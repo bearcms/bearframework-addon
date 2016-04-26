@@ -1,0 +1,26 @@
+{
+    "name": "bearcms/bearcms-bearframework-addon",
+    "description": "Bear CMS addon for Bear Framework",
+    "keywords": ["Bear CMS", "addon", "Bear Framework"],
+    "homepage": "https://bearcms.com/",
+    "license": "MIT",
+    "authors": [
+        {
+            "email": "support@bearcms.com",
+            "homepage": "http://bearcms.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "bearframework/bearframework": "*",
+        "ivopetkov/html-server-components-bearframework-addon": "*",
+        "ivopetkov/image-gallery-bearframework-addon": "*",
+        "ivopetkov/navigation-menu-bearframework-addon": "*",
+        "ivopetkov/video-embed": "*",
+        "ivopetkov/html5-dom-document-php": "*"
+
+    },
+    "autoload": {
+        "files": ["autoload.php"]
+    }
+}

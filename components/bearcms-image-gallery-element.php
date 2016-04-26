@@ -1,0 +1,41 @@
+<?php
+/*
+ * Bear CMS addon for Bear Framework
+ * https://bearcms.com/
+ * Copyright (c) 2016 Amplilabs Ltd.
+ * Free to use under the MIT license.
+ */
+
+$domDocument = new IvoPetkov\HTML5DOMDocument();
+$domDocument->loadHTML($component->innerHTML);
+$files = $domDocument->querySelectorAll('file');
+
+$spacing = $component->spacing;
+
+$content = '<div class="bearcms-image-gallery-element">';
+
+$attributes = '';
+if (strlen($component->type) > 0) {
+    $attributes .= ' type="' . $component->type . '"';
+}
+if (strlen($component->columnsCount) > 0) {
+    $attributes .= ' columnsCount="' . $component->columnsCount . '"';
+}
+if (strlen($component->imageSize) > 0) {
+    $attributes .= ' imageSize="' . $component->imageSize . '"';
+}
+if (strlen($component->imageAspectRatio) > 0) {
+    $attributes .= ' imageAspectRatio="' . $component->imageAspectRatio . '"';
+}
+
+$content .= '<component src="image-gallery" spacing="' . $spacing . '"' . $attributes . '>';
+foreach ($files as $file) {
+    $content .= '<file class="bearcms-image-gallery-element-image" filename="' . $app->data->getFilename('bearcms/files/imagegallery/' . $file->getAttribute('filename')) . '"/>';
+}
+$content .= '</component>';
+$content .= '</div>';
+
+$content = \BearCMS\Internal\ElementsHelper::getElementComponentContent($component, 'imageGallery', $content);
+?><html>
+    <body><?= $content ?></body>
+</html>

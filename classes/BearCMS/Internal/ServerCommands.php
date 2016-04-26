@@ -1,0 +1,554 @@
+<?php
+
+/*
+ * Bear CMS addon for Bear Framework
+ * https://bearcms.com/
+ * Copyright (c) 2016 Amplilabs Ltd.
+ * Free to use under the MIT license.
+ */
+
+namespace BearCMS\Internal;
+
+use BearFramework\App;
+
+class ServerCommands
+{
+
+    /**
+     * 
+     * @return array
+     */
+    static function about()
+    {
+        $result = [];
+        $result['siteID'] = 'dev1'; //todo
+        $result['phpVersion'] = phpversion();
+        $result['frameworkVersion'] = App::VERSION;
+        $result['addonVersion'] = \BearCMS::VERSION;
+        return $result;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    static function pages()
+    {
+        $app = App::$instance;
+        $structure = $app->data->get(
+                [
+                    'key' => 'bearcms/pages/structure.json',
+                    'result' => ['key', 'body']
+                ]
+        );
+        $pages = $app->data->search(
+                [
+                    'where' => [
+                        ['key', 'bearcms/pages/page/', 'startsWith']
+                    ],
+                    'result' => ['key', 'body']
+                ]
+        );
+        $temp = [];
+        $temp['structure'] = isset($structure['body']) ? json_decode($structure['body'], true) : [];
+        $temp['pages'] = [];
+        foreach ($pages as $page) {
+            $temp['pages'][] = json_decode($page['body'], true);
+        }
+        return $temp;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    static function blogPosts()
+    {
+        $app = App::$instance;
+        $result = $app->data->search(
+                [
+                    'where' => [
+                        ['key', 'bearcms/blog/post/', 'startsWith']
+                    ],
+                    'result' => ['key', 'body']
+                ]
+        );
+        $temp = [];
+        foreach ($result as $item) {
+            $temp[] = json_decode($item['body'], true);
+        }
+        return $temp;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    static function usersIDs()
+    {
+        $app = App::$instance;
+        $result = $app->data->search(
+                [
+                    'where' => [
+                        ['key', 'bearcms/users/user/', 'startsWith']
+                    ],
+                    'result' => ['key', 'body']
+                ]
+        );
+        $temp = [];
+        foreach ($result as $item) {
+            $itemData = json_decode($item['body'], true);
+            if (isset($itemData['id'])) {
+                $temp[] = $itemData['id'];
+            }
+        }
+        return $temp;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    static function usersInvitations()
+    {
+        $app = App::$instance;
+        $result = $app->data->search(
+                [
+                    'where' => [
+                        ['key', 'bearcms/users/invitation/', 'startsWith']
+                    ],
+                    'result' => ['key', 'body']
+                ]
+        );
+        $temp = [];
+        foreach ($result as $item) {
+            $temp[] = json_decode($item['body'], true);
+        }
+        return $temp;
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     * @throws \Exception
+     */
+    static function userIDByEmail($data)
+    {
+        if (!isset($data['email'])) {
+            throw new \Exception('');
+        }
+        $email = (string) $data['email'];
+        $app = App::$instance;
+        $users = $app->data->search(
+                [
+                    'where' => [
+                        ['key', 'bearcms/users/user/', 'startsWith']
+                    ],
+                    'result' => ['key', 'body']
+                ]
+        );
+        foreach ($users as $user) {
+            $userData = json_decode($user['body'], true);
+            if (isset($userData['emails'])) {
+                foreach ($userData['emails'] as $userEmail) {
+                    if ($userEmail === $email) {
+                        return isset($userData['id']) ? $userData['id'] : null;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    static function templates()
+    {
+        $templates = \BearCMS\Internal\Data\Templates::getTemplatesList();
+        foreach ($templates as $i => $template) {
+            if (isset($template['manifestFilename'])) {
+                $manifestData = \BearCMS\Internal\Data\Templates::getManifestData($template['manifestFilename'], $template['dir']);
+                unset($template['dir']);
+                unset($template['manifestFilename']);
+                $template = array_merge($template, $manifestData);
+                if (isset($template['options'])) {
+                    $template['hasOptions'] = !empty($template['options']);
+                    unset($template['options']);
+                } else {
+                    $template['hasOptions'] = false;
+                }
+                $templates[$i] = $template;
+            }
+        }
+        return $templates;
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     * @throws \Exception
+     */
+    static function template($data)
+    {
+        $app = App::$instance;
+        if (!isset($data['id'])) {
+            throw new \Exception('');
+        }
+        $templates = \BearCMS\Internal\Data\Templates::getTemplatesList();
+        foreach ($templates as $template) {
+            if ($template['id'] === $data['id']) {
+                if (isset($template['manifestFilename'])) {
+                    $manifestData = \BearCMS\Internal\Data\Templates::getManifestData($template['manifestFilename'], $template['dir']);
+                    unset($template['dir']);
+                    unset($template['manifestFilename']);
+                    $template = array_merge($template, $manifestData);
+                    if (isset($template['options'])) {
+                        $template['hasOptions'] = !empty($template['options']);
+                        unset($template['options']);
+                    } else {
+                        $template['hasOptions'] = false;
+                    }
+                    if (isset($data['includeOptions']) && !empty($data['includeOptions'])) {
+                        $template['options'] = [];
+                        $template['options']['definition'] = isset($manifestData['options']) ? $manifestData['options'] : [];
+
+                        $optionsValues = [];
+                        $result = $app->data->get(
+                                [
+                                    'key' => 'bearcms/templates/template/' . md5($template['id']) . '.json',
+                                    'result' => ['key', 'body']
+                                ]
+                        );
+                        if (isset($result['body'])) {
+                            $temp = json_decode($result['body'], true);
+                            $optionsValues = isset($temp['options']) ? $temp['options'] : [];
+                        }
+                        $template['options']['activeValues'] = $optionsValues;
+
+                        $optionsValues = [];
+                        $result = $app->data->get(
+                                [
+                                    'key' => '.temp/bearcms/user-template-options/' . md5(\BearCMS\CurrentUser::getID()) . '/' . md5($data['id']) . '.json',
+                                    'result' => ['key', 'body']
+                                ]
+                        );
+                        if (isset($result['body'])) {
+                            $temp = json_decode($result['body'], true);
+                            $optionsValues = isset($temp['options']) ? $temp['options'] : [];
+                        }
+                        $template['options']['currentUserValues'] = $optionsValues;
+                    }
+                }
+                return $template;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    static function addons()
+    {
+        $app = App::$instance;
+        $result = $app->data->search(
+                [
+                    'where' => [
+                        ['key', 'bearcms/addons/addon/', 'startsWith']
+                    ],
+                    'result' => ['key', 'body']
+                ]
+        );
+        $temp = [];
+        foreach ($result as $item) {
+            $addonData = json_decode($item['body'], true);
+            if (isset($addonData['id'])) {
+                $addonManifestData = \BearCMS\Internal\Data\Addons::getManifestData($addonData['id']);
+                if (is_array($addonManifestData)) {
+                    $addonData['name'] = $addonManifestData['name'];
+                    $addonData['hasOptions'] = isset($addonManifestData['options']) && !empty($addonManifestData['options']);
+                } else {
+                    $addonData['name'] = $addonData['id'];
+                    $addonData['hasOptions'] = false;
+                }
+                if (isset($addonData['options'])) {
+                    unset($addonData['options']);
+                }
+                $temp[] = $addonData;
+            }
+        }
+        return $temp;
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     * @throws \Exception
+     */
+    static function addon($data)
+    {
+        $app = App::$instance;
+        if (!isset($data['id'])) {
+            throw new \Exception('');
+        }
+
+        if (\BearFramework\Addons::exists($data['id'])) {
+            $addonData = [];
+            $addonData['id'] = $data['id'];
+
+            $result = $app->data->get([
+                'key' => 'bearcms/addons/addon/' . md5($data['id']) . '.json',
+                'result' => ['key', 'body']
+            ]);
+            if (isset($result['body'])) {
+                $temp = json_decode($result['body'], true);
+                $addonData['enabled'] = isset($temp['enabled']) ? (int) $temp['enabled'] > 0 : false;
+                $optionsValues = isset($temp['options']) ? $temp['options'] : [];
+            } else {
+                $addonData['enabled'] = false;
+                $optionsValues = [];
+            }
+
+            $includeOptions = isset($data['includeOptions']) && !empty($data['includeOptions']);
+            $addonManifestData = \BearCMS\Internal\Data\Addons::getManifestData($data['id']);
+            if (is_array($addonManifestData)) {
+                $addonData['hasOptions'] = isset($addonManifestData['options']) && !empty($addonManifestData['options']);
+                if ($includeOptions) {
+                    $addonData['options'] = [];
+                    $addonData['options']['definition'] = isset($addonManifestData['options']) ? $addonManifestData['options'] : [];
+                    $addonData['options']['values'] = $optionsValues;
+                    $addonData['options']['valid'] = \BearCMS\Internal\Data\Addons::validateOptions($addonData['options']['definition'], $addonData['options']['values']);
+                }
+                unset($addonManifestData['options']);
+                $addonData = array_merge($addonData, $addonManifestData);
+            } else {
+                $addonData['hasOptions'] = false;
+                if ($includeOptions) {
+                    $addonData['options'] = [];
+                    $addonData['options']['definition'] = [];
+                    $addonData['options']['values'] = [];
+                    $addonData['options']['valid'] = true;
+                }
+            }
+            return $addonData;
+        }
+        return null;
+    }
+
+    static function addAddon($data, $response)
+    {
+        $app = App::$instance;
+        if (isset($data['type']) && isset($data['value'])) {
+            $filenameOrUrl = null;
+            if ($data['type'] === 'url') {
+                $filenameOrUrl = $data['value'];
+            } elseif ($data['type'] === 'file') {
+                $filename = $app->data->getFilename('.temp/bearcms/files/' . $data['value']);
+                if (is_file($filename)) {
+                    $filenameOrUrl = $filename;
+                }
+            }
+            try {
+                $id = $app->maintenance->getAddonID($filenameOrUrl);
+            } catch (\Exception $e) {
+                return ['error' => 'invalidValue'];
+            }
+            if ($app->maintenance->addonExists($id)) {
+                $result = $app->data->get([
+                    'key' => 'bearcms/addons/addon/' . md5($id) . '.json',
+                    'result' => ['key']
+                ]);
+                if (!isset($result['key'])) { // Not managed by Bear CMS
+                    return ['error' => 'notManagedByBearCMS'];
+                }
+            }
+            try {
+                $id = $app->maintenance->installAddon($filenameOrUrl);
+                return $id;
+            } catch (\Exception $e) {
+                return ['error' => 'invalidValue'];
+            }
+        }
+        return null;
+    }
+
+    static function deleteAddon($data, $response)
+    {
+        $app = App::$instance;
+        if (!isset($data['id'])) {
+            throw new \Exception('');
+        }
+        $app->maintenance->deleteAddon($data['id']);
+    }
+
+    static function mail($data)
+    {
+        $app = App::$instance;
+        try {
+            $result = mail($data['recipient'], $data['subject'], $data['body']);
+        } catch (\Exception $e) {
+            $result = false;
+        }
+        $app->logger->log('info', json_encode(['message' => $data, 'result' => (int) $result]));
+        return $result;
+    }
+
+    static function iconChanged()
+    {
+        Cookies::setList(Cookies::TYPE_CLIENT, [['name' => 'fc', 'value' => uniqid(), 'expire' => time() + 86400 + 1000]]);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @throws \Exception
+     */
+    static function publishData($data)
+    {
+        $app = App::$instance;
+        if (!isset($data['key'])) {
+            throw new \Exception('');
+        }
+        $app->data->makePublic(['key' => $data['key']]);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return string
+     * @throws \Exception
+     */
+    static function dataUrl($data)
+    {
+        $app = App::$instance;
+        if (!isset($data['key'])) {
+            throw new \Exception('');
+        }
+        if (!isset($data['options'])) {
+            throw new \Exception('');
+        }
+        return $app->assets->getUrl($app->data->getFilename($data['key']), $data['options']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return string
+     * @throws \Exception
+     */
+    static function assetUrl($data)
+    {
+        $app = App::$instance;
+        if (!isset($data['filename'])) {
+            throw new \Exception('');
+        }
+        if (!isset($data['options'])) {
+            throw new \Exception('');
+        }
+        return $app->assets->getUrl($data['filename'], $data['options']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @param array $response
+     * @throws \Exception
+     */
+    static function temporaryRedirect($data, $response)
+    {
+        $app = App::$instance;
+        if (!isset($data['url'])) {
+            throw new \Exception('');
+        }
+        Cookies::setList(Cookies::TYPE_SERVER, Cookies::parseServerCookies($response['header']));
+        Cookies::update();
+        $app->respond(new App\Response\TemporaryRedirect($data['url']));
+        exit;
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function data($data)
+    {
+        $app = App::$instance;
+        return $app->data->execute($data);
+    }
+
+    static function replaceContent($data, $response)
+    {
+        $app = App::$instance;
+        $body = $response['body'];
+        $content = $app->components->process($data['content']);
+        $domDocument = new \IvoPetkov\HTML5DOMDocument();
+        $domDocument->loadHTML($content);
+        $bodyElement = $domDocument->querySelector('body');
+        $content = $bodyElement->innerHTML;
+        $bodyElement->parentNode->removeChild($bodyElement);
+        $allButBody = $domDocument->saveHTML();
+        $startPosition = strpos($body, '{bearcms-replace-content-' . $data['id'] . '-');
+        if ($startPosition === false) {
+            return;
+        }
+
+        $endPosition = strpos($body, '}', $startPosition);
+
+        $modificationsString = substr($body, $startPosition + 58, $endPosition - $startPosition - 58);
+        $parts = explode('\'', $modificationsString);
+        $singleQuoteSlashesCount = strlen($parts[0]);
+        $doubleQuoteSlashesCount = strlen($parts[1]) - 1;
+        for ($i = 0; $i < $doubleQuoteSlashesCount; $i+=2) {
+            $content = substr(json_encode($content), 1, -1);
+        }
+        for ($i = 0; $i < $singleQuoteSlashesCount; $i+=2) {
+            $content = addslashes($content);
+        }
+        $body = str_replace(substr($body, $startPosition, $endPosition - $startPosition + 1), $content, $body);
+        //todo optimize
+        $response1 = ['js' => 'html5DOMDocument.insert(' . json_encode($allButBody, true) . ');'];
+        $response2 = json_decode($body, true);
+        $response['body'] = json_encode(Server::mergeAjaxResponses($response1, $response2));
+    }
+
+//    static function evalHTML($data, $response)
+//    {
+//        $response1 = json_decode($response['body'], true);
+//        $response2 = ['js' => 'htmlMagic.evalElement(document.querySelector(\'#' . $data['elementID'] . '\'));'];
+//        $response['body'] = json_encode(Server::mergeAjaxResponses($response1, $response2));
+//    }
+
+    static function elementsEditor($data, $response)
+    {
+        if (!empty(ElementsHelper::$editorData)) {
+            $requestArguments = [];
+            $requestArguments['data'] = json_encode(ElementsHelper::$editorData);
+            $requestArguments['jsMode'] = 1;
+            $elementsEditorData = Server::call('elementseditor', $requestArguments, true);
+            if (is_array($elementsEditorData) && isset($elementsEditorData['result'], $elementsEditorData['result']['content'])) {
+                $response['body'] = json_encode(Server::mergeAjaxResponses(json_decode($response['body'], true), json_decode($elementsEditorData['result']['content'], true)));
+            } else {
+                throw new \Exception('');
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @param array $response
+     * @throws \Exception
+     */
+    static function checkpoint($data, $response)
+    {
+        return $data;
+    }
+
+}

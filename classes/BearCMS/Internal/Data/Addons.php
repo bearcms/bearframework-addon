@@ -1,0 +1,88 @@
+<?php
+/*
+ * Bear CMS addon for Bear Framework
+ * https://bearcms.com/
+ * Copyright (c) 2016 Amplilabs Ltd.
+ * Free to use under the MIT license.
+ */
+namespace BearCMS\Internal\Data;
+
+use BearFramework\App;
+
+class Addons
+{
+
+    static function getList()
+    {
+        $app = App::$instance;
+        $result = $app->data->search(
+                [
+                    'where' => [
+                        ['key', 'bearcms/addons/addon/', 'startsWith']
+                    ],
+                    'result' => ['key', 'body']
+                ]
+        );
+        $temp = [];
+        foreach ($result as $item) {
+            $addonData = json_decode($item['body'], true);
+            $temp[] = [
+                'id' => $addonData['id'],
+                'enabled' => (isset($addonData['enabled']) ? (int) $addonData['enabled'] > 0 : false)
+            ];
+        }
+        return $temp;
+    }
+
+    static function getManifestData($name)
+    {
+        if (\BearFramework\Addons::exists($name)) {
+            $options = \BearFramework\Addons::getOptions($name);
+            if (isset($options['bearCMS']) && is_array($options['bearCMS']) && isset($options['bearCMS']['manifest'])) {
+                $dir = rtrim(\BearFramework\Addons::getDir($name), '/') . '/';
+                $filename = $dir . $options['bearCMS']['manifest'];
+                if (is_file($filename)) {
+                    $data = json_decode(file_get_contents($filename), true);
+                    if (isset($data['media']) && is_array($data['media'])) {
+                        foreach ($data['media'] as $i => $media) {
+                            if (isset($media['filename'])) {
+                                $data['media'][$i]['filename'] = $dir . $media['filename'];
+                            }
+                        }
+                    }
+                    return $data;
+                }
+            }
+        }
+        return null;
+    }
+
+    static function validateOptions($definition, $values)
+    {
+        foreach ($definition as $optionData) {
+            if (isset($optionData['id'])) {
+                $id = $optionData['id'];
+                $validations = isset($optionData['validations']) ? $optionData['validations'] : [];
+                if (empty($validations)) {
+                    continue;
+                }
+                $isValid = true;
+                foreach ($validations as $validationData) {
+                    if (isset($validationData[0])) {
+                        if ($validationData[0] === 'required') {
+                            if (!isset($values[$id]) || strlen($values[$id]) === 0) {
+                                $isValid = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!$isValid) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+}

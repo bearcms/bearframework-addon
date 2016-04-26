@@ -1,0 +1,303 @@
+{
+    "name": "The Default Template",
+    "description": "This is the default starter template for each Bear CMS powered website. Simple yet highly customizable it enables you to create websites that look great on desktops, tables and smartphones. You can change the colors and visibility of the different content blocks.",
+    "media": [
+        {
+            "filename": "assets/dt1.jpg",
+            "width": 1024,
+            "height": 768
+        }
+    ],
+    "options": [
+        {
+            "type": "group",
+            "name": "Header",
+            "options": [
+                {
+                    "type": "group",
+                    "name": "Logo",
+                    "options": [
+                        {
+                            "id": "headerLogoImage",
+                            "type": "image",
+                            "name": "Image"
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "name": "Title",
+                    "options": [
+                        {
+                            "id": "headerTitleColor",
+                            "type": "color",
+                            "name": "Color",
+                            "defaultValue": "#ffffff"
+                        },
+                        {
+                            "id": "headerTitleFont",
+                            "type": "font",
+                            "name": "Font",
+                            "defaultValue": "Arial"
+                        },
+                        {
+                            "id": "headerTitleBackgroundColor",
+                            "type": "color",
+                            "name": "Background color",
+                            "defaultValue": "#1BB0CE"
+                        },
+                        {
+                            "id": "headerTitleVisibility",
+                            "type": "list",
+                            "name": "Visibility",
+                            "defaultValue": "1",
+                            "values": [
+                                {
+                                    "value": "1",
+                                    "text": "Visible"
+                                },
+                                {
+                                    "value": "0",
+                                    "text": "Hidden"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "name": "Description",
+                    "options": [
+                        {
+                            "id": "headerDescriptionColor",
+                            "type": "color",
+                            "name": "Color",
+                            "defaultValue": "#008caa"
+                        },
+                        {
+                            "id": "headerDescriptionBackgroundColor",
+                            "type": "color",
+                            "name": "Background color",
+                            "defaultValue": "rgba(0,0,0,0)"
+                        },
+                        {
+                            "id": "headerDescriptionVisibility",
+                            "type": "list",
+                            "name": "Visibility",
+                            "defaultValue": "1",
+                            "values": [
+                                {
+                                    "value": "1",
+                                    "text": "Visible"
+                                },
+                                {
+                                    "value": "0",
+                                    "text": "Hidden"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "name": "Background",
+                    "options": [
+                        {
+                            "id": "headerBackgroundColor",
+                            "type": "color",
+                            "name": "Color",
+                            "defaultValue": "#ffffff"
+                        },
+                        {
+                            "id": "headerBackgroundImage",
+                            "type": "image",
+                            "name": "Image"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "group",
+            "name": "Navigation",
+            "options": [
+                {
+                    "id": "navigationPosition",
+                    "type": "list",
+                    "name": "Position",
+                    "defaultValue": "2",
+                    "values": [
+                        {
+                            "value": "1",
+                            "text": "Top"
+                        },
+                        {
+                            "value": "2",
+                            "text": "Bottom"
+                        }
+                    ]
+                },
+                {
+                    "id": "navigationTextColor",
+                    "type": "color",
+                    "name": "Text color",
+                    "defaultValue": "#ffffff"
+                },
+                {
+                    "id": "navigationHighlightColor",
+                    "type": "color",
+                    "name": "Highlight color",
+                    "defaultValue": "#1BB0CE"
+                },
+                {
+                    "id": "navigationBackgroundColor",
+                    "type": "color",
+                    "name": "Background color",
+                    "defaultValue": "#333"
+                }
+            ]
+        },
+        {
+            "type": "group",
+            "name": "Home page special block",
+            "description": "This content block is placed above the navigation on the home page. It is useful for welcoming your visitors with images, videos or text.",
+            "options": [
+                {
+                    "id": "homePageSpecialBlockVisibility",
+                    "type": "list",
+                    "name": "Visibility",
+                    "defaultValue": "1",
+                    "values": [
+                        {
+                            "value": "1",
+                            "text": "Visible"
+                        },
+                        {
+                            "value": "0",
+                            "text": "Hidden"
+                        }
+                    ]
+                },
+                {
+                    "id": "homePageSpecialBlockTextColor",
+                    "type": "color",
+                    "name": "Text color",
+                    "defaultValue": "#ffffff"
+                },
+                {
+                    "id": "homePageSpecialBlockHighlightColor",
+                    "type": "color",
+                    "name": "Highlight color",
+                    "description": "This color is used for titles and links",
+                    "defaultValue": "#ffffff"
+                },
+                {
+                    "id": "homePageSpecialBlockBackgroundColor",
+                    "type": "color",
+                    "name": "Background color",
+                    "defaultValue": "#111111"
+                }
+            ]
+        },
+        {
+            "type": "group",
+            "name": "Content",
+            "options": [
+                {
+                    "id": "contentTextColor",
+                    "type": "color",
+                    "name": "Text color",
+                    "defaultValue": "#000000"
+                },
+                {
+                    "id": "contentHighlightColor",
+                    "type": "color",
+                    "name": "Highlight color",
+                    "description": "This color is used for titles and links",
+                    "defaultValue": "#1BB0CE"
+                },
+                {
+                    "id": "contentBackgroundColor",
+                    "type": "color",
+                    "name": "Background color",
+                    "defaultValue": "#ffffff"
+                }
+            ]
+        },
+        {
+            "type": "group",
+            "name": "Footer",
+            "options": [
+                {
+                    "id": "footerVisibility",
+                    "type": "list",
+                    "name": "Visibility",
+                    "defaultValue": "1",
+                    "values": [
+                        {
+                            "value": "1",
+                            "text": "Visible"
+                        },
+                        {
+                            "value": "0",
+                            "text": "Hidden"
+                        }
+                    ]
+                },
+                {
+                    "id": "footerTextColor",
+                    "type": "color",
+                    "name": "Text color",
+                    "defaultValue": "#ffffff"
+                },
+                {
+                    "id": "footerHighlightColor",
+                    "type": "color",
+                    "name": "Highlight color",
+                    "description": "This color is used for titles and links",
+                    "defaultValue": "#ffffff"
+                },
+                {
+                    "id": "footerBackgroundColor",
+                    "type": "color",
+                    "name": "Background color",
+                    "defaultValue": "#111111"
+                },
+                {
+                    "type": "group",
+                    "name": "Powered by link",
+                    "description": "This link is located at the bottom of your website and shows your visitors you are proud of using Bear CMS",
+                    "options": [
+                        {
+                            "id": "poweredByLinkVisibility",
+                            "type": "list",
+                            "name": "Visibility",
+                            "defaultValue": "1",
+                            "values": [
+                                {
+                                    "value": "1",
+                                    "text": "Visible"
+                                },
+                                {
+                                    "value": "0",
+                                    "text": "Hidden"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "poweredByLinkTextColor",
+                            "type": "color",
+                            "name": "Text color",
+                            "defaultValue": "#ffffff"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "customCSS",
+            "type": "textarea",
+            "name": "Custom CSS"
+        }
+    ]
+}

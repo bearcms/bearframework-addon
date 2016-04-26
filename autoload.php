@@ -1,0 +1,16 @@
+<?php
+
+/*
+ * Bear CMS addon for Bear Framework
+ * https://bearcms.com/
+ * Copyright (c) 2016 Amplilabs Ltd.
+ * Free to use under the MIT license.
+ */
+
+BearFramework\Addons::register('bearcms/bearcms-bearframework-addon', __DIR__, [
+    'require' => [
+        'ivopetkov/html-server-components-bearframework-addon',
+        'ivopetkov/image-gallery-bearframework-addon',
+        'ivopetkov/navigation-menu-bearframework-addon'
+    ]
+]);
