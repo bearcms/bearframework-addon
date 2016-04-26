@@ -81,7 +81,7 @@ foreach ($addons as $addonData) {
             }
         }
         if ($addonData['enabled']) {
-            $app->addons->add($addonID, ['bearCMSManaged' => true]);
+            $app->addons->add($addonID, ['addedByBearCMS' => true]);
         }
     } else {
         throw new Exception('Addon ' . $addonID . ' not available');
@@ -113,8 +113,8 @@ $app->routes->add('/b/?/', function() use ($app) {
         $content .= '<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/>';
 
         $response = new App\Response\HTML($content);
-        $response->enableBearCMS = true;
         $response->bearCMSBlogPostID = $blogPostID;
+        $response->bearCMSType = 'page';
         return $response;
     }
 });
@@ -126,8 +126,8 @@ $app->routes->add('*', function() use ($app) {
     if ($pageID !== false) {
         $content = '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
         $response = new App\Response\HTML($content);
-        $response->enableBearCMS = true;
         $response->bearCMSPageID = $pageID;
+        $response->bearCMSType = 'page';
         return $response;
     }
 });
@@ -142,27 +142,39 @@ $app->hooks->add('componentCreated', function($component) {
 
 $app->hooks->add('responseCreated', function($response) use ($app, $context) {
 
+    if ($response instanceof App\Response\NotFound) {
+        $response->bearCMSType = 'notFound';
+        $response->setContentType('text/html');
+    } elseif ($response instanceof App\Response\TemporaryUnavailable) {
+        $response->bearCMSType = 'temporaryUnavailable';
+        $response->setContentType('text/html');
+    } elseif ($app->request->path[0] === null) {
+        $response->bearCMSType = 'page';
+    } elseif ($app->request->path[0] === 'admin') {
+        $response->bearCMSType = 'admin';
+    }
+
     if (CurrentTemplate::getID() === 'bearcms/default') {
-        $template = null;
-        if ($response instanceof App\Response\HTML) {
-            $template = $app->components->process('<component src="file:' . $context->dir . '/components/defaultTemplate.php"/>');
-        } elseif ($response instanceof App\Response\NotFound) {
-            $template = $app->components->process('<component src="file:' . $context->dir . '/components/defaultTemplate.php" mode="notFound"/>');
-            $response->setContentType('text/html');
-        } elseif ($response instanceof App\Response\TemporaryUnavailable) {
-            $template = $app->components->process('<component src="file:' . $context->dir . '/components/defaultTemplate.php" mode="temporaryUnavailable"/>');
-            $response->setContentType('text/html');
-        }
-        if ($template !== null) {
-            $domDocument = new HTML5DOMDocument();
-            $domDocument->loadHTML(str_replace('{body}', $domDocument->createInsertTarget('templateBody'), $template));
-            $domDocument->insertHTML($response->content, 'templateBody');
-            $response->content = $domDocument->saveHTML();
+        if (isset($response->bearCMSType) && $response->bearCMSType === 'page') {
+            $template = null;
+            if ($response instanceof App\Response\HTML) {
+                $template = $app->components->process('<component src="file:' . $context->dir . '/components/defaultTemplate.php"/>');
+            } elseif ($response instanceof App\Response\NotFound) {
+                $template = $app->components->process('<component src="file:' . $context->dir . '/components/defaultTemplate.php" mode="notFound"/>');
+            } elseif ($response instanceof App\Response\TemporaryUnavailable) {
+                $template = $app->components->process('<component src="file:' . $context->dir . '/components/defaultTemplate.php" mode="temporaryUnavailable"/>');
+            }
+            if ($template !== null) {
+                $domDocument = new HTML5DOMDocument();
+                $domDocument->loadHTML(str_replace('{body}', $domDocument->createInsertTarget('templateBody'), $template));
+                $domDocument->insertHTML($response->content, 'templateBody');
+                $response->content = $domDocument->saveHTML();
+            }
         }
     }
 
-    if ($app->request->path[0] !== 'admin' && $response instanceof App\Response\HTML) {
-        if (!($app->request->path[0] === null || (isset($response->enableBearCMS) && $response->enableBearCMS === true))) {
+    if ($response instanceof App\Response\HTML) {
+        if (!(isset($response->bearCMSType) && $response->bearCMSType === 'page')) {
             return;
         }
 
@@ -222,7 +234,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         $domDocument = new HTML5DOMDocument();
         $domDocument->loadHTML($response->content);
         $domDocument->insertHTML('<component src="data:base64,' . base64_encode($componentContent) . '"/>');
-        $response->content = $domDocument->saveHTML();
+        $response->content = $app->components->process($domDocument->saveHTML());
 
         if (!CurrentUser::exists()) {
             return;
@@ -268,7 +280,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
                     $domDocument = new HTML5DOMDocument();
                     $domDocument->loadHTML($content);
                     $domDocument->insertHTML($elementsEditorData['result']['content']);
-                    $domDocument->insertHTML('<html><body><script src="<' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.js')) . '"></script></body></html>');
+                    $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.js')) . '"></script></body></html>');
                     $content = $domDocument->saveHTML();
                 } else {
                     $response = new App\Response\TemporaryUnavailable();
