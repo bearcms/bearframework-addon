@@ -14,9 +14,9 @@
         "php": ">=5.5.0",
         "bearframework/bearframework": "*",
         "ivopetkov/html-server-components-bearframework-addon": "*",
-        "ivopetkov/image-gallery-bearframework-addon": "*",
-        "ivopetkov/navigation-menu-bearframework-addon": "*",
-        "ivopetkov/video-embed": "*",
+        "ivopetkov/image-gallery-bearframework-addon": "dev-master",
+        "ivopetkov/navigation-menu-bearframework-addon": "dev-master",
+        "ivopetkov/video-embed": "dev-master",
         "ivopetkov/html5-dom-document-php": "*"
 
     },
