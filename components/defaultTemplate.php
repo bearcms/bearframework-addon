@@ -95,7 +95,7 @@ $getResponsiveImageData = function ($desiredWidths, $maxWidth, $widthCompensatio
     return $result;
 };
 
-$getNewDimensions = function ($width, $height, $maxWidth, $maxHeight) {
+$getNewDimensions = function ($width, $height, $maxWidth, $maxHeight) use (&$getNewDimensions) {
     if ($width > $maxWidth) {
         return $getNewDimensions($maxWidth, round($height * $maxWidth / $width), $maxWidth, $maxHeight);
     }
@@ -275,12 +275,13 @@ $headerItemsSpacingInPx = 40;
                     background-size:cover;
                 }
                 <?php
-                $headerBackgroundImageDimensions = $app->images->getSize($headerBackgroundImage);
+                $headerLogoImageFilename = $app->data->getFilename($headerBackgroundImage);
+                $headerBackgroundImageDimensions = $app->images->getSize($headerLogoImageFilename);
                 $headerBackgroundResponsiveImageData = $getResponsiveImageData([320, 360, 480, 768, 1024, 1280, 1366, 1440, 1680, 1960, 2048, $headerBackgroundImageDimensions[0]], $headerBackgroundImageDimensions[0]);
                 foreach ($headerBackgroundResponsiveImageData as $responsiveImageData) {
                     echo '@media' . $responsiveImageData['mediaQuery'] . '{
                             .template-header-outer-container{
-                                background-image:url(' . $app->assets->getUrl($headerBackgroundImage, ['width' => $responsiveImageData['imageWidth']]) . ');
+                                background-image:url(' . $app->assets->getUrl($headerLogoImageFilename, ['width' => $responsiveImageData['imageWidth']]) . ');
                             }
                         }';
                 }
@@ -300,7 +301,8 @@ $headerItemsSpacingInPx = 40;
                 }
 
                 <?php
-                $headerLogoImageDimensions = $app->images->getSize($headerLogoImage);
+                $headerLogoImageFilename = $app->data->getFilename($headerLogoImage);
+                $headerLogoImageDimensions = $app->images->getSize($headerLogoImageFilename);
                 $headerLogoImageMaxWidth = $isHomePage ? 400 : 200;
                 if ($headerLogoImageDimensions[0] < $headerLogoImageMaxWidth) {
                     $headerLogoImageMaxWidth = $headerLogoImageDimensions[0];
@@ -312,7 +314,7 @@ $headerItemsSpacingInPx = 40;
                         .template-header-logo{
                             width:' . $width . 'px;
                             height:' . $height . 'px;
-                            background-image:url(' . $app->assets->getUrl($headerLogoImage, ['width' => $width, 'height' => $height]) . ');
+                            background-image:url(' . $app->assets->getUrl($headerLogoImageFilename, ['width' => $width, 'height' => $height]) . ');
                         }
                     }';
                 }
