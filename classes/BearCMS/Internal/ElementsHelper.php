@@ -75,7 +75,7 @@ class ElementsHelper
 
         // Update color
         if (strlen($component->color) > 0) {
-            if (preg_match('/^#[0-9a-f]{6}$/', $component->color) !== 1) {
+            if (preg_match('/^#[0-9a-fA-F]{6}$/', $component->color) !== 1) {
                 $component->color = '';
             }
         }
