@@ -178,7 +178,7 @@ if ($mode === 'notFound' || $mode === 'temporaryUnavailable') {
 // todo - in nav pages
 $hasPages = sizeof(\BearCMS\Data\Pages::getList()) > 0;
 $settings = \BearCMS\Data\Settings::get();
-$isHomePage = $app->request->path === '/';
+$isHomePage = (string)$app->request->path === '/';
 
 $fontsHTML = '';
 $headerLogoImage = $options['headerLogoImage'];
@@ -910,7 +910,7 @@ $headerItemsSpacingInPx = 40;
         if ($isHomePage && $homePageSpecialBlockVisibility === '1') {
             echo '<div class="template-homepage-special-block-outer-container">';
             echo '<div class="template-homepage-special-block-inner-container">';
-            echo '<component src="bearcms-elements" editable="true" class="homepage-special-bearcms-elements" id="homepage-special"/>';
+            echo '<component src="bearcms-elements" color="#E0880B" editable="true" class="homepage-special-bearcms-elements" id="homepage-special"/>';
             echo '</div>';
             echo '</div>';
         }
@@ -932,7 +932,7 @@ $headerItemsSpacingInPx = 40;
 
             echo '<div class="template-footer-outer-container">';
             echo '<div class="template-footer-inner-container">';
-            echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer"/>';
+            echo '<component src="bearcms-elements" color="#E0880B" editable="true" class="footer-bearcms-elements" id="footer"/>';
             if ($poweredByLinkVisibility === '1') {
                 echo '<div class="template-powered-by-outer-container">';
                 echo '<div class="template-powered-by-inner-container">';
