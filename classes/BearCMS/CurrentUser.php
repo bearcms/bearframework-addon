@@ -21,16 +21,16 @@ class CurrentUser
      * 
      * @return boolean
      */
-    static function exists()
+    public function exists()
     {
-        return strlen(self::getKey()) > 70;
+        return strlen($this->getKey()) > 70;
     }
 
     /**
      * 
      * @return string
      */
-    static function getKey()
+    public function getKey()
     {
         $cookies = Cookies::getList(Cookies::TYPE_SERVER);
         $cookieKey = '_s';
@@ -40,25 +40,11 @@ class CurrentUser
 
     /**
      * 
-     * @param string $key
-     * @param string $userID
-     */
-    static function saveKey($key, $userID)
-    {
-        $app = App::$instance;
-        $app->data->set([
-            'key' => '.temp/bearcms/userkeys/' . md5($key),
-            'body' => $userID
-        ]);
-    }
-
-    /**
-     * 
      * @return string
      */
-    static function getID()
+    public function getID()
     {
-        $cacheKey = 'id-' . CurrentUser::getKey();
+        $cacheKey = 'id-' . $this->getKey();
         if (!isset(self::$cache[$cacheKey])) {
             self::$cache[$cacheKey] = null;
             $app = App::$instance;
@@ -80,9 +66,9 @@ class CurrentUser
      * 
      * @return array
      */
-    static function getPermissions()
+    public function getPermissions()
     {
-        $userID = CurrentUser::getID();
+        $userID = $this->getID();
         if ($userID === null) {
             return [];
         }
@@ -102,9 +88,9 @@ class CurrentUser
      * 
      * @return array
      */
-    static function hasPermission($name)
+    public function hasPermission($name)
     {
-        $permissions = self::getPermissions();
+        $permissions = $this->getPermissions();
         return array_search($name, $permissions) !== false;
     }
 

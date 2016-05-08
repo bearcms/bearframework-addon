@@ -13,7 +13,7 @@ $buildTreeFunction = function($pages, $parentID) use ($app, &$buildTreeFunction)
     $currentPath = (string) $app->request->path;
     foreach ($pages as $page) {
         if ($page['parentID'] === $parentID) {
-            if (BearCMS\CurrentUser::exists() || (!BearCMS\CurrentUser::exists() && $page['status'] === 'published')) {
+            if ($app->bearCMS->currentUser->exists() || (!$app->bearCMS->currentUser->exists() && $page['status'] === 'published')) {
                 $classNames = 'bearcms-navigation-element-item';
                 if ($page['path'] === $currentPath) {
                     $classNames .= ' bearcms-navigation-element-item-selected';
@@ -59,7 +59,7 @@ if (strlen($component->showHomeButton) > 0) {
 
 $pages = [];
 if ($type === 'top') {
-    $pages = BearCMS\Data\Pages::getList();
+    $pages = $app->bearCMS->data->pages->getList();
     $temp = [];
     foreach ($pages as $page) {
         if ($page['parentID'] === '') {
@@ -68,7 +68,7 @@ if ($type === 'top') {
     }
     $pages = $temp;
 } elseif ($type === 'children') {
-    $pages = BearCMS\Data\Pages::getList();
+    $pages = $app->bearCMS->data->pages->getList();
     $temp = [];
     $parentID = strlen($component->pageID) > 0 ? $component->pageID : '';
     foreach ($pages as $page) {
@@ -78,7 +78,7 @@ if ($type === 'top') {
     }
     $pages = $temp;
 } elseif ($type === 'tree') {
-    $pages = BearCMS\Data\Pages::getList();
+    $pages = $app->bearCMS->data->pages->getList();
 }
 
 $attributes = '';

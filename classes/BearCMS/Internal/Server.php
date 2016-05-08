@@ -11,7 +11,6 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 use BearCMS\Internal\Cookies;
-use BearCMS\CurrentUser;
 
 class Server
 {
@@ -193,9 +192,9 @@ class Server
             throw new \InvalidArgumentException('');
         }
 
-        if (CurrentUser::exists()) {
+        if ($app->bearCMS->currentUser->exists()) {
             $currentUserData = $app->data->get([
-                'key' => 'bearcms/users/user/' . md5(CurrentUser::getID()) . '.json',
+                'key' => 'bearcms/users/user/' . md5($app->bearCMS->currentUser->getID()) . '.json',
                 'result' => ['body']
             ]);
             $currentUserID = null;
@@ -236,10 +235,10 @@ class Server
             }
         }
         $log = "Bear CMS Server Request:\n\n";
-        $log .= 'User: ' . CurrentUser::getID() . "\n\n";
+        $log .= 'User: ' . $app->bearCMS->currentUser->getID() . "\n\n";
         $log .= 'Time: ' . curl_getinfo($ch, CURLINFO_TOTAL_TIME) . ' / dns: ' . curl_getinfo($ch, CURLINFO_NAMELOOKUP_TIME) . ', connect: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) . ', download: ' . curl_getinfo($ch, CURLINFO_STARTTRANSFER_TIME) . "\n\n";
         $log .= 'Request header: ' . trim(curl_getinfo($ch, CURLINFO_HEADER_OUT)) . "\n\n";
-        //$log .= 'Request data: ' . "\n" . print_r($data, true) . "\n\n";
+        $log .= 'Request data: ' . "\n" . print_r($data, true) . "\n\n";
         curl_close($ch);
         foreach ($cookies as $key => $value) {
             $log = str_replace($value, '*' . strlen($value) . 'chars*', $log);
@@ -300,7 +299,7 @@ class Server
             $response['body'] = $responseData['body'];
             $responseMeta = $responseData['meta'];
 
-            //$app->logger->log('info', print_r($responseData, true));
+            $app->logger->log('info', print_r($responseData, true));
 
             $resend = isset($responseMeta['resend']) && (int) $responseMeta['resend'] > 0;
             $resendRequestData = [];
@@ -329,7 +328,10 @@ class Server
             }
             if (isset($responseMeta['currentUser'])) {
                 $currentUserData = $responseMeta['currentUser'];
-                CurrentUser::saveKey($currentUserData['key'], $currentUserData['id']);
+                $app->data->set([
+                    'key' => '.temp/bearcms/userkeys/' . md5($currentUserData['key']),
+                    'body' => $currentUserData['id']
+                ]);
             }
             if (isset($responseMeta['clientEvents'])) {
                 $responseBody = $response['body']; // Can be changed in a command

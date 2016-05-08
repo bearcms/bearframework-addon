@@ -232,7 +232,7 @@ class ServerCommands
                         $optionsValues = [];
                         $result = $app->data->get(
                                 [
-                                    'key' => '.temp/bearcms/user-template-options/' . md5(\BearCMS\CurrentUser::getID()) . '/' . md5($data['id']) . '.json',
+                                    'key' => '.temp/bearcms/user-template-options/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($data['id']) . '.json',
                                     'result' => ['key', 'body']
                                 ]
                         );
@@ -359,7 +359,7 @@ class ServerCommands
             } catch (\Exception $e) {
                 return ['error' => 'invalidValue'];
             }
-            if ($app->maintenance->addonExists($id)) {
+            if (\BearFramework\Addons::exists($id)) {
                 $result = $app->data->get([
                     'key' => 'bearcms/addons/addon/' . md5($id) . '.json',
                     'result' => ['key']
@@ -369,7 +369,8 @@ class ServerCommands
                 }
             }
             try {
-                $id = $app->maintenance->installAddon($filenameOrUrl);
+                $context = $app->getContext(__FILE__);
+                $id = $app->maintenance->installAddon($context->options['addonsDir'], $filenameOrUrl);
                 return $id;
             } catch (\Exception $e) {
                 return ['error' => 'invalidValue'];
@@ -384,7 +385,8 @@ class ServerCommands
         if (!isset($data['id'])) {
             throw new \Exception('');
         }
-        $app->maintenance->deleteAddon($data['id']);
+        $context = $app->getContext(__FILE__);
+        $app->maintenance->deleteAddon($context->options['addonsDir'], $data['id']);
     }
 
     static function mail($data)
@@ -434,6 +436,46 @@ class ServerCommands
             throw new \Exception('');
         }
         return $app->assets->getUrl($app->data->getFilename($data['key']), $data['options']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return string
+     * @throws \Exception
+     */
+    static function appAssetUrl($data)
+    {
+        $app = App::$instance;
+        if (!isset($data['key'])) {
+            throw new \Exception('');
+        }
+        if (!isset($data['options'])) {
+            throw new \Exception('');
+        }
+        return $app->assets->getUrl($app->config->appDir . DIRECTORY_SEPARATOR . $data['key'], $data['options']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return string
+     * @throws \Exception
+     */
+    static function addonAssetUrl($data)
+    {
+        $app = App::$instance;
+        if (!isset($data['key'])) {
+            throw new \Exception('');
+        }
+        if (!isset($data['options'])) {
+            throw new \Exception('');
+        }
+        if (!isset($data['addonID'])) {
+            throw new \Exception('');
+        }
+        $addonDir = \BearFramework\Addons::getDir($data['addonID']);
+        return $app->assets->getUrl($addonDir . DIRECTORY_SEPARATOR . $data['key'], $data['options']);
     }
 
     /**
@@ -518,12 +560,12 @@ class ServerCommands
         $response['body'] = json_encode(Server::mergeAjaxResponses($response1, $response2));
     }
 
-//    static function evalHTML($data, $response)
-//    {
-//        $response1 = json_decode($response['body'], true);
-//        $response2 = ['js' => 'htmlMagic.evalElement(document.querySelector(\'#' . $data['elementID'] . '\'));'];
-//        $response['body'] = json_encode(Server::mergeAjaxResponses($response1, $response2));
-//    }
+    static function evalHTML($data, $response)
+    {
+        $response1 = json_decode($response['body'], true);
+        $response2 = ['js' => 'var e=document.querySelector(\'#' . $data['elementID'] . '\');if(e){html5DOMDocument.evalElement(e);}'];
+        $response['body'] = json_encode(Server::mergeAjaxResponses($response1, $response2));
+    }
 
     static function elementsEditor($data, $response)
     {

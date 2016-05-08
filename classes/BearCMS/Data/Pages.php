@@ -19,7 +19,7 @@ class Pages
      * @param string $id
      * @return array|null
      */
-    static function getPage($id)
+    public function getPage($id)
     {
         $app = App::$instance;
         $data = $app->data->get(
@@ -38,7 +38,7 @@ class Pages
      * 
      * @return array
      */
-    static function getList()
+    public function getList()
     {
         $app = App::$instance;
         $data = $app->data->search(
@@ -60,7 +60,7 @@ class Pages
      * 
      * @return array
      */
-    static function getStructure()
+    public function getStructure()
     {
         $app = App::$instance;
         $data = $app->data->get(

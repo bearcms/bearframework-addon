@@ -19,7 +19,7 @@ class Addons
      * @param string $id
      * @return array|null
      */
-    static function getAddon($id)
+    public function getAddon($id)
     {
         $app = App::$instance;
         $data = $app->data->get(
@@ -38,7 +38,7 @@ class Addons
      * 
      * @return array
      */
-    static function getList()
+    public function getList()
     {
         $app = App::$instance;
         $data = $app->data->search(

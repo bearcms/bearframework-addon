@@ -19,7 +19,7 @@ class Users
      * @param string $id
      * @return array|null
      */
-    static function getUser($id)
+    public function getUser($id)
     {
         $app = App::$instance;
         $data = $app->data->get(
@@ -38,7 +38,7 @@ class Users
      * 
      * @return array
      */
-    static function getList()
+    public function getList()
     {
         $app = App::$instance;
         $data = $app->data->search(
@@ -60,7 +60,7 @@ class Users
      * 
      * @return boolean
      */
-    static function hasUsers()
+    public function hasUsers()
     {
         $app = App::$instance;
         $result = $app->data->search(

@@ -18,7 +18,7 @@ class Settings
      * 
      * @return array
      */
-    static function get()
+    public function get()
     {
         $app = App::$instance;
         $data = $app->data->get(

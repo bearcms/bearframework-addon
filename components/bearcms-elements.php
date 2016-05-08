@@ -71,28 +71,28 @@ if ($renderElementsContainer) {
         <style><?= $styles ?></style>
     </head>
     <body><?php
-if ($renderElementsContainer) {
-    if ($editable) {
-        echo '<div>';
-    }
-    echo '<div' . $attributes . '>';
-}
-if (!empty($elements)) {
-    $childrenContextData = $contextData;
-    $childrenContextData['width'] = '100%';
-    foreach ($elements as $elementContainerData) {
-        if (isset($elementContainerData['data'], $elementContainerData['data']['type']) && $elementContainerData['data']['type'] === 'column') {
-            echo ElementsHelper::renderColumn($elementContainerData, $editable, $childrenContextData, !(isset($columnID{0}) && !$inContainer));
-        } else {
-            echo ElementsHelper::renderElement($elementsRawData[$elementContainerData['id']], $editable, $childrenContextData);
+        if ($renderElementsContainer) {
+            if ($editable) {
+                echo '<div>';
+            }
+            echo '<div' . $attributes . '>';
         }
-    }
-}
-if ($renderElementsContainer) {
-    echo '</div>';
-    if ($editable) {
-        echo '</div>';
-    }
-}
-?></body>
+        if (!empty($elements)) {
+            $childrenContextData = $contextData;
+            $childrenContextData['width'] = '100%';
+            foreach ($elements as $elementContainerData) {
+                if (isset($elementContainerData['data'], $elementContainerData['data']['type']) && $elementContainerData['data']['type'] === 'column') {
+                    echo ElementsHelper::renderColumn($elementContainerData, $editable, $childrenContextData, !(isset($columnID{0}) && !$inContainer));
+                } else {
+                    echo ElementsHelper::renderElement($elementsRawData[$elementContainerData['id']], $editable, $childrenContextData);
+                }
+            }
+        }
+        if ($renderElementsContainer) {
+            echo '</div>';
+            if ($editable) {
+                echo '</div>';
+            }
+        }
+        ?></body>
 </html>

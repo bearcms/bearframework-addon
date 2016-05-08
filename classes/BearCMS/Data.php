@@ -7,15 +7,18 @@
  * Free to use under the MIT license.
  */
 
-/**
- * @property \BearCMS\Data $data
- * @property \BearCMS\CurrentTemplate $currentTemplate
- * @property \BearCMS\CurrentUser $currentUser
- */
-class BearCMS
-{
+namespace BearCMS;
 
-    const VERSION = '0.0.1-dev';
+/**
+ * @property \BearCMS\Data\Addons $addons
+ * @property \BearCMS\Data\BlogPosts $blogPosts
+ * @property \BearCMS\Data\Pages $pages
+ * @property \BearCMS\Data\Settings $settings
+ * @property \BearCMS\Data\Templates $templates
+ * @property \BearCMS\Data\Users $users
+ */
+class Data
+{
 
     /**
      * Dependency Injection container
@@ -27,9 +30,12 @@ class BearCMS
     {
         $this->container = new \BearFramework\App\Container();
 
-        $this->container->set('data', \BearCMS\Data::class);
-        $this->container->set('currentTemplate', \BearCMS\CurrentTemplate::class);
-        $this->container->set('currentUser', \BearCMS\CurrentUser::class);
+        $this->container->set('addons', \BearCMS\Data\Addons::class);
+        $this->container->set('blogPosts', \BearCMS\Data\BlogPosts::class);
+        $this->container->set('pages', \BearCMS\Data\Pages::class);
+        $this->container->set('settings', \BearCMS\Data\Settings::class);
+        $this->container->set('templates', \BearCMS\Data\Templates::class);
+        $this->container->set('users', \BearCMS\Data\Users::class);
     }
 
     /**

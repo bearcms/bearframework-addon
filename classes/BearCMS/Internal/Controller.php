@@ -1,10 +1,12 @@
 <?php
+
 /*
  * Bear CMS addon for Bear Framework
  * https://bearcms.com/
  * Copyright (c) 2016 Amplilabs Ltd.
  * Free to use under the MIT license.
  */
+
 namespace BearCMS\Internal;
 
 use BearFramework\App;
@@ -18,11 +20,11 @@ class Controller
         $app = App::$instance;
         $path = (string) $app->request->path;
         if ($path === '/admin/') {
-            if (!\BearCMS\Data\Users::hasUsers()) {
+            if (!$app->bearCMS->data->users->hasUsers()) {
                 return new App\Response\TemporaryRedirect($app->request->base . '/admin/firstrun/');
             }
         } elseif ($path === '/admin/firstrun/') {
-            if (\BearCMS\Data\Users::hasUsers()) {
+            if ($app->bearCMS->data->users->hasUsers()) {
                 return new App\Response\TemporaryRedirect($app->request->base . '/admin/');
             }
         }

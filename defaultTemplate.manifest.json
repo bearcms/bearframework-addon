@@ -54,11 +54,11 @@
                             "values": [
                                 {
                                     "value": "1",
-                                    "text": "Visible"
+                                    "name": "Visible"
                                 },
                                 {
                                     "value": "0",
-                                    "text": "Hidden"
+                                    "name": "Hidden"
                                 }
                             ]
                         }
@@ -88,11 +88,11 @@
                             "values": [
                                 {
                                     "value": "1",
-                                    "text": "Visible"
+                                    "name": "Visible"
                                 },
                                 {
                                     "value": "0",
-                                    "text": "Hidden"
+                                    "name": "Hidden"
                                 }
                             ]
                         }
@@ -129,11 +129,11 @@
                     "values": [
                         {
                             "value": "1",
-                            "text": "Top"
+                            "name": "Top"
                         },
                         {
                             "value": "2",
-                            "text": "Bottom"
+                            "name": "Bottom"
                         }
                     ]
                 },
@@ -170,11 +170,11 @@
                     "values": [
                         {
                             "value": "1",
-                            "text": "Visible"
+                            "name": "Visible"
                         },
                         {
                             "value": "0",
-                            "text": "Hidden"
+                            "name": "Hidden"
                         }
                     ]
                 },
@@ -236,11 +236,11 @@
                     "values": [
                         {
                             "value": "1",
-                            "text": "Visible"
+                            "name": "Visible"
                         },
                         {
                             "value": "0",
-                            "text": "Hidden"
+                            "name": "Hidden"
                         }
                     ]
                 },
@@ -276,11 +276,11 @@
                             "values": [
                                 {
                                     "value": "1",
-                                    "text": "Visible"
+                                    "name": "Visible"
                                 },
                                 {
                                     "value": "0",
-                                    "text": "Hidden"
+                                    "name": "Hidden"
                                 }
                             ]
                         },

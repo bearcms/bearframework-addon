@@ -9,16 +9,16 @@
 
 namespace BearCMS;
 
-use \BearCMS\Internal\Cookies;
-use \BearCMS\CurrentUser;
-use \BearCMS\Internal\Data as InternalData;
+use BearFramework\App;
+use BearCMS\Internal\Cookies;
+use BearCMS\Internal\Data as InternalData;
 
 class CurrentTemplate
 {
 
     private static $cache = [];
 
-    static function getID()
+    public function getID()
     {
         if (!isset(self::$cache['id'])) {
             $cookies = Cookies::getList(Cookies::TYPE_SERVER);
@@ -27,13 +27,14 @@ class CurrentTemplate
         return self::$cache['id'];
     }
 
-    static function getOptions()
+    public function getOptions()
     {
+        $app = App::$instance;
         if (!isset(self::$cache['options'])) {
-            $currentTemplateID = self::getID();
-            $result = \BearCMS\Data\Templates::getOptions($currentTemplateID);
-            if (CurrentUser::exists()) {
-                $userOptions = \BearCMS\Data\Templates::getTempOptions($currentTemplateID, CurrentUser::getID());
+            $currentTemplateID = $this->getID();
+            $result = $app->bearCMS->data->templates->getOptions($currentTemplateID);
+            if ($app->bearCMS->currentUser->exists()) {
+                $userOptions = $app->bearCMS->data->templates->getTempOptions($currentTemplateID, $app->bearCMS->currentUser->getID());
                 if (!empty($userOptions)) {
                     $result = array_merge($result, $userOptions);
                 }
@@ -64,6 +65,56 @@ class CurrentTemplate
             self::$cache['options'] = $result;
         }
         return self::$cache['options'];
+    }
+
+    public function getFontFamily($fontName)
+    {
+        if (!is_string($fontName)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (substr($fontName, 0, 12) === 'googlefonts:') {
+            $fontName = substr($fontName, 12);
+            return strpos($fontName, ' ') !== false ? '"' . $fontName . '"' : $fontName;
+        } else {
+            $data['Arial,Helvetica,sans-serif'] = 'Arial';
+            $data['"Arial Black",Gadget,sans-serif'] = 'Arial Black';
+            $data['"Comic Sans MS",cursive,sans-serif'] = 'Comic Sans';
+            $data['"Courier New",Courier,monospace'] = 'Courier';
+            $data['Georgia,serif'] = 'Georgia';
+            $data['Impact,Charcoal,sans-serif'] = 'Impact';
+            $data['"Lucida Sans Unicode","Lucida Grande",sans-serif'] = 'Lucida';
+            $data['"Lucida Console",Monaco,monospace'] = 'Lucida Console';
+            $data['"Palatino Linotype","Book Antiqua",Palatino,serif'] = 'Palatino';
+            $data['Tahoma,Geneva,sans-serif'] = 'Tahoma';
+            $data['"Times New Roman",Times,serif'] = 'Times New Roman';
+            $data['"Trebuchet MS",Helvetica,sans-serif'] = 'Trebuchet';
+            $data['Verdana,Geneva,sans-serif'] = 'Verdana';
+            $key = array_search($fontName, $data);
+            if ($key !== false) {
+                return $key;
+            }
+            return 'unknown';
+        }
+    }
+
+    public function getFontsHTML($fontNames)
+    {
+        if (!is_array($fontNames) && !is_string($fontNames)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (!is_array($fontNames)) {
+            $fontNames = [$fontNames];
+        }
+        $fontNames = array_unique($fontNames);
+        $result = '<html><head>';
+        foreach ($fontNames as $fontName) {
+            if (substr($fontName, 0, 12) === 'googlefonts:') {
+                $fontName = substr($fontName, 12);
+                $result .= '<link href="//fonts.googleapis.com/css?family=' . urlencode($fontName) . '" rel="stylesheet" type="text/css" />';
+            }
+        }
+        $result .= '</head></html>';
+        return $result;
     }
 
 }

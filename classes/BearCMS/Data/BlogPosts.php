@@ -19,7 +19,7 @@ class BlogPosts
      * @param string $id
      * @return array|null
      */
-    static function getPost($id)
+    public function getPost($id)
     {
         $app = App::$instance;
         $data = $app->data->get(
@@ -38,7 +38,7 @@ class BlogPosts
      * 
      * @return array
      */
-    static function getList()
+    public function getList()
     {
         $app = App::$instance;
         $data = $app->data->search(

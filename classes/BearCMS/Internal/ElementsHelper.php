@@ -10,7 +10,6 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
-use BearCMS\CurrentUser;
 
 class ElementsHelper
 {
@@ -34,9 +33,10 @@ class ElementsHelper
      */
     static function updateComponentEditableAttribute($component)
     {
+        $app = App::$instance;
         $editable = false;
         if ($component->editable === 'true') {
-            if (CurrentUser::exists() && CurrentUser::hasPermission('modifyContent')) {
+            if ($app->bearCMS->currentUser->exists() && $app->bearCMS->currentUser->hasPermission('modifyContent')) {
                 $editable = true;
             }
         }
@@ -84,34 +84,32 @@ class ElementsHelper
         }
 
         // Update canEdit
-        if (strlen($component->canEdit) > 0) {
-            if ($component->canEdit !== 'true') {
-                $component->canEdit = '';
-            }
-        }
-        if ((string) $component->canEdit === '') {
-            $component->canEdit = 'true';
-        }
-
+//        if (strlen($component->canEdit) > 0) {
+//            if ($component->canEdit !== 'true') {
+//                $component->canEdit = '';
+//            }
+//        }
+//        if ((string) $component->canEdit === '') {
+//            $component->canEdit = 'true';
+//        }
         // Update canMove
-        if (strlen($component->canMove) > 0) {
-            if ($component->canMove !== 'true') {
-                $component->canMove = '';
-            }
-        }
-        if ((string) $component->canMove === '') {
-            $component->canMove = 'true';
-        }
-
+//        if (strlen($component->canMove) > 0) {
+//            if ($component->canMove !== 'true') {
+//                $component->canMove = '';
+//            }
+//        }
+//        if ((string) $component->canMove === '') {
+//            $component->canMove = 'true';
+//        }
         // Update canDelete
-        if (strlen($component->canDelete) > 0) {
-            if ($component->canDelete !== 'true') {
-                $component->canDelete = '';
-            }
-        }
-        if ((string) $component->canDelete === '') {
-            $component->canDelete = 'true';
-        }
+//        if (strlen($component->canDelete) > 0) {
+//            if ($component->canDelete !== 'true') {
+//                $component->canDelete = '';
+//            }
+//        }
+//        if ((string) $component->canDelete === '') {
+//            $component->canDelete = 'true';
+//        }
     }
 
     /**
@@ -125,9 +123,12 @@ class ElementsHelper
         $result['width'] = $component->width;
         $result['spacing'] = $component->spacing;
         $result['color'] = $component->color;
-        $result['canEdit'] = $component->canEdit === 'true';
-        $result['canMove'] = $component->canMove === 'true';
-        $result['canDelete'] = $component->canDelete === 'true';
+//        $result['canEdit'] = $component->canEdit === 'true';
+//        $result['canMove'] = $component->canMove === 'true';
+//        $result['canDelete'] = $component->canDelete === 'true';
+        if ($component->getAttribute('bearcms-internal-attribute-not-found-in-data') === 'true') {
+            $result['rawData'] = $component->getAttribute('bearcms-internal-attribute-raw-data');
+        }
         return $result;
     }
 
@@ -160,45 +161,148 @@ class ElementsHelper
         self::updateComponentContextAttributes($component);
 
         $rawData = $component->getAttribute('bearcms-internal-attribute-raw-data');
+        $elementData = null;
         if (strlen($rawData) > 0) {
             $elementData = self::decodeElementRawData($rawData);
             $component->id = $elementData['id'];
         } elseif (strlen($component->id) > 0) {
-            $elements = $app->data->get(
-                    [
-                        'key' => 'bearcms/elements/element/' . md5($component->id) . '.json',
-                        'result' => ['body']
-                    ]
-            );
-            $elementData = self::decodeElementRawData($elements['body']);
-        } else {
-            $elementData = null;
+            $elementsRawData = self::getElementsRawData([$component->id]);
+            if (isset($elementsRawData[$component->id])) {
+                $elementData = self::decodeElementRawData($elementsRawData[$component->id]);
+            }
         }
         if ($elementData !== null) {
-            if (strlen($component->src) === 0) {
-                throw new \Exception('');
+            self::updateComponentFromRawData($component, $elementData);
+        } else {
+            if (strlen($component->id) > 0 && $component->editable === 'true') {
+                $rawData = self::getRawDataFromComponent($component);
+                $component->setAttribute('bearcms-internal-attribute-raw-data', json_encode($rawData));
+                $component->setAttribute('bearcms-internal-attribute-not-found-in-data', 'true');
             }
-            if (!isset($elementData['type'])) {
-                throw new \Exception('');
-            }
-            $type = $elementData['type'];
-            if (!isset(self::$elementTypes[$component->src]) || self::$elementTypes[$component->src] !== $type) {
-                throw new \Exception('');
-            }
-            foreach ($elementData['data'] as $key => $value) {
-                if ($type === 'imageGallery' && $key === 'files') {
-                    foreach ($value as $file) {
+        }
+    }
+
+    static function updateComponentFromRawData(&$component, $rawData)
+    {
+        $type = $rawData['type'];
+        $data = $rawData['data'];
+
+        $copyString = function($name) use (&$component, $data) {
+            $component->$name = isset($data[$name]) ? (string) $data[$name] : '';
+        };
+
+        $copyBoolean = function($name) use (&$component, $data) {
+            $component->$name = isset($data[$name]) ? ($data[$name] ? 'true' : 'false') : '';
+        };
+
+        $copyInt = function($name) use (&$component, $data) {
+            $component->$name = isset($data[$name]) ? (string) $data[$name] : '';
+        };
+
+        if ($type === 'heading') {
+            $copyString('text');
+            $copyString('size');
+        } elseif ($type === 'text') {
+            $copyString('text');
+        } elseif ($type === 'link') {
+            $copyString('url');
+            $copyString('text');
+            $copyString('title');
+        } elseif ($type === 'video') {
+            $copyString('url');
+            $copyString('filename');
+        } elseif ($type === 'image') {
+            $copyString('filename');
+            $copyString('title');
+            $copyString('onClick');
+            $copyString('url');
+        } elseif ($type === 'imageGallery') {
+            $copyString('type');
+            $copyString('columnsCount');
+            $copyString('imageSize');
+            $copyString('imageAspectRatio');
+            if (isset($data['files'])) {
+                foreach ($data['files'] as $file) {
+                    if (is_array($file) && isset($file['filename'])) {
                         $component->innerHTML .= '<file filename="' . $file['filename'] . '" />';
-                    }
-                } else {
-                    if (is_bool($value)) {
-                        $component->$key = $value === true ? 'true' : 'false';
-                    } else {
-                        $component->$key = (string) $value;
                     }
                 }
             }
+        } elseif ($type === 'navigation') {
+            $copyString('type');
+            $copyString('pageID');
+        } elseif ($type === 'html') {
+            $copyString('code');
+        } elseif ($type === 'blogPosts') {
+            $copyString('type');
+            $copyBoolean('showDate');
+            $copyInt('limit');
         }
+    }
+
+    static function getRawDataFromComponent($component)
+    {
+        $type = self::$elementTypes[$component->src];
+        $data = [];
+
+        $copyString = function($name) use ($component, &$data) {
+            $data[$name] = (string) $component->$name;
+        };
+
+        $copyBoolean = function($name) use ($component, &$data) {
+            $data[$name] = $component->$name === 'true' ? true : false;
+        };
+
+        $copyInt = function($name) use ($component, &$data) {
+            $data[$name] = (int) $component->$name;
+        };
+
+        if ($type === 'heading') {
+            $copyString('text');
+            $copyString('size');
+        } elseif ($type === 'text') {
+            $copyString('text');
+        } elseif ($type === 'link') {
+            $copyString('url');
+            $copyString('text');
+            $copyString('title');
+        } elseif ($type === 'video') {
+            $copyString('url');
+            $copyString('filename');
+        } elseif ($type === 'image') {
+            $copyString('filename');
+            $copyString('title');
+            $copyString('onClick');
+            $copyString('url');
+        } elseif ($type === 'imageGallery') {
+            $copyString('type');
+            $copyString('columnsCount');
+            if (is_numeric($data['columnsCount'])) {
+                $data['columnsCount'] = (int) $data['columnsCount'];
+            }
+            $copyString('imageSize');
+            $copyString('imageAspectRatio');
+            $data['files'] = [];
+            if (strlen($component->innerHTML) > 0) {
+                $domDocument = new \IvoPetkov\HTML5DOMDocument();
+                $domDocument->loadHTML($component->innerHTML);
+                $files = $domDocument->querySelectorAll('file');
+                foreach ($files as $file) {
+                    $filename = $file->getAttribute('filename');
+                    $data['files'][] = ['filename' => $filename];
+                }
+            }
+        } elseif ($type === 'navigation') {
+            $copyString('type');
+            $copyString('pageID');
+        } elseif ($type === 'html') {
+            $copyString('code');
+        } elseif ($type === 'blogPosts') {
+            $copyString('type');
+            $copyBoolean('showDate');
+            $copyInt('limit');
+        }
+        return ['id' => $component->id, 'type' => $type, 'data' => $data];
     }
 
     /**
@@ -233,7 +337,13 @@ class ElementsHelper
         if (!is_array($data)) {
             throw new \Exception('');
         }
-        if (!isset($data['type'])) {
+        if (!isset($data['id']) || !is_string($data['id'])) {
+            throw new \Exception('');
+        }
+        if (!isset($data['type']) || !is_string($data['type'])) {
+            throw new \Exception('');
+        }
+        if (!isset($data['data']) || !is_array($data['data'])) {
             throw new \Exception('');
         }
         return $data;
@@ -260,7 +370,7 @@ class ElementsHelper
         if ($componentName === false) {
             throw new \Exception('');
         }
-        return '<component src="' . $componentName . '" editable="' . ($editable ? 'true' : 'false') . '" bearcms-internal-attribute-raw-data="' . htmlentities($rawData) . '" width="' . $contextData['width'] . '" spacing="' . $contextData['spacing'] . '" color="' . $contextData['color'] . '" canEdit="' . ($contextData['canEdit'] ? 'true' : 'false') . '" canMove="' . ($contextData['canMove'] ? 'true' : 'false') . '" canDelete="' . ($contextData['canDelete'] ? 'true' : 'false') . '"/>';
+        return '<component src="' . $componentName . '" editable="' . ($editable ? 'true' : 'false') . '" bearcms-internal-attribute-raw-data="' . htmlentities($rawData) . '" width="' . $contextData['width'] . '" spacing="' . $contextData['spacing'] . '" color="' . $contextData['color'] . '"/>'; // canEdit="' . ($contextData['canEdit'] ? 'true' : 'false') . '" canMove="' . ($contextData['canMove'] ? 'true' : 'false') . '" canDelete="' . ($contextData['canDelete'] ? 'true' : 'false') . '"
     }
 
     /**
@@ -362,7 +472,9 @@ class ElementsHelper
         }
         $data = $app->data->execute($commands);
         foreach ($itemsIDs as $index => $itemID) {
-            $result[$itemID] = $data[$index]['body'];
+            if (isset($data[$index]['body'])) {
+                $result[$itemID] = $data[$index]['body'];
+            }
         }
         return $result;
     }

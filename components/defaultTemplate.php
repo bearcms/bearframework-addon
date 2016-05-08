@@ -6,7 +6,8 @@
  * Free to use under the MIT license.
  */
 
-$options = \BearCMS\CurrentTemplate::getOptions();
+
+$options = $app->bearCMS->currentTemplate->getOptions();
 
 $addBrightness = function($color, $percent) {
     $a = $percent * 2.55;
@@ -176,9 +177,9 @@ if ($mode === 'notFound' || $mode === 'temporaryUnavailable') {
 }
 
 // todo - in nav pages
-$hasPages = sizeof(\BearCMS\Data\Pages::getList()) > 0;
-$settings = \BearCMS\Data\Settings::get();
-$isHomePage = (string)$app->request->path === '/';
+$hasPages = sizeof($app->bearCMS->data->pages->getList());
+$settings = $app->bearCMS->data->settings->get();
+$isHomePage = (string) $app->request->path === '/';
 
 $fontsHTML = '';
 $headerLogoImage = $options['headerLogoImage'];
@@ -186,7 +187,7 @@ $headerTitleVisibility = $options['headerTitleVisibility'];
 if ($headerTitleVisibility === '1') {
     $headerTitleColor = $options['headerTitleColor'];
     $headerTitleFont = $options['headerTitleFont'];
-    $fontsHTML .= \BearCMS\Fonts::getHTML($headerTitleFont, $this);
+    $fontsHTML .= $app->bearCMS->currentTemplate->getFontsHTML($headerTitleFont, $this);
     $headerTitleBackgroundColor = $options['headerTitleBackgroundColor'];
     $headerTitleBackgroundColor1 = $addBrightness($headerTitleBackgroundColor, -7);
     $headerTitleBackgroundColor2 = $addBrightness($headerTitleBackgroundColor, -14);
@@ -331,7 +332,7 @@ $headerItemsSpacingInPx = 40;
                     font-size:25px;
                     background-color:<?= $headerTitleBackgroundColor ?>;
                     color:<?= $headerTitleColor ?>;
-                    font-family:<?= \BearCMS\Fonts::getFontFamily($headerTitleFont) ?>;
+                    font-family:<?= $app->bearCMS->currentTemplate->getFontFamily($headerTitleFont) ?>;
                     padding:20px;
                     transition: background-color 200ms;
                     text-decoration:none;
@@ -514,7 +515,7 @@ $headerItemsSpacingInPx = 40;
                 min-height:250px;
             }
 
-            .bearcms-elements .bearcms-heading-element-large{
+            .bearcms-heading-element-large{
                 font-size:28px;
                 line-height:180%;
                 color:<?= $contentHighlightColor ?>;
@@ -522,7 +523,7 @@ $headerItemsSpacingInPx = 40;
                 font-family:Arial;
                 text-align:center;
             }
-            .bearcms-elements .bearcms-heading-element-medium{
+            .bearcms-heading-element-medium{
                 font-size:22px;
                 line-height:180%;
                 color:<?= $contentHighlightColor ?>;
@@ -530,7 +531,7 @@ $headerItemsSpacingInPx = 40;
                 font-family:Arial;
                 text-align:center;
             }
-            .bearcms-elements .bearcms-heading-element-small{
+            .bearcms-heading-element-small{
                 font-size:18px;
                 line-height:180%;
                 color:<?= $contentHighlightColor ?>;
@@ -539,7 +540,7 @@ $headerItemsSpacingInPx = 40;
                 text-align:center;
             }
 
-            .bearcms-elements .bearcms-link-element{
+            .bearcms-link-element{
                 color:<?= $contentBackgroundColor ?>;
                 display:inline-block;
                 text-decoration:none;
@@ -547,17 +548,17 @@ $headerItemsSpacingInPx = 40;
                 background-color:<?= $contentHighlightColor ?>;
                 transition: background-color 200ms;
             }
-            .bearcms-elements .bearcms-link-element:hover{
+            .bearcms-link-element:hover{
                 background-color:<?= $contentHighlightColor1 ?>;
             }
-            .bearcms-elements .bearcms-link-element:active{
+            .bearcms-link-element:active{
                 background-color:<?= $contentHighlightColor2 ?>;
             }
 
-            .bearcms-elements .bearcms-navigation-element{
+            .bearcms-navigation-element{
                 list-style-type:none;
             }
-            .bearcms-elements .bearcms-navigation-element-item a{
+            .bearcms-navigation-element-item a{
                 font-size:14px;
                 color:<?= $contentHighlightColor ?>;
                 line-height:180%;
@@ -565,40 +566,40 @@ $headerItemsSpacingInPx = 40;
                 text-decoration:underline;
                 transition: color 200ms;
             }
-            .bearcms-elements .bearcms-navigation-element-item a:hover{
+            .bearcms-navigation-element-item a:hover{
                 color:<?= $contentHighlightColor1 ?>;
             }
-            .bearcms-elements .bearcms-navigation-element-item a:active{
+            .bearcms-navigation-element-item a:active{
                 color:<?= $contentHighlightColor2 ?>;
             }
 
-            .bearcms-elements .bearcms-text-element, .bearcms-elements .bearcms-html-element {
+            .bearcms-text-element, .bearcms-html-element {
                 font-size:14px;
                 color:<?= $contentTextColor ?>;
                 line-height:180%;
             }
-            .bearcms-elements .bearcms-text-element a, .bearcms-elements .bearcms-html-element a{
+            .bearcms-text-element a, .bearcms-html-element a{
                 font-size:14px;
                 color:<?= $contentHighlightColor ?>;
                 display:inline-block;
                 text-decoration:underline;
                 transition: color 200ms;
             }
-            .bearcms-elements .bearcms-text-element a:hover, .bearcms-elements .bearcms-html-element a:hover{
+            .bearcms-text-element a:hover, .bearcms-html-element a:hover{
                 color:<?= $contentHighlightColor1 ?>;
             }
-            .bearcms-elements .bearcms-text-element a:active, .bearcms-elements .bearcms-html-element a:active{
+            .bearcms-text-element a:active, .bearcms-html-element a:active{
                 color:<?= $contentHighlightColor2 ?>;
             }
 
-            .bearcms-elements .bearcms-blog-posts-element-post{
+            .bearcms-blog-posts-element-post{
                 padding-bottom:15px;
             }
-            .bearcms-elements .bearcms-blog-posts-element-post:last-child{
+            .bearcms-blog-posts-element-post:last-child{
                 padding-bottom:0;
             }
 
-            .bearcms-elements .bearcms-blog-posts-element-post-title{
+            .bearcms-blog-posts-element-post-title{
                 font-size:25px;
                 line-height:180%;
                 color:<?= $contentHighlightColor ?>;
@@ -607,23 +608,23 @@ $headerItemsSpacingInPx = 40;
                 font-family:Arial;
                 text-decoration:none;
             }
-            .bearcms-elements .bearcms-blog-posts-element-post-title-container{
+            .bearcms-blog-posts-element-post-title-container{
                 text-align:center;
             }
-            .bearcms-elements .bearcms-blog-posts-element-post-title:hover{
+            .bearcms-blog-posts-element-post-title:hover{
                 color:<?= $contentHighlightColor1 ?>;
             }
-            .bearcms-elements .bearcms-blog-posts-element-post-title:active{
+            .bearcms-blog-posts-element-post-title:active{
                 color:<?= $contentHighlightColor2 ?>;
             }
 
-            .bearcms-elements .bearcms-blog-posts-element-post-date{
+            .bearcms-blog-posts-element-post-date{
                 font-size:14px;
                 color:<?= $addBrightness($contentTextColor, 50) ?>;
                 line-height:180%;
             }
 
-            .bearcms-elements .bearcms-blog-posts-element-post-date-container{
+            .bearcms-blog-posts-element-post-date-container{
                 padding-bottom:10px;
                 text-align:center;
             }
@@ -872,7 +873,6 @@ $headerItemsSpacingInPx = 40;
 
             <?= $options['customCSS'] ?>
         </style>
-        <?= $fontsHTML ?>
     </head>
     <body><?php
         $navigationContent = '';
@@ -942,6 +942,10 @@ $headerItemsSpacingInPx = 40;
             }
             echo '</div>';
             echo '</div>';
+        }
+
+        if (isset($fontsHTML{0})) {
+            echo '<component src="data:base64,' . base64_encode($fontsHTML) . '"/>';
         }
         ?></body>
 </html>
