@@ -34,19 +34,7 @@ if (strlen($component->url) > 0) {
         $content = '<div class="bearcms-video-element"></div>';
     }
 } elseif (strlen($component->filename) > 0) {
-
-    $filename = $component->filename;
-    if (substr($filename, 0, 5) === 'data:') {
-        $filename = $app->data->getFilename(substr($filename, 5));
-    } elseif (substr($filename, 0, 4) === 'app:') {
-        $filename = $app->config->appDir . DIRECTORY_SEPARATOR . substr($filename, 4);
-    } elseif (substr($filename, 0, 6) === 'addon:') {
-        $temp = explode(':', $filename, 3);
-        if (sizeof($temp) === 3) {
-            $addonDir = \BearFramework\Addons::getDir($temp[1]);
-            $filename = $addonDir . DIRECTORY_SEPARATOR . $temp[2];
-        }
-    }
+    $filename = $app->bearCMS->data->getRealFilename($component->filename);
     $content .= '<div class="bearcms-video-element" style="font-size:0;"><video style="width:100%" controls>';
     $content .= '<source src="' . $app->assets->getUrl($filename) . '" type="video/mp4">';
     $content .= '</video></div>';

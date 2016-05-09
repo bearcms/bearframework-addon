@@ -30,18 +30,7 @@ if (strlen($component->imageAspectRatio) > 0) {
 
 $content .= '<component src="image-gallery" spacing="' . $spacing . '"' . $attributes . '>';
 foreach ($files as $file) {
-    $filename = $file->getAttribute('filename');
-    if (substr($filename, 0, 5) === 'data:') {
-        $filename = $app->data->getFilename(substr($filename, 5));
-    } elseif (substr($filename, 0, 4) === 'app:') {
-        $filename = $app->config->appDir . DIRECTORY_SEPARATOR . substr($filename, 4);
-    } elseif (substr($filename, 0, 6) === 'addon:') {
-        $temp = explode(':', $filename, 3);
-        if (sizeof($temp) === 3) {
-            $addonDir = \BearFramework\Addons::getDir($temp[1]);
-            $filename = $addonDir . DIRECTORY_SEPARATOR . $temp[2];
-        }
-    }
+    $filename = $app->bearCMS->data->getRealFilename($file->getAttribute('filename'));
     $content .= '<file class="bearcms-image-gallery-element-image" filename="' . htmlentities($filename) . '"/>';
 }
 $content .= '</component>';

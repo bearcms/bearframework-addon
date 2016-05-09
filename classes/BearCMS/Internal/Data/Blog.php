@@ -9,7 +9,7 @@ namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
 
-class BlogPosts
+class Blog
 {
 
     /**

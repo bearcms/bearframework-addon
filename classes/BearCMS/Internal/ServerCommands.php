@@ -232,7 +232,7 @@ class ServerCommands
                         $optionsValues = [];
                         $result = $app->data->get(
                                 [
-                                    'key' => '.temp/bearcms/user-template-options/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($data['id']) . '.json',
+                                    'key' => '.temp/bearcms/usertemplateoptions/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($data['id']) . '.json',
                                     'result' => ['key', 'body']
                                 ]
                         );

@@ -9,9 +9,11 @@
 
 namespace BearCMS;
 
+use BearFramework\App;
+
 /**
  * @property \BearCMS\Data\Addons $addons
- * @property \BearCMS\Data\BlogPosts $blogPosts
+ * @property \BearCMS\Data\Blog $blog
  * @property \BearCMS\Data\Pages $pages
  * @property \BearCMS\Data\Settings $settings
  * @property \BearCMS\Data\Templates $templates
@@ -31,7 +33,7 @@ class Data
         $this->container = new \BearFramework\App\Container();
 
         $this->container->set('addons', \BearCMS\Data\Addons::class);
-        $this->container->set('blogPosts', \BearCMS\Data\BlogPosts::class);
+        $this->container->set('blog', \BearCMS\Data\Blog::class);
         $this->container->set('pages', \BearCMS\Data\Pages::class);
         $this->container->set('settings', \BearCMS\Data\Settings::class);
         $this->container->set('templates', \BearCMS\Data\Templates::class);
@@ -60,6 +62,28 @@ class Data
     public function __isset($name)
     {
         return $this->container->has($name);
+    }
+
+    /**
+     * Converts data:, app:, addon:id: filenames to real filenames
+     * @param string $filename
+     * @return string
+     */
+    public function getRealFilename($filename)
+    {
+        $app = App::$instance;
+        if (substr($filename, 0, 5) === 'data:') {
+            $filename = $app->data->getFilename(substr($filename, 5));
+        } elseif (substr($filename, 0, 4) === 'app:') {
+            $filename = $app->config->appDir . DIRECTORY_SEPARATOR . substr($filename, 4);
+        } elseif (substr($filename, 0, 6) === 'addon:') {
+            $temp = explode(':', $filename, 3);
+            if (sizeof($temp) === 3) {
+                $addonDir = \BearFramework\Addons::getDir($temp[1]);
+                $filename = $addonDir . DIRECTORY_SEPARATOR . $temp[2];
+            }
+        }
+        return $filename;
     }
 
 }

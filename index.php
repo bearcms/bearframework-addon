@@ -13,25 +13,27 @@ use BearCMS\Internal\Data as InternalData;
 use BearCMS\Internal\Server;
 use BearCMS\Internal\ElementsHelper;
 use IvoPetkov\HTML5DOMDocument;
+use \BearCMS\Internal\Features;
 
 $context->classes->add('BearCMS', 'classes/BearCMS.php');
 
 $context->classes->add('BearCMS\Data', 'classes/BearCMS/Data.php');
 $context->classes->add('BearCMS\Data\Addons', 'classes/BearCMS/Data/Addons.php');
-$context->classes->add('BearCMS\Data\BlogPosts', 'classes/BearCMS/Data/BlogPosts.php');
+$context->classes->add('BearCMS\Data\Blog', 'classes/BearCMS/Data/Blog.php');
 $context->classes->add('BearCMS\Data\Pages', 'classes/BearCMS/Data/Pages.php');
 $context->classes->add('BearCMS\Data\Settings', 'classes/BearCMS/Data/Settings.php');
 $context->classes->add('BearCMS\Data\Templates', 'classes/BearCMS/Data/Templates.php');
 $context->classes->add('BearCMS\Data\Users', 'classes/BearCMS/Data/Users.php');
 
 $context->classes->add('BearCMS\Internal\Data\Addons', 'classes/BearCMS/Internal/Data/Addons.php');
-$context->classes->add('BearCMS\Internal\Data\BlogPosts', 'classes/BearCMS/Internal/Data/BlogPosts.php');
+$context->classes->add('BearCMS\Internal\Data\Blog', 'classes/BearCMS/Internal/Data/Blog.php');
 $context->classes->add('BearCMS\Internal\Data\Pages', 'classes/BearCMS/Internal/Data/Pages.php');
 $context->classes->add('BearCMS\Internal\Data\Templates', 'classes/BearCMS/Internal/Data/Templates.php');
 $context->classes->add('BearCMS\Internal\Data\Users', 'classes/BearCMS/Internal/Data/Users.php');
 $context->classes->add('BearCMS\Internal\Controller', 'classes/BearCMS/Internal/Controller.php');
 $context->classes->add('BearCMS\Internal\Cookies', 'classes/BearCMS/Internal/Cookies.php');
 $context->classes->add('BearCMS\Internal\ElementsHelper', 'classes/BearCMS/Internal/ElementsHelper.php');
+$context->classes->add('BearCMS\Internal\Features', 'classes/BearCMS/Internal/Features.php');
 $context->classes->add('BearCMS\Internal\Server', 'classes/BearCMS/Internal/Server.php');
 $context->classes->add('BearCMS\Internal\ServerCommands', 'classes/BearCMS/Internal/ServerCommands.php');
 
@@ -49,95 +51,132 @@ $app->components->addAlias('bearcms-navigation-element', 'file:' . $context->dir
 $app->components->addAlias('bearcms-html-element', 'file:' . $context->dir . '/components/bearcms-html-element.php');
 $app->components->addAlias('bearcms-blog-posts-element', 'file:' . $context->dir . '/components/bearcms-blog-posts-element.php');
 
-$app->routes->add(['/admin/', '/admin/*'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
-$app->routes->add('/-aj/', ['BearCMS\Internal\Controller', 'handleAjax'], ['POST']);
-$app->routes->add('/-au/', ['BearCMS\Internal\Controller', 'handleFileUpload'], ['POST']);
-
 $context->assets->addDir('assets');
+
 $app->container->set('bearCMS', \BearCMS::class);
 
 if (!isset($context->options['serverUrl'])) {
     throw new Exception('serverUrl option is not set in bearcms/bearcms-bearframework-addon');
 }
 \BearCMS\Internal\Server::$url = $context->options['serverUrl'];
-$addonsDir = $context->options['addonsDir'];
 
-$addons = InternalData\Addons::getList();
-$addonsDir = rtrim($addonsDir, ' /') . '/';
-foreach ($addons as $addonData) {
-    $addonID = $addonData['id'];
-    $addonDir = $addonsDir . $addonID;
-    if (is_file($addonDir . DIRECTORY_SEPARATOR . 'autoload.php')) {
-        include $addonDir . DIRECTORY_SEPARATOR . 'autoload.php';
-    } else {
-        throw new Exception('Cannot find autoload.php file for ' . $addonID);
-    }
-    if (\BearFramework\Addons::exists($addonID)) {
-        $options = \BearFramework\Addons::getOptions($addonID);
-        if (isset($options['bearCMS']) && is_array($options['bearCMS']) && isset($options['bearCMS']['assetsDirs'])) {
-            foreach ($options['bearCMS']['assetsDirs'] as $dir) {
-                $app->assets->addDir($addonDir . DIRECTORY_SEPARATOR . $dir);
+$features = [];
+if (isset($context->options['features'])) {
+    $walkFeatures = function($list, $prefix = '') use (&$walkFeatures, &$features) {
+        if (is_array($list)) {
+            foreach ($list as $key => $value) {
+                if ($value === true) {
+                    $features[] = strtolower($prefix . $key);
+                    $features[] = strtolower($prefix . $key) . '.all';
+                } elseif (is_array($value)) {
+                    $features[] = strtolower($prefix . $key);
+                    $walkFeatures($value, $prefix . $key . '.');
+                }
             }
         }
-        if ($addonData['enabled']) {
-            $app->addons->add($addonID, ['addedByBearCMS' => true]);
+    };
+    $walkFeatures($context->options['features']);
+}
+if (empty($features)) {
+    $features[] = 'all';
+}
+Features::$data = $features;
+
+if (Features::enabled('users')) {
+    $app->routes->add(['/admin/', '/admin/*'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
+    $app->routes->add('/-aj/', ['BearCMS\Internal\Controller', 'handleAjax'], ['POST']);
+    $app->routes->add('/-au/', ['BearCMS\Internal\Controller', 'handleFileUpload'], ['POST']);
+}
+
+if (Features::enabled('addons')) {
+    $addonsDir = $context->options['addonsDir'];
+    $addons = InternalData\Addons::getList();
+    $addonsDir = rtrim($addonsDir, ' /') . '/';
+    foreach ($addons as $addonData) {
+        $addonID = $addonData['id'];
+        $addonDir = $addonsDir . $addonID;
+        if (is_file($addonDir . DIRECTORY_SEPARATOR . 'autoload.php')) {
+            include $addonDir . DIRECTORY_SEPARATOR . 'autoload.php';
+        } else {
+            throw new Exception('Cannot find autoload.php file for ' . $addonID);
         }
-    } else {
-        throw new Exception('Addon ' . $addonID . ' not available');
+        if (\BearFramework\Addons::exists($addonID)) {
+            $options = \BearFramework\Addons::getOptions($addonID);
+            if (isset($options['bearCMS']) && is_array($options['bearCMS']) && isset($options['bearCMS']['assetsDirs'])) {
+                foreach ($options['bearCMS']['assetsDirs'] as $dir) {
+                    $app->assets->addDir($addonDir . DIRECTORY_SEPARATOR . $dir);
+                }
+            }
+            if ($addonData['enabled']) {
+                $app->addons->add($addonID, ['addedByBearCMS' => true]);
+            }
+        } else {
+            throw new Exception('Addon ' . $addonID . ' not available');
+        }
     }
 }
 
-$app->routes->add('*', function() use ($app) {
-    $cookies = Cookies::getList(Cookies::TYPE_SERVER);
-    if (isset($cookies['_a']) && !$app->bearCMS->currentUser->exists()) {
-        Server::call('autologin', null, true);
-    }
-});
-
-$app->routes->add('/b/?/', function() use ($app) {
-    $slug = (string) $app->request->path[1];
-    $slugsList = InternalData\BlogPosts::getSlugsList('published');
-    $blogPostID = array_search($slug, $slugsList);
-    if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && $app->bearCMS->currentUser->exists()) {
-        $blogPost = Data\BlogPosts::getPost(substr($slug, 6));
-        if ($blogPost !== null) {
-            $blogPostID = $blogPost['id'];
+if (Features::enabled('users')) {
+    $app->routes->add('*', function() use ($app) {
+        $cookies = Cookies::getList(Cookies::TYPE_SERVER);
+        if (isset($cookies['_a']) && !$app->bearCMS->currentUser->exists()) {
+            Server::call('autologin', null, true);
         }
-    }
-    if ($blogPostID !== false) {
-        $blogPost = Data\BlogPosts::getPost($blogPostID);
+    });
+}
 
-        $content = '<h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1>';
-        $content .= '<div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? date('F j, Y', $blogPost['publishedTime']) : 'draft') . '</div>';
-        $content .= '<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/>';
+if (Features::enabled('blog')) {
+    $app->routes->add('/b/?/', function() use ($app) {
+        $slug = (string) $app->request->path[1];
+        $slugsList = InternalData\Blog::getSlugsList('published');
+        $blogPostID = array_search($slug, $slugsList);
+        if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && Features::enabled('users') && $app->bearCMS->currentUser->exists()) {
+            $blogPost = $app->bearCMS->data->blog->getPost(substr($slug, 6));
+            if ($blogPost !== null) {
+                $blogPostID = $blogPost['id'];
+            }
+        }
+        if ($blogPostID !== false) {
+            $blogPost = $app->bearCMS->data->blog->getPost($blogPostID);
 
-        $response = new App\Response\HTML($content);
-        $response->enableBearCMS = true;
-        $response->applyBearCMSTemplate = true;
-        return $response;
-    }
-});
+            $content = '<h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1>';
+            $content .= '<div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? date('F j, Y', $blogPost['publishedTime']) : 'draft') . '</div>';
+            $content .= '<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/>';
 
-$app->routes->add('*', function() use ($app) {
-    $path = (string) $app->request->path;
-    $pathsList = InternalData\Pages::getPathsList($app->bearCMS->currentUser->exists() ? 'all' : 'published');
-    $pageID = array_search($path, $pathsList);
-    if ($pageID !== false) {
-        $content = '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
-        $response = new App\Response\HTML($content);
-        $response->enableBearCMS = true;
-        $response->applyBearCMSTemplate = true;
-        return $response;
-    }
-});
+            $response = new App\Response\HTML($content);
+            $response->enableBearCMS = true;
+            $response->applyBearCMSTemplate = true;
+            $response->bearCMSBlogPostID = $blogPostID;
+            return $response;
+        }
+    });
+}
 
-$app->hooks->add('componentCreated', function($component) {
-    if ($component->src === 'bearcms-elements') {
-        ElementsHelper::updateContainerComponent($component);
-    } elseif (array_search($component->src, ['bearcms-heading-element', 'bearcms-text-element', 'bearcms-link-element', 'bearcms-video-element', 'bearcms-image-element', 'bearcms-image-gallery-element', 'bearcms-navigation-element', 'bearcms-html-element', 'bearcms-blog-posts-element']) !== false) {
-        ElementsHelper::updateElementComponent($component);
-    }
-});
+if (Features::enabled('pages')) {
+    $app->routes->add('*', function() use ($app) {
+        $path = (string) $app->request->path;
+        $pathsList = InternalData\Pages::getPathsList(Features::enabled('users') && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
+        $pageID = array_search($path, $pathsList);
+        if ($pageID !== false) {
+            $content = '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
+            $response = new App\Response\HTML($content);
+            $response->enableBearCMS = true;
+            $response->applyBearCMSTemplate = true;
+            $response->bearCMSPageID = $pageID;
+            return $response;
+        }
+    });
+}
+
+if (Features::enabled('elements')) {
+    $app->hooks->add('componentCreated', function($component) {
+        if ($component->src === 'bearcms-elements') {
+            ElementsHelper::updateContainerComponent($component);
+        } elseif (array_search($component->src, ['bearcms-heading-element', 'bearcms-text-element', 'bearcms-link-element', 'bearcms-video-element', 'bearcms-image-element', 'bearcms-image-gallery-element', 'bearcms-navigation-element', 'bearcms-html-element', 'bearcms-blog-posts-element']) !== false) {
+            ElementsHelper::updateElementComponent($component);
+        }
+    });
+}
 
 $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if ($response instanceof App\Response\NotFound) {
@@ -191,7 +230,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     $descrption = '';
     $keywords = '';
     if (isset($response->bearCMSPageID)) {
-        $page = Data\Pages::getPage($response->bearCMSPageID);
+        $page = $app->bearCMS->data->pages->getPage($response->bearCMSPageID);
         if (is_array($page)) {
             $title = isset($page['title']) ? trim($page['title']) : '';
             if (!isset($title{0})) {
@@ -217,22 +256,22 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     $componentContent .= '<meta name="generator" content="BearCMS"/>';
     $icon = $settings['icon'];
     if (isset($icon{0})) {
-        $objectKey = 'bearcms/files/icon/' . $icon;
-        $mimeType = $app->assets->getMimeType($app->data->getFilename($objectKey));
+        $filename = $app->bearCMS->data->getRealFilename($icon);
+        $mimeType = $app->assets->getMimeType($filename);
         $typeAttribute = $mimeType !== null ? ' type="' . $mimeType . '"' : '';
-        $componentContent .= '<link rel="apple-touch-icon" sizes="57x57" href="' . htmlentities($app->assets->getUrl($app->data->getFilename($objectKey), ['width' => 57, 'height' => 57])) . '">';
-        $componentContent .= '<link rel="apple-touch-icon" sizes="60x60" href="' . htmlentities($app->assets->getUrl($app->data->getFilename($objectKey), ['width' => 60, 'height' => 60])) . '">';
-        $componentContent .= '<link rel="apple-touch-icon" sizes="72x72" href="' . htmlentities($app->assets->getUrl($app->data->getFilename($objectKey), ['width' => 72, 'height' => 72])) . '">';
-        $componentContent .= '<link rel="apple-touch-icon" sizes="76x76" href="' . htmlentities($app->assets->getUrl($app->data->getFilename($objectKey), ['width' => 76, 'height' => 76])) . '">';
-        $componentContent .= '<link rel="apple-touch-icon" sizes="114x114" href="' . htmlentities($app->assets->getUrl($app->data->getFilename($objectKey), ['width' => 114, 'height' => 114])) . '">';
-        $componentContent .= '<link rel="apple-touch-icon" sizes="120x120" href="' . htmlentities($app->assets->getUrl($app->data->getFilename($objectKey), ['width' => 120, 'height' => 120])) . '">';
-        $componentContent .= '<link rel="apple-touch-icon" sizes="144x144" href="' . htmlentities($app->assets->getUrl($app->data->getFilename($objectKey), ['width' => 144, 'height' => 144])) . '">';
-        $componentContent .= '<link rel="apple-touch-icon" sizes="152x152" href="' . htmlentities($app->assets->getUrl($app->data->getFilename($objectKey), ['width' => 152, 'height' => 152])) . '">';
-        $componentContent .= '<link rel="apple-touch-icon" sizes="180x180" href="' . htmlentities($app->assets->getUrl($app->data->getFilename($objectKey), ['width' => 180, 'height' => 180])) . '">';
-        $componentContent .= '<link rel="icon"' . $typeAttribute . ' href="' . htmlentities($app->assets->getUrl($app->data->getFilename($objectKey), ['width' => 32, 'height' => 32])) . '" sizes="32x32">';
-        $componentContent .= '<link rel="icon"' . $typeAttribute . ' href="' . htmlentities($app->assets->getUrl($app->data->getFilename($objectKey), ['width' => 192, 'height' => 192])) . '" sizes="192x192">';
-        $componentContent .= '<link rel="icon"' . $typeAttribute . ' href="' . htmlentities($app->assets->getUrl($app->data->getFilename($objectKey), ['width' => 96, 'height' => 96])) . '" sizes="96x96">';
-        $componentContent .= '<link rel="icon"' . $typeAttribute . ' href="' . htmlentities($app->assets->getUrl($app->data->getFilename($objectKey), ['width' => 16, 'height' => 16])) . '" sizes="16x16">';
+        $componentContent .= '<link rel="apple-touch-icon" sizes="57x57" href="' . htmlentities($app->assets->getUrl($filename, ['width' => 57, 'height' => 57])) . '">';
+        $componentContent .= '<link rel="apple-touch-icon" sizes="60x60" href="' . htmlentities($app->assets->getUrl($filename, ['width' => 60, 'height' => 60])) . '">';
+        $componentContent .= '<link rel="apple-touch-icon" sizes="72x72" href="' . htmlentities($app->assets->getUrl($filename, ['width' => 72, 'height' => 72])) . '">';
+        $componentContent .= '<link rel="apple-touch-icon" sizes="76x76" href="' . htmlentities($app->assets->getUrl($filename, ['width' => 76, 'height' => 76])) . '">';
+        $componentContent .= '<link rel="apple-touch-icon" sizes="114x114" href="' . htmlentities($app->assets->getUrl($filename, ['width' => 114, 'height' => 114])) . '">';
+        $componentContent .= '<link rel="apple-touch-icon" sizes="120x120" href="' . htmlentities($app->assets->getUrl($filename, ['width' => 120, 'height' => 120])) . '">';
+        $componentContent .= '<link rel="apple-touch-icon" sizes="144x144" href="' . htmlentities($app->assets->getUrl($filename, ['width' => 144, 'height' => 144])) . '">';
+        $componentContent .= '<link rel="apple-touch-icon" sizes="152x152" href="' . htmlentities($app->assets->getUrl($filename, ['width' => 152, 'height' => 152])) . '">';
+        $componentContent .= '<link rel="apple-touch-icon" sizes="180x180" href="' . htmlentities($app->assets->getUrl($filename, ['width' => 180, 'height' => 180])) . '">';
+        $componentContent .= '<link rel="icon"' . $typeAttribute . ' href="' . htmlentities($app->assets->getUrl($filename, ['width' => 32, 'height' => 32])) . '" sizes="32x32">';
+        $componentContent .= '<link rel="icon"' . $typeAttribute . ' href="' . htmlentities($app->assets->getUrl($filename, ['width' => 192, 'height' => 192])) . '" sizes="192x192">';
+        $componentContent .= '<link rel="icon"' . $typeAttribute . ' href="' . htmlentities($app->assets->getUrl($filename, ['width' => 96, 'height' => 96])) . '" sizes="96x96">';
+        $componentContent .= '<link rel="icon"' . $typeAttribute . ' href="' . htmlentities($app->assets->getUrl($filename, ['width' => 16, 'height' => 16])) . '" sizes="16x16">';
     }
     if (empty($settings['allowSearchEngines'])) {
         $componentContent .= '<meta name="robots" content="noindex">';
@@ -245,7 +284,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     $domDocument->insertHTML('<component src="data:base64,' . base64_encode($componentContent) . '"/>');
     $response->content = $app->components->process($domDocument->saveHTML());
 
-    $currentUserExists = $app->bearCMS->currentUser->exists();
+    $currentUserExists = Features::enabled('users') ? $app->bearCMS->currentUser->exists() : false;
     $externalLinksAreEnabled = !empty($settings['externalLinks']);
     if ($externalLinksAreEnabled) {
         $domDocument = new HTML5DOMDocument();
@@ -266,6 +305,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         $requestArguments,
         $app->bearCMS->currentUser->getKey(),
         $app->bearCMS->currentUser->getPermissions(),
+        Features::$data,
         Cookies::getList(Cookies::TYPE_SERVER)
     ]);
 
@@ -287,6 +327,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
                 $requestArguments,
                 $app->bearCMS->currentUser->getKey(),
                 $app->bearCMS->currentUser->getPermissions(),
+                Features::$data,
                 Cookies::getList(Cookies::TYPE_SERVER)
             ]);
             $elementsEditorData = $app->cache->get($cacheKey);
@@ -316,6 +357,8 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     }
 }, ['priority' => 1000]);
 
-$app->hooks->add('responseCreated', function() {
-    Cookies::update();
-}, ['priority' => 1001]);
+if (Features::enabled('users')) {
+    $app->hooks->add('responseCreated', function() {
+        Cookies::update();
+    }, ['priority' => 1001]);
+}

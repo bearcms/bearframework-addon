@@ -276,7 +276,7 @@ $headerItemsSpacingInPx = 40;
                     background-size:cover;
                 }
                 <?php
-                $headerLogoImageFilename = $app->data->getFilename($headerBackgroundImage);
+                $headerLogoImageFilename = $app->bearCMS->data->getRealFilename($headerBackgroundImage);
                 $headerBackgroundImageDimensions = $app->images->getSize($headerLogoImageFilename);
                 $headerBackgroundResponsiveImageData = $getResponsiveImageData([320, 360, 480, 768, 1024, 1280, 1366, 1440, 1680, 1960, 2048, $headerBackgroundImageDimensions[0]], $headerBackgroundImageDimensions[0]);
                 foreach ($headerBackgroundResponsiveImageData as $responsiveImageData) {
@@ -302,7 +302,7 @@ $headerItemsSpacingInPx = 40;
                 }
 
                 <?php
-                $headerLogoImageFilename = $app->data->getFilename($headerLogoImage);
+                $headerLogoImageFilename = $app->bearCMS->data->getRealFilename($headerLogoImage);
                 $headerLogoImageDimensions = $app->images->getSize($headerLogoImageFilename);
                 $headerLogoImageMaxWidth = $isHomePage ? 400 : 200;
                 if ($headerLogoImageDimensions[0] < $headerLogoImageMaxWidth) {

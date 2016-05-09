@@ -48,7 +48,7 @@ class Templates
         $app = App::$instance;
         $data = $app->data->get(
                 [
-                    'key' => '.temp/bearcms/user-template-options/' . md5($userID) . '/' . md5($id) . '.json',
+                    'key' => '.temp/bearcms/usertemplateoptions/' . md5($userID) . '/' . md5($id) . '.json',
                     'result' => ['body']
                 ]
         );
