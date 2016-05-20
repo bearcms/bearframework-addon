@@ -229,7 +229,7 @@ class ServerCommands
                         }
                         $template['options']['activeValues'] = $optionsValues;
 
-                        $optionsValues = [];
+                        $optionsValues = null;
                         $result = $app->data->get(
                                 [
                                     'key' => '.temp/bearcms/usertemplateoptions/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($data['id']) . '.json',

@@ -438,7 +438,7 @@ class ElementsHelper
 
             $content = '<html>'
                     . '<head>'
-                    . '<script src="<' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.js')) . '"></script>'
+                    . '<script src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.js')) . '"></script>'
                     . '<style>' . $styles . '</style>'
                     . '</head>'
                     . '<body>'

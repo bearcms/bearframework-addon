@@ -296,6 +296,12 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if (!$currentUserExists) {
         return;
     }
+
+    $serverCookies = Cookies::getList(Cookies::TYPE_SERVER);
+    if (!empty($serverCookies['tmcs']) || !empty($serverCookies['tmpr'])) {
+        ElementsHelper::$editorData = [];
+    }
+
     $requestArguments = [];
     $requestArguments['hasEditableElements'] = empty(ElementsHelper::$editorData) ? '0' : '1';
 
@@ -306,7 +312,8 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         $app->bearCMS->currentUser->getKey(),
         $app->bearCMS->currentUser->getPermissions(),
         Features::$data,
-        Cookies::getList(Cookies::TYPE_SERVER)
+        $serverCookies,
+        rand()
     ]);
 
     $adminUIData = $app->cache->get($cacheKey);
