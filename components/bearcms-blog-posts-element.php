@@ -9,6 +9,7 @@
 use BearCMS\Internal\ElementsHelper;
 
 $blogPosts = $app->bearCMS->data->blog->getList();
+$list = [];
 foreach ($blogPosts as $blogPost) {
     if ($blogPost['status'] === 'published') {
         $list[] = $blogPost;
