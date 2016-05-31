@@ -13,7 +13,7 @@ use BearCMS\Internal\Data as InternalData;
 use BearCMS\Internal\Server;
 use BearCMS\Internal\ElementsHelper;
 use IvoPetkov\HTML5DOMDocument;
-use \BearCMS\Internal\Features;
+use \BearCMS\Internal\Options;
 
 $context->classes->add('BearCMS', 'classes/BearCMS.php');
 
@@ -33,7 +33,7 @@ $context->classes->add('BearCMS\Internal\Data\Users', 'classes/BearCMS/Internal/
 $context->classes->add('BearCMS\Internal\Controller', 'classes/BearCMS/Internal/Controller.php');
 $context->classes->add('BearCMS\Internal\Cookies', 'classes/BearCMS/Internal/Cookies.php');
 $context->classes->add('BearCMS\Internal\ElementsHelper', 'classes/BearCMS/Internal/ElementsHelper.php');
-$context->classes->add('BearCMS\Internal\Features', 'classes/BearCMS/Internal/Features.php');
+$context->classes->add('BearCMS\Internal\Options', 'classes/BearCMS/Internal/Options.php');
 $context->classes->add('BearCMS\Internal\Server', 'classes/BearCMS/Internal/Server.php');
 $context->classes->add('BearCMS\Internal\ServerCommands', 'classes/BearCMS/Internal/ServerCommands.php');
 
@@ -55,40 +55,15 @@ $context->assets->addDir('assets');
 
 $app->container->set('bearCMS', \BearCMS::class);
 
-if (!isset($context->options['serverUrl'])) {
-    throw new Exception('serverUrl option is not set in bearcms/bearcms-bearframework-addon');
-}
-\BearCMS\Internal\Server::$url = $context->options['serverUrl'];
+Options::set($context->options);
 
-$features = [];
-if (isset($context->options['features'])) {
-    $walkFeatures = function($list, $prefix = '') use (&$walkFeatures, &$features) {
-        if (is_array($list)) {
-            foreach ($list as $key => $value) {
-                if ($value === true) {
-                    $features[] = strtolower($prefix . $key);
-                    $features[] = strtolower($prefix . $key) . '.all';
-                } elseif (is_array($value)) {
-                    $features[] = strtolower($prefix . $key);
-                    $walkFeatures($value, $prefix . $key . '.');
-                }
-            }
-        }
-    };
-    $walkFeatures($context->options['features']);
-}
-if (empty($features)) {
-    $features[] = 'all';
-}
-Features::$data = $features;
-
-if (Features::enabled('users')) {
+if (Options::hasFeature('users')) {
     $app->routes->add(['/admin/', '/admin/*'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
     $app->routes->add('/-aj/', ['BearCMS\Internal\Controller', 'handleAjax'], ['POST']);
     $app->routes->add('/-au/', ['BearCMS\Internal\Controller', 'handleFileUpload'], ['POST']);
 }
 
-if (Features::enabled('addons')) {
+if (Options::hasFeature('addons')) {
     $addonsDir = $context->options['addonsDir'];
     $addons = InternalData\Addons::getList();
     $addonsDir = rtrim($addonsDir, ' /') . '/';
@@ -116,7 +91,7 @@ if (Features::enabled('addons')) {
     }
 }
 
-if (Features::enabled('users')) {
+if (Options::hasFeature('users')) {
     $app->routes->add('*', function() use ($app) {
         $cookies = Cookies::getList(Cookies::TYPE_SERVER);
         if (isset($cookies['_a']) && !$app->bearCMS->currentUser->exists()) {
@@ -125,12 +100,12 @@ if (Features::enabled('users')) {
     });
 }
 
-if (Features::enabled('blog')) {
+if (Options::hasFeature('blog')) {
     $app->routes->add('/b/?/', function() use ($app) {
         $slug = (string) $app->request->path[1];
         $slugsList = InternalData\Blog::getSlugsList('published');
         $blogPostID = array_search($slug, $slugsList);
-        if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && Features::enabled('users') && $app->bearCMS->currentUser->exists()) {
+        if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && Options::hasFeature('users') && $app->bearCMS->currentUser->exists()) {
             $blogPost = $app->bearCMS->data->blog->getPost(substr($slug, 6));
             if ($blogPost !== null) {
                 $blogPostID = $blogPost['id'];
@@ -152,10 +127,10 @@ if (Features::enabled('blog')) {
     });
 }
 
-if (Features::enabled('pages')) {
+if (Options::hasFeature('pages')) {
     $app->routes->add('*', function() use ($app) {
         $path = (string) $app->request->path;
-        $pathsList = InternalData\Pages::getPathsList(Features::enabled('users') && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
+        $pathsList = InternalData\Pages::getPathsList(Options::hasFeature('users') && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
         $pageID = array_search($path, $pathsList);
         if ($pageID !== false) {
             $content = '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
@@ -168,7 +143,7 @@ if (Features::enabled('pages')) {
     });
 }
 
-if (Features::enabled('elements')) {
+if (Options::hasFeature('elements')) {
     $app->hooks->add('componentCreated', function($component) {
         if ($component->src === 'bearcms-elements') {
             ElementsHelper::updateContainerComponent($component);
@@ -284,7 +259,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     $domDocument->insertHTML('<component src="data:base64,' . base64_encode($componentContent) . '"/>');
     $response->content = $app->components->process($domDocument->saveHTML());
 
-    $currentUserExists = Features::enabled('users') ? $app->bearCMS->currentUser->exists() : false;
+    $currentUserExists = Options::hasFeature('users') ? $app->bearCMS->currentUser->exists() : false;
     $externalLinksAreEnabled = !empty($settings['externalLinks']);
     if ($externalLinksAreEnabled) {
         $domDocument = new HTML5DOMDocument();
@@ -311,7 +286,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         $requestArguments,
         $app->bearCMS->currentUser->getKey(),
         $app->bearCMS->currentUser->getPermissions(),
-        Features::$data,
+        get_class_vars('\BearCMS\Internal\Options'),
         $serverCookies,
         rand()
     ]);
@@ -324,7 +299,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
 
     if (is_array($adminUIData) && isset($adminUIData['result']) && is_array($adminUIData['result']) && isset($adminUIData['result']['content'])) {
         $content = $adminUIData['result']['content'];
-        if (!empty(ElementsHelper::$editorData)) {
+        if (Options::hasFeature('elements') && !empty(ElementsHelper::$editorData)) {
             $requestArguments = [];
             $requestArguments['data'] = json_encode(ElementsHelper::$editorData);
 
@@ -334,7 +309,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
                 $requestArguments,
                 $app->bearCMS->currentUser->getKey(),
                 $app->bearCMS->currentUser->getPermissions(),
-                Features::$data,
+                get_class_vars('\BearCMS\Internal\Options'),
                 Cookies::getList(Cookies::TYPE_SERVER)
             ]);
             $elementsEditorData = $app->cache->get($cacheKey);
@@ -364,7 +339,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     }
 }, ['priority' => 1000]);
 
-if (Features::enabled('users')) {
+if (Options::hasFeature('users')) {
     $app->hooks->add('responseCreated', function() {
         Cookies::update();
     }, ['priority' => 1001]);

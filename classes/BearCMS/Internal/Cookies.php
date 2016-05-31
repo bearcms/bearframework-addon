@@ -145,7 +145,7 @@ class Cookies
                     $cookieData['secure'] = $app->request->scheme === 'https';
                 }
                 if (isset($requestUrlParts['host'])) {
-                    if ($partValue === trim(Server::$url, 'htps:/')) { // todo trqbva da se vrusta bez tochkata // '.' . 
+                    if ($partValue === trim(\BearCMS\Internal\Options::$serverUrl, 'htps:/')) { // todo trqbva da se vrusta bez tochkata // '.' . 
                         $cookieData['domain'] = $requestUrlParts['host'];
                     }
                 }

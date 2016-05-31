@@ -11,11 +11,10 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 use BearCMS\Internal\Cookies;
+use BearCMS\Internal\Options;
 
 class Server
 {
-
-    public static $url = '';
 
     static function call($name, $arguments = null, $sendCookies = false)
     {
@@ -28,7 +27,7 @@ class Server
         if (!is_bool($sendCookies)) {
             throw new \InvalidArgumentException('');
         }
-        $url = self::$url . '?name=' . $name;
+        $url = Options::$serverUrl . '?name=' . $name;
         $response = self::sendRequest($url, $arguments, $sendCookies);
         if ($sendCookies && self::isRetryResponse($response)) {
             $response = self::sendRequest($url, $arguments, $sendCookies);
@@ -38,7 +37,7 @@ class Server
 
     static function proxyAjax()
     {
-        $response = self::sendRequest(self::$url . '-aj/', $_POST, true);
+        $response = self::sendRequest(Options::$serverUrl . '-aj/', $_POST, true);
         if (self::isRetryResponse($response)) {
             return json_encode(array('js' => 'window.location.reload(true);'), JSON_UNESCAPED_UNICODE);
         }
@@ -121,7 +120,7 @@ class Server
     static function updateAssetsUrls($content, $ajaxMode)
     {
 
-        $serverUrl = Server::$url;
+        $serverUrl = \BearCMS\Internal\Options::$serverUrl;
 
         if ($ajaxMode) {
             $hasChange = false;
@@ -205,7 +204,8 @@ class Server
             $data['currentUserID'] = $currentUserID;
         }
 
-        $data['features'] = json_encode(\BearCMS\Internal\Features::$data);
+        $data['features'] = json_encode(Options::$features);
+        $data['language'] = Options::$language;
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -280,7 +280,7 @@ class Server
         $data['auth'] = json_encode([1, 'todo-siteid', 'todo-hash', $app->request->base], JSON_UNESCAPED_UNICODE); //todo
         $data['responseType'] = 'jsongz';
         if (isset($data['_ajaxreferer'])) {
-            $data['_ajaxreferer'] = str_replace($app->request->base . '/', self::$url, $data['_ajaxreferer']);
+            $data['_ajaxreferer'] = str_replace($app->request->base . '/', Options::$serverUrl, $data['_ajaxreferer']);
         }
 
         $cookies = $sendCookies ? Cookies::getList(Cookies::TYPE_SERVER) : [];
