@@ -287,6 +287,33 @@ class ServerCommands
 
     /**
      * 
+     * @return array
+     */
+    static function files()
+    {
+        $app = App::$instance;
+        $result = $app->data->search(
+                [
+                    'where' => [
+                        ['key', 'bearcms/files/custom/', 'startsWith']
+                    ],
+                    'result' => ['key', 'metadata']
+                ]
+        );
+        $temp = [];
+        foreach ($result as $item) {
+            $key = $item['key'];
+            $temp[] = [
+                'filename' => str_replace('bearcms/files/custom/', '', $key),
+                'name' => (isset($item['metadata.name']) ? $item['metadata.name'] : str_replace('bearcms/files/custom/', '', $key)),
+                'published' => (isset($item['metadata.published']) ? (int) $item['metadata.published'] : 0)
+            ];
+        }
+        return $temp;
+    }
+
+    /**
+     * 
      * @param array $data
      * @return array
      * @throws \Exception
@@ -418,6 +445,115 @@ class ServerCommands
             throw new \Exception('');
         }
         $app->data->makePublic(['key' => $data['key']]);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @throws \Exception
+     */
+    static function fileSet($data)
+    {
+        $app = App::$instance;
+        if (!isset($data['filename'])) {
+            throw new \Exception('');
+        }
+        if (!isset($data['data'])) {
+            throw new \Exception('');
+        }
+        $fileData = $data['data'];
+        $currentFileData = self::file(['filename' => $data['filename']]);
+        if (isset($fileData['name']) && $currentFileData['name'] !== $fileData['name']) {
+            $updateKey = function($key) {
+                $originalKey = $key;
+                $key = preg_replace('/[^a-z0-9\.\-\_]+/u', '-', strtolower($key));
+                while (strpos($key, '--') !== false) {
+                    $key = str_replace('--', '-', $key);
+                }
+                $key = trim($key, '-');
+                $info = pathinfo($key);
+                $info['filename'] = trim($info['filename'], '-');
+                if (strlen($info['filename']) === 0) {
+                    $info['filename'] = md5($originalKey);
+                }
+                if (strlen($key) > 80) {
+                    $info['filename'] = substr($info['filename'], 0, 80);
+                }
+                $key = $info['filename'] . (isset($info['extension']) ? '.' . $info['extension'] : '');
+                return $key;
+            };
+            $sourceKey = 'bearcms/files/custom/' . $updateKey($data['filename']);
+            $targetKey = 'bearcms/files/custom/' . $updateKey($fileData['name']);
+            if ($sourceKey !== $targetKey && is_file($app->data->getFilename($sourceKey))) {
+                if (is_file($app->data->getFilename($targetKey))) {
+                    $info = pathinfo($targetKey);
+                    if (isset($info['extension'])) {
+                        $targetKeyPrefix = substr($targetKey, 0, strlen($targetKey) - strlen($info['extension']) - 1);
+                    } else {
+                        $targetKeyPrefix = $targetKey;
+                    }
+                    $done = false;
+                    for ($i = 1; $i < 9999999; $i++) {
+                        $tempTargetKey = $targetKeyPrefix . '_' . $i . (isset($info['extension']) ? '.' . $info['extension'] : '');
+                        if (!is_file($app->data->getFilename($tempTargetKey))) {
+                            $targetKey = $tempTargetKey;
+                            $done = true;
+                            break;
+                        }
+                    }
+                    if (!$done) {
+                        throw new \Exception('Cannot find available filename for ' . $targetKey);
+                    }
+                }
+                $app->data->rename([
+                    'sourceKey' => $sourceKey,
+                    'targetKey' => $targetKey
+                ]);
+                $data['filename'] = str_replace('bearcms/files/custom/', '', $targetKey);
+            }
+        }
+        $setData = [
+            'key' => 'bearcms/files/custom/' . $data['filename']
+        ];
+        if (isset($fileData['name'])) {
+            $setData['metadata.name'] = (string) $fileData['name'];
+        }
+        if (isset($fileData['published'])) {
+            $setData['metadata.published'] = (string) $fileData['published'];
+        }
+        $app->data->set($setData);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @throws \Exception
+     */
+    static function file($data)
+    {
+        $app = App::$instance;
+        if (!isset($data['filename'])) {
+            throw new \Exception('');
+        }
+        $item = $app->data->get(
+                [
+                    'key' => 'bearcms/files/custom/' . $data['filename'],
+                    'result' => ['key', 'metadata']
+                ]
+        );
+        if (isset($item['key'])) {
+            $key = $item['key'];
+            $fullFilename = $app->data->getFilename($key);
+            $result = [
+                'filename' => str_replace('bearcms/files/custom/', '', $key),
+                'name' => (isset($item['metadata.name']) ? $item['metadata.name'] : str_replace('bearcms/files/custom/', '', $key)),
+                'published' => (isset($item['metadata.published']) ? (int) $item['metadata.published'] : 0),
+                'size' => filesize($fullFilename),
+                'dateUploaded' => filemtime($fullFilename)
+            ];
+            return $result;
+        }
+        return null;
     }
 
     /**

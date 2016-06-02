@@ -27,6 +27,7 @@ $context->classes->add('BearCMS\Data\Users', 'classes/BearCMS/Data/Users.php');
 
 $context->classes->add('BearCMS\Internal\Data\Addons', 'classes/BearCMS/Internal/Data/Addons.php');
 $context->classes->add('BearCMS\Internal\Data\Blog', 'classes/BearCMS/Internal/Data/Blog.php');
+$context->classes->add('BearCMS\Internal\Data\Files', 'classes/BearCMS/Internal/Data/Files.php');
 $context->classes->add('BearCMS\Internal\Data\Pages', 'classes/BearCMS/Internal/Data/Pages.php');
 $context->classes->add('BearCMS\Internal\Data\Templates', 'classes/BearCMS/Internal/Data/Templates.php');
 $context->classes->add('BearCMS\Internal\Data\Users', 'classes/BearCMS/Internal/Data/Users.php');
@@ -61,6 +62,11 @@ if (Options::hasFeature('users')) {
     $app->routes->add(['/admin/', '/admin/*'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
     $app->routes->add('/-aj/', ['BearCMS\Internal\Controller', 'handleAjax'], ['POST']);
     $app->routes->add('/-au/', ['BearCMS\Internal\Controller', 'handleFileUpload'], ['POST']);
+}
+
+if (Options::hasFeature('files')) {
+    $app->routes->add('/files/preview/*', ['BearCMS\Internal\Controller', 'handleFilePreview']);
+    $app->routes->add('/files/download/*', ['BearCMS\Internal\Controller', 'handleFileDownload']);
 }
 
 if (Options::hasFeature('addons')) {

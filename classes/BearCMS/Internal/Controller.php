@@ -55,15 +55,15 @@ class Controller
     {
         $app = App::$instance;
         if (isset($_FILES['Filedata']) && isset($_FILES['Filedata']["name"]) && !$_FILES['Filedata']["error"] && is_file($_FILES['Filedata']["tmp_name"])) {
-            $originalFileName = strtolower($_FILES['Filedata']["name"]);
-            $pathinfo = pathinfo($originalFileName);
+            $originalFilename = strtolower($_FILES['Filedata']["name"]);
+            $pathinfo = pathinfo($originalFilename);
             $fileExtension = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
-            $tempFileName = md5('fileupload' . uniqid()) . (isset($fileExtension{0}) ? '.' . $fileExtension : '');
-            $filename = $app->data->getFilename('.temp/bearcms/files/' . $tempFileName);
+            $tempFilename = md5('fileupload' . uniqid()) . (isset($fileExtension{0}) ? '.' . $fileExtension : '');
+            $filename = $app->data->getFilename('.temp/bearcms/files/' . $tempFilename);
             $app->filesystem->makeFileDir($filename);
             move_uploaded_file($_FILES['Filedata']["tmp_name"], $filename);
             if (is_file($filename)) {
-                $response = Server::call('fileupload', array('tempFileName' => $tempFileName, 'requestData' => json_encode($_GET)));
+                $response = Server::call('fileupload', array('tempFilename' => $tempFilename, 'requestData' => json_encode($_GET)));
                 if (isset($response['result'])) {
                     return new App\Response\JSON($response['result']);
                 } else {
@@ -75,6 +75,42 @@ class Controller
         $response->headers['contentType'] = 'Content-Type: text/json; charset=UTF-8';
         $response->headers['serviceUnavailable'] = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 400 Bad Request';
         return $response;
+    }
+
+    static function handleFileRequest($preview)
+    {
+        $app = App::$instance;
+        $filename = (string) $app->request->path[2];
+        $data = \BearCMS\Internal\Data\Files::getFileData($filename);
+        if ($data === false || $data['published'] === 0) {
+            return new App\Response\NotFound();
+        } else {
+            $fullFilename = $app->data->getFilename('bearcms/files/custom/' . $filename);
+            $response = new App\Response\FileReader($fullFilename);
+            $mimeType = $app->assets->getMimeType($fullFilename);
+            if ($mimeType !== null) {
+                $response->headers[] = 'Content-Type: ' . $mimeType;
+            }
+            if (!$preview) {
+                $response->headers[] = 'Content-Disposition: attachment; filename=' . urlencode($filename);
+                $response->headers[] = 'Content-Type: application/force-download';
+                $response->headers[] = 'Content-Type: application/octet-stream';
+                $response->headers[] = 'Content-Type: application/download';
+                $response->headers[] = 'Content-Description: File Transfer';
+                $response->headers[] = 'Content-Length: ' . filesize($fullFilename);
+            }
+            return $response;
+        }
+    }
+
+    static function handleFilePreview()
+    {
+        return self::handleFileRequest(true);
+    }
+
+    static function handleFileDownload()
+    {
+        return self::handleFileRequest(false);
     }
 
 }
