@@ -191,6 +191,15 @@ class Server
             throw new \InvalidArgumentException('');
         }
 
+        $clientData = [];
+        $clientData['info'] = [
+            'type' => 'bearframework-addon',
+            'bearframeworkVersion' => $app::VERSION,
+            'addonVersion' => \BearCMS::VERSION
+        ];
+        $clientData['siteID'] = 'todo-siteid';
+        $clientData['siteSecret'] = 'todo-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash';
+        $clientData['requestBase'] = $app->request->base;
         if ($app->bearCMS->currentUser->exists()) {
             $currentUserData = $app->data->get([
                 'key' => 'bearcms/users/user/' . md5($app->bearCMS->currentUser->getID()) . '.json',
@@ -201,11 +210,12 @@ class Server
                 $currentUserData = json_decode($currentUserData['body'], true);
                 $currentUserID = isset($currentUserData['id']) ? $currentUserData['id'] : null;
             }
-            $data['currentUserID'] = $currentUserID;
+            $clientData['currentUserID'] = $currentUserID;
         }
 
-        $data['features'] = json_encode(Options::$features);
-        $data['language'] = Options::$language;
+        $clientData['features'] = json_encode(Options::$features);
+        $clientData['language'] = Options::$language;
+        $data['clientData'] = json_encode($clientData, JSON_UNESCAPED_UNICODE);
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -277,7 +287,6 @@ class Server
             $data = [];
         }
 
-        $data['auth'] = json_encode([1, 'todo-siteid', 'todo-hash', $app->request->base], JSON_UNESCAPED_UNICODE); //todo
         $data['responseType'] = 'jsongz';
         if (isset($data['_ajaxreferer'])) {
             $data['_ajaxreferer'] = str_replace($app->request->base . '/', Options::$serverUrl, $data['_ajaxreferer']);
