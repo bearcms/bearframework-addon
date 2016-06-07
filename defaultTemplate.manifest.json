@@ -298,11 +298,6 @@
             "id": "customCSS",
             "type": "textarea",
             "name": "Custom CSS"
-        },
-        {
-            "id": "unit1",
-            "type": "htmlUnit",
-            "name": "Unit 1"
         }
     ]
 }
