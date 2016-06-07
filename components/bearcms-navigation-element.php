@@ -91,7 +91,11 @@ $attributes .= ' moreItemHtml="' . htmlentities('<li class="bearcms-navigation-e
 if ($showHomeButton) {
     array_unshift($pages, ['id' => '_home', 'path' => '/', 'name' => 'Home', 'parentID' => '', 'status' => 'published']);
 }
-$content = '<component src="navigation-menu"' . $attributes . '>' . $buildTreeFunction($pages, (string) $component->pageID) . '</component>';
+if (empty($pages)) {
+    $content = '';
+} else {
+    $content = '<component src="navigation-menu"' . $attributes . '>' . $buildTreeFunction($pages, (string) $component->pageID) . '</component>';
+}
 
 $content = \BearCMS\Internal\ElementsHelper::getElementComponentContent($component, 'navigation', $content);
 ?><html>

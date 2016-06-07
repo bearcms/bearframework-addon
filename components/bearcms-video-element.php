@@ -31,7 +31,7 @@ if (strlen($component->url) > 0) {
     if ($content !== '') {
         $content = '<div class="bearcms-video-element" style="position:relative;height:0;padding-bottom:' . (1 / $aspectRatio * 100) . '%;"><div style="position: absolute;top:0;left:0;width:100%;height:100%;">' . $content . '</div></div>';
     } else {
-        $content = '<div class="bearcms-video-element"></div>';
+        $content = '';
     }
 } elseif (strlen($component->filename) > 0) {
     $filename = $app->bearCMS->data->getRealFilename($component->filename);

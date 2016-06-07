@@ -6,7 +6,12 @@
  * Free to use under the MIT license.
  */
 
-$content = '<div class="bearcms-html-element">' . $component->code . '</div>';
+$code = trim($component->code);
+if ($code !== '') {
+    $content = '<div class="bearcms-html-element">' . $code . '</div>';
+} else {
+    $content = '';
+}
 
 $content = \BearCMS\Internal\ElementsHelper::getElementComponentContent($component, 'html', $content);
 ?><html>
