@@ -262,6 +262,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         $componentContent .= '<meta name="robots" content="noindex">';
     }
     $componentContent .= '<link rel="canonical" href="' . htmlentities(rtrim($app->request->base . $app->request->path, '/') . '/') . '"/>';
+    $componentContent .= '<link rel="alternate" type="application/rss+xml" title="' . (isset($settings['title']) ? trim($settings['title']) : '') . '" href="' . $app->request->base . '/rss.xml" />';
     $componentContent .= '</head><body></body></html>';
 
 
