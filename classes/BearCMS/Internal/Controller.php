@@ -113,4 +113,68 @@ class Controller
         return self::handleFileRequest(false);
     }
 
+    static function handleRSS()
+    {
+        $app = App::$instance;
+        $settings = $app->bearCMS->data->settings->get();
+        $baseUrl = $app->request->base;
+
+        $data = '<title>' . (isset($settings['title']) ? htmlspecialchars($settings['title']) : '') . '</title>';
+        $data .= '<link>' . $baseUrl . '/</link>';
+        $data .= '<description>' . (isset($settings['description']) ? htmlspecialchars($settings['description']) : '') . '</description>';
+        $data .= '<language>' . (isset($settings['language']) ? htmlspecialchars($settings['language']) : '') . '</language>';
+        $data .= '<atom:link href="' . $baseUrl . '/rss.xml" rel="self" type="application/rss+xml">';
+        $data .= '</atom:link>';
+
+        $blogPosts = $app->bearCMS->data->blog->getList();
+        foreach ($blogPosts as $blogPost) {
+            if (isset($blogPost['status']) && $blogPost['status'] === 'published') {
+                $blogPostUrl = isset($blogPost['slug']) ? $baseUrl . '/b/' . $blogPost['slug'] . '/' : '';
+                $data .= '<item>';
+                $data .= '<title>' . (isset($blogPost['title']) ? htmlspecialchars($blogPost['title']) : '') . '</title>';
+                $data .= '<link>' . $blogPostUrl . '</link>';
+                $data .= '<description><![CDATA[Read the full article at <a href="' . $blogPostUrl . '">' . $blogPostUrl . '</a>]]></description>';
+                $data .= '<pubDate>' . (isset($blogPost['publishedTime']) ? date('r', $blogPost['publishedTime']) : '') . '</pubDate>';
+                $data .= '<guid isPermaLink="false">' . $blogPostUrl . '</guid>';
+                $data .= '</item>';
+            }
+        }
+        $response = new App\Response('<?xml version="1.0" encoding="UTF-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" version="2.0"><channel>' . $data . '</channel></rss>');
+        $response->setContentType('text/xml');
+        return $response;
+    }
+
+    static function handleSitemap()
+    {
+        $app = App::$instance;
+        $urls = [];
+        $baseUrl = $app->request->base;
+        $addUrl = function($path) use (&$urls, $baseUrl) {
+            $urls[] = '<url><loc>' . $baseUrl . $path . '</loc></url>';
+        };
+        $addUrl('/');
+
+        $list = \BearCMS\Internal\Data\Pages::getPathsList('published');
+        foreach ($list as $path) {
+            $addUrl($path);
+        }
+
+        $list = \BearCMS\Internal\Data\Blog::getSlugsList('published');
+        foreach ($list as $slug) {
+            $addUrl('/b/' . $slug . '/');
+        }
+
+        $response = new App\Response('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.google.com/schemas/sitemap/0.84">' . implode('', $urls) . '</urlset>');
+        $response->setContentType('text/xml');
+        return $response;
+    }
+
+    static function handleRobots()
+    {
+        $response = new App\Response('User-agent: *
+Disallow:');
+        $response->setContentType('text/plain');
+        return $response;
+    }
+
 }

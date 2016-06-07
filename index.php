@@ -69,6 +69,10 @@ if (Options::hasFeature('files')) {
     $app->routes->add('/files/download/*', ['BearCMS\Internal\Controller', 'handleFileDownload']);
 }
 
+$app->routes->add('/rss.xml', ['BearCMS\Internal\Controller', 'handleRSS']);
+$app->routes->add('/sitemap.xml', ['BearCMS\Internal\Controller', 'handleSitemap']);
+$app->routes->add('/robots.txt', ['BearCMS\Internal\Controller', 'handleRobots']);
+
 if (Options::hasFeature('addons')) {
     $addonsDir = $context->options['addonsDir'];
     $addons = InternalData\Addons::getList();
@@ -234,7 +238,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if (isset($keywords{0})) {
         $componentContent .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
     }
-    $componentContent .= '<meta name="generator" content="BearCMS"/>';
+    $componentContent .= '<meta name="generator" content="Bear CMS ' . \BearCMS::VERSION . '"/>';
     $icon = $settings['icon'];
     if (isset($icon{0})) {
         $filename = $app->bearCMS->data->getRealFilename($icon);
@@ -259,6 +263,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     }
     $componentContent .= '<link rel="canonical" href="' . htmlentities(rtrim($app->request->base . $app->request->path, '/') . '/') . '"/>';
     $componentContent .= '</head><body></body></html>';
+
 
     $domDocument = new HTML5DOMDocument();
     $domDocument->loadHTML($response->content);
@@ -303,7 +308,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         $app->cache->set($cacheKey, $adminUIData, is_array($adminUIData) && isset($adminUIData['result']) ? 99999 : 10);
     }
 
-    if (is_array($adminUIData) && isset($adminUIData['result']) && is_array($adminUIData['result']) && isset($adminUIData['result']['content'])) {
+    if (is_array($adminUIData) && isset($adminUIData['result']) && is_array($adminUIData['result']) && isset($adminUIData['result']['content']) && strlen($adminUIData['result']['content']) > 0) {
         $content = $adminUIData['result']['content'];
         if (Options::hasFeature('elements') && !empty(ElementsHelper::$editorData)) {
             $requestArguments = [];
@@ -338,7 +343,6 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         $content = Server::updateAssetsUrls($content, false);
         $content = str_replace('{body}', '<component src="data:base64,' . base64_encode($response->content) . '"/>', $content);
         $content = $app->components->process($content);
-
         $response->content = $content;
     } else {
         $response = new App\Response\TemporaryUnavailable();
