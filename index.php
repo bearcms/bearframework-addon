@@ -140,8 +140,12 @@ if (Options::hasFeature('blog')) {
 if (Options::hasFeature('pages')) {
     $app->routes->add('*', function() use ($app) {
         $path = (string) $app->request->path;
-        $pathsList = InternalData\Pages::getPathsList(Options::hasFeature('users') && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
-        $pageID = array_search($path, $pathsList);
+        if ($path === '/') {
+            $pageID = 'home';
+        } else {
+            $pathsList = InternalData\Pages::getPathsList(Options::hasFeature('users') && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
+            $pageID = array_search($path, $pathsList);
+        }
         if ($pageID !== false) {
             $content = '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
             $response = new App\Response\HTML($content);
