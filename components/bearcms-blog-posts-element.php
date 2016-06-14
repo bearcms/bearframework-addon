@@ -50,7 +50,7 @@ if (empty($list)) {
 
         $content .= '<div class="bearcms-blog-posts-element-post">';
 
-        $content .= '<div class="bearcms-blog-posts-element-post-title-contaier">';
+        $content .= '<div class="bearcms-blog-posts-element-post-title-container">';
         $content .= '<a title="' . htmlentities($title) . '" class="bearcms-blog-posts-element-post-title" href="' . htmlentities($url) . '">' . htmlspecialchars($title) . '</a>';
         $content .= '</div>';
         if ($showDate) {
