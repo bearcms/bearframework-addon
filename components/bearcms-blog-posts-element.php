@@ -127,7 +127,7 @@ if (empty($list)) {
 //        $content .= '</div>';
 //    }
         $content .= '</div>';
-        if ($counter > $limit) {
+        if ($counter >= $limit) {
             break;
         }
     }
