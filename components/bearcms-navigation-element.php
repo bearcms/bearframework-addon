@@ -59,6 +59,7 @@ if (strlen($component->showHomeButton) > 0) {
 
 $pages = [];
 if ($type === 'top') {
+    $structure = $app->bearCMS->data->pages->getStructure();
     $pages = $app->bearCMS->data->pages->getList();
     $temp = [];
     foreach ($pages as $page) {
@@ -68,6 +69,7 @@ if ($type === 'top') {
     }
     $pages = $temp;
 } elseif ($type === 'children') {
+    $structure = $app->bearCMS->data->pages->getStructure();
     $pages = $app->bearCMS->data->pages->getList();
     $temp = [];
     $parentID = strlen($component->pageID) > 0 ? $component->pageID : '';
@@ -78,7 +80,36 @@ if ($type === 'top') {
     }
     $pages = $temp;
 } elseif ($type === 'tree') {
+    $structure = $app->bearCMS->data->pages->getStructure();
     $pages = $app->bearCMS->data->pages->getList();
+}
+
+// sort pages
+if (isset($structure, $pages)) {
+    $flatStructure = [];
+    $walkStructure = function($structure) use (&$flatStructure, &$walkStructure) {
+        foreach ($structure as $item) {
+            if (isset($item['id'])) {
+                $flatStructure[] = $item['id'];
+            }
+            if (isset($item['children'])) {
+                $walkStructure($item['children']);
+            }
+        }
+    };
+    $walkStructure($structure);
+    usort($pages, function($a, $b) use ($flatStructure) {
+        if (isset($a['id'], $b['id'])) {
+            $aIndex = array_search($a['id'], $flatStructure);
+            $bIndex = array_search($b['id'], $flatStructure);
+            if ($aIndex == $bIndex) {
+                return 0;
+            }
+            return ($aIndex < $bIndex) ? -1 : 1;
+        }
+    });
+    unset($flatStructure);
+    unset($walkStructure);
 }
 
 $attributes = '';
