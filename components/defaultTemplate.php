@@ -258,6 +258,140 @@ $headerItemsSpacingInPx = 40;
                 font-size:14px;
                 height:100%;
             }
+            
+            .bearcms-heading-element-large{
+                font-size:28px;
+                line-height:180%;
+                color:<?= $contentHighlightColor ?>;
+                font-weight:normal;
+                font-family:Arial;
+                text-align:center;
+                margin:0;
+            }
+            .bearcms-heading-element-medium{
+                font-size:22px;
+                line-height:180%;
+                color:<?= $contentHighlightColor ?>;
+                font-weight:normal;
+                font-family:Arial;
+                text-align:center;
+                margin:0;
+            }
+            .bearcms-heading-element-small{
+                font-size:18px;
+                line-height:180%;
+                color:<?= $contentHighlightColor ?>;
+                font-weight:normal;
+                font-family:Arial;
+                text-align:center;
+                margin:0;
+            }
+
+            .bearcms-link-element{
+                color:<?= $contentBackgroundColor ?>;
+                display:inline-block;
+                text-decoration:none;
+                padding:15px;
+                background-color:<?= $contentHighlightColor ?>;
+                transition: background-color 200ms;
+            }
+            .bearcms-link-element:hover{
+                background-color:<?= $contentHighlightColor1 ?>;
+            }
+            .bearcms-link-element:active{
+                background-color:<?= $contentHighlightColor2 ?>;
+            }
+
+            .bearcms-navigation-element{
+                list-style-type:none;
+            }
+            .bearcms-navigation-element-item a{
+                font-size:14px;
+                color:<?= $contentHighlightColor ?>;
+                line-height:180%;
+                display:inline-block;
+                text-decoration:underline;
+                transition: color 200ms;
+            }
+            .bearcms-navigation-element-item a:hover{
+                color:<?= $contentHighlightColor1 ?>;
+            }
+            .bearcms-navigation-element-item a:active{
+                color:<?= $contentHighlightColor2 ?>;
+            }
+
+            .bearcms-text-element, .bearcms-html-element {
+                font-size:14px;
+                color:<?= $contentTextColor ?>;
+                line-height:180%;
+            }
+            .bearcms-text-element a, .bearcms-html-element a{
+                font-size:14px;
+                color:<?= $contentHighlightColor ?>;
+                display:inline-block;
+                text-decoration:underline;
+                transition: color 200ms;
+            }
+            .bearcms-text-element a:hover, .bearcms-html-element a:hover{
+                color:<?= $contentHighlightColor1 ?>;
+            }
+            .bearcms-text-element a:active, .bearcms-html-element a:active{
+                color:<?= $contentHighlightColor2 ?>;
+            }
+
+            .bearcms-blog-posts-element-post{
+                padding-bottom:15px;
+            }
+            .bearcms-blog-posts-element-post:last-child{
+                padding-bottom:0;
+            }
+
+            .bearcms-blog-posts-element-post-title{
+                font-size:25px;
+                line-height:180%;
+                color:<?= $contentHighlightColor ?>;
+                text-align:center;
+                font-weight:normal;
+                font-family:Arial;
+                text-decoration:none;
+            }
+            .bearcms-blog-posts-element-post-title-container{
+                text-align:center;
+            }
+            .bearcms-blog-posts-element-post-title:hover{
+                color:<?= $contentHighlightColor1 ?>;
+            }
+            .bearcms-blog-posts-element-post-title:active{
+                color:<?= $contentHighlightColor2 ?>;
+            }
+
+            .bearcms-blog-posts-element-post-date{
+                font-size:14px;
+                color:<?= $addBrightness($contentTextColor, 50) ?>;
+                line-height:180%;
+            }
+
+            .bearcms-blog-posts-element-post-date-container{
+                padding-bottom:10px;
+                text-align:center;
+            }
+
+            .bearcms-blogpost-page-title{
+                font-size:28px;
+                line-height:180%;
+                color:<?= $contentHighlightColor ?>;
+                font-weight:normal;
+                font-family:Arial;
+                text-align:center;
+            }
+
+            .bearcms-blogpost-page-date{
+                font-size:14px;
+                color:<?= $addBrightness($contentTextColor, 50) ?>;
+                text-align:center;
+                line-height:180%;
+                padding-bottom:15px;
+            }
 
             .template-header-outer-container{
                 background-color:<?= $headerBackgroundColor ?>;
@@ -374,6 +508,7 @@ $headerItemsSpacingInPx = 40;
                     font-size:15px;
                     font-family:Arial,Helvetica,sans-serif;
                     text-decoration:none;
+                    line-height:normal;
                 }
                 .template-navigation .bearcms-navigation-element-item-selected, .template-navigation .bearcms-navigation-element-item-in-path, .template-navigation .bearcms-navigation-element-item:hover{
                     background-color:<?= $navigationHighlightColor ?>;
@@ -514,139 +649,8 @@ $headerItemsSpacingInPx = 40;
                 max-width:<?= $contentMaxWidth ?>;
                 margin:0 auto;
                 min-height:250px;
+                box-sizing:border-box;
             }
-
-            .bearcms-heading-element-large{
-                font-size:28px;
-                line-height:180%;
-                color:<?= $contentHighlightColor ?>;
-                font-weight:normal;
-                font-family:Arial;
-                text-align:center;
-            }
-            .bearcms-heading-element-medium{
-                font-size:22px;
-                line-height:180%;
-                color:<?= $contentHighlightColor ?>;
-                font-weight:normal;
-                font-family:Arial;
-                text-align:center;
-            }
-            .bearcms-heading-element-small{
-                font-size:18px;
-                line-height:180%;
-                color:<?= $contentHighlightColor ?>;
-                font-weight:normal;
-                font-family:Arial;
-                text-align:center;
-            }
-
-            .bearcms-link-element{
-                color:<?= $contentBackgroundColor ?>;
-                display:inline-block;
-                text-decoration:none;
-                padding:15px;
-                background-color:<?= $contentHighlightColor ?>;
-                transition: background-color 200ms;
-            }
-            .bearcms-link-element:hover{
-                background-color:<?= $contentHighlightColor1 ?>;
-            }
-            .bearcms-link-element:active{
-                background-color:<?= $contentHighlightColor2 ?>;
-            }
-
-            .bearcms-navigation-element{
-                list-style-type:none;
-            }
-            .bearcms-navigation-element-item a{
-                font-size:14px;
-                color:<?= $contentHighlightColor ?>;
-                line-height:180%;
-                display:inline-block;
-                text-decoration:underline;
-                transition: color 200ms;
-            }
-            .bearcms-navigation-element-item a:hover{
-                color:<?= $contentHighlightColor1 ?>;
-            }
-            .bearcms-navigation-element-item a:active{
-                color:<?= $contentHighlightColor2 ?>;
-            }
-
-            .bearcms-text-element, .bearcms-html-element {
-                font-size:14px;
-                color:<?= $contentTextColor ?>;
-                line-height:180%;
-            }
-            .bearcms-text-element a, .bearcms-html-element a{
-                font-size:14px;
-                color:<?= $contentHighlightColor ?>;
-                display:inline-block;
-                text-decoration:underline;
-                transition: color 200ms;
-            }
-            .bearcms-text-element a:hover, .bearcms-html-element a:hover{
-                color:<?= $contentHighlightColor1 ?>;
-            }
-            .bearcms-text-element a:active, .bearcms-html-element a:active{
-                color:<?= $contentHighlightColor2 ?>;
-            }
-
-            .bearcms-blog-posts-element-post{
-                padding-bottom:15px;
-            }
-            .bearcms-blog-posts-element-post:last-child{
-                padding-bottom:0;
-            }
-
-            .bearcms-blog-posts-element-post-title{
-                font-size:25px;
-                line-height:180%;
-                color:<?= $contentHighlightColor ?>;
-                text-align:center;
-                font-weight:normal;
-                font-family:Arial;
-                text-decoration:none;
-            }
-            .bearcms-blog-posts-element-post-title-container{
-                text-align:center;
-            }
-            .bearcms-blog-posts-element-post-title:hover{
-                color:<?= $contentHighlightColor1 ?>;
-            }
-            .bearcms-blog-posts-element-post-title:active{
-                color:<?= $contentHighlightColor2 ?>;
-            }
-
-            .bearcms-blog-posts-element-post-date{
-                font-size:14px;
-                color:<?= $addBrightness($contentTextColor, 50) ?>;
-                line-height:180%;
-            }
-
-            .bearcms-blog-posts-element-post-date-container{
-                padding-bottom:10px;
-                text-align:center;
-            }
-
-            .bearcms-blogpost-page-title{
-                font-size:28px;
-                line-height:180%;
-                color:<?= $contentHighlightColor ?>;
-                font-weight:normal;
-                font-family:Arial;
-                text-align:center;
-            }
-
-            .bearcms-blogpost-page-date{
-                font-size:14px;
-                color:<?= $addBrightness($contentTextColor, 50) ?>;
-                text-align:center;
-                line-height:180%;
-                padding-bottom:15px;
-            }
-
 
             <?php if ($isHomePage && $homePageSpecialBlockVisibility === '1') { ?>
 
