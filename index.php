@@ -218,15 +218,25 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     $title = '';
     $descrption = '';
     $keywords = '';
-    if (isset($response->bearCMSPageID)) {
+    if (isset($response->bearCMSPageID) && $response->bearCMSPageID !== 'home') {
         $page = $app->bearCMS->data->pages->getPage($response->bearCMSPageID);
         if (is_array($page)) {
-            $title = isset($page['title']) ? trim($page['title']) : '';
+            $title = isset($page['titleTagContent']) ? trim($page['titleTagContent']) : '';
             if (!isset($title{0})) {
                 $title = isset($page['name']) ? trim($page['name']) : '';
             }
-            $descrption = isset($page['description']) ? trim($page['description']) : '';
-            $keywords = isset($page['keywords']) ? trim($page['keywords']) : '';
+            $descrption = isset($page['descriptionTagContent']) ? trim($page['descriptionTagContent']) : '';
+            $keywords = isset($page['keywordsTagContent']) ? trim($page['keywordsTagContent']) : '';
+        }
+    } elseif (isset($response->bearCMSBlogPostID)) {
+        $blogPost = $app->bearCMS->data->blog->getPost($response->bearCMSBlogPostID);
+        if (is_array($blogPost)) {
+            $title = isset($blogPost['titleTagContent']) ? trim($blogPost['titleTagContent']) : '';
+            if (!isset($title{0})) {
+                $title = isset($blogPost['title']) ? trim($blogPost['title']) : '';
+            }
+            $descrption = isset($blogPost['descriptionTagContent']) ? trim($blogPost['descriptionTagContent']) : '';
+            $keywords = isset($blogPost['keywordsTagContent']) ? trim($blogPost['keywordsTagContent']) : '';
         }
     } else {
         $title = trim($settings['title']);
