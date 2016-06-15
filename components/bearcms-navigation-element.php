@@ -13,7 +13,7 @@ $buildTreeFunction = function($pages, $parentID) use ($app, &$buildTreeFunction)
     $currentPath = (string) $app->request->path;
     foreach ($pages as $page) {
         if ($page['parentID'] === $parentID) {
-            if ($app->bearCMS->currentUser->exists() || (!$app->bearCMS->currentUser->exists() && $page['status'] === 'published')) {
+            if ($page['status'] === 'published') {
                 $classNames = 'bearcms-navigation-element-item';
                 if ($page['path'] === $currentPath) {
                     $classNames .= ' bearcms-navigation-element-item-selected';
@@ -43,19 +43,19 @@ if (strlen($component->type) > 0) {
     }
 }
 
-$menuType = 'horizontal-down';
+$menuType = 'list-vertical';
 if (strlen($component->menuType) > 0) {
-    if (array_search($component->menuType, ['horizontal-down']) !== false) {
+    if (array_search($component->menuType, ['horizontal-down', 'list-vertical']) !== false) {
         $menuType = $component->type;
     }
 }
 
-$showHomeButton = false;
-if (strlen($component->showHomeButton) > 0) {
-    if ($component->showHomeButton === 'true') {
-        $showHomeButton = true;
-    }
-}
+//$showHomeButton = false;
+//if (strlen($component->showHomeButton) > 0) {
+//    if ($component->showHomeButton === 'true') {
+//        $showHomeButton = true;
+//    }
+//}
 
 $pages = [];
 if ($type === 'top') {
@@ -119,9 +119,9 @@ if (strlen($component->class) > 0) {
 }
 $attributes .= ' moreItemHtml="' . htmlentities('<li class="bearcms-navigation-element-item bearcms-navigation-element-item-more"><a></a><ul class="bearcms-navigation-element-item-children"></ul></li>') . '"';
 
-if ($showHomeButton) {
-    array_unshift($pages, ['id' => '_home', 'path' => '/', 'name' => 'Home', 'parentID' => '', 'status' => 'published']);
-}
+//if ($showHomeButton) {
+//    array_unshift($pages, ['id' => '_home', 'path' => '/', 'name' => 'Home', 'parentID' => '', 'status' => 'published']);
+//}
 if (empty($pages)) {
     $content = '';
 } else {
