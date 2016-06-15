@@ -129,15 +129,24 @@ class Controller
         $blogPosts = $app->bearCMS->data->blog->getList();
         foreach ($blogPosts as $blogPost) {
             if (isset($blogPost['status']) && $blogPost['status'] === 'published') {
-                $blogPostUrl = isset($blogPost['slug']) ? $baseUrl . '/b/' . $blogPost['slug'] . '/' : '';
-                $data .= '<item>';
-                $data .= '<title>' . (isset($blogPost['title']) ? htmlspecialchars($blogPost['title']) : '') . '</title>';
-                $data .= '<link>' . $blogPostUrl . '</link>';
-                $data .= '<description><![CDATA[Read the full article at <a href="' . $blogPostUrl . '">' . $blogPostUrl . '</a>]]></description>';
-                $data .= '<pubDate>' . (isset($blogPost['publishedTime']) ? date('r', $blogPost['publishedTime']) : '') . '</pubDate>';
-                $data .= '<guid isPermaLink="false">' . $blogPostUrl . '</guid>';
-                $data .= '</item>';
+                $blogPostsToRender[] = $blogPost;
             }
+        }
+        usort($blogPostsToRender, function($a, $b) {
+            if (!isset($a['publishedTime']) || !isset($b['publishedTime']) || $a['publishedTime'] === $b['publishedTime']) {
+                return 0;
+            }
+            return $a['publishedTime'] < $b['publishedTime'] ? 1 : -1;
+        });
+        foreach ($blogPostsToRender as $blogPost) {
+            $blogPostUrl = isset($blogPost['slug']) ? $baseUrl . '/b/' . $blogPost['slug'] . '/' : '';
+            $data .= '<item>';
+            $data .= '<title>' . (isset($blogPost['title']) ? htmlspecialchars($blogPost['title']) : '') . '</title>';
+            $data .= '<link>' . $blogPostUrl . '</link>';
+            $data .= '<description><![CDATA[Read the full article at <a href="' . $blogPostUrl . '">' . $blogPostUrl . '</a>]]></description>';
+            $data .= '<pubDate>' . (isset($blogPost['publishedTime']) ? date('r', $blogPost['publishedTime']) : '') . '</pubDate>';
+            $data .= '<guid isPermaLink="false">' . $blogPostUrl . '</guid>';
+            $data .= '</item>';
         }
         $response = new App\Response('<?xml version="1.0" encoding="UTF-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" version="2.0"><channel>' . $data . '</channel></rss>');
         $response->setContentType('text/xml');
