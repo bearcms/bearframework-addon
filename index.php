@@ -59,7 +59,10 @@ $app->container->set('bearCMS', \BearCMS::class);
 Options::set($context->options);
 
 if (Options::hasFeature('users')) {
-    $app->routes->add(['/admin/', '/admin/*'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
+    $app->routes->add(['/admin/', '/admin/*/'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
+    $app->routes->add(['/admin', '/admin/*'], function() use ($app) {
+        return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
+    });
     $app->routes->add('/-aj/', ['BearCMS\Internal\Controller', 'handleAjax'], ['POST']);
     $app->routes->add('/-au/', ['BearCMS\Internal\Controller', 'handleFileUpload'], ['POST']);
 }
@@ -313,8 +316,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         $app->bearCMS->currentUser->getKey(),
         $app->bearCMS->currentUser->getPermissions(),
         get_class_vars('\BearCMS\Internal\Options'),
-        $serverCookies,
-        rand()
+        $serverCookies
     ]);
 
     $adminUIData = $app->cache->get($cacheKey);
