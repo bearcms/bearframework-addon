@@ -138,6 +138,9 @@ if (Options::hasFeature('blog')) {
             return $response;
         }
     });
+    $app->routes->add('/b/?', function() use ($app) {
+        return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
+    });
 }
 
 if (Options::hasFeature('pages')) {
@@ -146,8 +149,16 @@ if (Options::hasFeature('pages')) {
         if ($path === '/') {
             $pageID = 'home';
         } else {
+            $hasSlash = substr($path, -1) === '/';
             $pathsList = InternalData\Pages::getPathsList(Options::hasFeature('users') && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
-            $pageID = array_search($path, $pathsList);
+            if ($hasSlash) {
+                $pageID = array_search($path, $pathsList);
+            } else {
+                $pageID = array_search($path . '/', $pathsList);
+                if ($pageID !== false) {
+                    return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
+                }
+            }
         }
         if ($pageID !== false) {
             $content = '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
