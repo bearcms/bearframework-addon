@@ -59,6 +59,9 @@ $app->container->set('bearCMS', \BearCMS::class);
 Options::set($context->options);
 
 if (Options::hasFeature('users')) {
+    $app->routes->add(['/admin/loggedin/'], function() use ($app) {
+        return new App\Response\TemporaryRedirect($app->request->base . '/');
+    });
     $app->routes->add(['/admin/', '/admin/*/'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
     $app->routes->add(['/admin', '/admin/*'], function() use ($app) {
         return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
