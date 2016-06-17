@@ -72,38 +72,99 @@ class Server
                 strpos($responseHeader, 'X-App-Sr: wpr') > 0;
     }
 
-    static function getAssetsUrl($originalUrls)
+    static function getAssetsUrl($urls)
     {
         $app = App::$instance;
-        sort($originalUrls);
-        $resultKey = '.temp/bearcms/assets/' . md5(serialize($originalUrls)) . '.js';
+        sort($urls);
+        $resultKey = '.temp/bearcms/assets/' . md5(serialize($urls)) . '.js';
         $result = $app->data->get([
             'key' => $resultKey,
             'result' => ['key']
         ]);
         if (!isset($result['key'])) {
-            foreach ($originalUrls as $originalUrl) {
-                $key = '.temp/bearcms/assets/' . md5(serialize([$originalUrl])) . '.js';
+            $filesToDownload = [];
+            foreach ($urls as $url) {
+                $key = '.temp/bearcms/assets/' . md5(serialize([$url])) . '.js';
                 $result = $app->data->get([
                     'key' => $key,
                     'result' => ['key']
                 ]);
                 if (!isset($result['key'])) {
-                    $app->data->set([
-                        'key' => $key,
-                        'body' => file_get_contents($originalUrl)
-                    ]);
-                    $app->data->makePublic([
-                        'key' => $key
-                    ]);
+                    $filesToDownload[$key] = $url;
                 }
             }
-            if (sizeof($originalUrls) > 1) {
+            if (!empty($filesToDownload)) {
+
+                $downloadFiles = function($urls) {
+                    $urls = array_values($urls);
+                    $mh = curl_multi_init();
+
+                    $serverUrlData = parse_url(\BearCMS\Internal\Options::$serverUrl);
+                    $serverUrlScheme = isset($serverUrlData['scheme']) ? $serverUrlData['scheme'] : 'http';
+
+                    foreach ($urls as $i => $url) {
+                        $calls[$i] = curl_init();
+                        curl_setopt($calls[$i], CURLOPT_URL, strpos($url, '//') === 0 ? $serverUrlScheme . ':' . $url : $url);
+                        curl_setopt($calls[$i], CURLOPT_RETURNTRANSFER, 1);
+                        curl_multi_add_handle($mh, $calls[$i]);
+                    }
+
+                    $active = null;
+                    do {
+                        $mrc = curl_multi_exec($mh, $active);
+                    } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+
+                    while ($active && $mrc == CURLM_OK) {
+                        $selectResult = curl_multi_select($mh);
+                        if ($selectResult === -1) {
+                            usleep(50);
+                        }
+                        do {
+                            $mrc = curl_multi_exec($mh, $active);
+                        } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+                    }
+
+                    $result = [];
+                    foreach ($calls as $i => $resource) {
+                        $result[$urls[$i]] = curl_multi_getcontent($calls[$i]);
+                        curl_multi_remove_handle($mh, $calls[$i]);
+                    }
+                    curl_multi_close($mh);
+                    return $result;
+                };
+
+                $filesDownloadResult = $downloadFiles($filesToDownload);
+                $downloadErrorUrls = [];
+                foreach ($filesToDownload as $key => $url) {
+                    if (strlen($filesDownloadResult[$url]) === 0) {
+                        $downloadErrorUrls[] = $url;
+                    } else {
+                        $app->data->set([
+                            'key' => $key,
+                            'body' => $filesDownloadResult[$url]
+                        ]);
+                        $app->data->makePublic([
+                            'key' => $key
+                        ]);
+                    }
+                }
+                if (!empty($downloadErrorUrls)) {
+                    throw new \Exception('Cannot download ' . implode(',', $downloadErrorUrls));
+                }
+            }
+
+            if (sizeof($urls) > 1) {
                 $bundleContent = '';
-                foreach ($originalUrls as $originalUrl) {
-                    $key = '.temp/bearcms/assets/' . md5(serialize([$originalUrl])) . '.js';
-                    $urlFilename = $app->data->getFilename($key);
-                    $bundleContent .= file_get_contents($urlFilename);
+                foreach ($urls as $url) {
+                    $key = '.temp/bearcms/assets/' . md5(serialize([$url])) . '.js';
+                    $result = $app->data->get([
+                        'key' => $key,
+                        'result' => ['key', 'body']
+                    ]);
+                    if (!isset($result['key'])) {
+                        throw new \Exception('Cannot read the temp file for ' . $url);
+                    }
+                    $bundleContent .= $result['body'];
                 }
                 $app->data->set([
                     'key' => $resultKey,
