@@ -15,7 +15,7 @@
 class BearCMS
 {
 
-    const VERSION = '0.0.1-dev';
+    const VERSION = '0.1.1-dev';
 
     /**
      * Dependency Injection container

@@ -28,7 +28,7 @@ class Options
             throw new \InvalidArgumentException('');
         }
         if (!isset($data['serverUrl'])) {
-            throw new \Exception('serverUrl option is not set for bearcms/bearcms-bearframework-addon');
+            throw new \Exception('serverUrl option is not set for bearcms/bearframework-addon');
         }
         self::$serverUrl = $data['serverUrl'];
 

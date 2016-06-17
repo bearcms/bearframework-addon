@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-BearFramework\Addons::register('bearcms/bearcms-bearframework-addon', __DIR__, [
+BearFramework\Addons::register('bearcms/bearframework-addon', __DIR__, [
     'require' => [
         'bearframework/maintenance-addon',
         'ivopetkov/html-server-components-bearframework-addon',
