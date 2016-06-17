@@ -1,13 +1,12 @@
 {
     "name": "bearcms/bearframework-addon",
     "description": "Bear CMS addon for Bear Framework",
-    "keywords": ["Bear CMS", "addon", "Bear Framework"],
+    "keywords": ["Bear CMS", "Bear Framework addon"],
     "homepage": "https://bearcms.com/",
     "license": "MIT",
-    "authors": [
+    "support": [
         {
-            "email": "support@bearcms.com",
-            "homepage": "http://bearcms.com"
+            "email": "support@bearcms.com"
         }
     ],
     "require": {
