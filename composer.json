@@ -4,11 +4,9 @@
     "keywords": ["Bear CMS", "Bear Framework addon"],
     "homepage": "https://bearcms.com/",
     "license": "MIT",
-    "support": [
-        {
-            "email": "support@bearcms.com"
-        }
-    ],
+    "support": {
+        "email": "support@bearcms.com"
+    },
     "require": {
         "php": ">=5.5.0",
         "bearframework/bearframework": "0.8.*",
