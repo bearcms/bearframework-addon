@@ -18,6 +18,7 @@ class Options
     static $language = 'en';
     static $features = ['all'];
     static $cookiePrefix = null;
+    static $logServerRequestsData = false;
 
     /**
      * 
@@ -64,6 +65,10 @@ class Options
         }
 
         self::$cookiePrefix = substr(md5(md5($app->request->base) . md5(self::$serverUrl)), 0, 14) . '_bearcms_';
+
+        if (isset($data['logServerRequestsData']) && $data['logServerRequestsData']) {
+            self::$logServerRequestsData = true;
+        }
     }
 
     static function hasFeature($name)

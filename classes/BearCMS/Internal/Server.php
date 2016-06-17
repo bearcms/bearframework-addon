@@ -95,7 +95,7 @@ class Server
             }
             if (!empty($filesToDownload)) {
 
-                $downloadFiles = function($urls) {
+                $downloadFiles = function($urls) use ($app) {
                     $urls = array_values($urls);
                     $mh = curl_multi_init();
 
@@ -127,6 +127,13 @@ class Server
                     $result = [];
                     foreach ($calls as $i => $resource) {
                         $result[$urls[$i]] = curl_multi_getcontent($calls[$i]);
+
+                        if (strlen($app->config->logsDir) > 0) {
+                            $log = 'Bear CMS asset download:' . "\n";
+                            $log .= 'Url: ' . $urls[$i] . "\n";
+                            $log .= 'Time: ' . curl_getinfo($calls[$i], CURLINFO_TOTAL_TIME) . ' / dns: ' . curl_getinfo($calls[$i], CURLINFO_NAMELOOKUP_TIME) . ', connect: ' . curl_getinfo($calls[$i], CURLINFO_CONNECT_TIME) . ', download: ' . curl_getinfo($calls[$i], CURLINFO_STARTTRANSFER_TIME) . "\n\n";
+                            $app->logger->log('info', $log);
+                        }
                         curl_multi_remove_handle($mh, $calls[$i]);
                     }
                     curl_multi_close($mh);
@@ -308,22 +315,24 @@ class Server
                 throw new \Exception('Invalid response');
             }
         }
-        $log = "Bear CMS Server Request:\n\n";
-        $log .= 'User: ' . $app->bearCMS->currentUser->getID() . "\n\n";
-        $log .= 'Time: ' . curl_getinfo($ch, CURLINFO_TOTAL_TIME) . ' / dns: ' . curl_getinfo($ch, CURLINFO_NAMELOOKUP_TIME) . ', connect: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) . ', download: ' . curl_getinfo($ch, CURLINFO_STARTTRANSFER_TIME) . "\n\n";
-        $log .= 'Request header: ' . trim(curl_getinfo($ch, CURLINFO_HEADER_OUT)) . "\n\n";
-        $log .= 'Request data: ' . "\n" . print_r($data, true) . "\n\n";
+        $log = "Bear CMS server request:\n";
+        $log .= 'User: ' . $app->bearCMS->currentUser->getID() . "\n";
+        $log .= 'Time: ' . curl_getinfo($ch, CURLINFO_TOTAL_TIME) . ' / dns: ' . curl_getinfo($ch, CURLINFO_NAMELOOKUP_TIME) . ', connect: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) . ', download: ' . curl_getinfo($ch, CURLINFO_STARTTRANSFER_TIME) . "\n";
+        $log .= 'Request: ' . trim(curl_getinfo($ch, CURLINFO_HEADER_OUT)) . "\n";
+        if (Options::$logServerRequestsData) {
+            $log .= 'Data: ' . trim(print_r($data, true)) . "\n";
+        }
         curl_close($ch);
         foreach ($cookies as $key => $value) {
             $log = str_replace($value, '*' . strlen($value) . 'chars*', $log);
         }
-        $log .= 'Response header: ' . $responseHeader . "\n\n";
+        $log .= 'Response: ' . $responseHeader . "\n";
         $newCookies = Cookies::parseServerCookies($responseHeader);
         foreach ($newCookies as $newCookie) {
             $log = str_replace($newCookie['value'], '*' . strlen($newCookie['value']) . 'chars*', $log);
         }
         //$log .= 'Response body: ' . $responseBody;
-        $log .= 'Response body: ' . '*' . strlen($responseBody) . 'chars*';
+        $log .= 'Body: ' . '*' . strlen($responseBody) . 'chars*';
         if (strlen($app->config->logsDir) > 0) {
             $app->logger->log('info', $log);
         }
@@ -372,7 +381,13 @@ class Server
             $response['body'] = $responseData['body'];
             $responseMeta = $responseData['meta'];
 
-            $app->logger->log('info', print_r($responseData, true));
+            if (Options::$logServerRequestsData) {
+                if (strlen($app->config->logsDir) > 0) {
+                    $log = "Bear CMS response data:\n";
+                    $log .= 'Data: ' . trim(print_r($responseData, true));
+                    $app->logger->log('info', $log);
+                }
+            }
 
             $resend = isset($responseMeta['resend']) && (int) $responseMeta['resend'] > 0;
             $resendRequestData = [];
