@@ -93,7 +93,7 @@ class Cookies
         if (!empty(self::$pendingUpdate)) {
             $app = App::$instance;
             $urlParts = parse_url($app->request->base);
-            $cookiePath = isset($urlParts['path']) ? $urlParts['path'] : '';
+            $cookiePath = isset($urlParts['path']) ? $urlParts['path'] : '/';
             $cookieDomain = $urlParts['host'];
             foreach (self::$pendingUpdate as $cookieData) {
                 $deleted = $cookieData['value'] === 'deleted' || $cookieData['expire'] === 0;
