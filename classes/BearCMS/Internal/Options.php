@@ -9,12 +9,15 @@
 
 namespace BearCMS\Internal;
 
+use BearFramework\App;
+
 class Options
 {
 
     static $serverUrl = null;
     static $language = 'en';
     static $features = ['all'];
+    static $cookiePrefix = null;
 
     /**
      * 
@@ -30,6 +33,9 @@ class Options
         if (!isset($data['serverUrl'])) {
             throw new \Exception('serverUrl option is not set for bearcms/bearframework-addon');
         }
+
+        $app = App::$instance;
+
         self::$serverUrl = $data['serverUrl'];
 
         if (isset($data['language'])) {
@@ -56,6 +62,8 @@ class Options
                 self::$features = $features;
             }
         }
+
+        self::$cookiePrefix = substr(md5(md5($app->request->base) . md5(self::$serverUrl)), 0, 14) . '_bearcms_';
     }
 
     static function hasFeature($name)

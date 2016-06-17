@@ -1,10 +1,12 @@
 <?php
+
 /*
  * Bear CMS addon for Bear Framework
  * https://bearcms.com/
  * Copyright (c) 2016 Amplilabs Ltd.
  * Free to use under the MIT license.
  */
+
 namespace BearCMS\Internal;
 
 use BearFramework\App;
@@ -34,7 +36,7 @@ class Cookies
             throw new \InvalidArgumentException('');
         }
         $result = [];
-        $cookiePrefix = substr(md5($app->request->base), 0, 14) . '_bearcms_';
+        $cookiePrefix = \BearCMS\Internal\Options::$cookiePrefix;
         $cookiePrefixLength = strlen($cookiePrefix);
         foreach ($_COOKIE as $key => $value) {
             if (substr($key, 0, $cookiePrefixLength) === $cookiePrefix) {
@@ -76,7 +78,7 @@ class Cookies
         if (!is_array($cookiesData)) {
             throw new \InvalidArgumentException('');
         }
-        $cookieTypePrefix = substr(md5($app->request->base), 0, 14) . '_bearcms_' . ($type === self::TYPE_SERVER ? 's_' : 'c_');
+        $cookieTypePrefix = \BearCMS\Internal\Options::$cookiePrefix . ($type === self::TYPE_SERVER ? 's_' : 'c_');
         foreach ($cookiesData as $cookieData) {
             $cookieData['name'] = $cookieTypePrefix . $cookieData['name'];
             self::$pendingUpdate[$cookieData['name']] = $cookieData;

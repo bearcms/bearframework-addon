@@ -200,6 +200,7 @@ class Server
         $clientData['siteID'] = 'todo-siteid';
         $clientData['siteSecret'] = 'todo-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash';
         $clientData['requestBase'] = $app->request->base;
+        $clientData['cookiePrefix'] = Options::$cookiePrefix;
         if ($app->bearCMS->currentUser->exists()) {
             $currentUserData = $app->data->get([
                 'key' => 'bearcms/users/user/' . md5($app->bearCMS->currentUser->getID()) . '.json',
