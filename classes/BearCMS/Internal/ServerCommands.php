@@ -382,7 +382,7 @@ class ServerCommands
                 }
             }
             try {
-                $id = $app->maintenance->getAddonID($filenameOrUrl);
+                $id = $app->maintenance->addons->getID($filenameOrUrl);
             } catch (\Exception $e) {
                 return ['error' => 'invalidValue'];
             }
@@ -397,7 +397,7 @@ class ServerCommands
             }
             try {
                 $context = $app->getContext(__FILE__);
-                $id = $app->maintenance->installAddon($context->options['addonsDir'], $filenameOrUrl);
+                $id = $app->maintenance->addons->install($context->options['addonsDir'], $filenameOrUrl);
                 return $id;
             } catch (\Exception $e) {
                 return ['error' => 'invalidValue'];
@@ -413,7 +413,7 @@ class ServerCommands
             throw new \Exception('');
         }
         $context = $app->getContext(__FILE__);
-        $app->maintenance->deleteAddon($context->options['addonsDir'], $data['id']);
+        $app->maintenance->addons->delete($context->options['addonsDir'], $data['id']);
     }
 
     static function mail($data)
