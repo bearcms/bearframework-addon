@@ -82,7 +82,7 @@ $app->routes->add('/robots.txt', ['BearCMS\Internal\Controller', 'handleRobots']
 if (Options::hasFeature('addons')) {
     $addonsDir = $context->options['addonsDir'];
     $addons = InternalData\Addons::getList();
-    $addonsDir = rtrim($addonsDir, ' /') . '/';
+    $addonsDir = rtrim($addonsDir, ' \/') . DIRECTORY_SEPARATOR;
     foreach ($addons as $addonData) {
         $addonID = $addonData['id'];
         $addonDir = $addonsDir . $addonID;
