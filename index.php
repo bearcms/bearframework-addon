@@ -307,7 +307,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if ($externalLinksAreEnabled) {
         $domDocument = new HTML5DOMDocument();
         $domDocument->loadHTML($response->content);
-        $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/externalLinks.js')) . '"></script><script>bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');</script></body></html>');
+        $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/externalLinks.min.js')) . '"></script><script>bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');</script></body></html>');
         $response->content = $domDocument->saveHTML();
     }
 
@@ -364,7 +364,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
                 $domDocument = new HTML5DOMDocument();
                 $domDocument->loadHTML($content);
                 $domDocument->insertHTML($elementsEditorData['result']['content']);
-                $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.js')) . '"></script></body></html>');
+                $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js')) . '"></script></body></html>');
                 $content = $domDocument->saveHTML();
             } else {
                 $response = new App\Response\TemporaryUnavailable();

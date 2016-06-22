@@ -1,3 +1,11 @@
+/*
+ * Bear CMS addon for Bear Framework
+ * https://bearcms.com/
+ * Copyright (c) 2016 Amplilabs Ltd.
+ * Free to use under the MIT license.
+ */
+
+
 if (typeof bearCMS === 'undefined') {
     bearCMS = {};
 }
@@ -35,7 +43,7 @@ bearCMS.externalLinks = (function () {
     var initialize = function (_enabled, active) {
         enabled = _enabled;
         update();
-        if(active){
+        if (active) {
             window.setInterval(update, 1000);
         }
     };
