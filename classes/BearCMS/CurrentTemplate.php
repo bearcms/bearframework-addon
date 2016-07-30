@@ -29,27 +29,46 @@ class CurrentTemplate
 
     public function getOptions()
     {
+        return $this->walkOptions(1);
+    }
+
+    /**
+     * 
+     * @param int $resultType 1 - values, 2 - definition
+     * @return []
+     */
+    private function walkOptions($resultType)
+    {
+        $cacheKey = 'options' . $resultType; //todo optimize
         $app = App::$instance;
-        if (!isset(self::$cache['options'])) {
+        if (!isset(self::$cache[$cacheKey])) {
             $currentTemplateID = $this->getID();
-            $result = $app->bearCMS->data->templates->getOptions($currentTemplateID);
+            $result = [];
+            $values = $app->bearCMS->data->templates->getOptions($currentTemplateID);
             if ($app->bearCMS->currentUser->exists()) {
                 $userOptions = $app->bearCMS->data->templates->getTempOptions($currentTemplateID, $app->bearCMS->currentUser->getID());
                 if (!empty($userOptions)) {
-                    $result = array_merge($result, $userOptions);
+                    $values = array_merge($values, $userOptions);
                 }
             }
-            // todo optimize
+// todo optimize
             $templates = \BearCMS\Internal\Data\Templates::getTemplatesList();
             foreach ($templates as $template) {
                 if ($template['id'] === $currentTemplateID) {
                     if (isset($template['manifestFilename'])) {
                         $manifestData = \BearCMS\Internal\Data\Templates::getManifestData($template['manifestFilename'], $template['dir']);
                         if (isset($manifestData['options'])) {
-                            $walkOptions = function($options) use (&$result, &$walkOptions) {
+                            $walkOptions = function($options) use (&$result, $values, &$walkOptions, $resultType) {
                                 foreach ($options as $option) {
-                                    if (isset($option['id']) && !isset($result[$option['id']])) {
-                                        $result[$option['id']] = isset($option['defaultValue']) ? $option['defaultValue'] : null;
+                                    if (isset($option['id'])) {
+                                        if (isset($values[$option['id']])) {
+                                            $result[$option['id']] = $values[$option['id']];
+                                        } else {
+                                            $result[$option['id']] = isset($option['defaultValue']) ? (is_array($option['defaultValue']) ? json_encode($option['defaultValue']) : $option['defaultValue']) : null;
+                                        }
+                                        if ($resultType === 2) {
+                                            $result[$option['id']] = [$result[$option['id']], $option];
+                                        }
                                     }
                                     if (isset($option['options'])) {
                                         $walkOptions($option['options']);
@@ -62,9 +81,89 @@ class CurrentTemplate
                     break;
                 }
             }
-            self::$cache['options'] = $result;
+            self::$cache[$cacheKey] = new \BearCMS\CurrentTemplateOptions($result);
         }
-        return self::$cache['options'];
+        return self::$cache[$cacheKey];
+    }
+
+    public function getOptionsCss()
+    {
+        $app = App::$instance;
+        $result = [];
+        $options = $this->walkOptions(2);
+        $applyImageUrls = function($text) use ($app) {
+            $matches = [];
+            preg_match_all('/url\((.*?)\)/', $text, $matches);
+            if (!empty($matches[1])) {
+                foreach ($matches[1] as $key) {
+                    $filename = $app->bearCMS->data->getRealFilename($key);
+                    $text = str_replace($key, is_file($filename) ? $app->assets->getUrl($filename) : "", $text);
+                }
+            }
+            return $text;
+        };
+
+        foreach ($options as $optionData) {
+            $optionValue = $optionData[0];
+            $optionDefinition = $optionData[1];
+            if (isset($optionDefinition['cssOutput'])) {
+                $optionType = $optionDefinition['type'];
+                foreach ($optionDefinition['cssOutput'] as $outputDefinition) {
+                    if (is_array($outputDefinition)) {
+                        if (isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
+                            $selector = $outputDefinition[1];
+                            $selectorVariants = ['', '', ''];
+                            if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssPadding' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssBackground') {
+                                $temp = strlen($optionValue) > 0 ? json_decode($optionValue, true) : [];
+                                foreach ($temp as $key => $value) {
+                                    if (substr($key, -6) === ':hover') {
+                                        $selectorVariants[1] .= substr($key, 0, -6) . ':' . $value . ';';
+                                    } elseif (substr($key, -7) === ':active') {
+                                        $selectorVariants[2] .= substr($key, 0, -7) . ':' . $value . ';';
+                                    } else {
+                                        $selectorVariants[0] .= $key . ':' . $value . ';';
+                                    }
+                                }
+                            }
+                            if ($optionType === 'css' || $optionType === 'cssBackground') {
+                                $selectorVariants[0] = $applyImageUrls($selectorVariants[0]);
+                                $selectorVariants[1] = $applyImageUrls($selectorVariants[1]);
+                                $selectorVariants[2] = $applyImageUrls($selectorVariants[2]);
+                            }
+                            if (strlen($selectorVariants[0]) > 0) {
+                                if (!isset($result[$selector])) {
+                                    $result[$selector] = '';
+                                }
+                                $result[$selector] .= $selectorVariants[0];
+                            }
+                            if (strlen($selectorVariants[1]) > 0) {
+                                if (!isset($result[$selector . ':hover'])) {
+                                    $result[$selector . ':hover'] = '';
+                                }
+                                $result[$selector . ':hover'] .= $selectorVariants[1];
+                            }
+                            if (strlen($selectorVariants[2]) > 0) {
+                                if (!isset($result[$selector . ':active'])) {
+                                    $result[$selector . ':active'] = '';
+                                }
+                                $result[$selector . ':active'] .= $selectorVariants[2];
+                            }
+                        } elseif (isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'rule') {
+                            $selector = $outputDefinition[1];
+                            if (!isset($result[$selector])) {
+                                $result[$selector] = '';
+                            }
+                            $result[$selector] .= $outputDefinition[2];
+                        }
+                    }
+                }
+            }
+        }
+        $temp = '';
+        foreach ($result as $key => $value) {
+            $temp .= $key . '{' . $value . '}';
+        }
+        return $temp;
     }
 
     public function getFontFamily($fontName)

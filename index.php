@@ -40,6 +40,7 @@ $context->classes->add('BearCMS\Internal\ServerCommands', 'classes/BearCMS/Inter
 
 $context->classes->add('BearCMS\CurrentUser', 'classes/BearCMS/CurrentUser.php');
 $context->classes->add('BearCMS\CurrentTemplate', 'classes/BearCMS/CurrentTemplate.php');
+$context->classes->add('BearCMS\CurrentTemplateOptions', 'classes/BearCMS/CurrentTemplateOptions.php');
 
 $app->components->addAlias('bearcms-elements', 'file:' . $context->dir . '/components/bearcms-elements.php');
 $app->components->addAlias('bearcms-heading-element', 'file:' . $context->dir . '/components/bearcms-heading-element.php');
@@ -372,9 +373,12 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         }
 
         $content = Server::updateAssetsUrls($content, false);
-        $content = str_replace('{body}', '<component src="data:base64,' . base64_encode($response->content) . '"/>', $content);
-        $content = $app->components->process($content);
-        $response->content = $content;
+        if (strpos($content, '{body}') !== false) {
+            $content = str_replace('{body}', '<component src="data:base64,' . base64_encode($response->content) . '"/>', $content);
+        } elseif (strpos($content, '{jsonEncodedBody}') !== false) {
+            $content = str_replace('{jsonEncodedBody}', json_encode($app->components->process($response->content)), $content);
+        }
+        $response->content = $app->components->process($content);
     } else {
         $response = new App\Response\TemporaryUnavailable();
     }
