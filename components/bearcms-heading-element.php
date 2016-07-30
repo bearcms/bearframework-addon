@@ -7,14 +7,14 @@
  */
 
 $text = (string) $component->text;
-$size = 'big';
+$size = 'large';
 if (strlen($component->size) > 0) {
-    if (array_search($component->size, ['big', 'medium', 'small']) !== false) {
+    if (array_search($component->size, ['large', 'medium', 'small']) !== false) {
         $size = $component->size;
     }
 }
 
-if ($size === 'big') {
+if ($size === 'large') {
     $tagName = 'h1';
     $className = 'bearcms-heading-element-large';
 } elseif ($size === 'medium') {
