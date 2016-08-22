@@ -127,7 +127,7 @@ class ElementsHelper
 //        $result['canMove'] = $component->canMove === 'true';
 //        $result['canDelete'] = $component->canDelete === 'true';
         if ($component->getAttribute('bearcms-internal-attribute-not-found-in-data') === 'true') {
-            $result['rawData'] = html_entity_decode($component->getAttribute('bearcms-internal-attribute-raw-data'));
+            $result['rawData'] = $component->getAttribute('bearcms-internal-attribute-raw-data');
         }
         return $result;
     }
@@ -160,7 +160,7 @@ class ElementsHelper
         self::updateComponentEditableAttribute($component);
         self::updateComponentContextAttributes($component);
 
-        $rawData = html_entity_decode($component->getAttribute('bearcms-internal-attribute-raw-data'));
+        $rawData = $component->getAttribute('bearcms-internal-attribute-raw-data');
         $elementData = null;
         if (strlen($rawData) > 0) {
             $elementData = self::decodeElementRawData($rawData);
@@ -176,7 +176,7 @@ class ElementsHelper
         } else {
             if (strlen($component->id) > 0 && $component->editable === 'true') {
                 $rawData = self::getRawDataFromComponent($component);
-                $component->setAttribute('bearcms-internal-attribute-raw-data', htmlentities(json_encode($rawData)));
+                $component->setAttribute('bearcms-internal-attribute-raw-data', json_encode($rawData));
                 $component->setAttribute('bearcms-internal-attribute-not-found-in-data', 'true');
             }
         }
