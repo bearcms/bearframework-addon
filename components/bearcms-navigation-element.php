@@ -50,12 +50,13 @@ if (strlen($component->menuType) > 0) {
     }
 }
 
-//$showHomeButton = false;
-//if (strlen($component->showHomeButton) > 0) {
-//    if ($component->showHomeButton === 'true') {
-//        $showHomeButton = true;
-//    }
-//}
+$showHomeButton = false;
+if (strlen($component->showHomeButton) > 0) {
+    if ($component->showHomeButton === 'true') {
+        $showHomeButton = true;
+        $homeButtomText = strlen($component->homeButtonText) > 0 ? $component->homeButtonText : 'Home';
+    }
+}
 
 $pages = [];
 if ($type === 'top') {
@@ -119,9 +120,9 @@ if (strlen($component->class) > 0) {
 }
 $attributes .= ' moreItemHtml="' . htmlentities('<li class="bearcms-navigation-element-item bearcms-navigation-element-item-more"><a></a><ul class="bearcms-navigation-element-item-children"></ul></li>') . '"';
 
-//if ($showHomeButton) {
-//    array_unshift($pages, ['id' => '_home', 'path' => '/', 'name' => 'Home', 'parentID' => '', 'status' => 'published']);
-//}
+if ($showHomeButton) {
+    array_unshift($pages, ['id' => '_home', 'path' => '/', 'name' => $homeButtomText, 'parentID' => '', 'status' => 'published']);
+}
 if (empty($pages)) {
     $content = '';
 } else {
