@@ -56,6 +56,7 @@ if ($renderElementsContainer) {
 
     $styles .= '.' . $className . '{width:' . $component->width . ';word-wrap:break-word;text-align:left;}';
     $styles .= '.' . $className . '>div{margin-bottom:' . $component->spacing . ';display:block;clear:both;zoom:1;}';
+    $styles .= '.' . $className . '>div:last-child{margin-bottom:0;}';
     $styles .= '.' . $className . '>div:empty{display:none;}';
 
     $spacingSelector = 's' . $component->spacing;
