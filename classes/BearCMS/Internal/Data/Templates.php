@@ -57,9 +57,9 @@ class Templates
         $context = $app->getContext(__DIR__);
         $addonDir = rtrim($context->dir, '/') . '/';
         array_unshift($result, [
-            'id' => 'bearcms/default',
+            'id' => 'bearcms/default1',
             'dir' => $addonDir,
-            'manifestFilename' => $addonDir . 'defaultTemplate.manifest.json'
+            'manifestFilename' => $addonDir . 'default-template-1.manifest.json'
         ]);
         array_unshift($result, [
             'id' => 'none'

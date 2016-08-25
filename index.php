@@ -131,9 +131,9 @@ if (Options::hasFeature('blog')) {
         if ($blogPostID !== false) {
             $blogPost = $app->bearCMS->data->blog->getPost($blogPostID);
 
-            $content = '<h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1>';
-            $content .= '<div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? date('F j, Y', $blogPost['publishedTime']) : 'draft') . '</div>';
-            $content .= '<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/>';
+            $content = '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1></div>';
+            $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? date('F j, Y', $blogPost['publishedTime']) : 'draft') . '</div></div>';
+            $content .= '<div class="bearcms-blogpost-page-content"><component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/></div>';
 
             $response = new App\Response\HTML($content);
             $response->enableBearCMS = true;
@@ -206,19 +206,19 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         $response->applyBearCMSTemplate = false;
     }
 
-    if ($response->applyBearCMSTemplate && $app->bearCMS->currentTemplate->getID() === 'bearcms/default') {
+    if ($response->applyBearCMSTemplate && $app->bearCMS->currentTemplate->getID() === 'bearcms/default1') {
         $template = null;
         if ($response instanceof App\Response\HTML) {
-            $template = $app->components->process('<component src="file:' . $context->dir . '/components/defaultTemplate.php"/>');
+            $template = $app->components->process('<component src="file:' . $context->dir . '/components/default-template-1.php"/>');
         } elseif ($response instanceof App\Response\NotFound) {
-            $template = $app->components->process('<component src="file:' . $context->dir . '/components/defaultTemplate.php" mode="notFound"/>');
+            $template = $app->components->process('<component src="file:' . $context->dir . '/components/default-template-1.php" mode="notFound"/>');
         } elseif ($response instanceof App\Response\TemporaryUnavailable) {
-            $template = $app->components->process('<component src="file:' . $context->dir . '/components/defaultTemplate.php" mode="temporaryUnavailable"/>');
+            $template = $app->components->process('<component src="file:' . $context->dir . '/components/default-template-1.php" mode="temporaryUnavailable"/>');
         }
         if ($template !== null) {
             $domDocument = new HTML5DOMDocument();
             $domDocument->loadHTML(str_replace('{body}', $domDocument->createInsertTarget('templateBody'), $template));
-            $domDocument->insertHTML($response->content, 'templateBody');
+            $domDocument->insertHTML($app->components->process($response->content), 'templateBody');
             $response->content = $domDocument->saveHTML();
         }
     }
