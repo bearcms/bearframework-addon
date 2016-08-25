@@ -86,8 +86,9 @@ class CurrentTemplate
         return self::$cache[$cacheKey];
     }
 
-    public function getOptionsCss()
+    public function getOptionsHtml()
     {
+        $linkTags = [];
         $app = App::$instance;
         $result = [];
         $options = $this->walkOptions(2);
@@ -102,118 +103,112 @@ class CurrentTemplate
             }
             return $text;
         };
+        $applyFontNames = function($text) use (&$linkTags) {
+            $webSafeFonts = [
+                'Arial' => 'Arial,Helvetica,sans-serif',
+                'Arial Black' => '"Arial Black",Gadget,sans-serif',
+                'Comic Sans' => '"Comic Sans MS",cursive,sans-serif',
+                'Courier' => '"Courier New",Courier,monospace',
+                'Georgia' => 'Georgia,serif',
+                'Impact' => 'Impact,Charcoal,sans-serif',
+                'Lucida' => '"Lucida Sans Unicode","Lucida Grande",sans-serif',
+                'Lucida Console' => '"Lucida Console",Monaco,monospace',
+                'Palatino' => '"Palatino Linotype","Book Antiqua",Palatino,serif',
+                'Tahoma' => 'Tahoma,Geneva,sans-serif',
+                'Times New Roman' => '"Times New Roman",Times,serif',
+                'Trebuchet' => '"Trebuchet MS",Helvetica,sans-serif',
+                'Verdana' => 'Verdana,Geneva,sans-serif'
+            ];
 
+            $matches = [];
+            preg_match_all('/font\-family\:(.*?);/', $text, $matches);
+            foreach ($matches[0] as $i => $match) {
+                $fontName = $matches[1][$i];
+                if (isset($webSafeFonts[$fontName])) {
+                    $text = str_replace($match, 'font-family:' . $webSafeFonts[$fontName] . ';', $text);
+                } elseif (strpos($fontName, 'googlefonts:') === 0) {
+                    $googleFontName = substr($fontName, strlen('googlefonts:'));
+                    $text = str_replace($match, 'font-family:\'' . $googleFontName . '\';', $text);
+                    if (!isset($linkTags[$googleFontName])) {
+                        $linkTags[$googleFontName] = '<link href="//fonts.googleapis.com/css?family=' . urlencode($googleFontName) . '" rel="stylesheet" type="text/css" />';
+                    }
+                }
+            }
+            return $text;
+        };
+
+        $cssCode = '';
         foreach ($options as $optionData) {
             $optionValue = $optionData[0];
             $optionDefinition = $optionData[1];
-            if (isset($optionDefinition['cssOutput'])) {
-                $optionType = $optionDefinition['type'];
-                foreach ($optionDefinition['cssOutput'] as $outputDefinition) {
-                    if (is_array($outputDefinition)) {
-                        if (isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
-                            $selector = $outputDefinition[1];
-                            $selectorVariants = ['', '', ''];
-                            if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssPadding' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssBackground') {
-                                $temp = strlen($optionValue) > 0 ? json_decode($optionValue, true) : [];
-                                foreach ($temp as $key => $value) {
-                                    if (substr($key, -6) === ':hover') {
-                                        $selectorVariants[1] .= substr($key, 0, -6) . ':' . $value . ';';
-                                    } elseif (substr($key, -7) === ':active') {
-                                        $selectorVariants[2] .= substr($key, 0, -7) . ':' . $value . ';';
-                                    } else {
-                                        $selectorVariants[0] .= $key . ':' . $value . ';';
+            $optionType = $optionDefinition['type'];
+            if ($optionType === 'cssCode') {
+                $cssCode .= $optionValue;
+            } else {
+                if (isset($optionDefinition['cssOutput'])) {
+                    foreach ($optionDefinition['cssOutput'] as $outputDefinition) {
+                        if (is_array($outputDefinition)) {
+                            if (isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
+                                $selector = $outputDefinition[1];
+                                $selectorVariants = ['', '', ''];
+                                if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
+                                    $temp = strlen($optionValue) > 0 ? json_decode($optionValue, true) : [];
+                                    foreach ($temp as $key => $value) {
+                                        if (substr($key, -6) === ':hover') {
+                                            $selectorVariants[1] .= substr($key, 0, -6) . ':' . $value . ';';
+                                        } elseif (substr($key, -7) === ':active') {
+                                            $selectorVariants[2] .= substr($key, 0, -7) . ':' . $value . ';';
+                                        } else {
+                                            $selectorVariants[0] .= $key . ':' . $value . ';';
+                                        }
                                     }
                                 }
-                            }
-                            if ($optionType === 'css' || $optionType === 'cssBackground') {
-                                $selectorVariants[0] = $applyImageUrls($selectorVariants[0]);
-                                $selectorVariants[1] = $applyImageUrls($selectorVariants[1]);
-                                $selectorVariants[2] = $applyImageUrls($selectorVariants[2]);
-                            }
-                            if (strlen($selectorVariants[0]) > 0) {
+                                if ($optionType === 'css' || $optionType === 'cssBackground') {
+                                    $selectorVariants[0] = $applyImageUrls($selectorVariants[0]);
+                                    $selectorVariants[1] = $applyImageUrls($selectorVariants[1]);
+                                    $selectorVariants[2] = $applyImageUrls($selectorVariants[2]);
+                                }
+                                if ($optionType === 'css' || $optionType === 'cssText') {
+                                    $selectorVariants[0] = $applyFontNames($selectorVariants[0]);
+                                    $selectorVariants[1] = $applyFontNames($selectorVariants[1]);
+                                    $selectorVariants[2] = $applyFontNames($selectorVariants[2]);
+                                }
+                                if (strlen($selectorVariants[0]) > 0) {
+                                    if (!isset($result[$selector])) {
+                                        $result[$selector] = '';
+                                    }
+                                    $result[$selector] .= $selectorVariants[0];
+                                }
+                                if (strlen($selectorVariants[1]) > 0) {
+                                    if (!isset($result[$selector . ':hover'])) {
+                                        $result[$selector . ':hover'] = '';
+                                    }
+                                    $result[$selector . ':hover'] .= $selectorVariants[1];
+                                }
+                                if (strlen($selectorVariants[2]) > 0) {
+                                    if (!isset($result[$selector . ':active'])) {
+                                        $result[$selector . ':active'] = '';
+                                    }
+                                    $result[$selector . ':active'] .= $selectorVariants[2];
+                                }
+                            } elseif (isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'rule') {
+                                $selector = $outputDefinition[1];
                                 if (!isset($result[$selector])) {
                                     $result[$selector] = '';
                                 }
-                                $result[$selector] .= $selectorVariants[0];
+                                $result[$selector] .= $outputDefinition[2];
                             }
-                            if (strlen($selectorVariants[1]) > 0) {
-                                if (!isset($result[$selector . ':hover'])) {
-                                    $result[$selector . ':hover'] = '';
-                                }
-                                $result[$selector . ':hover'] .= $selectorVariants[1];
-                            }
-                            if (strlen($selectorVariants[2]) > 0) {
-                                if (!isset($result[$selector . ':active'])) {
-                                    $result[$selector . ':active'] = '';
-                                }
-                                $result[$selector . ':active'] .= $selectorVariants[2];
-                            }
-                        } elseif (isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'rule') {
-                            $selector = $outputDefinition[1];
-                            if (!isset($result[$selector])) {
-                                $result[$selector] = '';
-                            }
-                            $result[$selector] .= $outputDefinition[2];
                         }
                     }
                 }
             }
         }
-        $temp = '';
+        $style = '';
         foreach ($result as $key => $value) {
-            $temp .= $key . '{' . $value . '}';
+            $style .= $key . '{' . $value . '}';
         }
-        return $temp;
-    }
-
-    public function getFontFamily($fontName)
-    {
-        if (!is_string($fontName)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (substr($fontName, 0, 12) === 'googlefonts:') {
-            $fontName = substr($fontName, 12);
-            return strpos($fontName, ' ') !== false ? '"' . $fontName . '"' : $fontName;
-        } else {
-            $data['Arial,Helvetica,sans-serif'] = 'Arial';
-            $data['"Arial Black",Gadget,sans-serif'] = 'Arial Black';
-            $data['"Comic Sans MS",cursive,sans-serif'] = 'Comic Sans';
-            $data['"Courier New",Courier,monospace'] = 'Courier';
-            $data['Georgia,serif'] = 'Georgia';
-            $data['Impact,Charcoal,sans-serif'] = 'Impact';
-            $data['"Lucida Sans Unicode","Lucida Grande",sans-serif'] = 'Lucida';
-            $data['"Lucida Console",Monaco,monospace'] = 'Lucida Console';
-            $data['"Palatino Linotype","Book Antiqua",Palatino,serif'] = 'Palatino';
-            $data['Tahoma,Geneva,sans-serif'] = 'Tahoma';
-            $data['"Times New Roman",Times,serif'] = 'Times New Roman';
-            $data['"Trebuchet MS",Helvetica,sans-serif'] = 'Trebuchet';
-            $data['Verdana,Geneva,sans-serif'] = 'Verdana';
-            $key = array_search($fontName, $data);
-            if ($key !== false) {
-                return $key;
-            }
-            return 'unknown';
-        }
-    }
-
-    public function getFontsHTML($fontNames)
-    {
-        if (!is_array($fontNames) && !is_string($fontNames)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_array($fontNames)) {
-            $fontNames = [$fontNames];
-        }
-        $fontNames = array_unique($fontNames);
-        $result = '<html><head>';
-        foreach ($fontNames as $fontName) {
-            if (substr($fontName, 0, 12) === 'googlefonts:') {
-                $fontName = substr($fontName, 12);
-                $result .= '<link href="//fonts.googleapis.com/css?family=' . urlencode($fontName) . '" rel="stylesheet" type="text/css" />';
-            }
-        }
-        $result .= '</head></html>';
-        return $result;
+        $style .= $cssCode;
+        return '<html><head>' . implode('', $linkTags) . '<style>' . $style . '</style></head></html>';
     }
 
 }
