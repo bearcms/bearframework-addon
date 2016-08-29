@@ -6,21 +6,24 @@
  * Free to use under the MIT license.
  */
 
-//$moreElementHtml = '<li class="bearcms-navigation-element-item bearcms-navigation-element-item-more"><a>&nbsp;</a><ul class="bearcms-navigation-element-item-children"></ul><li>';
 
-$buildTreeFunction = function($pages, $parentID) use ($app, &$buildTreeFunction) {
+$selectedPath = '';
+if (strlen($component->selectedPath) > 0) {
+    $selectedPath = $component->selectedPath;
+}
+
+$buildTree = function($pages, $parentID) use ($app, $selectedPath, &$buildTree) {
     $items = [];
-    $currentPath = (string) $app->request->path;
     foreach ($pages as $page) {
         if ($page['parentID'] === $parentID) {
             if ($page['status'] === 'published') {
                 $classNames = 'bearcms-navigation-element-item';
-                if ($page['path'] === $currentPath) {
+                if ($page['path'] === $selectedPath) {
                     $classNames .= ' bearcms-navigation-element-item-selected';
-                } elseif ($page['id'] !== '_home' && strpos($currentPath, $page['path']) === 0) {
+                } elseif ($page['id'] !== '_home' && strpos($selectedPath, $page['path']) === 0) {
                     $classNames .= ' bearcms-navigation-element-item-in-path';
                 }
-                $items[] = '<li class="' . $classNames . '"><a href="' . $app->request->base . $page['path'] . '">' . htmlspecialchars($page['name']) . '</a>' . $buildTreeFunction($pages, $page['id']) . '</li>';
+                $items[] = '<li class="' . $classNames . '"><a href="' . $app->request->base . $page['path'] . '">' . htmlspecialchars($page['name']) . '</a>' . $buildTree($pages, $page['id']) . '</li>';
             }
         }
     }
@@ -126,7 +129,35 @@ if ($showHomeButton) {
 if (empty($pages)) {
     $content = '';
 } else {
-    $content = '<component src="navigation-menu"' . $attributes . '>' . $buildTreeFunction($pages, (string) $component->pageID) . '</component>';
+    $itemsHtml = (string) $component->innerHTML;
+    if (isset($itemsHtml{0})) {
+        $domDocument = new IvoPetkov\HTML5DOMDocument();
+        $domDocument->loadHTML($itemsHtml);
+        $ulElements = $domDocument->querySelectorAll('ul');
+        foreach ($ulElements as $index => $ulElement) {
+            $ulElement->setAttribute('class', trim($ulElement->getAttribute('class') . ' ' . ($index === 0 ? 'bearcms-navigation-element' : 'bearcms-navigation-element-item-children')));
+        }
+        $liElements = $domDocument->querySelectorAll('li');
+        foreach ($liElements as $index => $liElement) {
+            $liClasssName = 'bearcms-navigation-element-item';
+            if ($liElement->firstChild) {
+                $liPath = str_replace($app->request->base, '', $liElement->firstChild->getAttribute('href'));
+                if ($liPath === $selectedPath) {
+                    $liClasssName .= ' bearcms-navigation-element-item-selected';
+                } elseif ($liPath !== '/' && strpos($selectedPath, $liPath) === 0) {
+                    $liClasssName .= ' bearcms-navigation-element-item-in-path';
+                }
+            }
+            $liElement->setAttribute('class', trim($liElement->getAttribute('class') . ' ' . $liClasssName));
+        }
+        $rootULElement = $domDocument->querySelector('ul');
+        if ($rootULElement) {
+            $itemsHtml = $rootULElement->outerHTML;
+        }
+    } else {
+        $itemsHtml = $buildTree($pages, (string) $component->pageID);
+    }
+    $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';
 }
 
 $content = \BearCMS\Internal\ElementsHelper::getElementComponentContent($component, 'navigation', $content);
