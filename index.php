@@ -209,13 +209,19 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if ($response->applyBearCMSTemplate && $app->bearCMS->currentTemplate->getID() === 'bearcms/default1') {
         $template = null;
         if ($response instanceof App\Response\HTML) {
-            $template = $app->components->process('<component src="file:' . $context->dir . '/components/default-template-1.php"/>');
+            $template = '<component src="file:' . $context->dir . '/components/default-template-1.php"/>';
         } elseif ($response instanceof App\Response\NotFound) {
-            $template = $app->components->process('<component src="file:' . $context->dir . '/components/default-template-1.php" mode="notFound"/>');
+            $template = '<component src="file:' . $context->dir . '/components/default-template-1.php" mode="notFound"/>';
         } elseif ($response instanceof App\Response\TemporaryUnavailable) {
-            $template = $app->components->process('<component src="file:' . $context->dir . '/components/default-template-1.php" mode="temporaryUnavailable"/>');
+            $template = '<component src="file:' . $context->dir . '/components/default-template-1.php" mode="temporaryUnavailable"/>';
         }
         if ($template !== null) {
+            $template = $app->components->process($template, ['recursive' => false]);
+            $object = new ArrayObject();
+            $object->content = $template;
+            $app->hooks->execute('bearCMSTemplateCreated', $object);
+            $template = $object->content;
+            $template = $app->components->process($template);
             $domDocument = new HTML5DOMDocument();
             $domDocument->loadHTML(str_replace('{body}', $domDocument->createInsertTarget('templateBody'), $template));
             $domDocument->insertHTML($app->components->process($response->content), 'templateBody');
