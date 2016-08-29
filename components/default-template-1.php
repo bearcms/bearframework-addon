@@ -189,6 +189,6 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
             echo '</footer>';
             echo '</div>';
         }
-        ?></body>
-    <component src="data:base64,<?= base64_encode($app->bearCMS->currentTemplate->getOptionsHtml()); ?>" />
+        ?><component src="data:base64,<?= base64_encode($app->bearCMS->currentTemplate->getOptionsHtml()); ?>" />
+</body>
 </html>
