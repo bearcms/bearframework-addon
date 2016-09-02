@@ -209,22 +209,36 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if ($response->applyBearCMSTemplate && $app->bearCMS->currentTemplate->getID() === 'bearcms/default1') {
         $template = null;
         if ($response instanceof App\Response\HTML) {
-            $template = '<component src="file:' . $context->dir . '/components/default-template-1.php"/>';
+            $template = '<component src="file:' . $context->dir . '/components/bearcms-default1-template.php"/>';
         } elseif ($response instanceof App\Response\NotFound) {
-            $template = '<component src="file:' . $context->dir . '/components/default-template-1.php" mode="notFound"/>';
+            $template = '<component src="file:' . $context->dir . '/components/bearcms-default1-template.php" mode="notFound"/>';
         } elseif ($response instanceof App\Response\TemporaryUnavailable) {
-            $template = '<component src="file:' . $context->dir . '/components/default-template-1.php" mode="temporaryUnavailable"/>';
+            $template = '<component src="file:' . $context->dir . '/components/bearcms-default1-template.php" mode="temporaryUnavailable"/>';
         }
         if ($template !== null) {
             $template = $app->components->process($template, ['recursive' => false]);
             $object = new ArrayObject();
             $object->content = $template;
-            $app->hooks->execute('bearCMSTemplateCreated', $object);
+            $app->hooks->execute('bearCMSDefaultTemplate1Created', $object);
             $template = $object->content;
             $template = $app->components->process($template);
+            $object = new ArrayObject();
+            $object->content = $template;
+            $app->hooks->execute('bearCMSDefaultTemplate1Ready', $object);
+
+            $content = $response->content;
+            $object = new ArrayObject();
+            $object->content = $content;
+            $app->hooks->execute('bearCMSDefaultTemplate1ContentCreated', $object);
+            $content = $object->content;
+            $content = $app->components->process($content);
+            $object = new ArrayObject();
+            $object->content = $content;
+            $app->hooks->execute('bearCMSDefaultTemplate1ContentReady', $object);
+
             $domDocument = new HTML5DOMDocument();
             $domDocument->loadHTML(str_replace('{body}', $domDocument->createInsertTarget('templateBody'), $template));
-            $domDocument->insertHTML($app->components->process($response->content), 'templateBody');
+            $domDocument->insertHTML($content, 'templateBody');
             $response->content = $domDocument->saveHTML();
         }
     }
@@ -303,13 +317,13 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     $componentContent .= '<link rel="alternate" type="application/rss+xml" title="' . (isset($settings['title']) ? trim($settings['title']) : '') . '" href="' . $app->request->base . '/rss.xml" />';
     $componentContent .= '</head><body></body></html>';
 
-
     $domDocument = new HTML5DOMDocument();
     $domDocument->loadHTML($response->content);
-    $domDocument->insertHTML('<component src="data:base64,' . base64_encode($componentContent) . '"/>');
+    $domDocument->insertHTML($componentContent);
     $response->content = $app->components->process($domDocument->saveHTML());
 
     $currentUserExists = Options::hasFeature('users') ? $app->bearCMS->currentUser->exists() : false;
+
     $externalLinksAreEnabled = !empty($settings['externalLinks']);
     if ($externalLinksAreEnabled) {
         $domDocument = new HTML5DOMDocument();
