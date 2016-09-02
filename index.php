@@ -194,7 +194,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         $response->enableBearCMS = true;
         $response->applyBearCMSTemplate = true;
         $response->setContentType('text/html');
-    } elseif ($app->request->path[0] === null) {
+    } elseif ($app->request->path[0] === null && $response instanceof App\Response\HTML) {
         $response->enableBearCMS = true;
         $response->applyBearCMSTemplate = true;
     }
@@ -249,6 +249,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if (!(isset($response->enableBearCMS) && $response->enableBearCMS)) {
         return;
     }
+
 
     $componentContent = '<html><head>';
 
