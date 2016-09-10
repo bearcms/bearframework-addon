@@ -35,6 +35,90 @@ $app->addons->add('bearcms/bearframework-addon', [
 ]);
 ```
 
+## Documentation
+
+You can configure the addon when added to your application. Here is a list of all [configuration options](http://).
+
+### Direct data access
+
+[$app->bearCMS->data->addons](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the CMS managed addons.
+
+[$app->bearCMS->data->blog](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the blog posts created by the CMS.
+
+[$app->bearCMS->data->pages](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the pages created by the CMS.
+
+[$app->bearCMS->data->settings](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the site settings available in the CMS.
+
+[$app->bearCMS->data->templates](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the templates customized by the administrators.
+
+[$app->bearCMS->data->users](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the administators.
+
+### Components
+
+[<component src="bearcms-elements" />](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an elements block.
+
+[<component src="bearcms-blog-posts-element" />](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a block that renders a list of blog posts.
+
+[<component src="bearcms-heading-element" />](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a heading.
+
+[<component src="bearcms-html-element" />](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Renders HTML code.
+
+[<component src="bearcms-image-element" />](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an image.
+
+[<component src="bearcms-image-gallery-element" />](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an image gallery.
+
+[<component src="bearcms-link-element" />](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a link.
+
+[<component src="bearcms-navigation-element" />](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a navigation.
+
+[<component src="bearcms-text-element" />](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a text block.
+
+[<component src="bearcms-vide-element" />](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a video block.
+
+### Current template
+
+[$app->bearCMS->currentTemplate](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provides information about the current template and it's customizations.
+
+### Current user
+
+[$app->bearCMS->currentUser](https://)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provides information about the current user and it's permissions.
+
 ## License
 Bear CMS addon for Bear Framework is open-sourced software. It's free to use under the MIT license. See the [license file](https://github.com/bearcms/bearframework-addon/blob/master/LICENSE) for more information.
 
