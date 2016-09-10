@@ -123,6 +123,11 @@ if (strlen($component->class) > 0) {
 }
 $attributes .= ' moreItemHtml="' . htmlentities('<li class="bearcms-navigation-element-item bearcms-navigation-element-item-more"><a></a><ul class="bearcms-navigation-element-item-children"></ul></li>') . '"';
 
+$dataResponsiveAttributes = $component->getAttribute('data-responsive-attributes');
+if (strlen($dataResponsiveAttributes) > 0) {
+    $attributes .= ' data-responsive-attributes="' . htmlentities(str_replace('=>menuType=', '=>type=', $dataResponsiveAttributes)) . '"';
+}
+
 if ($showHomeButton) {
     array_unshift($pages, ['id' => '_home', 'path' => '/', 'name' => $homeButtomText, 'parentID' => '', 'status' => 'published']);
 }

@@ -52,7 +52,7 @@ $navigationHomeButtonText = $options['navigationHomeButtonText'];
 $navigationItemCSS2 = !empty($options['navigationItemCSS2']) ? json_decode($options['navigationItemCSS2'], true) : [];
 $navigationItemColor = isset($navigationItemCSS2['color']) ? $navigationItemCSS2['color'] : '#ffffff';
 $navigationItemHoverColor = isset($navigationItemCSS2['color:hover']) ? $navigationItemCSS2['color:hover'] : $navigationItemColor;
-$navigationItemActiveColor = isset($navigationItemCSS2['color:active']) ? $navigationItemCSS2['color:active'] : $navigationItemActiveColor;
+$navigationItemActiveColor = isset($navigationItemCSS2['color:active']) ? $navigationItemCSS2['color:active'] : $navigationItemHoverColor;
 
 $homePageSpecialContentBlockVisibility = $options['homePageSpecialContentBlockVisibility'];
 $footerVisibility = $options['footerVisibility'];
@@ -102,7 +102,7 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
                         margin: 0 auto;
                         cursor: pointer;
                         background-image: url('data:image/svg+xml;base64,<?= base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" fill="' . $navigationItemColor . '"><path d="M512 192l-96-96-160 160L96 96 0 192l256 256z"/></svg>') ?>');
-                        background-size: 50% 50%;
+                        background-size: auto 50%;
                         background-position: center center;
                         background-repeat: no-repeat;
                     }
@@ -131,8 +131,7 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
             $navigationContent .= '<nav class="template-navigation">';
             $navigationContent .= '<div>';
             $navigationContent .= '<input id="template-navigation-toggle-button" type="checkbox"/><label for="template-navigation-toggle-button">&nbsp;</label>';
-            $navigationContent .= '<div><component src="bearcms-navigation-element" type="tree" showHomeButton="' . ($navigationHomeButtonVisibility === '1' ? 'true' : 'false') . '" homeButtonText="' . htmlentities($navigationHomeButtonText) . '" menuType="horizontal-down" class="template-navigation-content" selectedPath="' . (string) $app->request->path . '" /></div>';
-            $navigationContent .= '<script>var f=function(){var e=document.querySelector(".template-navigation-content");if(e){e.setAttribute("data-nm-type", window.innerWidth <= 680 ? "none" : "horizontal-down");};};window.addEventListener("resize",f,false);window.addEventListener("load",f,false);f();</script>';
+            $navigationContent .= '<div><component src="bearcms-navigation-element" type="tree" showHomeButton="' . ($navigationHomeButtonVisibility === '1' ? 'true' : 'false') . '" homeButtonText="' . htmlentities($navigationHomeButtonText) . '" menuType="horizontal-down" class="template-navigation-content" selectedPath="' . (string) $app->request->path . '" data-responsive-attributes="w<680=>menuType=none,w>=680=>menuType=horizontal-down" /></div>';
             $navigationContent .= '</div>';
             $navigationContent .= '</nav>';
             $navigationContent .= '</div>';
