@@ -58,7 +58,7 @@ class ElementsHelper
                     $value = '';
                 }
             }
-            return $value;
+            return (string)$value;
         };
 
         // Update width
