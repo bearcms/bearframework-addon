@@ -209,11 +209,11 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if ($response->applyBearCMSTemplate && $app->bearCMS->currentTemplate->getID() === 'bearcms/default1') {
         $template = null;
         if ($response instanceof App\Response\HTML) {
-            $template = '<component src="file:' . $context->dir . '/components/bearcms-default1-template.php"/>';
+            $template = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php"/>';
         } elseif ($response instanceof App\Response\NotFound) {
-            $template = '<component src="file:' . $context->dir . '/components/bearcms-default1-template.php" mode="notFound"/>';
+            $template = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php" mode="notFound"/>';
         } elseif ($response instanceof App\Response\TemporaryUnavailable) {
-            $template = '<component src="file:' . $context->dir . '/components/bearcms-default1-template.php" mode="temporaryUnavailable"/>';
+            $template = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php" mode="temporaryUnavailable"/>';
         }
         if ($template !== null) {
             $template = $app->components->process($template, ['recursive' => false]);
