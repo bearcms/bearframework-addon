@@ -67,43 +67,43 @@ You can configure the addon when added to your application. Here is a list of al
 
 ### Components
 
-[<component src="bearcms-elements" />](https://)
+[&lt;component src="bearcms-elements" /&gt;](https://)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an elements block.
 
-[<component src="bearcms-blog-posts-element" />](https://)
+[&lt;component src="bearcms-blog-posts-element" /&gt;](https://)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a block that renders a list of blog posts.
 
-[<component src="bearcms-heading-element" />](https://)
+[&lt;component src="bearcms-heading-element" /&gt;](https://)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a heading.
 
-[<component src="bearcms-html-element" />](https://)
+[&lt;component src="bearcms-html-element" /&gt;](https://)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Renders HTML code.
 
-[<component src="bearcms-image-element" />](https://)
+[&lt;component src="bearcms-image-element" /&gt;](https://)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an image.
 
-[<component src="bearcms-image-gallery-element" />](https://)
+[&lt;component src="bearcms-image-gallery-element" /&gt;](https://)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an image gallery.
 
-[<component src="bearcms-link-element" />](https://)
+[&lt;component src="bearcms-link-element" /&gt;](https://)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a link.
 
-[<component src="bearcms-navigation-element" />](https://)
+[&lt;component src="bearcms-navigation-element" /&gt;](https://)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a navigation.
 
-[<component src="bearcms-text-element" />](https://)
+[&lt;component src="bearcms-text-element" /&gt;](https://)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a text block.
 
-[<component src="bearcms-vide-element" />](https://)
+[&lt;component src="bearcms-vide-element" /&gt;](https://)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a video block.
 
