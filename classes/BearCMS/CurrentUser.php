@@ -23,14 +23,14 @@ class CurrentUser
      */
     public function exists()
     {
-        return strlen($this->getKey()) > 70;
+        return strlen($this->getSessionKey()) > 70;
     }
 
     /**
      * 
      * @return string
      */
-    public function getKey()
+    public function getSessionKey()
     {
         $cookies = Cookies::getList(Cookies::TYPE_SERVER);
         $cookieKey = '_s';
@@ -44,19 +44,21 @@ class CurrentUser
      */
     public function getID()
     {
-        $cacheKey = 'id-' . $this->getKey();
+
+        $sessionKey = $this->getSessionKey();
+        if (strlen($sessionKey) === 0) {
+            return null;
+        }
+        $cacheKey = 'id-' . $sessionKey;
         if (!isset(self::$cache[$cacheKey])) {
             self::$cache[$cacheKey] = null;
             $app = App::$instance;
-            $key = self::getKey();
-            if (strlen($key) > 0) {
-                $data = $app->data->get([
-                    'key' => '.temp/bearcms/userkeys/' . md5($key),
-                    'result' => ['body']
-                ]);
-                if (isset($data['body'])) {
-                    self::$cache[$cacheKey] = $data['body'];
-                }
+            $data = $app->data->get([
+                'key' => '.temp/bearcms/userkeys/' . md5($sessionKey),
+                'result' => ['body']
+            ]);
+            if (isset($data['body'])) {
+                self::$cache[$cacheKey] = $data['body'];
             }
         }
         return self::$cache[$cacheKey];

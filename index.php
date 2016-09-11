@@ -349,7 +349,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         'adminUI',
         $app->request->base,
         $requestArguments,
-        $app->bearCMS->currentUser->getKey(),
+        $app->bearCMS->currentUser->getSessionKey(),
         $app->bearCMS->currentUser->getPermissions(),
         get_class_vars('\BearCMS\Internal\Options'),
         $serverCookies
@@ -371,7 +371,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
                 'elementsEditor',
                 $app->request->base,
                 $requestArguments,
-                $app->bearCMS->currentUser->getKey(),
+                $app->bearCMS->currentUser->getSessionKey(),
                 $app->bearCMS->currentUser->getPermissions(),
                 get_class_vars('\BearCMS\Internal\Options'),
                 Cookies::getList(Cookies::TYPE_SERVER)
