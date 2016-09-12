@@ -37,14 +37,95 @@ Checks if there are any users
 
 _Returns_
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TRUE if there is atleast one user, FALSE if there are no users
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TRUE if there is at least one user, FALSE if there are no users
 
 ## Examples
 
-```php
-$app->bearCMS->data->users->getList()
-```
+Returns an array containing information about the user specified 
 
 ```php
-$app->bearCMS->data->users->hasUsers()
+$user = $app->bearCMS->data->users->getUser('abcdefghijk1');
+
+// Array
+// (
+//     [id] => abcdefghijk1
+//     [registerTime] => 1234567890
+//     [lastLoginTime] => 1234567891
+//     [hashedPassword] => abcdefghijklmnopgqstuvwxyz1234567890
+//     [emails] => Array
+//         (
+//             [0] => john@example.com
+//         )
+//     [permissions] => Array
+//         (
+//             [0] => modifyContent
+//             [1] => managePages
+//             [2] => manageAppearance
+//             [3] => manageBlog
+//             [4] => manageFiles
+//             [5] => manageAddons
+//             [6] => manageAdministrators
+//             [7] => manageSettings
+//             [8] => viewAboutInformation
+//         )
+// )
+```
+
+Returns an array containing all users data
+
+```php
+$list = $app->bearCMS->data->users->getList();
+
+// Array
+// (
+//     [0] => Array
+//         (
+//             [id] => abcdefghijk1
+//             [registerTime] => 1234567890
+//             [lastLoginTime] => 1234567891
+//             [hashedPassword] => abcdefghijklmnopgqstuvwxyz1234567890
+//             [emails] => Array
+//                 (
+//                     [0] => john@example.com
+//                 )
+//             [permissions] => Array
+//                 (
+//                     [0] => modifyContent
+//                     [1] => managePages
+//                     [2] => manageAppearance
+//                     [3] => manageBlog
+//                     [4] => manageFiles
+//                     [5] => manageAddons
+//                     [6] => manageAdministrators
+//                     [7] => manageSettings
+//                     [8] => viewAboutInformation
+//                 )
+//         )
+//     [1] => Array
+//         (
+//             [id] => abcdefghijk2
+//             [registerTime] => 1234567890
+//             [lastLoginTime] => 1234567891
+//             [hashedPassword] => abcdefghijklmnopgqstuvwxyz1234567891
+//             [emails] => Array
+//                 (
+//                     [0] => mark@example.com
+//                 )
+//             [permissions] => Array
+//                 (
+//                     [0] => modifyContent
+//                     [1] => managePages
+//                     [2] => manageBlog
+//                 )
+//         )
+// )
+
+```
+
+Check if there are any users
+
+```php
+$result = $app->bearCMS->data->users->hasUsers()
+
+// TRUE or FALSE
 ```
