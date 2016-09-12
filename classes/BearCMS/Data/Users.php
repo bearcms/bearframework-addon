@@ -11,13 +11,17 @@ namespace BearCMS\Data;
 
 use BearFramework\App;
 
+/**
+ * Retrieve information about the CMS users (administrators)
+ */
 class Users
 {
 
     /**
+     * Retrieves information about the user specified
      * 
-     * @param string $id
-     * @return array|null
+     * @param string $id The user ID
+     * @return array|null The user data or null if user not found
      */
     public function getUser($id)
     {
@@ -35,8 +39,9 @@ class Users
     }
 
     /**
+     * Retrieves a list of all users
      * 
-     * @return array
+     * @return array List containing all users data
      */
     public function getList()
     {
@@ -57,8 +62,9 @@ class Users
     }
 
     /**
+     * Checks if there are any users
      * 
-     * @return boolean
+     * @return boolean TRUE if there is at least one user, FALSE if there are no users
      */
     public function hasUsers()
     {
