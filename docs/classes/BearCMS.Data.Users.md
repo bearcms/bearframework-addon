@@ -1,5 +1,5 @@
 # BearCMS\Data\Users
-Retrieve information about the CMS users (administrators)
+Information about the CMS users (administrators)
 
 ## Methods
 
@@ -13,7 +13,7 @@ _Parameters_
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$id`
 
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The user ID
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The user ID
 
 _Returns_
 
