@@ -91,19 +91,19 @@ You can configure the addon when added to your application. Here is a list of al
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an image gallery.
 
-[&lt;component src="bearcms-link-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-navigation-element.md)
+[&lt;component src="bearcms-link-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-link-element.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a link.
 
-[&lt;component src="bearcms-navigation-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-text-element.md)
+[&lt;component src="bearcms-navigation-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-navigation-element.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a navigation.
 
-[&lt;component src="bearcms-text-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-video-element.md)
+[&lt;component src="bearcms-text-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-text-element.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a text block.
 
-[&lt;component src="bearcms-vide-element" /&gt;](https://)
+[&lt;component src="bearcms-vide-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-video-element.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a video block.
 
