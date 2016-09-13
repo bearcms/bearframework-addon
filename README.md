@@ -67,39 +67,39 @@ You can configure the addon when added to your application. Here is a list of al
 
 ### Components
 
-[&lt;component src="bearcms-elements" /&gt;](https://)
+[&lt;component src="bearcms-elements" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-elements.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an elements block.
 
-[&lt;component src="bearcms-blog-posts-element" /&gt;](https://)
+[&lt;component src="bearcms-blog-posts-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-blog-posts-element.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a block that renders a list of blog posts.
 
-[&lt;component src="bearcms-heading-element" /&gt;](https://)
+[&lt;component src="bearcms-heading-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-heading-element.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a heading.
 
-[&lt;component src="bearcms-html-element" /&gt;](https://)
+[&lt;component src="bearcms-html-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-html-element.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Renders HTML code.
 
-[&lt;component src="bearcms-image-element" /&gt;](https://)
+[&lt;component src="bearcms-image-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-image-element.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an image.
 
-[&lt;component src="bearcms-image-gallery-element" /&gt;](https://)
+[&lt;component src="bearcms-image-gallery-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-image-gallery-element.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an image gallery.
 
-[&lt;component src="bearcms-link-element" /&gt;](https://)
+[&lt;component src="bearcms-link-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-navigation-element.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a link.
 
-[&lt;component src="bearcms-navigation-element" /&gt;](https://)
+[&lt;component src="bearcms-navigation-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-text-element.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a navigation.
 
-[&lt;component src="bearcms-text-element" /&gt;](https://)
+[&lt;component src="bearcms-text-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-video-element.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a text block.
 
