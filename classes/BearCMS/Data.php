@@ -12,18 +12,21 @@ namespace BearCMS;
 use BearFramework\App;
 
 /**
- * @property \BearCMS\Data\Addons $addons
- * @property \BearCMS\Data\Blog $blog
- * @property \BearCMS\Data\Pages $pages
- * @property \BearCMS\Data\Settings $settings
- * @property \BearCMS\Data\Templates $templates
- * @property \BearCMS\Data\Users $users
+ * Contains reference to the different data types
+ * 
+ * @property \BearCMS\Data\Addons $addons Information about the addons managed by Bear CMS
+ * @property \BearCMS\Data\Blog $blog Information about the blog posts
+ * @property \BearCMS\Data\Pages $pages Information about the site pages
+ * @property \BearCMS\Data\Settings $settings Information about the site settings
+ * @property \BearCMS\Data\Templates $templates Information about the site templates
+ * @property \BearCMS\Data\Users $users Information about the CMS users (administrators)
  */
 class Data
 {
 
     /**
      * Dependency Injection container
+     * 
      * @var \BearFramework\App\ServiceContainer 
      */
     public $container = null;
@@ -42,6 +45,7 @@ class Data
 
     /**
      * Returns an object from the dependency injection container
+     * 
      * @param string $name The service name
      * @return object Object from the dependency injection container
      * @throws \Exception
@@ -56,6 +60,7 @@ class Data
 
     /**
      * Returns information about whether the service is added in the dependency injection container
+     * 
      * @param string $name The name of the service
      * @return boolen TRUE if services is added. FALSE otherwise.
      */
@@ -66,11 +71,16 @@ class Data
 
     /**
      * Converts data:, app:, addon:id: filenames to real filenames
+     * 
      * @param string $filename
-     * @return string
+     * @return string The real filename
+     * @throws \InvalidArgumentException
      */
     public function getRealFilename($filename)
     {
+        if (!is_string($filename)) {
+            throw new \InvalidArgumentException('');
+        }
         $app = App::$instance;
         if (substr($filename, 0, 5) === 'data:') {
             $filename = $app->data->getFilename(substr($filename, 5));

@@ -11,16 +11,24 @@ namespace BearCMS\Data;
 
 use BearFramework\App;
 
+/**
+ * Information about the addons managed by Bear CMS
+ */
 class Addons
 {
 
     /**
+     * Retrieves information about the addon specified
      * 
-     * @param string $id
-     * @return array|null
+     * @param string $id The addon ID
+     * @return array|null The addon data or null if addon not found
+     * @throws \InvalidArgumentException
      */
     public function getAddon($id)
     {
+        if (!is_string($id)) {
+            throw new \InvalidArgumentException('');
+        }
         $app = App::$instance;
         $data = $app->data->get(
                 [
@@ -35,8 +43,9 @@ class Addons
     }
 
     /**
+     * Retrieves a list of all addons
      * 
-     * @return array
+     * @return array List containing all addons data
      */
     public function getList()
     {

@@ -12,7 +12,7 @@ namespace BearCMS\Data;
 use BearFramework\App;
 
 /**
- * Retrieve information about the CMS users (administrators)
+ * Information about the CMS users (administrators)
  */
 class Users
 {
@@ -22,9 +22,13 @@ class Users
      * 
      * @param string $id The user ID
      * @return array|null The user data or null if user not found
+     * @throws \InvalidArgumentException
      */
     public function getUser($id)
     {
+        if (!is_string($id)) {
+            throw new \InvalidArgumentException('');
+        }
         $app = App::$instance;
         $data = $app->data->get(
                 [

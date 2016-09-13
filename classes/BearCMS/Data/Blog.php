@@ -11,16 +11,24 @@ namespace BearCMS\Data;
 
 use BearFramework\App;
 
+/**
+ * Information about the blog posts
+ */
 class Blog
 {
 
     /**
+     * Retrieves information about the blog post specified
      * 
-     * @param string $id
-     * @return array|null
+     * @param string $id The blog post ID
+     * @return array|null The blog post data or null if blog post not found
+     * @throws \InvalidArgumentException
      */
     public function getPost($id)
     {
+        if (!is_string($id)) {
+            throw new \InvalidArgumentException('');
+        }
         $app = App::$instance;
         $data = $app->data->get(
                 [
@@ -35,8 +43,9 @@ class Blog
     }
 
     /**
+     * Retrieves a list of all blog posts
      * 
-     * @return array
+     * @return array List containing all blog posts data
      */
     public function getList()
     {

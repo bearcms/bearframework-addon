@@ -11,16 +11,24 @@ namespace BearCMS\Data;
 
 use BearFramework\App;
 
+/**
+ * Information about the site templates
+ */
 class Templates
 {
 
     /**
+     * Returns a list containing the options for the template specified
      * 
-     * @param string $id
-     * @return array
+     * @param string $id The id of the template
+     * @return array A list containing the template options
+     * @throws \InvalidArgumentException
      */
     public function getOptions($id)
     {
+        if (!is_string($id)) {
+            throw new \InvalidArgumentException('');
+        }
         $app = App::$instance;
         $data = $app->data->get(
                 [
@@ -38,13 +46,21 @@ class Templates
     }
 
     /**
+     * Returns a list containing the template options a specific user has made
      * 
-     * @param string $id
-     * @param string $userID
-     * @return array
+     * @param array $id The id of the template
+     * @param array $userID The id of the user
+     * @return array A list containing the template options
+     * @throws \InvalidArgumentException
      */
     public function getTempOptions($id, $userID)
     {
+        if (!is_string($id)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (!is_string($userID)) {
+            throw new \InvalidArgumentException('');
+        }
         $app = App::$instance;
         $data = $app->data->get(
                 [

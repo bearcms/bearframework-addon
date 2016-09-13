@@ -11,12 +11,16 @@ namespace BearCMS\Data;
 
 use BearFramework\App;
 
+/**
+ * Information about the site settings
+ */
 class Settings
 {
 
     /**
+     * Returns an array containing the site settings
      * 
-     * @return array
+     * @return array An array containing the site settings
      */
     public function get()
     {

@@ -12,14 +12,23 @@ namespace BearCMS;
 use BearFramework\App;
 use BearCMS\Internal\Cookies;
 
+/**
+ * Information about the current logged in user
+ */
 class CurrentUser
 {
 
+    /**
+     * Local cache
+     * 
+     * @var array 
+     */
     private static $cache = [];
 
     /**
+     * Returns information about whether there is a current user logged in
      * 
-     * @return boolean
+     * @return boolean TRUE if there is a current user logged in, FALSE otherwise
      */
     public function exists()
     {
@@ -27,20 +36,22 @@ class CurrentUser
     }
 
     /**
+     * Returns the session key if there is a logged in user
      * 
-     * @return string
+     * @return string|null The session key if there is a logged in user, NULL otherwise
      */
     public function getSessionKey()
     {
         $cookies = Cookies::getList(Cookies::TYPE_SERVER);
         $cookieKey = '_s';
         $key = isset($cookies[$cookieKey]) ? (string) $cookies[$cookieKey] : '';
-        return strlen((string) $key) > 70 ? $key : '';
+        return strlen((string) $key) > 70 ? $key : null;
     }
 
     /**
+     * Returns the current logged in user ID
      * 
-     * @return string
+     * @return string|null ID of the current logged in user or null
      */
     public function getID()
     {
@@ -65,8 +76,9 @@ class CurrentUser
     }
 
     /**
+     * Returns the current logged in user permissions
      * 
-     * @return array
+     * @return array Array containing the permission of the current logged in user
      */
     public function getPermissions()
     {
@@ -87,11 +99,17 @@ class CurrentUser
     }
 
     /**
+     * Checks whether the current logged in user has the specified permission
      * 
-     * @return array
+     * @param string $name The name of the permission
+     * @return boolean TRUE if the current logged in user has the permission specified, FALSE otherwise
+     * @throws \InvalidArgumentException
      */
     public function hasPermission($name)
     {
+        if (!is_string($name)) {
+            throw new \InvalidArgumentException('');
+        }
         $permissions = $this->getPermissions();
         return array_search($name, $permissions) !== false;
     }

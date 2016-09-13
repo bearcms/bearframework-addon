@@ -11,16 +11,24 @@ namespace BearCMS\Data;
 
 use BearFramework\App;
 
+/**
+ * Information about the site pages
+ */
 class Pages
 {
 
     /**
+     * Retrieves information about the page specified
      * 
-     * @param string $id
-     * @return array|null
+     * @param string $id The page ID
+     * @return array|null The page data or null if page not found
+     * @throws \InvalidArgumentException
      */
     public function getPage($id)
     {
+        if (!is_string($id)) {
+            throw new \InvalidArgumentException('');
+        }
         $app = App::$instance;
         $data = $app->data->get(
                 [
@@ -35,8 +43,9 @@ class Pages
     }
 
     /**
+     * Retrieves a list of all pages
      * 
-     * @return array
+     * @return array List containing all pages data
      */
     public function getList()
     {
@@ -57,8 +66,9 @@ class Pages
     }
 
     /**
+     * Retrieves an array containing the pages structure
      * 
-     * @return array
+     * @return array An array containing the pages structure
      */
     public function getStructure()
     {

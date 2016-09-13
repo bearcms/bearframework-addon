@@ -8,21 +8,30 @@
  */
 
 /**
- * @property \BearCMS\Data $data
- * @property \BearCMS\CurrentTemplate $currentTemplate
- * @property \BearCMS\CurrentUser $currentUser
+ * Contains references to all Bear CMS related objects.
+ * 
+ * @property \BearCMS\Data $data A reference to the data related objects
+ * @property \BearCMS\CurrentTemplate $currentTemplate Information about the current template
+ * @property \BearCMS\CurrentUser $currentUser Information about the current loggedin user
  */
 class BearCMS
 {
 
+    /**
+     * Addon version
+     */
     const VERSION = '0.1.1-dev';
 
     /**
      * Dependency Injection container
+     * 
      * @var \BearFramework\App\ServiceContainer 
      */
     public $container = null;
 
+    /**
+     * The constructor
+     */
     function __construct()
     {
         $this->container = new \BearFramework\App\Container();
@@ -34,6 +43,7 @@ class BearCMS
 
     /**
      * Returns an object from the dependency injection container
+     * 
      * @param string $name The service name
      * @return object Object from the dependency injection container
      * @throws \Exception
@@ -48,6 +58,7 @@ class BearCMS
 
     /**
      * Returns information about whether the service is added in the dependency injection container
+     * 
      * @param string $name The name of the service
      * @return boolen TRUE if services is added. FALSE otherwise.
      */
