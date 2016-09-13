@@ -103,7 +103,7 @@ You can configure the addon when added to your application. Here is a list of al
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a text block.
 
-[&lt;component src="bearcms-vide-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-video-element.md)
+[&lt;component src="bearcms-video-element" /&gt;](https://github.com/bearcms/bearframework-addon/blob/master/docs/components/bearcms-video-element.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a video block.
 
