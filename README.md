@@ -41,27 +41,27 @@ You can configure the addon when added to your application. Here is a list of al
 
 ### Direct data access
 
-[$app->bearCMS->data->addons](https://)
+[$app->bearCMS->data->addons](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Addons.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the CMS managed addons.
 
-[$app->bearCMS->data->blog](https://)
+[$app->bearCMS->data->blog](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Blog.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the blog posts created by the CMS.
 
-[$app->bearCMS->data->pages](https://)
+[$app->bearCMS->data->pages](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Pages.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the pages created by the CMS.
 
-[$app->bearCMS->data->settings](https://)
+[$app->bearCMS->data->settings](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Settings.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the site settings available in the CMS.
 
-[$app->bearCMS->data->templates](https://)
+[$app->bearCMS->data->templates](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Templates.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the templates customized by the administrators.
 
-[$app->bearCMS->data->users](https://)
+[$app->bearCMS->data->users](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Users.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the administators.
 
@@ -109,13 +109,13 @@ You can configure the addon when added to your application. Here is a list of al
 
 ### Current template
 
-[$app->bearCMS->currentTemplate](https://)
+[$app->bearCMS->currentTemplate](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.CurrentTemplate.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provides information about the current template and it's customizations.
 
 ### Current user
 
-[$app->bearCMS->currentUser](https://)
+[$app->bearCMS->currentUser](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.CurrentUser.md)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provides information about the current user and it's permissions.
 
