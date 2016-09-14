@@ -86,4 +86,51 @@ class BearFrameworkAddonTestCase extends PHPUnit_Framework_TestCase
         }
     }
 
+    function createUser()
+    {
+        $userID = uniqid();
+        $userData = '{
+    "id": "' . $userID . '",
+    "registerTime": 1234567890,
+    "lastLoginTime": 1234567890,
+    "hashedPassword": "aaa",
+    "emails": [
+        "john@gmail.com"
+    ],
+    "permissions": [
+        "modifyContent",
+        "managePages",
+        "manageAppearance",
+        "manageBlog",
+        "manageFiles",
+        "manageAddons",
+        "manageAdministrators",
+        "manageSettings",
+        "viewAboutInformation"
+    ]
+}';
+        $this->app->data->set([
+            'key' => 'bearcms/users/user/' . md5($userID) . '.json',
+            'body' => $userData
+        ]);
+        return $userID;
+    }
+
+    function loginUser($userID)
+    {
+        $sessionKey = str_repeat(uniqid(), 90 / strlen(uniqid()));
+        \BearCMS\Internal\Cookies::setList(\BearCMS\Internal\Cookies::TYPE_SERVER, [['name' => '_s', 'value' => $sessionKey, 'expire' => time() + 86400]]);
+
+        $this->app->data->set([
+            'key' => '.temp/bearcms/userkeys/' . md5($sessionKey),
+            'body' => $userID
+        ]);
+        return $sessionKey;
+    }
+    
+    function createAndLoginUser(){
+        $userID = $this->createUser();
+        $this->loginUser($userID);
+    }
+
 }

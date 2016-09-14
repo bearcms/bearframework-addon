@@ -107,20 +107,15 @@ class ElementsTest extends BearFrameworkAddonTestCase
     public function testTextElementComponent()
     {
         $app = $this->getApp();
-        $result = $app->components->process('<component src="bearcms-text-element" />');
-        //echo $result;exit;
-        //$this->assertTrue($settings['title'] === '');
-    }
 
-    /**
-     * 
-     */
-    public function testVideoElementComponent()
-    {
-        $app = $this->getApp();
-        $result = $app->components->process('<component src="bearcms-video-element" />');
-        //echo $result;exit;
-        //$this->assertTrue($settings['title'] === '');
+        $result = $app->components->process('<component src="bearcms-text-element" text="Hello" />');
+        $expectedResult = '<!DOCTYPE html><html><head></head><body><div><div class="bearcms-text-element">Hello</div></div></body></html>';
+        $this->assertTrue($result === $expectedResult);
+
+        $text = 'This is a <a href="#">some html code</a>.';
+        $result = $app->components->process('<component src="bearcms-text-element" text="' . htmlentities($text) . '" />');
+        $expectedResult = '<!DOCTYPE html><html><head></head><body><div><div class="bearcms-text-element">' . $text . '</div></div></body></html>';
+        $this->assertTrue($result === $expectedResult);
     }
 
 }
