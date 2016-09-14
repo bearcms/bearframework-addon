@@ -10,7 +10,7 @@ An elements container. The administrators use the UI to manage the elements insi
 
 `editable`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Makes the block editable or not. Available values: true and false. The block will no be editable if there is no logged in user, regardless of the attribute value.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Makes the block editable or not. Available values: true and false. The block will be not editable if there is no logged in user, regardless of the attribute value.
 
 `group`
 

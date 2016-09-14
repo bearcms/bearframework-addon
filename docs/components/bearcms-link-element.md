@@ -10,7 +10,7 @@ Renders a link.
 
 `editable`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Makes the element editable or not. Available values: true or false. The element will no be editable if there is no logged in user, regardless of the attribute value.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Makes the element editable or not. Available values: true or false. The element will be not editable if there is no logged in user, regardless of the attribute value.
 
 `url`
 

@@ -10,7 +10,7 @@ Renders video.
 
 `editable`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Makes the element editable or not. Available values: true or false. The element will no be editable if there is no logged in user, regardless of the attribute value.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Makes the element editable or not. Available values: true or false. The element will be not editable if there is no logged in user, regardless of the attribute value.
 
 `url`
 
@@ -18,7 +18,7 @@ Renders video.
 
 `filename`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A filename of the local video file.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A filename of the local video file. Available value formats: /real/path/to/the/video/file.mp4, app:assets/file.mp4 (if the file is in the app folder), addon:vendor1/addon1/assets/file.mp4 (if the file is in an addon folder).
 
 ## Examples
 
