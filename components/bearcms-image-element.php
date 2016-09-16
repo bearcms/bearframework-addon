@@ -12,16 +12,23 @@ if ($component->onClick === 'fullscreen') {
 } elseif ($component->onClick === 'openUrl') {
     $onClick = 'url';
 }
-$onClickAttribute = ' onClick="' . $onClick . '"';
+
+$attributes = '';
+
+$attributes .= ' onClick="' . $onClick . '"';
 
 $class = (string) $component->class;
-$classAttribute = isset($class{0}) ? ' class="' . htmlentities($class) . '"' : '';
+$classAttributeValue = isset($class{0}) ? ' ' . htmlentities($class) : '';
+
+if (strlen($component->loadingBackground) > 0) {
+    $attributes .= ' imageLoadingBackground="' . $component->loadingBackground . '"';
+}
 
 $filename = (string) $component->filename;
-$content = '<div class="bearcms-image-element">';
+$content = '<div class="bearcms-image-element' . $classAttributeValue . '" style="font-size:0;">';
 if (isset($filename{0})) {
     $filename = $app->bearCMS->data->getRealFilename($filename);
-    $content .= '<component src="image-gallery" columnsCount="1"' . $onClickAttribute . $classAttribute . '>';
+    $content .= '<component src="image-gallery" columnsCount="1"' . $attributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
     $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' ? ' url="' . htmlentities($component->url) . '"' : '') . ' title="' . htmlentities($component->title) . '" filename="' . $filename . '"/>';
     $content .= '</component>';
 }

@@ -30,6 +30,10 @@ Renders an image.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The filename of the image
 
+`loadingBackground`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The type of background shown while the image is loading. Available values: none and checkered.
+
 `title`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HTML title attribute value

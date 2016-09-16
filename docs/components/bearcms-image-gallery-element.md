@@ -24,6 +24,10 @@ Renders an image gallery.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The proportional relationship between the width and the height of every image. It is useful for cropping and resizing the images. Example values: 1:1, 1:2, 1.5:1, etc.
 
+`imageLoadingBackground`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The type of background shown while the image is loading. Available values: none and checkered.
+
 `spacing`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The spacing between the images. Example values: 10px, 1rem, etc.

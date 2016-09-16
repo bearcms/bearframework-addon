@@ -12,7 +12,7 @@ $files = $domDocument->querySelectorAll('file');
 
 $spacing = $component->spacing;
 
-$content = '<div class="bearcms-image-gallery-element">';
+$content = '<div class="bearcms-image-gallery-element" style="font-size:0;">';
 
 $attributes = '';
 if (strlen($component->type) > 0) {
@@ -26,6 +26,9 @@ if (strlen($component->imageSize) > 0) {
 }
 if (strlen($component->imageAspectRatio) > 0) {
     $attributes .= ' imageAspectRatio="' . $component->imageAspectRatio . '"';
+}
+if (strlen($component->imageLoadingBackground) > 0) {
+    $attributes .= ' imageLoadingBackground="' . $component->imageLoadingBackground . '"';
 }
 
 $content .= '<component src="image-gallery" spacing="' . $spacing . '"' . $attributes . '>';
