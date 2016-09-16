@@ -46,9 +46,9 @@
                         {
                             "id": "headerLogoImageCSS",
                             "type": "css",
-                            "cssTypes": ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                            "cssTypes": ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssSize"],
                             "cssOutput": [
-                                ["rule", ".template-header-logo", "box-sizing:border-box;display:inline-block;overflow:hidden;"],
+                                ["rule", ".template-header-logo", "box-sizing:border-box;display:inline-block;overflow:hidden;font-size:0;"],
                                 ["selector", ".template-header-logo"]
                             ],
                             "onCustomize": [
