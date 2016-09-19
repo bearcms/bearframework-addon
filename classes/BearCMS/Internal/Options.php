@@ -11,9 +11,11 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 
-class Options
+final class Options
 {
 
+    static $siteID = null;
+    static $siteSecret = null;
     static $serverUrl = null;
     static $language = 'en';
     static $features = ['all'];
@@ -34,10 +36,18 @@ class Options
         if (!isset($data['serverUrl'])) {
             throw new \Exception('serverUrl option is not set for bearcms/bearframework-addon');
         }
+        if (!isset($data['siteID'])) {
+            throw new \Exception('siteID option is not set for bearcms/bearframework-addon');
+        }
+        if (!isset($data['siteSecret'])) {
+            throw new \Exception('siteSecret option is not set for bearcms/bearframework-addon');
+        }
 
         $app = App::$instance;
 
         self::$serverUrl = $data['serverUrl'];
+        self::$siteID = $data['siteID'];
+        self::$siteSecret = $data['siteSecret'];
 
         if (isset($data['language'])) {
             self::$language = $data['language'];

@@ -12,7 +12,7 @@ namespace BearCMS\Internal;
 use BearFramework\App;
 use BearCMS\Internal\Server;
 
-class Controller
+final class Controller
 {
 
     static function handleAdminPage()

@@ -11,7 +11,7 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 
-class ElementsHelper
+final class ElementsHelper
 {
 
     static $editorData = [];

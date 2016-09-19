@@ -9,7 +9,7 @@ namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
 
-class Addons
+final class Addons
 {
 
     static function getList()

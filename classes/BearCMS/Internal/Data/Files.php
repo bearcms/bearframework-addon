@@ -11,7 +11,7 @@ namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
 
-class Files
+final class Files
 {
 
     /**

@@ -11,7 +11,7 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 
-class ServerCommands
+final class ServerCommands
 {
 
     /**
@@ -21,7 +21,7 @@ class ServerCommands
     static function about()
     {
         $result = [];
-        $result['siteID'] = 'dev1'; //todo
+        $result['siteID'] = Options::$siteID;
         $result['phpVersion'] = phpversion();
         $result['frameworkVersion'] = App::VERSION;
         $result['addonVersion'] = \BearCMS::VERSION;

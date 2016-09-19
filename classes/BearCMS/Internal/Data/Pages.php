@@ -9,7 +9,7 @@ namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
 
-class Pages
+final class Pages
 {
 
     /**

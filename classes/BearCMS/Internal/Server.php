@@ -13,7 +13,7 @@ use BearFramework\App;
 use BearCMS\Internal\Cookies;
 use BearCMS\Internal\Options;
 
-class Server
+final class Server
 {
 
     static function call($name, $arguments = null, $sendCookies = false)
@@ -265,8 +265,8 @@ class Server
             'bearframeworkVersion' => $app::VERSION,
             'addonVersion' => \BearCMS::VERSION
         ];
-        $clientData['siteID'] = 'todo-siteid';
-        $clientData['siteSecret'] = 'todo-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash-hash';
+        $clientData['siteID'] = Options::$siteID;
+        $clientData['siteSecretHash'] = hash('sha256', Options::$siteSecret);
         $clientData['requestBase'] = $app->request->base;
         $clientData['cookiePrefix'] = Options::$cookiePrefix;
         if ($app->bearCMS->currentUser->exists()) {
