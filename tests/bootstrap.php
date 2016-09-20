@@ -50,6 +50,8 @@ class BearFrameworkAddonTestCase extends PHPUnit_Framework_TestCase
 
             $this->app->addons->add('bearcms/bearframework-addon', [
                 'serverUrl' => 'http://dummy.bearcms.com/',
+                'siteID' => 'dummy1',
+                'siteSecret' => 'dummy1',
                 'addonsDir' => realpath(__DIR__ . '/../addons/'),
                 'language' => 'en'
             ]);
@@ -127,8 +129,9 @@ class BearFrameworkAddonTestCase extends PHPUnit_Framework_TestCase
         ]);
         return $sessionKey;
     }
-    
-    function createAndLoginUser(){
+
+    function createAndLoginUser()
+    {
         $userID = $this->createUser();
         $this->loginUser($userID);
     }
