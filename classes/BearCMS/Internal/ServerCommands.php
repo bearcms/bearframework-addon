@@ -368,7 +368,7 @@ final class ServerCommands
         return null;
     }
 
-    static function addAddon($data, $response)
+    static function addAddon($data)
     {
         $app = App::$instance;
         if (isset($data['type']) && isset($data['value'])) {
@@ -406,7 +406,7 @@ final class ServerCommands
         return null;
     }
 
-    static function deleteAddon($data, $response)
+    static function deleteAddon($data)
     {
         $app = App::$instance;
         if (!isset($data['id'])) {
@@ -724,7 +724,7 @@ final class ServerCommands
      * @param array $response
      * @throws \Exception
      */
-    static function checkpoint($data, $response)
+    static function checkpoint($data)
     {
         return $data;
     }

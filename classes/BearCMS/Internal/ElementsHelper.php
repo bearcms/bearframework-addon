@@ -156,7 +156,6 @@ final class ElementsHelper
      */
     static function updateElementComponent($component)
     {
-        $app = App::$instance;
         self::updateComponentEditableAttribute($component);
         self::updateComponentContextAttributes($component);
 

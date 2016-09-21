@@ -126,15 +126,15 @@ final class Server
 
                     $result = [];
                     foreach ($calls as $i => $resource) {
-                        $result[$urls[$i]] = curl_multi_getcontent($calls[$i]);
+                        $result[$urls[$i]] = curl_multi_getcontent($resource);
 
                         if (strlen($app->config->logsDir) > 0) {
                             $log = 'Bear CMS asset download:' . "\n";
                             $log .= 'Url: ' . $urls[$i] . "\n";
-                            $log .= 'Time: ' . curl_getinfo($calls[$i], CURLINFO_TOTAL_TIME) . ' / dns: ' . curl_getinfo($calls[$i], CURLINFO_NAMELOOKUP_TIME) . ', connect: ' . curl_getinfo($calls[$i], CURLINFO_CONNECT_TIME) . ', download: ' . curl_getinfo($calls[$i], CURLINFO_STARTTRANSFER_TIME) . "\n\n";
+                            $log .= 'Time: ' . curl_getinfo($resource, CURLINFO_TOTAL_TIME) . ' / dns: ' . curl_getinfo($resource, CURLINFO_NAMELOOKUP_TIME) . ', connect: ' . curl_getinfo($resource, CURLINFO_CONNECT_TIME) . ', download: ' . curl_getinfo($resource, CURLINFO_STARTTRANSFER_TIME) . "\n\n";
                             $app->logger->log('info', $log);
                         }
-                        curl_multi_remove_handle($mh, $calls[$i]);
+                        curl_multi_remove_handle($mh, $resource);
                     }
                     curl_multi_close($mh);
                     return $result;

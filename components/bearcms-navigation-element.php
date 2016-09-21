@@ -131,37 +131,41 @@ if (strlen($dataResponsiveAttributes) > 0) {
 if ($showHomeButton) {
     array_unshift($pages, ['id' => '_home', 'path' => '/', 'name' => $homeButtomText, 'parentID' => '', 'status' => 'published']);
 }
-if (empty($pages)) {
-    $content = '';
-} else {
-    $itemsHtml = (string) $component->innerHTML;
-    if (isset($itemsHtml{0})) {
-        $domDocument = new IvoPetkov\HTML5DOMDocument();
-        $domDocument->loadHTML($itemsHtml);
-        $ulElements = $domDocument->querySelectorAll('ul');
-        foreach ($ulElements as $index => $ulElement) {
-            $ulElement->setAttribute('class', trim($ulElement->getAttribute('class') . ' ' . ($index === 0 ? 'bearcms-navigation-element' : 'bearcms-navigation-element-item-children')));
-        }
-        $liElements = $domDocument->querySelectorAll('li');
-        foreach ($liElements as $index => $liElement) {
-            $liClasssName = 'bearcms-navigation-element-item';
-            if ($liElement->firstChild) {
-                $liPath = str_replace($app->request->base, '', $liElement->firstChild->getAttribute('href'));
-                if ($liPath === $selectedPath) {
-                    $liClasssName .= ' bearcms-navigation-element-item-selected';
-                } elseif ($liPath !== '/' && strpos($selectedPath, $liPath) === 0) {
-                    $liClasssName .= ' bearcms-navigation-element-item-in-path';
-                }
+
+$itemsHtml = (string) $component->innerHTML;
+if (isset($itemsHtml{0})) {
+    $domDocument = new IvoPetkov\HTML5DOMDocument();
+    $domDocument->loadHTML($itemsHtml);
+    $ulElements = $domDocument->querySelectorAll('ul');
+    foreach ($ulElements as $index => $ulElement) {
+        $ulElement->setAttribute('class', trim($ulElement->getAttribute('class') . ' ' . ($index === 0 ? 'bearcms-navigation-element' : 'bearcms-navigation-element-item-children')));
+    }
+    $liElements = $domDocument->querySelectorAll('li');
+    foreach ($liElements as $index => $liElement) {
+        $liClasssName = 'bearcms-navigation-element-item';
+        if ($liElement->firstChild) {
+            $liPath = str_replace($app->request->base, '', $liElement->firstChild->getAttribute('href'));
+            if ($liPath === $selectedPath) {
+                $liClasssName .= ' bearcms-navigation-element-item-selected';
+            } elseif ($liPath !== '/' && strpos($selectedPath, $liPath) === 0) {
+                $liClasssName .= ' bearcms-navigation-element-item-in-path';
             }
-            $liElement->setAttribute('class', trim($liElement->getAttribute('class') . ' ' . $liClasssName));
         }
-        $rootULElement = $domDocument->querySelector('ul');
-        if ($rootULElement) {
-            $itemsHtml = $rootULElement->outerHTML;
-        }
+        $liElement->setAttribute('class', trim($liElement->getAttribute('class') . ' ' . $liClasssName));
+    }
+    $rootULElement = $domDocument->querySelector('ul');
+    if ($rootULElement) {
+        $itemsHtml = $rootULElement->outerHTML;
+    }
+} else {
+    if (empty($pages)) {
+        $itemsHtml = '';
     } else {
         $itemsHtml = $buildTree($pages, (string) $component->pageID);
     }
+}
+$content = '';
+if (isset($itemsHtml{0})) {
     $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';
 }
 
