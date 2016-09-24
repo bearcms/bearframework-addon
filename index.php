@@ -59,7 +59,7 @@ $app->container->set('bearCMS', \BearCMS::class);
 
 Options::set($context->options);
 
-if (Options::hasFeature('users')) {
+if (Options::hasServer() && Options::hasFeature('users')) {
     $app->routes->add(['/admin/loggedin/'], function() use ($app) {
         return new App\Response\TemporaryRedirect($app->request->base . '/');
     });
@@ -108,7 +108,7 @@ if (Options::hasFeature('addons')) {
     }
 }
 
-if (Options::hasFeature('users')) {
+if (Options::hasServer() && Options::hasFeature('users')) {
     $app->routes->add('*', function() use ($app) {
         $cookies = Cookies::getList(Cookies::TYPE_SERVER);
         if (isset($cookies['_a']) && !$app->bearCMS->currentUser->exists()) {
@@ -250,7 +250,6 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         return;
     }
 
-
     $componentContent = '<html><head>';
 
     $settings = $app->bearCMS->data->settings->get();
@@ -323,7 +322,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     $domDocument->insertHTML($componentContent);
     $response->content = $app->components->process($domDocument->saveHTML());
 
-    $currentUserExists = Options::hasFeature('users') ? $app->bearCMS->currentUser->exists() : false;
+    $currentUserExists = Options::hasServer() && Options::hasFeature('users') ? $app->bearCMS->currentUser->exists() : false;
 
     $externalLinksAreEnabled = !empty($settings['externalLinks']);
     if ($externalLinksAreEnabled) {
@@ -405,7 +404,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     }
 }, ['priority' => 1000]);
 
-if (Options::hasFeature('users')) {
+if (Options::hasServer() && Options::hasFeature('users')) {
     $app->hooks->add('responseCreated', function() {
         Cookies::update();
     }, ['priority' => 1001]);

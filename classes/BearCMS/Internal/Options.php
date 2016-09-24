@@ -33,21 +33,20 @@ final class Options
         if (!is_array($data)) {
             throw new \InvalidArgumentException('');
         }
-        if (!isset($data['serverUrl'])) {
-            throw new \Exception('serverUrl option is not set for bearcms/bearframework-addon');
-        }
-        if (!isset($data['siteID'])) {
-            throw new \Exception('siteID option is not set for bearcms/bearframework-addon');
-        }
-        if (!isset($data['siteSecret'])) {
-            throw new \Exception('siteSecret option is not set for bearcms/bearframework-addon');
+
+        if (isset($data['serverUrl'])) {
+            if (!isset($data['siteID'])) {
+                throw new \Exception('siteID option is not set for bearcms/bearframework-addon');
+            }
+            if (!isset($data['siteSecret'])) {
+                throw new \Exception('siteSecret option is not set for bearcms/bearframework-addon');
+            }
+            self::$serverUrl = $data['serverUrl'];
+            self::$siteID = $data['siteID'];
+            self::$siteSecret = $data['siteSecret'];
         }
 
         $app = App::$instance;
-
-        self::$serverUrl = $data['serverUrl'];
-        self::$siteID = $data['siteID'];
-        self::$siteSecret = $data['siteSecret'];
 
         if (isset($data['language'])) {
             self::$language = $data['language'];
@@ -79,6 +78,11 @@ final class Options
         if (isset($data['logServerRequestsData']) && $data['logServerRequestsData']) {
             self::$logServerRequestsData = true;
         }
+    }
+
+    static function hasServer()
+    {
+        return self::$serverUrl !== null;
     }
 
     static function hasFeature($name)
