@@ -59,122 +59,130 @@ $app->container->set('bearCMS', \BearCMS::class);
 
 Options::set($context->options);
 
-if (Options::hasServer() && Options::hasFeature('users')) {
-    $app->routes->add(['/admin/loggedin/'], function() use ($app) {
-        return new App\Response\TemporaryRedirect($app->request->base . '/');
-    });
-    $app->routes->add(['/admin/', '/admin/*/'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
-    $app->routes->add(['/admin', '/admin/*'], function() use ($app) {
-        return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
-    });
-    $app->routes->add('/-aj/', ['BearCMS\Internal\Controller', 'handleAjax'], ['POST']);
-    $app->routes->add('/-au/', ['BearCMS\Internal\Controller', 'handleFileUpload'], ['POST']);
-}
+$app->hooks->add('initialized', function() use ($app) {
 
-if (Options::hasFeature('files')) {
-    $app->routes->add('/files/preview/*', ['BearCMS\Internal\Controller', 'handleFilePreview']);
-    $app->routes->add('/files/download/*', ['BearCMS\Internal\Controller', 'handleFileDownload']);
-}
-
-$app->routes->add('/rss.xml', ['BearCMS\Internal\Controller', 'handleRSS']);
-$app->routes->add('/sitemap.xml', ['BearCMS\Internal\Controller', 'handleSitemap']);
-$app->routes->add('/robots.txt', ['BearCMS\Internal\Controller', 'handleRobots']);
-
-if (Options::hasFeature('addons')) {
-    $addonsDir = $context->options['addonsDir'];
-    $addons = InternalData\Addons::getList();
-    $addonsDir = rtrim($addonsDir, ' \/') . DIRECTORY_SEPARATOR;
-    foreach ($addons as $addonData) {
-        $addonID = $addonData['id'];
-        $addonDir = $addonsDir . $addonID;
-        if (is_file($addonDir . DIRECTORY_SEPARATOR . 'autoload.php')) {
-            include $addonDir . DIRECTORY_SEPARATOR . 'autoload.php';
-        } else {
-            throw new Exception('Cannot find autoload.php file for ' . $addonID);
-        }
-        if (\BearFramework\Addons::exists($addonID)) {
-            $options = \BearFramework\Addons::getOptions($addonID);
-            if (isset($options['bearCMS']) && is_array($options['bearCMS']) && isset($options['bearCMS']['assetsDirs'])) {
-                foreach ($options['bearCMS']['assetsDirs'] as $dir) {
-                    $app->assets->addDir($addonDir . DIRECTORY_SEPARATOR . $dir);
+    // Load the CMS managed addons
+    if (Options::hasFeature('addons')) {
+        $addons = InternalData\Addons::getList();
+        foreach ($addons as $addonData) {
+            $addonID = $addonData['id'];
+            $addonDir = Options::$addonsDir . DIRECTORY_SEPARATOR . $addonID . DIRECTORY_SEPARATOR;
+            if (is_file($addonDir . 'autoload.php')) {
+                include $addonDir . 'autoload.php';
+            } else {
+                throw new Exception('Cannot find autoload.php file for ' . $addonID);
+            }
+            if (\BearFramework\Addons::exists($addonID)) {
+                $_addonData = \BearFramework\Addons::get($addonID);
+                $options = $_addonData['options'];
+                if (isset($options['bearCMS']) && is_array($options['bearCMS']) && isset($options['bearCMS']['assetsDirs'])) {
+                    foreach ($options['bearCMS']['assetsDirs'] as $dir) {
+                        $app->assets->addDir($addonDir . $dir);
+                    }
                 }
+                if ($addonData['enabled']) {
+                    $app->addons->add($addonID, ['addedByBearCMS' => true]);
+                }
+            } else {
+                throw new Exception('Addon ' . $addonID . ' not available');
             }
-            if ($addonData['enabled']) {
-                $app->addons->add($addonID, ['addedByBearCMS' => true]);
-            }
-        } else {
-            throw new Exception('Addon ' . $addonID . ' not available');
         }
     }
-}
 
-if (Options::hasServer() && Options::hasFeature('users')) {
-    $app->routes->add('*', function() use ($app) {
+    // Automatically log in the user
+    if (Options::hasServer() && Options::hasFeature('users')) {
         $cookies = Cookies::getList(Cookies::TYPE_SERVER);
         if (isset($cookies['_a']) && !$app->bearCMS->currentUser->exists()) {
             Server::call('autologin', null, true);
         }
-    });
-}
+    }
 
-if (Options::hasFeature('blog')) {
-    $app->routes->add('/b/?/', function() use ($app) {
-        $slug = (string) $app->request->path[1];
-        $slugsList = InternalData\Blog::getSlugsList('published');
-        $blogPostID = array_search($slug, $slugsList);
-        if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && Options::hasFeature('users') && $app->bearCMS->currentUser->exists()) {
-            $blogPost = $app->bearCMS->data->blog->getPost(substr($slug, 6));
-            if ($blogPost !== null) {
-                $blogPostID = $blogPost['id'];
-            }
-        }
-        if ($blogPostID !== false) {
-            $blogPost = $app->bearCMS->data->blog->getPost($blogPostID);
+    // Register the system pages
+    if (Options::hasServer() && Options::hasFeature('users')) {
+        $app->routes->add(['/admin/loggedin/'], function() use ($app) {
+            return new App\Response\TemporaryRedirect($app->request->base . '/');
+        });
+        $app->routes->add(['/admin/', '/admin/*/'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
+        $app->routes->add(['/admin', '/admin/*'], function() use ($app) {
+            return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
+        });
+        $app->routes->add('/-aj/', ['BearCMS\Internal\Controller', 'handleAjax'], ['POST']);
+        $app->routes->add('/-au/', ['BearCMS\Internal\Controller', 'handleFileUpload'], ['POST']);
+    }
 
-            $content = '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1></div>';
-            $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? date('F j, Y', $blogPost['publishedTime']) : 'draft') . '</div></div>';
-            $content .= '<div class="bearcms-blogpost-page-content"><component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/></div>';
+    // Register the file handlers
+    if (Options::hasFeature('files')) {
+        $app->routes->add('/files/preview/*', ['BearCMS\Internal\Controller', 'handleFilePreview']);
+        $app->routes->add('/files/download/*', ['BearCMS\Internal\Controller', 'handleFileDownload']);
+    }
 
-            $response = new App\Response\HTML($content);
-            $response->enableBearCMS = true;
-            $response->applyBearCMSTemplate = true;
-            $response->bearCMSBlogPostID = $blogPostID;
-            return $response;
-        }
-    });
-    $app->routes->add('/b/?', function() use ($app) {
-        return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
-    });
-}
+    // Register some other pages
+    $app->routes->add('/rss.xml', ['BearCMS\Internal\Controller', 'handleRSS']);
+    $app->routes->add('/sitemap.xml', ['BearCMS\Internal\Controller', 'handleSitemap']);
+    $app->routes->add('/robots.txt', ['BearCMS\Internal\Controller', 'handleRobots']);
 
-if (Options::hasFeature('pages')) {
-    $app->routes->add('*', function() use ($app) {
-        $path = (string) $app->request->path;
-        if ($path === '/') {
-            $pageID = 'home';
-        } else {
-            $hasSlash = substr($path, -1) === '/';
-            $pathsList = InternalData\Pages::getPathsList(Options::hasFeature('users') && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
-            if ($hasSlash) {
-                $pageID = array_search($path, $pathsList);
-            } else {
-                $pageID = array_search($path . '/', $pathsList);
-                if ($pageID !== false) {
-                    return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
+    // Register the blog posts page handlers
+    if (Options::hasFeature('blog')) {
+        $app->routes->add('/b/?/', function() use ($app) {
+            $slug = (string) $app->request->path[1];
+            $slugsList = InternalData\Blog::getSlugsList('published');
+            $blogPostID = array_search($slug, $slugsList);
+            if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && Options::hasFeature('users') && $app->bearCMS->currentUser->exists()) {
+                $blogPost = $app->bearCMS->data->blog->getPost(substr($slug, 6));
+                if ($blogPost !== null) {
+                    $blogPostID = $blogPost['id'];
                 }
             }
-        }
-        if ($pageID !== false) {
-            $content = '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
-            $response = new App\Response\HTML($content);
-            $response->enableBearCMS = true;
-            $response->applyBearCMSTemplate = true;
-            $response->bearCMSPageID = $pageID;
-            return $response;
-        }
-    });
-}
+            if ($blogPostID !== false) {
+                $blogPost = $app->bearCMS->data->blog->getPost($blogPostID);
 
+                $content = '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1></div>';
+                $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? date('F j, Y', $blogPost['publishedTime']) : 'draft') . '</div></div>';
+                $content .= '<div class="bearcms-blogpost-page-content"><component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/></div>';
+
+                $response = new App\Response\HTML($content);
+                $response->enableBearCMS = true;
+                $response->bearCMSBlogPostID = $blogPostID;
+                return $response;
+            }
+        });
+        $app->routes->add('/b/?', function() use ($app) {
+            return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
+        });
+    }
+
+    // Register a home page and the dynamic pages handler
+    if (Options::hasFeature('pages')) {
+        $app->routes->add('*', function() use ($app) {
+            $path = (string) $app->request->path;
+            if ($path === '/') {
+                $pageID = 'home';
+            } else {
+                $hasSlash = substr($path, -1) === '/';
+                $pathsList = InternalData\Pages::getPathsList(Options::hasFeature('users') && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
+                if ($hasSlash) {
+                    $pageID = array_search($path, $pathsList);
+                } else {
+                    $pageID = array_search($path . '/', $pathsList);
+                    if ($pageID !== false) {
+                        return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
+                    }
+                }
+            }
+            if ($pageID !== false) {
+                $content = '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
+                $response = new App\Response\HTML($content);
+                $response->enableBearCMS = true;
+                if ($pageID !== 'home') {
+                    $response->bearCMSPageID = $pageID;
+                }
+                return $response;
+            }
+        });
+    }
+});
+
+// Updates the Bear CMS components when created
 if (Options::hasFeature('elements')) {
     $app->hooks->add('componentCreated', function($component) {
         if ($component->src === 'bearcms-elements') {
@@ -188,58 +196,55 @@ if (Options::hasFeature('elements')) {
 $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if ($response instanceof App\Response\NotFound) {
         $response->enableBearCMS = true;
-        $response->applyBearCMSTemplate = true;
         $response->setContentType('text/html');
     } elseif ($response instanceof App\Response\TemporaryUnavailable) {
         $response->enableBearCMS = true;
-        $response->applyBearCMSTemplate = true;
         $response->setContentType('text/html');
-    } elseif ($app->request->path[0] === null && $response instanceof App\Response\HTML) {
+    } elseif ($app->request->path === '/' && $response instanceof App\Response\HTML) {
         $response->enableBearCMS = true;
-        $response->applyBearCMSTemplate = true;
     }
 
     if (!isset($response->enableBearCMS)) {
         $response->enableBearCMS = false;
     }
-    if (!isset($response->applyBearCMSTemplate)) {
-        $response->applyBearCMSTemplate = false;
-    }
 
-    if ($response->applyBearCMSTemplate && $app->bearCMS->currentTemplate->getID() === 'bearcms/default1') {
-        $template = null;
-        if ($response instanceof App\Response\HTML) {
-            $template = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php"/>';
-        } elseif ($response instanceof App\Response\NotFound) {
-            $template = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php" mode="notFound"/>';
-        } elseif ($response instanceof App\Response\TemporaryUnavailable) {
-            $template = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php" mode="temporaryUnavailable"/>';
-        }
-        if ($template !== null) {
-            $template = $app->components->process($template, ['recursive' => false]);
-            $object = new ArrayObject();
-            $object->content = $template;
-            $app->hooks->execute('bearCMSDefaultTemplate1Created', $object);
-            $template = $object->content;
-            $template = $app->components->process($template);
-            $object = new ArrayObject();
-            $object->content = $template;
-            $app->hooks->execute('bearCMSDefaultTemplate1Ready', $object);
+    // Apply the template if the default theme is selected
+    if ($app->bearCMS->currentTemplate->getID() === 'bearcms/default1') {
+        if (empty($response->bearCMSSystemPage)) {
+            $template = null;
+            if ($response instanceof App\Response\HTML) {
+                $template = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php"/>';
+            } elseif ($response instanceof App\Response\NotFound) {
+                $template = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php" mode="notFound"/>';
+            } elseif ($response instanceof App\Response\TemporaryUnavailable) {
+                $template = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php" mode="temporaryUnavailable"/>';
+            }
+            if ($template !== null) {
+                $template = $app->components->process($template, ['recursive' => false]);
+                $object = new ArrayObject();
+                $object->content = $template;
+                $app->hooks->execute('bearCMSDefaultTemplate1Created', $object);
+                $template = $object->content;
+                $template = $app->components->process($template);
+                $object = new ArrayObject();
+                $object->content = $template;
+                $app->hooks->execute('bearCMSDefaultTemplate1Ready', $object);
 
-            $content = $response->content;
-            $object = new ArrayObject();
-            $object->content = $content;
-            $app->hooks->execute('bearCMSDefaultTemplate1ContentCreated', $object);
-            $content = $object->content;
-            $content = $app->components->process($content);
-            $object = new ArrayObject();
-            $object->content = $content;
-            $app->hooks->execute('bearCMSDefaultTemplate1ContentReady', $object);
+                $content = $response->content;
+                $object = new ArrayObject();
+                $object->content = $content;
+                $app->hooks->execute('bearCMSDefaultTemplate1ContentCreated', $object);
+                $content = $object->content;
+                $content = $app->components->process($content);
+                $object = new ArrayObject();
+                $object->content = $content;
+                $app->hooks->execute('bearCMSDefaultTemplate1ContentReady', $object);
 
-            $domDocument = new HTML5DOMDocument();
-            $domDocument->loadHTML(str_replace('{body}', $domDocument->createInsertTarget('templateBody'), $template));
-            $domDocument->insertHTML($content, 'templateBody');
-            $response->content = $domDocument->saveHTML();
+                $domDocument = new HTML5DOMDocument();
+                $domDocument->loadHTML(str_replace('{body}', $domDocument->createInsertTarget('templateBody'), $template));
+                $domDocument->insertHTML($content, 'templateBody');
+                $response->content = $domDocument->saveHTML();
+            }
         }
     }
 });
@@ -249,6 +254,9 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if (!(isset($response->enableBearCMS) && $response->enableBearCMS)) {
         return;
     }
+    if (!empty($response->bearCMSSystemPage)) {
+        return;
+    }
 
     $componentContent = '<html><head>';
 
@@ -256,7 +264,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     $title = '';
     $descrption = '';
     $keywords = '';
-    if (isset($response->bearCMSPageID) && $response->bearCMSPageID !== 'home') {
+    if (isset($response->bearCMSPageID)) {
         $page = $app->bearCMS->data->pages->getPage($response->bearCMSPageID);
         if (is_array($page)) {
             $title = isset($page['titleTagContent']) ? trim($page['titleTagContent']) : '';
@@ -318,8 +326,8 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     $componentContent .= '</head><body></body></html>';
 
     $domDocument = new HTML5DOMDocument();
-    $domDocument->loadHTML($response->content);
-    $domDocument->insertHTML($componentContent);
+    $domDocument->loadHTML($componentContent);
+    $domDocument->insertHTML($response->content);
     $response->content = $app->components->process($domDocument->saveHTML());
 
     $currentUserExists = Options::hasServer() && Options::hasFeature('users') ? $app->bearCMS->currentUser->exists() : false;

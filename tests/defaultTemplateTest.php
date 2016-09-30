@@ -19,7 +19,7 @@ class DefaultTemplateTest extends BearFrameworkAddonTestCase
     public function testBlogPostsElement()
     {
         $app = $this->getApp();
-        $context = $app->getContext(\BearFramework\Addons::getDir('bearcms/bearframework-addon') . '/index.php');
+        $context = $app->getContext(\BearFramework\Addons::get('bearcms/bearframework-addon')['dir'] . '/index.php');
         $result = $app->components->process('<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php" />');
         //echo $result;exit;
         //$this->assertTrue($settings['title'] === '');

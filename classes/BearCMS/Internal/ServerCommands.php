@@ -610,7 +610,7 @@ final class ServerCommands
         if (!isset($data['addonID'])) {
             throw new \Exception('');
         }
-        $addonDir = \BearFramework\Addons::getDir($data['addonID']);
+        $addonDir = \BearFramework\Addons::get($data['addonID'])['dir'];
         return $app->assets->getUrl($addonDir . DIRECTORY_SEPARATOR . $data['key'], $data['options']);
     }
 

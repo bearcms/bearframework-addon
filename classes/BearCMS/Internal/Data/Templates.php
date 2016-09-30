@@ -39,9 +39,10 @@ final class Templates
         $result = [];
         foreach ($addonsList as $addonData) {
             $addonID = $addonData['id'];
-            $options = \BearFramework\Addons::getOptions($addonID);
+            $addonData = \BearFramework\Addons::get($addonID);
+            $options = $addonData['options'];
             if (isset($options['bearCMS']) && is_array($options['bearCMS']) && isset($options['bearCMS']['templates']) && is_array($options['bearCMS']['templates'])) {
-                $addonDir = trim(\BearFramework\Addons::getDir($addonID), '/') . '/';
+                $addonDir = trim(\BearFramework\Addons::get($addonID)['dir'], '/') . '/';
                 foreach ($options['bearCMS']['templates'] as $templateData) {
                     if (isset($templateData['id'], $templateData['manifest'])) {
                         $manifestFilename = $addonDir . $templateData['manifest'];

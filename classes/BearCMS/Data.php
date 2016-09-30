@@ -52,7 +52,7 @@ class Data
      */
     public function __get($name)
     {
-        if ($this->container->has($name)) {
+        if ($this->container->exists($name)) {
             return $this->container->get($name);
         }
         throw new \Exception('Invalid property name');
@@ -66,7 +66,7 @@ class Data
      */
     public function __isset($name)
     {
-        return $this->container->has($name);
+        return $this->container->exists($name);
     }
 
     /**
@@ -89,7 +89,7 @@ class Data
         } elseif (substr($filename, 0, 6) === 'addon:') {
             $temp = explode(':', $filename, 3);
             if (sizeof($temp) === 3) {
-                $addonDir = \BearFramework\Addons::getDir($temp[1]);
+                $addonDir = \BearFramework\Addons::get($temp[1])['dir'];
                 $filename = $addonDir . DIRECTORY_SEPARATOR . $temp[2];
             }
         }

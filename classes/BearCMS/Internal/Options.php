@@ -21,6 +21,7 @@ final class Options
     static $features = ['all'];
     static $cookiePrefix = null;
     static $logServerRequestsData = false;
+    static $addonsDir = false;
 
     /**
      * 
@@ -34,11 +35,11 @@ final class Options
             throw new \InvalidArgumentException('');
         }
 
-        if (isset($data['serverUrl'])) {
-            if (!isset($data['siteID'])) {
+        if (isset($data['serverUrl']) && strlen($data['serverUrl']) > 0) {
+            if (!isset($data['siteID']) || strlen($data['siteID']) === 0) {
                 throw new \Exception('siteID option is not set for bearcms/bearframework-addon');
             }
-            if (!isset($data['siteSecret'])) {
+            if (!isset($data['siteSecret']) || strlen($data['siteSecret']) === 0) {
                 throw new \Exception('siteSecret option is not set for bearcms/bearframework-addon');
             }
             self::$serverUrl = $data['serverUrl'];
@@ -50,6 +51,14 @@ final class Options
 
         if (isset($data['language'])) {
             self::$language = $data['language'];
+        }
+
+        if (isset($data['addonsDir'])) {
+            $addonsDir = realpath($data['addonsDir']);
+            if ($addonsDir === false) {
+                throw new \Exception('addonsDir option is not value for bearcms/bearframework-addon');
+            }
+            self::$addonsDir = $addonsDir;
         }
 
         if (isset($data['features'])) {

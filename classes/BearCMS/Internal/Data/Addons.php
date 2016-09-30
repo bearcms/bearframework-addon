@@ -37,9 +37,10 @@ final class Addons
     static function getManifestData($name)
     {
         if (\BearFramework\Addons::exists($name)) {
-            $options = \BearFramework\Addons::getOptions($name);
+            $addonData = \BearFramework\Addons::get($name);
+            $options = $addonData['options'];
             if (isset($options['bearCMS']) && is_array($options['bearCMS']) && isset($options['bearCMS']['manifest'])) {
-                $dir = rtrim(\BearFramework\Addons::getDir($name), '/') . '/';
+                $dir = rtrim(\BearFramework\Addons::get($name), '/')['dir'] . '/';
                 $filename = $dir . $options['bearCMS']['manifest'];
                 if (is_file($filename)) {
                     $data = json_decode(file_get_contents($filename), true);
