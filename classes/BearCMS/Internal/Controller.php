@@ -37,7 +37,10 @@ final class Controller
             } elseif (is_array($data['result']) && isset($data['result']['content'])) {
                 $content = $data['result']['content'];
                 $content = Server::updateAssetsUrls($content, false);
-                return new App\Response\HTML($content);
+                $response = new App\Response\HTML($content);
+                $response->enableBearCMS = true;
+                $response->bearCMSSystemPage = true;
+                return $response;
             }
         }
         return new App\Response\TemporaryUnavailable();
