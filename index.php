@@ -211,23 +211,23 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     // Apply the template if the default theme is selected
     if ($app->bearCMS->currentTemplate->getID() === 'bearcms/default1') {
         if (empty($response->bearCMSSystemPage)) {
-            $template = null;
+            $templateHTMLCode = null;
             if ($response instanceof App\Response\HTML) {
-                $template = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php"/>';
+                $templateHTMLCode = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php"/>';
             } elseif ($response instanceof App\Response\NotFound) {
-                $template = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php" mode="notFound"/>';
+                $templateHTMLCode = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php" mode="notFound"/>';
             } elseif ($response instanceof App\Response\TemporaryUnavailable) {
-                $template = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php" mode="temporaryUnavailable"/>';
+                $templateHTMLCode = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php" mode="temporaryUnavailable"/>';
             }
-            if ($template !== null) {
-                $template = $app->components->process($template, ['recursive' => false]);
+            if ($templateHTMLCode !== null) {
+                $templateHTMLCode = $app->components->process($templateHTMLCode, ['recursive' => false]);
                 $object = new ArrayObject();
-                $object->content = $template;
+                $object->content = $templateHTMLCode;
                 $app->hooks->execute('bearCMSDefaultTemplate1Created', $object);
-                $template = $object->content;
-                $template = $app->components->process($template);
+                $templateHTMLCode = $object->content;
+                $templateHTMLCode = $app->components->process($templateHTMLCode);
                 $object = new ArrayObject();
-                $object->content = $template;
+                $object->content = $templateHTMLCode;
                 $app->hooks->execute('bearCMSDefaultTemplate1Ready', $object);
 
                 $content = $response->content;
@@ -240,10 +240,9 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
                 $object->content = $content;
                 $app->hooks->execute('bearCMSDefaultTemplate1ContentReady', $object);
 
-                $domDocument = new HTML5DOMDocument();
-                $domDocument->loadHTML(str_replace('{body}', $domDocument->createInsertTarget('templateBody'), $template));
-                $domDocument->insertHTML($content, 'templateBody');
-                $response->content = $domDocument->saveHTML();
+                $template = new BearFramework\HTMLTemplate($templateHTMLCode);
+                $template->insert('body', $response->content);
+                $response->content = $template->getResult();
             }
         }
     }

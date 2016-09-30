@@ -31,7 +31,7 @@ if ($mode === 'notFound' || $mode === 'temporaryUnavailable') {
             </style>
         </head>
         <body>
-            <div style="display:table;width:100%;height:100%;"><div style="display:table-cell;text-align:center;vertical-align:middle;">{body}</div></div>
+            <div style="display:table;width:100%;height:100%;"><div style="display:table-cell;text-align:center;vertical-align:middle;">{{body}}</div></div>
         </body></html><?php
     return;
 }
@@ -172,7 +172,7 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
 
         echo '<div class="template-content-container">';
         echo '<section class="template-content">';
-        echo '{body}';
+        echo '{{body}}';
         echo '</section>';
         echo '</div>';
 
