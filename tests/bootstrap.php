@@ -27,10 +27,10 @@ class BearFrameworkAddonTestCase extends PHPUnit_Framework_TestCase
         if ($this->app == null || $createNew) {
             $rootDir = $this->getTestDir();
             $this->app = new BearFramework\App();
-            $this->app->filesystem->makeDir($rootDir . 'app/');
-            $this->app->filesystem->makeDir($rootDir . 'data/');
-            $this->app->filesystem->makeDir($rootDir . 'logs/');
-            $this->app->filesystem->makeDir($rootDir . 'addons/');
+            $this->createDir($rootDir . 'app/');
+            $this->createDir($rootDir . 'data/');
+            $this->createDir($rootDir . 'logs/');
+            $this->createDir($rootDir . 'addons/');
             $this->app->config->handleErrors = false;
 
             $initialConfig = [
@@ -62,12 +62,19 @@ class BearFrameworkAddonTestCase extends PHPUnit_Framework_TestCase
 
     function createDir($dir)
     {
-        $this->app->filesystem->makeDir($dir);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
     }
 
     function createFile($filename, $content)
     {
-        $this->app->filesystem->makeFileDir($filename);
+        $pathinfo = pathinfo($filename);
+        if (isset($pathinfo['dirname']) && $pathinfo['dirname'] !== '.') {
+            if (!is_dir($pathinfo['dirname'])) {
+                mkdir($pathinfo['dirname'], 0777, true);
+            }
+        }
         file_put_contents($filename, $content);
     }
 
