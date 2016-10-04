@@ -16,15 +16,13 @@ $buildTree = function($pages, $parentID) use ($app, $selectedPath, &$buildTree) 
     $items = [];
     foreach ($pages as $page) {
         if ($page['parentID'] === $parentID) {
-            if ($page['status'] === 'published') {
-                $classNames = 'bearcms-navigation-element-item';
-                if ($page['path'] === $selectedPath) {
-                    $classNames .= ' bearcms-navigation-element-item-selected';
-                } elseif ($page['id'] !== '_home' && strpos($selectedPath, $page['path']) === 0) {
-                    $classNames .= ' bearcms-navigation-element-item-in-path';
-                }
-                $items[] = '<li class="' . $classNames . '"><a href="' . $app->request->base . $page['path'] . '">' . htmlspecialchars($page['name']) . '</a>' . $buildTree($pages, $page['id']) . '</li>';
+            $classNames = 'bearcms-navigation-element-item';
+            if ($page['path'] === $selectedPath) {
+                $classNames .= ' bearcms-navigation-element-item-selected';
+            } elseif ($page['id'] !== '_home' && strpos($selectedPath, $page['path']) === 0) {
+                $classNames .= ' bearcms-navigation-element-item-in-path';
             }
+            $items[] = '<li class="' . $classNames . '"><a href="' . $app->request->base . $page['path'] . '">' . htmlspecialchars($page['name']) . '</a>' . $buildTree($pages, $page['id']) . '</li>';
         }
     }
     if (empty($items)) {
@@ -64,7 +62,7 @@ if (strlen($component->showHomeButton) > 0) {
 $pages = [];
 if ($type === 'top') {
     $structure = $app->bearCMS->data->pages->getStructure();
-    $pages = $app->bearCMS->data->pages->getList();
+    $pages = $app->bearCMS->data->pages->getList(['PUBLISHED_ONLY']);
     $temp = [];
     foreach ($pages as $page) {
         if ($page['parentID'] === '') {
@@ -74,7 +72,7 @@ if ($type === 'top') {
     $pages = $temp;
 } elseif ($type === 'children') {
     $structure = $app->bearCMS->data->pages->getStructure();
-    $pages = $app->bearCMS->data->pages->getList();
+    $pages = $app->bearCMS->data->pages->getList(['PUBLISHED_ONLY']);
     $temp = [];
     $parentID = strlen($component->pageID) > 0 ? $component->pageID : '';
     foreach ($pages as $page) {
@@ -85,7 +83,7 @@ if ($type === 'top') {
     $pages = $temp;
 } elseif ($type === 'tree') {
     $structure = $app->bearCMS->data->pages->getStructure();
-    $pages = $app->bearCMS->data->pages->getList();
+    $pages = $app->bearCMS->data->pages->getList(['PUBLISHED_ONLY']);
 }
 
 // sort pages

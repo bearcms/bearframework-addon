@@ -134,19 +134,8 @@ final class Controller
         $data .= '<atom:link href="' . $baseUrl . '/rss.xml" rel="self" type="application/rss+xml">';
         $data .= '</atom:link>';
 
-        $blogPosts = $app->bearCMS->data->blog->getList();
+        $blogPosts = $app->bearCMS->data->blog->getList(['PUBLISHED_ONLY', 'SORT_BY_PUBLISHED_TIME_DESC']);
         foreach ($blogPosts as $blogPost) {
-            if (isset($blogPost['status']) && $blogPost['status'] === 'published') {
-                $blogPostsToRender[] = $blogPost;
-            }
-        }
-        usort($blogPostsToRender, function($a, $b) {
-            if (!isset($a['publishedTime']) || !isset($b['publishedTime']) || $a['publishedTime'] === $b['publishedTime']) {
-                return 0;
-            }
-            return $a['publishedTime'] < $b['publishedTime'] ? 1 : -1;
-        });
-        foreach ($blogPostsToRender as $blogPost) {
             $blogPostUrl = isset($blogPost['slug']) ? $baseUrl . '/b/' . $blogPost['slug'] . '/' : '';
             $data .= '<item>';
             $data .= '<title>' . (isset($blogPost['title']) ? htmlspecialchars($blogPost['title']) : '') . '</title>';
@@ -156,7 +145,7 @@ final class Controller
             $data .= '<guid isPermaLink="false">' . $blogPostUrl . '</guid>';
             $data .= '</item>';
         }
-        $response = new App\Response('<?xml version="1.0" encoding="UTF-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" version="2.0"><channel>' . $data . '</channel></rss>');
+        $response = new App\Response('<?xml version="1.0" encoding="UTF-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel>' . $data . '</channel></rss>');
         $response->setContentType('text/xml');
         return $response;
     }

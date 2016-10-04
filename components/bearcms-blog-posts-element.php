@@ -8,19 +8,7 @@
 
 use BearCMS\Internal\ElementsHelper;
 
-$blogPosts = $app->bearCMS->data->blog->getList();
-$list = [];
-foreach ($blogPosts as $blogPost) {
-    if ($blogPost['status'] === 'published') {
-        $list[] = $blogPost;
-    }
-}
-usort($list, function($a, $b) {
-    if ($a['publishedTime'] === $b['publishedTime']) {
-        return 0;
-    }
-    return ($a['publishedTime'] > $b['publishedTime']) ? -1 : 1;
-});
+$list = $app->bearCMS->data->blog->getList(['PUBLISHED_ONLY', 'SORT_BY_PUBLISHED_TIME_DESC']);
 
 $type = 'full';
 if (strlen($component->type) > 0) {
