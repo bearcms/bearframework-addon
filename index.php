@@ -1,5 +1,7 @@
 <?php
 
+/* @var $app \BearFramework\App */
+/* @var $context \BearFramework\App\AppContext */
 /*
  * Bear CMS addon for Bear Framework
  * https://bearcms.com/
@@ -241,7 +243,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
                 $app->hooks->execute('bearCMSDefaultTemplate1ContentReady', $object);
 
                 $template = new BearFramework\HTMLTemplate($templateHTMLCode);
-                $template->insert('body', $response->content);
+                $template->insert('body', $app->components->process($response->content));
                 $response->content = $template->getResult();
             }
         }
