@@ -1,4 +1,5 @@
-# Bear CMS
+![Bear CMS](http://bearcms.github.io/bearcms-logo-for-github.png)
+
 Addon for Bear Framework
 
 This addon enables you add CMS functionality to your [Bear Framework](https://bearframework.com/) powered website. Learn more at [bearcms.com](https://bearcms.com/).
