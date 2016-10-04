@@ -30,6 +30,8 @@ Enable the addon for your Bear Framework application.
 ```php
 $app->addons->add('bearcms/bearframework-addon', [
     'serverUrl' => 'https://example.bearcms.com/',
+    'siteID' => 'example',
+    'siteSecret' => 'example',
     'addonsDir' => realpath(__DIR__ . '/../addons/'),
     'language' => 'en'
 ]);
