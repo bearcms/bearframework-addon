@@ -63,7 +63,12 @@ final class Controller
             $fileExtension = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
             $tempFilename = md5('fileupload' . uniqid()) . (isset($fileExtension{0}) ? '.' . $fileExtension : '');
             $filename = $app->data->getFilename('.temp/bearcms/files/' . $tempFilename);
-            $app->filesystem->makeFileDir($filename);
+            $pathinfo = pathinfo($filename);
+            if (isset($pathinfo['dirname'])) {
+                if (!is_dir($pathinfo['dirname'])) {
+                    mkdir($pathinfo['dirname'], 0777, true);
+                }
+            }
             move_uploaded_file($_FILES['Filedata']["tmp_name"], $filename);
             if (is_file($filename)) {
                 $response = Server::call('fileupload', array('tempFilename' => $tempFilename, 'requestData' => json_encode($_GET)));
