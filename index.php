@@ -337,7 +337,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if ($externalLinksAreEnabled) {
         $domDocument = new HTML5DOMDocument();
         $domDocument->loadHTML($response->content);
-        $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/externalLinks.min.js')) . '"></script><script>bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');</script></body></html>');
+        $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/externalLinks.min.js')) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script></body></html>');
         $response->content = $domDocument->saveHTML();
     }
 
