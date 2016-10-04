@@ -394,12 +394,17 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
                 $domDocument = new HTML5DOMDocument();
                 $domDocument->loadHTML($content);
                 $domDocument->insertHTML($elementsEditorData['result']['content']);
-                $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js')) . '"></script></body></html>');
                 $content = $domDocument->saveHTML();
             } else {
                 $response = new App\Response\TemporaryUnavailable();
             }
         }
+
+        // It's needed even when there is no editable zone on the current page (editing a blog post for instance)
+        $domDocument = new HTML5DOMDocument();
+        $domDocument->loadHTML($content);
+        $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js')) . '"></script></body></html>');
+        $content = $domDocument->saveHTML();
 
         $content = Server::updateAssetsUrls($content, false);
         if (strpos($content, '{body}') !== false) {
