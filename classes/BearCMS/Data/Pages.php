@@ -45,9 +45,10 @@ class Pages
     /**
      * Retrieves a list of all pages
      * 
+     * @param array $options List of options. Available values: PUBLISHED_ONLY, NOT_PUBLISHED_ONLY, SORT_BY_NAME, SORT_BY_NAME_DESC
      * @return array List containing all pages data
      */
-    public function getList()
+    public function getList($options = [])
     {
         $app = App::$instance;
         $data = $app->data->search(
@@ -62,6 +63,38 @@ class Pages
         foreach ($data as $item) {
             $result[] = json_decode($item['body'], true);
         }
+
+        $filterByAttribute = function($name, $value) use (&$result) {
+            $temp = [];
+            foreach ($result as $item) {
+                if (isset($item[$name]) && $item[$name] === $value) {
+                    $temp[] = $item;
+                }
+            }
+            $result = $temp;
+        };
+
+        $sortByStringAttribute = function($name, $order = 'asc') use (&$result) {
+            usort($result, function($item1, $item2) use ($name, $order) {
+                if (isset($item1[$name], $item2[$name])) {
+                    return strcmp($item1[$name], $item2[$name]) * ($order === 'asc' ? 1 : -1);
+                }
+                return 0;
+            });
+        };
+
+        if (array_search('PUBLISHED_ONLY', $options) !== false) {
+            $filterByAttribute('status', 'published');
+        } elseif (array_search('NOT_PUBLISHED_ONLY', $options) !== false) {
+            $filterByAttribute('status', 'notPublished');
+        }
+
+        if (array_search('SORT_BY_NAME', $options) !== false) {
+            $sortByStringAttribute('name', 'asc');
+        } elseif (array_search('SORT_BY_NAME_DESC', $options) !== false) {
+            $sortByStringAttribute('name', 'desc');
+        }
+
         return $result;
     }
 

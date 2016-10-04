@@ -45,9 +45,10 @@ class Addons
     /**
      * Retrieves a list of all addons
      * 
+     * @param array $options List of options. Available values: ENABLED_ONLY, DISABLED_ONLY
      * @return array List containing all addons data
      */
-    public function getList()
+    public function getList($options = [])
     {
         $app = App::$instance;
         $data = $app->data->search(
@@ -61,6 +62,22 @@ class Addons
         $result = [];
         foreach ($data as $item) {
             $result[] = json_decode($item['body'], true);
+        }
+
+        $filterByAttribute = function($name, $value) use (&$result) {
+            $temp = [];
+            foreach ($result as $item) {
+                if (isset($item[$name]) && $item[$name] === $value) {
+                    $temp[] = $item;
+                }
+            }
+            $result = $temp;
+        };
+
+        if (array_search('ENABLED_ONLY', $options) !== false) {
+            $filterByAttribute('enabled', true);
+        } elseif (array_search('DISABLED_ONLY', $options) !== false) {
+            $filterByAttribute('enabled', false);
         }
         return $result;
     }
