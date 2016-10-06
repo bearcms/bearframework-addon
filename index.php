@@ -24,14 +24,14 @@ $context->classes->add('BearCMS\Data\Addons', 'classes/BearCMS/Data/Addons.php')
 $context->classes->add('BearCMS\Data\Blog', 'classes/BearCMS/Data/Blog.php');
 $context->classes->add('BearCMS\Data\Pages', 'classes/BearCMS/Data/Pages.php');
 $context->classes->add('BearCMS\Data\Settings', 'classes/BearCMS/Data/Settings.php');
-$context->classes->add('BearCMS\Data\Templates', 'classes/BearCMS/Data/Templates.php');
+$context->classes->add('BearCMS\Data\Themes', 'classes/BearCMS/Data/Themes.php');
 $context->classes->add('BearCMS\Data\Users', 'classes/BearCMS/Data/Users.php');
 
 $context->classes->add('BearCMS\Internal\Data\Addons', 'classes/BearCMS/Internal/Data/Addons.php');
 $context->classes->add('BearCMS\Internal\Data\Blog', 'classes/BearCMS/Internal/Data/Blog.php');
 $context->classes->add('BearCMS\Internal\Data\Files', 'classes/BearCMS/Internal/Data/Files.php');
 $context->classes->add('BearCMS\Internal\Data\Pages', 'classes/BearCMS/Internal/Data/Pages.php');
-$context->classes->add('BearCMS\Internal\Data\Templates', 'classes/BearCMS/Internal/Data/Templates.php');
+$context->classes->add('BearCMS\Internal\Data\Themes', 'classes/BearCMS/Internal/Data/Themes.php');
 $context->classes->add('BearCMS\Internal\Data\Users', 'classes/BearCMS/Internal/Data/Users.php');
 $context->classes->add('BearCMS\Internal\Controller', 'classes/BearCMS/Internal/Controller.php');
 $context->classes->add('BearCMS\Internal\Cookies', 'classes/BearCMS/Internal/Cookies.php');
@@ -41,8 +41,8 @@ $context->classes->add('BearCMS\Internal\Server', 'classes/BearCMS/Internal/Serv
 $context->classes->add('BearCMS\Internal\ServerCommands', 'classes/BearCMS/Internal/ServerCommands.php');
 
 $context->classes->add('BearCMS\CurrentUser', 'classes/BearCMS/CurrentUser.php');
-$context->classes->add('BearCMS\CurrentTemplate', 'classes/BearCMS/CurrentTemplate.php');
-$context->classes->add('BearCMS\CurrentTemplateOptions', 'classes/BearCMS/CurrentTemplateOptions.php');
+$context->classes->add('BearCMS\CurrentTheme', 'classes/BearCMS/CurrentTheme.php');
+$context->classes->add('BearCMS\CurrentThemeOptions', 'classes/BearCMS/CurrentThemeOptions.php');
 
 $app->components->addAlias('bearcms-elements', 'file:' . $context->dir . '/components/bearcms-elements.php');
 $app->components->addAlias('bearcms-heading-element', 'file:' . $context->dir . '/components/bearcms-heading-element.php');
@@ -205,50 +205,14 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     } elseif ($app->request->path === '/' && $response instanceof App\Response\HTML) {
         $response->enableBearCMS = true;
     }
-
     if (!isset($response->enableBearCMS)) {
         $response->enableBearCMS = false;
     }
-
-    // Apply the template if the default theme is selected
-    if ($app->bearCMS->currentTemplate->getID() === 'bearcms/default1') {
-        if (empty($response->bearCMSSystemPage)) {
-            $templateHTMLCode = null;
-            if ($response instanceof App\Response\HTML) {
-                $templateHTMLCode = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php"/>';
-            } elseif ($response instanceof App\Response\NotFound) {
-                $templateHTMLCode = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php" mode="notFound"/>';
-            } elseif ($response instanceof App\Response\TemporaryUnavailable) {
-                $templateHTMLCode = '<component src="file:' . $context->dir . '/components/bearcms-default-template-1.php" mode="temporaryUnavailable"/>';
-            }
-            if ($templateHTMLCode !== null) {
-                $templateHTMLCode = $app->components->process($templateHTMLCode, ['recursive' => false]);
-                $object = new ArrayObject();
-                $object->content = $templateHTMLCode;
-                $app->hooks->execute('bearCMSDefaultTemplate1Created', $object);
-                $templateHTMLCode = $object->content;
-                $templateHTMLCode = $app->components->process($templateHTMLCode);
-                $object = new ArrayObject();
-                $object->content = $templateHTMLCode;
-                $app->hooks->execute('bearCMSDefaultTemplate1Ready', $object);
-
-                $content = $response->content;
-                $object = new ArrayObject();
-                $object->content = $content;
-                $app->hooks->execute('bearCMSDefaultTemplate1ContentCreated', $object);
-                $content = $object->content;
-                $content = $app->components->process($content);
-                $object = new ArrayObject();
-                $object->content = $content;
-                $app->hooks->execute('bearCMSDefaultTemplate1ContentReady', $object);
-
-                $template = new BearFramework\HTMLTemplate($templateHTMLCode);
-                $template->insert('body', $app->components->process($response->content));
-                $response->content = $template->getResult();
-            }
-        }
-    }
 });
+
+if ($app->bearCMS->currentTheme->getID() === 'bearcms/default1') {
+    require $context->dir . '/themes/default1/index.php';
+}
 
 $app->hooks->add('responseCreated', function($response) use ($app, $context) {
 

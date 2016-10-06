@@ -15,9 +15,9 @@ Contains references to all Bear CMS related objects.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A reference to the data related objects
 
-`public \BearCMS\CurrentTemplate $currentTemplate`
+`public \BearCMS\CurrentTheme $currentTheme`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the current template
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the current theme
 
 `public \BearCMS\CurrentUser $currentUser`
 

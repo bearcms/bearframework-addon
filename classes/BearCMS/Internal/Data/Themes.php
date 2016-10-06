@@ -11,15 +11,15 @@ namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
 
-final class Templates
+final class Themes
 {
 
-    static function getActiveTemplateID()
+    static function getActiveThemeID()
     {
         $app = App::$instance;
         $data = $app->data->get(
                 [
-                    'key' => 'bearcms/templates/active.json',
+                    'key' => 'bearcms/themes/active.json',
                     'result' => ['key', 'body']
                 ]
         );
@@ -32,7 +32,7 @@ final class Templates
         return 'none';
     }
 
-    static function getTemplatesList()
+    static function getList()
     {
         $app = App::$instance;
         $addonsList = $app->addons->getList();
@@ -40,15 +40,14 @@ final class Templates
         foreach ($addonsList as $addonData) {
             $addonID = $addonData['id'];
             $addonData = \BearFramework\Addons::get($addonID);
-            $options = $addonData['options'];
-            if (isset($options['bearCMS']) && is_array($options['bearCMS']) && isset($options['bearCMS']['templates']) && is_array($options['bearCMS']['templates'])) {
-                $addonDir = trim(\BearFramework\Addons::get($addonID)['dir'], '/') . '/';
-                foreach ($options['bearCMS']['templates'] as $templateData) {
-                    if (isset($templateData['id'], $templateData['manifest'])) {
-                        $manifestFilename = $addonDir . $templateData['manifest'];
+            $addonOptions = $addonData['options'];
+            if (isset($addonOptions['bearCMS']) && is_array($addonOptions['bearCMS']) && isset($addonOptions['bearCMS']['themes']) && is_array($addonOptions['bearCMS']['themes'])) {
+                foreach ($addonOptions['bearCMS']['themes'] as $themeData) {
+                    if (is_array($themeData) && isset($themeData['id'], $themeData['manifest']) && is_string($themeData['id']) && is_string($themeData['manifest'])) {
+                        $manifestFilename = $addonOptions['dir'] . '/' . $themeData['manifest'];
                         if (is_file($manifestFilename)) {
-                            $templateID = (string) $templateData['id'];
-                            $result[$templateID] = ['id' => $templateID, 'dir' => $addonDir, 'manifestFilename' => $manifestFilename];
+                            $themeID = $themeData['id'];
+                            $result[$themeID] = ['id' => $themeID, 'dir' => $addonOptions['dir'], 'manifestFilename' => $manifestFilename];
                         }
                     }
                 }
@@ -56,11 +55,10 @@ final class Templates
         }
         $result = array_values($result);
         $context = $app->getContext(__DIR__);
-        $addonDir = rtrim($context->dir, '/') . '/';
         array_unshift($result, [
             'id' => 'bearcms/default1',
-            'dir' => $addonDir,
-            'manifestFilename' => $addonDir . 'default-template-1.manifest.json'
+            'dir' => $context->dir,
+            'manifestFilename' => $context->dir . '/themes/default1/manifest.json'
         ]);
         array_unshift($result, [
             'id' => 'none'
@@ -68,13 +66,13 @@ final class Templates
         return $result;
     }
 
-    static function getManifestData($manifestFilename, $dir)
+    static function getManifestData($manifestFilename, $contextDir)
     {
         $data = json_decode(file_get_contents($manifestFilename), true);
         if (isset($data['media']) && is_array($data['media'])) {
             foreach ($data['media'] as $i => $media) {
-                if (isset($media['filename'])) {
-                    $data['media'][$i]['filename'] = $dir . $media['filename'];
+                if (is_array($media) && isset($media['filename'])) {
+                    $data['media'][$i]['filename'] = $contextDir . '/' . $media['filename'];
                 }
             }
         }

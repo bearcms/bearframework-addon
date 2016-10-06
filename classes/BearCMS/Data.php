@@ -18,7 +18,7 @@ use BearFramework\App;
  * @property \BearCMS\Data\Blog $blog Information about the blog posts
  * @property \BearCMS\Data\Pages $pages Information about the site pages
  * @property \BearCMS\Data\Settings $settings Information about the site settings
- * @property \BearCMS\Data\Templates $templates Information about the site templates
+ * @property \BearCMS\Data\Themes $themes Information about the site themes
  * @property \BearCMS\Data\Users $users Information about the CMS users (administrators)
  */
 class Data
@@ -39,7 +39,7 @@ class Data
         $this->container->set('blog', \BearCMS\Data\Blog::class);
         $this->container->set('pages', \BearCMS\Data\Pages::class);
         $this->container->set('settings', \BearCMS\Data\Settings::class);
-        $this->container->set('templates', \BearCMS\Data\Templates::class);
+        $this->container->set('themes', \BearCMS\Data\Themes::class);
         $this->container->set('users', \BearCMS\Data\Users::class);
     }
 

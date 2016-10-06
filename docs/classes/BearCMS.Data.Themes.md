@@ -1,5 +1,5 @@
-# BearCMS\Data\Templates
-Information about the site templates
+# BearCMS\Data\Themes
+Information about the site themes
 
 ## Methods
 
@@ -7,29 +7,29 @@ Information about the site templates
 public array getOptions ( string $id )
 ```
 
-Returns a list containing the options for the template specified
+Returns a list containing the options for the theme specified
 
 _Parameters_
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$id`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The id of the template
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The id of the theme
 
 _Returns_
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A list containing the template options
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A list containing the theme options
 
 ```php
 public array getTempOptions ( array $id , array $userID )
 ```
 
-Returns a list containing the template options a specific user has made
+Returns a list containing the theme options a specific user has made
 
 _Parameters_
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$id`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The id of the template
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The id of the theme
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$userID`
 
@@ -37,14 +37,14 @@ _Parameters_
 
 _Returns_
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A list containing the template options
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A list containing the theme options
 
 ## Examples
 
-List last saved template options.
+List last saved theme options.
 
 ```php
-$options = $app->bearCMS->data->templates->getOptions('bearcms/default1');
+$options = $app->bearCMS->data->themes->getOptions('bearcms/default1');
 
 // Array
 // (
@@ -55,10 +55,10 @@ $options = $app->bearCMS->data->templates->getOptions('bearcms/default1');
 // )
 ```
 
-List last unsaved template options for a specific user.
+List last unsaved theme options for a specific user.
 
 ```php
-$options = $app->bearCMS->data->templates->getTempOptions('bearcms/default1', 'abcdefghijk1');
+$options = $app->bearCMS->data->themes->getTempOptions('bearcms/default1', 'abcdefghijk1');
 
 // Array
 // (

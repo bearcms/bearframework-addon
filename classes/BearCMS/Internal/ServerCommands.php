@@ -165,25 +165,24 @@ final class ServerCommands
      * 
      * @return array
      */
-    static function templates()
+    static function themes()
     {
-        $templates = \BearCMS\Internal\Data\Templates::getTemplatesList();
-        foreach ($templates as $i => $template) {
-            if (isset($template['manifestFilename'])) {
-                $manifestData = \BearCMS\Internal\Data\Templates::getManifestData($template['manifestFilename'], $template['dir']);
-                unset($template['dir']);
-                unset($template['manifestFilename']);
-                $template = array_merge($template, $manifestData);
-                if (isset($template['options'])) {
-                    $template['hasOptions'] = !empty($template['options']);
-                    unset($template['options']);
+        $themes = \BearCMS\Internal\Data\Themes::getList();
+        $result = [];
+        foreach ($themes as $i => $theme) {
+            if (isset($theme['manifestFilename'])) {
+                $manifestData = \BearCMS\Internal\Data\Themes::getManifestData($theme['manifestFilename'], $theme['dir']);
+                $manifestData['id'] = $theme['id'];
+                if (isset($manifestData['options'])) {
+                    $manifestData['hasOptions'] = !empty($manifestData['options']);
+                    unset($manifestData['options']);
                 } else {
-                    $template['hasOptions'] = false;
+                    $manifestData['hasOptions'] = false;
                 }
-                $templates[$i] = $template;
+                $result[] = $manifestData;
             }
         }
-        return $templates;
+        return $result;
     }
 
     /**
@@ -192,58 +191,64 @@ final class ServerCommands
      * @return array
      * @throws \Exception
      */
-    static function template($data)
+    static function theme($data)
     {
         $app = App::$instance;
         if (!isset($data['id'])) {
             throw new \Exception('');
         }
-        $templates = \BearCMS\Internal\Data\Templates::getTemplatesList();
-        foreach ($templates as $template) {
-            if ($template['id'] === $data['id']) {
-                if (isset($template['manifestFilename'])) {
-                    $manifestData = \BearCMS\Internal\Data\Templates::getManifestData($template['manifestFilename'], $template['dir']);
-                    unset($template['dir']);
-                    unset($template['manifestFilename']);
-                    $template = array_merge($template, $manifestData);
-                    if (isset($template['options'])) {
-                        $template['hasOptions'] = !empty($template['options']);
-                        unset($template['options']);
+        $includeOptions = isset($data['includeOptions']) && !empty($data['includeOptions']);
+        $themes = \BearCMS\Internal\Data\Themes::getList();
+        foreach ($themes as $theme) {
+            if ($theme['id'] === $data['id']) {
+                if (isset($theme['manifestFilename'])) {
+                    $manifestData = \BearCMS\Internal\Data\Themes::getManifestData($theme['manifestFilename'], $theme['dir']);
+                    $manifestData['id'] = $theme['id'];
+                    if (isset($manifestData['options'])) {
+                        $manifestData['hasOptions'] = !empty($manifestData['options']);
                     } else {
-                        $template['hasOptions'] = false;
+                        $manifestData['hasOptions'] = false;
                     }
-                    if (isset($data['includeOptions']) && !empty($data['includeOptions'])) {
-                        $template['options'] = [];
-                        $template['options']['definition'] = isset($manifestData['options']) ? $manifestData['options'] : [];
+                    if ($includeOptions) {
+                        $manifestData['options'] = [
+                            'definition' => isset($manifestData['options']) ? $manifestData['options'] : []
+                        ];
 
-                        $optionsValues = [];
+
                         $result = $app->data->get(
                                 [
-                                    'key' => 'bearcms/templates/template/' . md5($template['id']) . '.json',
+                                    'key' => 'bearcms/themes/theme/' . md5($theme['id']) . '.json',
                                     'result' => ['key', 'body']
                                 ]
                         );
                         if (isset($result['body'])) {
                             $temp = json_decode($result['body'], true);
                             $optionsValues = isset($temp['options']) ? $temp['options'] : [];
+                        } else {
+                            $optionsValues = [];
                         }
-                        $template['options']['activeValues'] = $optionsValues;
+                        $manifestData['options']['activeValues'] = $optionsValues;
 
-                        $optionsValues = null;
                         $result = $app->data->get(
                                 [
-                                    'key' => '.temp/bearcms/usertemplateoptions/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($data['id']) . '.json',
+                                    'key' => '.temp/bearcms/userthemeoptions/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($data['id']) . '.json',
                                     'result' => ['key', 'body']
                                 ]
                         );
                         if (isset($result['body'])) {
                             $temp = json_decode($result['body'], true);
                             $optionsValues = isset($temp['options']) ? $temp['options'] : [];
+                        } else {
+                            $optionsValues = null;
                         }
-                        $template['options']['currentUserValues'] = $optionsValues;
+                        $manifestData['options']['currentUserValues'] = $optionsValues;
+                    } else {
+                        if (isset($manifestData['options'])) {
+                            unset($manifestData['options']);
+                        }
                     }
+                    return $manifestData;
                 }
-                return $template;
             }
         }
         return null;

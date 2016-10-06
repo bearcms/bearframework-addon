@@ -11,7 +11,7 @@
  * Contains references to all Bear CMS related objects.
  * 
  * @property \BearCMS\Data $data A reference to the data related objects
- * @property \BearCMS\CurrentTemplate $currentTemplate Information about the current template
+ * @property \BearCMS\CurrentTheme $currentTheme Information about the current theme
  * @property \BearCMS\CurrentUser $currentUser Information about the current loggedin user
  */
 class BearCMS
@@ -37,7 +37,7 @@ class BearCMS
         $this->container = new \BearFramework\App\Container();
 
         $this->container->set('data', \BearCMS\Data::class);
-        $this->container->set('currentTemplate', \BearCMS\CurrentTemplate::class);
+        $this->container->set('currentTheme', \BearCMS\CurrentTheme::class);
         $this->container->set('currentUser', \BearCMS\CurrentUser::class);
     }
 
@@ -53,7 +53,7 @@ class BearCMS
         if ($this->container->exists($name)) {
             return $this->container->get($name);
         }
-        throw new \Exception('Invalid property name');
+        throw new \Exception('Invalid property name (' . $name . ')');
     }
 
     /**

@@ -10,9 +10,9 @@
 namespace BearCMS;
 
 /**
- * Data structure with array access containing all template options
+ * Data structure with array access containing all theme options
  */
-class CurrentTemplateOptions implements \ArrayAccess, \Iterator
+class CurrentThemeOptions implements \ArrayAccess, \Iterator
 {
 
     /**
@@ -37,7 +37,7 @@ class CurrentTemplateOptions implements \ArrayAccess, \Iterator
     }
 
     /**
-     * Cannot modify template options
+     * Cannot modify theme options
      * 
      * @param strint $offset
      * @param mixed $value
@@ -45,7 +45,7 @@ class CurrentTemplateOptions implements \ArrayAccess, \Iterator
      */
     public function offsetSet($offset, $value)
     {
-        throw new \Exception('Cannot modify template options');
+        throw new \Exception('Cannot modify theme options');
     }
 
     /**
@@ -60,14 +60,14 @@ class CurrentTemplateOptions implements \ArrayAccess, \Iterator
     }
 
     /**
-     * Cannot modify template options
+     * Cannot modify theme options
      * 
      * @param strint $offset
      * @throws \Exception
      */
     public function offsetUnset($offset)
     {
-        throw new \Exception('Cannot modify template options');
+        throw new \Exception('Cannot modify theme options');
     }
 
     /**

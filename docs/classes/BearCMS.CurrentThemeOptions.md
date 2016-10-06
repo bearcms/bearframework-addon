@@ -1,5 +1,5 @@
-# BearCMS\CurrentTemplateOptions
-Data structure with array access containing all template options
+# BearCMS\CurrentThemeOptions
+Data structure with array access containing all theme options
 
 ## Methods
 
@@ -21,7 +21,7 @@ _Returns_
 public void offsetSet ( strint $offset , mixed $value )
 ```
 
-Cannot modify template options
+Cannot modify theme options
 
 _Parameters_
 
@@ -51,7 +51,7 @@ _Returns_
 public void offsetUnset ( strint $offset )
 ```
 
-Cannot modify template options
+Cannot modify theme options
 
 _Parameters_
 

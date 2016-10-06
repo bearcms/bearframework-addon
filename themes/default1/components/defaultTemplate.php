@@ -36,7 +36,7 @@ if ($mode === 'notFound' || $mode === 'temporaryUnavailable') {
     return;
 }
 
-$options = $app->bearCMS->currentTemplate->getOptions();
+$options = $app->bearCMS->currentTheme->getOptions();
 
 $hasPages = sizeof($app->bearCMS->data->pages->getList(['PUBLISHED_ONLY']));
 $settings = $app->bearCMS->data->settings->get();
@@ -188,6 +188,6 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
             echo '</footer>';
             echo '</div>';
         }
-        ?><component src="data:base64,<?= base64_encode($app->bearCMS->currentTemplate->getOptionsHtml()); ?>" />
+        ?><component src="data:base64,<?= base64_encode($app->bearCMS->currentTheme->getOptionsHtml()); ?>" />
 </body>
 </html>

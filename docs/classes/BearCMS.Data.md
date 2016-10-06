@@ -23,9 +23,9 @@ Contains reference to the different data types
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the site settings
 
-`public \BearCMS\Data\Templates $templates`
+`public \BearCMS\Data\Themes $themes`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the site templates
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the site themes
 
 `public \BearCMS\Data\Users $users`
 

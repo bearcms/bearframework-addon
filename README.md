@@ -60,9 +60,9 @@ You can configure the addon when added to your application. Here is a list of al
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the site settings available in the CMS.
 
-[$app->bearCMS->data->templates](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Templates.md)
+[$app->bearCMS->data->themes](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Themes.md)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the templates customized by the administrators.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the themes customized by the administrators.
 
 [$app->bearCMS->data->users](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Users.md)
 
@@ -110,11 +110,11 @@ You can configure the addon when added to your application. Here is a list of al
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a video block.
 
-### Current template
+### Current theme
 
-[$app->bearCMS->currentTemplate](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.CurrentTemplate.md)
+[$app->bearCMS->currentTheme](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.CurrentTheme.md)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provides information about the current template and it's customizations.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provides information about the current theme and it's customizations.
 
 ### Current user
 

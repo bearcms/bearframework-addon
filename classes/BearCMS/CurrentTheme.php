@@ -14,9 +14,9 @@ use BearCMS\Internal\Cookies;
 use BearCMS\Internal\Data as InternalData;
 
 /**
- * Information about the current template
+ * Information about the current theme
  */
-class CurrentTemplate
+class CurrentTheme
 {
 
     /**
@@ -27,23 +27,23 @@ class CurrentTemplate
     private static $cache = [];
 
     /**
-     * Returns the id of the current active template or template in preview
+     * Returns the id of the current active theme or theme in preview
      * 
-     * @return string The id of the current active template or template in preview
+     * @return string The id of the current active theme or theme in preview
      */
     public function getID()
     {
         if (!isset(self::$cache['id'])) {
             $cookies = Cookies::getList(Cookies::TYPE_SERVER);
-            self::$cache['id'] = isset($cookies['tmpr']) ? $cookies['tmpr'] : InternalData\Templates::getActiveTemplateID();
+            self::$cache['id'] = isset($cookies['tmpr']) ? $cookies['tmpr'] : InternalData\Themes::getActiveThemeID();
         }
         return self::$cache['id'];
     }
 
     /**
-     * Returns an array containing all template options
+     * Returns an array containing all theme options
      * 
-     * @return array An array containing all template options
+     * @return array An array containing all theme options
      */
     public function getOptions()
     {
@@ -61,21 +61,21 @@ class CurrentTemplate
         $cacheKey = 'options' . $resultType; //todo optimize
         $app = App::$instance;
         if (!isset(self::$cache[$cacheKey])) {
-            $currentTemplateID = $this->getID();
+            $currentThemeID = $this->getID();
             $result = [];
-            $values = $app->bearCMS->data->templates->getOptions($currentTemplateID);
+            $values = $app->bearCMS->data->themes->getOptions($currentThemeID);
             if ($app->bearCMS->currentUser->exists()) {
-                $userOptions = $app->bearCMS->data->templates->getTempOptions($currentTemplateID, $app->bearCMS->currentUser->getID());
+                $userOptions = $app->bearCMS->data->themes->getTempOptions($currentThemeID, $app->bearCMS->currentUser->getID());
                 if (!empty($userOptions)) {
                     $values = array_merge($values, $userOptions);
                 }
             }
 // todo optimize
-            $templates = \BearCMS\Internal\Data\Templates::getTemplatesList();
-            foreach ($templates as $template) {
-                if ($template['id'] === $currentTemplateID) {
-                    if (isset($template['manifestFilename'])) {
-                        $manifestData = \BearCMS\Internal\Data\Templates::getManifestData($template['manifestFilename'], $template['dir']);
+            $themes = \BearCMS\Internal\Data\Themes::getList();
+            foreach ($themes as $theme) {
+                if ($theme['id'] === $currentThemeID) {
+                    if (isset($theme['manifestFilename'])) {
+                        $manifestData = \BearCMS\Internal\Data\Themes::getManifestData($theme['manifestFilename'], $theme['dir']);
                         if (isset($manifestData['options'])) {
                             $walkOptions = function($options) use (&$result, $values, &$walkOptions, $resultType) {
                                 foreach ($options as $option) {
@@ -100,7 +100,7 @@ class CurrentTemplate
                     break;
                 }
             }
-            self::$cache[$cacheKey] = new \BearCMS\CurrentTemplateOptions($result);
+            self::$cache[$cacheKey] = new \BearCMS\CurrentThemeOptions($result);
         }
         return self::$cache[$cacheKey];
     }

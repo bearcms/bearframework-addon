@@ -12,16 +12,16 @@ namespace BearCMS\Data;
 use BearFramework\App;
 
 /**
- * Information about the site templates
+ * Information about the site themes
  */
-class Templates
+class Themes
 {
 
     /**
-     * Returns a list containing the options for the template specified
+     * Returns a list containing the options for the theme specified
      * 
-     * @param string $id The id of the template
-     * @return array A list containing the template options
+     * @param string $id The id of the theme
+     * @return array A list containing the theme options
      * @throws \InvalidArgumentException
      */
     public function getOptions($id)
@@ -32,7 +32,7 @@ class Templates
         $app = App::$instance;
         $data = $app->data->get(
                 [
-                    'key' => 'bearcms/templates/template/' . md5($id) . '.json',
+                    'key' => 'bearcms/themes/theme/' . md5($id) . '.json',
                     'result' => ['body']
                 ]
         );
@@ -46,11 +46,11 @@ class Templates
     }
 
     /**
-     * Returns a list containing the template options a specific user has made
+     * Returns a list containing the theme options a specific user has made
      * 
-     * @param array $id The id of the template
+     * @param array $id The id of the theme
      * @param array $userID The id of the user
-     * @return array A list containing the template options
+     * @return array A list containing the theme options
      * @throws \InvalidArgumentException
      */
     public function getTempOptions($id, $userID)
@@ -64,7 +64,7 @@ class Templates
         $app = App::$instance;
         $data = $app->data->get(
                 [
-                    'key' => '.temp/bearcms/usertemplateoptions/' . md5($userID) . '/' . md5($id) . '.json',
+                    'key' => '.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json',
                     'result' => ['body']
                 ]
         );

@@ -1,9 +1,9 @@
 {
-    "name": "The Default Template",
-    "description": "This is the default starter template for each Bear CMS powered website. Simple yet highly customizable it enables you to create websites that look great on desktops, tables and smartphones. You can change the colors and visibility of the different content blocks.",
+    "name": "The Default Theme",
+    "description": "This is the default starter theme for each Bear CMS powered website. Simple yet highly customizable it enables you to create websites that look great on desktops, tables and smartphones. You can change the colors and visibility of the different content blocks.",
     "media": [
         {
-            "filename": "assets/dt1.jpg",
+            "filename": "themes/default1/assets/t1.jpg",
             "width": 1024,
             "height": 768
         }
