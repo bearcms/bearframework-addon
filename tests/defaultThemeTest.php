@@ -20,7 +20,7 @@ class DefaultThemeTest extends BearFrameworkAddonTestCase
     {
         $app = $this->getApp();
         $context = $app->getContext(\BearFramework\Addons::get('bearcms/bearframework-addon')['dir'] . '/index.php');
-        $result = $app->components->process('<component src="file:' . $context->dir . '/themes/default1/components/template.php" />');
+        $result = $app->components->process('<component src="file:' . $context->dir . '/themes/default1/components/defaultTemplate.php" />');
         //echo $result;exit;
         //$this->assertTrue($settings['title'] === '');
     }
