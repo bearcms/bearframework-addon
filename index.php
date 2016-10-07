@@ -44,16 +44,16 @@ $context->classes->add('BearCMS\CurrentUser', 'classes/BearCMS/CurrentUser.php')
 $context->classes->add('BearCMS\CurrentTheme', 'classes/BearCMS/CurrentTheme.php');
 $context->classes->add('BearCMS\CurrentThemeOptions', 'classes/BearCMS/CurrentThemeOptions.php');
 
-$app->components->addAlias('bearcms-elements', 'file:' . $context->dir . '/components/bearcms-elements.php');
-$app->components->addAlias('bearcms-heading-element', 'file:' . $context->dir . '/components/bearcms-heading-element.php');
-$app->components->addAlias('bearcms-text-element', 'file:' . $context->dir . '/components/bearcms-text-element.php');
-$app->components->addAlias('bearcms-link-element', 'file:' . $context->dir . '/components/bearcms-link-element.php');
-$app->components->addAlias('bearcms-video-element', 'file:' . $context->dir . '/components/bearcms-video-element.php');
-$app->components->addAlias('bearcms-image-element', 'file:' . $context->dir . '/components/bearcms-image-element.php');
-$app->components->addAlias('bearcms-image-gallery-element', 'file:' . $context->dir . '/components/bearcms-image-gallery-element.php');
-$app->components->addAlias('bearcms-navigation-element', 'file:' . $context->dir . '/components/bearcms-navigation-element.php');
-$app->components->addAlias('bearcms-html-element', 'file:' . $context->dir . '/components/bearcms-html-element.php');
-$app->components->addAlias('bearcms-blog-posts-element', 'file:' . $context->dir . '/components/bearcms-blog-posts-element.php');
+$app->components->addAlias('bearcms-elements', 'file:' . $context->dir . '/components/bearcmsElements.php');
+$app->components->addAlias('bearcms-heading-element', 'file:' . $context->dir . '/components/bearcmsHeadingElement.php');
+$app->components->addAlias('bearcms-text-element', 'file:' . $context->dir . '/components/bearcmsTextElement.php');
+$app->components->addAlias('bearcms-link-element', 'file:' . $context->dir . '/components/bearcmsLinkElement.php');
+$app->components->addAlias('bearcms-video-element', 'file:' . $context->dir . '/components/bearcmsVideoElement.php');
+$app->components->addAlias('bearcms-image-element', 'file:' . $context->dir . '/components/bearcmsImageElement.php');
+$app->components->addAlias('bearcms-image-gallery-element', 'file:' . $context->dir . '/components/bearcmsImageGalleryElement.php');
+$app->components->addAlias('bearcms-navigation-element', 'file:' . $context->dir . '/components/bearcmsNavigationElement.php');
+$app->components->addAlias('bearcms-html-element', 'file:' . $context->dir . '/components/bearcmsHtmlElement.php');
+$app->components->addAlias('bearcms-blog-posts-element', 'file:' . $context->dir . '/components/bearcmsBlogPostsElement.php');
 
 $context->assets->addDir('assets');
 
@@ -76,10 +76,12 @@ $app->hooks->add('initialized', function() use ($app) {
             }
             if (\BearFramework\Addons::exists($addonID)) {
                 $_addonData = \BearFramework\Addons::get($addonID);
-                $options = $_addonData['options'];
-                if (isset($options['bearCMS']) && is_array($options['bearCMS']) && isset($options['bearCMS']['assetsDirs'])) {
-                    foreach ($options['bearCMS']['assetsDirs'] as $dir) {
-                        $app->assets->addDir($addonDir . $dir);
+                $_addonOptions = $_addonData['options'];
+                if (isset($_addonOptions['bearCMS']) && is_array($_addonOptions['bearCMS']) && isset($_addonOptions['bearCMS']['assetsDirs']) && is_array($_addonOptions['bearCMS']['assetsDirs'])) {
+                    foreach ($_addonOptions['bearCMS']['assetsDirs'] as $dir) {
+                        if (is_string($dir)) {
+                            $app->assets->addDir($addonDir . $dir);
+                        }
                     }
                 }
                 if ($addonData['enabled']) {
@@ -144,6 +146,7 @@ $app->hooks->add('initialized', function() use ($app) {
 
                 $response = new App\Response\HTML($content);
                 $response->enableBearCMS = true;
+                $response->applyBearCMSTemplate = true;
                 $response->bearCMSBlogPostID = $blogPostID;
                 return $response;
             }
@@ -175,6 +178,7 @@ $app->hooks->add('initialized', function() use ($app) {
                 $content = '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
                 $response = new App\Response\HTML($content);
                 $response->enableBearCMS = true;
+                $response->applyBearCMSTemplate = true;
                 if ($pageID !== 'home') {
                     $response->bearCMSPageID = $pageID;
                 }
@@ -198,15 +202,21 @@ if (Options::hasFeature('elements')) {
 $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if ($response instanceof App\Response\NotFound) {
         $response->enableBearCMS = true;
+        $response->applyBearCMSTemplate = true;
         $response->setContentType('text/html');
     } elseif ($response instanceof App\Response\TemporaryUnavailable) {
         $response->enableBearCMS = true;
+        $response->applyBearCMSTemplate = true;
         $response->setContentType('text/html');
     } elseif ($app->request->path === '/' && $response instanceof App\Response\HTML) {
         $response->enableBearCMS = true;
+        $response->applyBearCMSTemplate = true;
     }
     if (!isset($response->enableBearCMS)) {
         $response->enableBearCMS = false;
+    }
+    if (!isset($response->applyBearCMSTemplate)) {
+        $response->applyBearCMSTemplate = false;
     }
 });
 

@@ -8,7 +8,7 @@ use BearFramework\App;
 $context->assets->addDir('themes/default1/assets');
 
 $app->hooks->add('responseCreated', function($response) use ($app, $context) {
-    if (empty($response->bearCMSSystemPage)) {
+    if (!empty($response->applyBearCMSTemplate)) {
         $templateContent = null;
         if ($response instanceof App\Response\HTML) {
             $templateContent = '<component src="file:' . $context->dir . '/themes/default1/components/defaultTemplate.php"/>';

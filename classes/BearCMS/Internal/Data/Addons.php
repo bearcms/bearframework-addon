@@ -1,10 +1,12 @@
 <?php
+
 /*
  * Bear CMS addon for Bear Framework
  * https://bearcms.com/
  * Copyright (c) 2016 Amplilabs Ltd.
  * Free to use under the MIT license.
  */
+
 namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
@@ -38,16 +40,15 @@ final class Addons
     {
         if (\BearFramework\Addons::exists($name)) {
             $addonData = \BearFramework\Addons::get($name);
-            $options = $addonData['options'];
-            if (isset($options['bearCMS']) && is_array($options['bearCMS']) && isset($options['bearCMS']['manifest'])) {
-                $dir = rtrim(\BearFramework\Addons::get($name), '/')['dir'] . '/';
-                $filename = $dir . $options['bearCMS']['manifest'];
+            $addonOptions = $addonData['options'];
+            if (isset($addonOptions['bearCMS']) && is_array($addonOptions['bearCMS']) && isset($addonOptions['bearCMS']['manifest']) && is_string($addonOptions['bearCMS']['manifest'])) {
+                $filename = $addonData['dir'] . '/' . $addonOptions['bearCMS']['manifest'];
                 if (is_file($filename)) {
                     $data = json_decode(file_get_contents($filename), true);
                     if (isset($data['media']) && is_array($data['media'])) {
                         foreach ($data['media'] as $i => $media) {
-                            if (isset($media['filename'])) {
-                                $data['media'][$i]['filename'] = $dir . $media['filename'];
+                            if (isset($media['filename']) && is_string($media['filename'])) {
+                                $data['media'][$i]['filename'] = $addonData['dir'] . '/' . $media['filename'];
                             }
                         }
                     }
