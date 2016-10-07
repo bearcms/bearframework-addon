@@ -273,7 +273,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if (isset($keywords{0})) {
         $componentContent .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
     }
-    $componentContent .= '<meta name="generator" content="Bear CMS ' . \BearCMS::VERSION . '"/>';
+    $componentContent .= '<meta name="generator" content="Bear Framework v'.  App::VERSION.', Bear CMS v' . \BearCMS::VERSION . '"/>';
     $icon = $settings['icon'];
     if (isset($icon{0})) {
         $filename = $app->bearCMS->data->getRealFilename($icon);
