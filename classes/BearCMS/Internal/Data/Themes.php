@@ -44,10 +44,10 @@ final class Themes
             if (isset($addonOptions['bearCMS']) && is_array($addonOptions['bearCMS']) && isset($addonOptions['bearCMS']['themes']) && is_array($addonOptions['bearCMS']['themes'])) {
                 foreach ($addonOptions['bearCMS']['themes'] as $themeData) {
                     if (is_array($themeData) && isset($themeData['id'], $themeData['manifest']) && is_string($themeData['id']) && is_string($themeData['manifest'])) {
-                        $manifestFilename = $addonOptions['dir'] . '/' . $themeData['manifest'];
+                        $manifestFilename = $addonData['dir'] . '/' . $themeData['manifest'];
                         if (is_file($manifestFilename)) {
                             $themeID = $themeData['id'];
-                            $result[$themeID] = ['id' => $themeID, 'dir' => $addonOptions['dir'], 'manifestFilename' => $manifestFilename];
+                            $result[$themeID] = ['id' => $themeID, 'dir' => $addonData['dir'], 'manifestFilename' => $manifestFilename];
                         }
                     }
                 }
