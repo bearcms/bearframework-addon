@@ -64,7 +64,7 @@ Options::set($context->options);
 $app->hooks->add('initialized', function() use ($app) {
 
     // Load the CMS managed addons
-    if (Options::hasFeature('addons')) {
+    if (Options::hasFeature('ADDONS')) {
         $addons = InternalData\Addons::getList();
         foreach ($addons as $addonData) {
             $addonID = $addonData['id'];
@@ -94,7 +94,7 @@ $app->hooks->add('initialized', function() use ($app) {
     }
 
     // Automatically log in the user
-    if (Options::hasServer() && Options::hasFeature('users')) {
+    if (Options::hasServer() && Options::hasFeature('USERS')) {
         $cookies = Cookies::getList(Cookies::TYPE_SERVER);
         if (isset($cookies['_a']) && !$app->bearCMS->currentUser->exists()) {
             Server::call('autologin', null, true);
@@ -102,7 +102,7 @@ $app->hooks->add('initialized', function() use ($app) {
     }
 
     // Register the system pages
-    if (Options::hasServer() && Options::hasFeature('users')) {
+    if (Options::hasServer() && Options::hasFeature('USERS')) {
         $app->routes->add(['/admin/loggedin/'], function() use ($app) {
             return new App\Response\TemporaryRedirect($app->request->base . '/');
         });
@@ -115,7 +115,7 @@ $app->hooks->add('initialized', function() use ($app) {
     }
 
     // Register the file handlers
-    if (Options::hasFeature('files')) {
+    if (Options::hasFeature('FILES')) {
         $app->routes->add('/files/preview/*', ['BearCMS\Internal\Controller', 'handleFilePreview']);
         $app->routes->add('/files/download/*', ['BearCMS\Internal\Controller', 'handleFileDownload']);
     }
@@ -126,12 +126,12 @@ $app->hooks->add('initialized', function() use ($app) {
     $app->routes->add('/robots.txt', ['BearCMS\Internal\Controller', 'handleRobots']);
 
     // Register the blog posts page handlers
-    if (Options::hasFeature('blog')) {
+    if (Options::hasFeature('BLOG')) {
         $app->routes->add('/b/?/', function() use ($app) {
             $slug = (string) $app->request->path[1];
             $slugsList = InternalData\Blog::getSlugsList('published');
             $blogPostID = array_search($slug, $slugsList);
-            if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && Options::hasFeature('users') && $app->bearCMS->currentUser->exists()) {
+            if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && Options::hasFeature('USERS') && $app->bearCMS->currentUser->exists()) {
                 $blogPost = $app->bearCMS->data->blog->getPost(substr($slug, 6));
                 if ($blogPost !== null) {
                     $blogPostID = $blogPost['id'];
@@ -157,14 +157,14 @@ $app->hooks->add('initialized', function() use ($app) {
     }
 
     // Register a home page and the dynamic pages handler
-    if (Options::hasFeature('pages')) {
+    if (Options::hasFeature('PAGES')) {
         $app->routes->add('*', function() use ($app) {
             $path = (string) $app->request->path;
             if ($path === '/') {
                 $pageID = 'home';
             } else {
                 $hasSlash = substr($path, -1) === '/';
-                $pathsList = InternalData\Pages::getPathsList(Options::hasFeature('users') && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
+                $pathsList = InternalData\Pages::getPathsList(Options::hasFeature('USERS') && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
                 if ($hasSlash) {
                     $pageID = array_search($path, $pathsList);
                 } else {
@@ -189,7 +189,7 @@ $app->hooks->add('initialized', function() use ($app) {
 });
 
 // Updates the Bear CMS components when created
-if (Options::hasFeature('elements')) {
+if (Options::hasFeature('ELEMENTS')) {
     $app->hooks->add('componentCreated', function($component) {
         if ($component->src === 'bearcms-elements') {
             ElementsHelper::updateContainerComponent($component);
@@ -305,7 +305,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     $domDocument->insertHTML($response->content);
     $response->content = $app->components->process($domDocument->saveHTML());
 
-    $currentUserExists = Options::hasServer() && Options::hasFeature('users') ? $app->bearCMS->currentUser->exists() : false;
+    $currentUserExists = Options::hasServer() && Options::hasFeature('USERS') ? $app->bearCMS->currentUser->exists() : false;
 
     $externalLinksAreEnabled = !empty($settings['externalLinks']);
     if ($externalLinksAreEnabled) {
@@ -345,7 +345,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
 
     if (is_array($adminUIData) && isset($adminUIData['result']) && is_array($adminUIData['result']) && isset($adminUIData['result']['content']) && strlen($adminUIData['result']['content']) > 0) {
         $content = $adminUIData['result']['content'];
-        if (Options::hasFeature('elements') && !empty(ElementsHelper::$editorData)) {
+        if (Options::hasFeature('ELEMENTS') && !empty(ElementsHelper::$editorData)) {
             $requestArguments = [];
             $requestArguments['data'] = json_encode(ElementsHelper::$editorData);
 
@@ -392,7 +392,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     }
 }, ['priority' => 1000]);
 
-if (Options::hasServer() && Options::hasFeature('users')) {
+if (Options::hasServer() && Options::hasFeature('USERS')) {
     $app->hooks->add('responseCreated', function() {
         Cookies::update();
     }, ['priority' => 1001]);

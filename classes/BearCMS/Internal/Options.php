@@ -18,7 +18,7 @@ final class Options
     static $siteSecret = null;
     static $serverUrl = null;
     static $language = 'en';
-    static $features = ['all'];
+    static $features = ['ALL'];
     static $cookiePrefix = null;
     static $logServerRequestsData = false;
     static $addonsDir = false;
@@ -61,25 +61,8 @@ final class Options
             self::$addonsDir = $addonsDir;
         }
 
-        if (isset($data['features'])) {
-            $features = [];
-            $walkFeatures = function($list, $prefix = '') use (&$walkFeatures, &$features) {
-                if (is_array($list)) {
-                    foreach ($list as $key => $value) {
-                        if ($value === true) {
-                            $features[] = strtolower($prefix . $key);
-                            $features[] = strtolower($prefix . $key) . '.all';
-                        } elseif (is_array($value)) {
-                            $features[] = strtolower($prefix . $key);
-                            $walkFeatures($value, $prefix . $key . '.');
-                        }
-                    }
-                }
-            };
-            $walkFeatures($data['features']);
-            if (!empty($features)) {
-                self::$features = $features;
-            }
+        if (isset($data['features']) && is_array($data['features']) && !empty($data['features'])) {
+            self::$features = $data['features'];
         }
 
         self::$cookiePrefix = substr(md5(md5($app->request->base) . md5(self::$serverUrl)), 0, 14) . '_bearcms_';
@@ -96,7 +79,7 @@ final class Options
 
     static function hasFeature($name)
     {
-        return array_search($name, self::$features) !== false || (sizeof(self::$features) === 1 && self::$features[0] === 'all');
+        return array_search($name, self::$features) !== false || (sizeof(self::$features) === 1 && self::$features[0] === 'ALL');
     }
 
 }
