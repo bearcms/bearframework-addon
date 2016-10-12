@@ -22,6 +22,9 @@ final class Options
     static $cookiePrefix = null;
     static $logServerRequestsData = false;
     static $addonsDir = false;
+    static $customPagesFields = [];
+    static $customBlogFields = [];
+    static $customSettingsFields = [];
 
     /**
      * 
@@ -70,6 +73,18 @@ final class Options
         if (isset($data['logServerRequestsData']) && $data['logServerRequestsData']) {
             self::$logServerRequestsData = true;
         }
+
+        if (isset($data['customPagesFields']) && is_array($data['customPagesFields'])) {
+            self::$customPagesFields = $data['customPagesFields'];
+        }
+
+        if (isset($data['customBlogFields']) && is_array($data['customBlogFields'])) {
+            self::$customBlogFields = $data['customBlogFields'];
+        }
+
+        if (isset($data['customSettingsFields']) && is_array($data['customSettingsFields'])) {
+            self::$customSettingsFields = $data['customSettingsFields'];
+        }
     }
 
     static function hasServer()
@@ -79,6 +94,14 @@ final class Options
 
     static function hasFeature($name)
     {
+        if (substr($name, -1) === '*') {
+            $prefix = substr($name, 0, -1);
+            foreach (self::$features as $feature) {
+                if (strpos($feature, $prefix) === 0) {
+                    return true;
+                }
+            }
+        }
         return array_search($name, self::$features) !== false || (sizeof(self::$features) === 1 && self::$features[0] === 'ALL');
     }
 

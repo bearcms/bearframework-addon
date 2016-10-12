@@ -723,6 +723,21 @@ final class ServerCommands
         }
     }
 
+    static function customPagesFields()
+    {
+        return \BearCMS\Internal\Options::$customPagesFields;
+    }
+
+    static function customBlogFields()
+    {
+        return \BearCMS\Internal\Options::$customBlogFields;
+    }
+
+    static function customSettingsFields()
+    {
+        return \BearCMS\Internal\Options::$customSettingsFields;
+    }
+
     /**
      * 
      * @param array $data
