@@ -189,7 +189,7 @@ $app->hooks->add('initialized', function() use ($app) {
 });
 
 // Updates the Bear CMS components when created
-if (Options::hasFeature('ELEMENTS')) {
+if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
     $app->hooks->add('componentCreated', function($component) {
         if ($component->src === 'bearcms-elements') {
             ElementsHelper::updateContainerComponent($component);
@@ -273,7 +273,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if (isset($keywords{0})) {
         $componentContent .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
     }
-    $componentContent .= '<meta name="generator" content="Bear Framework v'.  App::VERSION.', Bear CMS v' . \BearCMS::VERSION . '"/>';
+    $componentContent .= '<meta name="generator" content="Bear Framework v' . App::VERSION . ', Bear CMS v' . \BearCMS::VERSION . '"/>';
     $icon = $settings['icon'];
     if (isset($icon{0})) {
         $filename = $app->bearCMS->data->getRealFilename($icon);
@@ -345,7 +345,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
 
     if (is_array($adminUIData) && isset($adminUIData['result']) && is_array($adminUIData['result']) && isset($adminUIData['result']['content']) && strlen($adminUIData['result']['content']) > 0) {
         $content = $adminUIData['result']['content'];
-        if (Options::hasFeature('ELEMENTS') && !empty(ElementsHelper::$editorData)) {
+        if ((Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) && !empty(ElementsHelper::$editorData)) {
             $requestArguments = [];
             $requestArguments['data'] = json_encode(ElementsHelper::$editorData);
 
