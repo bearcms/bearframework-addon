@@ -32,7 +32,7 @@ class CurrentUser
      */
     public function exists()
     {
-        return strlen($this->getSessionKey()) > 70;
+        return $this->getID() !== null;
     }
 
     /**
