@@ -723,19 +723,15 @@ final class ServerCommands
         }
     }
 
-    static function customPagesFields()
+    static function dataSchema($data)
     {
-        return \BearCMS\Internal\Options::$customPagesFields;
-    }
-
-    static function customBlogFields()
-    {
-        return \BearCMS\Internal\Options::$customBlogFields;
-    }
-
-    static function customSettingsFields()
-    {
-        return \BearCMS\Internal\Options::$customSettingsFields;
+        if (!isset($data['id'])) {
+            return [];
+        }
+        $app = App::$instance;
+        $dataSchema = new \BearCMS\DataSchema($data['id']);
+        $app->hooks->execute('bearCMSDataSchemaRequested', $dataSchema);
+        return $dataSchema->fields;
     }
 
     /**

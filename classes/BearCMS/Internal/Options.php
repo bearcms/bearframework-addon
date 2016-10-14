@@ -22,9 +22,6 @@ final class Options
     static $cookiePrefix = null;
     static $logServerRequestsData = false;
     static $addonsDir = false;
-    static $customPagesFields = [];
-    static $customBlogFields = [];
-    static $customSettingsFields = [];
 
     /**
      * 
@@ -72,18 +69,6 @@ final class Options
 
         if (isset($data['logServerRequestsData']) && $data['logServerRequestsData']) {
             self::$logServerRequestsData = true;
-        }
-
-        if (isset($data['customPagesFields']) && is_array($data['customPagesFields'])) {
-            self::$customPagesFields = $data['customPagesFields'];
-        }
-
-        if (isset($data['customBlogFields']) && is_array($data['customBlogFields'])) {
-            self::$customBlogFields = $data['customBlogFields'];
-        }
-
-        if (isset($data['customSettingsFields']) && is_array($data['customSettingsFields'])) {
-            self::$customSettingsFields = $data['customSettingsFields'];
         }
     }
 
