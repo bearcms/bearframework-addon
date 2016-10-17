@@ -122,7 +122,9 @@ class CurrentTheme
             if (!empty($matches[1])) {
                 foreach ($matches[1] as $key) {
                     $filename = $app->bearCMS->data->getRealFilename($key);
-                    $text = str_replace($key, is_file($filename) ? $app->assets->getUrl($filename) : "", $text);
+                    if($filename !== $key){
+                        $text = str_replace($key, is_file($filename) ? $app->assets->getUrl($filename) : "", $text);
+                    }
                 }
             }
             return $text;
