@@ -122,6 +122,34 @@ You can configure the addon when added to your application. Here is a list of al
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provides information about the current user and it's permissions.
 
+### Addon options
+
+Here is a list of options that can be passed to `$app->addons->add('bearcms/bearframework-addon')` to customize the behaviour of the CMS.
+
+`serverUrl`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The URL of the CMS server. Can be found at your Bear CMS account.
+
+`siteID`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The site ID. Can be found at your Bear CMS account.
+
+`siteSecret`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The site secret key. Can be found at your Bear CMS account.
+
+`language`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The language of the CMS admin interface.
+
+`features`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array containing the enabled CMS features. Available values: ALL, ADDONS, FILES, BLOG, PAGES, ELEMENTS, THEMES, ABOUT, SETTINGS, USERS, ELEMENTS_HEADING, ELEMENTS_TEXT, ELEMENTS_LINK, ELEMENTS_IMAGE, ELEMENTS_IMAGE_GALLERY, ELEMENTS_VIDEO, ELEMENTS_NAVIGATION, ELEMENTS_HTML, ELEMENTS_BLOGPOSTS, ELEMENTS_COLUMN.
+
+`addonsDir`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The directory where the CMS will install addons.
+
 ## License
 Bear CMS addon for Bear Framework is open-sourced software. It's free to use under the MIT license. See the [license file](https://github.com/bearcms/bearframework-addon/blob/master/LICENSE) for more information.
 
