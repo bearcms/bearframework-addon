@@ -219,11 +219,15 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if (!isset($response->applyBearCMSTemplate)) {
         $response->applyBearCMSTemplate = false;
     }
+    if ($response instanceof App\Response\HTML) {
+        $response->content = $app->components->process($response->content);
+    }
 });
 
 if ($app->bearCMS->currentTheme->getID() === 'bearcms/default1') {
     require $context->dir . '/themes/default1/index.php';
 }
+
 
 $app->hooks->add('responseCreated', function($response) use ($app, $context) {
 
