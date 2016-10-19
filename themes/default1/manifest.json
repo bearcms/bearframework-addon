@@ -29,9 +29,9 @@
                         "margin-left": "auto",
                         "margin-right": "auto",
                         "padding-right": "40px",
-                        "padding-bottom": "1px",
+                        "padding-bottom": "40px",
                         "padding-left": "40px",
-                        "padding-top": "40px"
+                        "padding-top": "80px"
                     }
                 },
                 {
@@ -113,16 +113,12 @@
                                 ["updateRule", ".template-header-title"]
                             ],
                             "defaultValue": {
-                                "color": "#ffffff",
-                                "font-family": "Arial",
-                                "font-size": "25px",
-                                "padding-top": "20px",
-                                "padding-right": "20px",
-                                "padding-bottom": "20px",
-                                "padding-left": "20px",
-                                "background-color": "#1BB0CE",
-                                "background-color:hover": "#1099B5",
-                                "background-color:active": "#0A7D94"
+                                "font-family": "googlefonts:Open Sans",
+                                "font-size": "40px",
+                                "font-weight": "bold",
+                                "color": "#1BB0CE",
+                                "color:hover": "#1099B5",
+                                "color:active": "#0A7D94"
                             }
                         },
                         {
@@ -181,8 +177,8 @@
                                 ["updateRule", ".template-header-description"]
                             ],
                             "defaultValue": {
-                                "color": "#008caa",
-                                "font-family": "Arial",
+                                "color": "#666666",
+                                "font-family": "googlefonts:Open Sans",
                                 "font-size": "15px"
                             }
                         },
@@ -314,11 +310,13 @@
                                 ["rule", ".template-navigation .template-navigation-content > .bearcms-navigation-element-item > a", "display:block;white-space:nowrap;text-overflow:ellipsis;"],
                                 ["rule", ".template-navigation .template-navigation-content > .bearcms-navigation-element-item > a", "font-family:inherit;color:inherit;font-size:inherit;font-weight:inherit;font-style:inherit;text-decoration:inherit;text-align:inherit;line-height:inherit;letter-spacing:inherit;text-shadow:inherit;"],
                                 ["selector", ".template-navigation .template-navigation-content > .bearcms-navigation-element-item > a"],
-                                ["selector", ".template-navigation #template-navigation-toggle-button + label"]
+                                ["selector", ".template-navigation #template-navigation-toggle-button + label"],
+                                ["selector", ".template-navigation #template-navigation-toggle-button:checked + label"]
                             ],
                             "onCustomize": [
                                 ["updateRule", ".template-navigation .template-navigation-content > .bearcms-navigation-element-item > a"],
-                                ["updateRule", ".template-navigation #template-navigation-toggle-button + label"]
+                                ["updateRule", ".template-navigation #template-navigation-toggle-button + label"],
+                                ["updateRule", ".template-navigation #template-navigation-toggle-button:checked + label"]
                             ],
                             "defaultValue": {
                                 "padding-top": "15px",
@@ -333,11 +331,13 @@
                             "cssTypes": ["cssText", "cssTextShadow", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput": [
                                 ["selector", ".template-navigation .template-navigation-content > .bearcms-navigation-element-item"],
-                                ["selector", ".template-navigation #template-navigation-toggle-button + label"]
+                                ["selector", ".template-navigation #template-navigation-toggle-button + label"],
+                                ["selector", ".template-navigation #template-navigation-toggle-button:checked + label"]
                             ],
                             "onCustomize": [
                                 ["updateRule", ".template-navigation .template-navigation-content > .bearcms-navigation-element-item"],
-                                ["updateRule", ".template-navigation #template-navigation-toggle-button + label"]
+                                ["updateRule", ".template-navigation #template-navigation-toggle-button + label"],
+                                ["updateRule", ".template-navigation #template-navigation-toggle-button:checked + label"]
                             ],
                             "defaultValue": {
                                 "color": "#ffffff",
@@ -559,7 +559,7 @@
                                             ],
                                             "defaultValue": {
                                                 "color": "#1BB0CE",
-                                                "font-family": "Arial",
+                                                "font-family": "googlefonts:Open Sans",
                                                 "font-size": "28px",
                                                 "text-align": "center",
                                                 "line-height": "180%",
@@ -587,7 +587,7 @@
                                             ],
                                             "defaultValue": {
                                                 "color": "#1BB0CE",
-                                                "font-family": "Arial",
+                                                "font-family": "googlefonts:Open Sans",
                                                 "font-size": "22px",
                                                 "text-align": "center",
                                                 "line-height": "180%",
@@ -615,7 +615,7 @@
                                             ],
                                             "defaultValue": {
                                                 "color": "#1BB0CE",
-                                                "font-family": "Arial",
+                                                "font-family": "googlefonts:Open Sans",
                                                 "font-size": "18px",
                                                 "text-align": "center",
                                                 "line-height": "180%",
@@ -913,7 +913,7 @@
                                                     ],
                                                     "defaultValue": {
                                                         "color": "#1BB0CE",
-                                                        "font-family": "Arial",
+                                                        "font-family": "googlefonts:Open Sans",
                                                         "font-size": "22px",
                                                         "text-align": "left",
                                                         "line-height": "180%"
@@ -1042,9 +1042,9 @@
                         "max-width": "800px",
                         "margin-left": "auto",
                         "margin-right": "auto",
-                        "padding-top": "25px",
+                        "padding-top": "40px",
                         "padding-right": "15px",
-                        "padding-bottom": "25px",
+                        "padding-bottom": "40px",
                         "padding-left": "15px",
                         "min-height": "300px"
                     }
@@ -1073,7 +1073,7 @@
                                             ],
                                             "defaultValue": {
                                                 "color": "#1BB0CE",
-                                                "font-family": "Arial",
+                                                "font-family": "googlefonts:Open Sans",
                                                 "font-size": "28px",
                                                 "text-align": "center",
                                                 "line-height": "180%",
@@ -1101,7 +1101,7 @@
                                             ],
                                             "defaultValue": {
                                                 "color": "#1BB0CE",
-                                                "font-family": "Arial",
+                                                "font-family": "googlefonts:Open Sans",
                                                 "font-size": "22px",
                                                 "text-align": "center",
                                                 "line-height": "180%",
@@ -1129,7 +1129,7 @@
                                             ],
                                             "defaultValue": {
                                                 "color": "#1BB0CE",
-                                                "font-family": "Arial",
+                                                "font-family": "googlefonts:Open Sans",
                                                 "font-size": "18px",
                                                 "text-align": "center",
                                                 "line-height": "180%",
@@ -1427,7 +1427,7 @@
                                                     ],
                                                     "defaultValue": {
                                                         "color": "#1BB0CE",
-                                                        "font-family": "Arial",
+                                                        "font-family": "googlefonts:Open Sans",
                                                         "font-size": "22px",
                                                         "text-align": "left",
                                                         "line-height": "180%"
@@ -1572,9 +1572,9 @@
                         "max-width": "800px",
                         "margin-left": "auto",
                         "margin-right": "auto",
-                        "padding-top": "25px",
+                        "padding-top": "40px",
                         "padding-right": "15px",
-                        "padding-bottom": "25px",
+                        "padding-bottom": "40px",
                         "padding-left": "15px"
                     }
                 },
@@ -1602,7 +1602,7 @@
                                             ],
                                             "defaultValue": {
                                                 "color": "#1BB0CE",
-                                                "font-family": "Arial",
+                                                "font-family": "googlefonts:Open Sans",
                                                 "font-size": "28px",
                                                 "text-align": "center",
                                                 "line-height": "180%",
@@ -1630,7 +1630,7 @@
                                             ],
                                             "defaultValue": {
                                                 "color": "#1BB0CE",
-                                                "font-family": "Arial",
+                                                "font-family": "googlefonts:Open Sans",
                                                 "font-size": "22px",
                                                 "text-align": "center",
                                                 "line-height": "180%",
@@ -1658,7 +1658,7 @@
                                             ],
                                             "defaultValue": {
                                                 "color": "#1BB0CE",
-                                                "font-family": "Arial",
+                                                "font-family": "googlefonts:Open Sans",
                                                 "font-size": "18px",
                                                 "text-align": "center",
                                                 "line-height": "180%",
@@ -1956,7 +1956,7 @@
                                                     ],
                                                     "defaultValue": {
                                                         "color": "#1BB0CE",
-                                                        "font-family": "Arial",
+                                                        "font-family": "googlefonts:Open Sans",
                                                         "font-size": "22px",
                                                         "text-align": "left",
                                                         "line-height": "180%"

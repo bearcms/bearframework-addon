@@ -90,6 +90,7 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
                 @media(max-width: 680px) {
                     .template-navigation{
                         display: block !important;
+                        padding: 0 !important;
                     }
                     .template-navigation .bearcms-navigation-element-item{
                         display: block !important;
@@ -161,7 +162,7 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
         if ($isHomePage && $homePageSpecialContentBlockVisibility === '1') {
             echo '<div class="template-homepage-special-content-block-container">';
             echo '<section class="template-homepage-special-content-block">';
-            echo '<component src="bearcms-elements" color="#E0880B" editable="true" class="homepage-special-bearcms-elements" id="homepage-special"/>';
+            echo '<component src="bearcms-elements" editable="true" class="homepage-special-bearcms-elements" id="homepage-special"/>';
             echo '</section>';
             echo '</div>';
         }
@@ -179,7 +180,7 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
         if ($footerVisibility === '1') {
             echo '<div class="template-footer-container">';
             echo '<footer class="template-footer">';
-            echo '<component src="bearcms-elements" color="#E0880B" editable="true" class="footer-bearcms-elements" id="footer"/>';
+            echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer"/>';
             if ($poweredByLinkVisibility === '1') {
                 echo '<div class="template-powered-by-link-container">';
                 echo '<a class="template-powered-by-link" href="https://bearcms.com/" target="_blank">Powered by Bear CMS</a>';
