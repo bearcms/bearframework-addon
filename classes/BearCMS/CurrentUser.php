@@ -114,4 +114,18 @@ class CurrentUser
         return array_search($name, $permissions) !== false;
     }
 
+    /**
+     * Login a user without email and password validation. This methods must be enabled on the CMS server.
+     * 
+     * @param string $userID
+     * @throws \InvalidArgumentException
+     */
+    public function login($userID)
+    {
+        if (!is_string($userID)) {
+            throw new \InvalidArgumentException('');
+        }
+        \BearCMS\Internal\Server::call('login', ['userID' => $userID], true);
+    }
+
 }

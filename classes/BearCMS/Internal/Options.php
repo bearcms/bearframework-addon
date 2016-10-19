@@ -14,9 +14,9 @@ use BearFramework\App;
 final class Options
 {
 
+    static $serverUrl = null;
     static $siteID = null;
     static $siteSecret = null;
-    static $serverUrl = null;
     static $language = 'en';
     static $features = ['ALL'];
     static $cookiePrefix = null;
