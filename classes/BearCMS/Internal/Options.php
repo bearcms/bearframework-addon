@@ -22,6 +22,8 @@ final class Options
     static $cookiePrefix = null;
     static $logServerRequestsData = false;
     static $addonsDir = false;
+    static $uiColor = '#1BB0CE';
+    static $uiTextColor = '#ffffff';
 
     /**
      * 
@@ -69,6 +71,14 @@ final class Options
 
         if (isset($data['logServerRequestsData']) && $data['logServerRequestsData']) {
             self::$logServerRequestsData = true;
+        }
+
+        if (isset($data['uiColor'])) {
+            self::$uiColor = $data['uiColor'];
+        }
+
+        if (isset($data['uiTextColor'])) {
+            self::$uiTextColor = $data['uiTextColor'];
         }
     }
 

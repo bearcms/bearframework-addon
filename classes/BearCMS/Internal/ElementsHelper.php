@@ -80,7 +80,7 @@ final class ElementsHelper
             }
         }
         if ((string) $component->color === '') {
-            $component->color = '#000000';
+            $component->color = Options::$uiColor;
         }
 
         // Update canEdit

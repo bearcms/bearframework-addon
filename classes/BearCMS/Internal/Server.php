@@ -284,6 +284,8 @@ final class Server
 
         $clientData['features'] = json_encode(Options::$features);
         $clientData['language'] = Options::$language;
+        $clientData['uiColor'] = Options::$uiColor;
+        $clientData['uiTextColor'] = Options::$uiTextColor;
         $data['clientData'] = json_encode($clientData, JSON_UNESCAPED_UNICODE);
 
         $ch = curl_init();
