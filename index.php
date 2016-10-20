@@ -95,7 +95,7 @@ $app->hooks->add('initialized', function() use ($app) {
     }
 
     // Automatically log in the user
-    if (Options::hasServer() && Options::hasFeature('USERS')) {
+    if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_DEFAULT'))) {
         $cookies = Cookies::getList(Cookies::TYPE_SERVER);
         if (isset($cookies['_a']) && !$app->bearCMS->currentUser->exists()) {
             Server::call('autologin', null, true);
@@ -103,16 +103,20 @@ $app->hooks->add('initialized', function() use ($app) {
     }
 
     // Register the system pages
-    if (Options::hasServer() && Options::hasFeature('USERS')) {
-        $app->routes->add(['/admin/loggedin/'], function() use ($app) {
-            return new App\Response\TemporaryRedirect($app->request->base . '/');
-        });
-        $app->routes->add(['/admin/', '/admin/*/'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
-        $app->routes->add(['/admin', '/admin/*'], function() use ($app) {
-            return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
-        });
-        $app->routes->add('/-aj/', ['BearCMS\Internal\Controller', 'handleAjax'], ['POST']);
-        $app->routes->add('/-au/', ['BearCMS\Internal\Controller', 'handleFileUpload'], ['POST']);
+    if (Options::hasServer()) {
+        if (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_DEFAULT')) {
+            $app->routes->add(['/admin/loggedin/'], function() use ($app) {
+                return new App\Response\TemporaryRedirect($app->request->base . '/');
+            });
+            $app->routes->add(['/admin/', '/admin/*/'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
+            $app->routes->add(['/admin', '/admin/*'], function() use ($app) {
+                return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
+            });
+        }
+        if (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) {
+            $app->routes->add('/-aj/', ['BearCMS\Internal\Controller', 'handleAjax'], ['POST']);
+            $app->routes->add('/-au/', ['BearCMS\Internal\Controller', 'handleFileUpload'], ['POST']);
+        }
     }
 
     // Register the file handlers
@@ -132,7 +136,7 @@ $app->hooks->add('initialized', function() use ($app) {
             $slug = (string) $app->request->path[1];
             $slugsList = InternalData\Blog::getSlugsList('published');
             $blogPostID = array_search($slug, $slugsList);
-            if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && Options::hasFeature('USERS') && $app->bearCMS->currentUser->exists()) {
+            if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) && $app->bearCMS->currentUser->exists()) {
                 $blogPost = $app->bearCMS->data->blog->getPost(substr($slug, 6));
                 if ($blogPost !== null) {
                     $blogPostID = $blogPost['id'];
@@ -165,7 +169,7 @@ $app->hooks->add('initialized', function() use ($app) {
                 $pageID = 'home';
             } else {
                 $hasSlash = substr($path, -1) === '/';
-                $pathsList = InternalData\Pages::getPathsList(Options::hasFeature('USERS') && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
+                $pathsList = InternalData\Pages::getPathsList((Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
                 if ($hasSlash) {
                     $pageID = array_search($path, $pathsList);
                 } else {
@@ -310,7 +314,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     $domDocument->insertHTML($response->content);
     $response->content = $app->components->process($domDocument->saveHTML());
 
-    $currentUserExists = Options::hasServer() && Options::hasFeature('USERS') ? $app->bearCMS->currentUser->exists() : false;
+    $currentUserExists = Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) ? $app->bearCMS->currentUser->exists() : false;
 
     $externalLinksAreEnabled = !empty($settings['externalLinks']);
     if ($externalLinksAreEnabled) {
@@ -397,7 +401,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     }
 }, ['priority' => 1000]);
 
-if (Options::hasServer() && Options::hasFeature('USERS')) {
+if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*'))) {
     $app->hooks->add('responseCreated', function() {
         Cookies::update();
     }, ['priority' => 1001]);

@@ -144,7 +144,54 @@ Here is a list of options that can be passed to `$app->addons->add('bearcms/bear
 
 `features`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array containing the enabled CMS features. Available values: ALL, ADDONS, FILES, BLOG, PAGES, ELEMENTS, THEMES, ABOUT, SETTINGS, USERS, ELEMENTS_HEADING, ELEMENTS_TEXT, ELEMENTS_LINK, ELEMENTS_IMAGE, ELEMENTS_IMAGE_GALLERY, ELEMENTS_VIDEO, ELEMENTS_NAVIGATION, ELEMENTS_HTML, ELEMENTS_BLOGPOSTS, ELEMENTS_COLUMN.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array containing the enabled CMS features. Available values:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ALL` Enables all features.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ADDONS` Enables addons.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`FILES` Enables user files management (uploads, sharing, etc.).
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`BLOG` Enables blog posts.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`PAGES` Enables managing pages.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ELEMENTS` Enables creating elements.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ELEMENTS_HEADING` Enables the heading element.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ELEMENTS_TEXT` Enables the text element.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ELEMENTS_LINK` Enables the link element.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ELEMENTS_IMAGE` Enables the image element.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ELEMENTS_IMAGE_GALLERY` Enables the image gallery element.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ELEMENTS_VIDEO` Enables the video element.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ELEMENTS_NAVIGATION` Enables the navigation element.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ELEMENTS_HTML` Enables the HTML element.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ELEMENTS_BLOGPOSTS` Enables the blog posts element.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ELEMENTS_COLUMN` Enables the column element.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`THEMES` Enables themes management.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ABOUT` Enables viewing the system information about the website.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`SETTINGS` Enables managing settings.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`USERS` Enables users.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`USERS_LOGIN_DEFAULT` Enables users the login the default way (login form, lost password form, etc.)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`USERS_LOGIN_ANONYMOUS` Enables anonymous user login (by calling the CMS server with code).
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`USERS_MANAGE_ACCOUNT` Enables the user to manage his account (change password and emails).
+
 
 `addonsDir`
 
