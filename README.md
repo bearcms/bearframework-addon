@@ -140,7 +140,7 @@ Here is a list of options that can be passed to `$app->addons->add('bearcms/bear
 
 `language`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The language of the CMS admin interface.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The language of the CMS admin interface. Available values: en, bg.
 
 `features`
 
