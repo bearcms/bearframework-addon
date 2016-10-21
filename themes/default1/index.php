@@ -8,7 +8,7 @@ $context = $app->getContext(__FILE__);
 $context->assets->addDir('themes/default1/assets');
 
 $app->hooks->add('responseCreated', function($response) use ($app, $context) {
-    if (!empty($response->applyBearCMSTemplate)) {
+    if (!empty($response->applyBearCMSTheme)) {
         $templateContent = null;
         $hookName = null;
         if ($response instanceof App\Response\HTML) {

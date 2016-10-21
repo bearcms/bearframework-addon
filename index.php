@@ -152,7 +152,7 @@ $app->hooks->add('initialized', function() use ($app) {
 
                 $response = new App\Response\HTML($content);
                 $response->enableBearCMS = true;
-                $response->applyBearCMSTemplate = true;
+                $response->applyBearCMSTheme = true;
                 $response->bearCMSBlogPostID = $blogPostID;
                 return $response;
             }
@@ -184,7 +184,7 @@ $app->hooks->add('initialized', function() use ($app) {
                 $content = '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
                 $response = new App\Response\HTML($content);
                 $response->enableBearCMS = true;
-                $response->applyBearCMSTemplate = true;
+                $response->applyBearCMSTheme = true;
                 if ($pageID !== 'home') {
                     $response->bearCMSPageID = $pageID;
                 }
@@ -202,34 +202,27 @@ if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
         } elseif (array_search($component->src, ['bearcms-heading-element', 'bearcms-text-element', 'bearcms-link-element', 'bearcms-video-element', 'bearcms-image-element', 'bearcms-image-gallery-element', 'bearcms-navigation-element', 'bearcms-html-element', 'bearcms-blog-posts-element']) !== false) {
             ElementsHelper::updateElementComponent($component);
         }
-        //$component->src = 'data:base64,' . base64_encode('asd');
-        //(string)$component
-//        $component = $app->components->create();
-//        $component->src = 'file:Adsad';
-//        $component->innerHTML = '';
-//        (string)$component;
-        //$app->components->process($component);
     });
 }
 
 $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if ($response instanceof App\Response\NotFound) {
         $response->enableBearCMS = true;
-        $response->applyBearCMSTemplate = true;
+        $response->applyBearCMSTheme = true;
         $response->setContentType('text/html');
     } elseif ($response instanceof App\Response\TemporaryUnavailable) {
         $response->enableBearCMS = true;
-        $response->applyBearCMSTemplate = true;
+        $response->applyBearCMSTheme = true;
         $response->setContentType('text/html');
     } elseif ($app->request->path === '/' && $response instanceof App\Response\HTML) {
         $response->enableBearCMS = true;
-        $response->applyBearCMSTemplate = true;
+        $response->applyBearCMSTheme = true;
     }
     if (!isset($response->enableBearCMS)) {
         $response->enableBearCMS = false;
     }
-    if (!isset($response->applyBearCMSTemplate)) {
-        $response->applyBearCMSTemplate = false;
+    if (!isset($response->applyBearCMSTheme)) {
+        $response->applyBearCMSTheme = false;
     }
     if ($response instanceof App\Response\HTML) {
         $response->content = $app->components->process($response->content);
