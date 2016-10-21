@@ -6,6 +6,10 @@
  * Free to use under the MIT license.
  */
 
+use \BearFramework\App;
+
+$app = App::get();
+
 $domDocument = new IvoPetkov\HTML5DOMDocument();
 $domDocument->loadHTML($component->innerHTML);
 $files = $domDocument->querySelectorAll('file');

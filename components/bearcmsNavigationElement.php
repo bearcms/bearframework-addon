@@ -6,6 +6,9 @@
  * Free to use under the MIT license.
  */
 
+use \BearFramework\App;
+
+$app = App::get();
 
 $selectedPath = '';
 if (strlen($component->selectedPath) > 0) {

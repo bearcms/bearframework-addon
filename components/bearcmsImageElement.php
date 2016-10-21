@@ -6,6 +6,10 @@
  * Free to use under the MIT license.
  */
 
+use \BearFramework\App;
+
+$app = App::get();
+
 $onClick = 'none';
 if ($component->onClick === 'fullscreen') {
     $onClick = 'fullscreen';

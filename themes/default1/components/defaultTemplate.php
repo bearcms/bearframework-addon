@@ -6,6 +6,10 @@
  * Free to use under the MIT license.
  */
 
+use \BearFramework\App;
+
+$app = App::get();
+
 $mode = $component->mode;
 if ($mode === 'notFound' || $mode === 'temporaryUnavailable') {
     ?><html>

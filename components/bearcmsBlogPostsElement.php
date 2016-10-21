@@ -6,7 +6,10 @@
  * Free to use under the MIT license.
  */
 
+use \BearFramework\App;
 use BearCMS\Internal\ElementsHelper;
+
+$app = App::get();
 
 $list = $app->bearCMS->data->blog->getList(['PUBLISHED_ONLY', 'SORT_BY_PUBLISHED_TIME_DESC']);
 

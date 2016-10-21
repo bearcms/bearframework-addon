@@ -1,7 +1,5 @@
 <?php
 
-/* @var $app \BearFramework\App */
-/* @var $context \BearFramework\App\AppContext */
 /*
  * Bear CMS addon for Bear Framework
  * https://bearcms.com/
@@ -16,6 +14,9 @@ use BearCMS\Internal\Server;
 use BearCMS\Internal\ElementsHelper;
 use IvoPetkov\HTML5DOMDocument;
 use \BearCMS\Internal\Options;
+
+$app = App::get();
+$context = $app->getContext(__FILE__);
 
 $context->classes->add('BearCMS', 'classes/BearCMS.php');
 
@@ -201,6 +202,13 @@ if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
         } elseif (array_search($component->src, ['bearcms-heading-element', 'bearcms-text-element', 'bearcms-link-element', 'bearcms-video-element', 'bearcms-image-element', 'bearcms-image-gallery-element', 'bearcms-navigation-element', 'bearcms-html-element', 'bearcms-blog-posts-element']) !== false) {
             ElementsHelper::updateElementComponent($component);
         }
+        //$component->src = 'data:base64,' . base64_encode('asd');
+        //(string)$component
+//        $component = $app->components->create();
+//        $component->src = 'file:Adsad';
+//        $component->innerHTML = '';
+//        (string)$component;
+        //$app->components->process($component);
     });
 }
 

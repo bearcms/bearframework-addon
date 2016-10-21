@@ -6,6 +6,10 @@
  * Free to use under the MIT license.
  */
 
+use \BearFramework\App;
+
+$app = App::get();
+
 $content = '';
 if (strlen($component->url) > 0) {
     $aspectRatio = 0.75;
