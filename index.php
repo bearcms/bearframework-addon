@@ -229,10 +229,11 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     }
 });
 
+require $context->dir . '/themes/default1/autoload.php';
+
 if ($app->bearCMS->currentTheme->getID() === 'bearcms/default1') {
     require $context->dir . '/themes/default1/index.php';
 }
-
 
 $app->hooks->add('responseCreated', function($response) use ($app, $context) {
 

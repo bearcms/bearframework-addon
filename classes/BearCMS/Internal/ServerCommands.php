@@ -169,7 +169,7 @@ final class ServerCommands
     {
         $themes = \BearCMS\Internal\Data\Themes::getList();
         $result = [];
-        foreach ($themes as $i => $theme) {
+        foreach ($themes as $theme) {
             if (isset($theme['manifestFilename'])) {
                 $manifestData = \BearCMS\Internal\Data\Themes::getManifestData($theme['manifestFilename'], $theme['dir']);
                 $manifestData['id'] = $theme['id'];
@@ -180,6 +180,11 @@ final class ServerCommands
                     $manifestData['hasOptions'] = false;
                 }
                 $result[] = $manifestData;
+            } elseif ($theme['id'] === 'none') {
+                $result[] = [
+                    'id' => 'none',
+                    'hasOptions' => false
+                ];
             }
         }
         return $result;
@@ -197,6 +202,11 @@ final class ServerCommands
         if (!isset($data['id'])) {
             throw new \Exception('');
         }
+
+        if ($data['id'] === 'none') {
+            return ['id' => 'none'];
+        }
+
         $includeOptions = isset($data['includeOptions']) && !empty($data['includeOptions']);
         $themes = \BearCMS\Internal\Data\Themes::getList();
         foreach ($themes as $theme) {
