@@ -106,11 +106,11 @@ $app->hooks->add('initialized', function() use ($app) {
     // Register the system pages
     if (Options::hasServer()) {
         if (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_DEFAULT')) {
-            $app->routes->add(['/admin/loggedin/'], function() use ($app) {
+            $app->routes->add([Options::$adminPagesPathPrefix . 'loggedin/'], function() use ($app) {
                 return new App\Response\TemporaryRedirect($app->request->base . '/');
             });
-            $app->routes->add(['/admin/', '/admin/*/'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
-            $app->routes->add(['/admin', '/admin/*'], function() use ($app) {
+            $app->routes->add([Options::$adminPagesPathPrefix, Options::$adminPagesPathPrefix . '*/'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
+            $app->routes->add([rtrim(Options::$adminPagesPathPrefix, '/'), Options::$adminPagesPathPrefix . '*'], function() use ($app) {
                 return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
             });
         }
@@ -133,7 +133,7 @@ $app->hooks->add('initialized', function() use ($app) {
 
     // Register the blog posts page handlers
     if (Options::hasFeature('BLOG')) {
-        $app->routes->add('/b/?/', function() use ($app) {
+        $app->routes->add(Options::$blogPagesPathPrefix . '?/', function() use ($app) {
             $slug = (string) $app->request->path[1];
             $slugsList = InternalData\Blog::getSlugsList('published');
             $blogPostID = array_search($slug, $slugsList);
@@ -157,7 +157,7 @@ $app->hooks->add('initialized', function() use ($app) {
                 return $response;
             }
         });
-        $app->routes->add('/b/?', function() use ($app) {
+        $app->routes->add(Options::$blogPagesPathPrefix . '?', function() use ($app) {
             return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
         });
     }

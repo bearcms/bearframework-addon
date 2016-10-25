@@ -24,6 +24,8 @@ final class Options
     static $addonsDir = false;
     static $uiColor = '#1BB0CE';
     static $uiTextColor = '#ffffff';
+    static $adminPagesPathPrefix = '/admin/';
+    static $blogPagesPathPrefix = '/b/';
 
     /**
      * 
@@ -79,6 +81,14 @@ final class Options
 
         if (isset($data['uiTextColor'])) {
             self::$uiTextColor = $data['uiTextColor'];
+        }
+
+        if (isset($data['adminPagesPathPrefix'])) {
+            self::$adminPagesPathPrefix = $data['adminPagesPathPrefix'];
+        }
+
+        if (isset($data['blogPagesPathPrefix'])) {
+            self::$blogPagesPathPrefix = $data['blogPagesPathPrefix'];
         }
     }
 

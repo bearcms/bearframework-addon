@@ -11,6 +11,7 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 use BearCMS\Internal\Server;
+use BearCMS\Internal\Options;
 
 final class Controller
 {
@@ -19,13 +20,13 @@ final class Controller
     {
         $app = App::$instance;
         $path = (string) $app->request->path;
-        if ($path === '/admin/') {
+        if ($path === Options::$adminPagesPathPrefix) {
             if (!$app->bearCMS->data->users->hasUsers()) {
-                return new App\Response\TemporaryRedirect($app->request->base . '/admin/firstrun/');
+                return new App\Response\TemporaryRedirect($app->request->base . Options::$adminPagesPathPrefix . 'firstrun/');
             }
-        } elseif ($path === '/admin/firstrun/') {
+        } elseif ($path === Options::$adminPagesPathPrefix . 'firstrun/') {
             if ($app->bearCMS->data->users->hasUsers()) {
-                return new App\Response\TemporaryRedirect($app->request->base . '/admin/');
+                return new App\Response\TemporaryRedirect($app->request->base . Options::$adminPagesPathPrefix);
             }
         }
         $arguments = [];
@@ -136,7 +137,7 @@ final class Controller
 
         $blogPosts = $app->bearCMS->data->blog->getList(['PUBLISHED_ONLY', 'SORT_BY_PUBLISHED_TIME_DESC']);
         foreach ($blogPosts as $blogPost) {
-            $blogPostUrl = isset($blogPost['slug']) ? $baseUrl . '/b/' . $blogPost['slug'] . '/' : '';
+            $blogPostUrl = isset($blogPost['slug']) ? $baseUrl . Options::$blogPagesPathPrefix . $blogPost['slug'] . '/' : '';
             $data .= '<item>';
             $data .= '<title>' . (isset($blogPost['title']) ? htmlspecialchars($blogPost['title']) : '') . '</title>';
             $data .= '<link>' . $blogPostUrl . '</link>';
@@ -167,7 +168,7 @@ final class Controller
 
         $list = \BearCMS\Internal\Data\Blog::getSlugsList('published');
         foreach ($list as $slug) {
-            $addUrl('/b/' . $slug . '/');
+            $addUrl(Options::$blogPagesPathPrefix . $slug . '/');
         }
 
         $response = new App\Response('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.google.com/schemas/sitemap/0.84">' . implode('', $urls) . '</urlset>');

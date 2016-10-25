@@ -286,6 +286,8 @@ final class Server
         $clientData['language'] = Options::$language;
         $clientData['uiColor'] = Options::$uiColor;
         $clientData['uiTextColor'] = Options::$uiTextColor;
+        $clientData['adminPagesPathPrefix'] = Options::$adminPagesPathPrefix;
+        $clientData['blogPagesPathPrefix'] = Options::$blogPagesPathPrefix;
         $data['clientData'] = json_encode($clientData, JSON_UNESCAPED_UNICODE);
 
         $ch = curl_init();

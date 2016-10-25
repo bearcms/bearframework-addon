@@ -8,6 +8,7 @@
 
 use \BearFramework\App;
 use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal\Options;
 
 $app = App::get();
 
@@ -36,7 +37,7 @@ if (empty($list)) {
     foreach ($list as $blogPost) {
         $counter++;
         $title = isset($blogPost['title']) ? $blogPost['title'] : 'Unknown';
-        $url = $app->request->base . '/b/' . (isset($blogPost['slug']) ? $blogPost['slug'] : 'unknown') . '/';
+        $url = $app->request->base . Options::$blogPagesPathPrefix . (isset($blogPost['slug']) ? $blogPost['slug'] : 'unknown') . '/';
         $publishedTime = isset($blogPost['publishedTime']) ? $blogPost['publishedTime'] : '';
 
         $content .= '<div class="bearcms-blog-posts-element-post">';
