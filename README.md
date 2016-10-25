@@ -197,6 +197,14 @@ Here is a list of options that can be passed to `$app->addons->add('bearcms/bear
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The directory where the CMS will install addons.
 
+`adminPagesPathPrefix`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The path prefix for the administrators login, lost password and invite pages. The default value is "/admin/".
+
+`blogPagesPathPrefix`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The path prefix for the blog posts pages. The default value is "/b/".
+
 ## License
 Bear CMS addon for Bear Framework is open-sourced software. It's free to use under the MIT license. See the [license file](https://github.com/bearcms/bearframework-addon/blob/master/LICENSE) for more information.
 
