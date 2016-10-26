@@ -36,6 +36,8 @@ if (strlen($component->imageLoadingBackground) > 0) {
 }
 if (strlen($component->lazyLoadImages) > 0) {
     $attributes .= ' lazyLoadImages="' . $component->lazyLoadImages . '"';
+} else {
+    $attributes .= ' lazyLoadImages="true"';
 }
 
 $content .= '<component src="image-gallery" spacing="' . $spacing . '"' . $attributes . '>';

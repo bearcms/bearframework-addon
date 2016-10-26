@@ -17,9 +17,9 @@ if ($component->onClick === 'fullscreen') {
     $onClick = 'url';
 }
 
-$lazyLoad = 'false';
-if ($component->lazyLoad === 'true') {
-    $lazyLoad = 'true';
+$lazyLoad = 'true';
+if ($component->lazyLoad === 'false') {
+    $lazyLoad = 'false';
 }
 
 $attributes = '';
