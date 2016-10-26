@@ -34,6 +34,9 @@ if (strlen($component->imageAspectRatio) > 0) {
 if (strlen($component->imageLoadingBackground) > 0) {
     $attributes .= ' imageLoadingBackground="' . $component->imageLoadingBackground . '"';
 }
+if (strlen($component->lazyLoadImages) > 0) {
+    $attributes .= ' lazyLoadImages="' . $component->lazyLoadImages . '"';
+}
 
 $content .= '<component src="image-gallery" spacing="' . $spacing . '"' . $attributes . '>';
 foreach ($files as $file) {

@@ -17,6 +17,11 @@ if ($component->onClick === 'fullscreen') {
     $onClick = 'url';
 }
 
+$lazyLoad = 'false';
+if ($component->lazyLoad === 'true') {
+    $lazyLoad = 'true';
+}
+
 $attributes = '';
 
 $attributes .= ' onClick="' . $onClick . '"';
@@ -27,6 +32,8 @@ $classAttributeValue = isset($class{0}) ? ' ' . htmlentities($class) : '';
 if (strlen($component->loadingBackground) > 0) {
     $attributes .= ' imageLoadingBackground="' . $component->loadingBackground . '"';
 }
+
+$attributes .= ' lazyLoadImages="' . $lazyLoad . '"';
 
 $filename = (string) $component->filename;
 $content = '<div class="bearcms-image-element' . $classAttributeValue . '" style="font-size:0;">';
