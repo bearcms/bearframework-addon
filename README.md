@@ -207,7 +207,7 @@ Here is a list of options that can be passed to `$app->addons->add('bearcms/bear
 
 `autoCreateHomePage`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Automatically create editable elements container in the home page if no other response is defined. Default value is `true`.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Automatically create editable elements container in the home page if no other response is defined. The default value is `true`.
 
 ## License
 Bear CMS addon for Bear Framework is open-sourced software. It's free to use under the MIT license. See the [license file](https://github.com/bearcms/bearframework-addon/blob/master/LICENSE) for more information.
