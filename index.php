@@ -167,7 +167,11 @@ $app->hooks->add('initialized', function() use ($app) {
         $app->routes->add('*', function() use ($app) {
             $path = (string) $app->request->path;
             if ($path === '/') {
-                $pageID = 'home';
+                if (Options::$autoCreateHomePage) {
+                    $pageID = 'home';
+                } else {
+                    $pageID = false;
+                }
             } else {
                 $hasSlash = substr($path, -1) === '/';
                 $pathsList = InternalData\Pages::getPathsList((Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) && $app->bearCMS->currentUser->exists() ? 'all' : 'published');

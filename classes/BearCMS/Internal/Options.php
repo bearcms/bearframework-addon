@@ -26,6 +26,7 @@ final class Options
     static $uiTextColor = '#ffffff';
     static $adminPagesPathPrefix = '/admin/';
     static $blogPagesPathPrefix = '/b/';
+    static $autoCreateHomePage = true;
 
     /**
      * 
@@ -89,6 +90,10 @@ final class Options
 
         if (isset($data['blogPagesPathPrefix'])) {
             self::$blogPagesPathPrefix = $data['blogPagesPathPrefix'];
+        }
+
+        if (isset($data['autoCreateHomePage'])) {
+            self::$autoCreateHomePage = $data['autoCreateHomePage'];
         }
     }
 
