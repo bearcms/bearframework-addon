@@ -21,13 +21,13 @@ class Pages
      * Retrieves information about the page specified
      * 
      * @param string $id The page ID
-     * @return array|null The page data or null if page not found
+     * @return \BearCMS\DataObject|null The page data or null if page not found
      * @throws \InvalidArgumentException
      */
     public function getPage($id)
     {
         if (!is_string($id)) {
-            throw new \InvalidArgumentException('');
+            throw new \InvalidArgumentException('The id agrument must be of type string');
         }
         $app = App::$instance;
         $data = $app->data->get(
@@ -37,7 +37,15 @@ class Pages
                 ]
         );
         if (isset($data['body'])) {
-            return json_decode($data['body'], true);
+            $object = new \BearCMS\DataObject(json_decode($data['body'], true));
+            $pages = $this;
+            $object->defineProperty('children', [
+                'get' => function() use ($pages, $object) {
+                    return $pages->getList()
+                                    ->filterBy('parentID', $object->object->id);
+                }
+            ]);
+            return $object;
         }
         return null;
     }
@@ -45,10 +53,9 @@ class Pages
     /**
      * Retrieves a list of all pages
      * 
-     * @param array $options List of options. Available values: PUBLISHED_ONLY, NOT_PUBLISHED_ONLY, SORT_BY_NAME, SORT_BY_NAME_DESC
-     * @return array List containing all pages data
+     * @return \BearCMS\DataCollection List containing all pages data
      */
-    public function getList($options = [])
+    public function getList()
     {
         $app = App::$instance;
         $data = $app->data->search(
@@ -60,62 +67,44 @@ class Pages
                 ]
         );
         $result = [];
+        $pages = $this;
         foreach ($data as $item) {
-            $result[] = json_decode($item['body'], true);
-        }
-
-        $filterByAttribute = function($name, $value) use (&$result) {
-            $temp = [];
-            foreach ($result as $item) {
-                if (isset($item[$name]) && $item[$name] === $value) {
-                    $temp[] = $item;
+            $object = new \BearCMS\DataObject(json_decode($item['body'], true));
+            $object->defineProperty('children', [
+                'get' => function() use ($pages, $object) {
+                    return $pages->getList()
+                                    ->filterBy('parentID', $object->id);
                 }
-            }
-            $result = $temp;
-        };
-
-        $sortByStringAttribute = function($name, $order = 'asc') use (&$result) {
-            usort($result, function($item1, $item2) use ($name, $order) {
-                if (isset($item1[$name], $item2[$name])) {
-                    return strcmp($item1[$name], $item2[$name]) * ($order === 'asc' ? 1 : -1);
-                }
-                return 0;
-            });
-        };
-
-        if (array_search('PUBLISHED_ONLY', $options) !== false) {
-            $filterByAttribute('status', 'published');
-        } elseif (array_search('NOT_PUBLISHED_ONLY', $options) !== false) {
-            $filterByAttribute('status', 'notPublished');
+            ]);
+            $result[] = $object;
         }
-
-        if (array_search('SORT_BY_NAME', $options) !== false) {
-            $sortByStringAttribute('name', 'asc');
-        } elseif (array_search('SORT_BY_NAME_DESC', $options) !== false) {
-            $sortByStringAttribute('name', 'desc');
-        }
-
-        return $result;
-    }
-
-    /**
-     * Retrieves an array containing the pages structure
-     * 
-     * @return array An array containing the pages structure
-     */
-    public function getStructure()
-    {
-        $app = App::$instance;
         $data = $app->data->get(
                 [
                     'key' => 'bearcms/pages/structure.json',
                     'result' => ['body']
                 ]
         );
+        $flattenStructureData = [];
         if (isset($data['body'])) {
-            return json_decode($data['body'], true);
+            $structureData = json_decode($data['body'], true);
+            $flattenStructure = function($structureData) use (&$flattenStructure, &$flattenStructureData) {
+                foreach ($structureData as $item) {
+                    $flattenStructureData[] = $item['id'];
+                    if (isset($item['children'])) {
+                        $flattenStructure($item['children']);
+                    }
+                }
+            };
+            $flattenStructure($structureData);
+            unset($flattenStructure);
+            unset($structureData);
         }
-        return [];
+        return (new \BearCMS\DataCollection($result))
+                        ->sort(function($object1, $object2) use ($flattenStructureData) {
+                            $object1Index = array_search($object1->id, $flattenStructureData);
+                            $object2Index = array_search($object2->id, $flattenStructureData);
+                            return $object1Index - $object2Index;
+                        });
     }
 
 }

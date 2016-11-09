@@ -15,29 +15,31 @@ if (strlen($component->selectedPath) > 0) {
     $selectedPath = $component->selectedPath;
 }
 
-$buildTree = function($pages, $parentID) use ($app, $selectedPath, &$buildTree) {
-    $items = [];
+$buildTree = function($pages, $recursive = false, $level = 0) use ($app, $selectedPath, &$buildTree) {
+    $itemsHtml = [];
     foreach ($pages as $page) {
-        if ($page['parentID'] === $parentID) {
-            $classNames = 'bearcms-navigation-element-item';
-            if ($page['path'] === $selectedPath) {
-                $classNames .= ' bearcms-navigation-element-item-selected';
-            } elseif ($page['id'] !== '_home' && strpos($selectedPath, $page['path']) === 0) {
-                $classNames .= ' bearcms-navigation-element-item-in-path';
-            }
-            $items[] = '<li class="' . $classNames . '"><a href="' . $app->request->base . $page['path'] . '">' . htmlspecialchars($page['name']) . '</a>' . $buildTree($pages, $page['id']) . '</li>';
+        $classNames = 'bearcms-navigation-element-item';
+        if ($page->path === $selectedPath) {
+            $classNames .= ' bearcms-navigation-element-item-selected';
+        } elseif ($page->id !== '_home' && strpos($selectedPath, $page->path) === 0) {
+            $classNames .= ' bearcms-navigation-element-item-in-path';
         }
+        $itemsHtml[] = '<li class="' . $classNames . '"><a href="' . $app->request->base . $page->path . '">' . htmlspecialchars($page->name) . '</a>';
+        if ($recursive && isset($page->children)) {
+            $itemsHtml[] = $buildTree($page->children, true, $level + 1);
+        }
+        $itemsHtml[] = '</li>';
     }
-    if (empty($items)) {
+    if (empty($itemsHtml)) {
         return '';
     }
 
-    if ($parentID === '') {
+    if ($level === 0) {
         $attributes = ' class="bearcms-navigation-element"';
     } else {
         $attributes = ' class="bearcms-navigation-element-item-children"';
     }
-    return '<ul' . $attributes . '>' . implode('', $items) . '</ul>';
+    return '<ul' . $attributes . '>' . implode('', $itemsHtml) . '</ul>';
 };
 
 $type = 'top';
@@ -62,59 +64,15 @@ if (strlen($component->showHomeButton) > 0) {
     }
 }
 
-$pages = [];
-if ($type === 'top') {
-    $structure = $app->bearCMS->data->pages->getStructure();
-    $pages = $app->bearCMS->data->pages->getList(['PUBLISHED_ONLY']);
-    $temp = [];
-    foreach ($pages as $page) {
-        if ($page['parentID'] === '') {
-            $temp[] = $page;
-        }
-    }
-    $pages = $temp;
+$pages = null;
+if ($type === 'top' || $type === 'tree') {
+    $pages = $app->bearCMS->data->pages->getList()
+            ->filterBy('parentID', '')
+            ->filterBy('status', 'published');
 } elseif ($type === 'children') {
-    $structure = $app->bearCMS->data->pages->getStructure();
-    $pages = $app->bearCMS->data->pages->getList(['PUBLISHED_ONLY']);
-    $temp = [];
-    $parentID = strlen($component->pageID) > 0 ? $component->pageID : '';
-    foreach ($pages as $page) {
-        if ($page['parentID'] === $parentID) {
-            $temp[] = $page;
-        }
-    }
-    $pages = $temp;
-} elseif ($type === 'tree') {
-    $structure = $app->bearCMS->data->pages->getStructure();
-    $pages = $app->bearCMS->data->pages->getList(['PUBLISHED_ONLY']);
-}
-
-// sort pages
-if (isset($structure, $pages)) {
-    $flatStructure = [];
-    $walkStructure = function($structure) use (&$flatStructure, &$walkStructure) {
-        foreach ($structure as $item) {
-            if (isset($item['id'])) {
-                $flatStructure[] = $item['id'];
-            }
-            if (isset($item['children'])) {
-                $walkStructure($item['children']);
-            }
-        }
-    };
-    $walkStructure($structure);
-    usort($pages, function($a, $b) use ($flatStructure) {
-        if (isset($a['id'], $b['id'])) {
-            $aIndex = array_search($a['id'], $flatStructure);
-            $bIndex = array_search($b['id'], $flatStructure);
-            if ($aIndex == $bIndex) {
-                return 0;
-            }
-            return ($aIndex < $bIndex) ? -1 : 1;
-        }
-    });
-    unset($flatStructure);
-    unset($walkStructure);
+    $pages = $app->bearCMS->data->pages->getList()
+            ->filterBy('parentID', (string) $component->pageID)
+            ->filterBy('status', 'published');
 }
 
 $attributes = '';
@@ -129,8 +87,8 @@ if (strlen($dataResponsiveAttributes) > 0) {
     $attributes .= ' data-responsive-attributes="' . htmlentities(str_replace('=>menuType=', '=>type=', $dataResponsiveAttributes)) . '"';
 }
 
-if ($showHomeButton) {
-    array_unshift($pages, ['id' => '_home', 'path' => '/', 'name' => $homeButtomText, 'parentID' => '', 'status' => 'published']);
+if ($pages !== null && $showHomeButton) {
+    $pages->unshift(new \BearCMS\DataObject(['id' => '_home', 'path' => '/', 'name' => $homeButtomText, 'parentID' => '', 'status' => 'published']));
 }
 
 $itemsHtml = (string) $component->innerHTML;
@@ -159,10 +117,10 @@ if (isset($itemsHtml{0})) {
         $itemsHtml = $rootULElement->outerHTML;
     }
 } else {
-    if (empty($pages)) {
+    if ($pages === null || $pages->length === 0) {
         $itemsHtml = '';
     } else {
-        $itemsHtml = $buildTree($pages, (string) $component->pageID);
+        $itemsHtml = $buildTree($pages, $type === 'tree');
     }
 }
 $content = '';

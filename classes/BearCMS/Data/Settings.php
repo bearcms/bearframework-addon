@@ -20,7 +20,7 @@ class Settings
     /**
      * Returns an array containing the site settings
      * 
-     * @return array An array containing the site settings
+     * @return \BearCMS\DataObject An object containing the site settings
      */
     public function get()
     {
@@ -57,7 +57,7 @@ class Settings
         if (!isset($data['allowSearchEngines'])) {
             $data['allowSearchEngines'] = false;
         }
-        return $data;
+        return new \BearCMS\DataObject($data);
     }
 
 }

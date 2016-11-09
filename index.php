@@ -28,6 +28,8 @@ $context->classes->add('BearCMS\Data\Settings', 'classes/BearCMS/Data/Settings.p
 $context->classes->add('BearCMS\Data\Themes', 'classes/BearCMS/Data/Themes.php');
 $context->classes->add('BearCMS\Data\Users', 'classes/BearCMS/Data/Users.php');
 $context->classes->add('BearCMS\DataSchema', 'classes/BearCMS/DataSchema.php');
+$context->classes->add('BearCMS\DataObject', 'classes/BearCMS/DataObject.php');
+$context->classes->add('BearCMS\DataCollection', 'classes/BearCMS/DataCollection.php');
 
 $context->classes->add('BearCMS\Internal\Data\Addons', 'classes/BearCMS/Internal/Data/Addons.php');
 $context->classes->add('BearCMS\Internal\Data\Blog', 'classes/BearCMS/Internal/Data/Blog.php');

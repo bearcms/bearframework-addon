@@ -21,13 +21,13 @@ class Addons
      * Retrieves information about the addon specified
      * 
      * @param string $id The addon ID
-     * @return array|null The addon data or null if addon not found
+     * @return \BearCMS\DataObject|null The addon data or null if addon not found
      * @throws \InvalidArgumentException
      */
     public function getAddon($id)
     {
         if (!is_string($id)) {
-            throw new \InvalidArgumentException('');
+            throw new \InvalidArgumentException('The id agrument must be of type string');
         }
         $app = App::$instance;
         $data = $app->data->get(
@@ -37,7 +37,7 @@ class Addons
                 ]
         );
         if (isset($data['body'])) {
-            return json_decode($data['body'], true);
+            return new \BearCMS\DataObject(json_decode($data['body'], true));
         }
         return null;
     }
@@ -45,10 +45,9 @@ class Addons
     /**
      * Retrieves a list of all addons
      * 
-     * @param array $options List of options. Available values: ENABLED_ONLY, DISABLED_ONLY
-     * @return array List containing all addons data
+     * @return \BearCMS\DataCollection List containing all addons data
      */
-    public function getList($options = [])
+    public function getList()
     {
         $app = App::$instance;
         $data = $app->data->search(
@@ -61,25 +60,9 @@ class Addons
         );
         $result = [];
         foreach ($data as $item) {
-            $result[] = json_decode($item['body'], true);
+            $result[] = new \BearCMS\DataObject(json_decode($item['body'], true));
         }
-
-        $filterByAttribute = function($name, $value) use (&$result) {
-            $temp = [];
-            foreach ($result as $item) {
-                if (isset($item[$name]) && $item[$name] === $value) {
-                    $temp[] = $item;
-                }
-            }
-            $result = $temp;
-        };
-
-        if (array_search('ENABLED_ONLY', $options) !== false) {
-            $filterByAttribute('enabled', true);
-        } elseif (array_search('DISABLED_ONLY', $options) !== false) {
-            $filterByAttribute('enabled', false);
-        }
-        return $result;
+        return new \BearCMS\DataCollection($result);
     }
 
 }

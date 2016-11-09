@@ -27,7 +27,7 @@ class Themes
     public function getOptions($id)
     {
         if (!is_string($id)) {
-            throw new \InvalidArgumentException('');
+            throw new \InvalidArgumentException('The id agrument must be of type string');
         }
         $app = App::$instance;
         $data = $app->data->get(
@@ -56,10 +56,10 @@ class Themes
     public function getTempOptions($id, $userID)
     {
         if (!is_string($id)) {
-            throw new \InvalidArgumentException('');
+            throw new \InvalidArgumentException('The id agrument must be of type string');
         }
         if (!is_string($userID)) {
-            throw new \InvalidArgumentException('');
+            throw new \InvalidArgumentException('The userID agrument must be of type string');
         }
         $app = App::$instance;
         $data = $app->data->get(

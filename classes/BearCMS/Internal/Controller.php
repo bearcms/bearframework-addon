@@ -135,7 +135,9 @@ final class Controller
         $data .= '<atom:link href="' . $baseUrl . '/rss.xml" rel="self" type="application/rss+xml">';
         $data .= '</atom:link>';
 
-        $blogPosts = $app->bearCMS->data->blog->getList(['PUBLISHED_ONLY', 'SORT_BY_PUBLISHED_TIME_DESC']);
+        $blogPosts = $app->bearCMS->data->blog->getList()
+                ->filterBy('status', 'published')
+                ->sortBy('publishedTime', 'desc');
         foreach ($blogPosts as $blogPost) {
             $blogPostUrl = isset($blogPost['slug']) ? $baseUrl . Options::$blogPagesPathPrefix . $blogPost['slug'] . '/' : '';
             $data .= '<item>';

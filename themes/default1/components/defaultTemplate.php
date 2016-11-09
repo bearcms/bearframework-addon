@@ -42,7 +42,7 @@ if ($mode === 'notFound' || $mode === 'temporaryUnavailable') {
 
 $options = $app->bearCMS->currentTheme->getOptions();
 
-$hasPages = sizeof($app->bearCMS->data->pages->getList(['PUBLISHED_ONLY']));
+$hasPages = sizeof($app->bearCMS->data->pages->getList()->filterBy('status', 'published'));
 $settings = $app->bearCMS->data->settings->get();
 $isHomePage = (string) $app->request->path === '/';
 

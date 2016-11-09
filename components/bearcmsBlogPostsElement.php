@@ -12,7 +12,9 @@ use BearCMS\Internal\Options;
 
 $app = App::get();
 
-$list = $app->bearCMS->data->blog->getList(['PUBLISHED_ONLY', 'SORT_BY_PUBLISHED_TIME_DESC']);
+$list = $app->bearCMS->data->blog->getList()
+        ->filterBy('status', 'published')
+        ->sortBy('publishedTime', 'desc');
 
 $type = 'full';
 if (strlen($component->type) > 0) {
