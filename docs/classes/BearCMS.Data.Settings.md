@@ -4,14 +4,14 @@ Information about the site settings
 ## Methods
 
 ```php
-public array get ( void )
+public \BearCMS\DataObject get ( void )
 ```
 
-Returns an array containing the site settings
+Returns an object containing the site settings
 
 _Returns_
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array containing the site settings
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An object containing the site settings
 
 ## Examples
 
@@ -20,7 +20,7 @@ List all site settings.
 ```php
 $settings = $app->bearCMS->data->settings->get();
 
-// Array
+// \BearCMS\DataObject
 // (
 //     [title] => Company Ltd.
 //     [description] => welcome to our website

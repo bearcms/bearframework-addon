@@ -4,7 +4,7 @@ Information about the blog posts
 ## Methods
 
 ```php
-public array|null getPost ( string $id )
+public \BearCMS\DataObject|null getPost ( string $id )
 ```
 
 Retrieves information about the blog post specified
@@ -20,7 +20,7 @@ _Returns_
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The blog post data or null if blog post not found
 
 ```php
-public array getList ( void )
+public \BearCMS\DataCollection getList ( void )
 ```
 
 Retrieves a list of all blog posts
@@ -31,14 +31,14 @@ _Returns_
 
 ## Examples
 
-Returns an array containing information about the user specified 
+Returns a collection containing all blog posts
 
 ```php
 $list = $app->bearCMS->data->blog->getList();
 
-// Array
+// \BearCMS\DataCollection
 // (
-//     [0] => Array
+//     [0] => \BearCMS\DataObject
 //         (
 //             [id] => abcdefghijk1
 //             [title] => My first blog post
@@ -49,7 +49,7 @@ $list = $app->bearCMS->data->blog->getList();
 //             [descriptionTagContent] => 
 //             [keywordsTagContent] => 
 //         )
-//     [1] => Array
+//     [1] => \BearCMS\DataObject
 //         (
 //             [id] => abcdefghijk2
 //             [title] => My second blog post
@@ -65,12 +65,12 @@ $list = $app->bearCMS->data->blog->getList();
 // )
 ```
 
-Returns an array containing all users data
+Returns an object containing the blog post data
 
 ```php
 $post = $app->bearCMS->data->blog->getPost('abcdefghijk1');
 
-// Array
+// \BearCMS\DataObject
 // (
 //     [id] => abcdefghijk1
 //     [title] => My first blog post

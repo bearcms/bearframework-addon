@@ -4,7 +4,7 @@ Information about the addons managed by Bear CMS
 ## Methods
 
 ```php
-public array|null getAddon ( string $id )
+public \BearCMS\DataObject|null getAddon ( string $id )
 ```
 
 Retrieves information about the addon specified
@@ -20,7 +20,7 @@ _Returns_
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The addon data or null if addon not found
 
 ```php
-public array getList ( void )
+public \BearCMS\DataCollection getList ( void )
 ```
 
 Retrieves a list of all addons
@@ -36,14 +36,14 @@ List of all Bear CMS managed addons.
 ```php
 $list = $app->bearCMS->data->addons->getList();
 
-// Array
+// \BearCMS\DataCollection
 // (
-//     [0] => Array
+//     [0] => \BearCMS\DataObject
 //         (
 //             [id] => vendor1/example-addon-1
 //             [enabled] => 1
 //         )
-//     [1] => Array
+//     [1] => \BearCMS\DataObject
 //         (
 //             [id] => vendor2/example-addon-2
 //             [enabled] => 0
@@ -57,7 +57,7 @@ Information about a specific Bear CMS managed addon.
 ```php
 $addon = $app->bearCMS->data->addons->getAddon('test/test1-addon');
 
-// Array
+// \BearCMS\DataObject
 // (
 //     [id] => vendor1/example-addon-1
 //     [enabled] => 1

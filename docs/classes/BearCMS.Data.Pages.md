@@ -4,7 +4,7 @@ Information about the site pages
 ## Methods
 
 ```php
-public array|null getPage ( string $id )
+public \BearCMS\DataObject|null getPage ( string $id )
 ```
 
 Retrieves information about the page specified
@@ -20,7 +20,7 @@ _Returns_
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The page data or null if page not found
 
 ```php
-public array getList ( void )
+public \BearCMS\DataCollection getList ( void )
 ```
 
 Retrieves a list of all pages
@@ -29,16 +29,6 @@ _Returns_
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List containing all pages data
 
-```php
-public array getStructure ( void )
-```
-
-Retrieves an array containing the pages structure
-
-_Returns_
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array containing the pages structure
-
 ## Examples
 
 List of all pages
@@ -46,9 +36,9 @@ List of all pages
 ```php
 $list = $app->bearCMS->data->pages->getList();
 
-// Array
+// \BearCMS\DataCollection
 // (
-//     [0] => Array
+//     [0] => \BearCMS\DataObject
 //         (
 //             [id] => abcdefghijk1
 //             [name] => Products
@@ -59,8 +49,9 @@ $list = $app->bearCMS->data->pages->getList();
 //             [titleTagContent] => 
 //             [descriptionTagContent] => 
 //             [keywordsTagContent] => 
+//             [children] => \BearCMS\DataCollection
 //         )
-//     [1] => Array
+//     [1] => \BearCMS\DataObject
 //         (
 //             [id] => abcdefghijk2
 //             [name] => Laptops
@@ -71,30 +62,8 @@ $list = $app->bearCMS->data->pages->getList();
 //             [titleTagContent] => 
 //             [descriptionTagContent] => 
 //             [keywordsTagContent] => 
+//             [children] => \BearCMS\DataCollection
 //         )
 //     ...
 // )
-```
-
-The structure of the pages in tree view. Only pages ids and children are returned.
-
-```php
-$structure = $app->bearCMS->data->pages->getStructure();
-
-// Array
-// (
-//     [0] => Array
-//         (
-//             [id] => abcdefghijk1
-//             [children] => Array
-//                 (
-//                     [0] => Array
-//                         (
-//                             [id] => abcdefghijk2
-//                         )
-//                 )
-//         )
-//     ...
-// )
-
 ```

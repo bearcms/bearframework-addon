@@ -4,7 +4,7 @@ Information about the CMS users (administrators)
 ## Methods
 
 ```php
-public array|null getUser ( string $id )
+public \BearCMS\DataObject|null getUser ( string $id )
 ```
 
 Retrieves information about the user specified
@@ -20,7 +20,7 @@ _Returns_
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The user data or null if user not found
 
 ```php
-public array getList ( void )
+public \BearCMS\DataCollection getList ( void )
 ```
 
 Retrieves a list of all users
@@ -41,12 +41,12 @@ _Returns_
 
 ## Examples
 
-Returns an array containing information about the user specified 
+Returns an object containing information about the user specified 
 
 ```php
 $user = $app->bearCMS->data->users->getUser('abcdefghijk1');
 
-// Array
+// \BearCMS\DataObject
 // (
 //     [id] => abcdefghijk1
 //     [registerTime] => 1234567890
@@ -71,14 +71,14 @@ $user = $app->bearCMS->data->users->getUser('abcdefghijk1');
 // )
 ```
 
-Returns an array containing all users data
+Returns a collection containing all users data
 
 ```php
 $list = $app->bearCMS->data->users->getList();
 
-// Array
+// \BearCMS\DataCollection
 // (
-//     [0] => Array
+//     [0] => \BearCMS\DataObject
 //         (
 //             [id] => abcdefghijk1
 //             [registerTime] => 1234567890
@@ -101,7 +101,7 @@ $list = $app->bearCMS->data->users->getList();
 //                     [8] => viewAboutInformation
 //                 )
 //         )
-//     [1] => Array
+//     [1] => \BearCMS\DataObject
 //         (
 //             [id] => abcdefghijk2
 //             [registerTime] => 1234567890
