@@ -156,9 +156,6 @@ final class ElementsHelper
      */
     static function updateElementComponent($component)
     {
-        self::updateComponentEditableAttribute($component);
-        self::updateComponentContextAttributes($component);
-
         $rawData = $component->getAttribute('bearcms-internal-attribute-raw-data');
         $elementData = null;
         if (strlen($rawData) > 0) {
@@ -172,7 +169,12 @@ final class ElementsHelper
         }
         if ($elementData !== null) {
             self::updateComponentFromRawData($component, $elementData);
-        } else {
+        }
+
+        self::updateComponentEditableAttribute($component);
+        self::updateComponentContextAttributes($component);
+
+        if ($elementData === null) {
             if (strlen($component->id) > 0 && $component->editable === 'true') {
                 $rawData = self::getRawDataFromComponent($component);
                 $component->setAttribute('bearcms-internal-attribute-raw-data', json_encode($rawData));
