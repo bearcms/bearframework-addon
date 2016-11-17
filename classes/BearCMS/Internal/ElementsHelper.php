@@ -35,7 +35,7 @@ final class ElementsHelper
     {
         $app = App::$instance;
         $editable = false;
-        if ($component->editable === 'true') {
+        if ($component->editable === 'true' && strlen($component->id) > 0) {
             if ($app->bearCMS->currentUser->exists() && $app->bearCMS->currentUser->hasPermission('modifyContent')) {
                 $editable = true;
             }
@@ -58,7 +58,7 @@ final class ElementsHelper
                     $value = '';
                 }
             }
-            return (string)$value;
+            return (string) $value;
         };
 
         // Update width
