@@ -204,7 +204,7 @@ final class Server
                     }
                 }
                 if (!empty($scriptBundle)) {
-                    $newJsFiles[] = self::getAssetsUrl($scriptBundle);
+                    $newJsFiles[] = self::getAssetsUrl(array_unique($scriptBundle));
                 }
                 $contentData['jsFiles'] = $newJsFiles;
             }
@@ -236,7 +236,7 @@ final class Server
             if (!empty($scriptBundle)) {
                 $script = $dom->createElement('script');
                 $script->setAttribute('async', 'async');
-                $script->setAttribute('src', self::getAssetsUrl($scriptBundle));
+                $script->setAttribute('src', self::getAssetsUrl(array_unique($scriptBundle)));
                 $dom->querySelector('body')->appendChild($script);
             }
             if ($hasChange) {
