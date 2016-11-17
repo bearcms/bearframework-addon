@@ -20,7 +20,7 @@ class BearCMS
     /**
      * Addon version
      */
-    const VERSION = '0.3.1';
+    const VERSION = '0.3.3';
 
     /**
      * Dependency Injection container
