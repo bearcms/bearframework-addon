@@ -63,7 +63,7 @@ $context->assets->addDir('assets');
 
 $app->container->set('bearCMS', \BearCMS::class);
 
-Options::set($context->options);
+Options::set($app->addons->get('bearcms/bearframework-addon')['options']);
 
 $app->hooks->add('initialized', function() use ($app) {
 
