@@ -343,6 +343,12 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
 
     $requestArguments = [];
     $requestArguments['hasEditableElements'] = empty(ElementsHelper::$editorData) ? '0' : '1';
+    $requestArguments['hasEditableContainers'] = '0';
+    foreach (ElementsHelper::$editorData as $itemData) {
+        if ($itemData[0] === 'container') {
+            $requestArguments['hasEditableContainers'] = '1';
+        }
+    }
 
     $cacheKey = json_encode([
         'adminUI',
