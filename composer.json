@@ -9,7 +9,7 @@
     },
     "require": {
         "php": ">=5.5.0",
-        "bearframework/bearframework": ">=0.9.2 <0.10",
+        "bearframework/bearframework": "*",
         "bearframework/html-template": "0.1.*",
         "ivopetkov/html-server-components-bearframework-addon": "0.2.*|0.3.*|0.4.*",
         "ivopetkov/image-gallery-bearframework-addon": "0.0.*",
