@@ -65,19 +65,7 @@ final class ServerCommands
     static function blogPosts()
     {
         $app = App::get();
-        $result = $app->data->search(
-                [
-                    'where' => [
-                        ['key', 'bearcms/blog/post/', 'startsWith']
-                    ],
-                    'result' => ['key', 'body']
-                ]
-        );
-        $temp = [];
-        foreach ($result as $item) {
-            $temp[] = json_decode($item['body'], true);
-        }
-        return $temp;
+        return $app->bearCMS->data->blog->getList()->toArray();
     }
 
     /**
@@ -87,22 +75,12 @@ final class ServerCommands
     static function usersIDs()
     {
         $app = App::get();
-        $result = $app->data->search(
-                [
-                    'where' => [
-                        ['key', 'bearcms/users/user/', 'startsWith']
-                    ],
-                    'result' => ['key', 'body']
-                ]
-        );
-        $temp = [];
-        foreach ($result as $item) {
-            $itemData = json_decode($item['body'], true);
-            if (isset($itemData['id'])) {
-                $temp[] = $itemData['id'];
-            }
+        $users = $app->bearCMS->data->blog->getList();
+        $result = [];
+        foreach ($users as $user) {
+            $result[] = $user->id;
         }
-        return $temp;
+        return $result;
     }
 
     /**
