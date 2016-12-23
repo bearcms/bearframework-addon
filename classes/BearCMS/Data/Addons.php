@@ -29,7 +29,7 @@ class Addons
         if (!is_string($id)) {
             throw new \InvalidArgumentException('The id agrument must be of type string');
         }
-        $app = App::$instance;
+        $app = App::get();
         $data = $app->data->get(
                 [
                     'key' => 'bearcms/addons/addon/' . md5($id) . '.json',
@@ -49,7 +49,7 @@ class Addons
      */
     public function getList()
     {
-        $app = App::$instance;
+        $app = App::get();
         $data = $app->data->search(
                 [
                     'where' => [

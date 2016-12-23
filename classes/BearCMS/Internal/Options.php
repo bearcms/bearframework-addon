@@ -52,7 +52,7 @@ final class Options
             self::$siteSecret = $data['siteSecret'];
         }
 
-        $app = App::$instance;
+        $app = App::get();
 
         if (isset($data['language'])) {
             self::$language = $data['language'];

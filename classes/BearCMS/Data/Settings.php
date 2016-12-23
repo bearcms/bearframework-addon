@@ -24,7 +24,7 @@ class Settings
      */
     public function get()
     {
-        $app = App::$instance;
+        $app = App::get();
         $data = $app->data->get(
                 [
                     'key' => 'bearcms/settings.json',

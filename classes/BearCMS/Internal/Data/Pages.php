@@ -19,7 +19,7 @@ final class Pages
      */
     static function getPathsList($status = 'all')
     {
-        $app = App::$instance;
+        $app = App::get();
         
         $data = $app->data->search(
                 [

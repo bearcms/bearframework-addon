@@ -19,7 +19,7 @@ final class Blog
      */
     static function getSlugsList($status = 'all')
     {
-        $app = App::$instance;
+        $app = App::get();
         $data = $app->data->search(
                 [
                     'where' => [

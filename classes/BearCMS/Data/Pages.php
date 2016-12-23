@@ -29,7 +29,7 @@ class Pages
         if (!is_string($id)) {
             throw new \InvalidArgumentException('The id agrument must be of type string');
         }
-        $app = App::$instance;
+        $app = App::get();
         $data = $app->data->get(
                 [
                     'key' => 'bearcms/pages/page/' . md5($id) . '.json',
@@ -57,7 +57,7 @@ class Pages
      */
     public function getList()
     {
-        $app = App::$instance;
+        $app = App::get();
         $data = $app->data->search(
                 [
                     'where' => [

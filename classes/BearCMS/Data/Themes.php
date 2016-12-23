@@ -29,7 +29,7 @@ class Themes
         if (!is_string($id)) {
             throw new \InvalidArgumentException('The id agrument must be of type string');
         }
-        $app = App::$instance;
+        $app = App::get();
         $data = $app->data->get(
                 [
                     'key' => 'bearcms/themes/theme/' . md5($id) . '.json',
@@ -61,7 +61,7 @@ class Themes
         if (!is_string($userID)) {
             throw new \InvalidArgumentException('The userID agrument must be of type string');
         }
-        $app = App::$instance;
+        $app = App::get();
         $data = $app->data->get(
                 [
                     'key' => '.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json',

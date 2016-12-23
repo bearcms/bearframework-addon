@@ -59,7 +59,7 @@ class CurrentTheme
     private function walkOptions($resultType)
     {
         $cacheKey = 'options' . $resultType; //todo optimize
-        $app = App::$instance;
+        $app = App::get();
         if (!isset(self::$cache[$cacheKey])) {
             $currentThemeID = $this->getID();
             $result = [];
@@ -113,7 +113,7 @@ class CurrentTheme
     public function getOptionsHtml()
     {
         $linkTags = [];
-        $app = App::$instance;
+        $app = App::get();
         $result = [];
         $options = $this->walkOptions(2);
         $applyImageUrls = function($text) use ($app) {

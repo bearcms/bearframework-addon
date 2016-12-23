@@ -16,7 +16,7 @@ final class Addons
 
     static function getList()
     {
-        $app = App::$instance;
+        $app = App::get();
         $result = $app->data->search(
                 [
                     'where' => [

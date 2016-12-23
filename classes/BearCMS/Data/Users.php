@@ -29,7 +29,7 @@ class Users
         if (!is_string($id)) {
             throw new \InvalidArgumentException('The id agrument must be of type string');
         }
-        $app = App::$instance;
+        $app = App::get();
         $data = $app->data->get(
                 [
                     'key' => 'bearcms/users/user/' . md5($id) . '.json',
@@ -49,7 +49,7 @@ class Users
      */
     public function getList()
     {
-        $app = App::$instance;
+        $app = App::get();
         $data = $app->data->search(
                 [
                     'where' => [
@@ -72,7 +72,7 @@ class Users
      */
     public function hasUsers()
     {
-        $app = App::$instance;
+        $app = App::get();
         $result = $app->data->search(
                 [
                     'where' => [

@@ -16,7 +16,7 @@ final class Themes
 
     static function getActiveThemeID()
     {
-        $app = App::$instance;
+        $app = App::get();
         $data = $app->data->get(
                 [
                     'key' => 'bearcms/themes/active.json',
@@ -34,7 +34,7 @@ final class Themes
 
     static function getList()
     {
-        $app = App::$instance;
+        $app = App::get();
         $addonsList = $app->addons->getList();
         $result = [];
         foreach ($addonsList as $addonData) {
