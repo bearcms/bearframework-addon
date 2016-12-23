@@ -55,7 +55,6 @@ class CurrentUser
      */
     public function getID()
     {
-
         $sessionKey = $this->getSessionKey();
         if (strlen($sessionKey) === 0) {
             return null;
@@ -63,7 +62,7 @@ class CurrentUser
         $cacheKey = 'id-' . $sessionKey;
         if (!isset(self::$cache[$cacheKey])) {
             self::$cache[$cacheKey] = null;
-            $app = App::$instance;
+            $app = App::get();
             $data = $app->data->get([
                 'key' => '.temp/bearcms/userkeys/' . md5($sessionKey),
                 'result' => ['body']
@@ -86,7 +85,7 @@ class CurrentUser
         if ($userID === null) {
             return [];
         }
-        $app = App::$instance;
+        $app = App::get();
         $data = $app->data->get([
             'key' => 'bearcms/users/user/' . md5($userID) . '.json',
             'result' => ['body']
@@ -126,6 +125,17 @@ class CurrentUser
             throw new \InvalidArgumentException('');
         }
         \BearCMS\Internal\Server::call('login', ['userID' => $userID], true);
+    }
+
+    /**
+     * Logouts the current user.
+     * 
+     * @param string $userID
+     * @throws \InvalidArgumentException
+     */
+    public function logout()
+    {
+        \BearCMS\Internal\Cookies::setList(\BearCMS\Internal\Cookies::TYPE_SERVER, [['name' => '_s', 'value' => 'deleted', 'expire' => 0]]);
     }
 
 }
