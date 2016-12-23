@@ -18,7 +18,7 @@ final class Controller
 
     static function handleAdminPage()
     {
-        $app = App::$instance;
+        $app = App::get();
         $path = (string) $app->request->path;
         if ($path === Options::$adminPagesPathPrefix) {
             if (!$app->bearCMS->data->users->hasUsers()) {
@@ -51,15 +51,16 @@ final class Controller
     {
         $data = Server::proxyAjax();
         $response = new App\Response\JSON($data);
-        $response->headers[] = 'X-Robots-Tag: noindex';
+        $response->headers->set('X-Robots-Tag', 'noindex');
         return $response;
     }
 
     static function handleFileUpload()
     {
-        $app = App::$instance;
-        if (isset($_FILES['Filedata']) && isset($_FILES['Filedata']["name"]) && !$_FILES['Filedata']["error"] && is_file($_FILES['Filedata']["tmp_name"])) {
-            $originalFilename = strtolower($_FILES['Filedata']["name"]);
+        $app = App::get();
+        $file = $app->request->files->get('Filedata');
+        if ($file !== null && strlen($file['filename']) > 0 && $file['errorCode'] === UPLOAD_ERR_OK && is_file($file['tempFilename'])) {
+            $originalFilename = strtolower($file['filename']);
             $pathinfo = pathinfo($originalFilename);
             $fileExtension = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
             $tempFilename = md5('fileupload' . uniqid()) . (isset($fileExtension{0}) ? '.' . $fileExtension : '');
@@ -70,9 +71,14 @@ final class Controller
                     mkdir($pathinfo['dirname'], 0777, true);
                 }
             }
-            move_uploaded_file($_FILES['Filedata']["tmp_name"], $filename);
+            move_uploaded_file($file['tempFilename'], $filename);
             if (is_file($filename)) {
-                $response = Server::call('fileupload', array('tempFilename' => $tempFilename, 'requestData' => json_encode($_GET)));
+                $queryList = $app->request->query->getList();
+                $temp = [];
+                foreach ($queryList as $queryListItem) {
+                    $temp[$queryListItem['name']] = $queryListItem['value'];
+                }
+                $response = Server::call('fileupload', array('tempFilename' => $tempFilename, 'requestData' => json_encode($temp)));
                 if (isset($response['result'])) {
                     return new App\Response\JSON($response['result']);
                 } else {
@@ -81,35 +87,40 @@ final class Controller
             }
         }
         $response = new App\Response();
-        $response->headers['contentType'] = 'Content-Type: text/json; charset=UTF-8';
-        $response->headers['serviceUnavailable'] = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1') . ' 400 Bad Request';
+        $response->statusCode = 400;
+        $response->headers->set('Content-Type', 'text/json');
         return $response;
     }
 
     static function handleFileRequest($preview)
     {
-        $app = App::$instance;
+        $app = App::get();
         $filename = (string) $app->request->path[2];
-        $data = \BearCMS\Internal\Data\Files::getFileData($filename);
-        if ($data === false || $data['published'] === 0) {
-            return new App\Response\NotFound();
-        } else {
+        $fileData = \BearCMS\Internal\Data\Files::getFileData($filename);
+        $download = false;
+        if (is_array($fileData)) {
+            if ($fileData['published'] === 1) {
+                $download = true;
+            } else {
+                if ($app->bearCMS->currentUser->exists() && $app->bearCMS->currentUser->hasPermission('manageFiles')) {
+                    $download = true;
+                }
+            }
+        }
+        if ($download) {
             $fullFilename = $app->data->getFilename('bearcms/files/custom/' . $filename);
             $response = new App\Response\FileReader($fullFilename);
             $mimeType = $app->assets->getMimeType($fullFilename);
             if ($mimeType !== null) {
-                $response->headers[] = 'Content-Type: ' . $mimeType;
+                $response->headers->set('Content-Type', $mimeType);
             }
             if (!$preview) {
-                $response->headers[] = 'Content-Disposition: attachment; filename=' . urlencode($filename);
-                $response->headers[] = 'Content-Type: application/force-download';
-                $response->headers[] = 'Content-Type: application/octet-stream';
-                $response->headers[] = 'Content-Type: application/download';
-                $response->headers[] = 'Content-Description: File Transfer';
-                $response->headers[] = 'Content-Length: ' . filesize($fullFilename);
+                $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileData['name']); // rawurlencode
+                $response->headers->set('Content-Length', (string) filesize($fullFilename));
             }
             return $response;
         }
+        return new App\Response\NotFound();
     }
 
     static function handleFilePreview()
@@ -124,7 +135,7 @@ final class Controller
 
     static function handleRSS()
     {
-        $app = App::$instance;
+        $app = App::get();
         $settings = $app->bearCMS->data->settings->get();
         $baseUrl = $app->request->base;
 
@@ -149,13 +160,13 @@ final class Controller
             $data .= '</item>';
         }
         $response = new App\Response('<?xml version="1.0" encoding="UTF-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel>' . $data . '</channel></rss>');
-        $response->setContentType('text/xml');
+        $response->headers->set('Content-Type', 'text/xml');
         return $response;
     }
 
     static function handleSitemap()
     {
-        $app = App::$instance;
+        $app = App::get();
         $urls = [];
         $baseUrl = $app->request->base;
         $addUrl = function($path) use (&$urls, $baseUrl) {
@@ -174,7 +185,7 @@ final class Controller
         }
 
         $response = new App\Response('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.google.com/schemas/sitemap/0.84">' . implode('', $urls) . '</urlset>');
-        $response->setContentType('text/xml');
+        $response->headers->set('Content-Type', 'text/xml');
         return $response;
     }
 
@@ -182,7 +193,7 @@ final class Controller
     {
         $response = new App\Response('User-agent: *
 Disallow:');
-        $response->setContentType('text/plain');
+        $response->headers->set('Content-Type', 'text/plain');
         return $response;
     }
 

@@ -37,7 +37,13 @@ final class Server
 
     static function proxyAjax()
     {
-        $response = self::sendRequest(Options::$serverUrl . '-aj/', $_POST, true);
+        $app = App::get();
+        $postData = $app->request->data->getList();
+        $temp = [];
+        foreach ($postData as $postDataItem) {
+            $temp[$postDataItem['name']] = $postDataItem['value'];
+        }
+        $response = self::sendRequest(Options::$serverUrl . '-aj/', $temp, true);
         if (self::isRetryResponse($response)) {
             return json_encode(array('js' => 'window.location.reload(true);'), JSON_UNESCAPED_UNICODE);
         }
@@ -74,7 +80,7 @@ final class Server
 
     static function getAssetsUrl($urls)
     {
-        $app = App::$instance;
+        $app = App::get();
         sort($urls);
         $resultKey = '.temp/bearcms/assets/' . md5(serialize($urls)) . '.js';
         $result = $app->data->get([
@@ -248,7 +254,7 @@ final class Server
 
     static function makeRequest($url, $data, $cookies)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (!is_string($url)) {
             throw new \InvalidArgumentException('');
         }
@@ -348,7 +354,7 @@ final class Server
 
     static function sendRequest($url, $data = null, $sendCookies = false)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (!is_string($url)) {
             throw new \InvalidArgumentException('');
         }
