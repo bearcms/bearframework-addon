@@ -23,6 +23,8 @@ $context->classes->add('BearCMS', 'classes/BearCMS.php');
 $context->classes->add('BearCMS\Data', 'classes/BearCMS/Data.php');
 $context->classes->add('BearCMS\Data\Addons', 'classes/BearCMS/Data/Addons.php');
 $context->classes->add('BearCMS\Data\Blog', 'classes/BearCMS/Data/Blog.php');
+$context->classes->add('BearCMS\Data\Comments', 'classes/BearCMS/Data/Comments.php');
+$context->classes->add('BearCMS\Data\CommentsThreads', 'classes/BearCMS/Data/CommentsThreads.php');
 $context->classes->add('BearCMS\Data\Pages', 'classes/BearCMS/Data/Pages.php');
 $context->classes->add('BearCMS\Data\Settings', 'classes/BearCMS/Data/Settings.php');
 $context->classes->add('BearCMS\Data\Themes', 'classes/BearCMS/Data/Themes.php');
@@ -33,6 +35,7 @@ $context->classes->add('BearCMS\DataCollection', 'classes/BearCMS/DataCollection
 
 $context->classes->add('BearCMS\Internal\Data\Addons', 'classes/BearCMS/Internal/Data/Addons.php');
 $context->classes->add('BearCMS\Internal\Data\Blog', 'classes/BearCMS/Internal/Data/Blog.php');
+$context->classes->add('BearCMS\Internal\Data\Comments', 'classes/BearCMS/Internal/Data/Comments.php');
 $context->classes->add('BearCMS\Internal\Data\Files', 'classes/BearCMS/Internal/Data/Files.php');
 $context->classes->add('BearCMS\Internal\Data\Pages', 'classes/BearCMS/Internal/Data/Pages.php');
 $context->classes->add('BearCMS\Internal\Data\Themes', 'classes/BearCMS/Internal/Data/Themes.php');
@@ -58,10 +61,16 @@ $app->components->addAlias('bearcms-image-gallery-element', 'file:' . $context->
 $app->components->addAlias('bearcms-navigation-element', 'file:' . $context->dir . '/components/bearcmsNavigationElement.php');
 $app->components->addAlias('bearcms-html-element', 'file:' . $context->dir . '/components/bearcmsHtmlElement.php');
 $app->components->addAlias('bearcms-blog-posts-element', 'file:' . $context->dir . '/components/bearcmsBlogPostsElement.php');
+$app->components->addAlias('bearcms-comments-element', 'file:' . $context->dir . '/components/bearcmsCommentsElement.php');
 
 $context->assets->addDir('assets');
 
-$app->container->set('bearCMS', \BearCMS::class);
+$app->defineProperty('bearCMS', [
+    'init' => function() {
+        return new BearCMS();
+    },
+    'readonly' => true
+]);
 
 Options::set($app->addons->get('bearcms/bearframework-addon')['options']);
 
@@ -205,7 +214,7 @@ if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
     $app->hooks->add('componentCreated', function($component) {
         if ($component->src === 'bearcms-elements') {
             ElementsHelper::updateContainerComponent($component);
-        } elseif (array_search($component->src, ['bearcms-heading-element', 'bearcms-text-element', 'bearcms-link-element', 'bearcms-video-element', 'bearcms-image-element', 'bearcms-image-gallery-element', 'bearcms-navigation-element', 'bearcms-html-element', 'bearcms-blog-posts-element']) !== false) {
+        } elseif (array_search($component->src, ['bearcms-heading-element', 'bearcms-text-element', 'bearcms-link-element', 'bearcms-video-element', 'bearcms-image-element', 'bearcms-image-gallery-element', 'bearcms-navigation-element', 'bearcms-html-element', 'bearcms-blog-posts-element', 'bearcms-comments-element']) !== false) {
             ElementsHelper::updateElementComponent($component);
         }
     });
@@ -215,11 +224,11 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if ($response instanceof App\Response\NotFound) {
         $response->enableBearCMS = true;
         $response->applyBearCMSTheme = true;
-        $response->setContentType('text/html');
+        $response->headers->set('Content-Type', 'text/html');
     } elseif ($response instanceof App\Response\TemporaryUnavailable) {
         $response->enableBearCMS = true;
         $response->applyBearCMSTheme = true;
-        $response->setContentType('text/html');
+        $response->headers->set('Content-Type', 'text/html');
     } elseif ($app->request->path === '/' && $response instanceof App\Response\HTML) {
         $response->enableBearCMS = true;
         $response->applyBearCMSTheme = true;
@@ -242,13 +251,15 @@ if ($app->bearCMS->currentTheme->getID() === 'bearcms/default1') {
 }
 
 $app->hooks->add('responseCreated', function($response) use ($app, $context) {
-
     if (!(isset($response->enableBearCMS) && $response->enableBearCMS)) {
         return;
     }
+
     if (!empty($response->bearCMSSystemPage)) {
         return;
     }
+
+    $response->headers->set('Cache-Control', 'private, max-age=0');
 
     $componentContent = '<html><head>';
 
@@ -416,7 +427,7 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
 }, ['priority' => 1000]);
 
 if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*'))) {
-    $app->hooks->add('responseCreated', function() {
-        Cookies::update();
+    $app->hooks->add('responseCreated', function($response) {
+        Cookies::update($response);
     }, ['priority' => 1001]);
 }

@@ -34,7 +34,7 @@ final class ServerCommands
      */
     static function pages()
     {
-        $app = App::$instance;
+        $app = App::get();
         $structure = $app->data->get(
                 [
                     'key' => 'bearcms/pages/structure.json',
@@ -64,7 +64,7 @@ final class ServerCommands
      */
     static function blogPosts()
     {
-        $app = App::$instance;
+        $app = App::get();
         $result = $app->data->search(
                 [
                     'where' => [
@@ -86,7 +86,7 @@ final class ServerCommands
      */
     static function usersIDs()
     {
-        $app = App::$instance;
+        $app = App::get();
         $result = $app->data->search(
                 [
                     'where' => [
@@ -111,7 +111,7 @@ final class ServerCommands
      */
     static function usersInvitations()
     {
-        $app = App::$instance;
+        $app = App::get();
         $result = $app->data->search(
                 [
                     'where' => [
@@ -139,7 +139,7 @@ final class ServerCommands
             throw new \Exception('');
         }
         $email = (string) $data['email'];
-        $app = App::$instance;
+        $app = App::get();
         $users = $app->data->search(
                 [
                     'where' => [
@@ -198,7 +198,7 @@ final class ServerCommands
      */
     static function theme($data)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (!isset($data['id'])) {
             throw new \Exception('');
         }
@@ -270,7 +270,7 @@ final class ServerCommands
      */
     static function addons()
     {
-        $app = App::$instance;
+        $app = App::get();
         $result = $app->data->search(
                 [
                     'where' => [
@@ -306,7 +306,7 @@ final class ServerCommands
      */
     static function files()
     {
-        $app = App::$instance;
+        $app = App::get();
         $result = $app->data->search(
                 [
                     'where' => [
@@ -329,13 +329,75 @@ final class ServerCommands
 
     /**
      * 
+     * @return array
+     */
+    static function comments($data)
+    {
+        $app = App::get();
+        if (!isset($data['type'])) {
+            throw new \Exception('');
+        }
+        if (!isset($data['page'])) {
+            throw new \Exception('');
+        }
+        if (!isset($data['limit'])) {
+            throw new \Exception('');
+        }
+        $result = $app->bearCMS->data->comments->getList();
+        $result->sortBy('createdTime', 'desc');
+        if ($data['type'] !== 'all') {
+            $result->filterBy('status', $data['type']);
+        }
+        $result = $result->slice($data['limit'] * ($data['page'] - 1), $data['limit']);
+        return $result->toArray();
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    static function setCommentStatus($data)
+    {
+        $app = App::get();
+        if (!isset($data['threadID'])) {
+            throw new \Exception('');
+        }
+        if (!isset($data['commentID'])) {
+            throw new \Exception('');
+        }
+        if (!isset($data['status'])) {
+            throw new \Exception('');
+        }
+        \BearCMS\Internal\Data\Comments::setStatus($data['threadID'], $data['commentID'], $data['status']);
+        return true;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    static function deleteCommentForever($data)
+    {
+        $app = App::get();
+        if (!isset($data['threadID'])) {
+            throw new \Exception('');
+        }
+        if (!isset($data['commentID'])) {
+            throw new \Exception('');
+        }
+        \BearCMS\Internal\Data\Comments::deleteCommentForever($data['threadID'], $data['commentID']);
+        return true;
+    }
+
+    /**
+     * 
      * @param array $data
      * @return array
      * @throws \Exception
      */
     static function addon($data)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (!isset($data['id'])) {
             throw new \Exception('');
         }
@@ -385,7 +447,7 @@ final class ServerCommands
 
     static function addAddon($data)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (isset($data['type']) && isset($data['value'])) {
             $filenameOrUrl = null;
             if ($data['type'] === 'url') {
@@ -423,7 +485,7 @@ final class ServerCommands
 
     static function deleteAddon($data)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (!isset($data['id'])) {
             throw new \Exception('');
         }
@@ -433,7 +495,7 @@ final class ServerCommands
 
     static function mail($data)
     {
-        $app = App::$instance;
+        $app = App::get();
         try {
             $result = mail($data['recipient'], $data['subject'], $data['body']);
         } catch (\Exception $e) {
@@ -455,7 +517,7 @@ final class ServerCommands
      */
     static function publishData($data)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (!isset($data['key'])) {
             throw new \Exception('');
         }
@@ -469,7 +531,7 @@ final class ServerCommands
      */
     static function fileSet($data)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (!isset($data['filename'])) {
             throw new \Exception('');
         }
@@ -546,7 +608,7 @@ final class ServerCommands
      */
     static function file($data)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (!isset($data['filename'])) {
             throw new \Exception('');
         }
@@ -579,7 +641,7 @@ final class ServerCommands
      */
     static function dataUrl($data)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (!isset($data['key'])) {
             throw new \Exception('');
         }
@@ -597,7 +659,7 @@ final class ServerCommands
      */
     static function appAssetUrl($data)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (!isset($data['key'])) {
             throw new \Exception('');
         }
@@ -615,7 +677,7 @@ final class ServerCommands
      */
     static function addonAssetUrl($data)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (!isset($data['key'])) {
             throw new \Exception('');
         }
@@ -637,7 +699,7 @@ final class ServerCommands
      */
     static function assetUrl($data)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (!isset($data['filename'])) {
             throw new \Exception('');
         }
@@ -655,13 +717,14 @@ final class ServerCommands
      */
     static function temporaryRedirect($data, $response)
     {
-        $app = App::$instance;
+        $app = App::get();
         if (!isset($data['url'])) {
             throw new \Exception('');
         }
         Cookies::setList(Cookies::TYPE_SERVER, Cookies::parseServerCookies($response['header']));
-        Cookies::update();
-        $app->respond(new App\Response\TemporaryRedirect($data['url']));
+        $response = new App\Response\TemporaryRedirect($data['url']);
+        Cookies::update($response);
+        $app->respond($response);
         exit;
     }
 
@@ -672,13 +735,13 @@ final class ServerCommands
      */
     static function data($data)
     {
-        $app = App::$instance;
+        $app = App::get();
         return $app->data->execute($data);
     }
 
     static function replaceContent($data, $response)
     {
-        $app = App::$instance;
+        $app = App::get();
         $body = $response['body'];
         $content = $app->components->process($data['content']);
         $domDocument = new \IvoPetkov\HTML5DOMDocument();
@@ -738,7 +801,7 @@ final class ServerCommands
         if (!isset($data['id'])) {
             return [];
         }
-        $app = App::$instance;
+        $app = App::get();
         $dataSchema = new \BearCMS\DataSchema($data['id']);
         $app->hooks->execute('bearCMSDataSchemaRequested', $dataSchema);
         return $dataSchema->fields;

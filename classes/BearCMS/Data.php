@@ -16,6 +16,8 @@ use BearFramework\App;
  * 
  * @property \BearCMS\Data\Addons $addons Information about the addons managed by Bear CMS
  * @property \BearCMS\Data\Blog $blog Information about the blog posts
+ * @property \BearCMS\Data\Comments $comments Information about the comments
+ * @property \BearCMS\Data\CommentsThreads $commentsThreads Information about the comments threads
  * @property \BearCMS\Data\Pages $pages Information about the site pages
  * @property \BearCMS\Data\Settings $settings Information about the site settings
  * @property \BearCMS\Data\Themes $themes Information about the site themes
@@ -37,6 +39,8 @@ class Data
 
         $this->container->set('addons', \BearCMS\Data\Addons::class);
         $this->container->set('blog', \BearCMS\Data\Blog::class);
+        $this->container->set('comments', \BearCMS\Data\Comments::class);
+        $this->container->set('commentsThreads', \BearCMS\Data\CommentsThreads::class);
         $this->container->set('pages', \BearCMS\Data\Pages::class);
         $this->container->set('settings', \BearCMS\Data\Settings::class);
         $this->container->set('themes', \BearCMS\Data\Themes::class);
@@ -81,7 +85,7 @@ class Data
         if (!is_string($filename)) {
             throw new \InvalidArgumentException('');
         }
-        $app = App::$instance;
+        $app = App::get();
         if (substr($filename, 0, 5) === 'data:') {
             $filename = $app->data->getFilename(substr($filename, 5));
         } elseif (substr($filename, 0, 4) === 'app:') {

@@ -24,7 +24,8 @@ final class ElementsHelper
         'bearcms-image-gallery-element' => 'imageGallery',
         'bearcms-navigation-element' => 'navigation',
         'bearcms-html-element' => 'html',
-        'bearcms-blog-posts-element' => 'blogPosts'
+        'bearcms-blog-posts-element' => 'blogPosts',
+        'bearcms-comments-element' => 'comments'
     ];
 
     /**
@@ -33,7 +34,7 @@ final class ElementsHelper
      */
     static function updateComponentEditableAttribute($component)
     {
-        $app = App::$instance;
+        $app = App::get();
         $editable = false;
         if ($component->editable === 'true' && strlen($component->id) > 0) {
             if ($app->bearCMS->currentUser->exists() && $app->bearCMS->currentUser->hasPermission('modifyContent')) {
@@ -238,6 +239,9 @@ final class ElementsHelper
             $copyString('type');
             $copyBoolean('showDate');
             $copyInt('limit');
+        } elseif ($type === 'comments') {
+            $copyString('threadID');
+            $copyInt('count');
         }
     }
 
@@ -302,6 +306,9 @@ final class ElementsHelper
             $copyString('type');
             $copyBoolean('showDate');
             $copyInt('limit');
+        } elseif ($type === 'comments') {
+            $copyString('threadID');
+            $copyInt('count');
         }
         return ['id' => $component->id, 'type' => $type, 'data' => $data];
     }
@@ -362,14 +369,14 @@ final class ElementsHelper
     {
         $elementData = self::decodeElementRawData($rawData);
         if (!isset($elementData['id']) || strlen($elementData['id']) === 0) {
-            throw new \Exception('');
+            throw new \Exception('Missing element id');
         }
         if (!isset($elementData['type']) || strlen($elementData['type']) === 0) {
-            throw new \Exception('');
+            throw new \Exception('Missing element type');
         }
         $componentName = array_search($elementData['type'], self::$elementTypes);
         if ($componentName === false) {
-            throw new \Exception('');
+            throw new \Exception('Invalid element type');
         }
         return '<component src="' . $componentName . '" editable="' . ($editable ? 'true' : 'false') . '" bearcms-internal-attribute-raw-data="' . htmlentities($rawData) . '" width="' . $contextData['width'] . '" spacing="' . $contextData['spacing'] . '" color="' . $contextData['color'] . '"/>'; // canEdit="' . ($contextData['canEdit'] ? 'true' : 'false') . '" canMove="' . ($contextData['canMove'] ? 'true' : 'false') . '" canDelete="' . ($contextData['canDelete'] ? 'true' : 'false') . '"
     }
@@ -384,7 +391,7 @@ final class ElementsHelper
      */
     static function renderColumn($elementContainerData, $editable, $contextData, $inContainer)
     {
-        $app = App::$instance;
+        $app = App::get();
         $context = $app->getContext(__DIR__);
         $columnsSizes = explode(':', $elementContainerData['data']['mode']);
         $columnsCount = sizeof($columnsSizes);
@@ -460,7 +467,7 @@ final class ElementsHelper
      */
     static function getElementsRawData($itemsIDs)
     {
-        $app = App::$instance;
+        $app = App::get();
         $result = [];
         $commands = [];
         $itemsIDs = array_values($itemsIDs);
@@ -482,7 +489,7 @@ final class ElementsHelper
 
     static function getContainerData($id)
     {
-        $app = App::$instance;
+        $app = App::get();
         $container = $app->data->get(
                 [
                     'key' => 'bearcms/elements/container/' . md5($id) . '.json',
