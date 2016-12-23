@@ -21,17 +21,18 @@ final class Files
      */
     static function getFileData($filename)
     {
-        $app = App::$instance;
+        $app = App::get();
         $item = $app->data->get(
                 [
                     'key' => 'bearcms/files/custom/' . $filename,
-                    'result' => ['key', 'metadata']
+                    'result' => ['key', 'metadata.published', 'metadata.name']
                 ]
         );
         if (isset($item['key'])) {
             $result = [
                 'filename' => $filename,
-                'published' => (isset($item['metadata.published']) ? (int) $item['metadata.published'] : 0)
+                'published' => (isset($item['metadata.published']) ? (int) $item['metadata.published'] : 0),
+                'name' => (isset($item['metadata.name']) && strlen($item['metadata.name']) > 0 ? $item['metadata.name'] : $filename)
             ];
             return $result;
         }
