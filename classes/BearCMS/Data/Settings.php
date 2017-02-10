@@ -22,17 +22,12 @@ class Settings
      * 
      * @return \BearCMS\DataObject An object containing the site settings
      */
-    public function get()
+    public function get(): \BearCMS\DataObject
     {
         $app = App::get();
-        $data = $app->data->get(
-                [
-                    'key' => 'bearcms/settings.json',
-                    'result' => ['body']
-                ]
-        );
-        if (isset($data['body'])) {
-            $data = json_decode($data['body'], true);
+        $data = $app->data->getValue('bearcms/settings.json');
+        if ($data !== null) {
+            $data = json_decode($data, true);
         } else {
             $data = [];
         }
@@ -56,6 +51,12 @@ class Settings
         }
         if (!isset($data['allowSearchEngines'])) {
             $data['allowSearchEngines'] = false;
+        }
+        if (!isset($data['disabled'])) {
+            $data['disabled'] = false;
+        }
+        if (!isset($data['disabledText'])) {
+            $data['disabledText'] = '';
         }
         return new \BearCMS\DataObject($data);
     }

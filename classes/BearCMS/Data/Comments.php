@@ -20,27 +20,19 @@ class Comments
     /**
      * Retrieves a list of all comments
      * 
-     * @return \BearCMS\DataCollection List containing all comments data
+     * @return \BearCMS\DataList|\BearCMS\Data\Comment[] List containing all comments data
      */
     public function getList()
     {
         $app = App::get();
-        $data = $app->data->search(
-                [
-                    'where' => [
-                        ['key', 'bearcms/comments/thread/', 'startsWith']
-                    ],
-                    'result' => ['body']
-                ]
-        );
-        $result = new \BearCMS\DataCollection();
-        foreach ($data as $item) {
-            $rawData = json_decode($item['body'], true);
-            if (isset($rawData['id'], $rawData['comments'])) {
-                $tempCollection = \BearCMS\Internal\Data\Comments::createCommentsCollection($rawData['comments'], $rawData['id']);
-                foreach ($tempCollection as $dataObject) {
-                    $result[] = $dataObject;
-                }
+        $list = $app->data->getList()
+                ->filterBy('key', 'bearcms/comments/thread/', 'startWith');
+        $result = new \BearCMS\DataList();
+        foreach ($list as $item) {
+            $rawData = json_decode($item->value, true);
+            $tempCollection = \BearCMS\Internal\Data\Comments::createCommentsCollection($rawData['comments'], $rawData['id']);
+            foreach ($tempCollection as $dataObject) {
+                $result[] = $dataObject;
             }
         }
         return $result;

@@ -128,7 +128,6 @@ if (isset($itemsHtml{0})) {
     $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';
 }
 
-$content = \BearCMS\Internal\ElementsHelper::getElementComponentContent($component, 'navigation', $content);
 ?><html>
     <body><?= $content ?></body>
 </html>

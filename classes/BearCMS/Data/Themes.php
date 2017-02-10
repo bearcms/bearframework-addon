@@ -24,20 +24,12 @@ class Themes
      * @return array A list containing the theme options
      * @throws \InvalidArgumentException
      */
-    public function getOptions($id)
+    public function getOptions(string $id): array
     {
-        if (!is_string($id)) {
-            throw new \InvalidArgumentException('The id agrument must be of type string');
-        }
         $app = App::get();
-        $data = $app->data->get(
-                [
-                    'key' => 'bearcms/themes/theme/' . md5($id) . '.json',
-                    'result' => ['body']
-                ]
-        );
-        if (isset($data['body'])) {
-            $data = json_decode($data['body'], true);
+        $data = $app->data->getValue('bearcms/themes/theme/' . md5($id) . '.json');
+        if ($data) {
+            $data = json_decode($data, true);
             if (isset($data['options'])) {
                 return $data['options'];
             }
@@ -53,23 +45,12 @@ class Themes
      * @return array A list containing the theme options
      * @throws \InvalidArgumentException
      */
-    public function getTempOptions($id, $userID)
+    public function getTempOptions(string $id, string $userID): array
     {
-        if (!is_string($id)) {
-            throw new \InvalidArgumentException('The id agrument must be of type string');
-        }
-        if (!is_string($userID)) {
-            throw new \InvalidArgumentException('The userID agrument must be of type string');
-        }
         $app = App::get();
-        $data = $app->data->get(
-                [
-                    'key' => '.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json',
-                    'result' => ['body']
-                ]
-        );
-        if (isset($data['body'])) {
-            $data = json_decode($data['body'], true);
+        $data = $app->data->getValue('.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json');
+        if ($data) {
+            $data = json_decode($data, true);
             if (isset($data['options'])) {
                 return $data['options'];
             }

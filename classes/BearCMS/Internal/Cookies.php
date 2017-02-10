@@ -29,7 +29,7 @@ final class Cookies
      * @return array
      * @throws \Exception
      */
-    static function getList($type)
+    static function getList(int $type): array
     {
         $app = App::get();
         if ($type !== self::TYPE_SERVER && $type !== self::TYPE_CLIENT) {
@@ -40,8 +40,8 @@ final class Cookies
         $cookiePrefixLength = strlen($cookiePrefix);
         $cookies = $app->request->cookies->getList();
         foreach ($cookies as $cookie) {
-            $name = $cookie['name'];
-            $value = $cookie['value'];
+            $name = $cookie->name;
+            $value = $cookie->value;
             if (substr($name, 0, $cookiePrefixLength) === $cookiePrefix) {
                 $cookieTypePrefix = substr($name, 0, $cookiePrefixLength + 2);
                 if (($type === self::TYPE_SERVER && $cookieTypePrefix === $cookiePrefix . 's_') || ($type === self::TYPE_CLIENT && $cookieTypePrefix === $cookiePrefix . 'c_' )) {
@@ -72,13 +72,9 @@ final class Cookies
      * @param array $cookiesData
      * @throws \Exception
      */
-    static function setList($type, $cookiesData)
+    static function setList(int $type, array $cookiesData)
     {
-        $app = App::get();
         if ($type !== self::TYPE_SERVER && $type !== self::TYPE_CLIENT) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_array($cookiesData)) {
             throw new \InvalidArgumentException('');
         }
         $cookieTypePrefix = \BearCMS\Internal\Options::$cookiePrefix . ($type === self::TYPE_SERVER ? 's_' : 'c_');
@@ -91,13 +87,15 @@ final class Cookies
     /**
      * 
      */
-    static function update($response)
+    static function update(\BearFramework\App\Response $response): void
     {
         if (!empty(self::$pendingUpdate)) {
-            $app = App::get();
             foreach (self::$pendingUpdate as $cookieData) {
                 $deleted = $cookieData['value'] === 'deleted' || $cookieData['expire'] === 0;
-                $response->cookies->set($cookieData['name'], $deleted ? '' : $cookieData['value'], $deleted ? 0 : $cookieData['expire'], null, null, null, isset($cookieData['httponly']) ? $cookieData['httponly'] : true);
+                $cookie = $response->cookies->make($cookieData['name'], $deleted ? '' : $cookieData['value']);
+                $cookie->expire = $deleted ? 0 : $cookieData['expire'];
+                $cookie->httpOnly = isset($cookieData['httponly']) ? $cookieData['httponly'] : true;
+                $response->cookies->set($cookie);
             }
             self::$pendingUpdate = [];
         }
@@ -109,13 +107,10 @@ final class Cookies
      * @return array
      * @throws \Exception
      */
-    static function parseServerCookies($headers)
+    static function parseServerCookies(string $headers): array
     {
         $app = App::get();
-        if (!is_string($headers)) {
-            throw new \InvalidArgumentException('');
-        }
-        $result = array();
+        $result = [];
         $requestUrlParts = parse_url($app->request->base);
         $cookieMatches = [];
         preg_match_all('/Set-Cookie:(.*)/u', $headers, $cookieMatches);

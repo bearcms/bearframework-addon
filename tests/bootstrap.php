@@ -118,10 +118,7 @@ class BearFrameworkAddonTestCase extends PHPUnit_Framework_TestCase
         "viewAboutInformation"
     ]
 }';
-        $this->app->data->set([
-            'key' => 'bearcms/users/user/' . md5($userID) . '.json',
-            'body' => $userData
-        ]);
+        $this->app->data->set($app->data->make('bearcms/users/user/' . md5($userID) . '.json', $userData));
         return $userID;
     }
 
@@ -130,10 +127,7 @@ class BearFrameworkAddonTestCase extends PHPUnit_Framework_TestCase
         $sessionKey = str_repeat(uniqid(), 90 / strlen(uniqid()));
         \BearCMS\Internal\Cookies::setList(\BearCMS\Internal\Cookies::TYPE_SERVER, [['name' => '_s', 'value' => $sessionKey, 'expire' => time() + 86400]]);
 
-        $this->app->data->set([
-            'key' => '.temp/bearcms/userkeys/' . md5($sessionKey),
-            'body' => $userID
-        ]);
+        $this->app->data->set($app->data->make('.temp/bearcms/userkeys/' . md5($sessionKey), $userID));
         return $sessionKey;
     }
 

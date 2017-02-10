@@ -10,7 +10,7 @@
 use BearFramework\App;
 
 $app = App::get();
-$context = $app->getContext(__FILE__);
+$context = $app->context->get(__FILE__);
 
 $app->hooks->add('responseCreated', function($response) use ($app, $context) {
     if (!empty($response->applyBearCMSTheme)) {
@@ -28,12 +28,19 @@ $app->hooks->add('responseCreated', function($response) use ($app, $context) {
         }
 
         if ($templateContent !== null) {
+            //todo temp
+//            $cacheKey = 'template-' . $templateContent;
+//            $cachedData = $app->cache->getValue($cacheKey);
+//            if ($cachedData === null) {
             $templateContent = $app->components->process($templateContent, ['recursive' => false]);
             $object = new ArrayObject();
             $object->content = $templateContent;
             $app->hooks->execute($hookName, $object);
             $templateContent = $app->components->process($object->content);
-
+//                $app->cache->set($app->cache->make($cacheKey, $templateContent));
+//            } else {
+//                $templateContent = $cachedData;
+//            }
             $template = new BearFramework\HTMLTemplate($templateContent);
             $template->insert('body', $response->content);
             $response->content = $template->getResult();

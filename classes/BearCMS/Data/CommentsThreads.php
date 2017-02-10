@@ -17,6 +17,14 @@ use BearFramework\App;
 class CommentsThreads
 {
 
+    private function makeCommentsThreadPostFromRawData($rawData): \BearCMS\Data\CommentsThread
+    {
+        $rawData = json_decode($rawData, true);
+        $object = new \BearCMS\Data\CommentsThread($rawData);
+        $object->comments = \BearCMS\Internal\Data\Comments::createCommentsCollection($rawData['comments'], $rawData['id']);
+        return $object;
+    }
+
     /**
      * Retrieves information about the comments thread specified
      * 
@@ -24,25 +32,12 @@ class CommentsThreads
      * @return \BearCMS\DataObject|null The comments thread data or null if the thread not found
      * @throws \InvalidArgumentException
      */
-    public function getThread($id)
+    public function get(string $id): ?\BearCMS\Data\CommentsThread
     {
-        if (!is_string($id)) {
-            throw new \InvalidArgumentException('The id agrument must be of type string');
-        }
         $app = App::get();
-        $data = $app->data->get(
-                [
-                    'key' => 'bearcms/comments/thread/' . md5($id) . '.json',
-                    'result' => ['body']
-                ]
-        );
-        if (isset($data['body'])) {
-            $rawData = json_decode($data['body'], true);
-            if (isset($rawData['id'], $rawData['comments'])) {
-                $dataObject = new \BearCMS\DataObject($rawData);
-                $dataObject->comments = \BearCMS\Internal\Data\Comments::createCommentsCollection($rawData['comments'], $rawData['id']);
-                return $dataObject;
-            }
+        $data = $app->data->getValue('bearcms/comments/thread/' . md5($id) . '.json');
+        if ($data !== null) {
+            return $this->makeCommentsThreadPostFromRawData($data);
         }
         return null;
     }
@@ -50,29 +45,18 @@ class CommentsThreads
     /**
      * Retrieves a list of all comments threads
      * 
-     * @return \BearCMS\DataCollection List containing all comments threads data
+     * @return \BearCMS\DataList List containing all comments threads data
      */
     public function getList()
     {
         $app = App::get();
-        $data = $app->data->search(
-                [
-                    'where' => [
-                        ['key', 'bearcms/comments/thread/', 'startsWith']
-                    ],
-                    'result' => ['body']
-                ]
-        );
+        $list = $app->data->getList()
+                ->filterBy('key', 'bearcms/comments/thread/', 'startWith');
         $result = [];
-        foreach ($data as $item) {
-            $rawData = json_decode($item['body'], true);
-            if (isset($rawData['id'], $rawData['comments'])) {
-                $dataObject = new \BearCMS\DataObject($rawData);
-                $dataObject->comments = \BearCMS\Internal\Data\Comments::createCommentsCollection($rawData['comments'], $rawData['id']);
-                $result[] = $dataObject;
-            }
+        foreach ($list as $item) {
+            $result[] = $this->makeCommentsThreadPostFromRawData($item->value);
         }
-        return new \BearCMS\DataCollection($result);
+        return new \BearCMS\DataList($result);
     }
 
 }

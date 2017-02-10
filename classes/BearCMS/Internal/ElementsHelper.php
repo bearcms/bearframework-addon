@@ -15,18 +15,9 @@ final class ElementsHelper
 {
 
     static $editorData = [];
-    static $elementTypes = [
-        'bearcms-heading-element' => 'heading',
-        'bearcms-text-element' => 'text',
-        'bearcms-link-element' => 'link',
-        'bearcms-video-element' => 'video',
-        'bearcms-image-element' => 'image',
-        'bearcms-image-gallery-element' => 'imageGallery',
-        'bearcms-navigation-element' => 'navigation',
-        'bearcms-html-element' => 'html',
-        'bearcms-blog-posts-element' => 'blogPosts',
-        'bearcms-comments-element' => 'comments'
-    ];
+    static $elementsTypesCodes = [];
+    static $elementsTypesFilenames = [];
+    static $elementsTypesOptions = [];
 
     /**
      * 
@@ -127,9 +118,7 @@ final class ElementsHelper
 //        $result['canEdit'] = $component->canEdit === 'true';
 //        $result['canMove'] = $component->canMove === 'true';
 //        $result['canDelete'] = $component->canDelete === 'true';
-        if ($component->getAttribute('bearcms-internal-attribute-not-found-in-data') === 'true') {
-            $result['rawData'] = $component->getAttribute('bearcms-internal-attribute-raw-data');
-        }
+
         return $result;
     }
 
@@ -165,172 +154,16 @@ final class ElementsHelper
         } elseif (strlen($component->id) > 0) {
             $elementsRawData = self::getElementsRawData([$component->id]);
             if (isset($elementsRawData[$component->id])) {
-                $elementData = self::decodeElementRawData($elementsRawData[$component->id]);
+                $component->setAttribute('bearcms-internal-attribute-raw-data', $elementsRawData[$component->id]);
+                //$elementData = self::decodeElementRawData($elementsRawData[$component->id]);
             }
         }
-        if ($elementData !== null) {
-            self::updateComponentFromRawData($component, $elementData);
-        }
+        //if ($elementData !== null) {
+        //self::updateComponentFromRawData($component, $elementData);
+        //}
 
         self::updateComponentEditableAttribute($component);
         self::updateComponentContextAttributes($component);
-
-        if ($elementData === null) {
-            if (strlen($component->id) > 0 && $component->editable === 'true') {
-                $rawData = self::getRawDataFromComponent($component);
-                $component->setAttribute('bearcms-internal-attribute-raw-data', json_encode($rawData));
-                $component->setAttribute('bearcms-internal-attribute-not-found-in-data', 'true');
-            }
-        }
-    }
-
-    static function updateComponentFromRawData(&$component, $rawData)
-    {
-        $type = $rawData['type'];
-        $data = $rawData['data'];
-
-        $copyString = function($name) use (&$component, $data) {
-            $component->$name = isset($data[$name]) ? (string) $data[$name] : '';
-        };
-
-        $copyBoolean = function($name) use (&$component, $data) {
-            $component->$name = isset($data[$name]) ? ($data[$name] ? 'true' : 'false') : '';
-        };
-
-        $copyInt = function($name) use (&$component, $data) {
-            $component->$name = isset($data[$name]) ? (string) $data[$name] : '';
-        };
-
-        if ($type === 'heading') {
-            $copyString('text');
-            $copyString('size');
-        } elseif ($type === 'text') {
-            $copyString('text');
-        } elseif ($type === 'link') {
-            $copyString('url');
-            $copyString('text');
-            $copyString('title');
-        } elseif ($type === 'video') {
-            $copyString('url');
-            $copyString('filename');
-        } elseif ($type === 'image') {
-            $copyString('filename');
-            $copyString('title');
-            $copyString('onClick');
-            $copyString('url');
-        } elseif ($type === 'imageGallery') {
-            $copyString('type');
-            $copyString('columnsCount');
-            $copyString('imageSize');
-            $copyString('imageAspectRatio');
-            if (isset($data['files'])) {
-                foreach ($data['files'] as $file) {
-                    if (is_array($file) && isset($file['filename'])) {
-                        $component->innerHTML .= '<file filename="' . $file['filename'] . '" />';
-                    }
-                }
-            }
-        } elseif ($type === 'navigation') {
-            $copyString('type');
-            $copyString('pageID');
-        } elseif ($type === 'html') {
-            $copyString('code');
-        } elseif ($type === 'blogPosts') {
-            $copyString('type');
-            $copyBoolean('showDate');
-            $copyInt('limit');
-        } elseif ($type === 'comments') {
-            $copyString('threadID');
-            $copyInt('count');
-        }
-    }
-
-    static function getRawDataFromComponent($component)
-    {
-        $type = self::$elementTypes[$component->src];
-        $data = [];
-
-        $copyString = function($name) use ($component, &$data) {
-            $data[$name] = (string) $component->$name;
-        };
-
-        $copyBoolean = function($name) use ($component, &$data) {
-            $data[$name] = $component->$name === 'true' ? true : false;
-        };
-
-        $copyInt = function($name) use ($component, &$data) {
-            $data[$name] = (int) $component->$name;
-        };
-
-        if ($type === 'heading') {
-            $copyString('text');
-            $copyString('size');
-        } elseif ($type === 'text') {
-            $copyString('text');
-        } elseif ($type === 'link') {
-            $copyString('url');
-            $copyString('text');
-            $copyString('title');
-        } elseif ($type === 'video') {
-            $copyString('url');
-            $copyString('filename');
-        } elseif ($type === 'image') {
-            $copyString('filename');
-            $copyString('title');
-            $copyString('onClick');
-            $copyString('url');
-        } elseif ($type === 'imageGallery') {
-            $copyString('type');
-            $copyString('columnsCount');
-            if (is_numeric($data['columnsCount'])) {
-                $data['columnsCount'] = (int) $data['columnsCount'];
-            }
-            $copyString('imageSize');
-            $copyString('imageAspectRatio');
-            $data['files'] = [];
-            if (strlen($component->innerHTML) > 0) {
-                $domDocument = new \IvoPetkov\HTML5DOMDocument();
-                $domDocument->loadHTML($component->innerHTML);
-                $files = $domDocument->querySelectorAll('file');
-                foreach ($files as $file) {
-                    $filename = $file->getAttribute('filename');
-                    $data['files'][] = ['filename' => $filename];
-                }
-            }
-        } elseif ($type === 'navigation') {
-            $copyString('type');
-            $copyString('pageID');
-        } elseif ($type === 'html') {
-            $copyString('code');
-        } elseif ($type === 'blogPosts') {
-            $copyString('type');
-            $copyBoolean('showDate');
-            $copyInt('limit');
-        } elseif ($type === 'comments') {
-            $copyString('threadID');
-            $copyInt('count');
-        }
-        return ['id' => $component->id, 'type' => $type, 'data' => $data];
-    }
-
-    /**
-     * 
-     * @param type $component
-     * @param type $content
-     * @return type
-     */
-    static function getElementComponentContent($component, $type, $content)
-    {
-        if ($component->getAttribute('bearcms-internal-attribute-container') === 'none') {
-            return $content;
-        }
-        $attributes = '';
-        if ($component->editable === 'true') {
-            $htmlElementID = 'brelc' . md5($component->id);
-            ElementsHelper::$editorData[] = ['element', $component->id, self::getComponentContextData($component), $type];
-            $attributes .= ' id="' . $htmlElementID . '"';
-        }
-        return '<div' . $attributes . '>' . $content . '</div>';
     }
 
     /**
@@ -343,16 +176,16 @@ final class ElementsHelper
     {
         $data = json_decode($data, true);
         if (!is_array($data)) {
-            throw new \Exception('');
+            throw new \Exception('Invalid element data');
         }
         if (!isset($data['id']) || !is_string($data['id'])) {
-            throw new \Exception('');
+            throw new \Exception('Missing element id');
         }
         if (!isset($data['type']) || !is_string($data['type'])) {
-            throw new \Exception('');
+            throw new \Exception('Missing element type');
         }
         if (!isset($data['data']) || !is_array($data['data'])) {
-            throw new \Exception('');
+            throw new \Exception('Missing element data');
         }
         return $data;
     }
@@ -374,11 +207,18 @@ final class ElementsHelper
         if (!isset($elementData['type']) || strlen($elementData['type']) === 0) {
             throw new \Exception('Missing element type');
         }
-        $componentName = array_search($elementData['type'], self::$elementTypes);
+        $componentName = array_search($elementData['type'], self::$elementsTypesCodes);
         if ($componentName === false) {
             throw new \Exception('Invalid element type');
         }
-        return '<component src="' . $componentName . '" editable="' . ($editable ? 'true' : 'false') . '" bearcms-internal-attribute-raw-data="' . htmlentities($rawData) . '" width="' . $contextData['width'] . '" spacing="' . $contextData['spacing'] . '" color="' . $contextData['color'] . '"/>'; // canEdit="' . ($contextData['canEdit'] ? 'true' : 'false') . '" canMove="' . ($contextData['canMove'] ? 'true' : 'false') . '" canDelete="' . ($contextData['canDelete'] ? 'true' : 'false') . '"
+        return '<component'
+                . ' src="' . $componentName . '"'
+                . ' editable="' . ($editable ? 'true' : 'false') . '"'
+                . ' bearcms-internal-attribute-raw-data="' . htmlentities($rawData) . '"'
+                . ' width="' . $contextData['width'] . '"'
+                . ' spacing="' . $contextData['spacing'] . '"'
+                . ' color="' . $contextData['color'] . '"'
+                . '/>'; // canEdit="' . ($contextData['canEdit'] ? 'true' : 'false') . '" canMove="' . ($contextData['canMove'] ? 'true' : 'false') . '" canDelete="' . ($contextData['canDelete'] ? 'true' : 'false') . '"
     }
 
     /**
@@ -392,7 +232,7 @@ final class ElementsHelper
     static function renderColumn($elementContainerData, $editable, $contextData, $inContainer)
     {
         $app = App::get();
-        $context = $app->getContext(__DIR__);
+        $context = $app->context->get(__FILE__);
         $columnsSizes = explode(':', $elementContainerData['data']['mode']);
         $columnsCount = sizeof($columnsSizes);
         $totalSize = array_sum($columnsSizes);
@@ -407,11 +247,11 @@ final class ElementsHelper
                 if (!empty($elementsInColumn)) {
                     $elementsInColumnContextData = $contextData;
                     $elementsInColumnContextData['width'] = '100%';
-                    $itemsIDs = [];
+                    $elementsIDs = [];
                     foreach ($elementsInColumn as $elementInColumnContainerData) {
-                        $itemsIDs[] = $elementInColumnContainerData['id'];
+                        $elementsIDs[] = $elementInColumnContainerData['id'];
                     }
-                    $elementsInColumnRawData = self::getElementsRawData($itemsIDs);
+                    $elementsInColumnRawData = self::getElementsRawData($elementsIDs);
                     foreach ($elementsInColumn as $elementInColumnContainerData) {
                         $columnContent .= self::renderElement($elementsInColumnRawData[$elementInColumnContainerData['id']], $editable, $elementsInColumnContextData);
                     }
@@ -462,41 +302,37 @@ final class ElementsHelper
 
     /**
      * 
-     * @param type $itemsIDs
+     * @param type $elementsIDs
      * @return type
      */
-    static function getElementsRawData($itemsIDs)
+    static function getElementsRawData($elementsIDs)
     {
         $app = App::get();
         $result = [];
-        $commands = [];
-        $itemsIDs = array_values($itemsIDs);
-        foreach ($itemsIDs as $itemID) {
-            $commands[] = [
-                'command' => 'get',
-                'key' => 'bearcms/elements/element/' . md5($itemID) . '.json',
-                'result' => ['body']
-            ];
+        //$commands = [];
+        $elementsIDs = array_values($elementsIDs);
+        foreach ($elementsIDs as $elementID) {
+//            $commands[] = [
+//                'command' => 'get',
+//                'key' => 'bearcms/elements/element/' . md5($elementID) . '.json',
+//                'result' => ['body']
+//            ];
+            $result[$elementID] = $app->data->getValue('bearcms/elements/element/' . md5($elementID) . '.json');
         }
-        $data = $app->data->execute($commands);
-        foreach ($itemsIDs as $index => $itemID) {
-            if (isset($data[$index]['body'])) {
-                $result[$itemID] = $data[$index]['body'];
-            }
-        }
+        //$data = $app->data->execute($commands);
+//        foreach ($elementsIDs as $index => $elementID) {
+//            if (isset($data[$index]['body'])) {
+//                $result[$elementID] = $data[$index]['body'];
+//            }
+//        }
         return $result;
     }
 
     static function getContainerData($id)
     {
         $app = App::get();
-        $container = $app->data->get(
-                [
-                    'key' => 'bearcms/elements/container/' . md5($id) . '.json',
-                    'result' => ['body']
-                ]
-        );
-        $data = isset($container['body']) ? json_decode($container['body'], true) : [];
+        $container = $app->data->getValue('bearcms/elements/container/' . md5($id) . '.json');
+        $data = $container !== null ? json_decode($container, true) : [];
         if (!isset($data['elements'])) {
             $data['elements'] = [];
         }
@@ -504,6 +340,28 @@ final class ElementsHelper
             throw new Exception('');
         }
         return $data;
+    }
+
+    static function getContainerElementsIDs($id)
+    {
+        $containerData = self::getContainerData($id);
+        $result = [];
+        foreach ($containerData['elements'] as $elementData) {
+            if (isset($elementData['data'], $elementData['data']['type']) && $elementData['data']['type'] === 'column' && isset($elementData['data']['elements'])) {
+                foreach ($elementData['data']['elements'] as $columnElements) {
+                    foreach ($columnElements as $columnElement) {
+                        if (isset($columnElement['id'])) {
+                            $result[] = $columnElement['id'];
+                        }
+                    }
+                }
+                continue;
+            }
+            if (isset($elementData['id'])) {
+                $result[] = $elementData['id'];
+            }
+        }
+        return $result;
     }
 
 }

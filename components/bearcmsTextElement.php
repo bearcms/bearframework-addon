@@ -8,7 +8,6 @@
 
 $content = '<div class="bearcms-text-element">' . $component->text . '</div>';
 
-$content = \BearCMS\Internal\ElementsHelper::getElementComponentContent($component, 'text', $content);
 ?><html>
     <body><?= $content ?></body>
 </html>

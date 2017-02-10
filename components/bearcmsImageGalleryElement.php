@@ -48,7 +48,6 @@ foreach ($files as $file) {
 $content .= '</component>';
 $content .= '</div>';
 
-$content = \BearCMS\Internal\ElementsHelper::getElementComponentContent($component, 'imageGallery', $content);
 ?><html>
     <body><?= $content ?></body>
 </html>

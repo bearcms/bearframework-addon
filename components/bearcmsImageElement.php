@@ -45,7 +45,6 @@ if (isset($filename{0})) {
 }
 $content .= '</div>';
 
-$content = \BearCMS\Internal\ElementsHelper::getElementComponentContent($component, 'image', $content);
 ?><html>
     <body><?= $content ?></body>
 </html>

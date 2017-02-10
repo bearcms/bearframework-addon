@@ -20,7 +20,7 @@ _Returns_
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The blog post data or null if blog post not found
 
 ```php
-public \BearCMS\DataCollection getList ( void )
+public \BearCMS\DataList getList ( void )
 ```
 
 Retrieves a list of all blog posts
@@ -34,9 +34,9 @@ _Returns_
 Returns a collection containing all blog posts
 
 ```php
-$list = $app->bearCMS->data->blog->getList();
+$list = $app->bearCMS->data->blogPosts->getList();
 
-// \BearCMS\DataCollection
+// \BearCMS\DataList
 // (
 //     [0] => \BearCMS\DataObject
 //         (
@@ -68,7 +68,7 @@ $list = $app->bearCMS->data->blog->getList();
 Returns an object containing the blog post data
 
 ```php
-$post = $app->bearCMS->data->blog->getPost('abcdefghijk1');
+$post = $app->bearCMS->data->blogPosts->getPost('abcdefghijk1');
 
 // \BearCMS\DataObject
 // (

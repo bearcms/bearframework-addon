@@ -16,7 +16,7 @@ use BearCMS\Internal\Options;
 final class Controller
 {
 
-    static function handleAdminPage()
+    static function handleAdminPage(): \BearFramework\App\Response
     {
         $app = App::get();
         $path = (string) $app->request->path;
@@ -39,28 +39,27 @@ final class Controller
                 $content = $data['result']['content'];
                 $content = Server::updateAssetsUrls($content, false);
                 $response = new App\Response\HTML($content);
-                $response->enableBearCMS = true;
-                $response->bearCMSSystemPage = true;
+                $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0'));
                 return $response;
             }
         }
         return new App\Response\TemporaryUnavailable();
     }
 
-    static function handleAjax()
+    static function handleAjax(): \BearFramework\App\Response
     {
         $data = Server::proxyAjax();
         $response = new App\Response\JSON($data);
-        $response->headers->set('X-Robots-Tag', 'noindex');
+        $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex'));
         return $response;
     }
 
-    static function handleFileUpload()
+    static function handleFileUpload(): \BearFramework\App\Response
     {
         $app = App::get();
         $file = $app->request->files->get('Filedata');
-        if ($file !== null && strlen($file['filename']) > 0 && $file['errorCode'] === UPLOAD_ERR_OK && is_file($file['tempFilename'])) {
-            $originalFilename = strtolower($file['filename']);
+        if ($file !== null && strlen($file->filename) > 0 && $file->errorCode === UPLOAD_ERR_OK && is_file($file->tempFilename)) {
+            $originalFilename = strtolower($file->filename);
             $pathinfo = pathinfo($originalFilename);
             $fileExtension = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
             $tempFilename = md5('fileupload' . uniqid()) . (isset($fileExtension{0}) ? '.' . $fileExtension : '');
@@ -76,7 +75,7 @@ final class Controller
                 $queryList = $app->request->query->getList();
                 $temp = [];
                 foreach ($queryList as $queryListItem) {
-                    $temp[$queryListItem['name']] = $queryListItem['value'];
+                    $temp[$queryListItem->name] = $queryListItem->value;
                 }
                 $response = Server::call('fileupload', array('tempFilename' => $tempFilename, 'requestData' => json_encode($temp)));
                 if (isset($response['result'])) {
@@ -88,14 +87,14 @@ final class Controller
         }
         $response = new App\Response();
         $response->statusCode = 400;
-        $response->headers->set('Content-Type', 'text/json');
+        $response->headers->set($response->headers->make('Content-Type', 'text/json'));
         return $response;
     }
 
-    static function handleFileRequest($preview)
+    static function handleFileRequest(bool $preview): \BearFramework\App\Response
     {
         $app = App::get();
-        $filename = (string) $app->request->path[2];
+        $filename = (string) $app->request->path->getSegment(2);
         $fileData = \BearCMS\Internal\Data\Files::getFileData($filename);
         $download = false;
         if (is_array($fileData)) {
@@ -112,28 +111,28 @@ final class Controller
             $response = new App\Response\FileReader($fullFilename);
             $mimeType = $app->assets->getMimeType($fullFilename);
             if ($mimeType !== null) {
-                $response->headers->set('Content-Type', $mimeType);
+                $response->headers->set($response->headers->make('Content-Type', $mimeType));
             }
             if (!$preview) {
-                $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileData['name']); // rawurlencode
-                $response->headers->set('Content-Length', (string) filesize($fullFilename));
+                $response->headers->set($response->headers->make('Content-Disposition', 'attachment; filename=' . $fileData['name'])); // rawurlencode
+                $response->headers->set($response->headers->make('Content-Length', (string) filesize($fullFilename)));
             }
             return $response;
         }
         return new App\Response\NotFound();
     }
 
-    static function handleFilePreview()
+    static function handleFilePreview(): \BearFramework\App\Response
     {
         return self::handleFileRequest(true);
     }
 
-    static function handleFileDownload()
+    static function handleFileDownload(): \BearFramework\App\Response
     {
         return self::handleFileRequest(false);
     }
 
-    static function handleRSS()
+    static function handleRSS(): \BearFramework\App\Response
     {
         $app = App::get();
         $settings = $app->bearCMS->data->settings->get();
@@ -146,7 +145,7 @@ final class Controller
         $data .= '<atom:link href="' . $baseUrl . '/rss.xml" rel="self" type="application/rss+xml">';
         $data .= '</atom:link>';
 
-        $blogPosts = $app->bearCMS->data->blog->getList()
+        $blogPosts = $app->bearCMS->data->blogPosts->getList()
                 ->filterBy('status', 'published')
                 ->sortBy('publishedTime', 'desc');
         foreach ($blogPosts as $blogPost) {
@@ -164,7 +163,7 @@ final class Controller
         return $response;
     }
 
-    static function handleSitemap()
+    static function handleSitemap(): \BearFramework\App\Response
     {
         $app = App::get();
         $urls = [];
@@ -189,7 +188,7 @@ final class Controller
         return $response;
     }
 
-    static function handleRobots()
+    static function handleRobots(): \BearFramework\App\Response
     {
         $response = new App\Response('User-agent: *
 Disallow:');

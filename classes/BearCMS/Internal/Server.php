@@ -16,17 +16,8 @@ use BearCMS\Internal\Options;
 final class Server
 {
 
-    static function call($name, $arguments = null, $sendCookies = false)
+    static function call(string $name, array $arguments = [], bool $sendCookies = false)
     {
-        if (!is_string($name)) {
-            throw new \InvalidArgumentException('');
-        }
-        if ($arguments !== null && !is_array($arguments)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_bool($sendCookies)) {
-            throw new \InvalidArgumentException('');
-        }
         $url = Options::$serverUrl . '?name=' . $name;
         $response = self::sendRequest($url, $arguments, $sendCookies);
         if ($sendCookies && self::isRetryResponse($response)) {
@@ -35,13 +26,13 @@ final class Server
         return $response['body'];
     }
 
-    static function proxyAjax()
+    static function proxyAjax(): string
     {
         $app = App::get();
-        $postData = $app->request->data->getList();
+        $formDataList = $app->request->formData->getList();
         $temp = [];
-        foreach ($postData as $postDataItem) {
-            $temp[$postDataItem['name']] = $postDataItem['value'];
+        foreach ($formDataList as $formDataItem) {
+            $temp[$formDataItem->name] = $formDataItem->value;
         }
         $response = self::sendRequest(Options::$serverUrl . '-aj/', $temp, true);
         if (self::isRetryResponse($response)) {
@@ -54,7 +45,7 @@ final class Server
         return self::updateAssetsUrls($response['body'], true);
     }
 
-    static function mergeAjaxResponses($response1, $response2)
+    static function mergeAjaxResponses(array $response1, array $response2): array
     {
         foreach ($response2 as $key => $data) {
             if (!isset($response1[$key])) {
@@ -69,7 +60,7 @@ final class Server
         return $response1;
     }
 
-    static function isRetryResponse($response)
+    static function isRetryResponse(\ArrayObject $response): bool
     {
         $responseHeader = $response['header'];
         return strpos($responseHeader, 'X-App-Sr: qyi') > 0 ||
@@ -78,24 +69,18 @@ final class Server
                 strpos($responseHeader, 'X-App-Sr: wpr') > 0;
     }
 
-    static function getAssetsUrl($urls)
+    static function getAssetsUrl(array $urls): string
     {
         $app = App::get();
         sort($urls);
         $resultKey = '.temp/bearcms/assets/' . md5(serialize($urls)) . '.js';
-        $result = $app->data->get([
-            'key' => $resultKey,
-            'result' => ['key']
-        ]);
-        if (!isset($result['key'])) {
+        $result = $app->data->getValue($resultKey);
+        if ($result === null) {
             $filesToDownload = [];
             foreach ($urls as $url) {
                 $key = '.temp/bearcms/assets/' . md5(serialize([$url])) . '.js';
-                $result = $app->data->get([
-                    'key' => $key,
-                    'result' => ['key']
-                ]);
-                if (!isset($result['key'])) {
+                $result = $app->data->getValue($key);
+                if ($result === null) {
                     $filesToDownload[$key] = $url;
                 }
             }
@@ -152,13 +137,8 @@ final class Server
                     if (strlen($filesDownloadResult[$url]) === 0) {
                         $downloadErrorUrls[] = $url;
                     } else {
-                        $app->data->set([
-                            'key' => $key,
-                            'body' => $filesDownloadResult[$url]
-                        ]);
-                        $app->data->makePublic([
-                            'key' => $key
-                        ]);
+                        $app->data->set($app->data->make($key, $filesDownloadResult[$url]));
+                        $app->data->makePublic($key);
                     }
                 }
                 if (!empty($downloadErrorUrls)) {
@@ -170,49 +150,41 @@ final class Server
                 $bundleContent = '';
                 foreach ($urls as $url) {
                     $key = '.temp/bearcms/assets/' . md5(serialize([$url])) . '.js';
-                    $result = $app->data->get([
-                        'key' => $key,
-                        'result' => ['key', 'body']
-                    ]);
-                    if (!isset($result['key'])) {
+                    $result = $app->data->getValue($key);
+                    if ($result === null) {
                         throw new \Exception('Cannot read the temp file for ' . $url);
                     }
                     $bundleContent .= $result['body'];
                 }
-                $app->data->set([
-                    'key' => $resultKey,
-                    'body' => $bundleContent
-                ]);
-                $app->data->makePublic([
-                    'key' => $resultKey
-                ]);
+                $app->data->set($app->data->make($resultKey, $bundleContent));
+                $app->data->makePublic($resultKey);
             }
         }
         return $app->assets->getUrl($app->data->getFilename($resultKey));
     }
 
-    static function updateAssetsUrls($content, $ajaxMode)
+    static function updateAssetsUrls(string $content, bool $ajaxMode): string
     {
-
         $serverUrl = \BearCMS\Internal\Options::$serverUrl;
+        $app = App::get();
+        $context = $app->context->get(__FILE__);
+        $updateUrl = function($url) use ($app, $context, $serverUrl) {
+            if (strpos($url, '?') !== false) {
+                $url = explode('?', $url)[0];
+            }
+            return $app->assets->getUrl($context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 's' . DIRECTORY_SEPARATOR . str_replace($serverUrl, '', $url));
+        };
 
         if ($ajaxMode) {
             $hasChange = false;
             $contentData = json_decode($content, true);
             if (isset($contentData['jsFiles'])) {
-                $newJsFiles = [];
-                foreach ($contentData['jsFiles'] as $src) {
+                foreach ($contentData['jsFiles'] as $i => $src) {
                     if (isset($src{0}) && strpos($src, $serverUrl) === 0) {
+                        $contentData['jsFiles'][$i] = $updateUrl($src);
                         $hasChange = true;
-                        $scriptBundle[] = $src;
-                    } else {
-                        $newJsFiles[] = $src;
                     }
                 }
-                if (!empty($scriptBundle)) {
-                    $newJsFiles[] = self::getAssetsUrl(array_unique($scriptBundle));
-                }
-                $contentData['jsFiles'] = $newJsFiles;
             }
             if ($hasChange) {
                 return json_encode($contentData);
@@ -222,28 +194,12 @@ final class Server
             $dom = new \IvoPetkov\HTML5DOMDocument();
             $dom->loadHTML($content);
             $scripts = $dom->querySelectorAll('script');
-            $scriptBundle = [];
-            $scriptsToRemove = [];
             foreach ($scripts as $script) {
                 $src = (string) $script->getAttribute('src');
                 if (isset($src{0}) && strpos($src, $serverUrl) === 0) {
+                    $script->setAttribute('src', $updateUrl($src));
                     $hasChange = true;
-                    if ($script->getAttribute('async') === 'async') {
-                        $scriptsToRemove[] = $script;
-                        $scriptBundle[] = $src;
-                    } else {
-                        $script->setAttribute('src', self::getAssetsUrl([$src]));
-                    }
                 }
-            }
-            foreach ($scriptsToRemove as $script) {
-                $script->parentNode->removeChild($script);
-            }
-            if (!empty($scriptBundle)) {
-                $script = $dom->createElement('script');
-                $script->setAttribute('async', 'async');
-                $script->setAttribute('src', self::getAssetsUrl(array_unique($scriptBundle)));
-                $dom->querySelector('body')->appendChild($script);
             }
             if ($hasChange) {
                 return $dom->saveHTML();
@@ -252,18 +208,9 @@ final class Server
         return $content;
     }
 
-    static function makeRequest($url, $data, $cookies)
+    static function makeRequest(string $url, array $data, array $cookies): \ArrayObject
     {
         $app = App::get();
-        if (!is_string($url)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_array($data)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_array($cookies)) {
-            throw new \InvalidArgumentException('');
-        }
 
         $clientData = [];
         $clientData['info'] = [
@@ -276,13 +223,10 @@ final class Server
         $clientData['requestBase'] = $app->request->base;
         $clientData['cookiePrefix'] = Options::$cookiePrefix;
         if ($app->bearCMS->currentUser->exists()) {
-            $currentUserData = $app->data->get([
-                'key' => 'bearcms/users/user/' . md5($app->bearCMS->currentUser->getID()) . '.json',
-                'result' => ['body']
-            ]);
+            $currentUserData = $app->data->getValue('bearcms/users/user/' . md5($app->bearCMS->currentUser->getID()) . '.json');
             $currentUserID = null;
-            if (isset($currentUserData['body'])) {
-                $currentUserData = json_decode($currentUserData['body'], true);
+            if ($currentUserData !== null) {
+                $currentUserData = json_decode($currentUserData, true);
                 $currentUserID = isset($currentUserData['id']) ? $currentUserData['id'] : null;
             }
             $clientData['currentUserID'] = $currentUserID;
@@ -352,18 +296,10 @@ final class Server
         return new \ArrayObject(['header' => $responseHeader, 'body' => $responseBody]);
     }
 
-    static function sendRequest($url, $data = null, $sendCookies = false)
+    static function sendRequest(string $url, array $data = [], bool $sendCookies = false): \ArrayObject
     {
         $app = App::get();
-        if (!is_string($url)) {
-            throw new \InvalidArgumentException('');
-        }
-        if ($data !== null && !is_array($data)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_bool($sendCookies)) {
-            throw new \InvalidArgumentException('');
-        }
+        $context = $app->context->get(__FILE__);
         if (!is_array($data)) {
             $data = [];
         }
@@ -375,7 +311,7 @@ final class Server
 
         $cookies = $sendCookies ? Cookies::getList(Cookies::TYPE_SERVER) : [];
 
-        $send = function($requestData = [], $counter = 1) use(&$send, $app, $url, $data, $cookies) {
+        $send = function($requestData = [], $counter = 1) use(&$send, $app, $url, $data, $cookies, $context) {
             if ($counter > 10) {
                 throw new \Exception('Too much requests');
             }
@@ -407,7 +343,11 @@ final class Server
                 foreach ($responseMeta['commands'] as $commandData) {
                     if (isset($commandData['name']) && isset($commandData['data'])) {
                         $commandResult = '';
-                        $callback = ['\BearCMS\Internal\ServerCommands', $commandData['name']];
+                        $commandFilename = $context->dir . '/classes/BearCMS/Internal/ServerCommands/' . str_replace(['.', '/', '\\'], '', $commandData['name']) . '.php';
+                        $callback = null;
+                        if (is_file($commandFilename)) {
+                            $callback = include $commandFilename;
+                        }
                         if (is_callable($callback)) {
                             $commandResult = call_user_func($callback, $commandData['data'], $response);
                         }
@@ -426,10 +366,7 @@ final class Server
             }
             if (isset($responseMeta['currentUser'])) {
                 $currentUserData = $responseMeta['currentUser'];
-                $app->data->set([
-                    'key' => '.temp/bearcms/userkeys/' . md5($currentUserData['key']),
-                    'body' => $currentUserData['id']
-                ]);
+                $app->data->set($app->data->make('.temp/bearcms/userkeys/' . md5($currentUserData['key']), $currentUserData['id']));
             }
             if (isset($responseMeta['clientEvents'])) {
                 $responseBody = $response['body']; // Can be changed in a command
@@ -437,7 +374,7 @@ final class Server
             if ($resend) {
                 $response = $send($resendRequestData, $counter + 1);
             }
-            if (isset($responseMeta['clientEvents'])) {
+            if (isset($responseMeta['clientEvents']) && strlen($responseBody) > 0) {
                 $response['bodyPrefix'] = $responseBody;
             }
             return $response;

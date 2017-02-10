@@ -14,17 +14,19 @@ $content = '';
 if (strlen($component->url) > 0) {
     $aspectRatio = 0.75;
     $cacheKey = 'bearcms-video-element-data-' . $component->url;
-    $cachedData = $app->cache->get($cacheKey);
+    $cachedData = $app->cache->getValue($cacheKey);
     if ($cachedData === false) {
         try {
             $embed = new IvoPetkov\VideoEmbed($component->url);
             $aspectRatio = $embed->width / $embed->height;
             $embed->setSize('100%', '100%');
             $content = $embed->html;
-            $app->cache->set($cacheKey, ['html' => $embed->html, 'aspectRatio' => $aspectRatio]);
+            $app->cache->set($app->cache->make($cacheKey, ['html' => $embed->html, 'aspectRatio' => $aspectRatio]));
         } catch (\Exception $e) {
             $content = '';
-            $app->cache->set($cacheKey, '', 60);
+            $cacheItem = $app->cache->make($cacheKey, '');
+            $cacheItem->ttl = 60;
+            $app->cache->set($cacheItem);
         }
     } else {
         if (is_array($cachedData)) {
@@ -43,8 +45,6 @@ if (strlen($component->url) > 0) {
     $content .= '<source src="' . $app->assets->getUrl($filename) . '" type="video/mp4">';
     $content .= '</video></div>';
 }
-
-$content = \BearCMS\Internal\ElementsHelper::getElementComponentContent($component, 'video', $content);
 ?><html>
     <body><?= $content ?></body>
 </html>

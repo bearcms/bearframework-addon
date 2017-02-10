@@ -34,11 +34,8 @@ final class Options
      * @throws \InvalidArgumentException
      * @throws \Exception
      */
-    static function set($data)
+    static function set(array $data): void
     {
-        if (!is_array($data)) {
-            throw new \InvalidArgumentException('');
-        }
 
         if (isset($data['serverUrl']) && strlen($data['serverUrl']) > 0) {
             if (!isset($data['siteID']) || strlen($data['siteID']) === 0) {
@@ -97,12 +94,12 @@ final class Options
         }
     }
 
-    static function hasServer()
+    static function hasServer(): bool
     {
         return self::$serverUrl !== null;
     }
 
-    static function hasFeature($name)
+    static function hasFeature(string $name): bool
     {
         if (substr($name, -1) === '*') {
             $prefix = substr($name, 0, -1);

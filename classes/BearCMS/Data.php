@@ -18,6 +18,8 @@ use BearFramework\App;
  * @property \BearCMS\Data\Blog $blog Information about the blog posts
  * @property \BearCMS\Data\Comments $comments Information about the comments
  * @property \BearCMS\Data\CommentsThreads $commentsThreads Information about the comments threads
+ * @property \BearCMS\Data\ForumPosts $forumPosts Information about the forum posts
+ * @property \BearCMS\Data\ForumPostsReplies $forumPostsReplies Information about the forum replies
  * @property \BearCMS\Data\Pages $pages Information about the site pages
  * @property \BearCMS\Data\Settings $settings Information about the site settings
  * @property \BearCMS\Data\Themes $themes Information about the site themes
@@ -26,51 +28,70 @@ use BearFramework\App;
 class Data
 {
 
-    /**
-     * Dependency Injection container
-     * 
-     * @var \BearFramework\App\ServiceContainer 
-     */
-    public $container = null;
+    use \IvoPetkov\DataObjectTrait;
 
     function __construct()
     {
-        $this->container = new \BearFramework\App\Container();
-
-        $this->container->set('addons', \BearCMS\Data\Addons::class);
-        $this->container->set('blog', \BearCMS\Data\Blog::class);
-        $this->container->set('comments', \BearCMS\Data\Comments::class);
-        $this->container->set('commentsThreads', \BearCMS\Data\CommentsThreads::class);
-        $this->container->set('pages', \BearCMS\Data\Pages::class);
-        $this->container->set('settings', \BearCMS\Data\Settings::class);
-        $this->container->set('themes', \BearCMS\Data\Themes::class);
-        $this->container->set('users', \BearCMS\Data\Users::class);
-    }
-
-    /**
-     * Returns an object from the dependency injection container
-     * 
-     * @param string $name The service name
-     * @return object Object from the dependency injection container
-     * @throws \Exception
-     */
-    public function __get($name)
-    {
-        if ($this->container->exists($name)) {
-            return $this->container->get($name);
-        }
-        throw new \Exception('Invalid property name');
-    }
-
-    /**
-     * Returns information about whether the service is added in the dependency injection container
-     * 
-     * @param string $name The name of the service
-     * @return boolen TRUE if services is added. FALSE otherwise.
-     */
-    public function __isset($name)
-    {
-        return $this->container->exists($name);
+        $this->defineProperty('addons', [
+            'init' => function() {
+                return new \BearCMS\Data\Addons();
+            },
+            'readonly' => true
+        ]);
+        $this->defineProperty('blogPosts', [
+            'init' => function() {
+                return new \BearCMS\Data\BlogPosts();
+            },
+            'readonly' => true
+        ]);
+        $this->defineProperty('comments', [
+            'init' => function() {
+                return new \BearCMS\Data\Comments();
+            },
+            'readonly' => true
+        ]);
+        $this->defineProperty('commentsThreads', [
+            'init' => function() {
+                return new \BearCMS\Data\CommentsThreads();
+            },
+            'readonly' => true
+        ]);
+        $this->defineProperty('forumPosts', [
+            'init' => function() {
+                return new \BearCMS\Data\ForumPosts();
+            },
+            'readonly' => true
+        ]);
+        $this->defineProperty('forumPostsReplies', [
+            'init' => function() {
+                return new \BearCMS\Data\ForumPostsReplies();
+            },
+            'readonly' => true
+        ]);
+        $this->defineProperty('pages', [
+            'init' => function() {
+                return new \BearCMS\Data\Pages();
+            },
+            'readonly' => true
+        ]);
+        $this->defineProperty('settings', [
+            'init' => function() {
+                return new \BearCMS\Data\Settings();
+            },
+            'readonly' => true
+        ]);
+        $this->defineProperty('themes', [
+            'init' => function() {
+                return new \BearCMS\Data\Themes();
+            },
+            'readonly' => true
+        ]);
+        $this->defineProperty('users', [
+            'init' => function() {
+                return new \BearCMS\Data\Users();
+            },
+            'readonly' => true
+        ]);
     }
 
     /**
@@ -80,11 +101,8 @@ class Data
      * @return string The real filename
      * @throws \InvalidArgumentException
      */
-    public function getRealFilename($filename)
+    public function getRealFilename(string $filename)
     {
-        if (!is_string($filename)) {
-            throw new \InvalidArgumentException('');
-        }
         $app = App::get();
         if (substr($filename, 0, 5) === 'data:') {
             $filename = $app->data->getFilename(substr($filename, 5));

@@ -10,6 +10,10 @@
 use BearFramework\App;
 
 $app = App::get();
-$context = $app->getContext(__FILE__);
+$context = $app->context->get(__FILE__);
 
-$context->assets->addDir('themes/default1/assets');
+$context->assets
+        ->addDir('themes/default1/assets');
+
+//$app->bearCMS
+//        ->addTheme('default1');

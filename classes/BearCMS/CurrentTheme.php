@@ -31,7 +31,7 @@ class CurrentTheme
      * 
      * @return string The id of the current active theme or theme in preview
      */
-    public function getID()
+    public function getID(): string
     {
         if (!isset(self::$cache['id'])) {
             $cookies = Cookies::getList(Cookies::TYPE_SERVER);
@@ -45,7 +45,7 @@ class CurrentTheme
      * 
      * @return array An array containing all theme options
      */
-    public function getOptions()
+    public function getOptions(): \BearCMS\CurrentThemeOptions
     {
         return $this->walkOptions(1);
     }
@@ -56,7 +56,7 @@ class CurrentTheme
      * @param int $resultType 1 - values, 2 - definition
      * @return array
      */
-    private function walkOptions($resultType)
+    private function walkOptions(int $resultType): \BearCMS\CurrentThemeOptions
     {
         $cacheKey = 'options' . $resultType; //todo optimize
         $app = App::get();
@@ -73,9 +73,9 @@ class CurrentTheme
 // todo optimize
             $themes = \BearCMS\Internal\Data\Themes::getList();
             foreach ($themes as $theme) {
-                if ($theme['id'] === $currentThemeID) {
-                    if (isset($theme['manifestFilename'])) {
-                        $manifestData = \BearCMS\Internal\Data\Themes::getManifestData($theme['manifestFilename'], $theme['dir']);
+                if ($theme->id === $currentThemeID) {
+                    if (isset($theme->manifestFilename)) {
+                        $manifestData = \BearCMS\Internal\Data\Themes::getManifestData($theme->manifestFilename, $theme->dir);
                         if (isset($manifestData['options'])) {
                             $walkOptions = function($options) use (&$result, $values, &$walkOptions, $resultType) {
                                 foreach ($options as $option) {
@@ -110,7 +110,7 @@ class CurrentTheme
      * 
      * @return string The HTML code for the options
      */
-    public function getOptionsHtml()
+    public function getOptionsHtml(): string
     {
         $linkTags = [];
         $app = App::get();

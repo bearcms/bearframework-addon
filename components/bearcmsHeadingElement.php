@@ -26,8 +26,6 @@ if ($size === 'large') {
 }
 
 $content = '<' . $tagName . ' class="' . $className . '">' . htmlspecialchars($text) . '</' . $tagName . '>';
-
-$content = \BearCMS\Internal\ElementsHelper::getElementComponentContent($component, 'heading', $content);
 ?><html>
     <body><?= $content ?></body>
 </html>

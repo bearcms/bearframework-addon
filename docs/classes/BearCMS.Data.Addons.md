@@ -20,7 +20,7 @@ _Returns_
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The addon data or null if addon not found
 
 ```php
-public \BearCMS\DataCollection getList ( void )
+public \BearCMS\DataList getList ( void )
 ```
 
 Retrieves a list of all addons
@@ -36,7 +36,7 @@ List of all Bear CMS managed addons.
 ```php
 $list = $app->bearCMS->data->addons->getList();
 
-// \BearCMS\DataCollection
+// \BearCMS\DataList
 // (
 //     [0] => \BearCMS\DataObject
 //         (

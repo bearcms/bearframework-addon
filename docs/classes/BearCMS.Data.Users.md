@@ -20,7 +20,7 @@ _Returns_
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The user data or null if user not found
 
 ```php
-public \BearCMS\DataCollection getList ( void )
+public \BearCMS\DataList getList ( void )
 ```
 
 Retrieves a list of all users
@@ -76,7 +76,7 @@ Returns a collection containing all users data
 ```php
 $list = $app->bearCMS->data->users->getList();
 
-// \BearCMS\DataCollection
+// \BearCMS\DataList
 // (
 //     [0] => \BearCMS\DataObject
 //         (

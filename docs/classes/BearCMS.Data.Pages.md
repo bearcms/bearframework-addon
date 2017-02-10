@@ -20,7 +20,7 @@ _Returns_
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The page data or null if page not found
 
 ```php
-public \BearCMS\DataCollection getList ( void )
+public \BearCMS\DataList getList ( void )
 ```
 
 Retrieves a list of all pages
@@ -36,7 +36,7 @@ List of all pages
 ```php
 $list = $app->bearCMS->data->pages->getList();
 
-// \BearCMS\DataCollection
+// \BearCMS\DataList
 // (
 //     [0] => \BearCMS\DataObject
 //         (
@@ -49,7 +49,7 @@ $list = $app->bearCMS->data->pages->getList();
 //             [titleTagContent] => 
 //             [descriptionTagContent] => 
 //             [keywordsTagContent] => 
-//             [children] => \BearCMS\DataCollection
+//             [children] => \BearCMS\DataList
 //         )
 //     [1] => \BearCMS\DataObject
 //         (
@@ -62,7 +62,7 @@ $list = $app->bearCMS->data->pages->getList();
 //             [titleTagContent] => 
 //             [descriptionTagContent] => 
 //             [keywordsTagContent] => 
-//             [children] => \BearCMS\DataCollection
+//             [children] => \BearCMS\DataList
 //         )
 //     ...
 // )

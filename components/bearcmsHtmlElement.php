@@ -13,7 +13,6 @@ if ($code !== '') {
     $content = '';
 }
 
-$content = \BearCMS\Internal\ElementsHelper::getElementComponentContent($component, 'html', $content);
 ?><html>
     <body><?= $content ?></body>
 </html>

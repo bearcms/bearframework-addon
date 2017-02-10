@@ -30,7 +30,7 @@ class CurrentUser
      * 
      * @return boolean TRUE if there is a current user logged in, FALSE otherwise
      */
-    public function exists()
+    public function exists(): bool
     {
         return $this->getID() !== null;
     }
@@ -40,7 +40,7 @@ class CurrentUser
      * 
      * @return string|null The session key if there is a logged in user, NULL otherwise
      */
-    public function getSessionKey()
+    public function getSessionKey(): ?string
     {
         $cookies = Cookies::getList(Cookies::TYPE_SERVER);
         $cookieKey = '_s';
@@ -53,7 +53,7 @@ class CurrentUser
      * 
      * @return string|null ID of the current logged in user or null
      */
-    public function getID()
+    public function getID(): ?string
     {
         $sessionKey = $this->getSessionKey();
         if (strlen($sessionKey) === 0) {
@@ -63,12 +63,9 @@ class CurrentUser
         if (!isset(self::$cache[$cacheKey])) {
             self::$cache[$cacheKey] = null;
             $app = App::get();
-            $data = $app->data->get([
-                'key' => '.temp/bearcms/userkeys/' . md5($sessionKey),
-                'result' => ['body']
-            ]);
-            if (isset($data['body'])) {
-                self::$cache[$cacheKey] = $data['body'];
+            $data = $app->data->getValue('.temp/bearcms/userkeys/' . md5($sessionKey));
+            if ($data !== null) {
+                self::$cache[$cacheKey] = $data;
             }
         }
         return self::$cache[$cacheKey];
@@ -79,19 +76,16 @@ class CurrentUser
      * 
      * @return array Array containing the permission of the current logged in user
      */
-    public function getPermissions()
+    public function getPermissions(): array
     {
         $userID = $this->getID();
         if ($userID === null) {
             return [];
         }
         $app = App::get();
-        $data = $app->data->get([
-            'key' => 'bearcms/users/user/' . md5($userID) . '.json',
-            'result' => ['body']
-        ]);
-        if (isset($data['body'])) {
-            $user = json_decode($data['body'], true);
+        $data = $app->data->getValue('bearcms/users/user/' . md5($userID) . '.json');
+        if ($data !== null) {
+            $user = json_decode($data, true);
             return isset($user['permissions']) ? $user['permissions'] : [];
         }
         return [];
@@ -104,11 +98,8 @@ class CurrentUser
      * @return boolean TRUE if the current logged in user has the permission specified, FALSE otherwise
      * @throws \InvalidArgumentException
      */
-    public function hasPermission($name)
+    public function hasPermission(string $name): bool
     {
-        if (!is_string($name)) {
-            throw new \InvalidArgumentException('');
-        }
         $permissions = $this->getPermissions();
         return array_search($name, $permissions) !== false;
     }
@@ -119,11 +110,8 @@ class CurrentUser
      * @param string $userID
      * @throws \InvalidArgumentException
      */
-    public function login($userID)
+    public function login(string $userID): void
     {
-        if (!is_string($userID)) {
-            throw new \InvalidArgumentException('');
-        }
         \BearCMS\Internal\Server::call('login', ['userID' => $userID], true);
     }
 
@@ -133,7 +121,7 @@ class CurrentUser
      * @param string $userID
      * @throws \InvalidArgumentException
      */
-    public function logout()
+    public function logout(): void
     {
         \BearCMS\Internal\Cookies::setList(\BearCMS\Internal\Cookies::TYPE_SERVER, [['name' => '_s', 'value' => 'deleted', 'expire' => 0]]);
     }

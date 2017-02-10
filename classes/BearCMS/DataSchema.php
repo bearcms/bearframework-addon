@@ -34,7 +34,7 @@ class DataSchema
      * 
      * @param string $id The data schema id
      */
-    function __construct($id)
+    function __construct(string $id)
     {
         $this->id = $id;
     }
@@ -44,7 +44,7 @@ class DataSchema
      * 
      * @param array $field
      */
-    function addField($field)
+    function addField(array $field)
     {
         $this->fields[] = $field;
     }

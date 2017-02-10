@@ -20,7 +20,7 @@ class CurrentThemeOptions implements \ArrayAccess, \Iterator
      * 
      * @var array 
      */
-    private $data = array();
+    private $data = [];
 
     /**
      * The constructor
@@ -28,18 +28,15 @@ class CurrentThemeOptions implements \ArrayAccess, \Iterator
      * @param array $data
      * @throws \InvalidArgumentException
      */
-    public function __construct($data)
+    public function __construct(array $data)
     {
-        if (!is_array($data)) {
-            throw new \InvalidArgumentException('');
-        }
         $this->data = $data;
     }
 
     /**
      * Cannot modify theme options
      * 
-     * @param strint $offset
+     * @param string $offset
      * @param mixed $value
      * @throws \Exception
      */
@@ -62,7 +59,7 @@ class CurrentThemeOptions implements \ArrayAccess, \Iterator
     /**
      * Cannot modify theme options
      * 
-     * @param strint $offset
+     * @param string $offset
      * @throws \Exception
      */
     public function offsetUnset($offset)

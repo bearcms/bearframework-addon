@@ -10,20 +10,16 @@
 namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
+use BearCMS\Internal\ElementsHelper;
 
 final class Comments
 {
 
-    static function add($threadID, $author, $text)
+    static function add(string $threadID, array $author, string $text, string $status): void
     {
         $app = App::get();
-        $data = $app->data->get(
-                [
-                    'key' => 'bearcms/comments/thread/' . md5($threadID) . '.json',
-                    'result' => ['body']
-                ]
-        );
-        $data = strlen($data['body']) > 0 ? json_decode($data['body'], true) : [];
+        $data = $app->data->getValue('bearcms/comments/thread/' . md5($threadID) . '.json');
+        $data = $data !== null ? json_decode($data, true) : [];
         if (empty($data['id'])) {
             $data['id'] = $threadID;
         }
@@ -32,32 +28,22 @@ final class Comments
         }
         $data['comments'][] = [
             'id' => md5(uniqid()),
-            'status' => 'approved',
+            'status' => $status,
             'author' => $author,
             'text' => $text,
             'createdTime' => time()
         ];
-        $app->data->set(
-                [
-                    'key' => 'bearcms/comments/thread/' . md5($threadID) . '.json',
-                    'body' => json_encode($data)
-                ]
-        );
+        $app->data->set($app->data->make('bearcms/comments/thread/' . md5($threadID) . '.json', json_encode($data)));
     }
 
-    static function setStatus($threadID, $commentID, $status)
+    static function setStatus(string $threadID, string $commentID, string $status): void
     {
         $app = App::get();
         $dataKey = 'bearcms/comments/thread/' . md5($threadID) . '.json';
-        $result = $app->data->get(
-                [
-                    'key' => $dataKey,
-                    'result' => ['body']
-                ]
-        );
+        $data = $app->data->getValue($dataKey);
         $hasChange = false;
-        if (isset($result['body'])) {
-            $threadData = json_decode($result['body'], true);
+        if ($data !== null) {
+            $threadData = json_decode($data, true);
             if (is_array($threadData['comments']) && isset($threadData['comments'])) {
                 foreach ($threadData['comments'] as $i => $comment) {
                     if (isset($comment['id']) && $comment['id'] === $commentID) {
@@ -73,28 +59,18 @@ final class Comments
             }
         }
         if ($hasChange) {
-            $app->data->set(
-                    [
-                        'key' => $dataKey,
-                        'body' => json_encode($threadData)
-                    ]
-            );
+            $app->data->set($app->data->make($dataKey, json_encode($threadData)));
         }
     }
 
-    static function deleteCommentForever($threadID, $commentID)
+    static function deleteCommentForever(string $threadID, string $commentID)
     {
         $app = App::get();
         $dataKey = 'bearcms/comments/thread/' . md5($threadID) . '.json';
-        $result = $app->data->get(
-                [
-                    'key' => $dataKey,
-                    'result' => ['body']
-                ]
-        );
+        $data = $app->data->getValue($dataKey);
         $hasChange = false;
-        if (isset($result['body'])) {
-            $threadData = json_decode($result['body'], true);
+        if ($data !== null) {
+            $threadData = json_decode($data, true);
             if (is_array($threadData['comments']) && isset($threadData['comments'])) {
                 foreach ($threadData['comments'] as $i => $comment) {
                     if (isset($comment['id']) && $comment['id'] === $commentID) {
@@ -107,25 +83,59 @@ final class Comments
         }
         if ($hasChange) {
             $threadData['comments'] = array_values($threadData['comments']);
-            $app->data->set(
-                    [
-                        'key' => $dataKey,
-                        'body' => json_encode($threadData)
-                    ]
-            );
+            $app->data->set($app->data->make($dataKey, json_encode($threadData)));
         }
     }
 
-    static function createCommentsCollection($rawCommentsData, $threadID)
+    static function createCommentsCollection(array $rawCommentsData, string $threadID): \BearCMS\DataList
     {
-        $dataCollection = new \BearCMS\DataCollection();
+        $dataList = new \BearCMS\DataList();
         foreach ($rawCommentsData as $rawCommentData) {
-            $comment = new \BearCMS\DataObject($rawCommentData);
+            $comment = new \BearCMS\Data\Comment();
+            $properties = ['id', 'status', 'author', 'text', 'createdTime'];
+            foreach ($properties as $property) {
+                if (array_key_exists($property, $rawCommentData)) {
+                    $comment->$property = $rawCommentData[$property];
+                }
+            }
             $comment->threadID = $threadID;
-            $comment->author = new \BearCMS\DataObject(isset($rawCommentData['author']) && is_array($rawCommentData['author']) ? $rawCommentData['author'] : []);
-            $dataCollection[] = $comment;
+            $dataList[] = $comment;
         }
-        return $dataCollection;
+        return $dataList;
+    }
+
+    static function getCommentsElementsLocations(): array
+    {
+        // todo cache
+        $app = App::get();
+        $result = [];
+        $pages = $app->bearCMS->data->pages->getList();
+        foreach ($pages as $page) {
+            $containerElementIDs = ElementsHelper::getContainerElementsIDs('bearcms-page-' . $page->id);
+            $elementsRawData = ElementsHelper::getElementsRawData($containerElementIDs);
+            foreach ($elementsRawData as $elementRawData) {
+                $elementData = ElementsHelper::decodeElementRawData($elementRawData);
+                if ($elementData['type'] === 'comments') {
+                    if (isset($elementData['data']['threadID'])) {
+                        $result[$elementData['data']['threadID']] = $app->request->base . $page->path;
+                    }
+                }
+            }
+        }
+        $blogPosts = $app->bearCMS->data->blogPosts->getList();
+        foreach ($blogPosts as $blogPost) {
+            $containerElementIDs = ElementsHelper::getContainerElementsIDs('bearcms-blogpost-' . $blogPost->id);
+            $elementsRawData = ElementsHelper::getElementsRawData($containerElementIDs);
+            foreach ($elementsRawData as $elementRawData) {
+                $elementData = ElementsHelper::decodeElementRawData($elementRawData);
+                if ($elementData['type'] === 'comments') {
+                    if (isset($elementData['data']['threadID'])) {
+                        $result[$elementData['data']['threadID']] = $app->request->base . Options::$blogPagesPathPrefix . $blogPost->slug . '/';
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
 }

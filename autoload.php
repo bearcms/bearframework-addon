@@ -12,6 +12,9 @@ BearFramework\Addons::register('bearcms/bearframework-addon', __DIR__, [
         //'bearframework/maintenance-addon',
         'ivopetkov/html-server-components-bearframework-addon',
         'ivopetkov/image-gallery-bearframework-addon',
-        'ivopetkov/navigation-menu-bearframework-addon'
+        'ivopetkov/navigation-menu-bearframework-addon',
+        'ivopetkov/form-bearframework-addon',
+        'ivopetkov/users-bearframework-addon',
+        'ivopetkov/server-requests-bearframework-addon'
     ]
 ]);

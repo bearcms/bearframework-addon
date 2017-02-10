@@ -11,7 +11,6 @@ $text = $component->text;
 $title = $component->title;
 $content = '<a title="' . htmlentities($title) . '" class="bearcms-link-element" href="' . htmlentities($url) . '">' . htmlspecialchars(isset($text{0}) ? $text : $url) . '</a>';
 
-$content = \BearCMS\Internal\ElementsHelper::getElementComponentContent($component, 'link', $content);
 ?><html>
     <body><?= $content ?></body>
 </html>

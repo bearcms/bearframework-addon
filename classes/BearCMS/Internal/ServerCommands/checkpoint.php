@@ -7,9 +7,6 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS;
-
-class DataCollection extends \IvoPetkov\DataCollection
-{
-    
-}
+return function($data) {
+    return $data;
+};

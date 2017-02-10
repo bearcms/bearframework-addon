@@ -119,7 +119,7 @@ class PagesDataTest extends BearFrameworkAddonTestCase
         $this->assertTrue($list[0]->id === 'ec983ebad290fc046a7308661627fef1');
         $this->assertTrue($list[1]->id === 'ec983ebad290fc046a7308661627fef4');
 
-        $user = $app->bearCMS->data->pages->getPage('ec983ebad290fc046a7308661627fef1');
+        $user = $app->bearCMS->data->pages->get('ec983ebad290fc046a7308661627fef1');
         $this->assertTrue($user->id === 'ec983ebad290fc046a7308661627fef1');
     }
 

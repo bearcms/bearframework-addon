@@ -12,7 +12,7 @@ use BearCMS\Internal\Options;
 
 $app = App::get();
 
-$list = $app->bearCMS->data->blog->getList()
+$list = $app->bearCMS->data->blogPosts->getList()
         ->filterBy('status', 'published')
         ->sortBy('publishedTime', 'desc');
 
@@ -128,7 +128,6 @@ if (empty($list)) {
     $content .= '</div>';
 }
 
-$content = \BearCMS\Internal\ElementsHelper::getElementComponentContent($component, 'blogPosts', $content);
 ?><html>
     <body><?= $content ?></body>
 </html>

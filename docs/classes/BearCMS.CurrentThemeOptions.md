@@ -18,7 +18,7 @@ _Returns_
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No value is returned.
 
 ```php
-public void offsetSet ( strint $offset , mixed $value )
+public void offsetSet ( string $offset , mixed $value )
 ```
 
 Cannot modify theme options
@@ -48,7 +48,7 @@ _Returns_
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TRUE if the option is set, FALSE otherwise
 
 ```php
-public void offsetUnset ( strint $offset )
+public void offsetUnset ( string $offset )
 ```
 
 Cannot modify theme options

@@ -17,17 +17,12 @@ final class Addons
     static function getList()
     {
         $app = App::get();
-        $result = $app->data->search(
-                [
-                    'where' => [
-                        ['key', 'bearcms/addons/addon/', 'startsWith']
-                    ],
-                    'result' => ['key', 'body']
-                ]
-        );
+        $list = $app->data->getList()
+                ->filterBy('key', 'bearcms/addons/addon/', 'startWith');
+
         $temp = [];
-        foreach ($result as $item) {
-            $addonData = json_decode($item['body'], true);
+        foreach ($list as $item) {
+            $addonData = json_decode($item->value, true);
             $temp[] = [
                 'id' => $addonData['id'],
                 'enabled' => (isset($addonData['enabled']) ? (int) $addonData['enabled'] > 0 : false)
