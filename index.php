@@ -592,7 +592,7 @@ $app->hooks
             $serverUrl = \BearCMS\Internal\Options::$serverUrl;
             $matchingDir = $context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 's' . DIRECTORY_SEPARATOR;
             if (strpos($data->filename, $matchingDir) === 0) {
-                $fileServerUrl = $serverUrl . str_replace($matchingDir, '', $data->filename);
+                $fileServerUrl = $serverUrl . str_replace('\\', '/', str_replace($matchingDir, '', $data->filename));
                 $data->filename = null;
                 $fileInfo = pathinfo($fileServerUrl);
                 if (isset($fileInfo['extension'])) {

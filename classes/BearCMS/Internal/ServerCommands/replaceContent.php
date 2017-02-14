@@ -12,7 +12,7 @@ use BearCMS\Internal\Server;
 
 return function($data, $response) {
     $app = App::get();
-    $body = $response['body'];
+    $body = json_encode($response['body']);
     $content = $app->components->process($data['content']);
     $domDocument = new \IvoPetkov\HTML5DOMDocument();
     $domDocument->loadHTML($content);
@@ -41,5 +41,5 @@ return function($data, $response) {
     //todo optimize
     $response1 = ['js' => 'html5DOMDocument.insert(' . json_encode($allButBody, true) . ');'];
     $response2 = json_decode($body, true);
-    $response['body'] = json_encode(Server::mergeAjaxResponses($response1, $response2));
+    $response['body'] = Server::mergeAjaxResponses($response1, $response2);
 };

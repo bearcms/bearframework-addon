@@ -93,7 +93,7 @@ final class Cookies
             foreach (self::$pendingUpdate as $cookieData) {
                 $deleted = $cookieData['value'] === 'deleted' || $cookieData['expire'] === 0;
                 $cookie = $response->cookies->make($cookieData['name'], $deleted ? '' : $cookieData['value']);
-                $cookie->expire = $deleted ? 0 : $cookieData['expire'];
+                $cookie->expire = $deleted ? 0 : (int)$cookieData['expire'];
                 $cookie->httpOnly = isset($cookieData['httponly']) ? $cookieData['httponly'] : true;
                 $response->cookies->set($cookie);
             }

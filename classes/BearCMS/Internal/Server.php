@@ -40,9 +40,10 @@ final class Server
         }
 
         if (isset($response['bodyPrefix'])) {
-            $response['body'] = json_encode(self::mergeAjaxResponses(json_decode($response['bodyPrefix'], true), json_decode($response['body'], true)));
+            $response['body'] = self::mergeAjaxResponses($response['bodyPrefix'], $response['body']);
         }
-        return self::updateAssetsUrls($response['body'], true);
+        $response['body'] = self::updateAssetsUrls($response['body'], true);
+        return json_encode($response['body']);
     }
 
     static function mergeAjaxResponses(array $response1, array $response2): array
@@ -163,7 +164,7 @@ final class Server
         return $app->assets->getUrl($app->data->getFilename($resultKey));
     }
 
-    static function updateAssetsUrls(string $content, bool $ajaxMode): string
+    static function updateAssetsUrls($content, bool $ajaxMode)
     {
         $serverUrl = \BearCMS\Internal\Options::$serverUrl;
         $app = App::get();
@@ -177,7 +178,7 @@ final class Server
 
         if ($ajaxMode) {
             $hasChange = false;
-            $contentData = json_decode($content, true);
+            $contentData = $content; //json_decode($content, true);
             if (isset($contentData['jsFiles'])) {
                 foreach ($contentData['jsFiles'] as $i => $src) {
                     if (isset($src{0}) && strpos($src, $serverUrl) === 0) {
@@ -187,7 +188,7 @@ final class Server
                 }
             }
             if ($hasChange) {
-                return json_encode($contentData);
+                return $contentData;
             }
         } else {
             $hasChange = false;
@@ -374,7 +375,7 @@ final class Server
             if ($resend) {
                 $response = $send($resendRequestData, $counter + 1);
             }
-            if (isset($responseMeta['clientEvents']) && strlen($responseBody) > 0) {
+            if (isset($responseMeta['clientEvents']) && !empty($responseBody) > 0) {
                 $response['bodyPrefix'] = $responseBody;
             }
             return $response;
