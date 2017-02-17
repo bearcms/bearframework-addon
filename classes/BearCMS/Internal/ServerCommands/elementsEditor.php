@@ -17,7 +17,7 @@ return function($data, $response) {
         $requestArguments['jsMode'] = 1;
         $elementsEditorData = Server::call('elementseditor', $requestArguments, true);
         if (is_array($elementsEditorData) && isset($elementsEditorData['result'], $elementsEditorData['result']['content'])) {
-            $response['body'] = json_encode(Server::mergeAjaxResponses(json_decode($response['body'], true), json_decode($elementsEditorData['result']['content'], true)));
+            $response['body'] = Server::mergeAjaxResponses($response['body'], json_decode($elementsEditorData['result']['content'], true));
         } else {
             throw new Exception('');
         }

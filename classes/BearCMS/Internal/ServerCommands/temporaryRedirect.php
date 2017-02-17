@@ -8,6 +8,7 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal\Cookies;
 
 return function($data, $response) {
     $app = App::get();

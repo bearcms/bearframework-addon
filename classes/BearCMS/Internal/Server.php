@@ -119,7 +119,6 @@ final class Server
                     $result = [];
                     foreach ($calls as $i => $resource) {
                         $result[$urls[$i]] = curl_multi_getcontent($resource);
-
                         if (strlen($app->config->logsDir) > 0) {
                             $log = 'Bear CMS asset download:' . "\n";
                             $log .= 'Url: ' . $urls[$i] . "\n";
