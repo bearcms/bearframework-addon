@@ -83,208 +83,209 @@ $app->hooks->add('initialized', function() use ($app, $context) {
     if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
         $contextDir = $context->dir;
         $app->components->addAlias('bearcms-elements', 'file:' . $contextDir . '/components/bearcmsElements.php');
-        $app->bearCMS->elementsTypes->add('heading', [
-            'componentSrc' => 'bearcms-heading-element',
-            'componentFilename' => $contextDir . '/components/bearcmsHeadingElement.php',
-            'fields' => [
-                [
-                    'id' => 'size',
-                    'type' => 'list',
-                    'defaultValue' => 'large',
-                    'options' => [
+        $app->bearCMS->elementsTypes
+                ->add('heading', [
+                    'componentSrc' => 'bearcms-heading-element',
+                    'componentFilename' => $contextDir . '/components/bearcmsHeadingElement.php',
+                    'fields' => [
                         [
-                            'value' => 'large'
+                            'id' => 'size',
+                            'type' => 'list',
+                            'defaultValue' => 'large',
+                            'options' => [
+                                [
+                                    'value' => 'large'
+                                ],
+                                [
+                                    'value' => 'medium'
+                                ],
+                                [
+                                    'value' => 'small'
+                                ]
+                            ]
                         ],
                         [
-                            'value' => 'medium'
-                        ],
-                        [
-                            'value' => 'small'
+                            'id' => 'text',
+                            'type' => 'textbox'
                         ]
                     ]
-                ],
-                [
-                    'id' => 'text',
-                    'type' => 'textbox'
-                ]
-            ]
-        ]);
-        $app->bearCMS->elementsTypes->add('text', [
-            'componentSrc' => 'bearcms-text-element',
-            'componentFilename' => $contextDir . '/components/bearcmsTextElement.php',
-            'fields' => [
-                [
-                    'id' => 'text',
-                    'type' => 'textbox'
-                ]
-            ]
-        ]);
-        $app->bearCMS->elementsTypes->add('link', [
-            'componentSrc' => 'bearcms-link-element',
-            'componentFilename' => $contextDir . '/components/bearcmsLinkElement.php',
-            'fields' => [
-                [
-                    'id' => 'url',
-                    'type' => 'textbox'
-                ],
-                [
-                    'id' => 'text',
-                    'type' => 'textbox'
-                ],
-                [
-                    'id' => 'title',
-                    'type' => 'textbox'
-                ]
-            ]
-        ]);
-        $app->bearCMS->elementsTypes->add('video', [
-            'componentSrc' => 'bearcms-video-element',
-            'componentFilename' => $contextDir . '/components/bearcmsVideoElement.php',
-            'fields' => [
-                [
-                    'id' => 'url',
-                    'type' => 'textbox'
-                ],
-                [
-                    'id' => 'filename',
-                    'type' => 'textbox'
-                ]
-            ]
-        ]);
-        $app->bearCMS->elementsTypes->add('image', [
-            'componentSrc' => 'bearcms-image-element',
-            'componentFilename' => $contextDir . '/components/bearcmsImageElement.php',
-            'fields' => [
-                [
-                    'id' => 'filename',
-                    'type' => 'textbox'
-                ],
-                [
-                    'id' => 'title',
-                    'type' => 'textbox'
-                ],
-                [
-                    'id' => 'onClick',
-                    'type' => 'textbox'
-                ],
-                [
-                    'id' => 'url',
-                    'type' => 'textbox'
-                ]
-            ]
-        ]);
-        $app->bearCMS->elementsTypes->add('imageGallery', [
-            'componentSrc' => 'bearcms-image-gallery-element',
-            'componentFilename' => $contextDir . '/components/bearcmsImageGalleryElement.php',
-            'fields' => [
-                [
-                    'id' => 'type',
-                    'type' => 'textbox'
-                ],
-                [
-                    'id' => 'columnsCount',
-                    'type' => 'textbox'
-                ],
-                [
-                    'id' => 'imageSize',
-                    'type' => 'textbox'
-                ],
-                [
-                    'id' => 'imageAspectRatio',
-                    'type' => 'textbox'
-                ]
-            ]
-        ]);
-        $app->bearCMS->elementsTypes->add('navigation', [
-            'componentSrc' => 'bearcms-navigation-element',
-            'componentFilename' => $contextDir . '/components/bearcmsNavigationElement.php',
-            'fields' => [
-                [
-                    'id' => 'type',
-                    'type' => 'textbox'
-                ],
-                [
-                    'id' => 'pageID',
-                    'type' => 'textbox'
-                ]
-            ]
-        ]);
-        $app->bearCMS->elementsTypes->add('html', [
-            'componentSrc' => 'bearcms-html-element',
-            'componentFilename' => $contextDir . '/components/bearcmsHtmlElement.php',
-            'fields' => [
-                [
-                    'id' => 'code',
-                    'type' => 'textbox'
-                ]
-            ]
-        ]);
-        $app->bearCMS->elementsTypes->add('blogPosts', [
-            'componentSrc' => 'bearcms-blog-posts-element',
-            'componentFilename' => $contextDir . '/components/bearcmsBlogPostsElement.php',
-            'fields' => [
-                [
-                    'id' => 'type',
-                    'type' => 'textbox'
-                ],
-                [
-                    'id' => 'showDate',
-                    'type' => 'checkbox'
-                ],
-                [
-                    'id' => 'limit',
-                    'type' => 'number'
-                ]
-            ]
-        ]);
-        $app->bearCMS->elementsTypes->add('heading', [
-            'componentSrc' => 'bearcms-heading-element',
-            'componentFilename' => $contextDir . '/components/bearcmsHeadingElement.php',
-            'fields' => [
-                [
-                    'id' => 'text',
-                    'type' => 'textbox'
-                ]
-            ]
-        ]);
-        $app->bearCMS->elementsTypes->add('comments', [
-            'componentSrc' => 'bearcms-comments-element',
-            'componentFilename' => $contextDir . '/components/bearcmsCommentsElement.php',
-            'fields' => [
-                [
-                    'id' => 'threadID',
-                    'type' => 'textbox'
-                ],
-                [
-                    'id' => 'count',
-                    'type' => 'number'
-                ]
-            ],
-            'onDelete' => function($data) use ($app) {
-                if (isset($data['threadID'])) {
-                    $app->data->delete('bearcms/comments/thread/' . md5($data['threadID']) . '.json');
-                }
-            }
-        ]);
-        $app->bearCMS->elementsTypes->add('contactForm', [
-            'componentSrc' => 'bearcms-contact-form-element',
-            'componentFilename' => $contextDir . '/components/bearcmsContactFormElement.php',
-            'fields' => [
-                [
-                    'id' => 'email',
-                    'type' => 'textbox'
-                ]
-            ]
-        ]);
-        $app->bearCMS->elementsTypes->add('forumPosts', [
-            'componentSrc' => 'bearcms-forum-posts-element',
-            'componentFilename' => $contextDir . '/components/bearcmsForumPostsElement.php',
-            'fields' => [
-                [
-                    'id' => 'categoryID',
-                    'type' => 'textbox'
-                ]
-            ]
+                ])
+                ->add('text', [
+                    'componentSrc' => 'bearcms-text-element',
+                    'componentFilename' => $contextDir . '/components/bearcmsTextElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'text',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ])
+                ->add('link', [
+                    'componentSrc' => 'bearcms-link-element',
+                    'componentFilename' => $contextDir . '/components/bearcmsLinkElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'url',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'text',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'title',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ])
+                ->add('video', [
+                    'componentSrc' => 'bearcms-video-element',
+                    'componentFilename' => $contextDir . '/components/bearcmsVideoElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'url',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'filename',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ])
+                ->add('image', [
+                    'componentSrc' => 'bearcms-image-element',
+                    'componentFilename' => $contextDir . '/components/bearcmsImageElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'filename',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'title',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'onClick',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'url',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ])
+                ->add('imageGallery', [
+                    'componentSrc' => 'bearcms-image-gallery-element',
+                    'componentFilename' => $contextDir . '/components/bearcmsImageGalleryElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'type',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'columnsCount',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'imageSize',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'imageAspectRatio',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ])
+                ->add('navigation', [
+                    'componentSrc' => 'bearcms-navigation-element',
+                    'componentFilename' => $contextDir . '/components/bearcmsNavigationElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'type',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'pageID',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ])
+                ->add('html', [
+                    'componentSrc' => 'bearcms-html-element',
+                    'componentFilename' => $contextDir . '/components/bearcmsHtmlElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'code',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ])
+                ->add('blogPosts', [
+                    'componentSrc' => 'bearcms-blog-posts-element',
+                    'componentFilename' => $contextDir . '/components/bearcmsBlogPostsElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'type',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'showDate',
+                            'type' => 'checkbox'
+                        ],
+                        [
+                            'id' => 'limit',
+                            'type' => 'number'
+                        ]
+                    ]
+                ])
+                ->add('heading', [
+                    'componentSrc' => 'bearcms-heading-element',
+                    'componentFilename' => $contextDir . '/components/bearcmsHeadingElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'text',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ])
+                ->add('comments', [
+                    'componentSrc' => 'bearcms-comments-element',
+                    'componentFilename' => $contextDir . '/components/bearcmsCommentsElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'threadID',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'count',
+                            'type' => 'number'
+                        ]
+                    ],
+                    'onDelete' => function($data) use ($app) {
+                        if (isset($data['threadID'])) {
+                            $app->data->delete('bearcms/comments/thread/' . md5($data['threadID']) . '.json');
+                        }
+                    }
+                ])
+                ->add('contactForm', [
+                    'componentSrc' => 'bearcms-contact-form-element',
+                    'componentFilename' => $contextDir . '/components/bearcmsContactFormElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'email',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ])
+                ->add('forumPosts', [
+                    'componentSrc' => 'bearcms-forum-posts-element',
+                    'componentFilename' => $contextDir . '/components/bearcmsForumPostsElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'categoryID',
+                            'type' => 'textbox'
+                        ]
+                    ]
         ]);
     }
 
@@ -701,7 +702,8 @@ $app->hooks
                 $app->bearCMS->currentUser->getSessionKey(),
                 $app->bearCMS->currentUser->getPermissions(),
                 get_class_vars('\BearCMS\Internal\Options'),
-                $serverCookies
+                $serverCookies,
+                uniqid()//todo temp
             ]);
 
             $adminUIData = $app->cache->getValue($cacheKey);
