@@ -368,6 +368,7 @@ final class Server
                 $currentUserData = $responseMeta['currentUser'];
                 $app->data->set($app->data->make('.temp/bearcms/userkeys/' . md5($currentUserData['key']), $currentUserData['id']));
             }
+            $responseBody = null;
             if (isset($responseMeta['clientEvents'])) {
                 $responseBody = $response['body']; // Can be changed in a command
             }

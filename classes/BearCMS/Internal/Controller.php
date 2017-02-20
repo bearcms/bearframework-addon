@@ -57,9 +57,9 @@ final class Controller
     static function handleFileUpload(): \BearFramework\App\Response
     {
         $app = App::get();
-        $file = $app->request->files->get('Filedata');
-        if ($file !== null && strlen($file->filename) > 0 && $file->errorCode === UPLOAD_ERR_OK && is_file($file->tempFilename)) {
-            $originalFilename = strtolower($file->filename);
+        $file = $app->request->formData->get('Filedata');
+        if ($file !== null && strlen($file->value) > 0 && is_file($file->filename)) {
+            $originalFilename = strtolower($file->value);
             $pathinfo = pathinfo($originalFilename);
             $fileExtension = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
             $tempFilename = md5('fileupload' . uniqid()) . (isset($fileExtension{0}) ? '.' . $fileExtension : '');
@@ -70,7 +70,7 @@ final class Controller
                     mkdir($pathinfo['dirname'], 0777, true);
                 }
             }
-            move_uploaded_file($file['tempFilename'], $filename);
+            move_uploaded_file($file->filename, $filename);
             if (is_file($filename)) {
                 $queryList = $app->request->query->getList();
                 $temp = [];
