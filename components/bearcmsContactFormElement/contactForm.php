@@ -18,6 +18,10 @@ $form->constraints->setRequired('message');
 $form->constraints->setMinLength('message', 2);
 
 $form->onSubmit = function($values) use ($app, $component) {
+    sleep(14);
+    return [
+        'success' => 1
+    ];
     $data = [];
     $data['subject'] = 'Message in ' . $app->request->host;
     $data['body'] = 'Message from: ' . $values['email'] . "\n\n" . $values['message'];
@@ -53,7 +57,7 @@ $form->onSubmit = function($values) use ($app, $component) {
         </style>
     </head>
     <body><?php
-        echo '<form onsubmitdone="bearCMS.contactFormElement.onSubmitFormDone(event);">';
+        echo '<form onrequestsent="bearCMS.contactFormElement.onRequestSent(event);" onresponsereceived="bearCMS.contactFormElement.onResponseReceived(event);" onsubmitdone="bearCMS.contactFormElement.onSubmitDone(event);">';
         echo '<label for="email" class="bearcms-contact-form-element-email-label">Email</label>';
         echo '<input type="text" name="email" class="bearcms-contact-form-element-email"/>';
         echo '<label for="message" class="bearcms-contact-form-element-message-label">Message</label>';

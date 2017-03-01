@@ -9,17 +9,30 @@ var bearCMS = bearCMS || {};
 
 bearCMS.contactFormElement = (function () {
 
-    var onSubmitFormDone = function (event) {
+    var onRequestSent = function (event) {
+        var form = event.target;
+        form.childNodes[form.childNodes.length - 2].style.display = 'none';
+        form.childNodes[form.childNodes.length - 1].style.display = 'inline-block';
+    };
+    
+    var onResponseReceived = function (event) {
+        var form = event.target;
+        form.childNodes[form.childNodes.length - 2].style.display = 'inline-block';
+        form.childNodes[form.childNodes.length - 1].style.display = 'none';
+    };
+
+    var onSubmitDone = function (event) {
         var form = event.target;
         var result = event.result;
         if (typeof result.success !== 'undefined') {
             form.reset();
         }
-        updateCommentsList(result);
     };
 
     return {
-        'onSubmitFormDone': onSubmitFormDone
+        'onRequestSent': onRequestSent,
+        'onResponseReceived': onResponseReceived,
+        'onSubmitDone': onSubmitDone
     };
 
 }());
