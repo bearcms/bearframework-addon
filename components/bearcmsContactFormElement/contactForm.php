@@ -17,11 +17,23 @@ $form->constraints->setEmail('email');
 $form->constraints->setRequired('message');
 $form->constraints->setMinLength('message', 2);
 
-$form->onSubmit = function($values) use ($form, $component) {
-
-    $form->throwError('asdsad');
-
-    $email = $component->email;
+$form->onSubmit = function($values) use ($app, $component) {
+    $data = [];
+    $data['subject'] = 'Message in ' . $app->request->host;
+    $data['body'] = 'Message from: ' . $values['email'] . "\n\n" . $values['message'];
+    $data['recipient'] = $component->email;
+    $app->logger->log('mail', json_encode(['message' => $data]));
+    $defaultEmailSender = \BearCMS\Internal\Options::$defaultEmailSender;
+    if (!is_array($defaultEmailSender)) {
+        throw new \Exception('The defaultEmailSender option is empty.');
+    }
+    $email = $app->emails->make();
+    $email->sender->email = $defaultEmailSender['email'];
+    $email->sender->name = $defaultEmailSender['name'];
+    $email->subject = $data['subject'];
+    $email->content->add($data['body']);
+    $email->recipients->add($data['recipient']);
+    $app->emails->send($email);
 
     return [
         'success' => 1
@@ -30,30 +42,22 @@ $form->onSubmit = function($values) use ($form, $component) {
 ?><html>
     <head>
         <style>
-            .bearcms-contact-form-element-textarea{
+            .bearcms-contact-form-element-message{
                 display:block;
-                width:100%;
                 resize: none;
-                box-sizing: border-box;
-                height:100px;
-                padding:20px;
             }
             .bearcms-contact-form-element-send-button{
-                background-color:gray;
                 display:inline-block;
-                padding:10px;
-
-                margin-top: 15px;
                 cursor: pointer;
             }
         </style>
     </head>
     <body><?php
         echo '<form onsubmitdone="bearCMS.contactFormElement.onSubmitFormDone(event);">';
-        echo '<label for="email">Email</label>';
+        echo '<label for="email" class="bearcms-contact-form-element-email-label">Email</label>';
         echo '<input type="text" name="email" class="bearcms-contact-form-element-email"/>';
-        echo '<label for="message">Message</label>';
-        echo '<textarea name="message" class="bearcms-contact-form-element-textarea"></textarea>';
+        echo '<label for="message" class="bearcms-contact-form-element-message-label">Message</label>';
+        echo '<textarea name="message" class="bearcms-contact-form-element-message"></textarea>';
         echo '<span onclick="this.parentNode.submit();" href="javascript:void(0);" class="bearcms-contact-form-element-send-button">Send</span>';
         echo '<span style="display:none;" class="bearcms-contact-form-element-send-button bearcms-contact-form-element-send-button-waiting">Sending ...</span>';
         echo '</form>';

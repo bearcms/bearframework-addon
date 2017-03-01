@@ -11,11 +11,18 @@ use BearFramework\App;
 
 return function($data) {
     $app = App::get();
-    try {
-        $result = mail($data['recipient'], $data['subject'], $data['body']);
-    } catch (Exception $e) {
-        $result = false;
+    $app->logger->log('mail', json_encode(['message' => $data]));
+
+    $defaultEmailSender = \BearCMS\Internal\Options::$defaultEmailSender;
+    if (!is_array($defaultEmailSender)) {
+        throw new \Exception('The defaultEmailSender option is empty.');
     }
-    $app->logger->log('info', json_encode(['message' => $data, 'result' => (int) $result]));
-    return $result;
+    $email = $app->emails->make();
+    $email->sender->email = $defaultEmailSender['email'];
+    $email->sender->name = $defaultEmailSender['name'];
+    $email->subject = $data['subject'];
+    $email->content->add($data['body']);
+    $email->recipients->add($data['recipient']);
+    $app->emails->send($email);
+    return 1;
 };

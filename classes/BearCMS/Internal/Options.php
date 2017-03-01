@@ -27,6 +27,7 @@ final class Options
     static $adminPagesPathPrefix = '/admin/';
     static $blogPagesPathPrefix = '/b/';
     static $autoCreateHomePage = true;
+    static $defaultEmailSender = null;
 
     /**
      * 
@@ -91,6 +92,13 @@ final class Options
 
         if (isset($data['autoCreateHomePage'])) {
             self::$autoCreateHomePage = $data['autoCreateHomePage'];
+        }
+        if (isset($data['defaultEmailSender'])) {
+            if (is_array($data['defaultEmailSender']) && isset($data['defaultEmailSender']['email'], $data['defaultEmailSender']['name'])) {
+                self::$defaultEmailSender = $data['defaultEmailSender'];
+            } else {
+                throw new \Exception('defaultEmailSender option must be an array containg keys named \'email\' and \'name\' of the sender.');
+            }
         }
     }
 

@@ -9,7 +9,6 @@
 use \BearFramework\App;
 
 $email = strlen($component->email) > 0 ? $component->email : '';
-$email = 'test@test.com';
 
 $app = App::get();
 $context = $app->context->get(__FILE__);

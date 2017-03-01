@@ -194,7 +194,30 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                             'id' => 'imageAspectRatio',
                             'type' => 'textbox'
                         ]
-                    ]
+                    ],
+                    'updateComponentFromData' => function($component, $data) {
+                        if (isset($data['files']) && is_array($data['files'])) {
+                            $innerHTML = '';
+                            foreach ($data['files'] as $file) {
+                                if (isset($file['filename'])) {
+                                    $innerHTML .= '<file filename="' . htmlentities($file['filename']) . '"/>';
+                                }
+                            }
+                            $component->innerHTML = $innerHTML;
+                        }
+                        return $component;
+                    },
+                    'updateDataFromComponent' => function($component, $data) {
+                        $domDocument = new IvoPetkov\HTML5DOMDocument();
+                        $domDocument->loadHTML($component->innerHTML);
+                        $files = [];
+                        $filesElements = $domDocument->querySelectorAll('file');
+                        foreach ($filesElements as $fileElement) {
+                            $files[] = ['filename' => $fileElement->getAttribute('filename')];
+                        }
+                        $data['files'] = $files;
+                        return $data;
+                    }
                 ])
                 ->add('navigation', [
                     'componentSrc' => 'bearcms-navigation-element',

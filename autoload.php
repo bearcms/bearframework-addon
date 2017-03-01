@@ -15,6 +15,7 @@ BearFramework\Addons::register('bearcms/bearframework-addon', __DIR__, [
         'ivopetkov/navigation-menu-bearframework-addon',
         'ivopetkov/form-bearframework-addon',
         'ivopetkov/users-bearframework-addon',
-        'ivopetkov/server-requests-bearframework-addon'
+        'ivopetkov/server-requests-bearframework-addon',
+        'bearframework/emails-addon'
     ]
 ]);
