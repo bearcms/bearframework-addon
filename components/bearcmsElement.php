@@ -35,16 +35,18 @@ if ($rawData !== null) {
             }
         }
     }
+    if (isset($options['updateComponentFromData'])) {
+        $component = call_user_func($options['updateComponentFromData'], clone($component), $data);
+    }
+
     unset($rawData);
     unset($data);
     unset($options);
 } else {
     if (strlen($component->id) > 0 && $component->editable === 'true') {
-
         $getRawDataFromComponent = function($component) {
             $options = ElementsHelper::$elementsTypesOptions[$component->src];
             $data = [];
-
             if (isset($options['fields'])) {
                 foreach ($options['fields'] as $field) {
                     $fieldID = $field['id'];
@@ -58,8 +60,10 @@ if ($rawData !== null) {
                     }
                 }
             }
-
-            return json_encode(['id' => $component->id, 'type' => $type, 'data' => $data]);
+            if (isset($options['updateDataFromComponent'])) {
+                $data = call_user_func($options['updateDataFromComponent'], clone($component), $data);
+            }
+            return json_encode(['id' => $component->id, 'type' => ElementsHelper::$elementsTypesCodes[$component->src], 'data' => $data]);
         };
         if ($editable) {
             $componentContextData['rawData'] = $getRawDataFromComponent($component);
