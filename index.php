@@ -261,16 +261,6 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                         ]
                     ]
                 ])
-                ->add('heading', [
-                    'componentSrc' => 'bearcms-heading-element',
-                    'componentFilename' => $contextDir . '/components/bearcmsHeadingElement.php',
-                    'fields' => [
-                        [
-                            'id' => 'text',
-                            'type' => 'textbox'
-                        ]
-                    ]
-                ])
                 ->add('comments', [
                     'componentSrc' => 'bearcms-comments-element',
                     'componentFilename' => $contextDir . '/components/bearcmsCommentsElement.php',
@@ -446,16 +436,16 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                     [$app->bearCMS, 'disabledCheck'],
                     function() use ($app) {
                         $slug = (string) $app->request->path->getSegment(1);
-                        $slugsList = InternalData\Blog::getSlugsList('published');
+                        $slugsList = InternalData\BlogPosts::getSlugsList('published');
                         $blogPostID = array_search($slug, $slugsList);
                         if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) && $app->bearCMS->currentUser->exists()) {
-                            $blogPost = $app->bearCMS->data->blogPosts->getPost(substr($slug, 6));
+                            $blogPost = $app->bearCMS->data->blogPosts->get(substr($slug, 6));
                             if ($blogPost !== null) {
                                 $blogPostID = $blogPost['id'];
                             }
                         }
                         if ($blogPostID !== false) {
-                            $blogPost = $app->bearCMS->data->blogPosts->getPost($blogPostID);
+                            $blogPost = $app->bearCMS->data->blogPosts->get($blogPostID);
                             if ($blogPost !== null) {
                                 $content = '<html><head>';
                                 $title = isset($page->titleTagContent) ? trim($page->titleTagContent) : '';
@@ -473,6 +463,7 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                                 $content .= '<div class="bearcms-blogpost-page-content"><component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/></div>';
                                 $content .= '</body></html>';
                                 $response = new App\Response\HTML($content);
+                                $response->bearCMSBlogPostID = $blogPostID;
                                 $app->bearCMS->enableUI($response);
                                 $app->bearCMS->applyTheme($response);
                                 return $response;
@@ -544,6 +535,7 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                             $content .= '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
                             $content .= '</body></html>';
                             $response = new App\Response\HTML($content);
+                            $response->bearCMSPageID = $pageID;
                             $app->bearCMS->enableUI($response);
                             $app->bearCMS->applyTheme($response);
                             return $response;
