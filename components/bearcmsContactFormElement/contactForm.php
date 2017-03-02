@@ -18,10 +18,6 @@ $form->constraints->setRequired('message');
 $form->constraints->setMinLength('message', 2);
 
 $form->onSubmit = function($values) use ($app, $component) {
-    sleep(14);
-    return [
-        'success' => 1
-    ];
     $data = [];
     $data['subject'] = 'Message in ' . $app->request->host;
     $data['body'] = 'Message from: ' . $values['email'] . "\n\n" . $values['message'];
@@ -47,11 +43,11 @@ $form->onSubmit = function($values) use ($app, $component) {
     <head>
         <style>
             .bearcms-contact-form-element-message{
-                display:block;
+                display: block;
                 resize: none;
             }
             .bearcms-contact-form-element-send-button{
-                display:inline-block;
+                display: inline-block;
                 cursor: pointer;
             }
         </style>

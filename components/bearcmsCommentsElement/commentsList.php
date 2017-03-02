@@ -64,7 +64,7 @@ if ($thread !== null) {
         echo '<div class="bearcms-comments-comment">';
         echo '<' . $tagName . ' class="bearcms-comments-comment-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></' . $tagName . '>';
         echo '<' . $tagName . ' class="bearcms-comments-comment-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</' . $tagName . '> <span class="bearcms-comments-comment-date">' . Localization::getTimeAgo($comment->createdTime) . $statusText . '</span>';
-        echo '<div class="bearcms-comments-comment-content">' . htmlspecialchars($comment->text) . '</div>';
+        echo '<div class="bearcms-comments-comment-content">' . nl2br(htmlspecialchars($comment->text)) . '</div>';
         echo '</div>';
     }
 }

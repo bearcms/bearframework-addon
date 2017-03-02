@@ -55,10 +55,34 @@ bearCMS.commentsElement = (function () {
         updateCommentsList(result);
     };
 
+    var onFormRequestSent = function (event) {
+        var form = event.target;
+        form.querySelector('.bearcms-comments-element-send-button').style.display = 'none';
+        form.querySelector('.bearcms-comments-element-send-button-waiting').style.display = 'inline-block';
+        form.querySelector('.bearcms-comments-element-textarea').setAttribute('readonly', 'readonly');
+    };
+
+    var onFormResponseReceived = function (event) {
+        var form = event.target;
+        form.querySelector('.bearcms-comments-element-send-button').style.display = 'inline-block';
+        form.querySelector('.bearcms-comments-element-send-button-waiting').style.display = 'none';
+        form.querySelector('.bearcms-comments-element-textarea').removeAttribute('readonly');
+    };
+
+    var onFocusTextarea = function (event) {
+        var form = event.target.parentNode;
+        if (form.querySelector('.bearcms-comments-element-send-button-waiting').style.display === 'none') {
+            form.querySelector('.bearcms-comments-element-send-button').style.display = 'inline-block';
+        }
+    };
+
     return {
         'loadMore': loadMore,
         'onBeforeSubmitForm': onBeforeSubmitForm,
-        'onSubmitFormDone': onSubmitFormDone
+        'onSubmitFormDone': onSubmitFormDone,
+        'onFormRequestSent': onFormRequestSent,
+        'onFormResponseReceived': onFormResponseReceived,
+        'onFocusTextarea': onFocusTextarea,
     };
 
 }());
