@@ -28,7 +28,7 @@ if ($rawData !== null) {
             $fieldType = $field['type'];
             if ($fieldType === 'number') {
                 $component->$fieldID = isset($data[$fieldID]) ? (string) $data[$fieldID] : '';
-            } elseif ($fieldType === 'boolean') {//todo
+            } elseif ($fieldType === 'checkbox') {
                 $component->$fieldID = isset($data[$fieldID]) ? ($data[$fieldID] ? 'true' : 'false') : '';
             } else {
                 $component->$fieldID = isset($data[$fieldID]) ? (string) $data[$fieldID] : '';
@@ -53,7 +53,7 @@ if ($rawData !== null) {
                     $fieldType = $field['type'];
                     if ($fieldType === 'number') {
                         $data[$fieldID] = (int) $component->$fieldID;
-                    } elseif ($fieldType === 'boolean') {//todo
+                    } elseif ($fieldType === 'checkbox') {
                         $data[$fieldID] = $component->$fieldID === 'true';
                     } else {
                         $data[$fieldID] = (string) $component->$fieldID;
