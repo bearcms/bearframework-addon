@@ -178,7 +178,7 @@ final class Controller
             $addUrl($path);
         }
 
-        $list = \BearCMS\Internal\Data\Blog::getSlugsList('published');
+        $list = \BearCMS\Internal\Data\BlogPosts::getSlugsList('published');
         foreach ($list as $slug) {
             $addUrl(Options::$blogPagesPathPrefix . $slug . '/');
         }

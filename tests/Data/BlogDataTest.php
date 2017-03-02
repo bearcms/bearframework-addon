@@ -90,7 +90,7 @@ class BlogDataTest extends BearFrameworkAddonTestCase
         $this->assertTrue($list[0]->id === 'cd763a6f1574e1d326c511a2fda878d1');
         $this->assertTrue($list[1]->id === 'cd763a6f1574e1d326c511a2fda878d3');
 
-        $blogPost = $app->bearCMS->data->blogPosts->getPost('cd763a6f1574e1d326c511a2fda878d4');
+        $blogPost = $app->bearCMS->data->blogPosts->get('cd763a6f1574e1d326c511a2fda878d4');
         $this->assertTrue($blogPost->id === 'cd763a6f1574e1d326c511a2fda878d4');
     }
 
