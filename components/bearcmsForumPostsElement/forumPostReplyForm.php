@@ -30,7 +30,7 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         'provider' => $app->currentUser->provider,
         'id' => $app->currentUser->id
     ];
-    
+
     $data = new ArrayObject();
     $data->author = $author;
     $data->text = $values['fprtext'];
@@ -38,7 +38,7 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
     $data->cancelMessage = '';
     $data->status = 'approved';
     $app->hooks->execute('bearCMSForumPostReplyAdd', $data);
-    if($data->cancel){
+    if ($data->cancel) {
         $this->throwError($data->cancelMessage);
     }
     \BearCMS\Internal\Data\ForumPostsReplies::add($forumPostID, $author, $values['fprtext'], $data->status);
@@ -85,9 +85,14 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         </style>
     </head>
     <body><?php
-        echo '<form onbeforesubmit="bearCMS.forumPostReplyForm.onBeforeSubmitForm(event);" onsubmitdone="bearCMS.forumPostReplyForm.onSubmitFormDone(event);">';
+        echo '<form'
+        . ' onbeforesubmit="bearCMS.forumPostReplyForm.onBeforeSubmitForm(event);"'
+        . ' onsubmitdone="bearCMS.forumPostReplyForm.onSubmitFormDone(event);"'
+        . ' onrequestsent="bearCMS.forumPostReplyForm.onFormRequestSent(event);"'
+        . ' onresponsereceived="bearCMS.forumPostReplyForm.onFormResponseReceived(event);"'
+        . '>';
         echo '<input type="hidden" name="fprcontext"/>';
-        echo '<textarea name="fprtext" class="bearcms-forum-post-reply-form-textarea" onfocus="this.nextSibling.style.display=\'inline-block\';"></textarea>';
+        echo '<textarea name="fprtext" class="bearcms-forum-post-reply-form-textarea" onfocus="bearCMS.forumPostReplyForm.onFocusTextarea(event);"></textarea>';
         echo '<span onclick="this.parentNode.submit();" href="javascript:void(0);" class="bearcms-forum-post-reply-form-send-button">Send</span>';
         echo '<span style="display:none;" class="bearcms-forum-post-reply-form-send-button bearcms-forum-post-reply-form-send-button-waiting">Sending ...</span>';
         echo '</form>';

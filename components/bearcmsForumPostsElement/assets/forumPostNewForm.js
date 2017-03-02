@@ -39,9 +39,26 @@ bearCMS.forumPostNewForm = (function () {
         //updateCommentsList(result);
     };
 
+    var onFormRequestSent = function (event) {
+        var form = event.target;
+        form.querySelector('.bearcms-forum-post-form-element-send-button').style.display = 'none';
+        form.querySelector('.bearcms-forum-post-form-element-send-button-waiting').style.display = 'inline-block';
+        form.querySelector('.bearcms-forum-post-form-element-textarea').setAttribute('readonly', 'readonly');
+    };
+
+    var onFormResponseReceived = function (event) {
+        var form = event.target;
+        form.querySelector('.bearcms-forum-post-form-element-send-button').style.display = 'inline-block';
+        form.querySelector('.bearcms-forum-post-form-element-send-button-waiting').style.display = 'none';
+        form.querySelector('.bearcms-forum-post-form-element-textarea').removeAttribute('readonly');
+    };
+
+
     return {
         'onBeforeSubmitForm': onBeforeSubmitForm,
-        'onSubmitFormDone': onSubmitFormDone
+        'onSubmitFormDone': onSubmitFormDone,
+        'onFormRequestSent': onFormRequestSent,
+        'onFormResponseReceived': onFormResponseReceived
     };
 
 }());

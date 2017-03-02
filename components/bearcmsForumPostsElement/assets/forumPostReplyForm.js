@@ -39,9 +39,34 @@ bearCMS.forumPostReplyForm = (function () {
         updateRepliesList(result);
     };
 
-    return {
-        'onBeforeSubmitForm': onBeforeSubmitForm,
-        'onSubmitFormDone': onSubmitFormDone
+
+    var onFormRequestSent = function (event) {
+        var form = event.target;
+        form.querySelector('.bearcms-forum-post-reply-form-send-button').style.display = 'none';
+        form.querySelector('.bearcms-forum-post-reply-form-send-button-waiting').style.display = 'inline-block';
+        form.querySelector('.bearcms-forum-post-reply-form-textarea').setAttribute('readonly', 'readonly');
     };
 
+    var onFormResponseReceived = function (event) {
+        var form = event.target;
+        form.querySelector('.bearcms-forum-post-reply-form-send-button').style.display = 'inline-block';
+        form.querySelector('.bearcms-forum-post-reply-form-send-button-waiting').style.display = 'none';
+        form.querySelector('.bearcms-forum-post-reply-form-textarea').removeAttribute('readonly');
+    };
+
+    var onFocusTextarea = function (event) {
+        var form = event.target.parentNode;
+        if (form.querySelector('.bearcms-forum-post-reply-form-send-button-waiting').style.display === 'none') {
+            form.querySelector('.bearcms-forum-post-reply-form-send-button').style.display = 'inline-block';
+        }
+    };
+
+    return {
+        'onBeforeSubmitForm': onBeforeSubmitForm,
+        'onSubmitFormDone': onSubmitFormDone,
+        'onFormRequestSent': onFormRequestSent,
+        'onFormResponseReceived': onFormResponseReceived,
+        'onFocusTextarea': onFocusTextarea,
+    }
+    ;
 }());

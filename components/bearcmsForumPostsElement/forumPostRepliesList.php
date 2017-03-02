@@ -53,7 +53,7 @@ $elementID = 'frl' . md5($forumPostID);
                 echo '<div class="bearcms-forum-post-reply">';
                 echo '<' . $tagName . ' class="bearcms-forum-post-reply-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></' . $tagName . '>';
                 echo '<' . $tagName . ' class="bearcms-forum-post-reply-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</' . $tagName . '> <span class="bearcms-forum-post-reply-date">' . Localization::getTimeAgo($reply->createdTime) . $statusText . '</span>';
-                echo '<div class="bearcms-forum-post-reply-content">' . htmlspecialchars($reply->text) . '</div>';
+                echo '<div class="bearcms-forum-post-reply-content">' . nl2br(htmlspecialchars($reply->text)) . '</div>';
                 echo '</div>';
             }
         }

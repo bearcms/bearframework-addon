@@ -36,7 +36,7 @@ $form->onSubmit = function($values) use ($component, $app) {
     $data->cancelMessage = '';
     $data->status = 'approved';
     $app->hooks->execute('bearCMSForumPostAdd', $data);
-    if($data->cancel){
+    if ($data->cancel) {
         $this->throwError($data->cancelMessage);
     }
     $forumPostID = \BearCMS\Internal\Data\ForumPosts::add($categoryID, $author, $values['fptitle'], $values['fptext'], $data->status);
@@ -69,7 +69,12 @@ $form->onSubmit = function($values) use ($component, $app) {
         </style>
     </head>
     <body><?php
-        echo '<form onbeforesubmit="bearCMS.forumPostNewForm.onBeforeSubmitForm(event);" onsubmitdone="bearCMS.forumPostNewForm.onSubmitFormDone(event);">';
+        echo '<form'
+        . ' onbeforesubmit="bearCMS.forumPostNewForm.onBeforeSubmitForm(event);"'
+        . ' onsubmitdone="bearCMS.forumPostNewForm.onSubmitFormDone(event);"'
+        . ' onrequestsent="bearCMS.forumPostNewForm.onFormRequestSent(event);"'
+        . ' onresponsereceived="bearCMS.forumPostNewForm.onFormResponseReceived(event);"'
+        . '>';
         echo '<label for="fptitle">Title</label>';
         echo '<input type="text" name="fptitle" class="bearcms-forum-post-form-element-title"/><br/>';
         echo '<label for="fptext">Content</label>';
