@@ -127,7 +127,6 @@ $content = '';
 if (isset($itemsHtml{0})) {
     $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';
 }
-
 ?><html>
     <body><?= $content ?></body>
 </html>

@@ -29,7 +29,7 @@ final class Cookies
      * @return array
      * @throws \Exception
      */
-    static function getList(int $type): array
+    static function getList(int $type, $b = 3): array
     {
         $app = App::get();
         if ($type !== self::TYPE_SERVER && $type !== self::TYPE_CLIENT) {
@@ -53,7 +53,7 @@ final class Cookies
         foreach (self::$pendingUpdate as $cookieData) {
             $cookieTypePrefix = substr($cookieData['name'], 0, $cookiePrefixLength + 2);
             $key = substr($cookieData['name'], $cookiePrefixLength + 2);
-            if ($cookieData['expire'] > time()) {
+            if (strlen($cookieData['expire']) === 0 || $cookieData['expire'] > time()) {
                 if (($type === self::TYPE_SERVER && $cookieTypePrefix === $cookiePrefix . 's_') || ($type === self::TYPE_CLIENT && $cookieTypePrefix === $cookiePrefix . 'c_' )) {
                     $result[$key] = $cookieData['value'];
                 }
@@ -93,7 +93,7 @@ final class Cookies
             foreach (self::$pendingUpdate as $cookieData) {
                 $deleted = $cookieData['value'] === 'deleted' || $cookieData['expire'] === 0;
                 $cookie = $response->cookies->make($cookieData['name'], $deleted ? '' : $cookieData['value']);
-                $cookie->expire = $deleted ? 0 : (int)$cookieData['expire'];
+                $cookie->expire = $deleted ? 0 : (int) $cookieData['expire'];
                 $cookie->httpOnly = isset($cookieData['httponly']) ? $cookieData['httponly'] : true;
                 $response->cookies->set($cookie);
             }
@@ -112,6 +112,7 @@ final class Cookies
         $app = App::get();
         $result = [];
         $requestUrlParts = parse_url($app->request->base);
+        $serverUrlParts = parse_url(\BearCMS\Internal\Options::$serverUrl);
         $cookieMatches = [];
         preg_match_all('/Set-Cookie:(.*)/u', $headers, $cookieMatches);
         foreach ($cookieMatches[1] as $cookieMatch) {
@@ -126,6 +127,9 @@ final class Cookies
                     $cookieData['value'] = $partValue;
                 }
                 if ($partName == 'path') {
+                    if (isset($serverUrlParts['path']) && strlen($serverUrlParts['path']) > 0 && $partValue === $serverUrlParts['path']) {
+                        $partValue = '/';
+                    }
                     if (isset($requestUrlParts['path']) && strlen(trim($requestUrlParts['path'], '/')) > 0) {
                         $cookieData['path'] = '/' . trim($requestUrlParts['path'], '/') . '/' . (strlen(trim($partValue, '/')) > 0 ? trim($partValue, '/') . '/' : '');
                     } else {
@@ -141,8 +145,8 @@ final class Cookies
                 if ($partName == 'secure') {
                     $cookieData['secure'] = $app->request->scheme === 'https';
                 }
-                if (isset($requestUrlParts['host'])) {
-                    if ($partValue === trim(\BearCMS\Internal\Options::$serverUrl, 'htps:/')) { // todo trqbva da se vrusta bez tochkata // '.' . 
+                if ($partName == 'domain' && isset($requestUrlParts['host'], $serverUrlParts['host'])) {
+                    if ($partValue === $serverUrlParts['host']) {
                         $cookieData['domain'] = $requestUrlParts['host'];
                     }
                 }

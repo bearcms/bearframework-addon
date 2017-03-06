@@ -22,7 +22,7 @@ if (strlen($threadID) > 0) {
     $content .= '<component src="file:' . $context->dir . '/components/bearcmsCommentsElement/commentsList.php" count="' . htmlentities($count) . '" threadID="' . htmlentities($threadID) . '" />';
     $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsCommentsElement/commentsForm.php" count="' . htmlentities($count) . '" threadID="' . htmlentities($threadID) . '" />';
     $content .= '<script src="' . htmlentities($context->assets->getUrl('components/bearcmsCommentsElement/assets/commentsElement.js', ['cacheMaxAge' => 999999, 'version' => 1, 'robotsNoIndex' => true])) . '"></script>';
-    $content .= '<script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js')) . '"></script>';
+    $content .= '<script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.js')) . '"></script>';
 }
 ?><html>
     <head>

@@ -690,7 +690,7 @@ $app->hooks
             $domDocument->loadHTML($componentContent);
             $domDocument->insertHTML($response->content);
             $response->content = $app->components->process($domDocument->saveHTML());
-
+            
             if (!$currentUserExists) {
                 return;
             }
@@ -765,7 +765,7 @@ $app->hooks
                 if ($contentToInsert !== null) {
                     $domDocument->insertHTML($contentToInsert);
                 }
-                $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js')) . '"></script></body></html>');
+                $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.js')) . '"></script></body></html>');
                 $content = $domDocument->saveHTML();
 
                 $content = Server::updateAssetsUrls($content, false);
