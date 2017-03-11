@@ -11,6 +11,7 @@ use BearCMS\Internal\ElementsHelper;
 use BearCMS\Internal\Options;
 
 $app = App::get();
+$context = $app->context->get(__FILE__);
 
 $list = $app->bearCMS->data->blogPosts->getList()
         ->filterBy('status', 'published')
@@ -114,20 +115,30 @@ if (empty($list)) {
             }
             $content .= '</div>';
         }
-        //}
-//    if (isset($postContent{0})) {
-//        $content .= '<div class="bearcms-blog-posts-element-post-more-link-container">';
-//        $content .= '<a title="' . htmlentities($title) . '" class="bearcms-blog-posts-element-post-more-link" href="' . htmlentities($url) . '">read more</a>';
-//        $content .= '</div>';
-//    }
+
         $content .= '</div>';
         if ($counter >= $limit) {
             break;
         }
     }
+    if ($list->length > $limit) {
+        $content .= '<div class="bearcms-blog-posts-element-posts-more-link-container">';
+        $component->limit = (string) ($limit + 10);
+        $loadMoreData = [
+            'serverData' => \BearCMS\Internal\TempClientData::set(['componentHTML' => (string) $component])
+        ];
+        $onClick = 'bearCMS.blogPostsElement.loadMore(event,' . json_encode($loadMoreData) . ');';
+        $content .= '<a class="bearcms-blog-posts-element-posts-more-link" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">Show more</a>';
+        $content .= '</div>';
+    }
     $content .= '</div>';
 }
-
 ?><html>
+    <head><?php
+        if ($list->length > $limit) {
+            echo '<script src="' . htmlentities($context->assets->getUrl('components/bearcmsBlogPostsElement/assets/blogPostsElement.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script>';
+            echo '<script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script>';
+        }
+        ?></head>
     <body><?= $content ?></body>
 </html>

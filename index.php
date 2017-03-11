@@ -67,6 +67,7 @@ $context->classes
 
 $context->assets
         ->addDir('assets')
+        ->addDir('components/bearcmsBlogPostsElement/assets')
         ->addDir('components/bearcmsCommentsElement/assets')
         ->addDir('components/bearcmsContactFormElement/assets')
         ->addDir('components/bearcmsForumPostsElement/assets');
@@ -477,6 +478,17 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                         return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
                     }
         ]);
+        $app->serverRequests->add('bearcms-blogposts-load-more', function($data) use ($app, $context) {
+            if (isset($data['serverData'], $data['serverData'])) {
+                $serverData = \BearCMS\Internal\TempClientData::get($data['serverData']);
+                if (is_array($serverData) && isset($serverData['componentHTML'])) {
+                    $content = $app->components->process($serverData['componentHTML']);
+                    return json_encode([
+                        'content' => $content
+                    ]);
+                }
+            }
+        });
     }
 
     // Register a home page and the dynamic pages handler
@@ -681,7 +693,7 @@ $app->hooks
             if ($response instanceof \BearFramework\App\Response\HTML) { // is not temporary disabled
                 $externalLinksAreEnabled = !empty($settings['externalLinks']);
                 if ($externalLinksAreEnabled || $currentUserExists) {
-                    $componentContent .= '<script src="' . htmlentities($context->assets->getUrl('assets/externalLinks.min.js')) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
+                    $componentContent .= '<script src="' . htmlentities($context->assets->getUrl('assets/externalLinks.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
                 }
             }
             $componentContent .= '</body></html>';
@@ -690,7 +702,7 @@ $app->hooks
             $domDocument->loadHTML($componentContent);
             $domDocument->insertHTML($response->content);
             $response->content = $app->components->process($domDocument->saveHTML());
-            
+
             if (!$currentUserExists) {
                 return;
             }
@@ -717,8 +729,7 @@ $app->hooks
                 $app->bearCMS->currentUser->getSessionKey(),
                 $app->bearCMS->currentUser->getPermissions(),
                 get_class_vars('\BearCMS\Internal\Options'),
-                $serverCookies,
-                uniqid()//todo temp
+                $serverCookies
             ]);
 
             $adminUIData = $app->cache->getValue($cacheKey);
@@ -765,7 +776,7 @@ $app->hooks
                 if ($contentToInsert !== null) {
                     $domDocument->insertHTML($contentToInsert);
                 }
-                $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.js')) . '"></script></body></html>');
+                $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script></body></html>');
                 $content = $domDocument->saveHTML();
 
                 $content = Server::updateAssetsUrls($content, false);

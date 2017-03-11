@@ -15,7 +15,7 @@ $context = $app->context->get(__FILE__);
 
 $content = '';
 $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsContactFormElement/contactForm.php" email="' . htmlentities($email) . '" />';
-$content .= '<script src="' . htmlentities($context->assets->getUrl('components/bearcmsContactFormElement/assets/contactFormElement.js')) . '"></script>';
+$content .= '<script src="' . htmlentities($context->assets->getUrl('components/bearcmsContactFormElement/assets/contactFormElement.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script>';
 
 ?><html>
     <body><?= $content ?></body>

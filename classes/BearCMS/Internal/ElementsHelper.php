@@ -286,7 +286,7 @@ final class ElementsHelper
 
             $content = '<html>'
                     . '<head>'
-                    . '<script src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.min.js')) . '"></script>'
+                    . '<script src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script>'
                     . '<style>' . $styles . '</style>'
                     . '</head>'
                     . '<body>'

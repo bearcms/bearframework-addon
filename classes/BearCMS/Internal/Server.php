@@ -70,99 +70,6 @@ final class Server
                 strpos($responseHeader, 'X-App-Sr: wpr') > 0;
     }
 
-    static function getAssetsUrl(array $urls): string
-    {
-        $app = App::get();
-        sort($urls);
-        $resultKey = '.temp/bearcms/assets/' . md5(serialize($urls)) . '.js';
-        $result = $app->data->getValue($resultKey);
-        if ($result === null) {
-            $filesToDownload = [];
-            foreach ($urls as $url) {
-                $key = '.temp/bearcms/assets/' . md5(serialize([$url])) . '.js';
-                $result = $app->data->getValue($key);
-                if ($result === null) {
-                    $filesToDownload[$key] = $url;
-                }
-            }
-            if (!empty($filesToDownload)) {
-
-                $downloadFiles = function($urls) use ($app) {
-                    $urls = array_values($urls);
-                    $mh = curl_multi_init();
-
-                    $serverUrlData = parse_url(\BearCMS\Internal\Options::$serverUrl);
-                    $serverUrlScheme = isset($serverUrlData['scheme']) ? $serverUrlData['scheme'] : 'http';
-
-                    foreach ($urls as $i => $url) {
-                        $calls[$i] = curl_init();
-                        curl_setopt($calls[$i], CURLOPT_URL, strpos($url, '//') === 0 ? $serverUrlScheme . ':' . $url : $url);
-                        curl_setopt($calls[$i], CURLOPT_RETURNTRANSFER, 1);
-                        curl_multi_add_handle($mh, $calls[$i]);
-                    }
-
-                    $active = null;
-                    do {
-                        $mrc = curl_multi_exec($mh, $active);
-                    } while ($mrc == CURLM_CALL_MULTI_PERFORM);
-
-                    while ($active && $mrc == CURLM_OK) {
-                        $selectResult = curl_multi_select($mh);
-                        if ($selectResult === -1) {
-                            usleep(50);
-                        }
-                        do {
-                            $mrc = curl_multi_exec($mh, $active);
-                        } while ($mrc == CURLM_CALL_MULTI_PERFORM);
-                    }
-
-                    $result = [];
-                    foreach ($calls as $i => $resource) {
-                        $result[$urls[$i]] = curl_multi_getcontent($resource);
-                        if (strlen($app->config->logsDir) > 0) {
-                            $log = 'Bear CMS asset download:' . "\n";
-                            $log .= 'Url: ' . $urls[$i] . "\n";
-                            $log .= 'Time: ' . curl_getinfo($resource, CURLINFO_TOTAL_TIME) . ' / dns: ' . curl_getinfo($resource, CURLINFO_NAMELOOKUP_TIME) . ', connect: ' . curl_getinfo($resource, CURLINFO_CONNECT_TIME) . ', download: ' . curl_getinfo($resource, CURLINFO_STARTTRANSFER_TIME) . "\n\n";
-                            $app->logger->log('info', $log);
-                        }
-                        curl_multi_remove_handle($mh, $resource);
-                    }
-                    curl_multi_close($mh);
-                    return $result;
-                };
-
-                $filesDownloadResult = $downloadFiles($filesToDownload);
-                $downloadErrorUrls = [];
-                foreach ($filesToDownload as $key => $url) {
-                    if (strlen($filesDownloadResult[$url]) === 0) {
-                        $downloadErrorUrls[] = $url;
-                    } else {
-                        $app->data->set($app->data->make($key, $filesDownloadResult[$url]));
-                        $app->data->makePublic($key);
-                    }
-                }
-                if (!empty($downloadErrorUrls)) {
-                    throw new \Exception('Cannot download ' . implode(',', $downloadErrorUrls));
-                }
-            }
-
-            if (sizeof($urls) > 1) {
-                $bundleContent = '';
-                foreach ($urls as $url) {
-                    $key = '.temp/bearcms/assets/' . md5(serialize([$url])) . '.js';
-                    $result = $app->data->getValue($key);
-                    if ($result === null) {
-                        throw new \Exception('Cannot read the temp file for ' . $url);
-                    }
-                    $bundleContent .= $result['body'];
-                }
-                $app->data->set($app->data->make($resultKey, $bundleContent));
-                $app->data->makePublic($resultKey);
-            }
-        }
-        return $app->assets->getUrl($app->data->getFilename($resultKey));
-    }
-
     static function updateAssetsUrls($content, bool $ajaxMode)
     {
         $serverUrl = \BearCMS\Internal\Options::$serverUrl;
@@ -172,7 +79,7 @@ final class Server
             if (strpos($url, '?') !== false) {
                 $url = explode('?', $url)[0];
             }
-            return $app->assets->getUrl($context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 's' . DIRECTORY_SEPARATOR . str_replace($serverUrl, '', $url));
+            return $app->assets->getUrl($context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 's' . DIRECTORY_SEPARATOR . str_replace($serverUrl, '', $url), ['cacheMaxAge' => 999999, 'version' => 1]);
         };
 
         if ($ajaxMode) {
