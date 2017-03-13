@@ -41,7 +41,7 @@ if ($thread !== null) {
             'serverData' => \BearCMS\Internal\TempClientData::set(['threadID' => $threadID])
         ];
         $onClick = 'bearCMS.commentsElement.loadMore(event,' . json_encode($loadMoreData) . ');';
-        echo '<a class="bearcms-comments-more-link" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">Show more</a>';
+        echo '<a class="bearcms-comments-more-link" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">' . __('bearcms.comments.Show more') . '</a>';
         echo '</div>';
     }
 
@@ -49,7 +49,7 @@ if ($thread !== null) {
     foreach ($result as $comment) {
         $statusText = '';
         if ($comment->status === 'pendingApproval') {
-            $statusText = ', pending approval';
+            $statusText = ', ' . __('bearcms.comments.pending approval');
         }
         $profile = PublicProfile::getFromAuthor($comment->author);
         $linkAttributes = '';

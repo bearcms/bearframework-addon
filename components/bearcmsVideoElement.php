@@ -15,7 +15,7 @@ if (strlen($component->url) > 0) {
     $aspectRatio = 0.75;
     $cacheKey = 'bearcms-video-element-data-' . $component->url;
     $cachedData = $app->cache->getValue($cacheKey);
-    if ($cachedData === false) {
+    if ($cachedData === null) {
         try {
             $embed = new IvoPetkov\VideoEmbed($component->url);
             $aspectRatio = $embed->width / $embed->height;

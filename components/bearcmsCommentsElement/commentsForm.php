@@ -11,7 +11,7 @@ use \BearFramework\App;
 $app = App::get();
 $context = $app->context->get(__FILE__);
 
-$form->constraints->setRequired('cfcomment', 'Your comment cannot be empty!');
+$form->constraints->setRequired('cfcomment', __('bearcms.comments.Your comment cannot be empty!'));
 
 $form->onSubmit = function($values) use ($component, $app, $context) {
     $contextData = json_decode($values['cfcontext'], true);
@@ -74,9 +74,9 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         . ' onresponsereceived="bearCMS.commentsElement.onFormResponseReceived(event);"'
         . '>';
         echo '<input type="hidden" name="cfcontext"/>';
-        echo '<textarea placeholder="Your comment" name="cfcomment" class="bearcms-comments-element-textarea" onfocus="bearCMS.commentsElement.onFocusTextarea(event);"></textarea>';
-        echo '<span onclick="this.parentNode.submit();" href="javascript:void(0);" class="bearcms-comments-element-send-button">Send</span>';
-        echo '<span style="display:none;" class="bearcms-comments-element-send-button bearcms-comments-element-send-button-waiting">Sending ...</span>';
+        echo '<textarea placeholder="' . __('bearcms.comments.Your comment') . '" name="cfcomment" class="bearcms-comments-element-textarea" onfocus="bearCMS.commentsElement.onFocusTextarea(event);"></textarea>';
+        echo '<span onclick="this.parentNode.submit();" href="javascript:void(0);" class="bearcms-comments-element-send-button">' . __('bearcms.comments.Send') . '</span>';
+        echo '<span style="display:none;" class="bearcms-comments-element-send-button bearcms-comments-element-send-button-waiting">' . __('bearcms.comments.Sending ...') . '</span>';
         echo '</form>';
         ?></body>
 </html>

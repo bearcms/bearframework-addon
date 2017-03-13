@@ -39,7 +39,7 @@ final class Controller
                 $content = $data['result']['content'];
                 $content = Server::updateAssetsUrls($content, false);
                 $response = new App\Response\HTML($content);
-                $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0'));
+                $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0, no-cache, no-store'));
                 return $response;
             }
         }

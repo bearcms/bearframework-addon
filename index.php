@@ -72,6 +72,14 @@ $context->assets
         ->addDir('components/bearcmsContactFormElement/assets')
         ->addDir('components/bearcmsForumPostsElement/assets');
 
+$app->localization
+        ->addDictionary('en', function() use ($context) {
+            return include $context->dir . '/locales/en.php';
+        })
+        ->addDictionary('bg', function() use ($context) {
+            return include $context->dir . '/locales/bg.php';
+        });
+
 $app->shortcuts
         ->add('bearCMS', function() {
             return new BearCMS();
@@ -661,7 +669,7 @@ $app->hooks
             $currentUserExists = Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) ? $app->bearCMS->currentUser->exists() : false;
             $settings = $app->bearCMS->data->settings->get();
             if (!$response->headers->exists('Cache-Control')) {
-                $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0'));
+                $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0, no-cache, no-store'));
             }
             $componentContent .= '<meta name="generator" content="Bear Framework v' . App::VERSION . ', Bear CMS v' . \BearCMS::VERSION . '"/>';
             $icon = $settings['icon'];

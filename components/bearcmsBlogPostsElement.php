@@ -30,7 +30,7 @@ if ($limit < 1) {
     $limit = 5;
 }
 
-if (empty($list)) {
+if ($list->length === 0) {
     $content = '';
 } else {
     $content = '<div class="bearcms-blog-posts-element">';
