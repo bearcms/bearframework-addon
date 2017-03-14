@@ -240,7 +240,6 @@ final class ElementsHelper
 
         $content = '';
         for ($i = 0; $i < $columnsCount; $i++) {
-
             $columnContent = '';
             if (isset($elementContainerData['data']['elements'], $elementContainerData['data']['elements'][$i])) {
                 $elementsInColumn = $elementContainerData['data']['elements'][$i];
@@ -292,6 +291,86 @@ final class ElementsHelper
                     . '<body>'
                     . '<div' . $attributes . '>' . $content . '</div>'
                     //. '<script>responsiveAttributes.run();</script>'
+                    . '</body>'
+                    . '</html>';
+            return '<component src="data:base64,' . base64_encode($content) . '" />';
+        } else {
+            return $content;
+        }
+    }
+
+    /**
+     * 
+     * @param type $elementContainerData
+     * @param type $editable
+     * @param type $contextData
+     * @param type $inContainer
+     * @return type
+     */
+    static function renderFloatingBox($elementContainerData, $editable, $contextData, $inContainer)
+    {
+        $app = App::get();
+        $context = $app->context->get(__FILE__);
+        $position = $elementContainerData['data']['position'];
+        $width = $elementContainerData['data']['width'];
+        if (strlen($width) === 0 || $width === 'auto') {
+            $width = '100%';
+        }
+        $spacing = $contextData['spacing'];
+
+        $content = '';
+
+        $getElementsContent = function($location) use ($elementContainerData, $contextData, $editable) {
+            $content = '';
+            $elements = $elementContainerData['data']['elements'][$location];
+            if (!empty($elements)) {
+                $elementsContextData = $contextData;
+                $elementsContextData['width'] = '100%';
+                $elementsIDs = [];
+                foreach ($elements as $elementData) {
+                    $elementsIDs[] = $elementData['id'];
+                }
+                $elementsRawData = self::getElementsRawData($elementsIDs);
+                foreach ($elements as $elementData) {
+                    $content .= self::renderElement($elementsRawData[$elementData['id']], $editable, $elementsContextData);
+                }
+            }
+            return $content;
+        };
+
+        $content .= '<div style="margin-'.($position === 'left' ? 'right' : 'left').':' . $spacing . ';float:' . $position . ';width:' . $width . ';">' . $getElementsContent('inside') . '</div>';
+        $content .= '<div style="display:block;">' . $getElementsContent('outside') . '</div>';
+
+        if ($inContainer) {
+            $attributes = '';
+            $className = 'bre' . md5(uniqid());
+            $attributes .= ' class="' . $className . '"';
+
+            if ($editable) {
+                $htmlElementID = 'brelb' . md5($elementContainerData['id']);
+                $attributes .= ' id="' . $htmlElementID . '"';
+                ElementsHelper::$editorData[] = ['floatingBox', $elementContainerData['id'], $contextData];
+            }
+
+            $attributes .= ' data-srvri="t3 s' . $spacing . '" data-responsive-attributes="w<=500=>data-srvri-vertical=1"';
+
+            $styles = '';
+            $styles .= '.' . $className . '>div:empty{display:none;}';
+            $styles .= '.' . $className . '>div:first-child{max-width:50%;}';
+            $styles .= '.' . $className . '[data-rvr-editable]>div:empty{display:block;}';
+            $styles .= '.' . $className . '[data-rvr-editable]>div:first-child{min-width:24px;}';
+            $styles .= '.' . $className . '[data-srvri-vertical="1"]>div{display:block !important;max-width:100% !important;width:100% !important;margin-right:0 !important;float:none !important;}';
+            $styles .= '.' . $className . '[data-srvri-vertical="1"]>div:not(:empty):not(:last-child){margin-bottom:' . $spacing . ' !important;}';
+            $styles .= '.' . $className . '[data-rvr-editable][data-srvri-vertical="1"]>div:not(:last-child){margin-bottom:' . $spacing . ' !important;}';
+            $styles .= '.' . $className . ':after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
+
+            $content = '<html>'
+                    . '<head>'
+                    . '<script src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script>'
+                    . '<style>' . $styles . '</style>'
+                    . '</head>'
+                    . '<body>'
+                    . '<div' . $attributes . '>' . $content . '</div>'
                     . '</body>'
                     . '</html>';
             return '<component src="data:base64,' . base64_encode($content) . '" />';
