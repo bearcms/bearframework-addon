@@ -22,7 +22,6 @@ $context->classes
         ->add('BearCMS', 'classes/BearCMS.php')
         ->add('BearCMS\CurrentUser', 'classes/BearCMS/CurrentUser.php')
         ->add('BearCMS\CurrentTheme', 'classes/BearCMS/CurrentTheme.php')
-        ->add('BearCMS\CurrentThemeOptions', 'classes/BearCMS/CurrentThemeOptions.php')
         ->add('BearCMS\Data', 'classes/BearCMS/Data.php')
         ->add('BearCMS\Data\Addon', 'classes/BearCMS/Data/Addon.php')
         ->add('BearCMS\Data\Addons', 'classes/BearCMS/Data/Addons.php')
@@ -45,6 +44,8 @@ $context->classes
         ->add('BearCMS\DataList', 'classes/BearCMS/DataList.php')
         ->add('BearCMS\DataObject', 'classes/BearCMS/DataObject.php')
         ->add('BearCMS\DataSchema', 'classes/BearCMS/DataSchema.php')
+        ->add('BearCMS\Themes', 'classes/BearCMS/Themes.php')
+        ->add('BearCMS\Themes\Options', 'classes/BearCMS/Themes/Options.php')
         ->add('BearCMS\ElementsTypes', 'classes/BearCMS/ElementsTypes.php')
         ->add('BearCMS\Internal\Data\Addons', 'classes/BearCMS/Internal/Data/Addons.php')
         ->add('BearCMS\Internal\Data\BlogPosts', 'classes/BearCMS/Internal/Data/BlogPosts.php')
@@ -53,7 +54,6 @@ $context->classes
         ->add('BearCMS\Internal\Data\ForumPosts', 'classes/BearCMS/Internal/Data/ForumPosts.php')
         ->add('BearCMS\Internal\Data\ForumPostsReplies', 'classes/BearCMS/Internal/Data/ForumPostsReplies.php')
         ->add('BearCMS\Internal\Data\Pages', 'classes/BearCMS/Internal/Data/Pages.php')
-        ->add('BearCMS\Internal\Data\Themes', 'classes/BearCMS/Internal/Data/Themes.php')
         ->add('BearCMS\Internal\Data\Users', 'classes/BearCMS/Internal/Data/Users.php')
         ->add('BearCMS\Internal\Controller', 'classes/BearCMS/Internal/Controller.php')
         ->add('BearCMS\Internal\Cookies', 'classes/BearCMS/Internal/Cookies.php')
@@ -63,7 +63,8 @@ $context->classes
         ->add('BearCMS\Internal\Options', 'classes/BearCMS/Internal/Options.php')
         ->add('BearCMS\Internal\PublicProfile', 'classes/BearCMS/Internal/PublicProfile.php')
         ->add('BearCMS\Internal\Server', 'classes/BearCMS/Internal/Server.php')
-        ->add('BearCMS\Internal\TempClientData', 'classes/BearCMS/Internal/TempClientData.php');
+        ->add('BearCMS\Internal\TempClientData', 'classes/BearCMS/Internal/TempClientData.php')
+        ->add('BearCMS\Internal\Themes', 'classes/BearCMS/Internal/Themes.php');
 
 $context->assets
         ->addDir('assets')
@@ -652,10 +653,12 @@ $app->hooks
             }
         });
 
-require $context->dir . '/themes/default1/autoload.php';
+require $context->dir . '/themes/theme1/index.php';
 
-if ($app->bearCMS->currentTheme->getID() === 'bearcms/default1') {
-    require $context->dir . '/themes/default1/index.php';
+$currentThemeID = $app->bearCMS->currentTheme->getID();
+$app->bearCMS->themes->initialize($currentThemeID);
+if ($app->bearCMS->currentUser->exists()) {
+    $app->bearCMS->themes->initializeAll();
 }
 
 $app->hooks
@@ -663,6 +666,8 @@ $app->hooks
             if (!isset($response->enableBearCMSUI)) {
                 return;
             }
+
+            $app->bearCMS->themes->apply($response);
 
             $componentContent = '<html><head>';
 

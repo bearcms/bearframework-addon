@@ -10,38 +10,6 @@ use \BearFramework\App;
 
 $app = App::get();
 
-$mode = $component->mode;
-if ($mode === 'notFound' || $mode === 'temporaryUnavailable') {
-    ?><html>
-        <head>
-            <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0,minimal-ui">
-            <style>
-                html{
-                    height:100%;
-                }
-                html, body{
-                    padding:0;
-                    margin:0;
-                }
-                body{
-                    background-color:#000;
-                    color:#fff;
-                    font-family:Arial,Helvetica,sans-serif;
-                    font-size:14px;
-                    height:100%;
-                    box-sizing:border-box;
-                    padding:15px;
-                }
-            </style>
-        </head>
-        <body>
-            <div style="display:table;width:100%;height:100%;"><div style="display:table-cell;text-align:center;vertical-align:middle;">{{body}}</div></div>
-        </body></html><?php
-    return;
-}
-
-$options = $app->bearCMS->currentTheme->getOptions();
-
 $hasPages = sizeof($app->bearCMS->data->pages->getList()->filterBy('status', 'published'));
 $settings = $app->bearCMS->data->settings->get();
 $isHomePage = (string) $app->request->path === '/';
@@ -63,6 +31,7 @@ $footerVisibility = $options['footerVisibility'];
 $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
 ?><html>
     <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0,minimal-ui">
         <style>
             html, body{
                 padding: 0;
@@ -193,6 +162,5 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
             echo '</footer>';
             echo '</div>';
         }
-        ?><component src="data:base64,<?= base64_encode($app->bearCMS->currentTheme->getOptionsHtml()); ?>" />
-</body>
+        ?></body>
 </html>

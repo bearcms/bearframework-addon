@@ -11,7 +11,6 @@ namespace BearCMS;
 
 use BearFramework\App;
 use BearCMS\Internal\Cookies;
-use BearCMS\Internal\Data as InternalData;
 
 /**
  * Information about the current theme
@@ -35,7 +34,7 @@ class CurrentTheme
     {
         if (!isset(self::$cache['id'])) {
             $cookies = Cookies::getList(Cookies::TYPE_SERVER);
-            self::$cache['id'] = isset($cookies['tmpr']) ? $cookies['tmpr'] : InternalData\Themes::getActiveThemeID();
+            self::$cache['id'] = isset($cookies['tmpr']) ? $cookies['tmpr'] : \BearCMS\Internal\Themes::getActiveThemeID();
         }
         return self::$cache['id'];
     }
@@ -45,9 +44,9 @@ class CurrentTheme
      * 
      * @return array An array containing all theme options
      */
-    public function getOptions(): \BearCMS\CurrentThemeOptions
+    public function getOptions(): \BearCMS\Themes\Options
     {
-        return $this->walkOptions(1);
+        return new \BearCMS\Themes\Options($this->walkOptions(1), $this->getOptionsHtml());
     }
 
     /**
@@ -56,7 +55,7 @@ class CurrentTheme
      * @param int $resultType 1 - values, 2 - definition
      * @return array
      */
-    private function walkOptions(int $resultType): \BearCMS\CurrentThemeOptions
+    private function walkOptions(int $resultType): array
     {
         $cacheKey = 'options' . $resultType; //todo optimize
         $app = App::get();
@@ -71,36 +70,28 @@ class CurrentTheme
                 }
             }
 // todo optimize
-            $themes = \BearCMS\Internal\Data\Themes::getList();
-            foreach ($themes as $theme) {
-                if ($theme->id === $currentThemeID) {
-                    if (isset($theme->manifestFilename)) {
-                        $manifestData = \BearCMS\Internal\Data\Themes::getManifestData($theme->manifestFilename, $theme->dir);
-                        if (isset($manifestData['options'])) {
-                            $walkOptions = function($options) use (&$result, $values, &$walkOptions, $resultType) {
-                                foreach ($options as $option) {
-                                    if (isset($option['id'])) {
-                                        if (isset($values[$option['id']])) {
-                                            $result[$option['id']] = $values[$option['id']];
-                                        } else {
-                                            $result[$option['id']] = isset($option['defaultValue']) ? (is_array($option['defaultValue']) ? json_encode($option['defaultValue']) : $option['defaultValue']) : null;
-                                        }
-                                        if ($resultType === 2) {
-                                            $result[$option['id']] = [$result[$option['id']], $option];
-                                        }
-                                    }
-                                    if (isset($option['options'])) {
-                                        $walkOptions($option['options']);
-                                    }
-                                }
-                            };
-                            $walkOptions($manifestData['options']);
+            $themeOptions = \BearCMS\Internal\Themes::getOptions($currentThemeID);
+            if (!empty($themeOptions)) {
+                $walkOptions = function($options) use (&$result, $values, &$walkOptions, $resultType) {
+                    foreach ($options as $option) {
+                        if (isset($option['id'])) {
+                            if (isset($values[$option['id']])) {
+                                $result[$option['id']] = $values[$option['id']];
+                            } else {
+                                $result[$option['id']] = isset($option['defaultValue']) ? (is_array($option['defaultValue']) ? json_encode($option['defaultValue']) : $option['defaultValue']) : null;
+                            }
+                            if ($resultType === 2) {
+                                $result[$option['id']] = [$result[$option['id']], $option];
+                            }
+                        }
+                        if (isset($option['options'])) {
+                            $walkOptions($option['options']);
                         }
                     }
-                    break;
-                }
+                };
+                $walkOptions($themeOptions);
             }
-            self::$cache[$cacheKey] = new \BearCMS\CurrentThemeOptions($result);
+            self::$cache[$cacheKey] = $result;
         }
         return self::$cache[$cacheKey];
     }
@@ -110,7 +101,7 @@ class CurrentTheme
      * 
      * @return string The HTML code for the options
      */
-    public function getOptionsHtml(): string
+    private function getOptionsHtml(): string
     {
         $linkTags = [];
         $app = App::get();
@@ -122,7 +113,7 @@ class CurrentTheme
             if (!empty($matches[1])) {
                 foreach ($matches[1] as $key) {
                     $filename = $app->bearCMS->data->getRealFilename($key);
-                    if($filename !== $key){
+                    if ($filename !== $key) {
                         $text = str_replace($key, is_file($filename) ? $app->assets->getUrl($filename) : "", $text);
                     }
                 }

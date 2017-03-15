@@ -44,7 +44,7 @@ _Returns_
 List last saved theme options.
 
 ```php
-$options = $app->bearCMS->data->themes->getOptions('bearcms/default1');
+$options = $app->bearCMS->data->themes->getOptions('bearcms/theme1');
 
 // Array
 // (
@@ -58,7 +58,7 @@ $options = $app->bearCMS->data->themes->getOptions('bearcms/default1');
 List last unsaved theme options for a specific user.
 
 ```php
-$options = $app->bearCMS->data->themes->getTempOptions('bearcms/default1', 'abcdefghijk1');
+$options = $app->bearCMS->data->themes->getTempOptions('bearcms/theme1', 'abcdefghijk1');
 
 // Array
 // (

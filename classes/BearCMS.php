@@ -17,6 +17,7 @@ use \BearCMS\Internal\Options;
  * @property-read \BearCMS\CurrentTheme $currentTheme Information about the current theme
  * @property-read \BearCMS\CurrentUser $currentUser Information about the current loggedin user
  * @property-read \BearCMS\ElementsTypes $elementsTypes Information about the available elements types
+ * @property-read \BearCMS\Themes $themes
  */
 class BearCMS
 {
@@ -56,6 +57,13 @@ class BearCMS
         $this->defineProperty('elementsTypes', [
             'init' => function() {
                 return new \BearCMS\ElementsTypes();
+            },
+            'readonly' => true
+        ]);
+
+        $this->defineProperty('themes', [
+            'init' => function() {
+                return new \BearCMS\Themes();
             },
             'readonly' => true
         ]);

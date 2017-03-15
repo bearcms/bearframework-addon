@@ -7,12 +7,12 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS;
+namespace BearCMS\Themes;
 
 /**
  * Data structure with array access containing all theme options
  */
-class CurrentThemeOptions implements \ArrayAccess, \Iterator
+class Options implements \ArrayAccess, \Iterator
 {
 
     /**
@@ -21,6 +21,7 @@ class CurrentThemeOptions implements \ArrayAccess, \Iterator
      * @var array 
      */
     private $data = [];
+    private $html = '';
 
     /**
      * The constructor
@@ -28,9 +29,10 @@ class CurrentThemeOptions implements \ArrayAccess, \Iterator
      * @param array $data
      * @throws \InvalidArgumentException
      */
-    public function __construct(array $data)
+    public function __construct(array $data, string $html)
     {
         $this->data = $data;
+        $this->html = $html;
     }
 
     /**
@@ -116,6 +118,16 @@ class CurrentThemeOptions implements \ArrayAccess, \Iterator
     function valid()
     {
         return isset($this->data[key($this->data)]);
+    }
+
+    function toArray()
+    {
+        return $this->data;
+    }
+
+    function toHTML()
+    {
+        return $this->html;
     }
 
 }

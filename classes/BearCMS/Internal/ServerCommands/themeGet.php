@@ -15,52 +15,38 @@ return function($data) {
         throw new Exception('');
     }
 
-    if ($data['id'] === 'none') {
-        return ['id' => 'none'];
-    }
-
     $includeOptions = isset($data['includeOptions']) && !empty($data['includeOptions']);
-    $themes = BearCMS\Internal\Data\Themes::getList();
-    foreach ($themes as $theme) {
-        if ($theme->id === $data['id']) {
-            if (isset($theme->manifestFilename)) {
-                $manifestData = BearCMS\Internal\Data\Themes::getManifestData($theme->manifestFilename, $theme->dir);
-                $manifestData['id'] = $theme->id;
-                if (isset($manifestData['options'])) {
-                    $manifestData['hasOptions'] = !empty($manifestData['options']);
+    $themes = BearCMS\Internal\Themes::getList();
+    foreach ($themes as $id) {
+        if ($id === $data['id']) {
+            $options = BearCMS\Internal\Themes::getOptions($id);
+            $themeManifest = BearCMS\Internal\Themes::getManifest($id);
+            $themeData = $themeManifest;
+            $themeData['id'] = $id;
+            $themeData['hasOptions'] = sizeof($options) > 0;
+            if ($includeOptions) {
+                $themeData['options'] = [
+                    'definition' => $options
+                ];
+                $result = $app->data->getValue('bearcms/themes/theme/' . md5($id) . '.json');
+                if ($result !== null) {
+                    $temp = json_decode($result, true);
+                    $optionsValues = isset($temp['options']) ? $temp['options'] : [];
                 } else {
-                    $manifestData['hasOptions'] = false;
+                    $optionsValues = [];
                 }
-                if ($includeOptions) {
-                    $manifestData['options'] = [
-                        'definition' => isset($manifestData['options']) ? $manifestData['options'] : []
-                    ];
+                $themeData['options']['activeValues'] = $optionsValues;
 
-
-                    $result = $app->data->getValue('bearcms/themes/theme/' . md5($theme->id) . '.json');
-                    if ($result !== null) {
-                        $temp = json_decode($result, true);
-                        $optionsValues = isset($temp['options']) ? $temp['options'] : [];
-                    } else {
-                        $optionsValues = [];
-                    }
-                    $manifestData['options']['activeValues'] = $optionsValues;
-
-                    $result = $app->data->getValue('.temp/bearcms/userthemeoptions/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($data['id']) . '.json');
-                    if ($result !== null) {
-                        $temp = json_decode($result, true);
-                        $optionsValues = isset($temp['options']) ? $temp['options'] : [];
-                    } else {
-                        $optionsValues = null;
-                    }
-                    $manifestData['options']['currentUserValues'] = $optionsValues;
+                $result = $app->data->getValue('.temp/bearcms/userthemeoptions/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($id) . '.json');
+                if ($result !== null) {
+                    $temp = json_decode($result, true);
+                    $optionsValues = isset($temp['options']) ? $temp['options'] : [];
                 } else {
-                    if (isset($manifestData['options'])) {
-                        unset($manifestData['options']);
-                    }
+                    $optionsValues = null;
                 }
-                return $manifestData;
+                $themeData['options']['currentUserValues'] = $optionsValues;
             }
+            return $themeData;
         }
     }
     return null;

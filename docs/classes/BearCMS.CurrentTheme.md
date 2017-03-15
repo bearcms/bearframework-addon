@@ -40,7 +40,7 @@ Get the id of the current active theme
 ```php
 $id = $app->bearCMS->currentTheme->getID();
 
-// bearcms/default1
+// bearcms/theme1
 ```
 
 The options of the current active theme

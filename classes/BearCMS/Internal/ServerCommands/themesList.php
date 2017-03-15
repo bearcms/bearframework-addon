@@ -8,25 +8,14 @@
  */
 
 return function() {
-    $themes = BearCMS\Internal\Data\Themes::getList();
+    $themes = BearCMS\Internal\Themes::getList();
     $result = [];
-    foreach ($themes as $theme) {
-        if (isset($theme->manifestFilename)) {
-            $manifestData = BearCMS\Internal\Data\Themes::getManifestData($theme->manifestFilename, $theme->dir);
-            $manifestData['id'] = $theme->id;
-            if (isset($manifestData['options'])) {
-                $manifestData['hasOptions'] = !empty($manifestData['options']);
-                unset($manifestData['options']);
-            } else {
-                $manifestData['hasOptions'] = false;
-            }
-            $result[] = $manifestData;
-        } elseif ($theme->id === 'none') {
-            $result[] = [
-                'id' => 'none',
-                'hasOptions' => false
-            ];
-        }
+    foreach ($themes as $id) {
+        $themeManifest = BearCMS\Internal\Themes::getManifest($id);
+        $themeData = $themeManifest;
+        $themeData['id'] = $id;
+        $themeData['hasOptions'] = sizeof(BearCMS\Internal\Themes::getOptions($id)) > 0;
+        $result[] = $themeData;
     }
     return $result;
 };
