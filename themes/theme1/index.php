@@ -15,14 +15,6 @@ $context = $app->context->get(__FILE__);
 $context->classes
         ->add('BearCMS\Themes\Theme1', 'themes/theme1/classes/Theme1.php');
 
-$app->localization
-        ->addDictionary('en', function() use ($context) {
-            return include $context->dir . '/themes/theme1/locales/en.php';
-        })
-        ->addDictionary('bg', function() use ($context) {
-            return include $context->dir . '/themes/theme1//locales/bg.php';
-        });
-
 $app->bearCMS->themes
         ->add('bearcms/theme1', function() use ($app, $context) {
             BearCMS\Themes\Theme1::initialize($app, $context);

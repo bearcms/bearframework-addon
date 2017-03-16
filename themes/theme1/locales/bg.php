@@ -21,7 +21,7 @@ return [
     'bearcms.themes.theme1.options.Item' => 'Елемент',
     'bearcms.themes.theme1.options.Subitem' => 'Поделемент',
     'bearcms.themes.theme1.options.Selected' => 'Избран елемент',
-    'bearcms.themes.theme1.options.Home page special block' => 'Допълнителен блок в началната страница',
+    'bearcms.themes.theme1.options.Home page special block' => 'Блок в началната страница',
     'bearcms.themes.theme1.options.Heading' => 'Заглавие',
     'bearcms.themes.theme1.options.Image gallery' => 'Албум със снимки',
     'bearcms.themes.theme1.options.Blog posts' => 'Статии от блога',

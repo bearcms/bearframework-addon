@@ -86,7 +86,8 @@ $app->shortcuts
             return new BearCMS();
         });
 
-Options::set($app->addons->get('bearcms/bearframework-addon')->options);
+$addonOptions = $app->addons->get('bearcms/bearframework-addon')->options;
+Options::set($addonOptions);
 
 $app->hooks->add('initialized', function() use ($app, $context) {
 
@@ -653,15 +654,18 @@ $app->hooks
             }
         });
 
-require $context->dir . '/themes/theme1/index.php';
-
-$currentThemeID = $app->bearCMS->currentTheme->getID();
-$app->bearCMS->themes->initialize($currentThemeID);
-if ($app->bearCMS->currentUser->exists()) {
-    $app->bearCMS->themes->initializeAll();
+if (!(isset($addonOptions['addDefaultThemes']) && $addonOptions['addDefaultThemes'] === false)) {
+    require $context->dir . '/themes/theme1/index.php';
 }
 
 $app->hooks
+        ->add('initialized', function() use ($app) {
+            $currentThemeID = $app->bearCMS->currentTheme->getID();
+            $app->bearCMS->themes->initialize($currentThemeID);
+            if ($app->bearCMS->currentUser->exists()) {
+                $app->bearCMS->themes->initializeAll();
+            }
+        })
         ->add('responseCreated', function($response) use ($app, $context) {
             if (!isset($response->enableBearCMSUI)) {
                 return;
