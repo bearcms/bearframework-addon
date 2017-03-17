@@ -40,5 +40,12 @@ return [
     'bearcms.themes.theme1.options.Position' => 'Position',
     'bearcms.themes.theme1.options.Top' => 'Top',
     'bearcms.themes.theme1.options.Bottom' => 'Bottom',
+    'bearcms.themes.theme1.options.Contact Form' => 'Contact Form',
+    'bearcms.themes.theme1.options.Email label' => 'Email label',
+    'bearcms.themes.theme1.options.Email input' => 'Email input',
+    'bearcms.themes.theme1.options.Message label' => 'Message label',
+    'bearcms.themes.theme1.options.Message input' => 'Message input',
+    'bearcms.themes.theme1.options.Send button' => 'Send button',
+    'bearcms.themes.theme1.options.Send button waiting' => 'Waiting...',
 ];
 

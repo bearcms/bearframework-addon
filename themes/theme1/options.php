@@ -1,6 +1,655 @@
 <?php
 
-return [
+$getElementsList = function($idPrefix, $parentClassNameSelector) {
+    return [
+        [
+            "type" => "group",
+            "name" => __("bearcms.themes.theme1.options.Heading"),
+            "options" => [
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.Large"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "HeadingLargeCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-heading-element-large", "font-weight:normal;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-heading-element-large"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-heading-element-large"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#1BB0CE",
+                                "font-family" => "googlefonts:Open Sans",
+                                "font-size" => "28px",
+                                "text-align" => "center",
+                                "line-height" => "180%",
+                                "margin-top" => "0",
+                                "margin-right" => "0",
+                                "margin-bottom" => "0",
+                                "margin-left" => "0"
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.Medium"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "HeadingMediumCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-heading-element-medium", "font-weight:normal;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-heading-element-medium"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-heading-element-medium"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#1BB0CE",
+                                "font-family" => "googlefonts:Open Sans",
+                                "font-size" => "22px",
+                                "text-align" => "center",
+                                "line-height" => "180%",
+                                "margin-top" => "0",
+                                "margin-right" => "0",
+                                "margin-bottom" => "0",
+                                "margin-left" => "0"
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.Small"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "HeadingSmallCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-heading-element-small", "font-weight:normal;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-heading-element-small"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-heading-element-small"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#1BB0CE",
+                                "font-family" => "googlefonts:Open Sans",
+                                "font-size" => "18px",
+                                "text-align" => "center",
+                                "line-height" => "180%",
+                                "margin-top" => "0",
+                                "margin-right" => "0",
+                                "margin-bottom" => "0",
+                                "margin-left" => "0"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        [
+            "type" => "group",
+            "name" => __("bearcms.themes.theme1.options.Text"),
+            "options" => [
+                [
+                    "id" => $idPrefix . "TextCSS",
+                    "type" => "css",
+                    "cssOutput" => [
+                        ["selector", $parentClassNameSelector . " .bearcms-text-element"]
+                    ],
+                    "onCustomize" => [
+                        ["updateRule", $parentClassNameSelector . " .bearcms-text-element"]
+                    ],
+                    "defaultValue" => [
+                        "color" => "#000000",
+                        "font-family" => "Arial",
+                        "font-size" => "14px",
+                        "line-height" => "180%"
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.Links"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "TextLinkCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-text-element a", "display:inline-block;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-text-element a"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-text-element a"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#1BB0CE",
+                                "color:hover" => "#1099B5",
+                                "color:active" => "#0A7D94",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "180%",
+                                "text-decoration" => "underline"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        [
+            "type" => "group",
+            "name" => __("bearcms.themes.theme1.options.Link"),
+            "options" => [
+                [
+                    "id" => $idPrefix . "LinkCSS",
+                    "type" => "css",
+                    "cssOutput" => [
+                        ["rule", $parentClassNameSelector . " .bearcms-link-element", "display:inline-block;text-decoration:none;"],
+                        ["selector", $parentClassNameSelector . " .bearcms-link-element"]
+                    ],
+                    "onCustomize" => [
+                        ["updateRule", $parentClassNameSelector . " .bearcms-link-element"]
+                    ],
+                    "defaultValue" => [
+                        "color" => "#ffffff",
+                        "font-family" => "Arial",
+                        "font-size" => "14px",
+                        "line-height" => "42px",
+                        "padding-left" => "15px",
+                        "padding-right" => "15px",
+                        "height" => "42px",
+                        "background-color" => "#1BB0CE",
+                        "background-color:hover" => "#1099B5",
+                        "background-color:active" => "#0A7D94"
+                    ]
+                ]
+            ]
+        ],
+        [
+            "type" => "group",
+            "name" => __("bearcms.themes.theme1.options.Image"),
+            "options" => [
+                [
+                    "id" => $idPrefix . "ImageCSS",
+                    "type" => "css",
+                    "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
+                    "cssOutput" => [
+                        ["rule", $parentClassNameSelector . " .bearcms-image-element", "overflow:hidden;"],
+                        ["selector", $parentClassNameSelector . " .bearcms-image-element"]
+                    ],
+                    "onCustomize" => [
+                        ["updateRule", $parentClassNameSelector . " .bearcms-image-element"]
+                    ]
+                ]
+            ]
+        ],
+        [
+            "type" => "group",
+            "name" => __("bearcms.themes.theme1.options.Image gallery"),
+            "options" => [
+                [
+                    "id" => $idPrefix . "ImageGalleryCSS",
+                    "type" => "css",
+                    "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
+                    "cssOutput" => [
+                        ["selector", $parentClassNameSelector . " .bearcms-image-gallery-element"]
+                    ],
+                    "onCustomize" => [
+                        ["updateRule", $parentClassNameSelector . " .bearcms-image-gallery-element"]
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.Image"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "ImageGalleryImageCSS",
+                            "type" => "css",
+                            "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-image-gallery-element-image", "overflow:hidden;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-image-gallery-element-image"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-image-gallery-element-image"]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        [
+            "type" => "group",
+            "name" => __("bearcms.themes.theme1.options.Video"),
+            "options" => [
+                [
+                    "id" => $idPrefix . "VideoCSS",
+                    "type" => "css",
+                    "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
+                    "cssOutput" => [
+                        ["rule", $parentClassNameSelector . " .bearcms-video-element", "overflow:hidden;"],
+                        ["selector", $parentClassNameSelector . " .bearcms-video-element"]
+                    ],
+                    "onCustomize" => [
+                        ["updateRule", $parentClassNameSelector . " .bearcms-video-element"]
+                    ]
+                ]
+            ]
+        ],
+        [
+            "type" => "group",
+            "name" => __("bearcms.themes.theme1.options.Navigation"),
+            "options" => [
+                [
+                    "id" => $idPrefix . "NavigationCSS",
+                    "type" => "css",
+                    "cssTypes" => ["cssBorder", "cssBackground"],
+                    "cssOutput" => [
+                        ["selector", $parentClassNameSelector . " .bearcms-navigation-element"]
+                    ],
+                    "onCustomize" => [
+                        ["updateRule", $parentClassNameSelector . " .bearcms-navigation-element"]
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.Elements"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "NavigationItemLinkCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-navigation-element-item a", "display:inline-block;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-navigation-element-item a"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-navigation-element-item a"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#1BB0CE",
+                                "color:hover" => "#1099B5",
+                                "color:active" => "#0A7D94",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "180%",
+                                "text-decoration" => "underline"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        [
+            "type" => "group",
+            "name" => __("bearcms.themes.theme1.options.Contact Form"),
+            "options" => [
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.Email label"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "ContactFormEmailLabelCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-contact-form-element-email-label", "display:block;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-contact-form-element-email-label"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-contact-form-element-email-label"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#000000",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "180%"
+                            ]
+                        ],
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.Email input"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "ContactFormEmailInputCSS",
+                            "type" => "css",
+                            "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                            "cssOutput" => [
+                                ["selector", $parentClassNameSelector . " .bearcms-contact-form-element-email"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-contact-form-element-email"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#000000",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "42px",
+                                "padding-left" => "15px",
+                                "padding-right" => "15px",
+                                "width" => "100%",
+                                "max-width" => "400px",
+                                "height" => "42px",
+                                "border-top" => "1px solid #cccccc",
+                                "border-bottom" => "1px solid #cccccc",
+                                "border-left" => "1px solid #cccccc",
+                                "border-right" => "1px solid #cccccc",
+                                "border-top:hover" => "1px solid #aaaaaa",
+                                "border-bottom:hover" => "1px solid #aaaaaa",
+                                "border-left:hover" => "1px solid #aaaaaa",
+                                "border-right:hover" => "1px solid #aaaaaa",
+                                "border-top:active" => "1px solid #888888",
+                                "border-bottom:active" => "1px solid #888888",
+                                "border-left:active" => "1px solid #888888",
+                                "border-right:active" => "1px solid #888888",
+                            ]
+                        ],
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.Message label"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "ContactFormMessageLabelCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-contact-form-element-message-label", "display:block;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-contact-form-element-message-label"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-contact-form-element-message-label"]
+                            ],
+                            "defaultValue" => [
+                                "margin-top" => "10px",
+                                "color" => "#000000",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "180%"
+                            ]
+                        ],
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.Message input"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "ContactFormMessageInputCSS",
+                            "type" => "css",
+                            "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                            "cssOutput" => [
+                                ["selector", $parentClassNameSelector . " .bearcms-contact-form-element-message"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-contact-form-element-message"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#000000",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "180%",
+                                "padding-left" => "15px",
+                                "padding-right" => "15px",
+                                "padding-top" => "10px",
+                                "padding-bottom" => "10px",
+                                "width" => "100%",
+                                "max-width" => "400px",
+                                "height" => "200px",
+                                "border-top" => "1px solid #cccccc",
+                                "border-bottom" => "1px solid #cccccc",
+                                "border-left" => "1px solid #cccccc",
+                                "border-right" => "1px solid #cccccc",
+                                "border-top:hover" => "1px solid #aaaaaa",
+                                "border-bottom:hover" => "1px solid #aaaaaa",
+                                "border-left:hover" => "1px solid #aaaaaa",
+                                "border-right:hover" => "1px solid #aaaaaa",
+                                "border-top:active" => "1px solid #888888",
+                                "border-bottom:active" => "1px solid #888888",
+                                "border-left:active" => "1px solid #888888",
+                                "border-right:active" => "1px solid #888888",
+                            ]
+                        ],
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.Send button"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "ContactFormSendButtonCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-contact-form-element-send-button", "display:inline-block;text-decoration:none;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-contact-form-element-send-button"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-contact-form-element-send-button"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#ffffff",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "42px",
+                                "padding-left" => "15px",
+                                "padding-right" => "15px",
+                                "height" => "42px",
+                                "background-color" => "#1BB0CE",
+                                "background-color:hover" => "#1099B5",
+                                "background-color:active" => "#0A7D94",
+                                "margin-top" => "10px"
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.Send button waiting"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "ContactFormSendButtonWaitingCSS",
+                                    "type" => "css",
+                                    "cssOutput" => [
+                                        ["rule", $parentClassNameSelector . " .bearcms-contact-form-element-send-button-waiting", "display:inline-block;text-decoration:none;"],
+                                        ["selector", $parentClassNameSelector . " .bearcms-contact-form-element-send-button-waiting"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-contact-form-element-send-button-waiting"]
+                                    ],
+                                    "defaultValue" => [
+                                        "background-color" => "#aaaaaa"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        [
+            "type" => "group",
+            "name" => __("bearcms.themes.theme1.options.HTML code"),
+            "options" => [
+                [
+                    "id" => $idPrefix . "HtmlCSS",
+                    "type" => "css",
+                    "cssOutput" => [
+                        ["selector", $parentClassNameSelector . " .bearcms-html-element"]
+                    ],
+                    "onCustomize" => [
+                        ["updateRule", $parentClassNameSelector . " .bearcms-html-element"]
+                    ],
+                    "defaultValue" => [
+                        "color" => "#000000",
+                        "font-family" => "Arial",
+                        "font-size" => "14px",
+                        "line-height" => "180%"
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.Links"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "HtmlLinkCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-html-element a", "display:inline-block;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-html-element a"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-html-element a"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#1BB0CE",
+                                "color:hover" => "#1099B5",
+                                "color:active" => "#0A7D94",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "180%",
+                                "text-decoration" => "underline"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        [
+            "type" => "group",
+            "name" => __("bearcms.themes.theme1.options.Blog posts"),
+            "options" => [
+                [
+                    "id" => $idPrefix . "BlogPostsCSS",
+                    "type" => "css",
+                    "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
+                    "cssOutput" => [
+                        ["selector", $parentClassNameSelector . " .bearcms-blog-posts-element"]
+                    ],
+                    "onCustomize" => [
+                        ["updateRule", $parentClassNameSelector . " .bearcms-blog-posts-element"]
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.Post"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "BlogPostsPostCSS",
+                            "type" => "css",
+                            "cssTypes" => ["cssBorder", "cssBackground", "cssShadow"],
+                            "cssOutput" => [
+                                ["selector", $parentClassNameSelector . " .bearcms-blog-posts-element-post"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-blog-posts-element-post"]
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.Title"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "BlogPostsPostTitleCSS",
+                                    "type" => "css",
+                                    "cssOutput" => [
+                                        ["selector", $parentClassNameSelector . " .bearcms-blog-posts-element-post-title"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-blog-posts-element-post-title"]
+                                    ],
+                                    "defaultValue" => [
+                                        "color" => "#1BB0CE",
+                                        "font-family" => "googlefonts:Open Sans",
+                                        "font-size" => "22px",
+                                        "text-align" => "left",
+                                        "line-height" => "180%"
+                                    ]
+                                ],
+                                [
+                                    "type" => "group",
+                                    "name" => __("bearcms.themes.theme1.options.Container"),
+                                    "options" => [
+                                        [
+                                            "id" => $idPrefix . "BlogPostsPostTitleContainerCSS",
+                                            "type" => "css",
+                                            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                                            "cssOutput" => [
+                                                ["selector", $parentClassNameSelector . " .bearcms-blog-posts-element-post-title-container"]
+                                            ],
+                                            "onCustomize" => [
+                                                ["updateRule", $parentClassNameSelector . " .bearcms-blog-posts-element-post-title-container"]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.Date"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "BlogPostsPostDateCSS",
+                                    "type" => "css",
+                                    "cssOutput" => [
+                                        ["selector", $parentClassNameSelector . " .bearcms-blog-posts-element-post-date"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-blog-posts-element-post-date"]
+                                    ],
+                                    "defaultValue" => [
+                                        "color" => "#777777",
+                                        "font-family" => "Arial",
+                                        "font-size" => "14px",
+                                        "line-height" => "180%"
+                                    ]
+                                ],
+                                [
+                                    "type" => "group",
+                                    "name" => __("bearcms.themes.theme1.options.Container"),
+                                    "options" => [
+                                        [
+                                            "id" => $idPrefix . "BlogPostsPostDateContainerCSS",
+                                            "type" => "css",
+                                            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                                            "cssOutput" => [
+                                                ["selector", $parentClassNameSelector . " .bearcms-blog-posts-element-post-date-container"]
+                                            ],
+                                            "onCustomize" => [
+                                                ["updateRule", $parentClassNameSelector . " .bearcms-blog-posts-element-post-date-container"]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.Content"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "BlogPostsPostContentCSS",
+                                    "type" => "css",
+                                    "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                                    "cssOutput" => [
+                                        ["selector", $parentClassNameSelector . " .bearcms-blog-posts-element-post-content"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-blog-posts-element-post-content"]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ];
+};
+
+$options = [
     [
         "type" => "group",
         "name" => __("bearcms.themes.theme1.options.Header"),
@@ -311,10 +960,10 @@ return [
                             ["updateRule", ".template-navigation #template-navigation-toggle-button:checked + label"]
                         ],
                         "defaultValue" => [
-                            "padding-top" => "15px",
-                            "padding-right" => "15px",
-                            "padding-bottom" => "15px",
-                            "padding-left" => "15px"
+                            "line-height" => "44px",
+                            "padding-left" => "16px",
+                            "padding-right" => "16px",
+                            "height" => "44px"
                         ]
                     ],
                     [
@@ -399,10 +1048,10 @@ return [
                             ["updateRule", ".template-navigation .template-navigation-content .bearcms-navigation-element-item-children > .bearcms-navigation-element-item > a"]
                         ],
                         "defaultValue" => [
-                            "padding-top" => "15px",
-                            "padding-right" => "15px",
-                            "padding-bottom" => "15px",
-                            "padding-left" => "15px"
+                            "line-height" => "44px",
+                            "padding-left" => "16px",
+                            "padding-right" => "16px",
+                            "height" => "44px"
                         ]
                     ],
                     [
@@ -530,467 +1179,7 @@ return [
             [
                 "type" => "group",
                 "name" => __("bearcms.themes.theme1.options.Elements"),
-                "options" => [
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Heading"),
-                        "options" => [
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Large"),
-                                "options" => [
-                                    [
-                                        "id" => "homePageSpecialContentBlockElementsHeadingLargeCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-homepage-special-content-block .bearcms-heading-element-large", "font-weight:normal;"],
-                                            ["selector", ".template-homepage-special-content-block .bearcms-heading-element-large"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-homepage-special-content-block .bearcms-heading-element-large"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "font-family" => "googlefonts:Open Sans",
-                                            "font-size" => "28px",
-                                            "text-align" => "center",
-                                            "line-height" => "180%",
-                                            "margin-top" => "0",
-                                            "margin-right" => "0",
-                                            "margin-bottom" => "0",
-                                            "margin-left" => "0"
-                                        ]
-                                    ]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Medium"),
-                                "options" => [
-                                    [
-                                        "id" => "homePageSpecialContentBlockElementsHeadingMediumCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-homepage-special-content-block .bearcms-heading-element-medium", "font-weight:normal;"],
-                                            ["selector", ".template-homepage-special-content-block .bearcms-heading-element-medium"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-homepage-special-content-block .bearcms-heading-element-medium"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "font-family" => "googlefonts:Open Sans",
-                                            "font-size" => "22px",
-                                            "text-align" => "center",
-                                            "line-height" => "180%",
-                                            "margin-top" => "0",
-                                            "margin-right" => "0",
-                                            "margin-bottom" => "0",
-                                            "margin-left" => "0"
-                                        ]
-                                    ]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Small"),
-                                "options" => [
-                                    [
-                                        "id" => "homePageSpecialContentBlockElementsHeadingSmallCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-homepage-special-content-block .bearcms-heading-element-small", "font-weight:normal;"],
-                                            ["selector", ".template-homepage-special-content-block .bearcms-heading-element-small"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-homepage-special-content-block .bearcms-heading-element-small"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "font-family" => "googlefonts:Open Sans",
-                                            "font-size" => "18px",
-                                            "text-align" => "center",
-                                            "line-height" => "180%",
-                                            "margin-top" => "0",
-                                            "margin-right" => "0",
-                                            "margin-bottom" => "0",
-                                            "margin-left" => "0"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Text"),
-                        "options" => [
-                            [
-                                "id" => "homePageSpecialContentBlockElementsTextCSS",
-                                "type" => "css",
-                                "cssOutput" => [
-                                    ["selector", ".template-homepage-special-content-block .bearcms-text-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-homepage-special-content-block .bearcms-text-element"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#ffffff",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%"
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Links"),
-                                "options" => [
-                                    [
-                                        "id" => "homePageSpecialContentBlockElementsTextLinkCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-homepage-special-content-block .bearcms-text-element a", "display:inline-block;"],
-                                            ["selector", ".template-homepage-special-content-block .bearcms-text-element a"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-homepage-special-content-block .bearcms-text-element a"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%",
-                                            "text-decoration" => "underline"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Link"),
-                        "options" => [
-                            [
-                                "id" => "homePageSpecialContentBlockElementsLinkCSS",
-                                "type" => "css",
-                                "cssOutput" => [
-                                    ["rule", ".template-homepage-special-content-block .bearcms-link-element", "display:inline-block;text-decoration:none;"],
-                                    ["selector", ".template-homepage-special-content-block .bearcms-link-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-homepage-special-content-block .bearcms-link-element"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#ffffff",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "padding-top" => "15px",
-                                    "padding-right" => "15px",
-                                    "padding-bottom" => "15px",
-                                    "padding-left" => "15px",
-                                    "background-color" => "#1BB0CE",
-                                    "background-color:hover" => "#1099B5",
-                                    "background-color:active" => "#0A7D94"
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Image"),
-                        "options" => [
-                            [
-                                "id" => "homePageSpecialContentBlockElementsImageCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
-                                "cssOutput" => [
-                                    ["rule", ".template-homepage-special-content-block .bearcms-image-element", "overflow:hidden;"],
-                                    ["selector", ".template-homepage-special-content-block .bearcms-image-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-homepage-special-content-block .bearcms-image-element"]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Image gallery"),
-                        "options" => [
-                            [
-                                "id" => "homePageSpecialContentBlockElementsImageGalleryCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
-                                "cssOutput" => [
-                                    ["selector", ".template-homepage-special-content-block .bearcms-image-gallery-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-homepage-special-content-block .bearcms-image-gallery-element"]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Image"),
-                                "options" => [
-                                    [
-                                        "id" => "homePageSpecialContentBlockElementsImageGalleryImageCSS",
-                                        "type" => "css",
-                                        "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
-                                        "cssOutput" => [
-                                            ["rule", ".template-homepage-special-content-block .bearcms-image-gallery-element-image", "overflow:hidden;"],
-                                            ["selector", ".template-homepage-special-content-block .bearcms-image-gallery-element-image"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-homepage-special-content-block .bearcms-image-gallery-element-image"]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Video"),
-                        "options" => [
-                            [
-                                "id" => "homePageSpecialContentBlockElementsVideoCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
-                                "cssOutput" => [
-                                    ["rule", ".template-homepage-special-content-block .bearcms-video-element", "overflow:hidden;"],
-                                    ["selector", ".template-homepage-special-content-block .bearcms-video-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-homepage-special-content-block .bearcms-video-element"]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Navigation"),
-                        "options" => [
-                            [
-                                "id" => "homePageSpecialContentBlockElementsNavigationCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssBorder", "cssBackground"],
-                                "cssOutput" => [
-                                    ["selector", ".template-homepage-special-content-block .bearcms-navigation-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-homepage-special-content-block .bearcms-navigation-element"]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Elements"),
-                                "options" => [
-                                    [
-                                        "id" => "homePageSpecialContentBlockElementsNavigationItemLinkCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-homepage-special-content-block .bearcms-navigation-element-item a", "display:inline-block;"],
-                                            ["selector", ".template-homepage-special-content-block .bearcms-navigation-element-item a"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-homepage-special-content-block .bearcms-navigation-element-item a"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%",
-                                            "text-decoration" => "underline"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.HTML code"),
-                        "options" => [
-                            [
-                                "id" => "homePageSpecialContentBlockElementsHtmlCSS",
-                                "type" => "css",
-                                "cssOutput" => [
-                                    ["selector", ".template-homepage-special-content-block .bearcms-html-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-homepage-special-content-block .bearcms-html-element"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#ffffff",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%"
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Links"),
-                                "options" => [
-                                    [
-                                        "id" => "homePageSpecialContentBlockElementsHtmlLinkCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-homepage-special-content-block .bearcms-html-element a", "display:inline-block;"],
-                                            ["selector", ".template-homepage-special-content-block .bearcms-html-element a"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-homepage-special-content-block .bearcms-html-element a"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%",
-                                            "text-decoration" => "underline"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Blog posts"),
-                        "options" => [
-                            [
-                                "id" => "homePageSpecialContentBlockElementsBlogPostsCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
-                                "cssOutput" => [
-                                    ["selector", ".template-homepage-special-content-block .bearcms-blog-posts-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-homepage-special-content-block .bearcms-blog-posts-element"]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Post"),
-                                "options" => [
-                                    [
-                                        "id" => "homePageSpecialContentBlockElementsBlogPostsPostCSS",
-                                        "type" => "css",
-                                        "cssTypes" => ["cssBorder", "cssBackground", "cssShadow"],
-                                        "cssOutput" => [
-                                            ["selector", ".template-homepage-special-content-block .bearcms-blog-posts-element-post"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-homepage-special-content-block .bearcms-blog-posts-element-post"]
-                                        ]
-                                    ],
-                                    [
-                                        "type" => "group",
-                                        "name" => __("bearcms.themes.theme1.options.Title"),
-                                        "options" => [
-                                            [
-                                                "id" => "homePageSpecialContentBlockElementsBlogPostsPostTitleCSS",
-                                                "type" => "css",
-                                                "cssOutput" => [
-                                                    ["selector", ".template-homepage-special-content-block .bearcms-blog-posts-element-post-title"]
-                                                ],
-                                                "onCustomize" => [
-                                                    ["updateRule", ".template-homepage-special-content-block .bearcms-blog-posts-element-post-title"]
-                                                ],
-                                                "defaultValue" => [
-                                                    "color" => "#1BB0CE",
-                                                    "font-family" => "googlefonts:Open Sans",
-                                                    "font-size" => "22px",
-                                                    "text-align" => "left",
-                                                    "line-height" => "180%"
-                                                ]
-                                            ],
-                                            [
-                                                "type" => "group",
-                                                "name" => __("bearcms.themes.theme1.options.Container"),
-                                                "options" => [
-                                                    [
-                                                        "id" => "homePageSpecialContentBlockElementsBlogPostsPostTitleContainerCSS",
-                                                        "type" => "css",
-                                                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                                                        "cssOutput" => [
-                                                            ["selector", ".template-homepage-special-content-block .bearcms-blog-posts-element-post-title-container"]
-                                                        ],
-                                                        "onCustomize" => [
-                                                            ["updateRule", ".template-homepage-special-content-block .bearcms-blog-posts-element-post-title-container"]
-                                                        ]
-                                                    ]
-                                                ]
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        "type" => "group",
-                                        "name" => __("bearcms.themes.theme1.options.Date"),
-                                        "options" => [
-                                            [
-                                                "id" => "homePageSpecialContentBlockElementsBlogPostsPostDateCSS",
-                                                "type" => "css",
-                                                "cssOutput" => [
-                                                    ["selector", ".template-homepage-special-content-block .bearcms-blog-posts-element-post-date"]
-                                                ],
-                                                "onCustomize" => [
-                                                    ["updateRule", ".template-homepage-special-content-block .bearcms-blog-posts-element-post-date"]
-                                                ],
-                                                "defaultValue" => [
-                                                    "color" => "#eeeeee",
-                                                    "font-family" => "Arial",
-                                                    "font-size" => "14px",
-                                                    "line-height" => "180%"
-                                                ]
-                                            ],
-                                            [
-                                                "type" => "group",
-                                                "name" => __("bearcms.themes.theme1.options.Container"),
-                                                "options" => [
-                                                    [
-                                                        "id" => "homePageSpecialContentBlockElementsBlogPostsPostDateContainerCSS",
-                                                        "type" => "css",
-                                                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                                                        "cssOutput" => [
-                                                            ["selector", ".template-homepage-special-content-block .bearcms-blog-posts-element-post-date-container"]
-                                                        ],
-                                                        "onCustomize" => [
-                                                            ["updateRule", ".template-homepage-special-content-block .bearcms-blog-posts-element-post-date-container"]
-                                                        ]
-                                                    ]
-                                                ]
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        "type" => "group",
-                                        "name" => __("bearcms.themes.theme1.options.Content"),
-                                        "options" => [
-                                            [
-                                                "id" => "homePageSpecialContentBlockElementsBlogPostsPostContentCSS",
-                                                "type" => "css",
-                                                "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                                                "cssOutput" => [
-                                                    ["selector", ".template-homepage-special-content-block .bearcms-blog-posts-element-post-content"]
-                                                ],
-                                                "onCustomize" => [
-                                                    ["updateRule", ".template-homepage-special-content-block .bearcms-blog-posts-element-post-content"]
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                "options" => $getElementsList('homePageSpecialContentBlockElements', '.template-homepage-special-content-block')
             ],
             [
                 "type" => "group",
@@ -1044,467 +1233,7 @@ return [
             [
                 "type" => "group",
                 "name" => __("bearcms.themes.theme1.options.Elements"),
-                "options" => [
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Heading"),
-                        "options" => [
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Large"),
-                                "options" => [
-                                    [
-                                        "id" => "elementsHeadingLargeCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-content .bearcms-heading-element-large", "font-weight:normal;"],
-                                            ["selector", ".template-content .bearcms-heading-element-large"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-content .bearcms-heading-element-large"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "font-family" => "googlefonts:Open Sans",
-                                            "font-size" => "28px",
-                                            "text-align" => "center",
-                                            "line-height" => "180%",
-                                            "margin-top" => "0",
-                                            "margin-right" => "0",
-                                            "margin-bottom" => "0",
-                                            "margin-left" => "0"
-                                        ]
-                                    ]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Medium"),
-                                "options" => [
-                                    [
-                                        "id" => "elementsHeadingMediumCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-content .bearcms-heading-element-medium", "font-weight:normal;"],
-                                            ["selector", ".template-content .bearcms-heading-element-medium"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-content .bearcms-heading-element-medium"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "font-family" => "googlefonts:Open Sans",
-                                            "font-size" => "22px",
-                                            "text-align" => "center",
-                                            "line-height" => "180%",
-                                            "margin-top" => "0",
-                                            "margin-right" => "0",
-                                            "margin-bottom" => "0",
-                                            "margin-left" => "0"
-                                        ]
-                                    ]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Small"),
-                                "options" => [
-                                    [
-                                        "id" => "elementsHeadingSmallCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-content .bearcms-heading-element-small", "font-weight:normal;"],
-                                            ["selector", ".template-content .bearcms-heading-element-small"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-content .bearcms-heading-element-small"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "font-family" => "googlefonts:Open Sans",
-                                            "font-size" => "18px",
-                                            "text-align" => "center",
-                                            "line-height" => "180%",
-                                            "margin-top" => "0",
-                                            "margin-right" => "0",
-                                            "margin-bottom" => "0",
-                                            "margin-left" => "0"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Text"),
-                        "options" => [
-                            [
-                                "id" => "elementsTextCSS",
-                                "type" => "css",
-                                "cssOutput" => [
-                                    ["selector", ".template-content .bearcms-text-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-content .bearcms-text-element"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#000000",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%"
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Links"),
-                                "options" => [
-                                    [
-                                        "id" => "elementsTextLinkCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-content .bearcms-text-element a", "display:inline-block;"],
-                                            ["selector", ".template-content .bearcms-text-element a"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-content .bearcms-text-element a"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%",
-                                            "text-decoration" => "underline"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Link"),
-                        "options" => [
-                            [
-                                "id" => "elementsLinkCSS",
-                                "type" => "css",
-                                "cssOutput" => [
-                                    ["rule", ".template-content .bearcms-link-element", "display:inline-block;text-decoration:none;"],
-                                    ["selector", ".template-content .bearcms-link-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-content .bearcms-link-element"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#ffffff",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "padding-top" => "15px",
-                                    "padding-right" => "15px",
-                                    "padding-bottom" => "15px",
-                                    "padding-left" => "15px",
-                                    "background-color" => "#1BB0CE",
-                                    "background-color:hover" => "#1099B5",
-                                    "background-color:active" => "#0A7D94"
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Image"),
-                        "options" => [
-                            [
-                                "id" => "elementsImageCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
-                                "cssOutput" => [
-                                    ["rule", ".template-content .bearcms-image-element", "overflow:hidden;"],
-                                    ["selector", ".template-content .bearcms-image-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-content .bearcms-image-element"]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Image gallery"),
-                        "options" => [
-                            [
-                                "id" => "elementsImageGalleryCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
-                                "cssOutput" => [
-                                    ["selector", ".template-content .bearcms-image-gallery-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-content .bearcms-image-gallery-element"]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Image"),
-                                "options" => [
-                                    [
-                                        "id" => "elementsImageGalleryImageCSS",
-                                        "type" => "css",
-                                        "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
-                                        "cssOutput" => [
-                                            ["rule", ".template-content .bearcms-image-gallery-element-image", "overflow:hidden;"],
-                                            ["selector", ".template-content .bearcms-image-gallery-element-image"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-content .bearcms-image-gallery-element-image"]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Video"),
-                        "options" => [
-                            [
-                                "id" => "elementsVideoCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
-                                "cssOutput" => [
-                                    ["rule", ".template-content .bearcms-video-element", "overflow:hidden;"],
-                                    ["selector", ".template-content .bearcms-video-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-content .bearcms-video-element"]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Navigation"),
-                        "options" => [
-                            [
-                                "id" => "elementsNavigationCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssBorder", "cssBackground"],
-                                "cssOutput" => [
-                                    ["selector", ".template-content .bearcms-navigation-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-content .bearcms-navigation-element"]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Elements"),
-                                "options" => [
-                                    [
-                                        "id" => "elementsNavigationItemLinkCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-content .bearcms-navigation-element-item a", "display:inline-block;"],
-                                            ["selector", ".template-content .bearcms-navigation-element-item a"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-content .bearcms-navigation-element-item a"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%",
-                                            "text-decoration" => "underline"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.HTML code"),
-                        "options" => [
-                            [
-                                "id" => "elementsHtmlCSS",
-                                "type" => "css",
-                                "cssOutput" => [
-                                    ["selector", ".template-content .bearcms-html-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-content .bearcms-html-element"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#000000",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%"
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Links"),
-                                "options" => [
-                                    [
-                                        "id" => "elementsHtmlLinkCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-content .bearcms-html-element a", "display:inline-block;"],
-                                            ["selector", ".template-content .bearcms-html-element a"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-content .bearcms-html-element a"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%",
-                                            "text-decoration" => "underline"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Blog posts"),
-                        "options" => [
-                            [
-                                "id" => "elementsBlogPostsCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
-                                "cssOutput" => [
-                                    ["selector", ".template-content .bearcms-blog-posts-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-content .bearcms-blog-posts-element"]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Post"),
-                                "options" => [
-                                    [
-                                        "id" => "elementsBlogPostsPostCSS",
-                                        "type" => "css",
-                                        "cssTypes" => ["cssBorder", "cssBackground", "cssShadow"],
-                                        "cssOutput" => [
-                                            ["selector", ".template-content .bearcms-blog-posts-element-post"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-content .bearcms-blog-posts-element-post"]
-                                        ]
-                                    ],
-                                    [
-                                        "type" => "group",
-                                        "name" => __("bearcms.themes.theme1.options.Title"),
-                                        "options" => [
-                                            [
-                                                "id" => "elementsBlogPostsPostTitleCSS",
-                                                "type" => "css",
-                                                "cssOutput" => [
-                                                    ["selector", ".template-content .bearcms-blog-posts-element-post-title"]
-                                                ],
-                                                "onCustomize" => [
-                                                    ["updateRule", ".template-content .bearcms-blog-posts-element-post-title"]
-                                                ],
-                                                "defaultValue" => [
-                                                    "color" => "#1BB0CE",
-                                                    "font-family" => "googlefonts:Open Sans",
-                                                    "font-size" => "22px",
-                                                    "text-align" => "left",
-                                                    "line-height" => "180%"
-                                                ]
-                                            ],
-                                            [
-                                                "type" => "group",
-                                                "name" => __("bearcms.themes.theme1.options.Container"),
-                                                "options" => [
-                                                    [
-                                                        "id" => "elementsBlogPostsPostTitleContainerCSS",
-                                                        "type" => "css",
-                                                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                                                        "cssOutput" => [
-                                                            ["selector", ".template-content .bearcms-blog-posts-element-post-title-container"]
-                                                        ],
-                                                        "onCustomize" => [
-                                                            ["updateRule", ".template-content .bearcms-blog-posts-element-post-title-container"]
-                                                        ]
-                                                    ]
-                                                ]
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        "type" => "group",
-                                        "name" => __("bearcms.themes.theme1.options.Date"),
-                                        "options" => [
-                                            [
-                                                "id" => "elementsBlogPostsPostDateCSS",
-                                                "type" => "css",
-                                                "cssOutput" => [
-                                                    ["selector", ".template-content .bearcms-blog-posts-element-post-date"]
-                                                ],
-                                                "onCustomize" => [
-                                                    ["updateRule", ".template-content .bearcms-blog-posts-element-post-date"]
-                                                ],
-                                                "defaultValue" => [
-                                                    "color" => "#777777",
-                                                    "font-family" => "Arial",
-                                                    "font-size" => "14px",
-                                                    "line-height" => "180%"
-                                                ]
-                                            ],
-                                            [
-                                                "type" => "group",
-                                                "name" => __("bearcms.themes.theme1.options.Container"),
-                                                "options" => [
-                                                    [
-                                                        "id" => "elementsBlogPostsPostDateContainerCSS",
-                                                        "type" => "css",
-                                                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                                                        "cssOutput" => [
-                                                            ["selector", ".template-content .bearcms-blog-posts-element-post-date-container"]
-                                                        ],
-                                                        "onCustomize" => [
-                                                            ["updateRule", ".template-content .bearcms-blog-posts-element-post-date-container"]
-                                                        ]
-                                                    ]
-                                                ]
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        "type" => "group",
-                                        "name" => __("bearcms.themes.theme1.options.Content"),
-                                        "options" => [
-                                            [
-                                                "id" => "elementsBlogPostsPostContentCSS",
-                                                "type" => "css",
-                                                "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                                                "cssOutput" => [
-                                                    ["selector", ".template-content .bearcms-blog-posts-element-post-content"]
-                                                ],
-                                                "onCustomize" => [
-                                                    ["updateRule", ".template-content .bearcms-blog-posts-element-post-content"]
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                "options" => $getElementsList('contentElements', '.template-content')
             ],
             [
                 "type" => "group",
@@ -1573,467 +1302,7 @@ return [
             [
                 "type" => "group",
                 "name" => __("bearcms.themes.theme1.options.Elements"),
-                "options" => [
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Heading"),
-                        "options" => [
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Large"),
-                                "options" => [
-                                    [
-                                        "id" => "footerElementsHeadingLargeCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-footer .bearcms-heading-element-large", "font-weight:normal;"],
-                                            ["selector", ".template-footer .bearcms-heading-element-large"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-footer .bearcms-heading-element-large"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "font-family" => "googlefonts:Open Sans",
-                                            "font-size" => "28px",
-                                            "text-align" => "center",
-                                            "line-height" => "180%",
-                                            "margin-top" => "0",
-                                            "margin-right" => "0",
-                                            "margin-bottom" => "0",
-                                            "margin-left" => "0"
-                                        ]
-                                    ]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Medium"),
-                                "options" => [
-                                    [
-                                        "id" => "footerElementsHeadingMediumCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-footer .bearcms-heading-element-medium", "font-weight:normal;"],
-                                            ["selector", ".template-footer .bearcms-heading-element-medium"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-footer .bearcms-heading-element-medium"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "font-family" => "googlefonts:Open Sans",
-                                            "font-size" => "22px",
-                                            "text-align" => "center",
-                                            "line-height" => "180%",
-                                            "margin-top" => "0",
-                                            "margin-right" => "0",
-                                            "margin-bottom" => "0",
-                                            "margin-left" => "0"
-                                        ]
-                                    ]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Small"),
-                                "options" => [
-                                    [
-                                        "id" => "footerElementsHeadingSmallCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-footer .bearcms-heading-element-small", "font-weight:normal;"],
-                                            ["selector", ".template-footer .bearcms-heading-element-small"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-footer .bearcms-heading-element-small"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "font-family" => "googlefonts:Open Sans",
-                                            "font-size" => "18px",
-                                            "text-align" => "center",
-                                            "line-height" => "180%",
-                                            "margin-top" => "0",
-                                            "margin-right" => "0",
-                                            "margin-bottom" => "0",
-                                            "margin-left" => "0"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Text"),
-                        "options" => [
-                            [
-                                "id" => "footerElementsTextCSS",
-                                "type" => "css",
-                                "cssOutput" => [
-                                    ["selector", ".template-footer .bearcms-text-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-footer .bearcms-text-element"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#ffffff",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%"
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Links"),
-                                "options" => [
-                                    [
-                                        "id" => "footerElementsTextLinkCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-footer .bearcms-text-element a", "display:inline-block;"],
-                                            ["selector", ".template-footer .bearcms-text-element a"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-footer .bearcms-text-element a"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%",
-                                            "text-decoration" => "underline"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Link"),
-                        "options" => [
-                            [
-                                "id" => "footerElementsLinkCSS",
-                                "type" => "css",
-                                "cssOutput" => [
-                                    ["rule", ".template-footer .bearcms-link-element", "display:inline-block;text-decoration:none;"],
-                                    ["selector", ".template-footer .bearcms-link-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-footer .bearcms-link-element"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#ffffff",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "padding-top" => "15px",
-                                    "padding-right" => "15px",
-                                    "padding-bottom" => "15px",
-                                    "padding-left" => "15px",
-                                    "background-color" => "#1BB0CE",
-                                    "background-color:hover" => "#1099B5",
-                                    "background-color:active" => "#0A7D94"
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Image"),
-                        "options" => [
-                            [
-                                "id" => "footerElementsImageCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
-                                "cssOutput" => [
-                                    ["rule", ".template-footer .bearcms-image-element", "overflow:hidden;"],
-                                    ["selector", ".template-footer .bearcms-image-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-footer .bearcms-image-element"]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Image gallery"),
-                        "options" => [
-                            [
-                                "id" => "footerElementsImageGalleryCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
-                                "cssOutput" => [
-                                    ["selector", ".template-footer .bearcms-image-gallery-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-footer .bearcms-image-gallery-element"]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Image"),
-                                "options" => [
-                                    [
-                                        "id" => "footerElementsImageGalleryImageCSS",
-                                        "type" => "css",
-                                        "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
-                                        "cssOutput" => [
-                                            ["rule", ".template-footer .bearcms-image-gallery-element-image", "overflow:hidden;"],
-                                            ["selector", ".template-footer .bearcms-image-gallery-element-image"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-footer .bearcms-image-gallery-element-image"]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Video"),
-                        "options" => [
-                            [
-                                "id" => "footerElementsVideoCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
-                                "cssOutput" => [
-                                    ["rule", ".template-footer .bearcms-video-element", "overflow:hidden;"],
-                                    ["selector", ".template-footer .bearcms-video-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-footer .bearcms-video-element"]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Navigation"),
-                        "options" => [
-                            [
-                                "id" => "footerElementsNavigationCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssBorder", "cssBackground"],
-                                "cssOutput" => [
-                                    ["selector", ".template-footer .bearcms-navigation-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-footer .bearcms-navigation-element"]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Elements"),
-                                "options" => [
-                                    [
-                                        "id" => "footerElementsNavigationItemLinkCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-footer .bearcms-navigation-element-item a", "display:inline-block;"],
-                                            ["selector", ".template-footer .bearcms-navigation-element-item a"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-footer .bearcms-navigation-element-item a"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%",
-                                            "text-decoration" => "underline"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.HTML code"),
-                        "options" => [
-                            [
-                                "id" => "footerElementsHtmlCSS",
-                                "type" => "css",
-                                "cssOutput" => [
-                                    ["selector", ".template-footer .bearcms-html-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-footer .bearcms-html-element"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#ffffff",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%"
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Links"),
-                                "options" => [
-                                    [
-                                        "id" => "footerElementsHtmlLinkCSS",
-                                        "type" => "css",
-                                        "cssOutput" => [
-                                            ["rule", ".template-footer .bearcms-html-element a", "display:inline-block;"],
-                                            ["selector", ".template-footer .bearcms-html-element a"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-footer .bearcms-html-element a"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%",
-                                            "text-decoration" => "underline"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Blog posts"),
-                        "options" => [
-                            [
-                                "id" => "footerElementsBlogPostsCSS",
-                                "type" => "css",
-                                "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
-                                "cssOutput" => [
-                                    ["selector", ".template-footer .bearcms-blog-posts-element"]
-                                ],
-                                "onCustomize" => [
-                                    ["updateRule", ".template-footer .bearcms-blog-posts-element"]
-                                ]
-                            ],
-                            [
-                                "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Post"),
-                                "options" => [
-                                    [
-                                        "id" => "footerElementsBlogPostsPostCSS",
-                                        "type" => "css",
-                                        "cssTypes" => ["cssBorder", "cssBackground", "cssShadow"],
-                                        "cssOutput" => [
-                                            ["selector", ".template-footer .bearcms-blog-posts-element-post"]
-                                        ],
-                                        "onCustomize" => [
-                                            ["updateRule", ".template-footer .bearcms-blog-posts-element-post"]
-                                        ]
-                                    ],
-                                    [
-                                        "type" => "group",
-                                        "name" => __("bearcms.themes.theme1.options.Title"),
-                                        "options" => [
-                                            [
-                                                "id" => "footerElementsBlogPostsPostTitleCSS",
-                                                "type" => "css",
-                                                "cssOutput" => [
-                                                    ["selector", ".template-footer .bearcms-blog-posts-element-post-title"]
-                                                ],
-                                                "onCustomize" => [
-                                                    ["updateRule", ".template-footer .bearcms-blog-posts-element-post-title"]
-                                                ],
-                                                "defaultValue" => [
-                                                    "color" => "#1BB0CE",
-                                                    "font-family" => "googlefonts:Open Sans",
-                                                    "font-size" => "22px",
-                                                    "text-align" => "left",
-                                                    "line-height" => "180%"
-                                                ]
-                                            ],
-                                            [
-                                                "type" => "group",
-                                                "name" => __("bearcms.themes.theme1.options.Container"),
-                                                "options" => [
-                                                    [
-                                                        "id" => "footerElementsBlogPostsPostTitleContainerCSS",
-                                                        "type" => "css",
-                                                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                                                        "cssOutput" => [
-                                                            ["selector", ".template-footer .bearcms-blog-posts-element-post-title-container"]
-                                                        ],
-                                                        "onCustomize" => [
-                                                            ["updateRule", ".template-footer .bearcms-blog-posts-element-post-title-container"]
-                                                        ]
-                                                    ]
-                                                ]
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        "type" => "group",
-                                        "name" => __("bearcms.themes.theme1.options.Date"),
-                                        "options" => [
-                                            [
-                                                "id" => "footerElementsBlogPostsPostDateCSS",
-                                                "type" => "css",
-                                                "cssOutput" => [
-                                                    ["selector", ".template-footer .bearcms-blog-posts-element-post-date"]
-                                                ],
-                                                "onCustomize" => [
-                                                    ["updateRule", ".template-footer .bearcms-blog-posts-element-post-date"]
-                                                ],
-                                                "defaultValue" => [
-                                                    "color" => "#eeeeee",
-                                                    "font-family" => "Arial",
-                                                    "font-size" => "14px",
-                                                    "line-height" => "180%"
-                                                ]
-                                            ],
-                                            [
-                                                "type" => "group",
-                                                "name" => __("bearcms.themes.theme1.options.Container"),
-                                                "options" => [
-                                                    [
-                                                        "id" => "footerElementsBlogPostsPostDateContainerCSS",
-                                                        "type" => "css",
-                                                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                                                        "cssOutput" => [
-                                                            ["selector", ".template-footer .bearcms-blog-posts-element-post-date-container"]
-                                                        ],
-                                                        "onCustomize" => [
-                                                            ["updateRule", ".template-footer .bearcms-blog-posts-element-post-date-container"]
-                                                        ]
-                                                    ]
-                                                ]
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        "type" => "group",
-                                        "name" => __("bearcms.themes.theme1.options.Content"),
-                                        "options" => [
-                                            [
-                                                "id" => "footerElementsBlogPostsPostContentCSS",
-                                                "type" => "css",
-                                                "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                                                "cssOutput" => [
-                                                    ["selector", ".template-footer .bearcms-blog-posts-element-post-content"]
-                                                ],
-                                                "onCustomize" => [
-                                                    ["updateRule", ".template-footer .bearcms-blog-posts-element-post-content"]
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                "options" => $getElementsList('footerElements', '.template-footer')
             ],
             [
                 "type" => "group",
@@ -2151,7 +1420,7 @@ return [
                 "name" => __("bearcms.themes.theme1.options.Title"),
                 "options" => [
                     [
-                        "id" => "elementsBlogPostPageTitleCSS",
+                        "id" => "blogPostPageTitleCSS",
                         "type" => "css",
                         "cssOutput" => [
                             ["rule", ".template-content .bearcms-blogpost-page-title", "font-weight:normal;"],
@@ -2177,7 +1446,7 @@ return [
                         "name" => __("bearcms.themes.theme1.options.Container"),
                         "options" => [
                             [
-                                "id" => "elementsBlogPostPageTitleContainerCSS",
+                                "id" => "blogPostPageTitleContainerCSS",
                                 "type" => "css",
                                 "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
@@ -2196,7 +1465,7 @@ return [
                 "name" => __("bearcms.themes.theme1.options.Date"),
                 "options" => [
                     [
-                        "id" => "elementsBlogPostPageDateCSS",
+                        "id" => "blogPostPageDateCSS",
                         "type" => "css",
                         "cssOutput" => [
                             ["selector", ".template-content .bearcms-blogpost-page-date"]
@@ -2217,7 +1486,7 @@ return [
                         "name" => __("bearcms.themes.theme1.options.Container"),
                         "options" => [
                             [
-                                "id" => "elementsBlogPostPageDateContainerCSS",
+                                "id" => "blogPostPageDateContainerCSS",
                                 "type" => "css",
                                 "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
@@ -2236,7 +1505,7 @@ return [
                 "name" => __("bearcms.themes.theme1.options.Content"),
                 "options" => [
                     [
-                        "id" => "elementsBlogPostPageContentCSS",
+                        "id" => "blogPostPageContentCSS",
                         "type" => "css",
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                         "cssOutput" => [
@@ -2259,3 +1528,43 @@ return [
         "name" => __("bearcms.themes.theme1.options.Custom CSS")
     ]
 ];
+
+$setDefaultValue = function($id, $defaultValue) use (&$options) {
+    $updateOptions = function($options) use ($id, $defaultValue, &$updateOptions) {
+        foreach ($options as $index => $option) {
+            if (is_array($option)) {
+                if (isset($option['id']) && $option['id'] === $id) {
+                    $options[$index]['defaultValue'] = $defaultValue;
+                    return $options;
+                }
+                if (isset($option['options'])) {
+                    $options[$index]['options'] = $updateOptions($option['options']);
+                }
+            }
+        }
+        return $options;
+    };
+    $options = $updateOptions($options);
+};
+
+$setDefaultValue("footerElementsHeadingLargeCSS", [
+    "color" => "#fff",
+    "font-family" => "googlefonts:Open Sans",
+    "font-size" => "28px",
+    "text-align" => "center",
+    "line-height" => "180%",
+    "margin-top" => "0",
+    "margin-right" => "0",
+    "margin-bottom" => "0",
+    "margin-left" => "0"
+]);
+
+$setDefaultValue("footerElementsTextCSS", [
+    "color" => "#ffffff",
+    "font-family" => "Arial",
+    "font-size" => "14px",
+    "line-height" => "180%"
+]);
+
+
+return $options;

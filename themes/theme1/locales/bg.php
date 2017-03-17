@@ -40,4 +40,11 @@ return [
     'bearcms.themes.theme1.options.Position' => 'Позиция',
     'bearcms.themes.theme1.options.Top' => 'Горе',
     'bearcms.themes.theme1.options.Bottom' => 'Долу',
+    'bearcms.themes.theme1.options.Contact Form' => 'Форма за контакти',
+    'bearcms.themes.theme1.options.Email label' => 'Име на полето за имейл',
+    'bearcms.themes.theme1.options.Email input' => 'Поле за имейл',
+    'bearcms.themes.theme1.options.Message label' => 'Име на полето за съобщение',
+    'bearcms.themes.theme1.options.Message input' => 'Поле за съобщение',
+    'bearcms.themes.theme1.options.Send button' => 'Бутон за изпращане',
+    'bearcms.themes.theme1.options.Send button waiting' => 'Изчакване...',
 ];
