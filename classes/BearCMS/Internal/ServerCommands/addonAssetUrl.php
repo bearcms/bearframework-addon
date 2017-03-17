@@ -20,6 +20,6 @@ return function($data) {
     if (!isset($data['addonID'])) {
         throw new Exception('');
     }
-    $addonDir = BearFramework\Addons::get($data['addonID'])['dir'];
+    $addonDir = BearFramework\Addons::get($data['addonID'])->dir;
     return $app->assets->getUrl($addonDir . DIRECTORY_SEPARATOR . $data['key'], $data['options']);
 };

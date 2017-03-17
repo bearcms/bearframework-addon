@@ -111,8 +111,11 @@ class Data
         } elseif (substr($filename, 0, 6) === 'addon:') {
             $temp = explode(':', $filename, 3);
             if (sizeof($temp) === 3) {
-                $addonDir = \BearFramework\Addons::get($temp[1])['dir'];
-                $filename = $addonDir . DIRECTORY_SEPARATOR . $temp[2];
+                $addon = \BearFramework\Addons::get($temp[1]);
+                if ($addon === null) {
+                    throw new \Exception('Cannot find addon ' . $temp[1]);
+                }
+                $filename = $addon->dir . DIRECTORY_SEPARATOR . $temp[2];
             }
         }
         return $filename;
