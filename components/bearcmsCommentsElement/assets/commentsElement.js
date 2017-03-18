@@ -59,14 +59,14 @@ bearCMS.commentsElement = (function () {
         var form = event.target;
         form.querySelector('.bearcms-comments-element-send-button').style.display = 'none';
         form.querySelector('.bearcms-comments-element-send-button-waiting').style.display = 'inline-block';
-        form.querySelector('.bearcms-comments-element-textarea').setAttribute('readonly', 'readonly');
+        form.querySelector('.bearcms-comments-element-text').setAttribute('readonly', 'readonly');
     };
 
     var onFormResponseReceived = function (event) {
         var form = event.target;
         form.querySelector('.bearcms-comments-element-send-button').style.display = 'inline-block';
         form.querySelector('.bearcms-comments-element-send-button-waiting').style.display = 'none';
-        form.querySelector('.bearcms-comments-element-textarea').removeAttribute('readonly');
+        form.querySelector('.bearcms-comments-element-text').removeAttribute('readonly');
     };
 
     var onFocusTextarea = function (event) {

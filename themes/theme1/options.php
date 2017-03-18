@@ -289,7 +289,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
             "options" => [
                 [
                     "type" => "group",
-                    "name" => __("bearcms.themes.theme1.options.Email label"),
+                    "name" => __("bearcms.themes.theme1.options.contactForm.Email label"),
                     "options" => [
                         [
                             "id" => $idPrefix . "ContactFormEmailLabelCSS",
@@ -312,7 +312,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                 ],
                 [
                     "type" => "group",
-                    "name" => __("bearcms.themes.theme1.options.Email input"),
+                    "name" => __("bearcms.themes.theme1.options.contactForm.Email input"),
                     "options" => [
                         [
                             "id" => $idPrefix . "ContactFormEmailInputCSS",
@@ -352,7 +352,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                 ],
                 [
                     "type" => "group",
-                    "name" => __("bearcms.themes.theme1.options.Message label"),
+                    "name" => __("bearcms.themes.theme1.options.contactForm.Message label"),
                     "options" => [
                         [
                             "id" => $idPrefix . "ContactFormMessageLabelCSS",
@@ -376,7 +376,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                 ],
                 [
                     "type" => "group",
-                    "name" => __("bearcms.themes.theme1.options.Message input"),
+                    "name" => __("bearcms.themes.theme1.options.contactForm.Message input"),
                     "options" => [
                         [
                             "id" => $idPrefix . "ContactFormMessageInputCSS",
@@ -418,7 +418,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                 ],
                 [
                     "type" => "group",
-                    "name" => __("bearcms.themes.theme1.options.Send button"),
+                    "name" => __("bearcms.themes.theme1.options.contactForm.Send button"),
                     "options" => [
                         [
                             "id" => $idPrefix . "ContactFormSendButtonCSS",
@@ -446,7 +446,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                         ],
                         [
                             "type" => "group",
-                            "name" => __("bearcms.themes.theme1.options.Send button waiting"),
+                            "name" => __("bearcms.themes.theme1.options.contactForm.Send button waiting"),
                             "options" => [
                                 [
                                     "id" => $idPrefix . "ContactFormSendButtonWaitingCSS",
@@ -460,6 +460,287 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                     ],
                                     "defaultValue" => [
                                         "background-color" => "#aaaaaa"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        [
+            "type" => "group",
+            "name" => __("bearcms.themes.theme1.options.Comments"),
+            "options" => [
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.comments.Comment"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "CommentsCommentCSS",
+                            "type" => "css",
+                            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                            "cssOutput" => [
+                                ["selector", $parentClassNameSelector . " .bearcms-comments-comment"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-comments-comment"]
+                            ],
+                            "defaultValue" => [
+                                "margin-bottom" => "10px",
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.comments.Author name"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "CommentsAuthorNameCSS",
+                                    "type" => "css",
+                                    "cssOutput" => [
+                                        ["rule", $parentClassNameSelector . " .bearcms-comments-comment-author-name", "display:inline-block;"],
+                                        ["selector", $parentClassNameSelector . " .bearcms-comments-comment-author-name"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-comments-comment-author-name"]
+                                    ],
+                                    "defaultValue" => [
+                                        "color" => "#1BB0CE",
+                                        "color:hover" => "#1099B5",
+                                        "color:active" => "#0A7D94",
+                                        "font-family" => "Arial",
+                                        "font-size" => "14px",
+                                        "line-height" => "180%",
+                                        "text-decoration" => "underline"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.comments.Author image"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "CommentsAuthorImageCSS",
+                                    "type" => "css",
+                                    "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                                    "cssOutput" => [
+                                        ["rule", $parentClassNameSelector . " .bearcms-comments-comment-author-image", "display:inline-block;float:left;"],
+                                        ["selector", $parentClassNameSelector . " .bearcms-comments-comment-author-image"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-comments-comment-author-image"]
+                                    ],
+                                    "defaultValue" => [
+                                        "width" => "50px",
+                                        "height" => "50px",
+                                        "margin-right" => "8px",
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.comments.Date"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "CommentsDateCSS",
+                                    "type" => "css",
+                                    "cssOutput" => [
+                                        ["rule", $parentClassNameSelector . " .bearcms-comments-comment-date", "display:inline-block;float:right;"],
+                                        ["selector", $parentClassNameSelector . " .bearcms-comments-comment-date"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-comments-comment-date"]
+                                    ],
+                                    "defaultValue" => [
+                                        "color" => "#aaa",
+                                        "font-family" => "Arial",
+                                        "font-size" => "12px",
+                                        "line-height" => "180%"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.comments.Text"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "CommentsTextCSS",
+                                    "type" => "css",
+                                    "cssOutput" => [
+                                        ["selector", $parentClassNameSelector . " .bearcms-comments-comment-text"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-comments-comment-text"]
+                                    ],
+                                    "defaultValue" => [
+                                        "color" => "#000000",
+                                        "font-family" => "Arial",
+                                        "font-size" => "14px",
+                                        "line-height" => "180%"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.comments.Text links"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "CommentsTextLinksCSS",
+                                    "type" => "css",
+                                    "cssOutput" => [
+                                        ["rule", $parentClassNameSelector . " .bearcms-comments-comment-text a", "display:inline-block;"],
+                                        ["selector", $parentClassNameSelector . " .bearcms-comments-comment-text a"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-comments-comment-text a"]
+                                    ],
+                                    "defaultValue" => [
+                                        "color" => "#1BB0CE",
+                                        "color:hover" => "#1099B5",
+                                        "color:active" => "#0A7D94",
+                                        "font-family" => "Arial",
+                                        "font-size" => "14px",
+                                        "line-height" => "180%",
+                                        "text-decoration" => "underline"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.comments.Text input"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "CommentsTextInputCSS",
+                            "type" => "css",
+                            "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                            "cssOutput" => [
+                                ["selector", $parentClassNameSelector . " .bearcms-comments-element-text"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-comments-element-text"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#000000",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "180%",
+                                "padding-left" => "15px",
+                                "padding-right" => "15px",
+                                "padding-top" => "10px",
+                                "padding-bottom" => "10px",
+                                "width" => "100%",
+                                "height" => "80px",
+                                "border-top" => "1px solid #cccccc",
+                                "border-bottom" => "1px solid #cccccc",
+                                "border-left" => "1px solid #cccccc",
+                                "border-right" => "1px solid #cccccc",
+                                "border-top:hover" => "1px solid #aaaaaa",
+                                "border-bottom:hover" => "1px solid #aaaaaa",
+                                "border-left:hover" => "1px solid #aaaaaa",
+                                "border-right:hover" => "1px solid #aaaaaa",
+                                "border-top:active" => "1px solid #888888",
+                                "border-bottom:active" => "1px solid #888888",
+                                "border-left:active" => "1px solid #888888",
+                                "border-right:active" => "1px solid #888888",
+                            ]
+                        ],
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.comments.Send button"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "CommentsSendButtonCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-comments-element-send-button", "display:inline-block;text-decoration:none;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-comments-element-send-button"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-comments-element-send-button"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#ffffff",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "42px",
+                                "padding-left" => "15px",
+                                "padding-right" => "15px",
+                                "height" => "42px",
+                                "background-color" => "#1BB0CE",
+                                "background-color:hover" => "#1099B5",
+                                "background-color:active" => "#0A7D94",
+                                "margin-top" => "10px"
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.comments.Send button waiting"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "CommentsSendButtonWaitingCSS",
+                                    "type" => "css",
+                                    "cssOutput" => [
+                                        ["rule", $parentClassNameSelector . " .bearcms-comments-element-send-button-waiting", "display:inline-block;text-decoration:none;"],
+                                        ["selector", $parentClassNameSelector . " .bearcms-comments-element-send-button-waiting"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-comments-element-send-button-waiting"]
+                                    ],
+                                    "defaultValue" => [
+                                        "background-color" => "#aaaaaa"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.comments.Show more button"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "CommentsShowMoreButtonCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-comments-show-more-button", "display:inline-block;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-comments-show-more-button"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-comments-show-more-button"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#1BB0CE",
+                                "color:hover" => "#1099B5",
+                                "color:active" => "#0A7D94",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "180%",
+                                "text-decoration" => "underline",
+                                "margin-bottom" => "5px"
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.comments.Container"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "CommentsShowMoreButtonContainerCSS",
+                                    "type" => "css",
+                                    "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                                    "cssOutput" => [
+                                        ["selector", $parentClassNameSelector . " .bearcms-comments-show-more-button-container"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-comments-show-more-button-container"]
                                     ]
                                 ]
                             ]

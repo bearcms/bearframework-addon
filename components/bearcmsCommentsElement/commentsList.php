@@ -36,12 +36,12 @@ if ($thread !== null) {
         $startIndex = 0;
     }
     if ($startIndex > 0) {
-        echo '<div class="bearcms-comments-more-link-container">';
+        echo '<div class="bearcms-comments-show-more-button-container">';
         $loadMoreData = [
             'serverData' => \BearCMS\Internal\TempClientData::set(['threadID' => $threadID])
         ];
         $onClick = 'bearCMS.commentsElement.loadMore(event,' . json_encode($loadMoreData) . ');';
-        echo '<a class="bearcms-comments-more-link" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">' . __('bearcms.comments.Show more') . '</a>';
+        echo '<a class="bearcms-comments-show-more-button" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">' . __('bearcms.comments.Show more') . '</a>';
         echo '</div>';
     }
 
@@ -62,9 +62,9 @@ if ($thread !== null) {
         }
         $linkAttributes .= ' title="' . htmlentities($profile->name) . '"';
         echo '<div class="bearcms-comments-comment">';
-        echo '<' . $tagName . ' class="bearcms-comments-comment-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></' . $tagName . '>';
-        echo '<' . $tagName . ' class="bearcms-comments-comment-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</' . $tagName . '> <span class="bearcms-comments-comment-date">' . Localization::getTimeAgo($comment->createdTime) . $statusText . '</span>';
-        echo '<div class="bearcms-comments-comment-content">' . nl2br(htmlspecialchars($comment->text)) . '</div>';
+        echo '<' . $tagName . ' class="bearcms-comments-comment-author-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></' . $tagName . '>';
+        echo '<' . $tagName . ' class="bearcms-comments-comment-author-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</' . $tagName . '> <span class="bearcms-comments-comment-date">' . Localization::getTimeAgo($comment->createdTime) . $statusText . '</span>';
+        echo '<div class="bearcms-comments-comment-text">' . nl2br(htmlspecialchars($comment->text)) . '</div>';
         echo '</div>';
     }
 }

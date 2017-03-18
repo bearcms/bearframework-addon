@@ -54,9 +54,8 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
 ?><html>
     <head>
         <style>
-            .bearcms-comments-element-textarea{
+            .bearcms-comments-element-text{
                 display: block;
-                width: 100%;
                 resize: none;
             }
             .bearcms-comments-element-send-button{
@@ -74,7 +73,7 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         . ' onresponsereceived="bearCMS.commentsElement.onFormResponseReceived(event);"'
         . '>';
         echo '<input type="hidden" name="cfcontext"/>';
-        echo '<textarea placeholder="' . __('bearcms.comments.Your comment') . '" name="cfcomment" class="bearcms-comments-element-textarea" onfocus="bearCMS.commentsElement.onFocusTextarea(event);"></textarea>';
+        echo '<textarea placeholder="' . __('bearcms.comments.Your comment') . '" name="cfcomment" class="bearcms-comments-element-text" onfocus="bearCMS.commentsElement.onFocusTextarea(event);"></textarea>';
         echo '<span onclick="this.parentNode.submit();" href="javascript:void(0);" class="bearcms-comments-element-send-button">' . __('bearcms.comments.Send') . '</span>';
         echo '<span style="display:none;" class="bearcms-comments-element-send-button bearcms-comments-element-send-button-waiting">' . __('bearcms.comments.Sending ...') . '</span>';
         echo '</form>';
