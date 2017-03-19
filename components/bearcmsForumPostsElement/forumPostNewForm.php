@@ -50,20 +50,12 @@ $form->onSubmit = function($values) use ($component, $app) {
 ?><html>
     <head>
         <style>
-            .bearcms-forum-post-form-element-textarea{
+            .bearcms-new-forum-post-page-text{
                 display:block;
-                width:100%;
                 resize: none;
-                box-sizing: border-box;
-                height:100px;
-                padding:20px;
             }
-            .bearcms-forum-post-form-element-send-button{
-                background-color:gray;
+            .bearcms-new-forum-post-page-send-button{
                 display:inline-block;
-                padding:10px;
-
-                margin-top: 15px;
                 cursor: pointer;
             }
         </style>
@@ -75,12 +67,12 @@ $form->onSubmit = function($values) use ($component, $app) {
         . ' onrequestsent="bearCMS.forumPostNewForm.onFormRequestSent(event);"'
         . ' onresponsereceived="bearCMS.forumPostNewForm.onFormResponseReceived(event);"'
         . '>';
-        echo '<label for="fptitle">Title</label>';
-        echo '<input type="text" name="fptitle" class="bearcms-forum-post-form-element-title"/><br/>';
-        echo '<label for="fptext">Content</label>';
-        echo '<textarea name="fptext" class="bearcms-forum-post-form-element-textarea"></textarea>';
-        echo '<span onclick="this.parentNode.submit();" href="javascript:void(0);" class="bearcms-forum-post-form-element-send-button">Post</span>';
-        echo '<span style="display:none;" class="bearcms-forum-post-form-element-send-button bearcms-forum-post-form-element-send-button-waiting">Posting ...</span>';
+        echo '<label for="fptitle" class="bearcms-new-forum-post-page-title-label">Title</label>';
+        echo '<input type="text" name="fptitle" class="bearcms-new-forum-post-page-title"/><br/>';
+        echo '<label for="fptext" class="bearcms-new-forum-post-page-text-label">Content</label>';
+        echo '<textarea name="fptext" class="bearcms-new-forum-post-page-text"></textarea>';
+        echo '<span onclick="this.parentNode.submit();" href="javascript:void(0);" class="bearcms-new-forum-post-page-send-button">Post</span>';
+        echo '<span style="display:none;" class="bearcms-new-forum-post-page-send-button bearcms-new-forum-post-page-send-button-waiting">Posting ...</span>';
         echo '</form>';
         echo '<script src="' . htmlentities($context->assets->getUrl('components/bearcmsForumPostsElement/assets/forumPostNewForm.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script>';
         ?></body>

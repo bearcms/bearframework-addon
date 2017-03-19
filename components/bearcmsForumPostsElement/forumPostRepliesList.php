@@ -18,10 +18,10 @@ $elementID = 'frl' . md5($forumPostID);
     <head>
 
         <style>
-            .bearcms-forum-post-reply{
+            .bearcms-forum-post-page-reply{
                 clear:both;
             }
-            .bearcms-forum-post-reply-image{
+            .bearcms-forum-post-page-reply-image{
                 display:inline-block;
                 width:50px;
                 height:50px;
@@ -50,10 +50,10 @@ $elementID = 'frl' . md5($forumPostID);
                     $linkAttributes .= ' href="javascript:void(0);"';
                 }
                 $linkAttributes .= ' title="' . htmlentities($profile->name) . '"';
-                echo '<div class="bearcms-forum-post-reply">';
-                echo '<' . $tagName . ' class="bearcms-forum-post-reply-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></' . $tagName . '>';
-                echo '<' . $tagName . ' class="bearcms-forum-post-reply-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</' . $tagName . '> <span class="bearcms-forum-post-reply-date">' . Localization::getTimeAgo($reply->createdTime) . $statusText . '</span>';
-                echo '<div class="bearcms-forum-post-reply-content">' . nl2br(htmlspecialchars($reply->text)) . '</div>';
+                echo '<div class="bearcms-forum-post-page-reply">';
+                echo '<' . $tagName . ' class="bearcms-forum-post-page-reply-author-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></' . $tagName . '>';
+                echo '<' . $tagName . ' class="bearcms-forum-post-page-reply-author-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</' . $tagName . '> <span class="bearcms-forum-post-page-reply-date">' . Localization::getTimeAgo($reply->createdTime) . $statusText . '</span>';
+                echo '<div class="bearcms-forum-post-page-reply-text">' . nl2br(htmlspecialchars($reply->text)) . '</div>';
                 echo '</div>';
             }
         }

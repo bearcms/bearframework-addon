@@ -510,8 +510,8 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                         "color:active" => "#0A7D94",
                                         "font-family" => "Arial",
                                         "font-size" => "14px",
-                                        "line-height" => "180%",
-                                        "text-decoration" => "underline"
+                                        "text-decoration" => "underline",
+                                        "margin-bottom" => "4px"
                                     ]
                                 ]
                             ]
@@ -557,7 +557,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                         "color" => "#aaa",
                                         "font-family" => "Arial",
                                         "font-size" => "12px",
-                                        "line-height" => "180%"
+                                        "line-height" => "180%",
                                     ]
                                 ]
                             ]
@@ -741,6 +741,167 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                     ],
                                     "onCustomize" => [
                                         ["updateRule", $parentClassNameSelector . " .bearcms-comments-show-more-button-container"]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        [
+            "type" => "group",
+            "name" => __("bearcms.themes.theme1.options.Forum posts"),
+            "options" => [
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.forumPosts.Post"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "ForumPostsPostCSS",
+                            "type" => "css",
+                            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                            "cssOutput" => [
+                                ["selector", $parentClassNameSelector . " .bearcms-forum-posts-post"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-forum-posts-post"]
+                            ],
+                            "defaultValue" => [
+                                "margin-bottom" => "5px",
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.forumPosts.Title"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "ForumPostsTitleCSS",
+                                    "type" => "css",
+                                    "cssOutput" => [
+                                        ["selector", $parentClassNameSelector . " .bearcms-forum-posts-post-title"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-forum-posts-post-title"]
+                                    ],
+                                    "defaultValue" => [
+                                        "color" => "#1BB0CE",
+                                        "color:hover" => "#1099B5",
+                                        "color:active" => "#0A7D94",
+                                        "font-family" => "Arial",
+                                        "font-size" => "14px",
+                                        "line-height" => "180%",
+                                        "text-decoration" => "underline"
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.forumPosts.Replies count"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "ForumPostsRepliesCountCSS",
+                                    "type" => "css",
+                                    "cssOutput" => [
+                                        ["rule", $parentClassNameSelector . " .bearcms-forum-posts-post-replies-count", "display:inline-block;float:right;"],
+                                        ["selector", $parentClassNameSelector . " .bearcms-forum-posts-post-replies-count"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-forum-posts-post-replies-count"]
+                                    ],
+                                    "defaultValue" => [
+                                        "color" => "#aaa",
+                                        "font-family" => "Arial",
+                                        "font-size" => "12px",
+                                        "line-height" => "180%",
+                                    ]
+                                ]
+                            ]
+                        ],
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.forumPosts.Show more button"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "ForumPostsShowMoreButtonCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-forum-posts-show-more-button", "display:inline-block;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-forum-posts-show-more-button"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-forum-posts-show-more-button"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#1BB0CE",
+                                "color:hover" => "#1099B5",
+                                "color:active" => "#0A7D94",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "180%",
+                                "text-decoration" => "underline",
+                                "margin-bottom" => "5px"
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.forumPosts.Container"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "ForumPostsShowMoreButtonContainerCSS",
+                                    "type" => "css",
+                                    "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                                    "cssOutput" => [
+                                        ["selector", $parentClassNameSelector . " .bearcms-forum-posts-show-more-button-container"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-forum-posts-show-more-button-container"]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.forumPosts.New post bitton"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "ForumPostsNewPostButtonCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-forum-posts-new-post-button", "display:inline-block;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-forum-posts-new-post-button"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-forum-posts-new-post-button"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#1BB0CE",
+                                "color:hover" => "#1099B5",
+                                "color:active" => "#0A7D94",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "180%",
+                                "text-decoration" => "underline"
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.forumPosts.Container"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "ForumPostsShowMoreButtonContainerCSS",
+                                    "type" => "css",
+                                    "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                                    "cssOutput" => [
+                                        ["selector", $parentClassNameSelector . " .bearcms-forum-posts-new-post-button-container"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-forum-posts-new-post-button-container"]
                                     ]
                                 ]
                             ]
@@ -1797,6 +1958,426 @@ $options = [
                         ],
                         "defaultValue" => [
                             "padding-top" => "15px"
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "type" => "group",
+        "name" => __("bearcms.themes.theme1.New forum post page"),
+        "options" => [
+            [
+                "type" => "group",
+                "name" => __("bearcms.themes.theme1.options.newForumPostPage.Title label"),
+                "options" => [
+                    [
+                        "id" => "newForumPostPageTitleLabelCSS",
+                        "type" => "css",
+                        "cssOutput" => [
+                            ["rule", ".bearcms-new-forum-post-page-title-label", "display:block;"],
+                            ["selector", ".bearcms-new-forum-post-page-title-label"]
+                        ],
+                        "onCustomize" => [
+                            ["updateRule", ".bearcms-new-forum-post-page-title-label"]
+                        ],
+                        "defaultValue" => [
+                            "color" => "#000000",
+                            "font-family" => "Arial",
+                            "font-size" => "14px",
+                            "line-height" => "180%"
+                        ]
+                    ],
+                ]
+            ],
+            [
+                "type" => "group",
+                "name" => __("bearcms.themes.theme1.options.newForumPostPage.Title input"),
+                "options" => [
+                    [
+                        "id" => "newForumPostPageTitleInputCSS",
+                        "type" => "css",
+                        "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOutput" => [
+                            ["selector", ".bearcms-new-forum-post-page-title"]
+                        ],
+                        "onCustomize" => [
+                            ["updateRule", ".bearcms-new-forum-post-page-title"]
+                        ],
+                        "defaultValue" => [
+                            "color" => "#000000",
+                            "font-family" => "Arial",
+                            "font-size" => "14px",
+                            "line-height" => "42px",
+                            "padding-left" => "15px",
+                            "padding-right" => "15px",
+                            "width" => "100%",
+                            "height" => "42px",
+                            "border-top" => "1px solid #cccccc",
+                            "border-bottom" => "1px solid #cccccc",
+                            "border-left" => "1px solid #cccccc",
+                            "border-right" => "1px solid #cccccc",
+                            "border-top:hover" => "1px solid #aaaaaa",
+                            "border-bottom:hover" => "1px solid #aaaaaa",
+                            "border-left:hover" => "1px solid #aaaaaa",
+                            "border-right:hover" => "1px solid #aaaaaa",
+                            "border-top:active" => "1px solid #888888",
+                            "border-bottom:active" => "1px solid #888888",
+                            "border-left:active" => "1px solid #888888",
+                            "border-right:active" => "1px solid #888888",
+                        ]
+                    ],
+                ]
+            ],
+            [
+                "type" => "group",
+                "name" => __("bearcms.themes.theme1.options.newForumPostPage.Text label"),
+                "options" => [
+                    [
+                        "id" => "newForumPostPageTextLabelCSS",
+                        "type" => "css",
+                        "cssOutput" => [
+                            ["rule", ".bearcms-new-forum-post-page-text-label", "display:block;"],
+                            ["selector", ".bearcms-new-forum-post-page-text-label"]
+                        ],
+                        "onCustomize" => [
+                            ["updateRule", ".bearcms-new-forum-post-page-text-label"]
+                        ],
+                        "defaultValue" => [
+                            "margin-top" => "10px",
+                            "color" => "#000000",
+                            "font-family" => "Arial",
+                            "font-size" => "14px",
+                            "line-height" => "180%"
+                        ]
+                    ],
+                ]
+            ],
+            [
+                "type" => "group",
+                "name" => __("bearcms.themes.theme1.options.newForumPostPage.Text input"),
+                "options" => [
+                    [
+                        "id" => "newForumPostPageTextInputCSS",
+                        "type" => "css",
+                        "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOutput" => [
+                            ["selector", ".bearcms-new-forum-post-page-text"]
+                        ],
+                        "onCustomize" => [
+                            ["updateRule", ".bearcms-new-forum-post-page-text"]
+                        ],
+                        "defaultValue" => [
+                            "color" => "#000000",
+                            "font-family" => "Arial",
+                            "font-size" => "14px",
+                            "line-height" => "180%",
+                            "padding-left" => "15px",
+                            "padding-right" => "15px",
+                            "padding-top" => "10px",
+                            "padding-bottom" => "10px",
+                            "width" => "100%",
+                            "height" => "200px",
+                            "border-top" => "1px solid #cccccc",
+                            "border-bottom" => "1px solid #cccccc",
+                            "border-left" => "1px solid #cccccc",
+                            "border-right" => "1px solid #cccccc",
+                            "border-top:hover" => "1px solid #aaaaaa",
+                            "border-bottom:hover" => "1px solid #aaaaaa",
+                            "border-left:hover" => "1px solid #aaaaaa",
+                            "border-right:hover" => "1px solid #aaaaaa",
+                            "border-top:active" => "1px solid #888888",
+                            "border-bottom:active" => "1px solid #888888",
+                            "border-left:active" => "1px solid #888888",
+                            "border-right:active" => "1px solid #888888",
+                        ]
+                    ],
+                ]
+            ],
+            [
+                "type" => "group",
+                "name" => __("bearcms.themes.theme1.options.newForumPostPage.Send button"),
+                "options" => [
+                    [
+                        "id" => "newForumPostPageSendButtonCSS",
+                        "type" => "css",
+                        "cssOutput" => [
+                            ["rule", ".bearcms-new-forum-post-page-send-button", "display:inline-block;text-decoration:none;"],
+                            ["selector", ".bearcms-new-forum-post-page-send-button"]
+                        ],
+                        "onCustomize" => [
+                            ["updateRule", ".bearcms-new-forum-post-page-send-button"]
+                        ],
+                        "defaultValue" => [
+                            "color" => "#ffffff",
+                            "font-family" => "Arial",
+                            "font-size" => "14px",
+                            "line-height" => "42px",
+                            "padding-left" => "15px",
+                            "padding-right" => "15px",
+                            "height" => "42px",
+                            "background-color" => "#1BB0CE",
+                            "background-color:hover" => "#1099B5",
+                            "background-color:active" => "#0A7D94",
+                            "margin-top" => "10px"
+                        ]
+                    ],
+                    [
+                        "type" => "group",
+                        "name" => __("bearcms.themes.theme1.options.newForumPostPage.Send button waiting"),
+                        "options" => [
+                            [
+                                "id" => "newForumPostPageSendButtonWaitingCSS",
+                                "type" => "css",
+                                "cssOutput" => [
+                                    ["rule", ".bearcms-new-forum-post-page-send-button-waiting", "display:inline-block;text-decoration:none;"],
+                                    ["selector", ".bearcms-new-forum-post-page-send-button-waiting"]
+                                ],
+                                "onCustomize" => [
+                                    ["updateRule", ".bearcms-new-forum-post-page-send-button-waiting"]
+                                ],
+                                "defaultValue" => [
+                                    "background-color" => "#aaaaaa"
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "type" => "group",
+        "name" => __("bearcms.themes.theme1.Forum post page"),
+        "options" => [
+            [
+                "type" => "group",
+                "name" => __("bearcms.themes.theme1.options.forumPostPage.Reply"),
+                "options" => [
+                    [
+                        "id" => "forumPostPageReplyCSS",
+                        "type" => "css",
+                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOutput" => [
+                            ["selector", ".bearcms-forum-post-page-reply"]
+                        ],
+                        "onCustomize" => [
+                            ["updateRule", ".bearcms-forum-post-page-reply"]
+                        ],
+                        "defaultValue" => [
+                            "margin-bottom" => "10px",
+                        ]
+                    ],
+                    [
+                        "type" => "group",
+                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Author name"),
+                        "options" => [
+                            [
+                                "id" => "forumPostPageAuthorNameCSS",
+                                "type" => "css",
+                                "cssOutput" => [
+                                    ["rule", ".bearcms-forum-post-page-author-name", "display:inline-block;"],
+                                    ["selector", ".bearcms-forum-post-page-reply-author-name"]
+                                ],
+                                "onCustomize" => [
+                                    ["updateRule", ".bearcms-forum-post-page-reply-author-name"]
+                                ],
+                                "defaultValue" => [
+                                    "color" => "#1BB0CE",
+                                    "color:hover" => "#1099B5",
+                                    "color:active" => "#0A7D94",
+                                    "font-family" => "Arial",
+                                    "font-size" => "14px",
+                                    "text-decoration" => "underline",
+                                    "margin-bottom" => "4px"
+                                ]
+                            ]
+                        ]
+                    ],
+                    [
+                        "type" => "group",
+                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Author image"),
+                        "options" => [
+                            [
+                                "id" => "forumPostPageAuthorImageCSS",
+                                "type" => "css",
+                                "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                                "cssOutput" => [
+                                    ["rule", ".bearcms-forum-post-page-reply-author-image", "display:inline-block;float:left;"],
+                                    ["selector", ".bearcms-forum-post-page-reply-author-image"]
+                                ],
+                                "onCustomize" => [
+                                    ["updateRule", ".bearcms-forum-post-page-reply-author-image"]
+                                ],
+                                "defaultValue" => [
+                                    "width" => "50px",
+                                    "height" => "50px",
+                                    "margin-right" => "8px",
+                                ]
+                            ]
+                        ]
+                    ],
+                    [
+                        "type" => "group",
+                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Date"),
+                        "options" => [
+                            [
+                                "id" => "forumPostPageDateCSS",
+                                "type" => "css",
+                                "cssOutput" => [
+                                    ["rule", ".bearcms-forum-post-page-reply-date", "display:inline-block;float:right;"],
+                                    ["selector", ".bearcms-forum-post-page-reply-date"]
+                                ],
+                                "onCustomize" => [
+                                    ["updateRule", ".bearcms-forum-post-page-reply-date"]
+                                ],
+                                "defaultValue" => [
+                                    "color" => "#aaa",
+                                    "font-family" => "Arial",
+                                    "font-size" => "12px",
+                                    "line-height" => "180%",
+                                ]
+                            ]
+                        ]
+                    ],
+                    [
+                        "type" => "group",
+                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Text"),
+                        "options" => [
+                            [
+                                "id" => "forumPostPageTextCSS",
+                                "type" => "css",
+                                "cssOutput" => [
+                                    ["selector", ".bearcms-forum-post-page-reply-text"]
+                                ],
+                                "onCustomize" => [
+                                    ["updateRule", ".bearcms-forum-post-page-reply-text"]
+                                ],
+                                "defaultValue" => [
+                                    "color" => "#000000",
+                                    "font-family" => "Arial",
+                                    "font-size" => "14px",
+                                    "line-height" => "180%"
+                                ]
+                            ]
+                        ]
+                    ],
+                    [
+                        "type" => "group",
+                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Text links"),
+                        "options" => [
+                            [
+                                "id" => "forumPostPageTextLinksCSS",
+                                "type" => "css",
+                                "cssOutput" => [
+                                    ["rule", ".bearcms-forum-post-page-reply-text a", "display:inline-block;"],
+                                    ["selector", ".bearcms-forum-post-page-reply-text a"]
+                                ],
+                                "onCustomize" => [
+                                    ["updateRule", ".bearcms-forum-post-page-reply-text a"]
+                                ],
+                                "defaultValue" => [
+                                    "color" => "#1BB0CE",
+                                    "color:hover" => "#1099B5",
+                                    "color:active" => "#0A7D94",
+                                    "font-family" => "Arial",
+                                    "font-size" => "14px",
+                                    "line-height" => "180%",
+                                    "text-decoration" => "underline"
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "type" => "group",
+                "name" => __("bearcms.themes.theme1.options.forumPostPage.Text input"),
+                "options" => [
+                    [
+                        "id" => "forumPostPageTextInputCSS",
+                        "type" => "css",
+                        "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOutput" => [
+                            ["selector", ".bearcms-forum-post-page-text"]
+                        ],
+                        "onCustomize" => [
+                            ["updateRule", ".bearcms-forum-post-page-text"]
+                        ],
+                        "defaultValue" => [
+                            "color" => "#000000",
+                            "font-family" => "Arial",
+                            "font-size" => "14px",
+                            "line-height" => "180%",
+                            "padding-left" => "15px",
+                            "padding-right" => "15px",
+                            "padding-top" => "10px",
+                            "padding-bottom" => "10px",
+                            "width" => "100%",
+                            "height" => "80px",
+                            "border-top" => "1px solid #cccccc",
+                            "border-bottom" => "1px solid #cccccc",
+                            "border-left" => "1px solid #cccccc",
+                            "border-right" => "1px solid #cccccc",
+                            "border-top:hover" => "1px solid #aaaaaa",
+                            "border-bottom:hover" => "1px solid #aaaaaa",
+                            "border-left:hover" => "1px solid #aaaaaa",
+                            "border-right:hover" => "1px solid #aaaaaa",
+                            "border-top:active" => "1px solid #888888",
+                            "border-bottom:active" => "1px solid #888888",
+                            "border-left:active" => "1px solid #888888",
+                            "border-right:active" => "1px solid #888888",
+                        ]
+                    ],
+                ]
+            ],
+            [
+                "type" => "group",
+                "name" => __("bearcms.themes.theme1.options.forumPostPage.Send button"),
+                "options" => [
+                    [
+                        "id" => "forumPostPageSendButtonCSS",
+                        "type" => "css",
+                        "cssOutput" => [
+                            ["rule", ".bearcms-forum-post-page-send-button", "display:inline-block;text-decoration:none;"],
+                            ["selector", ".bearcms-forum-post-page-send-button"]
+                        ],
+                        "onCustomize" => [
+                            ["updateRule", ".bearcms-forum-post-page-send-button"]
+                        ],
+                        "defaultValue" => [
+                            "color" => "#ffffff",
+                            "font-family" => "Arial",
+                            "font-size" => "14px",
+                            "line-height" => "42px",
+                            "padding-left" => "15px",
+                            "padding-right" => "15px",
+                            "height" => "42px",
+                            "background-color" => "#1BB0CE",
+                            "background-color:hover" => "#1099B5",
+                            "background-color:active" => "#0A7D94",
+                            "margin-top" => "10px"
+                        ]
+                    ],
+                    [
+                        "type" => "group",
+                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Send button waiting"),
+                        "options" => [
+                            [
+                                "id" => "forumPostPageSendButtonWaitingCSS",
+                                "type" => "css",
+                                "cssOutput" => [
+                                    ["rule", ".bearcms-forum-post-page-send-button-waiting", "display:inline-block;text-decoration:none;"],
+                                    ["selector", ".bearcms-forum-post-page-send-button-waiting"]
+                                ],
+                                "onCustomize" => [
+                                    ["updateRule", ".bearcms-forum-post-page-send-button-waiting"]
+                                ],
+                                "defaultValue" => [
+                                    "background-color" => "#aaaaaa"
+                                ]
+                            ]
                         ]
                     ]
                 ]

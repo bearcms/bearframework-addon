@@ -16,13 +16,24 @@ $context = $app->context->get(__FILE__);
 $posts = $app->bearCMS->data->forumPosts->getList()->filterBy('categoryID', $forumCategoryID);
 
 $content = '';
-$newPostUrl = $app->request->base . '/f/' . $forumCategoryID . '/';
-$content = '<a href="' . htmlentities($newPostUrl) . '">New post<a><br>';
 foreach ($posts as $post) {
     $postUrl = $app->request->base . '/f/' . $post->id . '/' . $post->id . '/';
-    $content .= '<a href="' . htmlentities($postUrl) . '">' . htmlspecialchars($post->title) . '<a><br>';
+    $content .= '<div class="bearcms-forum-posts-post">';
+    $content .= '<a class="bearcms-forum-posts-post-title" href="' . htmlentities($postUrl) . '">' . htmlspecialchars($post->title) . '</a>';
+    $content .= '<div class="bearcms-forum-posts-post-replies-count">3 replies</div>';
+    $content .= '</div>';
 }
-
+$newPostUrl = $app->request->base . '/f/' . $forumCategoryID . '/';
+$content .= '<div class="bearcms-forum-posts-show-more-button-container">';
+$loadMoreData = [
+        //'serverData' => \BearCMS\Internal\TempClientData::set(['threadID' => 1])
+];
+$onClick = 'bearCMS.commentsElement.loadMore(event,' . json_encode($loadMoreData) . ');';
+$content .= '<a class="bearcms-forum-posts-show-more-button" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">' . __('bearcms.comments.Show more') . '</a>';
+$content .= '</div>';
+$content .= '<div class="bearcms-forum-posts-new-post-button-container">';
+$content .= '<a class="bearcms-forum-posts-new-post-button" href="' . htmlentities($newPostUrl) . '">New post<a>';
+$content .= '</div>';
 ?><html>
     <body><?= $content ?></body>
 </html>

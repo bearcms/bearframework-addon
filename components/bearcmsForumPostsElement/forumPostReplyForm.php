@@ -53,32 +53,12 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
 ?><html>
     <head>
         <style>
-            .bearcms-forum-post-reply-form-textarea{
+            .bearcms-forum-post-page-text{
                 display:block;
-                width:100%;
                 resize: none;
-                box-sizing: border-box;
-                height:100px;
-                padding:20px;
-
-                border: 1px solid #ccc;
-                padding: 15px;
-                display: block;
-                width: 100%;
-                box-sizing: border-box;
-                resize: none;
-                font-size: 14px;
-                color: #000;
-                font-family: Arial;
-                height: 200px;
-                line-height: 180%;
             }
-            .bearcms-forum-post-reply-form-send-button{
-                background-color:gray;
+            .bearcms-forum-post-page-send-button{
                 display:inline-block;
-                padding:10px;
-
-                margin-top: 15px;
                 cursor: pointer;
                 display:none;
             }
@@ -92,9 +72,9 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         . ' onresponsereceived="bearCMS.forumPostReplyForm.onFormResponseReceived(event);"'
         . '>';
         echo '<input type="hidden" name="fprcontext"/>';
-        echo '<textarea name="fprtext" class="bearcms-forum-post-reply-form-textarea" onfocus="bearCMS.forumPostReplyForm.onFocusTextarea(event);"></textarea>';
-        echo '<span onclick="this.parentNode.submit();" href="javascript:void(0);" class="bearcms-forum-post-reply-form-send-button">Send</span>';
-        echo '<span style="display:none;" class="bearcms-forum-post-reply-form-send-button bearcms-forum-post-reply-form-send-button-waiting">Sending ...</span>';
+        echo '<textarea name="fprtext" class="bearcms-forum-post-page-text" onfocus="bearCMS.forumPostReplyForm.onFocusTextarea(event);"></textarea>';
+        echo '<span onclick="this.parentNode.submit();" href="javascript:void(0);" class="bearcms-forum-post-page-send-button">Send</span>';
+        echo '<span style="display:none;" class="bearcms-forum-post-page-send-button bearcms-forum-post-page-send-button-waiting">Sending ...</span>';
         echo '</form>';
         echo '<script src="' . htmlentities($context->assets->getUrl('components/bearcmsForumPostsElement/assets/forumPostReplyForm.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script>';
         ?></body>
