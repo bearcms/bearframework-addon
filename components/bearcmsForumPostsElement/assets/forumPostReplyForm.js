@@ -42,22 +42,22 @@ bearCMS.forumPostReplyForm = (function () {
 
     var onFormRequestSent = function (event) {
         var form = event.target;
-        form.querySelector('.bearcms-forum-post-reply-form-send-button').style.display = 'none';
-        form.querySelector('.bearcms-forum-post-reply-form-send-button-waiting').style.display = 'inline-block';
-        form.querySelector('.bearcms-forum-post-reply-form-textarea').setAttribute('readonly', 'readonly');
+        form.querySelector('.bearcms-forum-post-page-send-button').style.display = 'none';
+        form.querySelector('.bearcms-forum-post-page-send-button-waiting').style.display = 'inline-block';
+        form.querySelector('.bearcms-forum-post-page-text').setAttribute('readonly', 'readonly');
     };
 
     var onFormResponseReceived = function (event) {
         var form = event.target;
-        form.querySelector('.bearcms-forum-post-reply-form-send-button').style.display = 'inline-block';
-        form.querySelector('.bearcms-forum-post-reply-form-send-button-waiting').style.display = 'none';
-        form.querySelector('.bearcms-forum-post-reply-form-textarea').removeAttribute('readonly');
+        form.querySelector('.bearcms-forum-post-page-send-button').style.display = 'inline-block';
+        form.querySelector('.bearcms-forum-post-page-send-button-waiting').style.display = 'none';
+        form.querySelector('.bearcms-forum-post-page-text').removeAttribute('readonly');
     };
 
     var onFocusTextarea = function (event) {
         var form = event.target.parentNode;
-        if (form.querySelector('.bearcms-forum-post-reply-form-send-button-waiting').style.display === 'none') {
-            form.querySelector('.bearcms-forum-post-reply-form-send-button').style.display = 'inline-block';
+        if (form.querySelector('.bearcms-forum-post-page-send-button-waiting').style.display === 'none') {
+            form.querySelector('.bearcms-forum-post-page-send-button').style.display = 'inline-block';
         }
     };
 

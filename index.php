@@ -427,9 +427,9 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                             $content = '';
                             $content = '<div class="bearcms-forum-post-page-title-container"><h1 class="bearcms-forum-post-page-title">' . htmlspecialchars($forumPost->title) . '</h1></div>';
                             $content .= '<div class="bearcms-forum-post-page-date-container"><div class="bearcms-forum-post-page-date">' . BearCMS\Internal\Localization::getDate($forumPost->createdTime) . '</div></div>';
-                            $content .= '<div class="bearcms-forum-post-page-content">' . htmlspecialchars($forumPost->text) . '</div>';
-
-                            $content .= '<component src="file:' . $context->dir . '/components/bearcmsForumPostsElement/forumPostRepliesList.php" forumPostID="' . htmlentities($forumPost->id) . '" />';
+                            $content .= '<div class="bearcms-forum-post-page-content">';
+                            $content .= '<component src="file:' . $context->dir . '/components/bearcmsForumPostsElement/forumPostRepliesList.php" includePost="true" forumPostID="' . htmlentities($forumPost->id) . '" />';
+                            $content .= '</div>';
                             $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsForumPostsElement/forumPostReplyForm.php" forumPostID="' . htmlentities($forumPost->id) . '" />';
                             $response = new App\Response\HTML($content);
                             $app->bearCMS->enableUI($response);

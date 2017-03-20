@@ -319,6 +319,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                             "type" => "css",
                             "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-contact-form-element-email", "box-sizing:border-box;"],
                                 ["selector", $parentClassNameSelector . " .bearcms-contact-form-element-email"]
                             ],
                             "onCustomize" => [
@@ -383,6 +384,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                             "type" => "css",
                             "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-contact-form-element-message", "box-sizing:border-box;"],
                                 ["selector", $parentClassNameSelector . " .bearcms-contact-form-element-message"]
                             ],
                             "onCustomize" => [
@@ -481,6 +483,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                             "type" => "css",
                             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
+                                ["rule", ".bearcms-comments-comment", "overflow:hidden;"],
                                 ["selector", $parentClassNameSelector . " .bearcms-comments-comment"]
                             ],
                             "onCustomize" => [
@@ -621,6 +624,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                             "type" => "css",
                             "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-comments-element-text", "box-sizing:border-box;"],
                                 ["selector", $parentClassNameSelector . " .bearcms-comments-element-text"]
                             ],
                             "onCustomize" => [
@@ -2000,6 +2004,7 @@ $options = [
                         "type" => "css",
                         "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                         "cssOutput" => [
+                            ["rule", ".bearcms-new-forum-post-page-title", "box-sizing:border-box;"],
                             ["selector", ".bearcms-new-forum-post-page-title"]
                         ],
                         "onCustomize" => [
@@ -2063,6 +2068,7 @@ $options = [
                         "type" => "css",
                         "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                         "cssOutput" => [
+                            ["rule", ".bearcms-new-forum-post-page-text", "box-sizing:border-box;"],
                             ["selector", ".bearcms-new-forum-post-page-text"]
                         ],
                         "onCustomize" => [
@@ -2153,6 +2159,111 @@ $options = [
         "options" => [
             [
                 "type" => "group",
+                "name" => __("bearcms.themes.theme1.options.forumPostPage.Title"),
+                "options" => [
+                    [
+                        "id" => "forumPostPageTitleCSS",
+                        "type" => "css",
+                        "cssOutput" => [
+                            ["rule", ".bearcms-forum-post-page-title", "font-weight:normal;"],
+                            ["selector", ".bearcms-forum-post-page-title"]
+                        ],
+                        "onCustomize" => [
+                            ["updateRule", ".bearcms-forum-post-page-title"]
+                        ],
+                        "defaultValue" => [
+                            "color" => "#1BB0CE",
+                            "font-family" => "Arial",
+                            "font-size" => "28px",
+                            "text-align" => "center",
+                            "line-height" => "180%",
+                            "margin-top" => "0",
+                            "margin-right" => "0",
+                            "margin-bottom" => "0",
+                            "margin-left" => "0"
+                        ]
+                    ],
+                    [
+                        "type" => "group",
+                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Container"),
+                        "options" => [
+                            [
+                                "id" => "forumPostPageTitleContainerCSS",
+                                "type" => "css",
+                                "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                                "cssOutput" => [
+                                    ["selector", ".bearcms-forum-post-page-title-container"]
+                                ],
+                                "onCustomize" => [
+                                    ["updateRule", ".bearcms-forum-post-page-title-container"]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "type" => "group",
+                "name" => __("bearcms.themes.theme1.options.forumPostPage.Date"),
+                "options" => [
+                    [
+                        "id" => "forumPostPageDateCSS",
+                        "type" => "css",
+                        "cssOutput" => [
+                            ["selector", ".bearcms-forum-post-page-date"]
+                        ],
+                        "onCustomize" => [
+                            ["updateRule", ".bearcms-forum-post-page-date"]
+                        ],
+                        "defaultValue" => [
+                            "color" => "#777777",
+                            "font-family" => "Arial",
+                            "text-align" => "center",
+                            "font-size" => "14px",
+                            "line-height" => "180%"
+                        ]
+                    ],
+                    [
+                        "type" => "group",
+                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Container"),
+                        "options" => [
+                            [
+                                "id" => "forumPostPageDateContainerCSS",
+                                "type" => "css",
+                                "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                                "cssOutput" => [
+                                    ["selector", ".bearcms-blogpost-page-date-container"]
+                                ],
+                                "onCustomize" => [
+                                    ["updateRule", ".bearcms-blogpost-page-date-container"]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "type" => "group",
+                "name" => __("bearcms.themes.theme1.options.forumPostPage.Content"),
+                "options" => [
+                    [
+                        "id" => "forumPostPageContentCSS",
+                        "type" => "css",
+                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOutput" => [
+                            ["selector", ".bearcms-forum-post-page-content"]
+                        ],
+                        "onCustomize" => [
+                            ["updateRule", ".bearcms-forum-post-page-content"]
+                        ],
+                        "defaultValue" => [
+                            "padding-top" => "15px"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "type" => "group",
                 "name" => __("bearcms.themes.theme1.options.forumPostPage.Reply"),
                 "options" => [
                     [
@@ -2160,6 +2271,7 @@ $options = [
                         "type" => "css",
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                         "cssOutput" => [
+                            ["rule", ".bearcms-forum-post-page-reply", "overflow:hidden;"],
                             ["selector", ".bearcms-forum-post-page-reply"]
                         ],
                         "onCustomize" => [
@@ -2174,10 +2286,10 @@ $options = [
                         "name" => __("bearcms.themes.theme1.options.forumPostPage.Author name"),
                         "options" => [
                             [
-                                "id" => "forumPostPageAuthorNameCSS",
+                                "id" => "forumPostPageReplyAuthorNameCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", ".bearcms-forum-post-page-author-name", "display:inline-block;"],
+                                    ["rule", ".bearcms-forum-post-page-reply-author-name", "display:inline-block;"],
                                     ["selector", ".bearcms-forum-post-page-reply-author-name"]
                                 ],
                                 "onCustomize" => [
@@ -2200,7 +2312,7 @@ $options = [
                         "name" => __("bearcms.themes.theme1.options.forumPostPage.Author image"),
                         "options" => [
                             [
-                                "id" => "forumPostPageAuthorImageCSS",
+                                "id" => "forumPostPageReplyAuthorImageCSS",
                                 "type" => "css",
                                 "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
@@ -2223,7 +2335,7 @@ $options = [
                         "name" => __("bearcms.themes.theme1.options.forumPostPage.Date"),
                         "options" => [
                             [
-                                "id" => "forumPostPageDateCSS",
+                                "id" => "forumPostPageReplyDateCSS",
                                 "type" => "css",
                                 "cssOutput" => [
                                     ["rule", ".bearcms-forum-post-page-reply-date", "display:inline-block;float:right;"],
@@ -2246,7 +2358,7 @@ $options = [
                         "name" => __("bearcms.themes.theme1.options.forumPostPage.Text"),
                         "options" => [
                             [
-                                "id" => "forumPostPageTextCSS",
+                                "id" => "forumPostPageReplyTextCSS",
                                 "type" => "css",
                                 "cssOutput" => [
                                     ["selector", ".bearcms-forum-post-page-reply-text"]
@@ -2268,7 +2380,7 @@ $options = [
                         "name" => __("bearcms.themes.theme1.options.forumPostPage.Text links"),
                         "options" => [
                             [
-                                "id" => "forumPostPageTextLinksCSS",
+                                "id" => "forumPostPageReplyTextLinksCSS",
                                 "type" => "css",
                                 "cssOutput" => [
                                     ["rule", ".bearcms-forum-post-page-reply-text a", "display:inline-block;"],
@@ -2300,6 +2412,7 @@ $options = [
                         "type" => "css",
                         "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                         "cssOutput" => [
+                            ["rule", ".bearcms-forum-post-page-text", "box-sizing:border-box;"],
                             ["selector", ".bearcms-forum-post-page-text"]
                         ],
                         "onCustomize" => [

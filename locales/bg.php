@@ -13,4 +13,11 @@ return [
     'bearcms.contactForm.Sending ...' => 'Изпращане ...',
     'bearcms.contactForm.Message in %s' => 'Съобщение в %s',
     'bearcms.contactForm.Message from %s' => 'Съобщение от %s',
+    'bearcms.forumPosts.New post' => 'Нова тема',
+    'bearcms.forumPosts.Show more' => 'Покажи още',
+    'bearcms.forumPosts.%s replies' => '%s отговора',
+    'bearcms.forumPosts.1 reply' => '1 отговор',
+    'bearcms.forumPosts.Your reply' => 'Вашият отговор',
+    'bearcms.forumPosts.Send' => 'Изпрати',
+    'bearcms.forumPosts.Sending ...' => 'Изпращане ...',
 ];
