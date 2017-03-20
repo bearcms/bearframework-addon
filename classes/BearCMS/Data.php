@@ -18,6 +18,7 @@ use BearFramework\App;
  * @property \BearCMS\Data\Blog $blog Information about the blog posts
  * @property \BearCMS\Data\Comments $comments Information about the comments
  * @property \BearCMS\Data\CommentsThreads $commentsThreads Information about the comments threads
+ * @property \BearCMS\Data\ForumCategories $forumCategories Information about the forum categories
  * @property \BearCMS\Data\ForumPosts $forumPosts Information about the forum posts
  * @property \BearCMS\Data\ForumPostsReplies $forumPostsReplies Information about the forum replies
  * @property \BearCMS\Data\Pages $pages Information about the site pages
@@ -53,6 +54,12 @@ class Data
         $this->defineProperty('commentsThreads', [
             'init' => function() {
                 return new \BearCMS\Data\CommentsThreads();
+            },
+            'readonly' => true
+        ]);
+            $this->defineProperty('forumCategories', [
+            'init' => function() {
+                return new \BearCMS\Data\ForumCategories();
             },
             'readonly' => true
         ]);

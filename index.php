@@ -31,6 +31,8 @@ $context->classes
         ->add('BearCMS\Data\Comments', 'classes/BearCMS/Data/Comments.php')
         ->add('BearCMS\Data\CommentsThread', 'classes/BearCMS/Data/CommentsThread.php')
         ->add('BearCMS\Data\CommentsThreads', 'classes/BearCMS/Data/CommentsThreads.php')
+        ->add('BearCMS\Data\ForumCategories', 'classes/BearCMS/Data/ForumCategories.php')
+        ->add('BearCMS\Data\ForumCategory', 'classes/BearCMS/Data/ForumCategory.php')
         ->add('BearCMS\Data\ForumPost', 'classes/BearCMS/Data/ForumPost.php')
         ->add('BearCMS\Data\ForumPosts', 'classes/BearCMS/Data/ForumPosts.php')
         ->add('BearCMS\Data\ForumPostReply', 'classes/BearCMS/Data/ForumPostReply.php')
@@ -308,6 +310,10 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                         [
                             'id' => 'categoryID',
                             'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'count',
+                            'type' => 'number'
                         ]
                     ]
         ]);
@@ -405,16 +411,18 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                     [$app->bearCMS, 'disabledCheck'],
                     function() use ($app, $context) {
                         $forumCategoryID = $app->request->path->getSegment(1);
-                        //todo slug
-                        //$forumCategory = $app->bearCMS->data->forumCategories->get($forumCategoryID);
-                        //if ($forumCategory !== null) {
-                        $content = '<component src="form" filename="' . $context->dir . '/components/bearcmsForumPostsElement/forumPostNewForm.php" categoryID="' . htmlentities($forumCategoryID) . '" />';
-                        $response = new App\Response\HTML($app->components->process($content));
-                        $app->bearCMS->enableUI($response);
-                        $app->bearCMS->applyTheme($response);
-                        $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex'));
-                        return $response;
-                        //}
+                        $forumCategory = $app->bearCMS->data->forumCategories->get($forumCategoryID);
+                        if ($forumCategory !== null) {
+                            $content = '<div class="bearcms-forum-post-page-title-container"><h1 class="bearcms-forum-post-page-title">' . sprintf(__('bearcms.New post in %s'), htmlspecialchars($forumCategory->name)) . '</h1></div>';
+                            $content .= '<div class="bearcms-forum-post-page-content">';
+                            $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsForumPostsElement/forumPostNewForm.php" categoryID="' . htmlentities($forumCategoryID) . '" />';
+                            $content .= '</div>';
+                            $response = new App\Response\HTML($app->components->process($content));
+                            $app->bearCMS->enableUI($response);
+                            $app->bearCMS->applyTheme($response);
+                            $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex'));
+                            return $response;
+                        }
                     }
                 ])
                 ->add('/f/?/?/', [
@@ -439,6 +447,17 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                         }
                     }
         ]);
+        $app->serverRequests->add('bearcms-forumposts-load-more', function($data) use ($app, $context) {
+            if (isset($data['serverData'], $data['serverData'])) {
+                $serverData = \BearCMS\Internal\TempClientData::get($data['serverData']);
+                if (is_array($serverData) && isset($serverData['componentHTML'])) {
+                    $content = $app->components->process($serverData['componentHTML']);
+                    return json_encode([
+                        'content' => $content
+                    ]);
+                }
+            }
+        });
     }
 
     if (Options::hasFeature('BLOG')) {
@@ -755,6 +774,11 @@ $app->hooks
                 $cacheItem = $app->cache->make($cacheKey, $adminUIData);
                 $cacheItem->ttl = is_array($adminUIData) && isset($adminUIData['result']) ? 99999 : 10;
                 $app->cache->set($cacheItem);
+            }
+            // The user does not exists on the server
+            if (is_array($adminUIData) && isset($adminUIData['result']) && $adminUIData['result'] === 'noUser') {
+                $app->bearCMS->currentUser->logout();
+                return;
             }
 
             if (is_array($adminUIData) && isset($adminUIData['result']) && is_array($adminUIData['result']) && isset($adminUIData['result']['content']) && strlen($adminUIData['result']['content']) > 0) {

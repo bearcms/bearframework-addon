@@ -8,14 +8,14 @@
 
 use \BearFramework\App;
 
+$app = App::get();
+$context = $app->context->get(__FILE__);
+
 $count = strlen($component->count) > 0 ? (int) $component->count : 5;
 if ($count < 1) {
     $count = 1;
 }
 $threadID = $component->threadID;
-
-$app = App::get();
-$context = $app->context->get(__FILE__);
 
 $content = '';
 if (strlen($threadID) > 0) {
