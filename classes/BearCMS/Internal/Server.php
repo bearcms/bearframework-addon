@@ -145,6 +145,10 @@ final class Server
         $clientData['uiTextColor'] = Options::$uiTextColor;
         $clientData['adminPagesPathPrefix'] = Options::$adminPagesPathPrefix;
         $clientData['blogPagesPathPrefix'] = Options::$blogPagesPathPrefix;
+        if (Options::$maxUploadsSize !== null) {
+            $clientData['maxUploadsSize'] = Options::$maxUploadsSize;
+            $clientData['uploadsSize'] = \BearCMS\Internal\Data\UploadsSize::getSize();
+        }
         $data['clientData'] = json_encode($clientData, JSON_UNESCAPED_UNICODE);
 
         $ch = curl_init();

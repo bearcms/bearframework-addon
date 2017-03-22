@@ -28,6 +28,7 @@ final class Options
     static $blogPagesPathPrefix = '/b/';
     static $autoCreateHomePage = true;
     static $defaultEmailSender = null;
+    static $maxUploadsSize = null;
 
     /**
      * 
@@ -99,6 +100,9 @@ final class Options
             } else {
                 throw new \Exception('defaultEmailSender option must be an array containg keys named \'email\' and \'name\' of the sender.');
             }
+        }
+        if (isset($data['maxUploadsSize'])) {
+            self::$maxUploadsSize = (int) $data['maxUploadsSize'];
         }
     }
 

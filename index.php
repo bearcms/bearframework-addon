@@ -56,6 +56,7 @@ $context->classes
         ->add('BearCMS\Internal\Data\ForumPosts', 'classes/BearCMS/Internal/Data/ForumPosts.php')
         ->add('BearCMS\Internal\Data\ForumPostsReplies', 'classes/BearCMS/Internal/Data/ForumPostsReplies.php')
         ->add('BearCMS\Internal\Data\Pages', 'classes/BearCMS/Internal/Data/Pages.php')
+        ->add('BearCMS\Internal\Data\UploadsSize', 'classes/BearCMS/Internal/Data/UploadsSize.php')
         ->add('BearCMS\Internal\Data\Users', 'classes/BearCMS/Internal/Data/Users.php')
         ->add('BearCMS\Internal\Controller', 'classes/BearCMS/Internal/Controller.php')
         ->add('BearCMS\Internal\Cookies', 'classes/BearCMS/Internal/Cookies.php')
