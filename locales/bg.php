@@ -25,4 +25,5 @@ return [
     'bearcms.forumPosts.Content' => 'Съдържание',
     'bearcms.forumPosts.Post' => 'Публикувай',
     'bearcms.forumPosts.Posting ...' => 'Публикуване ...',
+    'bearcms.blogPosts.Show more' => 'Покажи още',
 ];

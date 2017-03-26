@@ -273,7 +273,7 @@ final class ElementsHelper
             if ($editable) {
                 $htmlElementID = 'brelb' . md5($elementContainerData['id']);
                 $attributes .= ' id="' . $htmlElementID . '"';
-                ElementsHelper::$editorData[] = ['column', $elementContainerData['id'], $contextData];
+                ElementsHelper::$editorData[] = ['columns', $elementContainerData['id'], $contextData];
             }
 
             $attributes .= ' data-srvri="t2 s' . $spacing . '" data-responsive-attributes="w<=500=>data-srvri-vertical=1"';
@@ -426,7 +426,7 @@ final class ElementsHelper
         $containerData = self::getContainerData($id);
         $result = [];
         foreach ($containerData['elements'] as $elementData) {
-            if (isset($elementData['data'], $elementData['data']['type']) && $elementData['data']['type'] === 'column' && isset($elementData['data']['elements'])) {
+            if (isset($elementData['data'], $elementData['data']['type']) && ($elementData['data']['type'] === 'column' || $elementData['data']['type'] === 'columns') && isset($elementData['data']['elements'])) {
                 foreach ($elementData['data']['elements'] as $columnElements) {
                     foreach ($columnElements as $columnElement) {
                         if (isset($columnElement['id'])) {

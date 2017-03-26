@@ -16,7 +16,7 @@ $containerData = ElementsHelper::getContainerData($component->id);
 
 $elements = $containerData['elements'];
 
-$columnID = (string) $component->getAttribute('bearcms-internal-attribute-column-id');
+$columnID = (string) $component->getAttribute('bearcms-internal-attribute-columns-id');
 $floatingBoxID = (string) $component->getAttribute('bearcms-internal-attribute-floatingbox-id');
 $inContainer = $component->getAttribute('bearcms-internal-attribute-container') !== 'none';
 $renderElementsContainer = $inContainer && !isset($columnID{0}) && !isset($floatingBoxID{0});
@@ -41,8 +41,8 @@ if (empty($elements)) {
         }
     } else {
         foreach ($elements as $elementContainerData) {
-            if (isset($elementContainerData['data'], $elementContainerData['data']['type']) && $elementContainerData['data']['type'] === 'column') {
-                // column element
+            if (isset($elementContainerData['data'], $elementContainerData['data']['type']) && ($elementContainerData['data']['type'] === 'column' || $elementContainerData['data']['type'] === 'columns')) {
+                // columns element
             } elseif (isset($elementContainerData['data'], $elementContainerData['data']['type']) && $elementContainerData['data']['type'] === 'floatingBox') {
                 // floating box element
             } else {
@@ -95,7 +95,7 @@ if ($renderElementsContainer) {
             $childrenContextData = $contextData;
             $childrenContextData['width'] = '100%';
             foreach ($elements as $elementContainerData) {
-                if (isset($elementContainerData['data'], $elementContainerData['data']['type']) && $elementContainerData['data']['type'] === 'column') {
+                if (isset($elementContainerData['data'], $elementContainerData['data']['type']) && ($elementContainerData['data']['type'] === 'column' || $elementContainerData['data']['type'] === 'columns')) {
                     echo ElementsHelper::renderColumn($elementContainerData, $editable, $childrenContextData, !(isset($columnID{0}) && !$inContainer));
                 } elseif (isset($elementContainerData['data'], $elementContainerData['data']['type']) && $elementContainerData['data']['type'] === 'floatingBox') {
                     echo ElementsHelper::renderFloatingBox($elementContainerData, $editable, $childrenContextData, !(isset($floatingBoxID{0}) && !$inContainer));

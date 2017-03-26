@@ -114,7 +114,7 @@ class CurrentTheme
                 foreach ($matches[1] as $key) {
                     $filename = $app->bearCMS->data->getRealFilename($key);
                     if ($filename !== $key) {
-                        $text = str_replace($key, is_file($filename) ? $app->assets->getUrl($filename) : "", $text);
+                        $text = str_replace($key, is_file($filename) ? $app->assets->getUrl($filename, ['cacheMaxAge' => 999999, 'version' => 1]) : "", $text);
                     }
                 }
             }

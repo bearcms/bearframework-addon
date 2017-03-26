@@ -25,4 +25,5 @@ return [
     'bearcms.forumPosts.Content' => 'Content',
     'bearcms.forumPosts.Post' => 'Post',
     'bearcms.forumPosts.Posting ...' => 'Posting ...',
+    'bearcms.blogPosts.Show more' => 'Show more',
 ];

@@ -78,7 +78,7 @@ if ($list->length === 0) {
                 };
 
                 foreach ($containerData['elements'] as $elementContainerData) {
-                    if (isset($elementContainerData['data'], $elementContainerData['data']['type']) && $elementContainerData['data']['type'] === 'column') {
+                    if (isset($elementContainerData['data'], $elementContainerData['data']['type']) && ($elementContainerData['data']['type'] === 'column' || $elementContainerData['data']['type'] === 'columns')) {
                         $columnsSizes = explode(':', $elementContainerData['data']['mode']);
                         $columnsCount = sizeof($columnsSizes);
                         $break = false;
@@ -122,13 +122,13 @@ if ($list->length === 0) {
         }
     }
     if ($list->length > $limit) {
-        $content .= '<div class="bearcms-blog-posts-element-posts-more-link-container">';
+        $content .= '<div class="bearcms-blog-posts-element-show-more-button-container">';
         $component->limit = (string) ($limit + 10);
         $loadMoreData = [
             'serverData' => \BearCMS\Internal\TempClientData::set(['componentHTML' => (string) $component])
         ];
         $onClick = 'bearCMS.blogPostsElement.loadMore(event,' . json_encode($loadMoreData) . ');';
-        $content .= '<a class="bearcms-blog-posts-element-posts-more-link" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">Show more</a>';
+        $content .= '<a class="bearcms-blog-posts-element-show-more-button" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">' . __('bearcms.blogPosts.Show more') . '</a>';
         $content .= '</div>';
     }
     $content .= '</div>';

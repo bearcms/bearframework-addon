@@ -88,4 +88,6 @@ return [
     'bearcms.themes.theme1.options.newForumPostPage.Send button' => 'Бутон за изпращане',
     'bearcms.themes.theme1.options.newForumPostPage.Send button waiting' => 'Изчакване...',
     'bearcms.themes.theme1.Pages' => 'Страници',
+    'bearcms.themes.theme1.options.blogPosts.Show more button' => 'Бутон за още',
+    'bearcms.themes.theme1.options.blogPosts.Container' => 'Контейнер',
 ];

@@ -21,7 +21,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                 ["updateRule", $parentClassNameSelector . " .bearcms-heading-element-large"]
                             ],
                             "defaultValue" => [
-                                "color" => "#1BB0CE",
+                                "color" => $idPrefix === 'contentElements' ? "#1BB0CE" : "#ffffff",
                                 "font-family" => "googlefonts:Open Sans",
                                 "font-size" => "28px",
                                 "text-align" => "center",
@@ -49,7 +49,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                 ["updateRule", $parentClassNameSelector . " .bearcms-heading-element-medium"]
                             ],
                             "defaultValue" => [
-                                "color" => "#1BB0CE",
+                                "color" => $idPrefix === 'contentElements' ? "#1BB0CE" : "#ffffff",
                                 "font-family" => "googlefonts:Open Sans",
                                 "font-size" => "22px",
                                 "text-align" => "center",
@@ -77,7 +77,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                 ["updateRule", $parentClassNameSelector . " .bearcms-heading-element-small"]
                             ],
                             "defaultValue" => [
-                                "color" => "#1BB0CE",
+                                "color" => $idPrefix === 'contentElements' ? "#1BB0CE" : "#ffffff",
                                 "font-family" => "googlefonts:Open Sans",
                                 "font-size" => "18px",
                                 "text-align" => "center",
@@ -106,7 +106,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                         ["updateRule", $parentClassNameSelector . " .bearcms-text-element"]
                     ],
                     "defaultValue" => [
-                        "color" => "#000000",
+                        "color" => $idPrefix === 'contentElements' ? "#000000" : "#ffffff",
                         "font-family" => "Arial",
                         "font-size" => "14px",
                         "line-height" => "180%"
@@ -302,7 +302,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                 ["updateRule", $parentClassNameSelector . " .bearcms-contact-form-element-email-label"]
                             ],
                             "defaultValue" => [
-                                "color" => "#000000",
+                                "color" => $idPrefix === 'contentElements' ? "#000000" : "#ffffff",
                                 "font-family" => "Arial",
                                 "font-size" => "14px",
                                 "line-height" => "180%"
@@ -319,7 +319,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                             "type" => "css",
                             "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
-                                ["rule", $parentClassNameSelector . " .bearcms-contact-form-element-email", "box-sizing:border-box;"],
+                                ["rule", $parentClassNameSelector . " .bearcms-contact-form-element-email", "box-sizing:border-box;border:0;"],
                                 ["selector", $parentClassNameSelector . " .bearcms-contact-form-element-email"]
                             ],
                             "onCustomize" => [
@@ -335,18 +335,18 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                 "width" => "100%",
                                 "max-width" => "400px",
                                 "height" => "42px",
-                                "border-top" => "1px solid #cccccc",
-                                "border-bottom" => "1px solid #cccccc",
-                                "border-left" => "1px solid #cccccc",
-                                "border-right" => "1px solid #cccccc",
-                                "border-top:hover" => "1px solid #aaaaaa",
-                                "border-bottom:hover" => "1px solid #aaaaaa",
-                                "border-left:hover" => "1px solid #aaaaaa",
-                                "border-right:hover" => "1px solid #aaaaaa",
-                                "border-top:active" => "1px solid #888888",
-                                "border-bottom:active" => "1px solid #888888",
-                                "border-left:active" => "1px solid #888888",
-                                "border-right:active" => "1px solid #888888",
+                                "border-top" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
+                                "border-bottom" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
+                                "border-left" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
+                                "border-right" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
+                                "border-top:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
+                                "border-bottom:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
+                                "border-left:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
+                                "border-right:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
+                                "border-top:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
+                                "border-bottom:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
+                                "border-left:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
+                                "border-right:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
                             ]
                         ],
                     ]
@@ -367,7 +367,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                             ],
                             "defaultValue" => [
                                 "margin-top" => "10px",
-                                "color" => "#000000",
+                                "color" => $idPrefix === 'contentElements' ? "#000000" : "#ffffff",
                                 "font-family" => "Arial",
                                 "font-size" => "14px",
                                 "line-height" => "180%"
@@ -384,7 +384,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                             "type" => "css",
                             "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
-                                ["rule", $parentClassNameSelector . " .bearcms-contact-form-element-message", "box-sizing:border-box;"],
+                                ["rule", $parentClassNameSelector . " .bearcms-contact-form-element-message", "box-sizing:border-box;border:0;"],
                                 ["selector", $parentClassNameSelector . " .bearcms-contact-form-element-message"]
                             ],
                             "onCustomize" => [
@@ -402,18 +402,18 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                 "width" => "100%",
                                 "max-width" => "400px",
                                 "height" => "200px",
-                                "border-top" => "1px solid #cccccc",
-                                "border-bottom" => "1px solid #cccccc",
-                                "border-left" => "1px solid #cccccc",
-                                "border-right" => "1px solid #cccccc",
-                                "border-top:hover" => "1px solid #aaaaaa",
-                                "border-bottom:hover" => "1px solid #aaaaaa",
-                                "border-left:hover" => "1px solid #aaaaaa",
-                                "border-right:hover" => "1px solid #aaaaaa",
-                                "border-top:active" => "1px solid #888888",
-                                "border-bottom:active" => "1px solid #888888",
-                                "border-left:active" => "1px solid #888888",
-                                "border-right:active" => "1px solid #888888",
+                                "border-top" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
+                                "border-bottom" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
+                                "border-left" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
+                                "border-right" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
+                                "border-top:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
+                                "border-bottom:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
+                                "border-left:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
+                                "border-right:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
+                                "border-top:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
+                                "border-bottom:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
+                                "border-left:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
+                                "border-right:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
                             ]
                         ],
                     ]
@@ -579,7 +579,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                         ["updateRule", $parentClassNameSelector . " .bearcms-comments-comment-text"]
                                     ],
                                     "defaultValue" => [
-                                        "color" => "#000000",
+                                        "color" => $idPrefix === 'contentElements' ? "#000000" : "#ffffff",
                                         "font-family" => "Arial",
                                         "font-size" => "14px",
                                         "line-height" => "180%"
@@ -624,7 +624,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                             "type" => "css",
                             "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
-                                ["rule", $parentClassNameSelector . " .bearcms-comments-element-text", "box-sizing:border-box;"],
+                                ["rule", $parentClassNameSelector . " .bearcms-comments-element-text", "box-sizing:border-box;border:0;"],
                                 ["selector", $parentClassNameSelector . " .bearcms-comments-element-text"]
                             ],
                             "onCustomize" => [
@@ -641,18 +641,18 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                 "padding-bottom" => "10px",
                                 "width" => "100%",
                                 "height" => "80px",
-                                "border-top" => "1px solid #cccccc",
-                                "border-bottom" => "1px solid #cccccc",
-                                "border-left" => "1px solid #cccccc",
-                                "border-right" => "1px solid #cccccc",
-                                "border-top:hover" => "1px solid #aaaaaa",
-                                "border-bottom:hover" => "1px solid #aaaaaa",
-                                "border-left:hover" => "1px solid #aaaaaa",
-                                "border-right:hover" => "1px solid #aaaaaa",
-                                "border-top:active" => "1px solid #888888",
-                                "border-bottom:active" => "1px solid #888888",
-                                "border-left:active" => "1px solid #888888",
-                                "border-right:active" => "1px solid #888888",
+                                "border-top" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
+                                "border-bottom" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
+                                "border-left" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
+                                "border-right" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
+                                "border-top:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
+                                "border-bottom:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
+                                "border-left:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
+                                "border-right:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
+                                "border-top:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
+                                "border-bottom:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
+                                "border-left:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
+                                "border-right:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
                             ]
                         ],
                     ]
@@ -928,7 +928,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                         ["updateRule", $parentClassNameSelector . " .bearcms-html-element"]
                     ],
                     "defaultValue" => [
-                        "color" => "#000000",
+                        "color" => $idPrefix === 'contentElements' ? "#000000" : "#ffffff",
                         "font-family" => "Arial",
                         "font-size" => "14px",
                         "line-height" => "180%"
@@ -1046,7 +1046,7 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                         ["updateRule", $parentClassNameSelector . " .bearcms-blog-posts-element-post-date"]
                                     ],
                                     "defaultValue" => [
-                                        "color" => "#777777",
+                                        "color" => $idPrefix === 'contentElements' ? "#777777" : "#eeeeee",
                                         "font-family" => "Arial",
                                         "font-size" => "14px",
                                         "line-height" => "180%"
@@ -1084,6 +1084,50 @@ $getElementsList = function($idPrefix, $parentClassNameSelector) {
                                     ],
                                     "onCustomize" => [
                                         ["updateRule", $parentClassNameSelector . " .bearcms-blog-posts-element-post-content"]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    "type" => "group",
+                    "name" => __("bearcms.themes.theme1.options.blogPosts.Show more button"),
+                    "options" => [
+                        [
+                            "id" => $idPrefix . "BlogPostsShowMoreButtonCSS",
+                            "type" => "css",
+                            "cssOutput" => [
+                                ["rule", $parentClassNameSelector . " .bearcms-blog-posts-element-show-more-button", "display:inline-block;"],
+                                ["selector", $parentClassNameSelector . " .bearcms-blog-posts-element-show-more-button"]
+                            ],
+                            "onCustomize" => [
+                                ["updateRule", $parentClassNameSelector . " .bearcms-blog-posts-element-show-more-button"]
+                            ],
+                            "defaultValue" => [
+                                "color" => "#1BB0CE",
+                                "color:hover" => "#1099B5",
+                                "color:active" => "#0A7D94",
+                                "font-family" => "Arial",
+                                "font-size" => "14px",
+                                "line-height" => "180%",
+                                "text-decoration" => "underline",
+                                "margin-bottom" => "5px"
+                            ]
+                        ],
+                        [
+                            "type" => "group",
+                            "name" => __("bearcms.themes.theme1.options.blogPosts.Container"),
+                            "options" => [
+                                [
+                                    "id" => $idPrefix . "BlogPostsShowMoreButtonContainerCSS",
+                                    "type" => "css",
+                                    "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                                    "cssOutput" => [
+                                        ["selector", $parentClassNameSelector . " .bearcms-blog-posts-element-show-more-button-container"]
+                                    ],
+                                    "onCustomize" => [
+                                        ["updateRule", $parentClassNameSelector . " .bearcms-blog-posts-element-show-more-button-container"]
                                     ]
                                 ]
                             ]
@@ -2008,7 +2052,7 @@ $options = [
                                 "type" => "css",
                                 "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
-                                    ["rule", ".bearcms-new-forum-post-page-title", "box-sizing:border-box;"],
+                                    ["rule", ".bearcms-new-forum-post-page-title", "box-sizing:border-box;border:0;"],
                                     ["selector", ".bearcms-new-forum-post-page-title"]
                                 ],
                                 "onCustomize" => [
@@ -2072,7 +2116,7 @@ $options = [
                                 "type" => "css",
                                 "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
-                                    ["rule", ".bearcms-new-forum-post-page-text", "box-sizing:border-box;"],
+                                    ["rule", ".bearcms-new-forum-post-page-text", "box-sizing:border-box;border:0;"],
                                     ["selector", ".bearcms-new-forum-post-page-text"]
                                 ],
                                 "onCustomize" => [
@@ -2416,7 +2460,7 @@ $options = [
                                 "type" => "css",
                                 "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
-                                    ["rule", ".bearcms-forum-post-page-text", "box-sizing:border-box;"],
+                                    ["rule", ".bearcms-forum-post-page-text", "box-sizing:border-box;border:0;"],
                                     ["selector", ".bearcms-forum-post-page-text"]
                                 ],
                                 "onCustomize" => [
@@ -2509,43 +2553,5 @@ $options = [
         "name" => __("bearcms.themes.theme1.options.Custom CSS")
     ]
 ];
-
-$setDefaultValue = function($id, $defaultValue) use (&$options) {
-    $updateOptions = function($options) use ($id, $defaultValue, &$updateOptions) {
-        foreach ($options as $index => $option) {
-            if (is_array($option)) {
-                if (isset($option['id']) && $option['id'] === $id) {
-                    $options[$index]['defaultValue'] = $defaultValue;
-                    return $options;
-                }
-                if (isset($option['options'])) {
-                    $options[$index]['options'] = $updateOptions($option['options']);
-                }
-            }
-        }
-        return $options;
-    };
-    $options = $updateOptions($options);
-};
-
-$setDefaultValue("footerElementsHeadingLargeCSS", [
-    "color" => "#fff",
-    "font-family" => "googlefonts:Open Sans",
-    "font-size" => "28px",
-    "text-align" => "center",
-    "line-height" => "180%",
-    "margin-top" => "0",
-    "margin-right" => "0",
-    "margin-bottom" => "0",
-    "margin-left" => "0"
-]);
-
-$setDefaultValue("footerElementsTextCSS", [
-    "color" => "#ffffff",
-    "font-family" => "Arial",
-    "font-size" => "14px",
-    "line-height" => "180%"
-]);
-
 
 return $options;

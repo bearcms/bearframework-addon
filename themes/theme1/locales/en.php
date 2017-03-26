@@ -88,5 +88,7 @@ return [
     'bearcms.themes.theme1.options.newForumPostPage.Send button' => 'Send button',
     'bearcms.themes.theme1.options.newForumPostPage.Send button waiting' => 'Send button waiting',
     'bearcms.themes.theme1.Pages' => 'Pages',
+    'bearcms.themes.theme1.options.blogPosts.Show more button' => 'Show more button',
+    'bearcms.themes.theme1.options.blogPosts.Container' => 'Container',
 ];
 
