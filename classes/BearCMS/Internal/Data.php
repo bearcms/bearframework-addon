@@ -16,6 +16,7 @@ class Data
 
     static $cacheRequests = [];
     static $cache = [];
+    static $loadedBundleHash = null;
 
     static function _getGroupValue($key)
     {
@@ -81,9 +82,11 @@ class Data
         $cacheKey = 'bearcms-bundle-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . $requestPath . '-' . self::_getGroupValue('all');
         $bundle = $app->cache->getValue($cacheKey);
         if ($bundle !== null) {
-            foreach ($bundle as $localCacheKey => $data) {
-                self::$cache[$localCacheKey] = $data;
+            foreach ($bundle[1] as $data) {
+                self::$cache[$data[0] . '-' . $data[1]] = $data[2];
+                self::$cacheRequests[] = ['bundleget', $data[0], $data[1]];
             }
+            self::$loadedBundleHash = $bundle[0];
         }
     }
 
@@ -103,13 +106,16 @@ class Data
         $bundle = [];
         foreach ($keys as $keyData) {
             if ($keyData[0] === 'value') {
-                $bundle[$keyData[0] . '-' . $keyData[1]] = self::getValue($keyData[1]);
+                $bundle[] = [$keyData[0], $keyData[1], self::getValue($keyData[1])];
             } elseif ($keyData[0] === 'list') {
-                $bundle[$keyData[0] . '-' . $keyData[1]] = self::getList($keyData[1]);
+                $bundle[] = [$keyData[0], $keyData[1], self::getList($keyData[1])];
             }
         }
-        $cacheKey = 'bearcms-bundle-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . $requestPath . '-' . self::_getGroupValue('all');
-        $app->cache->set($app->cache->make($cacheKey, $bundle)); //todo if not changed
+        $hash = md5(serialize($bundle));
+        if (self::$loadedBundleHash !== $hash) {
+            $cacheKey = 'bearcms-bundle-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . $requestPath . '-' . self::_getGroupValue('all');
+            $app->cache->set($app->cache->make($cacheKey, [$hash, $bundle]));
+        }
     }
 
     static function getValue($key)

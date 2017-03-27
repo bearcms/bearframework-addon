@@ -93,6 +93,10 @@ $app->shortcuts
 $addonOptions = $app->addons->get('bearcms/bearframework-addon')->options;
 Options::set($addonOptions);
 
+if ($app->request->method === 'GET') {
+    \BearCMS\Internal\Data::loadCacheBundle($app->request->path->get());
+}
+
 $app->hooks->add('initialized', function() use ($app, $context) {
     if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
         $contextDir = $context->dir;
@@ -680,9 +684,6 @@ if (!(isset($addonOptions['addDefaultThemes']) && $addonOptions['addDefaultTheme
 
 $app->hooks
         ->add('initialized', function() use ($app) {
-            if ($app->request->method === 'GET') {
-                \BearCMS\Internal\Data::loadCacheBundle($app->request->path->get());
-            }
             $currentThemeID = $app->bearCMS->currentTheme->getID();
             $app->bearCMS->themes->initialize($currentThemeID);
             if ($app->bearCMS->currentUser->exists()) {
