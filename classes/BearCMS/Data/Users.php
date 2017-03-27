@@ -38,8 +38,7 @@ class Users
      */
     public function get(string $id): ?\BearCMS\Data\User
     {
-        $app = App::get();
-        $data = $app->data->getValue('bearcms/users/user/' . md5($id) . '.json');
+        $data = \BearCMS\Internal\Data::getValue('bearcms/users/user/' . md5($id) . '.json');
         if ($data !== null) {
             return $this->makeUserFromRawData($data);
         }
@@ -53,14 +52,11 @@ class Users
      */
     public function getList()
     {
-        $app = App::get();
-        $list = $app->data->getList()
-                ->filterBy('key', 'bearcms/users/user/', 'startWith');
-        $result = new \BearCMS\DataList();
-        foreach ($list as $item) {
-            $result[] = $this->makeUserFromRawData($item->value);
-        }
-        return $result;
+        $list = \BearCMS\Internal\Data::getList('bearcms/users/user/');
+        array_walk($list, function(&$value) {
+            $value = $this->makeUserFromRawData($value);
+        });
+        return new \BearCMS\DataList($list);
     }
 
     /**
@@ -70,11 +66,8 @@ class Users
      */
     public function hasUsers()
     {
-        $app = App::get();
-        $list = $app->data->getList()
-                ->filterBy('key', 'bearcms/users/user/', 'startWith');
-        //'limit' => 1 //todo
-        return $list->length > 0;
+        $list = \BearCMS\Internal\Data::getList('bearcms/users/user/'); //'limit' => 1 //todo
+        return sizeof($list) > 0;
     }
 
 }

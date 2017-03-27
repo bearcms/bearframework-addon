@@ -33,7 +33,9 @@ final class Comments
             'text' => $text,
             'createdTime' => time()
         ];
-        $app->data->set($app->data->make('bearcms/comments/thread/' . md5($threadID) . '.json', json_encode($data)));
+        $dataKey = 'bearcms/comments/thread/' . md5($threadID) . '.json';
+        $app->data->set($app->data->make($dataKey, json_encode($data)));
+        \BearCMS\Internal\Data::setChanged($dataKey);
     }
 
     static function setStatus(string $threadID, string $commentID, string $status): void
@@ -60,6 +62,7 @@ final class Comments
         }
         if ($hasChange) {
             $app->data->set($app->data->make($dataKey, json_encode($threadData)));
+            \BearCMS\Internal\Data::setChanged($dataKey);
         }
     }
 
@@ -84,6 +87,7 @@ final class Comments
         if ($hasChange) {
             $threadData['comments'] = array_values($threadData['comments']);
             $app->data->set($app->data->make($dataKey, json_encode($threadData)));
+            \BearCMS\Internal\Data::setChanged($dataKey);
         }
     }
 

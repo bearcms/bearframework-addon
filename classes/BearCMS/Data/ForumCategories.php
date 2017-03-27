@@ -17,8 +17,6 @@ use BearFramework\App;
 class ForumCategories
 {
 
-    private static $listDataCache = null;
-
     private function makeForumCategoryFromRawData($rawData): \BearCMS\Data\ForumCategory
     {
         $rawData = json_decode($rawData, true);
@@ -41,8 +39,7 @@ class ForumCategories
      */
     public function get(string $id): ?\BearCMS\Data\ForumCategory
     {
-        $app = App::get();
-        $data = $app->data->getValue('bearcms/forum/categories/category/' . md5($id) . '.json');
+        $data = \BearCMS\Internal\Data::getValue('bearcms/forum/categories/category/' . md5($id) . '.json');
         if ($data !== null) {
             return $this->makeForumCategoryFromRawData($data);
         }
@@ -56,26 +53,23 @@ class ForumCategories
      */
     public function getList(): \BearCMS\DataList
     {
-        $app = App::get();
-        if (self::$listDataCache === null) {
-            $list = $app->data->getList()
-                    ->filterBy('key', 'bearcms/forum/categories/category/', 'startWith');
-            self::$listDataCache = [];
-            foreach ($list as $item) {
-                self::$listDataCache[] = $this->makeForumCategoryFromRawData($item->value);
-            }
-            $structureData = $app->data->getValue('bearcms/forum/categories/structure.json');
-            $flattenStructureData = [];
-            foreach ($structureData as $itemData) {
-                $flattenStructureData[] = $itemData['id'];
-            }
-            usort(self::$listDataCache, function($object1, $object2) use ($flattenStructureData) {
-                $object1Index = array_search($object1->id, $flattenStructureData);
-                $object2Index = array_search($object2->id, $flattenStructureData);
-                return $object1Index - $object2Index;
-            });
+        $list = \BearCMS\Internal\Data::getList('bearcms/forum/categories/category/');
+        array_walk($list, function(&$value) {
+            $value = $this->makeForumCategoryFromRawData($value);
+        });
+
+        $structureData = \BearCMS\Internal\Data::getValue('bearcms/forum/categories/structure.json');
+        $structureData = $structureData === null ? [] : json_decode($structureData, true);
+        $flattenStructureData = [];
+        foreach ($structureData as $itemData) {
+            $flattenStructureData[] = $itemData['id'];
         }
-        return new \BearCMS\DataList(self::$listDataCache);
+        usort($list, function($object1, $object2) use ($flattenStructureData) {
+            $object1Index = array_search($object1->id, $flattenStructureData);
+            $object2Index = array_search($object2->id, $flattenStructureData);
+            return $object1Index - $object2Index;
+        });
+        return new \BearCMS\DataList($list);
     }
 
 }

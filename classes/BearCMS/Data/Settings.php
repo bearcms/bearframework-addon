@@ -25,7 +25,7 @@ class Settings
     public function get(): \BearCMS\DataObject
     {
         $app = App::get();
-        $data = $app->data->getValue('bearcms/settings.json');
+        $data = \BearCMS\Internal\Data::getValue('bearcms/settings.json');
         if ($data !== null) {
             $data = json_decode($data, true);
         } else {

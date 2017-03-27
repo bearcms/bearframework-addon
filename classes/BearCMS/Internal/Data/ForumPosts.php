@@ -28,7 +28,9 @@ final class ForumPosts
             'createdTime' => time()
         ];
 
-        $app->data->set($app->data->make('bearcms/forum/posts/post/' . md5($id) . '.json', json_encode($data)));
+        $dataKey = 'bearcms/forum/posts/post/' . md5($id) . '.json';
+        $app->data->set($app->data->make($dataKey, json_encode($data)));
+        \BearCMS\Internal\Data::setChanged($dataKey);
         return $id;
     }
 
@@ -45,6 +47,7 @@ final class ForumPosts
         }
         if ($hasChange) {
             $app->data->set($app->data->make($dataKey, json_encode($forumPostData)));
+            \BearCMS\Internal\Data::setChanged($dataKey);
         }
     }
 

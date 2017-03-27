@@ -20,7 +20,9 @@ class UploadsSize
         $data = $app->data->getValue('bearcms/uploadssize.json');
         $data = $data === null ? [] : json_decode($data, true);
         $data[$key] = $size;
-        $app->data->set($app->data->make('bearcms/uploadssize.json', json_encode($data)));
+        $dataKey = 'bearcms/uploadssize.json';
+        $app->data->set($app->data->make($dataKey, json_encode($data)));
+        \BearCMS\Internal\Data::setChanged($dataKey);
     }
 
     static function remove($key)
@@ -30,14 +32,16 @@ class UploadsSize
         $data = $data === null ? [] : json_decode($data, true);
         if (isset($data[$key])) {
             unset($data[$key]);
-            $app->data->set($app->data->make('bearcms/uploadssize.json', json_encode($data)));
+            $dataKey = 'bearcms/uploadssize.json';
+            $app->data->set($app->data->make($dataKey, json_encode($data)));
+            \BearCMS\Internal\Data::setChanged($dataKey);
         }
     }
 
     static function getSize()
     {
         $app = App::get();
-        $data = $app->data->getValue('bearcms/uploadssize.json');
+        $data = \BearCMS\Internal\Data::getValue('bearcms/uploadssize.json');
         $data = $data === null ? [] : json_decode($data, true);
         return array_sum($data);
     }

@@ -63,7 +63,7 @@ class CurrentUser
         if (!isset(self::$cache[$cacheKey])) {
             self::$cache[$cacheKey] = null;
             $app = App::get();
-            $data = $app->data->getValue('.temp/bearcms/userkeys/' . md5($sessionKey));
+            $data = \BearCMS\Internal\Data::getValue('.temp/bearcms/userkeys/' . md5($sessionKey));
             if ($data !== null) {
                 self::$cache[$cacheKey] = $data;
             }
@@ -83,7 +83,7 @@ class CurrentUser
             return [];
         }
         $app = App::get();
-        $data = $app->data->getValue('bearcms/users/user/' . md5($userID) . '.json');
+        $data = \BearCMS\Internal\Data::getValue('bearcms/users/user/' . md5($userID) . '.json');
         if ($data !== null) {
             $user = json_decode($data, true);
             return isset($user['permissions']) ? $user['permissions'] : [];

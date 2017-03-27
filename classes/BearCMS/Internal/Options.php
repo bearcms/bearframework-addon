@@ -29,6 +29,8 @@ final class Options
     static $autoCreateHomePage = true;
     static $defaultEmailSender = null;
     static $maxUploadsSize = null;
+    static $useDataCache = false;
+    static $dataCachePrefix = null;
 
     /**
      * 
@@ -103,6 +105,12 @@ final class Options
         }
         if (isset($data['maxUploadsSize'])) {
             self::$maxUploadsSize = (int) $data['maxUploadsSize'];
+        }
+        if (isset($data['useDataCache'])) {
+            self::$useDataCache = (int) $data['useDataCache'] > 0;
+        }
+        if (isset($data['dataCachePrefix'])) {
+            self::$dataCachePrefix = (string) $data['dataCachePrefix'];
         }
     }
 

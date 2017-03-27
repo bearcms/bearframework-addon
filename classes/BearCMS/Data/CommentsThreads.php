@@ -34,8 +34,7 @@ class CommentsThreads
      */
     public function get(string $id): ?\BearCMS\Data\CommentsThread
     {
-        $app = App::get();
-        $data = $app->data->getValue('bearcms/comments/thread/' . md5($id) . '.json');
+        $data = \BearCMS\Internal\Data::getValue('bearcms/comments/thread/' . md5($id) . '.json');
         if ($data !== null) {
             return $this->makeCommentsThreadPostFromRawData($data);
         }
@@ -49,14 +48,11 @@ class CommentsThreads
      */
     public function getList()
     {
-        $app = App::get();
-        $list = $app->data->getList()
-                ->filterBy('key', 'bearcms/comments/thread/', 'startWith');
-        $result = [];
-        foreach ($list as $item) {
-            $result[] = $this->makeCommentsThreadPostFromRawData($item->value);
-        }
-        return new \BearCMS\DataList($result);
+        $list = \BearCMS\Internal\Data::getList('bearcms/comments/thread/');
+        array_walk($list, function(&$value) {
+            $value = $this->makeCommentsThreadPostFromRawData($value);
+        });
+        return new \BearCMS\DataList($list);
     }
 
 }

@@ -24,7 +24,7 @@ class Themes
     static function getActiveThemeID(): string
     {
         $app = App::get();
-        $data = $app->data->getValue('bearcms/themes/active.json');
+        $data = \BearCMS\Internal\Data::getValue('bearcms/themes/active.json');
         if ($data !== null) {
             $data = json_decode($data, true);
             if (isset($data['id'])) {

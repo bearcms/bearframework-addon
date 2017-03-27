@@ -396,7 +396,7 @@ final class ElementsHelper
 //                'key' => 'bearcms/elements/element/' . md5($elementID) . '.json',
 //                'result' => ['body']
 //            ];
-            $result[$elementID] = $app->data->getValue('bearcms/elements/element/' . md5($elementID) . '.json');
+            $result[$elementID] = \BearCMS\Internal\Data::getValue('bearcms/elements/element/' . md5($elementID) . '.json');
         }
         //$data = $app->data->execute($commands);
 //        foreach ($elementsIDs as $index => $elementID) {
@@ -410,7 +410,7 @@ final class ElementsHelper
     static function getContainerData($id)
     {
         $app = App::get();
-        $container = $app->data->getValue('bearcms/elements/container/' . md5($id) . '.json');
+        $container = \BearCMS\Internal\Data::getValue('bearcms/elements/container/' . md5($id) . '.json');
         $data = $container !== null ? json_decode($container, true) : [];
         if (!isset($data['elements'])) {
             $data['elements'] = [];

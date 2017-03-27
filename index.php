@@ -49,6 +49,7 @@ $context->classes
         ->add('BearCMS\Themes', 'classes/BearCMS/Themes.php')
         ->add('BearCMS\Themes\Options', 'classes/BearCMS/Themes/Options.php')
         ->add('BearCMS\ElementsTypes', 'classes/BearCMS/ElementsTypes.php')
+        ->add('BearCMS\Internal\Data', 'classes/BearCMS/Internal/Data.php')
         ->add('BearCMS\Internal\Data\Addons', 'classes/BearCMS/Internal/Data/Addons.php')
         ->add('BearCMS\Internal\Data\BlogPosts', 'classes/BearCMS/Internal/Data/BlogPosts.php')
         ->add('BearCMS\Internal\Data\Comments', 'classes/BearCMS/Internal/Data/Comments.php')
@@ -93,7 +94,6 @@ $addonOptions = $app->addons->get('bearcms/bearframework-addon')->options;
 Options::set($addonOptions);
 
 $app->hooks->add('initialized', function() use ($app, $context) {
-
     if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
         $contextDir = $context->dir;
         $app->components->addAlias('bearcms-elements', 'file:' . $contextDir . '/components/bearcmsElements.php');
@@ -680,6 +680,9 @@ if (!(isset($addonOptions['addDefaultThemes']) && $addonOptions['addDefaultTheme
 
 $app->hooks
         ->add('initialized', function() use ($app) {
+            if ($app->request->method === 'GET') {
+                \BearCMS\Internal\Data::loadCacheBundle($app->request->path->get());
+            }
             $currentThemeID = $app->bearCMS->currentTheme->getID();
             $app->bearCMS->themes->initialize($currentThemeID);
             if ($app->bearCMS->currentUser->exists()) {
@@ -831,11 +834,12 @@ $app->hooks
             } else {
                 //$response = new App\Response\TemporaryUnavailable();
             }
+            \BearCMS\Internal\Data::saveCacheBundle($app->request->path->get());
         }, ['priority' => 1000]);
 
 if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*'))) {
     $app->hooks
-            ->add('responseCreated', function($response) {
+            ->add('responseCreated', function($response) use ($app) {
                 Cookies::update($response);
             }, ['priority' => 1001]);
 }

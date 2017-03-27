@@ -24,13 +24,11 @@ class ForumPostsReplies
      */
     public function getList()
     {
-        $app = App::get();
-        $list = $app->data->getList()
-                ->filterBy('key', 'bearcms/forum/posts/post/', 'startWith');
+        $list = \BearCMS\Internal\Data::getList('bearcms/forum/posts/post/');
 
         $result = new \BearCMS\DataList();
-        foreach ($list as $item) {
-            $rawData = json_decode($item->value, true);
+        foreach ($list as $value) {
+            $rawData = json_decode($value, true);
             if (isset($rawData['id'], $rawData['replies'])) {
                 foreach ($rawData['replies'] as $replyData) {
                     $reply = new \BearCMS\Data\ForumPostReply();

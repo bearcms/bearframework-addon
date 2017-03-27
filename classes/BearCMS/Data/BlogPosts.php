@@ -17,8 +17,6 @@ use BearFramework\App;
 class BlogPosts
 {
 
-    private static $listDataCache = null;
-
     private function makeBlogPostFromRawData($rawData): \BearCMS\Data\BlogPost
     {
         return new \BearCMS\Data\BlogPost(json_decode($rawData, true));
@@ -33,8 +31,7 @@ class BlogPosts
      */
     public function get(string $id)
     {
-        $app = App::get();
-        $data = $app->data->getValue('bearcms/blog/post/' . md5($id) . '.json');
+        $data = \BearCMS\Internal\Data::getValue('bearcms/blog/post/' . md5($id) . '.json');
         if ($data !== null) {
             return $this->makeBlogPostFromRawData($data);
         }
@@ -48,16 +45,11 @@ class BlogPosts
      */
     public function getList()
     {
-        $app = App::get();
-        if (self::$listDataCache === null) {
-            $list = $app->data->getList()
-                    ->filterBy('key', 'bearcms/blog/post/', 'startWith');
-            self::$listDataCache = [];
-            foreach ($list as $item) {
-                self::$listDataCache[] = $this->makeBlogPostFromRawData($item->value);
-            }
-        }
-        return new \BearCMS\DataList(self::$listDataCache);
+        $list = \BearCMS\Internal\Data::getList('bearcms/blog/post/');
+        array_walk($list, function(&$value) {
+            $value = $this->makeBlogPostFromRawData($value);
+        });
+        return new \BearCMS\DataList($list);
     }
 
 }

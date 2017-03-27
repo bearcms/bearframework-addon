@@ -159,7 +159,7 @@ final class Controller
             $data .= '</item>';
         }
         $response = new App\Response('<?xml version="1.0" encoding="UTF-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel>' . $data . '</channel></rss>');
-        $response->headers->set('Content-Type', 'text/xml');
+        $response->headers->set($response->headers->make('Content-Type', 'text/xml'));
         return $response;
     }
 

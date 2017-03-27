@@ -130,7 +130,7 @@ final class Server
         $clientData['requestBase'] = $app->request->base;
         $clientData['cookiePrefix'] = Options::$cookiePrefix;
         if ($app->bearCMS->currentUser->exists()) {
-            $currentUserData = $app->data->getValue('bearcms/users/user/' . md5($app->bearCMS->currentUser->getID()) . '.json');
+            $currentUserData = \BearCMS\Internal\Data::getValue('bearcms/users/user/' . md5($app->bearCMS->currentUser->getID()) . '.json');
             $currentUserID = null;
             if ($currentUserData !== null) {
                 $currentUserData = json_decode($currentUserData, true);
@@ -277,7 +277,9 @@ final class Server
             }
             if (isset($responseMeta['currentUser'])) {
                 $currentUserData = $responseMeta['currentUser'];
-                $app->data->set($app->data->make('.temp/bearcms/userkeys/' . md5($currentUserData['key']), $currentUserData['id']));
+                $dataKey = '.temp/bearcms/userkeys/' . md5($currentUserData['key']);
+                $app->data->set($app->data->make($dataKey, $currentUserData['id']));
+                \BearCMS\Internal\Data::setChanged($dataKey);
             }
             $responseBody = null;
             if (isset($responseMeta['clientEvents'])) {

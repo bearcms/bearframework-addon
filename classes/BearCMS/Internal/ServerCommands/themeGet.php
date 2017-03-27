@@ -28,7 +28,7 @@ return function($data) {
                 $themeData['options'] = [
                     'definition' => $options
                 ];
-                $result = $app->data->getValue('bearcms/themes/theme/' . md5($id) . '.json');
+                $result = \BearCMS\Internal\Data::getValue('bearcms/themes/theme/' . md5($id) . '.json');
                 if ($result !== null) {
                     $temp = json_decode($result, true);
                     $optionsValues = isset($temp['options']) ? $temp['options'] : [];
@@ -37,7 +37,7 @@ return function($data) {
                 }
                 $themeData['options']['activeValues'] = $optionsValues;
 
-                $result = $app->data->getValue('.temp/bearcms/userthemeoptions/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($id) . '.json');
+                $result = \BearCMS\Internal\Data::getValue('.temp/bearcms/userthemeoptions/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($id) . '.json');
                 if ($result !== null) {
                     $temp = json_decode($result, true);
                     $optionsValues = isset($temp['options']) ? $temp['options'] : [];

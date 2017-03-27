@@ -22,6 +22,7 @@ return function($data) {
             }
         } elseif ($command === 'set') {
             $app->data->set($app->data->make($commandData['key'], $commandData['body']));
+            \BearCMS\Internal\Data::setChanged($commandData['key']);
         } elseif ($command === 'delete') {
             $app->data->delete($commandData['key']);
         } elseif ($command === 'rename') {

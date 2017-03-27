@@ -21,13 +21,10 @@ final class BlogPosts
      */
     static function getSlugsList(string $status = 'all'): array
     {
-        $app = App::get();
-        $list = $app->data->getList()
-                ->filterBy('key', 'bearcms/blog/post/', 'startWith');
-
+        $list = \BearCMS\Internal\Data::getList('bearcms/blog/post/');
         $result = [];
-        foreach ($list as $item) {
-            $blogPostData = json_decode($item->value, true);
+        foreach ($list as $value) {
+            $blogPostData = json_decode($value, true);
             if (
                     is_array($blogPostData) &&
                     isset($blogPostData['id']) &&

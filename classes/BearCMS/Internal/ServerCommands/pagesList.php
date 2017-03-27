@@ -11,14 +11,13 @@ use BearFramework\App;
 
 return function() {
     $app = App::get();
-    $structure = $app->data->getValue('bearcms/pages/structure.json');
-    $pages = $app->data->getList()
-            ->filterBy('key', 'bearcms/pages/page/', 'startWith');
+    $list = \BearCMS\Internal\Data::getList('bearcms/pages/page/');
+    $structure = \BearCMS\Internal\Data::getValue('bearcms/pages/structure.json');
     $temp = [];
     $temp['structure'] = $structure !== null ? json_decode($structure, true) : [];
     $temp['pages'] = [];
-    foreach ($pages as $page) {
-        $temp['pages'][] = json_decode($page->value, true);
+    foreach ($list as $value) {
+        $temp['pages'][] = json_decode($value, true);
     }
     return $temp;
 };

@@ -32,7 +32,9 @@ final class ForumPostsReplies
             'text' => $text,
             'createdTime' => time()
         ];
-        $app->data->set($app->data->make('bearcms/forum/posts/post/' . md5($forumPostID) . '.json', json_encode($data)));
+        $dataKey = 'bearcms/forum/posts/post/' . md5($forumPostID) . '.json';
+        $app->data->set($app->data->make($dataKey, json_encode($data)));
+        \BearCMS\Internal\Data::setChanged($dataKey);
     }
 
     static function setStatus(string $forumPostID, string $replyID, string $status): void
@@ -59,6 +61,7 @@ final class ForumPostsReplies
         }
         if ($hasChange) {
             $app->data->set($app->data->make($dataKey, json_encode($forumPostData)));
+            \BearCMS\Internal\Data::setChanged($dataKey);
         }
     }
 
@@ -83,6 +86,7 @@ final class ForumPostsReplies
         if ($hasChange) {
             $forumPostData['replies'] = array_values($forumPostData['replies']);
             $app->data->set($app->data->make($dataKey, json_encode($forumPostData)));
+            \BearCMS\Internal\Data::setChanged($dataKey);
         }
     }
 

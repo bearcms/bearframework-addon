@@ -21,12 +21,10 @@ final class Pages
      */
     static function getPathsList(string $status = 'all'): array
     {
-        $app = App::get();
-        $list = $app->data->getList()
-                ->filterBy('key', 'bearcms/pages/page/', 'startWith');
+        $list = \BearCMS\Internal\Data::getList('bearcms/pages/page/');
         $result = [];
-        foreach ($list as $item) {
-            $pageData = json_decode($item->value, true);
+        foreach ($list as $value) {
+            $pageData = json_decode($value, true);
             if (
                     is_array($pageData) &&
                     isset($pageData['id']) &&

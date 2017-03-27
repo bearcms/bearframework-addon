@@ -24,12 +24,10 @@ class Comments
      */
     public function getList()
     {
-        $app = App::get();
-        $list = $app->data->getList()
-                ->filterBy('key', 'bearcms/comments/thread/', 'startWith');
+        $list = \BearCMS\Internal\Data::getList('bearcms/comments/thread/');
         $result = new \BearCMS\DataList();
-        foreach ($list as $item) {
-            $rawData = json_decode($item->value, true);
+        foreach ($list as $value) {
+            $rawData = json_decode($value, true);
             $tempCollection = \BearCMS\Internal\Data\Comments::createCommentsCollection($rawData['comments'], $rawData['id']);
             foreach ($tempCollection as $dataObject) {
                 $result[] = $dataObject;
