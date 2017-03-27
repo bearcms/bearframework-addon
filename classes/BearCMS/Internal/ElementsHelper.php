@@ -174,6 +174,7 @@ final class ElementsHelper
      */
     static function decodeElementRawData($data)
     {
+        $data2 = $data;
         $data = json_decode($data, true);
         if (!is_array($data)) {
             throw new \Exception('Invalid element data');
@@ -338,7 +339,7 @@ final class ElementsHelper
             return $content;
         };
 
-        $content .= '<div style="margin-'.($position === 'left' ? 'right' : 'left').':' . $spacing . ';float:' . $position . ';width:' . $width . ';">' . $getElementsContent('inside') . '</div>';
+        $content .= '<div style="margin-' . ($position === 'left' ? 'right' : 'left') . ':' . $spacing . ';float:' . $position . ';width:' . $width . ';">' . $getElementsContent('inside') . '</div>';
         $content .= '<div style="display:block;">' . $getElementsContent('outside') . '</div>';
 
         if ($inContainer) {

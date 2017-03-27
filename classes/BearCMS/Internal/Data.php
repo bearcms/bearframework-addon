@@ -17,6 +17,7 @@ class Data
     static $cacheRequests = [];
     static $cache = [];
     static $loadedBundleHash = null;
+    static $hasContentChange = false;
 
     static function _getGroupValue($key)
     {
@@ -142,11 +143,13 @@ class Data
 
     static function setChanged($key)
     {
-        if (!\BearCMS\Internal\Options::$useDataCache) {
-            return;
+        if (strpos($key, '.temp/') !== 0) {
+            self::$hasContentChange = true;
         }
-        self::$cache = [];
-        self::_updateGroupValue('all');
+        if (\BearCMS\Internal\Options::$useDataCache) {
+            self::$cache = [];
+            self::_updateGroupValue('all');
+        }
     }
 
 }

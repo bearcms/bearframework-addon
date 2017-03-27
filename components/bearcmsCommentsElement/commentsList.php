@@ -49,7 +49,7 @@ if ($thread !== null) {
     foreach ($result as $comment) {
         $statusText = '';
         if ($comment->status === 'pendingApproval') {
-            $statusText = ', ' . __('bearcms.comments.pending approval');
+            $statusText = __('bearcms.comments.pending approval') . ', ';
         }
         $profile = PublicProfile::getFromAuthor($comment->author);
         $linkAttributes = '';
@@ -63,7 +63,7 @@ if ($thread !== null) {
         $linkAttributes .= ' title="' . htmlentities($profile->name) . '"';
         echo '<div class="bearcms-comments-comment">';
         echo '<' . $tagName . ' class="bearcms-comments-comment-author-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></' . $tagName . '>';
-        echo '<' . $tagName . ' class="bearcms-comments-comment-author-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</' . $tagName . '> <span class="bearcms-comments-comment-date">' . Localization::getTimeAgo($comment->createdTime) . $statusText . '</span>';
+        echo '<' . $tagName . ' class="bearcms-comments-comment-author-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</' . $tagName . '> <span class="bearcms-comments-comment-date">' . $statusText . Localization::getTimeAgo($comment->createdTime) . '</span>';
         echo '<div class="bearcms-comments-comment-text">' . nl2br(htmlspecialchars($comment->text)) . '</div>';
         echo '</div>';
     }

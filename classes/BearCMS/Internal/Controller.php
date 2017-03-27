@@ -148,12 +148,30 @@ final class Controller
         $blogPosts = $app->bearCMS->data->blogPosts->getList()
                 ->filterBy('status', 'published')
                 ->sortBy('publishedTime', 'desc');
+        $contentType = \BearCMS\Internal\Options::$rssContentType;
         foreach ($blogPosts as $blogPost) {
             $blogPostUrl = isset($blogPost['slug']) ? $baseUrl . Options::$blogPagesPathPrefix . $blogPost['slug'] . '/' : '';
+            $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPost['id'] . '"/>');
+            $domDocument = new \IvoPetkov\HTML5DOMDocument();
+            $domDocument->loadHTML($blogPostContent);
+            $contentElementsContainer = $domDocument->querySelector('body')->firstChild;
+            $content = '';
+            if ($contentType === 'full') {
+                $content = $contentElementsContainer->innerHTML;
+            } elseif ($contentType === 'summary') {
+                $content = '';
+                $child = $contentElementsContainer->childNodes->item(0);
+                if ($child != null) {
+                    $content .= $child->outerHTML . '<br><br>';
+                }
+                $content .= sprintf(__('bearcms.rss.Read the full post at %s'), '<a href="' . $blogPostUrl . '">' . $blogPostUrl . '</a>');
+            } else {
+                $content .= sprintf(__('bearcms.rss.Read the post at %s'), '<a href="' . $blogPostUrl . '">' . $blogPostUrl . '</a>');
+            }
             $data .= '<item>';
             $data .= '<title>' . (isset($blogPost['title']) ? htmlspecialchars($blogPost['title']) : '') . '</title>';
             $data .= '<link>' . $blogPostUrl . '</link>';
-            $data .= '<description><![CDATA[Read the full article at <a href="' . $blogPostUrl . '">' . $blogPostUrl . '</a>]]></description>';
+            $data .= '<description><![CDATA[' . $content . ']]></description>';
             $data .= '<pubDate>' . (isset($blogPost['publishedTime']) ? date('r', $blogPost['publishedTime']) : '') . '</pubDate>';
             $data .= '<guid isPermaLink="false">' . $blogPostUrl . '</guid>';
             $data .= '</item>';

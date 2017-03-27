@@ -61,7 +61,6 @@ $context->classes
         ->add('BearCMS\Internal\Data\Users', 'classes/BearCMS/Internal/Data/Users.php')
         ->add('BearCMS\Internal\Controller', 'classes/BearCMS/Internal/Controller.php')
         ->add('BearCMS\Internal\Cookies', 'classes/BearCMS/Internal/Cookies.php')
-        ->add('BearCMS\Internal\Dictionary', 'classes/BearCMS/Internal/Dictionary.php')
         ->add('BearCMS\Internal\ElementsHelper', 'classes/BearCMS/Internal/ElementsHelper.php')
         ->add('BearCMS\Internal\Localization', 'classes/BearCMS/Internal/Localization.php')
         ->add('BearCMS\Internal\Options', 'classes/BearCMS/Internal/Options.php')
@@ -388,9 +387,17 @@ $app->hooks->add('initialized', function() use ($app, $context) {
 
     // Register some other pages
     $app->routes
-            ->add('/rss.xml', ['BearCMS\Internal\Controller', 'handleRSS'])
-            ->add('/sitemap.xml', ['BearCMS\Internal\Controller', 'handleSitemap'])
-            ->add('/robots.txt', ['BearCMS\Internal\Controller', 'handleRobots']);
+            ->add('/rss.xml', function() {
+                if (BearCMS\Internal\Options::$enableRSS) {
+                    return BearCMS\Internal\Controller::handleRSS();
+                }
+            })
+            ->add('/sitemap.xml', function() {
+                return BearCMS\Internal\Controller::handleSitemap();
+            })
+            ->add('/robots.txt', function() {
+                return BearCMS\Internal\Controller::handleRobots();
+            });
 
     if (Options::hasFeature('COMMENTS')) {
         $app->serverRequests->add('bearcms-comments-load-more', function($data) use ($app, $context) {
@@ -842,5 +849,8 @@ if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature
     $app->hooks
             ->add('responseCreated', function($response) use ($app) {
                 Cookies::update($response);
+                if (\BearCMS\Internal\Data::$hasContentChange) {
+                    $app->hooks->execute('bearCMSContentChanged');
+                }
             }, ['priority' => 1001]);
 }
