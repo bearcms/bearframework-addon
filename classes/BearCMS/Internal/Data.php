@@ -143,12 +143,22 @@ class Data
 
     static function setChanged($key)
     {
+        $app = App::get();
         if (strpos($key, '.temp/') !== 0) {
             self::$hasContentChange = true;
         }
         if (\BearCMS\Internal\Options::$useDataCache) {
             self::$cache = [];
             self::_updateGroupValue('all');
+        }
+        if (strpos($key, 'bearcms/elements/element/') === 0 && $app->hooks->exists('bearCMSElementChanged')) {
+            $data = new \ArrayObject();
+            $rawElementData = \BearCMS\Internal\Data::getValue($key);
+            $elementData = ElementsHelper::decodeElementRawData($rawElementData);
+            $data->id = $elementData['id'];
+            $data->type = $elementData['type'];
+            $data->data = $elementData['data'];
+            $app->hooks->execute('bearCMSElementChanged', $data);
         }
     }
 
