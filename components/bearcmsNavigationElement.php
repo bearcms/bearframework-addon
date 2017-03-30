@@ -52,7 +52,7 @@ if (strlen($component->type) > 0) {
 $menuType = 'list-vertical';
 if (strlen($component->menuType) > 0) {
     if (array_search($component->menuType, ['horizontal-down', 'list-vertical']) !== false) {
-        $menuType = $component->type;
+        $menuType = $component->menuType;
     }
 }
 
