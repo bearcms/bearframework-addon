@@ -19,7 +19,11 @@ class Pages
 
     private function makePageFromRawData($rawData): \BearCMS\Data\Page
     {
-        return new \BearCMS\Data\Page(json_decode($rawData, true));
+        $data = json_decode($rawData, true);
+        if (isset($data['parentID']) && strlen($data['parentID']) === 0) {
+            $data['parentID'] = null;
+        }
+        return new \BearCMS\Data\Page($data);
     }
 
     /**

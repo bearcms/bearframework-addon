@@ -26,6 +26,7 @@ return [
     'bearcms.forumPosts.Post' => 'Post',
     'bearcms.forumPosts.Posting ...' => 'Posting ...',
     'bearcms.blogPosts.Show more' => 'Show more',
+    'bearcms.blogPosts.Read more' => 'Read more',
     'bearcms.rss.Read the full post at %s' => 'Read the full post at %s',
     'bearcms.rss.Read the post at %s' => 'Read the post at %s',
     'bearcms.date.month_1' => 'January',

@@ -18,7 +18,9 @@ if ($count < 1) {
 }
 $categoryID = $component->categoryID;
 
-$posts = $app->bearCMS->data->forumPosts->getList()->filterBy('categoryID', $categoryID);
+$posts = $app->bearCMS->data->forumPosts->getList()
+        ->filterBy('categoryID', $categoryID)
+        ->sortBy('createdTime', 'desc');
 $counter = 0;
 echo '<div>';
 foreach ($posts as $post) {

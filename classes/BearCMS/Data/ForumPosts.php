@@ -53,7 +53,7 @@ class ForumPosts
      */
     public function get(string $id): ?\BearCMS\Data\ForumPost
     {
-        $data = \BearCMS\Internal\Data::getValue('bearcms/forum/posts/post/' . md5($id) . '.json');
+        $data = \BearCMS\Internal\Data::getValue('bearcms/forums/posts/post/' . md5($id) . '.json');
         if ($data !== null) {
             return $this->makeForumPostFromRawData($data);
         }
@@ -67,7 +67,7 @@ class ForumPosts
      */
     public function getList()
     {
-        $list = \BearCMS\Internal\Data::getList('bearcms/forum/posts/post/');
+        $list = \BearCMS\Internal\Data::getList('bearcms/forums/posts/post/');
         array_walk($list, function(&$value) {
             $value = $this->makeForumPostFromRawData($value);
         });

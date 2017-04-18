@@ -39,7 +39,7 @@ class ForumCategories
      */
     public function get(string $id): ?\BearCMS\Data\ForumCategory
     {
-        $data = \BearCMS\Internal\Data::getValue('bearcms/forum/categories/category/' . md5($id) . '.json');
+        $data = \BearCMS\Internal\Data::getValue('bearcms/forums/categories/category/' . md5($id) . '.json');
         if ($data !== null) {
             return $this->makeForumCategoryFromRawData($data);
         }
@@ -53,12 +53,12 @@ class ForumCategories
      */
     public function getList(): \BearCMS\DataList
     {
-        $list = \BearCMS\Internal\Data::getList('bearcms/forum/categories/category/');
+        $list = \BearCMS\Internal\Data::getList('bearcms/forums/categories/category/');
         array_walk($list, function(&$value) {
             $value = $this->makeForumCategoryFromRawData($value);
         });
 
-        $structureData = \BearCMS\Internal\Data::getValue('bearcms/forum/categories/structure.json');
+        $structureData = \BearCMS\Internal\Data::getValue('bearcms/forums/categories/structure.json');
         $structureData = $structureData === null ? [] : json_decode($structureData, true);
         $flattenStructureData = [];
         foreach ($structureData as $itemData) {

@@ -67,7 +67,7 @@ if (strlen($component->showHomeButton) > 0) {
 $pages = null;
 if ($type === 'top' || $type === 'tree') {
     $pages = $app->bearCMS->data->pages->getList()
-            ->filterBy('parentID', '')
+            ->filterBy('parentID', null)
             ->filterBy('status', 'published');
 } elseif ($type === 'children') {
     $pages = $app->bearCMS->data->pages->getList()
@@ -123,6 +123,7 @@ if (isset($itemsHtml{0})) {
         $itemsHtml = $buildTree($pages, $type === 'tree');
     }
 }
+
 $content = '';
 if (isset($itemsHtml{0})) {
     $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';

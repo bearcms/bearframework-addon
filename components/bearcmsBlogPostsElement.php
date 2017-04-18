@@ -109,6 +109,8 @@ if ($list->length === 0) {
                 }
                 if ($textElementData !== null) {
                     $content .= '<component src="bearcms-text-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($textElementData)) . '"/>';
+                    $readMoreText = '<a href="' . htmlentities($url) . '">' . __('bearcms.blogPosts.Read more') . '</a>';
+                    $content .= '<component src="bearcms-text-element" text="' . htmlentities($readMoreText) . '"/>';
                 }
             } else {
                 $content .= '<component src="bearcms-elements" id="' . $containerID . '"/>';

@@ -28,7 +28,7 @@ final class ForumPosts
             'createdTime' => time()
         ];
 
-        $dataKey = 'bearcms/forum/posts/post/' . md5($id) . '.json';
+        $dataKey = 'bearcms/forums/posts/post/' . md5($id) . '.json';
         $app->data->set($app->data->make($dataKey, json_encode($data)));
         \BearCMS\Internal\Data::setChanged($dataKey);
         return $id;
@@ -37,7 +37,7 @@ final class ForumPosts
     static function setStatus(string $forumPostID, string $status): void
     {
         $app = App::get();
-        $dataKey = 'bearcms/forum/posts/post/' . md5($forumPostID) . '.json';
+        $dataKey = 'bearcms/forums/posts/post/' . md5($forumPostID) . '.json';
         $data = $app->data->getValue($dataKey);
         $hasChange = false;
         if ($data !== null) {

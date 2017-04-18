@@ -9,6 +9,7 @@
 use \BearFramework\App;
 
 $app = App::get();
+$context = $app->context->get(__FILE__);
 
 $content = '';
 if (strlen($component->url) > 0) {
@@ -35,7 +36,8 @@ if (strlen($component->url) > 0) {
         }
     }
     if ($content !== '') {
-        $content = '<div class="bearcms-video-element" style="font-size:0;position:relative;height:0;padding-bottom:' . (1 / $aspectRatio * 100) . '%;"><div style="position: absolute;top:0;left:0;width:100%;height:100%;">' . $content . '</div></div>';
+        $content = '<div style="position:absolute;top:0;left:0;width:100%;height:100%;">' . $content . '</div>';
+        $content = '<div class="responsively-lazy bearcms-video-element" style="font-size:0;padding-bottom:' . (1 / $aspectRatio * 100) . '%;" data-lazycontent="' . htmlentities($content) . '"></div>';
     } else {
         $content = '';
     }
@@ -46,5 +48,8 @@ if (strlen($component->url) > 0) {
     $content .= '</video></div>';
 }
 ?><html>
+    <head>
+        <script id="responsively-lazy-script" src="<?= $context->assets->getUrl('assets/responsivelyLazy.min.js', ['cacheMaxAge' => 999999, 'version' => 1]) ?>" async/>
+    </head>
     <body><?= $content ?></body>
 </html>

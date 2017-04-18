@@ -26,6 +26,7 @@ return [
     'bearcms.forumPosts.Post' => 'Публикувай',
     'bearcms.forumPosts.Posting ...' => 'Публикуване ...',
     'bearcms.blogPosts.Show more' => 'Покажи още',
+    'bearcms.blogPosts.Read more' => 'Прочети повече',
     'bearcms.rss.Read the full post at %s' => 'Прочетете цялата статия на %s',
     'bearcms.rss.Read the post at %s' => 'Прочетете статията на %s',
     'bearcms.date.month_1' => 'Януари',
@@ -40,7 +41,7 @@ return [
     'bearcms.date.month_10' => 'Октомври',
     'bearcms.date.month_11' => 'Ноември',
     'bearcms.date.month_12' => 'Декември',
-    'bearcms.time.a_moment_ago' => 'току що',
+    'bearcms.time.a_moment_ago' => 'преди по-малко от минута',
     'bearcms.time.minutes_ago' => 'преди %s минути',
     'bearcms.time.hours_ago' => 'преди %s часа',
 ];

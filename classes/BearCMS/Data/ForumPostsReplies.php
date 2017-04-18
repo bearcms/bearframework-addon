@@ -24,7 +24,7 @@ class ForumPostsReplies
      */
     public function getList()
     {
-        $list = \BearCMS\Internal\Data::getList('bearcms/forum/posts/post/');
+        $list = \BearCMS\Internal\Data::getList('bearcms/forums/posts/post/');
 
         $result = new \BearCMS\DataList();
         foreach ($list as $value) {
