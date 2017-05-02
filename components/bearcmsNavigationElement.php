@@ -72,7 +72,7 @@ $buildTree = function($pages, $recursive = false, $level = 0) use ($app, $select
 
 $menuType = 'list-vertical';
 if (strlen($component->menuType) > 0) {
-    if (array_search($component->menuType, ['horizontal-down', 'list-vertical']) !== false) {
+    if (array_search($component->menuType, ['horizontal-down', 'vertical-left', 'vertical-right', 'list-vertical']) !== false) {
         $menuType = $component->menuType;
     }
 }
