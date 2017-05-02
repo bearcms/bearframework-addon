@@ -25,7 +25,7 @@ if ($source === 'pageChildren') {
     $sourceParentPageID = (string) $component->sourceParentPageID;
 } elseif ($source === 'allPages' || $source === 'topPages') {
     $showHomeLink = $component->showHomeLink === 'true';
-    $homeLinkText = strlen($component->homeLinkText) > 0 ? $component->homeLinkText : 'Home';
+    $homeLinkText = strlen($component->homeLinkText) > 0 ? $component->homeLinkText : __('bearcms.navigation.home');
 }
 
 $itemsType = (string) $component->itemsType === 'onlySelected' ? 'onlySelected' : 'allExcept';
