@@ -241,11 +241,27 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                     'componentFilename' => $contextDir . '/components/bearcmsNavigationElement.php',
                     'fields' => [
                         [
-                            'id' => 'type',
+                            'id' => 'source',
                             'type' => 'textbox'
                         ],
                         [
-                            'id' => 'pageID',
+                            'id' => 'sourceParentPageID',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'showHomeLink',
+                            'type' => 'checkbox'
+                        ],
+                        [
+                            'id' => 'homeLinkText',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'itemsType',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'items',
                             'type' => 'textbox'
                         ]
                     ]
@@ -387,8 +403,9 @@ $app->hooks->add('initialized', function() use ($app, $context) {
 
     // Register some other pages
     $app->routes
-            ->add('/rss.xml', function() {
-                if (BearCMS\Internal\Options::$enableRSS) {
+            ->add('/rss.xml', function() use ($app) {
+                $settings = $app->bearCMS->data->settings->get();
+                if ($settings['enableRSS']) {
                     return BearCMS\Internal\Controller::handleRSS();
                 }
             })
@@ -446,7 +463,7 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                         if ($forumPost !== null) {
                             $content = '';
                             $content = '<div class="bearcms-forum-post-page-title-container"><h1 class="bearcms-forum-post-page-title">' . htmlspecialchars($forumPost->title) . '</h1></div>';
-                            $content .= '<div class="bearcms-forum-post-page-date-container"><div class="bearcms-forum-post-page-date">' . BearCMS\Internal\Localization::getDate($forumPost->createdTime) . '</div></div>';
+                            //$content .= '<div class="bearcms-forum-post-page-date-container"><div class="bearcms-forum-post-page-date">' . BearCMS\Internal\Localization::getDate($forumPost->createdTime) . '</div></div>';
                             $content .= '<div class="bearcms-forum-post-page-content">';
                             $content .= '<component src="file:' . $context->dir . '/components/bearcmsForumPostsElement/forumPostRepliesList.php" includePost="true" forumPostID="' . htmlentities($forumPost->id) . '" />';
                             $content .= '</div>';
@@ -501,7 +518,7 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                                 $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
                                 $content .= '</head><body>';
                                 $content = '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1></div>';
-                                $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? date('F j, Y', $blogPost['publishedTime']) : 'draft') . '</div></div>';
+                                $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? \BearCMS\Internal\Localization::getDate($blogPost['publishedTime']) : 'draft') . '</div></div>';
                                 $content .= '<div class="bearcms-blogpost-page-content"><component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/></div>';
                                 $content .= '</body></html>';
                                 $response = new App\Response\HTML($content);
@@ -735,7 +752,9 @@ $app->hooks
                 $componentContent .= '<meta name="robots" content="noindex">';
             }
             $componentContent .= '<link rel="canonical" href="' . htmlentities(rtrim($app->request->base . $app->request->path, '/') . '/') . '"/>';
-            $componentContent .= '<link rel="alternate" type="application/rss+xml" title="' . (isset($settings['title']) ? trim($settings['title']) : '') . '" href="' . $app->request->base . '/rss.xml" />';
+            if ($settings['enableRSS']) {
+                $componentContent .= '<link rel="alternate" type="application/rss+xml" title="' . (isset($settings['title']) ? trim($settings['title']) : '') . '" href="' . $app->request->base . '/rss.xml" />';
+            }
             $componentContent .= '</head><body>';
 
             if ($response instanceof \BearFramework\App\Response\HTML) { // is not temporary disabled

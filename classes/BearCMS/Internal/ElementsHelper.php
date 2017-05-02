@@ -119,6 +119,31 @@ final class ElementsHelper
 //        $result['canMove'] = $component->canMove === 'true';
 //        $result['canDelete'] = $component->canDelete === 'true';
 
+        $otherAttributes = [];
+        $attributesToSkip = ['src', 'id', 'editable', 'width', 'spacing', 'color', 'group'];
+        foreach ($component->attributes as $key => $value) {
+            $add = true;
+            if (array_search($key, $attributesToSkip) !== false || strpos($key, 'bearcms-internal-attribute-') === 0) {
+                $add = false;
+            }
+            if ($add && isset(ElementsHelper::$elementsTypesOptions[$component->src])) {
+                $options = ElementsHelper::$elementsTypesOptions[$component->src];
+                if (isset($options['fields'])) {
+                    foreach ($options['fields'] as $field) {
+                        if (strtolower($key) === strtolower($field['id'])) {
+                            $add = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if ($add) {
+                $otherAttributes[$key] = $value;
+            }
+        }
+        if (!empty($otherAttributes)) {
+            $result['componentAttributes'] = $otherAttributes;
+        }
         return $result;
     }
 

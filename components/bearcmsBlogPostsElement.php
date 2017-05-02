@@ -51,7 +51,7 @@ if ($list->length === 0) {
         if ($showDate) {
             $content .= '<div class="bearcms-blog-posts-element-post-date-container">';
             $content .= '<span class="bearcms-blog-posts-element-post-date">';
-            $content .= date('F j, Y', $publishedTime);
+            $content .= \BearCMS\Internal\Localization::getDate($publishedTime);
             $content .= '</span>';
             $content .= '</div>';
         }

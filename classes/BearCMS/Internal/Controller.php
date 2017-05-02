@@ -148,7 +148,7 @@ final class Controller
         $blogPosts = $app->bearCMS->data->blogPosts->getList()
                 ->filterBy('status', 'published')
                 ->sortBy('publishedTime', 'desc');
-        $contentType = \BearCMS\Internal\Options::$rssContentType;
+        $contentType = $settings['rssType'];
         foreach ($blogPosts as $blogPost) {
             $blogPostUrl = isset($blogPost['slug']) ? $baseUrl . Options::$blogPagesPathPrefix . $blogPost['slug'] . '/' : '';
             $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPost['id'] . '"/>');
@@ -156,16 +156,16 @@ final class Controller
             $domDocument->loadHTML($blogPostContent);
             $contentElementsContainer = $domDocument->querySelector('body')->firstChild;
             $content = '';
-            if ($contentType === 'full') {
+            if ($contentType === 'fullContent') {
                 $content = $contentElementsContainer->innerHTML;
-            } elseif ($contentType === 'summary') {
+            } elseif ($contentType === 'contentSummary') {
                 $content = '';
                 $child = $contentElementsContainer->childNodes->item(0);
                 if ($child != null) {
                     $content .= $child->outerHTML . '<br><br>';
                 }
                 $content .= sprintf(__('bearcms.rss.Read the full post at %s'), '<a href="' . $blogPostUrl . '">' . $blogPostUrl . '</a>');
-            } else {
+            } elseif ($contentType === 'noContent') {
                 $content .= sprintf(__('bearcms.rss.Read the post at %s'), '<a href="' . $blogPostUrl . '">' . $blogPostUrl . '</a>');
             }
             $data .= '<item>';

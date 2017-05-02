@@ -21,14 +21,13 @@ $elementID = 'frl' . md5($forumPostID);
         <style>
             .bearcms-forum-post-page-reply{
                 clear:both;
+                min-height:50px;
             }
             .bearcms-forum-post-page-reply-image{
                 display:inline-block;
                 width:50px;
                 height:50px;
                 float:left;
-                margin-right:10px;
-                margin-bottom:10px;
             }
         </style>
     </head>

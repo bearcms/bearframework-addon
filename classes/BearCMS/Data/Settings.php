@@ -58,6 +58,12 @@ class Settings
         if (!isset($data['disabledText'])) {
             $data['disabledText'] = '';
         }
+        if (!isset($data['enableRSS'])) {
+            $data['enableRSS'] = true;
+        }
+        if (!isset($data['rssType'])) {
+            $data['rssType'] = 'fullContent';
+        }
         return new \BearCMS\DataObject($data);
     }
 

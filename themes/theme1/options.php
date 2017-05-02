@@ -1421,7 +1421,7 @@ $options = [
                         ]
                     ],
                     [
-                        "id" => "navigationHomeButtonText",
+                        "id" => "navigationhomeLinkText",
                         "type" => "textbox",
                         "name" => __("bearcms.themes.theme1.options.Text"),
                         "defaultValue" => "Home"

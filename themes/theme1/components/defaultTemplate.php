@@ -20,7 +20,7 @@ $headerDescriptionVisibility = $options['headerDescriptionVisibility'];
 
 $navigationPosition = $options['navigationPosition'];
 $navigationHomeButtonVisibility = $options['navigationHomeButtonVisibility'];
-$navigationHomeButtonText = $options['navigationHomeButtonText'];
+$navigationhomeLinkText = $options['navigationhomeLinkText'];
 $navigationItemCSS2 = !empty($options['navigationItemCSS2']) ? json_decode($options['navigationItemCSS2'], true) : [];
 $navigationItemColor = isset($navigationItemCSS2['color']) ? $navigationItemCSS2['color'] : '#ffffff';
 $navigationItemHoverColor = isset($navigationItemCSS2['color:hover']) ? $navigationItemCSS2['color:hover'] : $navigationItemColor;
@@ -105,7 +105,7 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
             $navigationContent .= '<nav class="template-navigation">';
             $navigationContent .= '<div>';
             $navigationContent .= '<input id="template-navigation-toggle-button" type="checkbox"/><label for="template-navigation-toggle-button">&nbsp;</label>';
-            $navigationContent .= '<div><component src="bearcms-navigation-element" type="tree" showHomeButton="' . ($navigationHomeButtonVisibility === '1' ? 'true' : 'false') . '" homeButtonText="' . htmlentities($navigationHomeButtonText) . '" menuType="horizontal-down" class="template-navigation-content" selectedPath="' . (string) $app->request->path . '" data-responsive-attributes="w<680=>menuType=none,w>=680=>menuType=horizontal-down" /></div>';
+            $navigationContent .= '<div><component src="bearcms-navigation-element" type="tree" showHomeLink="' . ($navigationHomeButtonVisibility === '1' ? 'true' : 'false') . '" homeLinkText="' . htmlentities($navigationhomeLinkText) . '" menuType="horizontal-down" class="template-navigation-content" selectedPath="' . (string) $app->request->path . '" data-responsive-attributes="w<680=>menuType=none,w>=680=>menuType=horizontal-down" /></div>';
             $navigationContent .= '</div>';
             $navigationContent .= '</nav>';
             $navigationContent .= '</div>';

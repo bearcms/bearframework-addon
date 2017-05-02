@@ -31,8 +31,6 @@ final class Options
     static $maxUploadsSize = null;
     static $useDataCache = false;
     static $dataCachePrefix = null;
-    static $enableRSS = true;
-    static $rssContentType = 'summary'; //full, summary, none
 
     /**
      * 
@@ -114,12 +112,6 @@ final class Options
         }
         if (isset($data['dataCachePrefix'])) {
             self::$dataCachePrefix = (string) $data['dataCachePrefix'];
-        }
-        if (isset($data['enableRSS'])) {
-            self::$enableRSS = (int) $data['enableRSS'] > 0;
-        }
-        if (isset($data['rssContentType'])) {
-            self::$rssContentType = (string) $data['rssContentType'];
         }
     }
 

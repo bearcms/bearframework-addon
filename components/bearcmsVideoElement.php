@@ -49,6 +49,7 @@ if (strlen($component->url) > 0) {
 }
 ?><html>
     <head>
+        <style id="responsively-lazy-style">.responsively-lazy:not(img){position:relative;height:0;}.responsively-lazy:not(img)>img{position:absolute;top:0;left:0;width:100%;height:100%}img.responsively-lazy{width:100%;}</style>
         <script id="responsively-lazy-script" src="<?= $context->assets->getUrl('assets/responsivelyLazy.min.js', ['cacheMaxAge' => 999999, 'version' => 1]) ?>" async/>
     </head>
     <body><?= $content ?></body>

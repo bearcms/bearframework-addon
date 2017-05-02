@@ -9,20 +9,23 @@
 
 namespace BearCMS\Internal;
 
+use BearFramework\App;
+
 final class Localization
 {
 
     static function getDate(int $timestamp): string
     {
-        $language = 'en'; //todo
+        $app = App::get();
+        $language = $app->localization->getLocale();
         $date = date('j', $timestamp);
         $month = __('bearcms.date.month_' . date('n', $timestamp));
         $year = date('Y', $timestamp);
-        $showYear = $year === date('Y', time());
-        if ($language === 'en') {
-            return $month . ' ' . $date . ($showYear ? ', ' . $year : '');
-        } else {
+        $showYear = $year !== date('Y', time());
+        if ($language === 'bg') {
             return $date . ' ' . $month . ($showYear ? ' ' . $year : '');
+        } else {
+            return $month . ' ' . $date . ($showYear ? ', ' . $year : '');
         }
     }
 

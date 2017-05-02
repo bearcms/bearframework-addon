@@ -34,11 +34,11 @@ Renders a navigation menu containing pages created in the CMS.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The currently selected page path. This will add special CSS class names to links pointing to pages in this path.
 
-`showHomeButton`
+`showHomeLink`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether a link to the home page is shown alongside other pages. Available values: true and false.
 
-`homeButtonText`
+`homeLinkText`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The text of the home button.
 
