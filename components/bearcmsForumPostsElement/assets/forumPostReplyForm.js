@@ -10,11 +10,13 @@ var bearCMS = bearCMS || {};
 bearCMS.forumPostReplyForm = (function () {
 
     var onBeforeSubmitForm = function (event) {
-        var users = ivoPetkov.bearFrameworkAddons.users;
-        if (!users.currentUser.exists()) {
-            users.showLogin();
-            event.preventDefault();
-            return;
+        if (typeof ivoPetkov.bearFrameworkAddons !== 'undefined' && typeof ivoPetkov.bearFrameworkAddons.users !== 'undefined') {
+            var users = ivoPetkov.bearFrameworkAddons.users;
+            if (!users.currentUser.exists()) {
+                users.showLogin();
+                event.preventDefault();
+                return;
+            }
         }
         var listElementID = event.target.previousSibling.id;
         event.target.querySelector('input[type="hidden"]').value = JSON.stringify({

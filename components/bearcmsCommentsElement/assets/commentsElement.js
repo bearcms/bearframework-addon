@@ -10,11 +10,13 @@ var bearCMS = bearCMS || {};
 bearCMS.commentsElement = (function () {
 
     var onBeforeSubmitForm = function (event) {
-        var users = ivoPetkov.bearFrameworkAddons.users;
-        if (!users.currentUser.exists()) {
-            users.showLogin();
-            event.preventDefault();
-            return;
+        if (typeof ivoPetkov.bearFrameworkAddons !== 'undefined' && typeof ivoPetkov.bearFrameworkAddons.users !== 'undefined') {
+            var users = ivoPetkov.bearFrameworkAddons.users;
+            if (!users.currentUser.exists()) {
+                users.showLogin();
+                event.preventDefault();
+                return;
+            }
         }
         var listElementID = event.target.previousSibling.id;
         var listCommentsCount = event.target.previousSibling.getAttribute('data-count');
