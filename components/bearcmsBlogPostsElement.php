@@ -130,7 +130,7 @@ if ($list->length === 0) {
             'serverData' => \BearCMS\Internal\TempClientData::set(['componentHTML' => (string) $component])
         ];
         $onClick = 'bearCMS.blogPostsElement.loadMore(event,' . json_encode($loadMoreData) . ');';
-        $content .= '<a class="bearcms-blog-posts-element-show-more-button" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">' . __('bearcms.blogPosts.Show more') . '</a>';
+        $content .= '<a class="bearcms-blog-posts-element-show-more-button" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">' . __('bearcms.blogPosts.Show more posts') . '</a>';
         $content .= '</div>';
     }
     $content .= '</div>';

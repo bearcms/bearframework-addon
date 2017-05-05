@@ -25,7 +25,7 @@ return [
     'bearcms.forumPosts.Content' => 'Съдържание',
     'bearcms.forumPosts.Post' => 'Публикувай',
     'bearcms.forumPosts.Posting ...' => 'Публикуване ...',
-    'bearcms.blogPosts.Show more' => 'Покажи още',
+    'bearcms.blogPosts.Show more posts' => 'Покажи още статии',
     'bearcms.blogPosts.Read more' => 'Прочети повече',
     'bearcms.rss.Read the full post at %s' => 'Прочетете цялата статия на %s',
     'bearcms.rss.Read the post at %s' => 'Прочетете статията на %s',
