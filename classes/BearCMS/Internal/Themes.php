@@ -74,5 +74,22 @@ class Themes
         }
         return [];
     }
+    
+    static function getStyles(string $id): array
+    {
+        if (isset(\BearCMS\Internal\Themes::$list[$id])) {
+            $themeOptions = \BearCMS\Internal\Themes::$list[$id][2];
+            if (isset($themeOptions['styles'])) {
+                if (is_array($themeOptions['styles'])) {
+                    return $themeOptions['styles'];
+                } elseif (is_callable($themeOptions['styles'])) {
+                    return call_user_func($themeOptions['styles']);
+                } else {
+                    throw new \Exception('');
+                }
+            }
+        }
+        return [];
+    }
 
 }
