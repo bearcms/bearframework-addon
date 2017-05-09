@@ -22,6 +22,12 @@ if ($component->lazyLoad === 'false') {
     $lazyLoad = 'false';
 }
 
+$width = (string) $component->width;
+$align = (string) $component->align;
+if ($align !== 'left' && $align !== 'center' && $align !== 'right') {
+    $align = 'left';
+}
+
 $attributes = '';
 
 $attributes .= ' onClick="' . $onClick . '"';
@@ -36,15 +42,37 @@ if (strlen($component->loadingBackground) > 0) {
 $attributes .= ' lazyLoadImages="' . $lazyLoad . '"';
 
 $filename = (string) $component->filename;
+
+$innerContainerStyle = '';
+if (strlen($width) === 0) {
+    if ($align === 'center') {
+        $innerContainerStyle = 'text-align:center;';
+    } elseif ($align === 'right') {
+        $innerContainerStyle = 'text-align:right;';
+    }
+} else {
+    $innerContainerStyle = 'max-width:' . $width . ';';
+    if ($align === 'center') {
+        $innerContainerStyle .= 'margin:0 auto;';
+    } elseif ($align === 'right') {
+        $innerContainerStyle .= 'margin-left:auto;';
+    }
+}
+
 $content = '<div class="bearcms-image-element' . $classAttributeValue . '" style="font-size:0;">';
+if (isset($innerContainerStyle{0})) {
+    $content .= '<div style="' . $innerContainerStyle . '">';
+}
 if (isset($filename{0})) {
     $filename = $app->bearCMS->data->getRealFilename($filename);
     $content .= '<component src="image-gallery" columnsCount="1"' . $attributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
     $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' ? ' url="' . htmlentities($component->url) . '"' : '') . ' title="' . htmlentities($component->title) . '" filename="' . $filename . '"/>';
     $content .= '</component>';
 }
+if (isset($innerContainerStyle{0})) {
+    $content .= '</div>';
+}
 $content .= '</div>';
-
 ?><html>
     <body><?= $content ?></body>
 </html>

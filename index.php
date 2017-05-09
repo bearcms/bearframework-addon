@@ -166,7 +166,27 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                         [
                             'id' => 'filename',
                             'type' => 'textbox'
-                        ]
+                        ],
+                        [
+                            'id' => 'width',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'align',
+                            'type' => 'list',
+                            'defaultValue' => 'left',
+                            'options' => [
+                                [
+                                    'value' => 'left'
+                                ],
+                                [
+                                    'value' => 'center'
+                                ],
+                                [
+                                    'value' => 'right'
+                                ]
+                            ]
+                        ],
                     ]
                 ])
                 ->add('image', [
@@ -188,7 +208,27 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                         [
                             'id' => 'url',
                             'type' => 'textbox'
-                        ]
+                        ],
+                        [
+                            'id' => 'width',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'align',
+                            'type' => 'list',
+                            'defaultValue' => 'left',
+                            'options' => [
+                                [
+                                    'value' => 'left'
+                                ],
+                                [
+                                    'value' => 'center'
+                                ],
+                                [
+                                    'value' => 'right'
+                                ]
+                            ]
+                        ],
                     ]
                 ])
                 ->add('imageGallery', [
