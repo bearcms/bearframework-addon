@@ -24,6 +24,7 @@ return function($data) {
             $themeData = $themeManifest;
             $themeData['id'] = $id;
             $themeData['hasOptions'] = sizeof($options) > 0;
+            $themeData['hasStyles'] = sizeof(BearCMS\Internal\Themes::getStyles($id)) > 0;
             if ($includeOptions) {
                 $themeData['options'] = [
                     'definition' => $options
