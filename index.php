@@ -486,7 +486,7 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                             $content .= '<div class="bearcms-forum-post-page-content">';
                             $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsForumPostsElement/forumPostNewForm.php" categoryID="' . htmlentities($forumCategoryID) . '" />';
                             $content .= '</div>';
-                            $response = new App\Response\HTML($app->components->process($content));
+                            $response = new App\Response\HTML($content); //$app->components->process()
                             $app->bearCMS->enableUI($response);
                             $app->bearCMS->applyTheme($response);
                             $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex'));
@@ -710,9 +710,6 @@ $app->hooks
                 $app->bearCMS->enableUI($response);
                 $app->bearCMS->applyTheme($response);
             }
-            if ($response instanceof App\Response\HTML) {
-                $response->content = $app->components->process($response->content);
-            }
         })
         ->add('assetPrepare', function($data) use ($app, $context) {
             $serverUrl = \BearCMS\Internal\Options::$serverUrl;
@@ -758,7 +755,6 @@ $app->hooks
             if (!isset($response->enableBearCMSUI)) {
                 return;
             }
-
             $app->bearCMS->themes->apply($response);
 
             $componentContent = '<html><head>';
@@ -808,7 +804,7 @@ $app->hooks
             $domDocument = new HTML5DOMDocument();
             $domDocument->loadHTML($componentContent);
             $domDocument->insertHTML($response->content);
-            $response->content = $app->components->process($domDocument->saveHTML());
+            $response->content = $app->components->process($domDocument->saveHTML()); // Needed to fill $editorData
 
             if (!$currentUserExists) {
                 return;
@@ -897,12 +893,12 @@ $app->hooks
                 } elseif (strpos($content, '{jsonEncodedBody}') !== false) {
                     $content = str_replace('{jsonEncodedBody}', json_encode($app->components->process($response->content)), $content);
                 }
-                $response->content = $app->components->process($content);
+                $response->content = $content; //$app->components->process();
             } else {
                 //$response = new App\Response\TemporaryUnavailable();
             }
             \BearCMS\Internal\Data::saveCacheBundle($app->request->path->get());
-        }, ['priority' => 1000]);
+        }, ['priority' => 900]);
 
 if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*'))) {
     $app->hooks
@@ -911,5 +907,5 @@ if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature
                 if (\BearCMS\Internal\Data::$hasContentChange) {
                     $app->hooks->execute('bearCMSContentChanged');
                 }
-            }, ['priority' => 1001]);
+            }, ['priority' => 901]);
 }
