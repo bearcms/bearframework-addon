@@ -202,7 +202,7 @@ final class Controller
         }
 
         $response = new App\Response('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.google.com/schemas/sitemap/0.84">' . implode('', $urls) . '</urlset>');
-        $response->headers->set('Content-Type', 'text/xml');
+        $response->headers->set($response->headers->make('Content-Type', 'text/xml'));
         return $response;
     }
 
@@ -210,7 +210,7 @@ final class Controller
     {
         $response = new App\Response('User-agent: *
 Disallow:');
-        $response->headers->set('Content-Type', 'text/plain');
+        $response->headers->set($response->headers->make('Content-Type', 'text/plain'));
         return $response;
     }
 
