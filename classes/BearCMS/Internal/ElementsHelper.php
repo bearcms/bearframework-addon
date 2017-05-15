@@ -302,7 +302,7 @@ final class ElementsHelper
                 ElementsHelper::$editorData[] = ['columns', $elementContainerData['id'], $contextData];
             }
 
-            $attributes .= ' data-srvri="t2 s' . $spacing . '" data-responsive-attributes="w<=500=>data-srvri-vertical=1"';
+            $attributes .= ' data-srvri="t2 s' . $spacing . '"';// data-responsive-attributes="w<=500=>data-srvri-vertical=1"
 
             $styles = '';
             $styles .= '.' . $className . '[data-srvri-vertical="1"]>div{display:block !important;width:100% !important;margin-right:0 !important;}';
@@ -378,16 +378,16 @@ final class ElementsHelper
                 ElementsHelper::$editorData[] = ['floatingBox', $elementContainerData['id'], $contextData];
             }
 
-            $attributes .= ' data-srvri="t3 s' . $spacing . '" data-responsive-attributes="w<=500=>data-srvri-vertical=1"';
+            $attributes .= ' data-srvri="t3 s' . $spacing . '"'; // data-responsive-attributes="w<=500=>data-srvri-vertical=1"
 
             $styles = '';
             $styles .= '.' . $className . '>div:empty{display:none;}';
-            $styles .= '.' . $className . '>div:first-child{max-width:50%;}';
+            $styles .= '.' . $className . '>div:first-child{max-width:100%;}';
             $styles .= '.' . $className . '[data-rvr-editable]>div:empty{display:block;}';
             $styles .= '.' . $className . '[data-rvr-editable]>div:first-child{min-width:24px;}';
-            $styles .= '.' . $className . '[data-srvri-vertical="1"]>div{display:block !important;max-width:100% !important;width:100% !important;margin-right:0 !important;float:none !important;}';
-            $styles .= '.' . $className . '[data-srvri-vertical="1"]>div:not(:empty):not(:last-child){margin-bottom:' . $spacing . ' !important;}';
-            $styles .= '.' . $className . '[data-rvr-editable][data-srvri-vertical="1"]>div:not(:last-child){margin-bottom:' . $spacing . ' !important;}';
+            //$styles .= '.' . $className . '[data-srvri-vertical="1"]>div{display:block !important;max-width:100% !important;width:100% !important;margin-right:0 !important;float:none !important;}';
+            //$styles .= '.' . $className . '[data-srvri-vertical="1"]>div:not(:empty):not(:last-child){margin-bottom:' . $spacing . ' !important;}';
+            //$styles .= '.' . $className . '[data-rvr-editable][data-srvri-vertical="1"]>div:not(:last-child){margin-bottom:' . $spacing . ' !important;}';
             $styles .= '.' . $className . ':after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
 
             $content = '<html>'
