@@ -31,6 +31,7 @@ final class Options
     static $maxUploadsSize = null;
     static $useDataCache = false;
     static $dataCachePrefix = null;
+    static $useEmptyTheme = true;
 
     /**
      * 
@@ -38,7 +39,6 @@ final class Options
      * @throws \InvalidArgumentException
      * @throws \Exception
      */
-
     static function set(array $data): void
     {
 
@@ -112,6 +112,9 @@ final class Options
         }
         if (isset($data['dataCachePrefix'])) {
             self::$dataCachePrefix = (string) $data['dataCachePrefix'];
+        }
+        if (isset($data['useEmptyTheme'])) {
+            self::$useEmptyTheme = (int) $data['useEmptyTheme'] > 0;
         }
     }
 

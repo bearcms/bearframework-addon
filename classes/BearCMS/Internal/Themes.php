@@ -36,7 +36,7 @@ class Themes
 
     static function getList(): array
     {
-        $list = ['none'];
+        $list = Options::$useEmptyTheme ? ['none'] : [];
         $list = array_merge($list, array_keys(\BearCMS\Internal\Themes::$list));
         return $list;
     }
@@ -74,7 +74,7 @@ class Themes
         }
         return [];
     }
-    
+
     static function getStyles(string $id): array
     {
         if (isset(\BearCMS\Internal\Themes::$list[$id])) {
