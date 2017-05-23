@@ -93,7 +93,11 @@ $addonOptions = $app->addons->get('bearcms/bearframework-addon')->options;
 Options::set($addonOptions);
 
 if ($app->request->method === 'GET') {
-    \BearCMS\Internal\Data::loadCacheBundle($app->request->path->get());
+    if (strlen($app->config->assetsPathPrefix) > 0 && strpos($app->request->path, $app->config->assetsPathPrefix) === 0) {
+        // skip
+    } else {
+        \BearCMS\Internal\Data::loadCacheBundle($app->request->path->get());
+    }
 }
 
 $app->hooks->add('initialized', function() use ($app, $context) {
