@@ -302,7 +302,7 @@ final class ElementsHelper
                 ElementsHelper::$editorData[] = ['columns', $elementContainerData['id'], $contextData];
             }
 
-            $attributes .= ' data-srvri="t2 s' . $spacing . '"';// data-responsive-attributes="w<=500=>data-srvri-vertical=1"
+            $attributes .= ' data-srvri="t2 s' . $spacing . '"'; // data-responsive-attributes="w<=500=>data-srvri-vertical=1"
 
             $styles = '';
             $styles .= '.' . $className . '[data-srvri-vertical="1"]>div{display:block !important;width:100% !important;margin-right:0 !important;}';
@@ -452,15 +452,37 @@ final class ElementsHelper
         $containerData = self::getContainerData($id);
         $result = [];
         foreach ($containerData['elements'] as $elementData) {
-            if (isset($elementData['data'], $elementData['data']['type']) && ($elementData['data']['type'] === 'column' || $elementData['data']['type'] === 'columns') && isset($elementData['data']['elements'])) {
-                foreach ($elementData['data']['elements'] as $columnElements) {
-                    foreach ($columnElements as $columnElement) {
-                        if (isset($columnElement['id'])) {
-                            $result[] = $columnElement['id'];
+            if (isset($elementData['data'], $elementData['data']['type'])) {
+                if (($elementData['data']['type'] === 'column' || $elementData['data']['type'] === 'columns') && isset($elementData['data']['elements'])) {
+                    foreach ($elementData['data']['elements'] as $columnElements) {
+                        foreach ($columnElements as $columnElement) {
+                            if (isset($columnElement['id'])) {
+                                $result[] = $columnElement['id'];
+                            }
                         }
                     }
+                    continue;
+                } elseif ($elementData['data']['type'] === 'floatingBox' && isset($elementData['data']['elements'])) {
+                    if (isset($elementData['data']['elements']['inside'])) {
+                        foreach ($elementData['data']['elements']['inside'] as $insideElements) {
+                            foreach ($insideElements as $insideElement) {
+                                if (isset($insideElement['id'])) {
+                                    $result[] = $insideElement['id'];
+                                }
+                            }
+                        }
+                    }
+                    if (isset($elementData['data']['elements']['outside'])) {
+                        foreach ($elementData['data']['elements']['outside'] as $outsideElements) {
+                            foreach ($outsideElements as $outsideElement) {
+                                if (isset($outsideElement['id'])) {
+                                    $result[] = $outsideElement['id'];
+                                }
+                            }
+                        }
+                    }
+                    continue;
                 }
-                continue;
             }
             if (isset($elementData['id'])) {
                 $result[] = $elementData['id'];
