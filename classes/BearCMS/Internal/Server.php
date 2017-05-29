@@ -180,26 +180,28 @@ final class Server
                 throw new \Exception('Invalid response');
             }
         }
-        $log = "Bear CMS server request:\n";
-        $log .= 'User: ' . $app->bearCMS->currentUser->getID() . "\n";
-        $log .= 'Time: ' . curl_getinfo($ch, CURLINFO_TOTAL_TIME) . ' / dns: ' . curl_getinfo($ch, CURLINFO_NAMELOOKUP_TIME) . ', connect: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) . ', download: ' . curl_getinfo($ch, CURLINFO_STARTTRANSFER_TIME) . "\n";
-        $log .= 'Request: ' . trim(curl_getinfo($ch, CURLINFO_HEADER_OUT)) . "\n";
-        if (Options::$logServerRequestsData) {
-            $log .= 'Data: ' . trim(print_r($data, true)) . "\n";
-        }
-        curl_close($ch);
-        foreach ($cookies as $key => $value) {
-            $log = str_replace($value, '*' . strlen($value) . 'chars*', $log);
-        }
-        $log .= 'Response: ' . $responseHeader . "\n";
-        $newCookies = Cookies::parseServerCookies($responseHeader);
-        foreach ($newCookies as $newCookie) {
-            $log = str_replace($newCookie['value'], '*' . strlen($newCookie['value']) . 'chars*', $log);
-        }
-        //$log .= 'Response body: ' . $responseBody;
-        $log .= 'Body: ' . '*' . strlen($responseBody) . 'chars*';
-        if (strlen($app->config->logsDir) > 0) {
-            $app->logger->log('info', $log);
+        if (Options::$logServerRequests) {
+            $log = "Bear CMS server request:\n";
+            $log .= 'User: ' . $app->bearCMS->currentUser->getID() . "\n";
+            $log .= 'Time: ' . curl_getinfo($ch, CURLINFO_TOTAL_TIME) . ' / dns: ' . curl_getinfo($ch, CURLINFO_NAMELOOKUP_TIME) . ', connect: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) . ', download: ' . curl_getinfo($ch, CURLINFO_STARTTRANSFER_TIME) . "\n";
+            $log .= 'Request: ' . trim(curl_getinfo($ch, CURLINFO_HEADER_OUT)) . "\n";
+            if (Options::$logServerRequestsData) {
+                $log .= 'Data: ' . trim(print_r($data, true)) . "\n";
+            }
+            curl_close($ch);
+            foreach ($cookies as $key => $value) {
+                $log = str_replace($value, '*' . strlen($value) . 'chars*', $log);
+            }
+            $log .= 'Response: ' . $responseHeader . "\n";
+            $newCookies = Cookies::parseServerCookies($responseHeader);
+            foreach ($newCookies as $newCookie) {
+                $log = str_replace($newCookie['value'], '*' . strlen($newCookie['value']) . 'chars*', $log);
+            }
+            //$log .= 'Response body: ' . $responseBody;
+            $log .= 'Body: ' . '*' . strlen($responseBody) . 'chars*';
+            if (strlen($app->config->logsDir) > 0) {
+                $app->logger->log('info', $log);
+            }
         }
         if (isset($error{0})) {
             throw new \Exception('Request curl error: ' . $error . ' (1027)');
@@ -238,7 +240,7 @@ final class Server
             $response['body'] = $responseData['body'];
             $responseMeta = $responseData['meta'];
 
-            if (Options::$logServerRequestsData) {
+            if (Options::$logServerRequests && Options::$logServerRequestsData) {
                 if (strlen($app->config->logsDir) > 0) {
                     $log = "Bear CMS response data:\n";
                     $log .= 'Data: ' . trim(print_r($responseData, true));
