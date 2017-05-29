@@ -888,7 +888,7 @@ $app->hooks
                 if ($contentToInsert !== null) {
                     $domDocument->insertHTML($contentToInsert);
                 }
-                $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script></body></html>');
+                $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script></body></html>');
                 $content = $domDocument->saveHTML();
 
                 $content = Server::updateAssetsUrls($content, false);

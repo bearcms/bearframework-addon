@@ -139,7 +139,7 @@ if ($list->length === 0) {
     <head><?php
         if ($list->length > $limit) {
             echo '<script src="' . htmlentities($context->assets->getUrl('components/bearcmsBlogPostsElement/assets/blogPostsElement.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script>';
-            echo '<script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script>';
+            echo '<script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script>';
         }
         ?></head>
     <body><?= $content ?></body>
