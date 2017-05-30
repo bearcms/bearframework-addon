@@ -17,6 +17,8 @@ use BearFramework\App;
 class Pages
 {
 
+    static private $cache = [];
+
     private function makePageFromRawData($rawData): \BearCMS\Data\Page
     {
         $data = json_decode($rawData, true);
@@ -49,31 +51,34 @@ class Pages
      */
     public function getList(): \BearCMS\DataList
     {
-
-        $list = \BearCMS\Internal\Data::getList('bearcms/pages/page/');
-        array_walk($list, function(&$value) {
-            $value = $this->makePageFromRawData($value);
-        });
-        $structureData = \BearCMS\Internal\Data::getValue('bearcms/pages/structure.json');
-        $structureData = $structureData === null ? [] : json_decode($structureData, true);
-        $flattenStructureData = [];
-        $flattenStructure = function($structureData) use (&$flattenStructure, &$flattenStructureData) {
-            foreach ($structureData as $item) {
-                $flattenStructureData[] = $item['id'];
-                if (isset($item['children'])) {
-                    $flattenStructure($item['children']);
+        if (!isset(self::$cache['list'])) {
+            $list = \BearCMS\Internal\Data::getList('bearcms/pages/page/');
+            array_walk($list, function(&$value) {
+                $value = $this->makePageFromRawData($value);
+            });
+            $structureData = \BearCMS\Internal\Data::getValue('bearcms/pages/structure.json');
+            $structureData = $structureData === null ? [] : json_decode($structureData, true);
+            $flattenStructureData = [];
+            $flattenStructure = function($structureData) use (&$flattenStructure, &$flattenStructureData) {
+                foreach ($structureData as $item) {
+                    $flattenStructureData[] = $item['id'];
+                    if (isset($item['children'])) {
+                        $flattenStructure($item['children']);
+                    }
                 }
-            }
-        };
-        $flattenStructure($structureData);
-        unset($flattenStructure);
-        unset($structureData);
-        usort($list, function($object1, $object2) use ($flattenStructureData) {
-            $object1Index = array_search($object1->id, $flattenStructureData);
-            $object2Index = array_search($object2->id, $flattenStructureData);
-            return $object1Index - $object2Index;
-        });
-        return new \BearCMS\DataList($list);
+            };
+            $flattenStructure($structureData);
+            unset($flattenStructure);
+            unset($structureData);
+            $flattenStructureData = array_flip($flattenStructureData);
+            usort($list, function($object1, $object2) use ($flattenStructureData) {
+                return $flattenStructureData[$object1->id] - $flattenStructureData[$object2->id];
+            });
+            unset($flattenStructureData);
+            self::$cache['list'] = $list;
+            unset($list);
+        }
+        return new \BearCMS\DataList(self::$cache['list']);
     }
 
 }
