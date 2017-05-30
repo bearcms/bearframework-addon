@@ -40,19 +40,21 @@ $buildTree = function($pages, $recursive = false, $level = 0) use ($app, $select
         if ($page->status !== 'published') { //needed for the children
             continue;
         }
-        if ($itemsType === 'allExcept' && array_search($page->id, $items) !== false) {
+        $pageID = $page->id;
+        if ($itemsType === 'allExcept' && array_search($pageID, $items) !== false) {
             continue;
         }
-        if ($itemsType === 'onlySelected' && array_search($page->id, $items) === false) {
+        if ($itemsType === 'onlySelected' && array_search($pageID, $items) === false) {
             continue;
         }
+        $pagePath = $page->path;
         $classNames = 'bearcms-navigation-element-item';
-        if ($page->path === $selectedPath) {
+        if ($pagePath === $selectedPath) {
             $classNames .= ' bearcms-navigation-element-item-selected';
-        } elseif ($page->id !== '_home' && strpos($selectedPath, $page->path) === 0) {
+        } elseif ($pageID !== '_home' && strpos($selectedPath, $pagePath) === 0) {
             $classNames .= ' bearcms-navigation-element-item-in-path';
         }
-        $itemsHtml[] = '<li class="' . $classNames . '"><a href="' . $app->request->base . $page->path . '">' . htmlspecialchars($page->name) . '</a>';
+        $itemsHtml[] = '<li class="' . $classNames . '"><a href="' . $app->request->base . $pagePath . '">' . htmlspecialchars($page->name) . '</a>';
         if ($recursive && isset($page->children)) {
             $itemsHtml[] = $buildTree($page->children, true, $level + 1);
         }
