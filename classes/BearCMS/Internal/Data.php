@@ -131,12 +131,22 @@ class Data
     {
         return self::_get('list', $prefix, function() use ($prefix) {
                     $app = App::get();
-                    $list = $app->data->getList()
-                            ->filterBy('key', $prefix, 'startWith');
+                    $dir = $app->config->dataDir . '/objects/' . $prefix;
                     $data = [];
-                    foreach ($list as $item) {
-                        $data[] = $item->value;
+                    if (is_dir($dir)) {
+                        $keys = scandir($dir);
+                        foreach ($keys as $key) {
+                            if ($key !== '.' && $key !== '..') {
+                                $data[$key] = file_get_contents($dir . $key);
+                            }
+                        }
                     }
+//                    $list = $app->data->getList()
+//                            ->filterBy('key', $prefix, 'startWith');
+//                    $data = [];
+//                    foreach ($list as $item) {
+//                        $data[] = $item->value;
+//                    }
                     return $data;
                 });
     }
