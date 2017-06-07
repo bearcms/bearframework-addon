@@ -42,10 +42,14 @@ class CurrentUser
      */
     public function getSessionKey(): ?string
     {
-        $cookies = Cookies::getList(Cookies::TYPE_SERVER);
-        $cookieKey = '_s';
-        $key = isset($cookies[$cookieKey]) ? (string) $cookies[$cookieKey] : '';
-        return strlen((string) $key) > 70 ? $key : null;
+        $cacheKey = 'sessionkey';
+        if (!isset(self::$cache[$cacheKey])) {
+            $cookies = Cookies::getList(Cookies::TYPE_SERVER);
+            $cookieKey = '_s';
+            $key = isset($cookies[$cookieKey]) ? (string) $cookies[$cookieKey] : '';
+            self::$cache[$cacheKey] = strlen((string) $key) > 70 ? $key : null;
+        }
+        return self::$cache[$cacheKey];
     }
 
     /**
@@ -124,6 +128,7 @@ class CurrentUser
     public function logout(): void
     {
         \BearCMS\Internal\Cookies::setList(\BearCMS\Internal\Cookies::TYPE_SERVER, [['name' => '_s', 'value' => 'deleted', 'expire' => 0]]);
+        self::$cache = [];
     }
 
 }

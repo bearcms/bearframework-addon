@@ -156,7 +156,7 @@ class CurrentTheme
 
         $cssCode = '';
         foreach ($options as $optionData) {
-            $optionValue = $optionData[0];
+            $optionValue = (string) $optionData[0];
             $optionDefinition = $optionData[1];
             $optionType = $optionDefinition['type'];
             if ($optionType === 'cssCode') {
@@ -169,44 +169,41 @@ class CurrentTheme
                                 $selector = $outputDefinition[1];
                                 $selectorVariants = ['', '', ''];
                                 if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
-                                    $temp = strlen($optionValue) > 0 ? json_decode($optionValue, true) : [];
+                                    $temp = isset($optionValue[0]) ? json_decode($optionValue, true) : [];
                                     foreach ($temp as $key => $value) {
-                                        if (substr($key, -6) === ':hover') {
-                                            $selectorVariants[1] .= substr($key, 0, -6) . ':' . $value . ';';
-                                        } elseif (substr($key, -7) === ':active') {
-                                            $selectorVariants[2] .= substr($key, 0, -7) . ':' . $value . ';';
+                                        // ugly but optimized
+                                        $pseudo = substr($key, -6);
+                                        if ($pseudo === ':hover') {
+                                            $selectorVariants[1] .= $pseudo . ':' . $value . ';';
+                                        } else if ($pseudo === 'active') {
+                                            $pseudo = substr($key, -7);
+                                            if ($pseudo === ':active') {
+                                                $selectorVariants[2] .= $pseudo . ':' . $value . ';';
+                                            } else {
+                                                $selectorVariants[0] .= $key . ':' . $value . ';';
+                                            }
                                         } else {
                                             $selectorVariants[0] .= $key . ':' . $value . ';';
                                         }
                                     }
                                 }
-                                if ($optionType === 'css' || $optionType === 'cssBackground') {
-                                    $selectorVariants[0] = $applyImageUrls($selectorVariants[0]);
-                                    $selectorVariants[1] = $applyImageUrls($selectorVariants[1]);
-                                    $selectorVariants[2] = $applyImageUrls($selectorVariants[2]);
-                                }
-                                if ($optionType === 'css' || $optionType === 'cssText') {
-                                    $selectorVariants[0] = $applyFontNames($selectorVariants[0]);
-                                    $selectorVariants[1] = $applyFontNames($selectorVariants[1]);
-                                    $selectorVariants[2] = $applyFontNames($selectorVariants[2]);
-                                }
-                                if (strlen($selectorVariants[0]) > 0) {
+                                if ($selectorVariants[0] !== '') {
                                     if (!isset($result[$selector])) {
                                         $result[$selector] = '';
                                     }
-                                    $result[$selector] .= $selectorVariants[0];
+                                    $result[$selector] .= (($optionType === 'css' || $optionType === 'cssBackground' || $optionType === 'cssText') && strstr($selectorVariants[0], 'url(') !== false ? $applyImageUrls($selectorVariants[0]) : $selectorVariants[0]);
                                 }
-                                if (strlen($selectorVariants[1]) > 0) {
+                                if ($selectorVariants[1] !== '') {
                                     if (!isset($result[$selector . ':hover'])) {
                                         $result[$selector . ':hover'] = '';
                                     }
-                                    $result[$selector . ':hover'] .= $selectorVariants[1];
+                                    $result[$selector . ':hover'] .= (($optionType === 'css' || $optionType === 'cssBackground' || $optionType === 'cssText') && strstr($selectorVariants[1], 'url(') !== false ? $applyImageUrls($selectorVariants[1]) : $selectorVariants[1]);
                                 }
-                                if (strlen($selectorVariants[2]) > 0) {
+                                if ($selectorVariants[2] !== '') {
                                     if (!isset($result[$selector . ':active'])) {
                                         $result[$selector . ':active'] = '';
                                     }
-                                    $result[$selector . ':active'] .= $selectorVariants[2];
+                                    $result[$selector . ':active'] .= (($optionType === 'css' || $optionType === 'cssBackground' || $optionType === 'cssText') && strstr($selectorVariants[2], 'url(') !== false ? $applyImageUrls($selectorVariants[2]) : $selectorVariants[2]);
                                 }
                             } elseif (isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'rule') {
                                 $selector = $outputDefinition[1];
