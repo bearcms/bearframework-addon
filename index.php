@@ -96,7 +96,11 @@ if ($app->request->method === 'GET') {
     if (strlen($app->config->assetsPathPrefix) > 0 && strpos($app->request->path, $app->config->assetsPathPrefix) === 0) {
         // skip
     } else {
-        \BearCMS\Internal\Data::loadCacheBundle($app->request->path->get());
+        $cacheBundlePath = $app->request->path->get();
+        \BearCMS\Internal\Data::loadCacheBundle($cacheBundlePath);
+        $app->hooks->add('responseCreated', function($response) use ($cacheBundlePath) {
+            \BearCMS\Internal\Data::saveCacheBundle($cacheBundlePath);
+        }, ['priority' => 901]);
     }
 }
 
@@ -901,7 +905,6 @@ $app->hooks
             } else {
                 //$response = new App\Response\TemporaryUnavailable();
             }
-            \BearCMS\Internal\Data::saveCacheBundle($app->request->path->get());
         }, ['priority' => 900]);
 
 if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*'))) {
@@ -911,5 +914,5 @@ if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature
                 if (\BearCMS\Internal\Data::$hasContentChange) {
                     $app->hooks->execute('bearCMSContentChanged');
                 }
-            }, ['priority' => 901]);
+            }, ['priority' => 902]);
 }
