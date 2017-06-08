@@ -115,7 +115,11 @@ class Data
         $hash = md5(serialize($bundle));
         if (self::$loadedBundleHash !== $hash) {
             $cacheKey = 'bearcms-bundle-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . $requestPath . '-' . self::_getGroupValue('all');
-            $app->cache->set($app->cache->make($cacheKey, [$hash, $bundle]));
+            try {
+                $app->cache->set($app->cache->make($cacheKey, [$hash, $bundle]));
+            } catch (\Exception $e) {
+                // dont care if failed
+            }
         }
     }
 
