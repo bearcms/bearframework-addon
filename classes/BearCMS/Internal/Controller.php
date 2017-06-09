@@ -149,6 +149,7 @@ final class Controller
                 ->filterBy('status', 'published')
                 ->sortBy('publishedTime', 'desc');
         $contentType = $settings['rssType'];
+        $counter = 0;
         foreach ($blogPosts as $blogPost) {
             $blogPostUrl = isset($blogPost['slug']) ? $baseUrl . Options::$blogPagesPathPrefix . $blogPost['slug'] . '/' : '';
             $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPost['id'] . '"/>');
@@ -175,6 +176,10 @@ final class Controller
             $data .= '<pubDate>' . (isset($blogPost['publishedTime']) ? date('r', $blogPost['publishedTime']) : '') . '</pubDate>';
             $data .= '<guid isPermaLink="false">' . $blogPostUrl . '</guid>';
             $data .= '</item>';
+            $counter++;
+            if ($counter >= 20) {
+                break;
+            }
         }
         $response = new App\Response('<?xml version="1.0" encoding="UTF-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel>' . $data . '</channel></rss>');
         $response->headers->set($response->headers->make('Content-Type', 'text/xml'));
