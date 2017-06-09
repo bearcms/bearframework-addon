@@ -555,17 +555,17 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                             $blogPost = $app->bearCMS->data->blogPosts->get($blogPostID);
                             if ($blogPost !== null) {
                                 $content = '<html><head>';
-                                $title = isset($page->titleTagContent) ? trim($page->titleTagContent) : '';
+                                $title = isset($blogPost->titleTagContent) ? trim($blogPost->titleTagContent) : '';
                                 if (!isset($title{0})) {
-                                    $title = isset($page->title) ? trim($page->title) : '';
+                                    $title = isset($blogPost->title) ? trim($blogPost->title) : '';
                                 }
-                                $description = isset($page->descriptionTagContent) ? trim($page->descriptionTagContent) : '';
-                                $keywords = isset($page->keywordsTagContent) ? trim($page->keywordsTagContent) : '';
+                                $description = isset($blogPost->descriptionTagContent) ? trim($blogPost->descriptionTagContent) : '';
+                                $keywords = isset($blogPost->keywordsTagContent) ? trim($blogPost->keywordsTagContent) : '';
                                 $content .= '<title>' . htmlspecialchars($title) . '</title>';
                                 $content .= '<meta name="description" content="' . htmlentities($description) . '"/>';
                                 $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
                                 $content .= '</head><body>';
-                                $content = '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1></div>';
+                                $content .= '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1></div>';
                                 $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? \BearCMS\Internal\Localization::getDate($blogPost['publishedTime']) : 'draft') . '</div></div>';
                                 $content .= '<div class="bearcms-blogpost-page-content"><component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/></div>';
                                 $content .= '</body></html>';
