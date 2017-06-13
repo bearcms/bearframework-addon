@@ -105,6 +105,25 @@ if ($app->request->method === 'GET') {
 }
 
 $app->hooks->add('initialized', function() use ($app, $context) {
+    
+    $app->hooks->add('dataItemChanged', function(\BearFramework\App\Hooks\DataItemChangedData $data) use (&$app) {
+        $prefixes = [
+            'bearcms/pages/page/',
+            'bearcms/blog/post/'
+        ];
+        foreach ($prefixes as $prefix) {
+            if (strpos($data->key, $prefix) === 0) {
+                $dataBundleID = 'bearcmsdataprefix-' . $prefix;
+                if ($data->action === 'delete') {
+                    $app->dataBundle->removeItem($dataBundleID, $data->key);
+                } else {
+                    $app->dataBundle->addItem($dataBundleID, $data->key);
+                }
+                break;
+            }
+        }
+    });
+    
     if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
         $contextDir = $context->dir;
         $app->components->addAlias('bearcms-elements', 'file:' . $contextDir . '/components/bearcmsElements.php');

@@ -134,14 +134,41 @@ class Data
     static function getList($prefix)
     {
         return self::_get('list', $prefix, function() use ($prefix) {
-                    $app = App::get();
-                    $dir = $app->config->dataDir . '/objects/' . $prefix;
-                    $data = [];
-                    if (is_dir($dir)) {
-                        $keys = scandir($dir);
-                        foreach ($keys as $key) {
-                            if ($key !== '.' && $key !== '..') {
-                                $data[$key] = file_get_contents($dir . $key);
+                    $found = false;
+                    if ($prefix === 'bearcms/pages/page/' || $prefix === 'bearcms/blog/post/') {
+                        $dataBundleID = 'bearcmsdataprefix-' . $prefix;
+                        $app = App::get();
+                        if (!$app->dataBundle->exists($dataBundleID)) {
+                            $dir = $app->config->dataDir . '/objects/' . $prefix;
+                            $itemKeys = [];
+                            if (is_dir($dir)) {
+                                $keys = scandir($dir);
+                                foreach ($keys as $key) {
+                                    if ($key !== '.' && $key !== '..') {
+                                        $itemKeys[] = $prefix . $key;
+                                    }
+                                }
+                            }
+                            $app->dataBundle->create($dataBundleID, $itemKeys);
+                        }
+                        $app->dataBundle->prepare($dataBundleID);
+                        $list = $app->dataBundle->getItemsList($dataBundleID);
+                        $data = [];
+                        foreach ($list as $item) {
+                            $data[$item->key] = $item->value;
+                        }
+                        $found = true;
+                    }
+                    if (!$found) {
+                        $app = App::get();
+                        $dir = $app->config->dataDir . '/objects/' . $prefix;
+                        $data = [];
+                        if (is_dir($dir)) {
+                            $keys = scandir($dir);
+                            foreach ($keys as $key) {
+                                if ($key !== '.' && $key !== '..') {
+                                    $data[$prefix . $key] = file_get_contents($dir . $key);
+                                }
                             }
                         }
                     }
