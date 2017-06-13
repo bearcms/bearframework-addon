@@ -22,7 +22,7 @@
         "ivopetkov/html5-dom-document-php": "0.3.*|0.4.*",
         "ivopetkov/data-object": "0.*",
         "ivopetkov/form-bearframework-addon": "0.2.*@beta",
-        "ivopetkov/data-bundle-bearframework-addon": "dev-master"
+        "ivopetkov/data-bundle-bearframework-addon": "0.1.*"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8"
