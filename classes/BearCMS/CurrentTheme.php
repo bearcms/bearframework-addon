@@ -171,14 +171,12 @@ class CurrentTheme
                                 if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
                                     $temp = isset($optionValue[0]) ? json_decode($optionValue, true) : [];
                                     foreach ($temp as $key => $value) {
-                                        // ugly but optimized
                                         $pseudo = substr($key, -6);
                                         if ($pseudo === ':hover') {
-                                            $selectorVariants[1] .= $pseudo . ':' . $value . ';';
-                                        } else if ($pseudo === 'active') {
-                                            $pseudo = substr($key, -7);
-                                            if ($pseudo === ':active') {
-                                                $selectorVariants[2] .= $pseudo . ':' . $value . ';';
+                                            $selectorVariants[1] .= substr($key, 0, -6) . ':' . $value . ';';
+                                        } else if ($pseudo === 'active') { // optimization
+                                            if (substr($key, -7) === ':active') {
+                                                $selectorVariants[2] .= substr($key, 0, -7) . ':' . $value . ';';
                                             } else {
                                                 $selectorVariants[0] .= $key . ':' . $value . ';';
                                             }
@@ -191,19 +189,19 @@ class CurrentTheme
                                     if (!isset($result[$selector])) {
                                         $result[$selector] = '';
                                     }
-                                    $result[$selector] .= (($optionType === 'css' || $optionType === 'cssBackground' || $optionType === 'cssText') && strstr($selectorVariants[0], 'url(') !== false ? $applyImageUrls($selectorVariants[0]) : $selectorVariants[0]);
+                                    $result[$selector] .= $selectorVariants[0];
                                 }
                                 if ($selectorVariants[1] !== '') {
                                     if (!isset($result[$selector . ':hover'])) {
                                         $result[$selector . ':hover'] = '';
                                     }
-                                    $result[$selector . ':hover'] .= (($optionType === 'css' || $optionType === 'cssBackground' || $optionType === 'cssText') && strstr($selectorVariants[1], 'url(') !== false ? $applyImageUrls($selectorVariants[1]) : $selectorVariants[1]);
+                                    $result[$selector . ':hover'] .= $selectorVariants[1];
                                 }
                                 if ($selectorVariants[2] !== '') {
                                     if (!isset($result[$selector . ':active'])) {
                                         $result[$selector . ':active'] = '';
                                     }
-                                    $result[$selector . ':active'] .= (($optionType === 'css' || $optionType === 'cssBackground' || $optionType === 'cssText') && strstr($selectorVariants[2], 'url(') !== false ? $applyImageUrls($selectorVariants[2]) : $selectorVariants[2]);
+                                    $result[$selector . ':active'] .= $selectorVariants[2];
                                 }
                             } elseif (isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'rule') {
                                 $selector = $outputDefinition[1];
@@ -221,6 +219,8 @@ class CurrentTheme
         foreach ($result as $key => $value) {
             $style .= $key . '{' . $value . '}';
         }
+        $style = $applyImageUrls($style);
+        $style = $applyFontNames($style);
         $style .= $cssCode;
         return '<html><head>' . implode('', $linkTags) . '<style>' . $style . '</style></head></html>';
     }
