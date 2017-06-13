@@ -18,5 +18,6 @@ BearFramework\Addons::register('bearcms/bearframework-addon', __DIR__, [
         'ivopetkov/server-requests-bearframework-addon',
         'bearframework/emails-addon',
         'bearframework/localization-addon',
+        'ivopetkov/data-bundle-bearframework-addon',
     ]
 ]);
