@@ -104,8 +104,43 @@ if ($app->request->method === 'GET') {
     }
 }
 
-$app->hooks->add('initialized', function() use ($app, $context) {
-    
+$getEditableElementsHtml = function() use ($app) {//$jsMode = false
+    $contentToInsert = '';
+    if ((Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) && !empty(ElementsHelper::$editorData)) {
+        $requestArguments = [];
+        $requestArguments['data'] = json_encode(ElementsHelper::$editorData);
+//        if ($jsMode) {
+//            $requestArguments['jsMode'] = 1;
+//        }
+        $cacheKey = json_encode([
+            'elementsEditor',
+            $app->request->base,
+            $requestArguments,
+            $app->bearCMS->currentUser->getSessionKey(),
+            $app->bearCMS->currentUser->getPermissions(),
+            get_class_vars('\BearCMS\Internal\Options'),
+            Cookies::getList(Cookies::TYPE_SERVER),
+            2, //version
+        ]);
+        $elementsEditorData = $app->cache->getValue($cacheKey);
+        if (!is_array($elementsEditorData)) {
+            $elementsEditorData = Server::call('elementseditor', $requestArguments, true);
+            $cacheItem = $app->cache->make($cacheKey, $elementsEditorData);
+            $cacheItem->ttl = is_array($elementsEditorData) && isset($elementsEditorData['result']) ? 99999 : 10;
+            $app->cache->set($cacheItem);
+        }
+
+        if (is_array($elementsEditorData) && isset($elementsEditorData['result']) && is_array($elementsEditorData['result']) && isset($elementsEditorData['result']['content'])) {
+            $contentToInsert = $elementsEditorData['result']['content'];
+        } else {
+            //$response = new App\Response\TemporaryUnavailable();
+        }
+    }
+    return $contentToInsert;
+};
+
+$app->hooks->add('initialized', function() use ($app, $context, $getEditableElementsHtml) {
+
     $app->hooks->add('dataItemChanged', function(\BearFramework\App\Hooks\DataItemChangedData $data) use (&$app) {
         $prefixes = [
             'bearcms/pages/page/',
@@ -123,7 +158,7 @@ $app->hooks->add('initialized', function() use ($app, $context) {
             }
         }
     });
-    
+
     if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
         $contextDir = $context->dir;
         $app->components->addAlias('bearcms-elements', 'file:' . $contextDir . '/components/bearcmsElements.php');
@@ -680,6 +715,21 @@ $app->hooks->add('initialized', function() use ($app, $context) {
                     }
                 });
     }
+
+    $app->serverRequests->add('bearcms-elements-load-more', function($data) use ($app, $context, $getEditableElementsHtml) {
+        if (isset($data['serverData'])) {
+            $serverData = \BearCMS\Internal\TempClientData::get($data['serverData']);
+            if (is_array($serverData) && isset($serverData['componentHTML'])) {
+                $content = $app->components->process($serverData['componentHTML']);
+                $editorContent = $getEditableElementsHtml(true);
+                return json_encode([
+                    'content' => $content,
+                    'editorContent' => (isset($editorContent[0]) ? $editorContent : ''),
+                    'nextLazyLoadData' => (string)ElementsHelper::$lastLoadMoreServerData
+                ]);
+            }
+        }
+    });
 });
 
 $componentCreatedStatus = [];
@@ -778,7 +828,7 @@ $app->hooks
                 $app->bearCMS->themes->initializeAll();
             }
         })
-        ->add('responseCreated', function($response) use ($app, $context) {
+        ->add('responseCreated', function($response) use ($app, $context, $getEditableElementsHtml) {
             if (!isset($response->enableBearCMSUI)) {
                 return;
             }
@@ -877,41 +927,14 @@ $app->hooks
 
             if (is_array($adminUIData) && isset($adminUIData['result']) && is_array($adminUIData['result']) && isset($adminUIData['result']['content']) && strlen($adminUIData['result']['content']) > 0) {
                 $content = $adminUIData['result']['content'];
-                $contentToInsert = null;
-                if ((Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) && !empty(ElementsHelper::$editorData)) {
-                    $requestArguments = [];
-                    $requestArguments['data'] = json_encode(ElementsHelper::$editorData);
-
-                    $cacheKey = json_encode([
-                        'elementsEditor',
-                        $app->request->base,
-                        $requestArguments,
-                        $app->bearCMS->currentUser->getSessionKey(),
-                        $app->bearCMS->currentUser->getPermissions(),
-                        get_class_vars('\BearCMS\Internal\Options'),
-                        Cookies::getList(Cookies::TYPE_SERVER)
-                    ]);
-                    $elementsEditorData = $app->cache->getValue($cacheKey);
-                    if (!is_array($elementsEditorData)) {
-                        $elementsEditorData = Server::call('elementseditor', $requestArguments, true);
-                        $cacheItem = $app->cache->make($cacheKey, $elementsEditorData);
-                        $cacheItem->ttl = is_array($elementsEditorData) && isset($elementsEditorData['result']) ? 99999 : 10;
-                        $app->cache->set($cacheItem);
-                    }
-
-                    if (is_array($elementsEditorData) && isset($elementsEditorData['result']) && is_array($elementsEditorData['result']) && isset($elementsEditorData['result']['content'])) {
-                        $contentToInsert = $elementsEditorData['result']['content'];
-                    } else {
-                        //$response = new App\Response\TemporaryUnavailable();
-                    }
-                }
+                $contentToInsert = $getEditableElementsHtml();
                 // It's needed even when there is no editable zone on the current page (editing a blog post for instance)
                 $domDocument = new HTML5DOMDocument();
                 $domDocument->loadHTML($content);
-                if ($contentToInsert !== null) {
+                if (isset($contentToInsert[0])) {
                     $domDocument->insertHTML($contentToInsert);
                 }
-                $domDocument->insertHTML('<html><body><script src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script></body></html>');
+                $domDocument->insertHTML('<html><body><script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script></body></html>');
                 $content = $domDocument->saveHTML();
 
                 $content = Server::updateAssetsUrls($content, false);

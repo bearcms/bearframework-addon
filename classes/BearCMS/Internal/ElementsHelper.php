@@ -18,6 +18,7 @@ final class ElementsHelper
     static $elementsTypesCodes = [];
     static $elementsTypesFilenames = [];
     static $elementsTypesOptions = [];
+    static $lastLoadMoreServerData = null;
 
     /**
      * 

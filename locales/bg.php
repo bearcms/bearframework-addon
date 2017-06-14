@@ -44,5 +44,6 @@ return [
     'bearcms.time.a_moment_ago' => 'преди по-малко от минута',
     'bearcms.time.minutes_ago' => 'преди %s минути',
     'bearcms.time.hours_ago' => 'преди %s часа',
-    'bearcms.navigation.home' => 'Начало'
+    'bearcms.navigation.home' => 'Начало',
+    'bearcms.elements.LoadingMore' => 'Зарежда се още съдържание. Моля, изчакайте.'
 ];

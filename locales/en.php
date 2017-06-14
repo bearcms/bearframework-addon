@@ -44,5 +44,6 @@ return [
     'bearcms.time.a_moment_ago' => 'a moment ago',
     'bearcms.time.minutes_ago' => '%s minutes ago',
     'bearcms.time.hours_ago' => '%s hours ago',
-    'bearcms.navigation.home' => 'Home'
+    'bearcms.navigation.home' => 'Home',
+    'bearcms.elements.LoadingMore' => 'Loading more content. Please wait.'
 ];
