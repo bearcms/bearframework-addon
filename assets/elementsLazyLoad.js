@@ -53,7 +53,7 @@ if (typeof bearCMS.elementsLazyLoad === 'undefined') {
             var elements = document.querySelectorAll('[data-bearcms-elements-lazy-load]');
             for (var i = 0; i < elements.length; i++) {
                 var element = elements[i];
-                if (window.innerHeight - element.getBoundingClientRect().bottom > -50) {
+                if (window.innerHeight - element.getBoundingClientRect().bottom > -1000) {
                     var serverData = element.getAttribute('data-bearcms-elements-lazy-load');
                     element.removeAttribute('data-bearcms-elements-lazy-load');
                     load(element, serverData);

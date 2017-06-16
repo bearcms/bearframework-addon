@@ -136,7 +136,7 @@ if ($renderElementsContainer) {
             if ($hasLazyLoading) {
                 $lazyLoadInitializeData = [];
                 $lazyLoadInitializeData[] = __('bearcms.elements.LoadingMore');
-                echo '<script id="bearcms-bearframework-addon-script-3" src="' . htmlentities($context->assets->getUrl('assets/elementsLazyLoad.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '" async onload="' . htmlentities('bearCMS.elementsLazyLoad.initialize(' . json_encode($lazyLoadInitializeData) . ');') . '"></script>';
+                echo '<script id="bearcms-bearframework-addon-script-3" src="' . htmlentities($context->assets->getUrl('assets/elementsLazyLoad.js', ['cacheMaxAge' => 999999, 'version' => 2])) . '" async onload="' . htmlentities('bearCMS.elementsLazyLoad.initialize(' . json_encode($lazyLoadInitializeData) . ');') . '"></script>';
                 echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '" async></script>';
             }
         }
