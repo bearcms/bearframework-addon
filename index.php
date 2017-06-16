@@ -505,18 +505,27 @@ $app->hooks->add('initialized', function() use ($app, $context, $getEditableElem
 
     // Register some other pages
     $app->routes
-            ->add('/rss.xml', function() use ($app) {
-                $settings = $app->bearCMS->data->settings->get();
-                if ($settings['enableRSS']) {
-                    return BearCMS\Internal\Controller::handleRSS();
+            ->add('/rss.xml', [
+                [$app->bearCMS, 'disabledCheck'],
+                function() use ($app) {
+                    $settings = $app->bearCMS->data->settings->get();
+                    if ($settings['enableRSS']) {
+                        return BearCMS\Internal\Controller::handleRSS();
+                    }
                 }
-            })
-            ->add('/sitemap.xml', function() {
-                return BearCMS\Internal\Controller::handleSitemap();
-            })
-            ->add('/robots.txt', function() {
-                return BearCMS\Internal\Controller::handleRobots();
-            });
+            ])
+            ->add('/sitemap.xml', [
+                [$app->bearCMS, 'disabledCheck'],
+                function() {
+                    return BearCMS\Internal\Controller::handleSitemap();
+                }
+            ])
+            ->add('/robots.txt', [
+                [$app->bearCMS, 'disabledCheck'],
+                function() {
+                    return BearCMS\Internal\Controller::handleRobots();
+                }
+    ]);
 
     if (Options::hasFeature('COMMENTS')) {
         $app->serverRequests->add('bearcms-comments-load-more', function($data) use ($app, $context) {
@@ -725,7 +734,7 @@ $app->hooks->add('initialized', function() use ($app, $context, $getEditableElem
                 return json_encode([
                     'content' => $content,
                     'editorContent' => (isset($editorContent[0]) ? $editorContent : ''),
-                    'nextLazyLoadData' => (string)ElementsHelper::$lastLoadMoreServerData
+                    'nextLazyLoadData' => (string) ElementsHelper::$lastLoadMoreServerData
                 ]);
             }
         }
