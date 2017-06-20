@@ -40,7 +40,8 @@ $form->onSubmit = function($values) use ($app, $component) {
     }
 
     return [
-        'success' => 1
+        'success' => 1,
+        'message'=>__('bearcms.contactForm.SuccessfullySent')
     ];
 };
 ?><html>

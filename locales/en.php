@@ -13,6 +13,7 @@ return [
     'bearcms.contactForm.Sending ...' => 'Sending ...',
     'bearcms.contactForm.Message in %s' => 'Message in %s',
     'bearcms.contactForm.Message from %s' => 'Message from %s',
+    'bearcms.contactForm.SuccessfullySent' => 'Your message is successfully sent!',
     'bearcms.forumPosts.New post' => 'New post',
     'bearcms.forumPosts.Show more' => 'Show more',
     'bearcms.forumPosts.%s replies' => '%s replies',

@@ -1,0 +1,50 @@
+<?php
+
+return [
+    'bearcms.comments.Your comment' => 'Ваш комментарий',
+    'bearcms.comments.Send' => 'Отправить',
+    'bearcms.comments.Sending ...' => 'Изпращане ...', //todo
+    'bearcms.comments.Your comment cannot be empty!' => 'Вашият коментар не може да бъде празен!', //todo
+    'bearcms.comments.Show more' => 'Покажи още', //todo
+    'bearcms.comments.pending approval' => 'очаква одобрение', //todo
+    'bearcms.contactForm.Email' => 'Ваш e-mail',
+    'bearcms.contactForm.Message' => 'Сообщение',
+    'bearcms.contactForm.Send' => 'Отправить',
+    'bearcms.contactForm.Sending ...' => 'Изпращане ...', //todo
+    'bearcms.contactForm.Message in %s' => 'Съобщение в %s', //todo
+    'bearcms.contactForm.Message from %s' => 'Съобщение от %s', //todo
+    'bearcms.contactForm.SuccessfullySent' => 'Ваше сообщение успешно отправлено!',
+    'bearcms.forumPosts.New post' => 'Нова тема', //todo
+    'bearcms.forumPosts.Show more' => 'Покажи още', //todo
+    'bearcms.forumPosts.%s replies' => '%s отговора', //todo
+    'bearcms.forumPosts.1 reply' => '1 отговор', //todo
+    'bearcms.forumPosts.Your reply' => 'Вашият отговор', //todo
+    'bearcms.forumPosts.Send' => 'Отправить',
+    'bearcms.forumPosts.Sending ...' => 'Изпращане ...', //todo
+    'bearcms.New post in %s' => 'Нова тема в %s', //todo
+    'bearcms.forumPosts.Title' => 'Заглавие', //todo
+    'bearcms.forumPosts.Content' => 'Съдържание', //todo
+    'bearcms.forumPosts.Post' => 'Публикувай', //todo
+    'bearcms.forumPosts.Posting ...' => 'Публикуване ...', //todo
+    'bearcms.blogPosts.Show more posts' => 'Покажи още статии', //todo
+    'bearcms.blogPosts.Read more' => 'Прочети повече', //todo
+    'bearcms.rss.Read the full post at %s' => 'Прочетете цялата статия на %s', //todo
+    'bearcms.rss.Read the post at %s' => 'Прочетете статията на %s', //todo
+    'bearcms.date.month_1' => 'Януари', //todo
+    'bearcms.date.month_2' => 'Февруари', //todo
+    'bearcms.date.month_3' => 'Март', //todo
+    'bearcms.date.month_4' => 'Април', //todo
+    'bearcms.date.month_5' => 'Май', //todo
+    'bearcms.date.month_6' => 'Юни', //todo
+    'bearcms.date.month_7' => 'Юли', //todo
+    'bearcms.date.month_8' => 'Август', //todo
+    'bearcms.date.month_9' => 'Септември', //todo
+    'bearcms.date.month_10' => 'Октомври', //todo
+    'bearcms.date.month_11' => 'Ноември', //todo
+    'bearcms.date.month_12' => 'Декември', //todo
+    'bearcms.time.a_moment_ago' => 'преди по-малко от минута', //todo
+    'bearcms.time.minutes_ago' => 'преди %s минути', //todo
+    'bearcms.time.hours_ago' => 'преди %s часа', //todo
+    'bearcms.navigation.home' => 'Начало', //todo
+    'bearcms.elements.LoadingMore' => 'Зарежда се още съдържание. Моля, изчакайте.'//todo
+];

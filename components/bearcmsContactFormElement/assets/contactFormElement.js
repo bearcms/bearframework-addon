@@ -16,7 +16,7 @@ bearCMS.contactFormElement = (function () {
         form.querySelector('.bearcms-contact-form-element-email').setAttribute('readonly', 'readonly');
         form.querySelector('.bearcms-contact-form-element-message').setAttribute('readonly', 'readonly');
     };
-    
+
     var onResponseReceived = function (event) {
         var form = event.target;
         form.querySelector('.bearcms-contact-form-element-send-button').style.display = 'inline-block';
@@ -30,7 +30,9 @@ bearCMS.contactFormElement = (function () {
         var result = event.result;
         if (typeof result.success !== 'undefined') {
             form.reset();
-            alert('Your message is successfully sent!');
+            if (result.message.length > 0) {
+                alert(result.message);
+            }
         }
     };
 
