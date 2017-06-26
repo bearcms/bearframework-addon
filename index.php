@@ -75,6 +75,9 @@ Options::set($options);
 $app->addons->add('ivopetkov/form-bearframework-addon', [
     'useDataCache' => Options::$useDataCache
 ]);
+$app->addons->add('ivopetkov/users-bearframework-addon', [
+    'useDataCache' => Options::$useDataCache
+]);
 
 $context->assets
         ->addDir('assets')
