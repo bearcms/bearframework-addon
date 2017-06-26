@@ -17,6 +17,7 @@ use \BearCMS\Internal\Options;
 
 $app = App::get();
 $context = $app->context->get(__FILE__);
+$options = $app->addons->get('bearcms/bearframework-addon')->options;
 
 $context->classes
         ->add('BearCMS', 'classes/BearCMS.php')
@@ -69,6 +70,12 @@ $context->classes
         ->add('BearCMS\Internal\TempClientData', 'classes/BearCMS/Internal/TempClientData.php')
         ->add('BearCMS\Internal\Themes', 'classes/BearCMS/Internal/Themes.php');
 
+Options::set($options);
+
+$app->addons->add('ivopetkov/form-bearframework-addon', [
+    'useDataCache' => Options::$useDataCache
+]);
+
 $context->assets
         ->addDir('assets')
         ->addDir('components/bearcmsBlogPostsElement/assets')
@@ -92,8 +99,6 @@ $app->shortcuts
             return new BearCMS();
         });
 
-$addonOptions = $app->addons->get('bearcms/bearframework-addon')->options;
-Options::set($addonOptions);
 
 if ($app->request->method === 'GET') {
     if (strlen($app->config->assetsPathPrefix) > 0 && strpos($app->request->path, $app->config->assetsPathPrefix) === 0) {
@@ -828,7 +833,7 @@ $app->hooks
             }
         });
 
-if (!(isset($addonOptions['addDefaultThemes']) && $addonOptions['addDefaultThemes'] === false)) {
+if (!(isset($options['addDefaultThemes']) && $options['addDefaultThemes'] === false)) {
     require $context->dir . '/themes/theme1/index.php';
 }
 
