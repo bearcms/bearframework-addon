@@ -20,7 +20,13 @@ class TempClientData
         if (preg_match('/^[a-f0-9]{32}$/', $key) !== 1) {
             return false;
         }
-        $tempData = \BearCMS\Internal\Data::getValue('.temp/clientdata/' . $key);
+        $tempData = null;
+        if (Options::$useDataCache) {
+            $tempData = $app->cache->getValue('bearcms-tempclientdata-' . $key);
+        }
+        if ($tempData === null) {
+            $tempData = $app->data->getValue('.temp/clientdata/' . $key);
+        }
         $data = null;
         if ($tempData !== null) {
             $data = json_decode($tempData, true);
@@ -36,10 +42,17 @@ class TempClientData
         $app = App::get();
         $encodedData = json_encode(['v' => $data]);
         $key = md5($encodedData);
+        if (Options::$useDataCache) {
+            $cacheKey = 'bearcms-tempclientdata-' . $key;
+            if ($app->cache->exists($cacheKey)) {
+                return $key;
+            } else {
+                $app->cache->set($app->cache->make($cacheKey, $encodedData));
+            }
+        }
         $dataKey = '.temp/clientdata/' . $key;
         if (!$app->data->exists($dataKey)) {
             $app->data->set($app->data->make($dataKey, $encodedData));
-            \BearCMS\Internal\Data::setChanged($dataKey);
         }
         return $key;
     }
