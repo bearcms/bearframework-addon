@@ -893,7 +893,7 @@ $app->hooks
             if ($response instanceof \BearFramework\App\Response\HTML) { // is not temporary disabled
                 $externalLinksAreEnabled = !empty($settings['externalLinks']);
                 if ($externalLinksAreEnabled || $currentUserExists) {
-                    $componentContent .= '<script src="' . htmlentities($context->assets->getUrl('assets/externalLinks.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
+                    $componentContent .= '<script id="bearcms-bearframework-addon-script-10" src="' . htmlentities($context->assets->getUrl('assets/externalLinks.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
                 }
             }
             $componentContent .= '</body></html>';
@@ -954,7 +954,7 @@ $app->hooks
                 if (isset($contentToInsert[0])) {
                     $domDocument->insertHTML($contentToInsert);
                 }
-                $domDocument->insertHTML('<html><body><script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script></body></html>');
+                $domDocument->insertHTML('<html><body><script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '" async></script></body></html>');
                 $content = $domDocument->saveHTML();
 
                 $content = Server::updateAssetsUrls($content, false);
