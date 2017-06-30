@@ -312,7 +312,7 @@ final class ElementsHelper
 
             $content = '<html>'
                     . '<head>'
-                    . '<script id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script>'
+                    . '<script id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '" async></script>'
                     . '<style>' . $styles . '</style>'
                     . '</head>'
                     . '<body>'
@@ -393,7 +393,7 @@ final class ElementsHelper
 
             $content = '<html>'
                     . '<head>'
-                    . '<script id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '"></script>'
+                    . '<script id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '" async></script>'
                     . '<style>' . $styles . '</style>'
                     . '</head>'
                     . '<body>'
