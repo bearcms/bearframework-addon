@@ -689,66 +689,69 @@ $app->hooks->add('initialized', function() use ($app, $context, $getEditableElem
     // Register a home page and the dynamic pages handler
     if (Options::hasFeature('PAGES')) {
         $app->routes
-                ->add('*', function() use ($app) {
-                    $path = (string) $app->request->path;
-                    if ($path === '/') {
-                        if (Options::$autoCreateHomePage) {
-                            $pageID = 'home';
-                        } else {
-                            $pageID = false;
-                        }
-                    } else {
-                        $hasSlash = substr($path, -1) === '/';
-                        $pathsList = InternalData\Pages::getPathsList((Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
-                        if ($hasSlash) {
-                            $pageID = array_search($path, $pathsList);
-                        } else {
-                            $pageID = array_search($path . '/', $pathsList);
-                            if ($pageID !== false) {
-                                return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
+                ->add('*', [
+                    [$app->bearCMS, 'disabledCheck'],
+                    function() use ($app) {
+                        $path = (string) $app->request->path;
+                        if ($path === '/') {
+                            if (Options::$autoCreateHomePage) {
+                                $pageID = 'home';
+                            } else {
+                                $pageID = false;
                             }
-                        }
-                    }
-                    if ($pageID !== false) {
-                        $response = $app->bearCMS->disabledCheck();
-                        if ($response !== null) {
-                            return $response;
-                        }
-                        $found = false;
-                        if ($pageID === 'home') {
-                            $settings = $app->bearCMS->data->settings->get();
-                            $title = trim($settings->title);
-                            $description = trim($settings->description);
-                            $keywords = trim($settings->keywords);
-                            $found = true;
                         } else {
-                            $page = $app->bearCMS->data->pages->get($pageID);
-                            if ($page !== null) {
-                                $title = isset($page->titleTagContent) ? trim($page->titleTagContent) : '';
-                                if (!isset($title{0})) {
-                                    $title = isset($page->name) ? trim($page->name) : '';
+                            $hasSlash = substr($path, -1) === '/';
+                            $pathsList = InternalData\Pages::getPathsList((Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
+                            if ($hasSlash) {
+                                $pageID = array_search($path, $pathsList);
+                            } else {
+                                $pageID = array_search($path . '/', $pathsList);
+                                if ($pageID !== false) {
+                                    return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
                                 }
-                                $description = isset($page->descriptionTagContent) ? trim($page->descriptionTagContent) : '';
-                                $keywords = isset($page->keywordsTagContent) ? trim($page->keywordsTagContent) : '';
-                                $found = true;
                             }
                         }
-                        if ($found) {
-                            $content = '<html><head>';
-                            $content .= '<title>' . htmlspecialchars($title) . '</title>';
-                            $content .= '<meta name="description" content="' . htmlentities($description) . '"/>';
-                            $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
-                            $content .= '</head><body>';
-                            $content .= '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
-                            $content .= '</body></html>';
-                            $response = new App\Response\HTML($content);
-                            $response->bearCMSPageID = $pageID;
-                            $app->bearCMS->enableUI($response);
-                            $app->bearCMS->applyTheme($response);
-                            return $response;
+                        if ($pageID !== false) {
+                            $response = $app->bearCMS->disabledCheck();
+                            if ($response !== null) {
+                                return $response;
+                            }
+                            $found = false;
+                            if ($pageID === 'home') {
+                                $settings = $app->bearCMS->data->settings->get();
+                                $title = trim($settings->title);
+                                $description = trim($settings->description);
+                                $keywords = trim($settings->keywords);
+                                $found = true;
+                            } else {
+                                $page = $app->bearCMS->data->pages->get($pageID);
+                                if ($page !== null) {
+                                    $title = isset($page->titleTagContent) ? trim($page->titleTagContent) : '';
+                                    if (!isset($title{0})) {
+                                        $title = isset($page->name) ? trim($page->name) : '';
+                                    }
+                                    $description = isset($page->descriptionTagContent) ? trim($page->descriptionTagContent) : '';
+                                    $keywords = isset($page->keywordsTagContent) ? trim($page->keywordsTagContent) : '';
+                                    $found = true;
+                                }
+                            }
+                            if ($found) {
+                                $content = '<html><head>';
+                                $content .= '<title>' . htmlspecialchars($title) . '</title>';
+                                $content .= '<meta name="description" content="' . htmlentities($description) . '"/>';
+                                $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
+                                $content .= '</head><body>';
+                                $content .= '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
+                                $content .= '</body></html>';
+                                $response = new App\Response\HTML($content);
+                                $response->bearCMSPageID = $pageID;
+                                $app->bearCMS->enableUI($response);
+                                $app->bearCMS->applyTheme($response);
+                                return $response;
+                            }
                         }
                     }
-                });
+        ]);
     }
 
     $app->serverRequests->add('bearcms-elements-load-more', function($data) use ($app, $context, $getEditableElementsHtml) {
