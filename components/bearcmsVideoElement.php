@@ -40,32 +40,42 @@ if (isset($innerContainerStyle{0})) {
     $innerContainerEndTag = '</div>';
 }
 
-$content = '';
 if (strlen($component->url) > 0) {
+    $html = '';
     $aspectRatio = 0.75;
-    $cacheKey = 'bearcms-video-element-data-' . $component->url;
+    $cacheKey = 'bearcms-video-element-data-' . md5($component->url) . '-2';
     $cachedData = $app->cache->getValue($cacheKey);
     if ($cachedData === null) {
-        try {
-            $embed = new IvoPetkov\VideoEmbed($component->url);
-            $aspectRatio = $embed->width / $embed->height;
-            $embed->setSize('100%', '100%');
-            $content = $embed->html;
-            $app->cache->set($app->cache->make($cacheKey, ['html' => $embed->html, 'aspectRatio' => $aspectRatio]));
-        } catch (\Exception $e) {
-            $content = '';
-            $cacheItem = $app->cache->make($cacheKey, '');
+        $tempDataKey = '.temp/bearcms/videoelementdata/' . md5($component->url);
+        $tempData = $app->data->getValue($tempDataKey);
+        if ($tempData === null) {
+            try {
+                $embed = new IvoPetkov\VideoEmbed($component->url);
+                $aspectRatio = $embed->width / $embed->height;
+                $embed->setSize('100%', '100%');
+                $html = $embed->html;
+            } catch (\Exception $e) {
+                $html = '';
+            }
+            if ($html !== '') {
+                $app->data->set($app->data->make($tempDataKey, json_encode(['html' => $html, 'aspectRatio' => $aspectRatio])));
+            }
+        } else {
+            $tempData = json_decode($tempData, true);
+            $html = $tempData['html'];
+            $aspectRatio = $tempData['aspectRatio'];
+        }
+        $cacheItem = $app->cache->make($cacheKey, ['html' => $html, 'aspectRatio' => $aspectRatio]);
+        if ($html === '') {
             $cacheItem->ttl = 60;
-            $app->cache->set($cacheItem);
         }
+        $app->cache->set($cacheItem);
     } else {
-        if (is_array($cachedData)) {
-            $content = $cachedData['html'];
-            $aspectRatio = $cachedData['aspectRatio'];
-        }
+        $html = $cachedData['html'];
+        $aspectRatio = $cachedData['aspectRatio'];
     }
-    if ($content !== '') {
-        $content = '<div style="position:absolute;top:0;left:0;width:100%;height:100%;">' . $content . '</div>';
+    if ($html !== '') {
+        $content = '<div style="position:absolute;top:0;left:0;width:100%;height:100%;">' . $html . '</div>';
         $content = '<div class="responsively-lazy" style="padding-bottom:' . (1 / $aspectRatio * 100) . '%;" data-lazycontent="' . htmlentities($content) . '"></div>';
         $content = '<div class="bearcms-video-element" style="font-size:0;">' . $innerContainerStartTag . $content . $innerContainerEndTag . '</div>';
     } else {
@@ -73,7 +83,7 @@ if (strlen($component->url) > 0) {
     }
 } elseif (strlen($component->filename) > 0) {
     $filename = $app->bearCMS->data->getRealFilename($component->filename);
-    $content .= '<div class="bearcms-video-element" style="font-size:0;">' . $innerContainerStartTag . '<video style="width:100%" controls>';
+    $content = '<div class="bearcms-video-element" style="font-size:0;">' . $innerContainerStartTag . '<video style="width:100%" controls>';
     $content .= '<source src="' . $app->assets->getUrl($filename) . '" type="video/mp4">';
     $content .= '</video>' . $innerContainerEndTag . '</div>';
 }
