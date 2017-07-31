@@ -74,6 +74,6 @@ $form->onSubmit = function($values) use ($component, $app) {
         echo '<span onclick="this.parentNode.submit();" href="javascript:void(0);" class="bearcms-new-forum-post-page-send-button">'.__('bearcms.forumPosts.Post').'</span>';
         echo '<span style="display:none;" class="bearcms-new-forum-post-page-send-button bearcms-new-forum-post-page-send-button-waiting">'.__('bearcms.forumPosts.Posting ...').'</span>';
         echo '</form>';
-        echo '<script id="bearcms-bearframework-addon-script-7" src="' . htmlentities($context->assets->getUrl('components/bearcmsForumPostsElement/assets/forumPostNewForm.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '" async></script>';
+        echo '<script id="bearcms-bearframework-addon-script-7" src="' . htmlentities($context->assets->getUrl('components/bearcmsForumPostsElement/assets/forumPostNewForm.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
         ?></body>
 </html>

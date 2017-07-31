@@ -138,8 +138,8 @@ if ($list->length === 0) {
 ?><html>
     <head><?php
         if ($list->length > $limit) {
-            echo '<script id="bearcms-bearframework-addon-script-2" src="' . htmlentities($context->assets->getUrl('components/bearcmsBlogPostsElement/assets/blogPostsElement.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '" async></script>';
-            echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999, 'version' => 1])) . '" async></script>';
+            echo '<script id="bearcms-bearframework-addon-script-2" src="' . htmlentities($context->assets->getUrl('components/bearcmsBlogPostsElement/assets/blogPostsElement.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
+            echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
         }
         ?></head>
     <body><?= $content ?></body>

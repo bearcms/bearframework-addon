@@ -79,7 +79,7 @@ final class Server
             if (strpos($url, '?') !== false) {
                 $url = explode('?', $url)[0];
             }
-            return $app->assets->getUrl($context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 's' . DIRECTORY_SEPARATOR . str_replace($serverUrl, '', $url), ['cacheMaxAge' => 999999, 'version' => 1]);
+            return $app->assets->getUrl($context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 's' . DIRECTORY_SEPARATOR . str_replace($serverUrl, '', $url), ['cacheMaxAge' => 999999999, 'version' => 1]);
         };
 
         if ($ajaxMode) {
@@ -278,10 +278,22 @@ final class Server
                 $resend = true;
             }
             if (isset($responseMeta['currentUser'])) {
-                $currentUserData = $responseMeta['currentUser'];
-                $dataKey = '.temp/bearcms/userkeys/' . md5($currentUserData['key']);
-                $app->data->set($app->data->make($dataKey, $currentUserData['id']));
-                \BearCMS\Internal\Data::setChanged($dataKey);
+                for ($i = 1; $i <= 3; $i++) {
+                    try {
+                        $currentUserData = $responseMeta['currentUser'];
+                        $dataKey = '.temp/bearcms/userkeys/' . md5($currentUserData['key']);
+                        $app->data->set($app->data->make($dataKey, $currentUserData['id']));
+                        \BearCMS\Internal\Data::setChanged($dataKey);
+                        break;
+                    } catch (\BearFramework\App\Data\DataLockedException $e) {
+                        
+                    }
+                    if ($i === 3) {
+                        throw $e;
+                    } else {
+                        sleep(1);
+                    }
+                }
             }
             $responseBody = null;
             if (isset($responseMeta['clientEvents'])) {
