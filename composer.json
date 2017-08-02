@@ -19,7 +19,7 @@
         "ivopetkov/users-bearframework-addon": "0.1.*",
         "ivopetkov/server-requests-bearframework-addon": "0.3.*@beta",
         "ivopetkov/video-embed": "0.1.*",
-        "ivopetkov/html5-dom-document-php": "0.3.*|0.4.*",
+        "ivopetkov/html5-dom-document-php": "0.3.*|0.4.*|0.5.*",
         "ivopetkov/data-object": "0.*",
         "ivopetkov/form-bearframework-addon": "0.2.*@beta",
         "ivopetkov/data-bundle-bearframework-addon": "0.2.*"
