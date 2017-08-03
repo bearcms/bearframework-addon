@@ -579,10 +579,17 @@ $app->hooks->add('initialized', function() use ($app, $context, $getEditableElem
                         $forumCategoryID = $app->request->path->getSegment(1);
                         $forumCategory = $app->bearCMS->data->forumCategories->get($forumCategoryID);
                         if ($forumCategory !== null) {
-                            $content = '<div class="bearcms-forum-post-page-title-container"><h1 class="bearcms-forum-post-page-title">' . sprintf(__('bearcms.New post in %s'), htmlspecialchars($forumCategory->name)) . '</h1></div>';
+                            $content = '<html>';
+                            $content .= '<head>';
+                            $content .= '<title>' . sprintf(__('bearcms.New post in %s'), htmlspecialchars($forumCategory->name)) . '</title>';
+                            $content .= '</head>';
+                            $content .= '<body>';
+                            $content .= '<div class="bearcms-forum-post-page-title-container"><h1 class="bearcms-forum-post-page-title">' . sprintf(__('bearcms.New post in %s'), htmlspecialchars($forumCategory->name)) . '</h1></div>';
                             $content .= '<div class="bearcms-forum-post-page-content">';
                             $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsForumPostsElement/forumPostNewForm.php" categoryID="' . htmlentities($forumCategoryID) . '" />';
                             $content .= '</div>';
+                            $content .= '</body>';
+                            $content .= '</html>';
                             $response = new App\Response\HTML($content); //$app->components->process()
                             $app->bearCMS->enableUI($response);
                             $app->bearCMS->applyTheme($response);
@@ -598,13 +605,19 @@ $app->hooks->add('initialized', function() use ($app, $context, $getEditableElem
                         $forumPostID = $app->request->path->getSegment(2);
                         $forumPost = $app->bearCMS->data->forumPosts->get($forumPostID);
                         if ($forumPost !== null) {
-                            $content = '';
-                            $content = '<div class="bearcms-forum-post-page-title-container"><h1 class="bearcms-forum-post-page-title">' . htmlspecialchars($forumPost->title) . '</h1></div>';
+                            $content = '<html>';
+                            $content .= '<head>';
+                            $content .= '<title>' . htmlspecialchars($forumPost->title) . '</title>';
+                            $content .= '</head>';
+                            $content .= '<body>';
+                            $content .= '<div class="bearcms-forum-post-page-title-container"><h1 class="bearcms-forum-post-page-title">' . htmlspecialchars($forumPost->title) . '</h1></div>';
                             //$content .= '<div class="bearcms-forum-post-page-date-container"><div class="bearcms-forum-post-page-date">' . BearCMS\Internal\Localization::getDate($forumPost->createdTime) . '</div></div>';
                             $content .= '<div class="bearcms-forum-post-page-content">';
                             $content .= '<component src="file:' . $context->dir . '/components/bearcmsForumPostsElement/forumPostRepliesList.php" includePost="true" forumPostID="' . htmlentities($forumPost->id) . '" />';
                             $content .= '</div>';
                             $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsForumPostsElement/forumPostReplyForm.php" forumPostID="' . htmlentities($forumPost->id) . '" />';
+                            $content .= '</body>';
+                            $content .= '</html>';
                             $response = new App\Response\HTML($content);
                             $app->bearCMS->enableUI($response);
                             $app->bearCMS->applyTheme($response);
