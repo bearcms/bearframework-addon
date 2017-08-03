@@ -40,6 +40,7 @@ if (isset($innerContainerStyle{0})) {
     $innerContainerEndTag = '</div>';
 }
 
+$content = '';
 if (strlen($component->url) > 0) {
     $html = '';
     $aspectRatio = 0.75;
