@@ -294,7 +294,7 @@ final class ElementsHelper
 
         if ($inContainer) {
             $attributes = '';
-            $className = 'bre' . md5(uniqid());
+            $className = 'bre' . md5($spacing);
             $attributes .= ' class="' . $className . '"';
 
             if ($editable) {
@@ -370,7 +370,7 @@ final class ElementsHelper
 
         if ($inContainer) {
             $attributes = '';
-            $className = 'bre' . md5(uniqid());
+            $className = 'bre' . md5($spacing);
             $attributes .= ' class="' . $className . '"';
 
             if ($editable) {
