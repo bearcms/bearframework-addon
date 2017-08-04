@@ -101,7 +101,9 @@ if ($hasLazyLoading) {
 $styles = '';
 
 if ($renderElementsContainer) {
-    $className = 'bre' . md5(uniqid());
+    $spacing = $component->spacing;
+    $width = $component->width;
+    $className = 'bre' . md5($spacing . '$' . $width);
     $attributes = '';
     if ($editable) {
         $htmlElementID = 'brela' . md5($component->id);
@@ -109,18 +111,18 @@ if ($renderElementsContainer) {
         $attributes .= ' id="' . $htmlElementID . '"';
     }
 
-    $styles .= '.' . $className . '{width:' . $component->width . ';word-wrap:break-word;text-align:left;}';
-    $styles .= '.' . $className . '>div{margin-bottom:' . $component->spacing . ';display:block;clear:both;zoom:1;}';
+    $styles .= '.' . $className . '{width:' . $width . ';word-wrap:break-word;text-align:left;}';
+    $styles .= '.' . $className . '>div{margin-bottom:' . $spacing . ';display:block;clear:both;zoom:1;}';
     $styles .= '.' . $className . '>div:last-child{margin-bottom:0;}';
     $styles .= '.' . $className . '>div:empty{display:none;}';
 
-    $spacingSelector = 's' . $component->spacing;
+    $spacingSelector = 's' . $spacing;
     $styles .= '.' . $className . '>[data-srvri~="t2"][data-srvri~="' . $spacingSelector . '"]>div>div:empty{display:none;}';
     $styles .= '.' . $className . '>[data-srvri~="t2"][data-srvri~="' . $spacingSelector . '"]>div{display:inline-block;vertical-align:top;}';
-    $styles .= '.' . $className . '>[data-srvri~="t2"][data-srvri~="' . $spacingSelector . '"]>div>div{margin-bottom:' . $component->spacing . ';display:block;clear:both;zoom:1;}';
+    $styles .= '.' . $className . '>[data-srvri~="t2"][data-srvri~="' . $spacingSelector . '"]>div>div{margin-bottom:' . $spacing . ';display:block;clear:both;zoom:1;}';
     $styles .= '.' . $className . '>[data-srvri~="t2"][data-srvri~="' . $spacingSelector . '"]>div>div:last-child{margin-bottom:0;}';
     $styles .= '.' . $className . '>[data-srvri~="t3"][data-srvri~="' . $spacingSelector . '"]>div>div:empty{display:none;}';
-    $styles .= '.' . $className . '>[data-srvri~="t3"][data-srvri~="' . $spacingSelector . '"]>div>div{margin-bottom:' . $component->spacing . ';display:block;zoom:1;}';
+    $styles .= '.' . $className . '>[data-srvri~="t3"][data-srvri~="' . $spacingSelector . '"]>div>div{margin-bottom:' . $spacing . ';display:block;zoom:1;}';
     $styles .= '.' . $className . '>[data-srvri~="t3"][data-srvri~="' . $spacingSelector . '"]>div>div:last-child{margin-bottom:0;}';
 
     $attributes .= ' class="bearcms-elements ' . $className . (strlen($component->class) > 0 ? ' ' . $component->class : '') . '"';
