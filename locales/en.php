@@ -44,7 +44,9 @@ return [
     'bearcms.date.month_12' => 'December',
     'bearcms.time.a_moment_ago' => 'a moment ago',
     'bearcms.time.minutes_ago' => '%s minutes ago',
+    'bearcms.time.minutes_ago' => 'a minute ago',
     'bearcms.time.hours_ago' => '%s hours ago',
+    'bearcms.time.hour_ago' => 'an hour ago',
     'bearcms.navigation.home' => 'Home',
     'bearcms.elements.LoadingMore' => 'Loading more content. Please wait.'
 ];

@@ -44,7 +44,9 @@ return [
     'bearcms.date.month_12' => 'Декември',
     'bearcms.time.a_moment_ago' => 'преди по-малко от минута',
     'bearcms.time.minutes_ago' => 'преди %s минути',
+    'bearcms.time.minute_ago' => 'преди минута',
     'bearcms.time.hours_ago' => 'преди %s часа',
+    'bearcms.time.hour_ago' => 'преди час',
     'bearcms.navigation.home' => 'Начало',
     'bearcms.elements.LoadingMore' => 'Зарежда се още съдържание. Моля, изчакайте.'
 ];

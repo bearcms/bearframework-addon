@@ -36,10 +36,12 @@ final class Localization
             return __('bearcms.time.a_moment_ago');
         }
         if ($secondsAgo < 60 * 60) {
-            return sprintf(__('bearcms.time.minutes_ago'), floor($secondsAgo / 60));
+            $minutes = floor($secondsAgo / 60);
+            return $minutes > 1 ? sprintf(__('bearcms.time.minutes_ago'), $minutes) : __('bearcms.time.minute_ago');
         }
         if ($secondsAgo < 60 * 60 * 24) {
-            return sprintf(__('bearcms.time.hours_ago'), floor($secondsAgo / (60 * 60)));
+            $hours = floor($secondsAgo / (60 * 60));
+            return $hours > 1 ? sprintf(__('bearcms.time.hours_ago'), $hours) : __('bearcms.time.hour_ago');
         }
         return self::getDate($timestamp);
     }
