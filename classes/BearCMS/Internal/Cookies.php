@@ -18,10 +18,17 @@ final class Cookies
     const TYPE_CLIENT = 2;
 
     /**
+     * Pending cookies to be applied to a response object
+     * 
+     * @var array 
+     */
+    private static $pending = [];
+
+    /**
      *
      * @var array 
      */
-    private static $pendingUpdate = [];
+    private static $cache = [];
 
     /**
      * 
@@ -29,41 +36,45 @@ final class Cookies
      * @return array
      * @throws \Exception
      */
-    static function getList(int $type, $b = 3): array
+    static function getList(int $type): array
     {
-        $app = App::get();
-        if ($type !== self::TYPE_SERVER && $type !== self::TYPE_CLIENT) {
-            throw new \InvalidArgumentException('');
-        }
-        $result = [];
-        $cookiePrefix = \BearCMS\Internal\Options::$cookiePrefix;
-        $cookiePrefixLength = strlen($cookiePrefix);
-        $cookies = $app->request->cookies->getList();
-        foreach ($cookies as $cookie) {
-            $name = $cookie->name;
-            $value = $cookie->value;
-            if (substr($name, 0, $cookiePrefixLength) === $cookiePrefix) {
-                $cookieTypePrefix = substr($name, 0, $cookiePrefixLength + 2);
-                if (($type === self::TYPE_SERVER && $cookieTypePrefix === $cookiePrefix . 's_') || ($type === self::TYPE_CLIENT && $cookieTypePrefix === $cookiePrefix . 'c_' )) {
-                    $result[substr($name, $cookiePrefixLength + 2)] = $value;
+        $cacheKey = 'list-' . $type;
+        if (!isset(self::$cache[$cacheKey])) {
+            $app = App::get();
+            if ($type !== self::TYPE_SERVER && $type !== self::TYPE_CLIENT) {
+                throw new \InvalidArgumentException('');
+            }
+            $result = [];
+            $cookiePrefix = \BearCMS\Internal\Options::$cookiePrefix;
+            $cookiePrefixLength = strlen($cookiePrefix);
+            $cookies = $app->request->cookies->getList();
+            foreach ($cookies as $cookie) {
+                $name = $cookie->name;
+                $value = $cookie->value;
+                if (substr($name, 0, $cookiePrefixLength) === $cookiePrefix) {
+                    $cookieTypePrefix = substr($name, 0, $cookiePrefixLength + 2);
+                    if (($type === self::TYPE_SERVER && $cookieTypePrefix === $cookiePrefix . 's_') || ($type === self::TYPE_CLIENT && $cookieTypePrefix === $cookiePrefix . 'c_' )) {
+                        $result[substr($name, $cookiePrefixLength + 2)] = $value;
+                    }
                 }
             }
-        }
-        ksort($result);
-        foreach (self::$pendingUpdate as $cookieData) {
-            $cookieTypePrefix = substr($cookieData['name'], 0, $cookiePrefixLength + 2);
-            $key = substr($cookieData['name'], $cookiePrefixLength + 2);
-            if (strlen($cookieData['expire']) === 0 || $cookieData['expire'] > time()) {
-                if (($type === self::TYPE_SERVER && $cookieTypePrefix === $cookiePrefix . 's_') || ($type === self::TYPE_CLIENT && $cookieTypePrefix === $cookiePrefix . 'c_' )) {
-                    $result[$key] = $cookieData['value'];
-                }
-            } else {
-                if ($cookieData['value'] === 'deleted' && array_key_exists($key, $result)) {
-                    unset($result[$key]);
+            ksort($result);
+            foreach (self::$pending as $cookieData) {
+                $cookieTypePrefix = substr($cookieData['name'], 0, $cookiePrefixLength + 2);
+                $key = substr($cookieData['name'], $cookiePrefixLength + 2);
+                if (strlen($cookieData['expire']) === 0 || $cookieData['expire'] > time()) {
+                    if (($type === self::TYPE_SERVER && $cookieTypePrefix === $cookiePrefix . 's_') || ($type === self::TYPE_CLIENT && $cookieTypePrefix === $cookiePrefix . 'c_' )) {
+                        $result[$key] = $cookieData['value'];
+                    }
+                } else {
+                    if ($cookieData['value'] === 'deleted' && array_key_exists($key, $result)) {
+                        unset($result[$key]);
+                    }
                 }
             }
+            self::$cache[$cacheKey] = $result;
         }
-        return $result;
+        return self::$cache[$cacheKey];
     }
 
     /**
@@ -80,24 +91,24 @@ final class Cookies
         $cookieTypePrefix = \BearCMS\Internal\Options::$cookiePrefix . ($type === self::TYPE_SERVER ? 's_' : 'c_');
         foreach ($cookiesData as $cookieData) {
             $cookieData['name'] = $cookieTypePrefix . $cookieData['name'];
-            self::$pendingUpdate[$cookieData['name']] = $cookieData;
+            self::$pending[$cookieData['name']] = $cookieData;
         }
+        self::$cache = [];
     }
 
     /**
      * 
      */
-    static function update(\BearFramework\App\Response $response): void
+    static function apply(\BearFramework\App\Response $response): void
     {
-        if (!empty(self::$pendingUpdate)) {
-            foreach (self::$pendingUpdate as $cookieData) {
+        if (!empty(self::$pending)) {
+            foreach (self::$pending as $cookieData) {
                 $deleted = $cookieData['value'] === 'deleted' || $cookieData['expire'] === 0;
                 $cookie = $response->cookies->make($cookieData['name'], $deleted ? '' : $cookieData['value']);
                 $cookie->expire = $deleted ? 0 : (int) $cookieData['expire'];
                 $cookie->httpOnly = isset($cookieData['httponly']) ? $cookieData['httponly'] : true;
                 $response->cookies->set($cookie);
             }
-            self::$pendingUpdate = [];
         }
     }
 

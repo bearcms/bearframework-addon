@@ -1015,7 +1015,7 @@ $app->hooks
 if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*'))) {
     $app->hooks
             ->add('responseCreated', function($response) use ($app) {
-                Cookies::update($response);
+                Cookies::apply($response);
                 if (\BearCMS\Internal\Data::$hasContentChange) {
                     $app->hooks->execute('bearCMSContentChanged');
                 }

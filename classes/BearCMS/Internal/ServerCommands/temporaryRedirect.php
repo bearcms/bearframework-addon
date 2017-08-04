@@ -17,7 +17,7 @@ return function($data, $response) {
     }
     Cookies::setList(Cookies::TYPE_SERVER, Cookies::parseServerCookies($response['header']));
     $response = new App\Response\TemporaryRedirect($data['url']);
-    Cookies::update($response);
+    Cookies::apply($response);
     $app->respond($response);
     exit;
 };
