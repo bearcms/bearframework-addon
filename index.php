@@ -994,10 +994,12 @@ $app->hooks
                 // It's needed even when there is no editable zone on the current page (editing a blog post for instance)
                 $domDocument = new HTML5DOMDocument();
                 $domDocument->loadHTML($content);
+                $htmlToInsert = [];
                 if (isset($contentToInsert[0])) {
-                    $domDocument->insertHTML($contentToInsert);
+                    $htmlToInsert[] = ['source' => $contentToInsert];
                 }
-                $domDocument->insertHTML('<html><body><script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script></body></html>');
+                $htmlToInsert[] = ['source' => '<html><body><script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script></body></html>'];
+                $domDocument->insertHTMLMulti($htmlToInsert);
                 $content = $domDocument->saveHTML();
 
                 $content = Server::updateAssetsUrls($content, false);
