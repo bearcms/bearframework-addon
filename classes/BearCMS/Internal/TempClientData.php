@@ -26,7 +26,7 @@ class TempClientData
         if (md5($data) !== $dataHash) {
             return;
         }
-        $data = json_decode($data);
+        $data = json_decode($data, true);
         if (is_array($data) && isset($data[0], $data[1]) && $data[0] === 'bearcms') {
             return $data[1];
         }
