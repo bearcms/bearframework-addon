@@ -17,22 +17,18 @@ class TempClientData
     static function get($key)
     {
         $app = App::get();
-        if (preg_match('/^[a-f0-9]{32}$/', $key) !== 1) {
-            return false;
+        $dataHash = substr($key, 0, 32);
+        try {
+            $data = gzuncompress($app->encryption->decrypt(base64_decode(substr($key, 32))));
+        } catch (\Exception $e) {
+            return;
         }
-        $tempData = null;
-        if (Options::$useDataCache) {
-            $tempData = $app->cache->getValue('bearcms-tempclientdata-' . $key);
+        if (md5($data) !== $dataHash) {
+            return;
         }
-        if ($tempData === null) {
-            $tempData = $app->data->getValue('.temp/clientdata/' . $key);
-        }
-        $data = null;
-        if ($tempData !== null) {
-            $data = json_decode($tempData, true);
-        }
-        if (is_array($data) && isset($data['v'])) {
-            return $data['v'];
+        $data = json_decode($data);
+        if (is_array($data) && isset($data[0], $data[1]) && $data[0] === 'bearcms') {
+            return $data[1];
         }
         return false;
     }
@@ -40,21 +36,8 @@ class TempClientData
     static function set($data)
     {
         $app = App::get();
-        $encodedData = json_encode(['v' => $data]);
-        $key = md5($encodedData);
-        if (Options::$useDataCache) {
-            $cacheKey = 'bearcms-tempclientdata-' . $key;
-            if ($app->cache->exists($cacheKey)) {
-                return $key;
-            } else {
-                $app->cache->set($app->cache->make($cacheKey, $encodedData));
-            }
-        }
-        $dataKey = '.temp/clientdata/' . $key;
-        if (!$app->data->exists($dataKey)) {
-            $app->data->set($app->data->make($dataKey, $encodedData));
-        }
-        return $key;
+        $encodedData = json_encode(['bearcms', $data]);
+        return md5($encodedData) . base64_encode($app->encryption->encrypt(gzcompress($encodedData)));
     }
 
 }

@@ -19,5 +19,6 @@ BearFramework\Addons::register('bearcms/bearframework-addon', __DIR__, [
         'bearframework/emails-addon',
         'bearframework/localization-addon',
         'ivopetkov/data-bundle-bearframework-addon',
+        'ivopetkov/encryption-bearframework-addon'
     ]
 ]);
