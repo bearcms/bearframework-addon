@@ -105,6 +105,7 @@ final class Server
                 $src = (string) $script->getAttribute('src');
                 if (isset($src{0}) && strpos($src, $serverUrl) === 0) {
                     $script->setAttribute('src', $updateUrl($src));
+                    $script->setAttribute('id', md5($src));
                     $hasChange = true;
                 }
             }
