@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS;
+namespace BearCMS\Internal;
 
 use BearFramework\App;
 use BearCMS\Internal\Cookies;
@@ -30,7 +30,7 @@ class CurrentTheme
      * 
      * @return string The id of the current active theme or theme in preview
      */
-    public function getID(): string
+    static public function getID(): string
     {
         if (!isset(self::$cache['id'])) {
             $cookies = Cookies::getList(Cookies::TYPE_SERVER);
@@ -44,9 +44,9 @@ class CurrentTheme
      * 
      * @return array An array containing all theme options
      */
-    public function getOptions(): \BearCMS\Themes\Options
+    static public function getOptions(): \BearCMS\Themes\Options
     {
-        return new \BearCMS\Themes\Options($this->walkOptions(1), $this->getOptionsHtml());
+        return new \BearCMS\Themes\Options(self::walkOptions(1), self::getOptionsHtml());
     }
 
     /**
@@ -55,12 +55,12 @@ class CurrentTheme
      * @param int $resultType 1 - values, 2 - definition
      * @return array
      */
-    private function walkOptions(int $resultType): array
+    static private function walkOptions(int $resultType): array
     {
         $cacheKey = 'options' . $resultType; //todo optimize
         $app = App::get();
         if (!isset(self::$cache[$cacheKey])) {
-            $currentThemeID = $this->getID();
+            $currentThemeID = self::getID();
             $result = [];
             $values = $app->bearCMS->data->themes->getOptions($currentThemeID);
             if ($app->bearCMS->currentUser->exists()) {
@@ -101,12 +101,12 @@ class CurrentTheme
      * 
      * @return string The HTML code for the options
      */
-    private function getOptionsHtml(): string
+    static private function getOptionsHtml(): string
     {
         $linkTags = [];
         $app = App::get();
         $result = [];
-        $options = $this->walkOptions(2);
+        $options = self::walkOptions(2);
         $applyImageUrls = function($text) use ($app) {
             $matches = [];
             preg_match_all('/url\((.*?)\)/', $text, $matches);

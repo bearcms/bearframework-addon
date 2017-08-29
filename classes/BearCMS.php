@@ -8,13 +8,18 @@
  */
 
 use BearFramework\App;
-use \BearCMS\Internal\Options;
+use BearCMS\Internal\Options;
+use BearFramework\App\Response;
+use IvoPetkov\HTML5DOMDocument;
+use BearCMS\Internal\Cookies;
+use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal\Server;
+use BearCMS\Internal\CurrentTheme;
 
 /**
  * Contains references to all Bear CMS related objects.
  * 
  * @property-read \BearCMS\Data $data A reference to the data related objects
- * @property-read \BearCMS\CurrentTheme $currentTheme Information about the current theme
  * @property-read \BearCMS\CurrentUser $currentUser Information about the current loggedin user
  * @property-read \BearCMS\ElementsTypes $elementsTypes Information about the available elements types
  * @property-read \BearCMS\Themes $themes
@@ -41,12 +46,6 @@ class BearCMS
             'readonly' => true
         ]);
 
-        $this->defineProperty('currentTheme', [
-            'init' => function() {
-                return new \BearCMS\CurrentTheme();
-            },
-            'readonly' => true
-        ]);
         $this->defineProperty('currentUser', [
             'init' => function() {
                 return new \BearCMS\CurrentUser();
@@ -69,28 +68,169 @@ class BearCMS
         ]);
     }
 
-    public function enableUI(\BearFramework\App\Response $response): void
+    public function apply(Response $response): void
     {
-        $response->enableBearCMSUI = true;
+        $this->applyDefaults($response);
+        $this->applyTheme($response);
+        $this->applyAdminUI($response);
+    }
+
+    public function applyDefaults(Response $response): void
+    {
         $app = App::get();
+
+        $html = '<html><head>';
+        $currentUserExists = Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
+        $settings = $this->data->settings->get();
+        if (!$response->headers->exists('Cache-Control')) {
+            $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0, no-cache, no-store'));
+        }
+        $html .= '<meta name="generator" content="Bear Framework v' . App::VERSION . ', Bear CMS v' . \BearCMS::VERSION . '"/>';
+        $icon = $settings['icon'];
+        if (isset($icon{0})) {
+            $baseUrl = $app->urls->get();
+            $html .= '<link rel="apple-touch-icon" sizes="57x57" href="' . htmlentities($baseUrl . '-link-rel-icon-57') . '">';
+            $html .= '<link rel="apple-touch-icon" sizes="60x60" href="' . htmlentities($baseUrl . '-link-rel-icon-60') . '">';
+            $html .= '<link rel="apple-touch-icon" sizes="72x72" href="' . htmlentities($baseUrl . '-link-rel-icon-72') . '">';
+            $html .= '<link rel="apple-touch-icon" sizes="76x76" href="' . htmlentities($baseUrl . '-link-rel-icon-76') . '">';
+            $html .= '<link rel="apple-touch-icon" sizes="114x114" href="' . htmlentities($baseUrl . '-link-rel-icon-114') . '">';
+            $html .= '<link rel="apple-touch-icon" sizes="120x120" href="' . htmlentities($baseUrl . '-link-rel-icon-120') . '">';
+            $html .= '<link rel="apple-touch-icon" sizes="144x144" href="' . htmlentities($baseUrl . '-link-rel-icon-144') . '">';
+            $html .= '<link rel="apple-touch-icon" sizes="152x152" href="' . htmlentities($baseUrl . '-link-rel-icon-152') . '">';
+            $html .= '<link rel="apple-touch-icon" sizes="180x180" href="' . htmlentities($baseUrl . '-link-rel-icon-180') . '">';
+            $html .= '<link rel="icon" sizes="32x32" href="' . htmlentities($baseUrl . '-link-rel-icon-32') . '">';
+            $html .= '<link rel="icon" sizes="192x192" href="' . htmlentities($baseUrl . '-link-rel-icon-192') . '">';
+            $html .= '<link rel="icon" sizes="96x96" href="' . htmlentities($baseUrl . '-link-rel-icon-96') . '">';
+            $html .= '<link rel="icon" sizes="16x16" href="' . htmlentities($baseUrl . '-link-rel-icon-16') . '">';
+        } else if ($currentUserExists) {
+            $html .= '<link rel="apple-touch-icon" sizes="57x57" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="apple-touch-icon" sizes="60x60" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="apple-touch-icon" sizes="72x72" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="apple-touch-icon" sizes="76x76" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="apple-touch-icon" sizes="114x114" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="apple-touch-icon" sizes="120x120" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="apple-touch-icon" sizes="144x144" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="apple-touch-icon" sizes="152x152" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="apple-touch-icon" sizes="180x180" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="icon" sizes="32x32" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="icon" sizes="192x192" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="icon" sizes="96x96" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="icon" sizes="16x16" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+        }
+        if (empty($settings['allowSearchEngines'])) {
+            $html .= '<meta name="robots" content="noindex">';
+        }
+        $html .= '<link rel="canonical" href="' . htmlentities(rtrim($app->request->base . $app->request->path, '/') . '/') . '"/>';
+        if ($settings['enableRSS']) {
+            $html .= '<link rel="alternate" type="application/rss+xml" title="' . (isset($settings['title']) ? trim($settings['title']) : '') . '" href="' . $app->request->base . '/rss.xml" />';
+        }
+        $html .= '</head><body>';
+
+        if ($response instanceof Response\HTML) { // is not temporary disabled
+            $externalLinksAreEnabled = !empty($settings['externalLinks']);
+            if ($externalLinksAreEnabled || $currentUserExists) {
+                $context = $app->context->get(__FILE__);
+                $html .= '<script id="bearcms-bearframework-addon-script-10" src="' . htmlentities($context->assets->getUrl('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
+            }
+        }
+        $html .= '</body></html>';
+        $domDocument = new HTML5DOMDocument();
+        $domDocument->loadHTML($html);
+        $domDocument->insertHTML($response->content, 'afterBodyBegin');
+        $response->content = $domDocument->saveHTML();
+
         $app->users->enableUI($response);
     }
 
-    public function applyTheme(\BearFramework\App\Response $response): void
-    {
-        $response->applyBearCMSTheme = true;
-    }
-
-    public function disabledCheck(): ?\BearFramework\App\Response
+    public function applyAdminUI(Response $response): void
     {
         $app = App::get();
-        $currentUserExists = Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) ? $app->bearCMS->currentUser->exists() : false;
-        $settings = $app->bearCMS->data->settings->get();
+        $context = $app->context->get(__FILE__);
+
+        $settings = $this->data->settings->get();
+
+        $serverCookies = Cookies::getList(Cookies::TYPE_SERVER);
+        if (!empty($serverCookies['tmcs']) || !empty($serverCookies['tmpr'])) {
+            ElementsHelper::$editorData = [];
+        }
+
+        $requestArguments = [];
+        $requestArguments['hasEditableElements'] = empty(ElementsHelper::$editorData) ? '0' : '1';
+        $requestArguments['hasEditableContainers'] = '0';
+        $requestArguments['isDisabled'] = $settings->disabled ? '1' : '0';
+        foreach (ElementsHelper::$editorData as $itemData) {
+            if ($itemData[0] === 'container') {
+                $requestArguments['hasEditableContainers'] = '1';
+            }
+        }
+
+        $cacheKey = json_encode([
+            'adminUI',
+            $app->request->base,
+            $requestArguments,
+            $this->currentUser->getSessionKey(),
+            $this->currentUser->getPermissions(),
+            get_class_vars('\BearCMS\Internal\Options'),
+            $serverCookies
+        ]);
+
+        $adminUIData = $app->cache->getValue($cacheKey);
+        if (!is_array($adminUIData)) {
+            $adminUIData = Server::call('adminui', $requestArguments, true);
+            $cacheItem = $app->cache->make($cacheKey, $adminUIData);
+            $cacheItem->ttl = is_array($adminUIData) && isset($adminUIData['result']) ? 99999 : 10;
+            $app->cache->set($cacheItem);
+        }
+        // The user does not exists on the server
+        if (is_array($adminUIData) && isset($adminUIData['result']) && $adminUIData['result'] === 'noUser') {
+            $this->currentUser->logout();
+            return;
+        }
+
+        if (is_array($adminUIData) && isset($adminUIData['result']) && is_array($adminUIData['result']) && isset($adminUIData['result']['content']) && strlen($adminUIData['result']['content']) > 0) {
+            $content = $adminUIData['result']['content'];
+            $content = Server::updateAssetsUrls($content, false);
+            $domDocument = new HTML5DOMDocument();
+            $htmlToInsert = [];
+            if (strpos($content, '{body}')) {
+                $content = str_replace('{body}', (string) $domDocument->createInsertTarget('body'), $content);
+                $htmlToInsert[] = ['source' => $response->content, 'target' => 'body'];
+            } elseif (strpos($content, '{jsonEncodedBody}')) {
+                $content = str_replace('{jsonEncodedBody}', json_encode($app->components->process($response->content)), $content);
+            }
+            $domDocument->loadHTML($content);
+            $elementsHtml = ElementsHelper::getEditableElementsHtml();
+            if (isset($elementsHtml[0])) {
+                $htmlToInsert[] = ['source' => $elementsHtml];
+            }
+            $htmlToInsert[] = ['source' => '<html><body><script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script></body></html>'];
+            $domDocument->insertHTMLMulti($htmlToInsert);
+            $response->content = $domDocument->saveHTML();
+        } else {
+            //$response = new App\Response\TemporaryUnavailable();
+        }
+    }
+
+    public function applyTheme(Response $response): void
+    {
+        $app = App::get();
+        $currentThemeID = CurrentTheme::getID();
+        if (isset(\BearCMS\Internal\Themes::$list[$currentThemeID])) {
+            $callback = \BearCMS\Internal\Themes::$list[$currentThemeID][1];
+            if (is_callable($callback)) {
+                call_user_func($callback, $response, CurrentTheme::getOptions());
+            }
+        }
+    }
+
+    public function disabledCheck(): ?Response
+    {
+        $app = App::get();
+        $currentUserExists = Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
+        $settings = $this->data->settings->get();
         $isDisabled = !$currentUserExists && $settings->disabled;
         if ($isDisabled) {
-            $response = new App\Response\TemporaryUnavailable(htmlspecialchars($settings->disabledText));
-            $response->content = $settings->disabledText;
-            return $response;
+            return new App\Response\TemporaryUnavailable(htmlspecialchars($settings->disabledText));
         }
         return null;
     }

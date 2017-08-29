@@ -12,8 +12,10 @@ use BearCMS\Internal\Cookies;
 use BearCMS\Internal\Data as InternalData;
 use BearCMS\Internal\Server;
 use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal\Options;
+use BearCMS\Internal\CurrentTheme;
+use BearCMS\Internal\Themes;
 use IvoPetkov\HTML5DOMDocument;
-use \BearCMS\Internal\Options;
 
 $app = App::get();
 $context = $app->context->get(__FILE__);
@@ -22,7 +24,6 @@ $options = $app->addons->get('bearcms/bearframework-addon')->options;
 $context->classes
         ->add('BearCMS', 'classes/BearCMS.php')
         ->add('BearCMS\CurrentUser', 'classes/BearCMS/CurrentUser.php')
-        ->add('BearCMS\CurrentTheme', 'classes/BearCMS/CurrentTheme.php')
         ->add('BearCMS\Data', 'classes/BearCMS/Data.php')
         ->add('BearCMS\Data\Addon', 'classes/BearCMS/Data/Addon.php')
         ->add('BearCMS\Data\Addons', 'classes/BearCMS/Data/Addons.php')
@@ -62,6 +63,7 @@ $context->classes
         ->add('BearCMS\Internal\Data\Users', 'classes/BearCMS/Internal/Data/Users.php')
         ->add('BearCMS\Internal\Controller', 'classes/BearCMS/Internal/Controller.php')
         ->add('BearCMS\Internal\Cookies', 'classes/BearCMS/Internal/Cookies.php')
+        ->add('BearCMS\Internal\CurrentTheme', 'classes/BearCMS/Internal/CurrentTheme.php')
         ->add('BearCMS\Internal\ElementsHelper', 'classes/BearCMS/Internal/ElementsHelper.php')
         ->add('BearCMS\Internal\Localization', 'classes/BearCMS/Internal/Localization.php')
         ->add('BearCMS\Internal\Options', 'classes/BearCMS/Internal/Options.php')
@@ -72,9 +74,6 @@ $context->classes
 
 Options::set($options);
 
-$app->addons->add('ivopetkov/form-bearframework-addon', [
-    'useDataCache' => Options::$useDataCache
-]);
 $app->addons->add('ivopetkov/users-bearframework-addon', [
     'useDataCache' => Options::$useDataCache
 ]);
@@ -102,724 +101,690 @@ $app->shortcuts
             return new BearCMS();
         });
 
-
 if ($app->request->method === 'GET') {
     if (strlen($app->config->assetsPathPrefix) > 0 && strpos($app->request->path, $app->config->assetsPathPrefix) === 0) {
         // skip
     } else {
         $cacheBundlePath = $app->request->path->get();
-        \BearCMS\Internal\Data::loadCacheBundle($cacheBundlePath);
-        $app->hooks->add('responseCreated', function($response) use ($cacheBundlePath) {
-            \BearCMS\Internal\Data::saveCacheBundle($cacheBundlePath);
-        }, ['priority' => 901]);
+        InternalData::loadCacheBundle($cacheBundlePath);
+        $app->hooks->add('responseSent', function() use ($cacheBundlePath) {
+            InternalData::saveCacheBundle($cacheBundlePath);
+        });
     }
 }
 
-$getEditableElementsHtml = function() use ($app) {//$jsMode = false
-    $contentToInsert = '';
-    if ((Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) && !empty(ElementsHelper::$editorData)) {
-        $requestArguments = [];
-        $requestArguments['data'] = json_encode(ElementsHelper::$editorData);
-//        if ($jsMode) {
-//            $requestArguments['jsMode'] = 1;
-//        }
-        $cacheKey = json_encode([
-            'elementsEditor',
-            $app->request->base,
-            $requestArguments,
-            $app->bearCMS->currentUser->getSessionKey(),
-            $app->bearCMS->currentUser->getPermissions(),
-            get_class_vars('\BearCMS\Internal\Options'),
-            Cookies::getList(Cookies::TYPE_SERVER),
-            2, //version
-        ]);
-        $elementsEditorData = $app->cache->getValue($cacheKey);
-        if (!is_array($elementsEditorData)) {
-            $elementsEditorData = Server::call('elementseditor', $requestArguments, true);
-            $cacheItem = $app->cache->make($cacheKey, $elementsEditorData);
-            $cacheItem->ttl = is_array($elementsEditorData) && isset($elementsEditorData['result']) ? 99999 : 10;
-            $app->cache->set($cacheItem);
-        }
-
-        if (is_array($elementsEditorData) && isset($elementsEditorData['result']) && is_array($elementsEditorData['result']) && isset($elementsEditorData['result']['content'])) {
-            $contentToInsert = $elementsEditorData['result']['content'];
-        } else {
-            //$response = new App\Response\TemporaryUnavailable();
-        }
-    }
-    return $contentToInsert;
-};
-
-$app->hooks->add('initialized', function() use ($app, $context, $getEditableElementsHtml) {
-
-    $app->hooks->add('dataItemChanged', function(\BearFramework\App\Hooks\DataItemChangedData $data) use (&$app) {
-        $prefixes = [
-            'bearcms/pages/page/',
-            'bearcms/blog/post/'
-        ];
-        foreach ($prefixes as $prefix) {
-            if (strpos($data->key, $prefix) === 0) {
-                $dataBundleID = 'bearcmsdataprefix-' . $prefix;
-                if ($data->action === 'delete') {
-                    $app->dataBundle->removeItem($dataBundleID, $data->key);
-                } else {
-                    $app->dataBundle->addItem($dataBundleID, $data->key);
+$app->hooks
+        ->add('dataItemChanged', function($key) use (&$app) {
+            $prefixes = [
+                'bearcms/pages/page/',
+                'bearcms/blog/post/'
+            ];
+            foreach ($prefixes as $prefix) {
+                if (strpos($key, $prefix) === 0) {
+                    $dataBundleID = 'bearcmsdataprefix-' . $prefix;
+                    if ($app->data->exists($key)) {
+                        $app->dataBundle->addItem($dataBundleID, $key);
+                    } else {
+                        $app->dataBundle->removeItem($dataBundleID, $key);
+                    }
+                    break;
                 }
-                break;
             }
-        }
-    });
+        });
 
-    if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
-        $contextDir = $context->dir;
-        $app->components->addAlias('bearcms-elements', 'file:' . $contextDir . '/components/bearcmsElements.php');
-        $app->bearCMS->elementsTypes
-                ->add('heading', [
-                    'componentSrc' => 'bearcms-heading-element',
-                    'componentFilename' => $contextDir . '/components/bearcmsHeadingElement.php',
-                    'fields' => [
-                        [
-                            'id' => 'size',
-                            'type' => 'list',
-                            'defaultValue' => 'large',
-                            'options' => [
-                                [
-                                    'value' => 'large'
-                                ],
-                                [
-                                    'value' => 'medium'
-                                ],
-                                [
-                                    'value' => 'small'
-                                ]
+if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
+    $contextDir = $context->dir;
+    $app->components
+            ->addAlias('bearcms-elements', 'file:' . $contextDir . '/components/bearcmsElements.php');
+    $app->bearCMS->elementsTypes
+            ->add('heading', [
+                'componentSrc' => 'bearcms-heading-element',
+                'componentFilename' => $contextDir . '/components/bearcmsHeadingElement.php',
+                'fields' => [
+                    [
+                        'id' => 'size',
+                        'type' => 'list',
+                        'defaultValue' => 'large',
+                        'options' => [
+                            [
+                                'value' => 'large'
+                            ],
+                            [
+                                'value' => 'medium'
+                            ],
+                            [
+                                'value' => 'small'
                             ]
-                        ],
-                        [
-                            'id' => 'text',
-                            'type' => 'textbox'
-                        ]
-                    ]
-                ])
-                ->add('text', [
-                    'componentSrc' => 'bearcms-text-element',
-                    'componentFilename' => $contextDir . '/components/bearcmsTextElement.php',
-                    'fields' => [
-                        [
-                            'id' => 'text',
-                            'type' => 'textbox'
-                        ]
-                    ]
-                ])
-                ->add('link', [
-                    'componentSrc' => 'bearcms-link-element',
-                    'componentFilename' => $contextDir . '/components/bearcmsLinkElement.php',
-                    'fields' => [
-                        [
-                            'id' => 'url',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'text',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'title',
-                            'type' => 'textbox'
-                        ]
-                    ]
-                ])
-                ->add('video', [
-                    'componentSrc' => 'bearcms-video-element',
-                    'componentFilename' => $contextDir . '/components/bearcmsVideoElement.php',
-                    'fields' => [
-                        [
-                            'id' => 'url',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'filename',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'width',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'align',
-                            'type' => 'list',
-                            'defaultValue' => 'left',
-                            'options' => [
-                                [
-                                    'value' => 'left'
-                                ],
-                                [
-                                    'value' => 'center'
-                                ],
-                                [
-                                    'value' => 'right'
-                                ]
-                            ]
-                        ],
-                    ]
-                ])
-                ->add('image', [
-                    'componentSrc' => 'bearcms-image-element',
-                    'componentFilename' => $contextDir . '/components/bearcmsImageElement.php',
-                    'fields' => [
-                        [
-                            'id' => 'filename',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'title',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'onClick',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'url',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'width',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'align',
-                            'type' => 'list',
-                            'defaultValue' => 'left',
-                            'options' => [
-                                [
-                                    'value' => 'left'
-                                ],
-                                [
-                                    'value' => 'center'
-                                ],
-                                [
-                                    'value' => 'right'
-                                ]
-                            ]
-                        ],
-                    ]
-                ])
-                ->add('imageGallery', [
-                    'componentSrc' => 'bearcms-image-gallery-element',
-                    'componentFilename' => $contextDir . '/components/bearcmsImageGalleryElement.php',
-                    'fields' => [
-                        [
-                            'id' => 'type',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'columnsCount',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'imageSize',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'imageAspectRatio',
-                            'type' => 'textbox'
                         ]
                     ],
-                    'updateComponentFromData' => function($component, $data) {
-                        if (isset($data['files']) && is_array($data['files'])) {
-                            $innerHTML = '';
-                            foreach ($data['files'] as $file) {
-                                if (isset($file['filename'])) {
-                                    $innerHTML .= '<file filename="' . htmlentities($file['filename']) . '"/>';
-                                }
+                    [
+                        'id' => 'text',
+                        'type' => 'textbox'
+                    ]
+                ]
+            ])
+            ->add('text', [
+                'componentSrc' => 'bearcms-text-element',
+                'componentFilename' => $contextDir . '/components/bearcmsTextElement.php',
+                'fields' => [
+                    [
+                        'id' => 'text',
+                        'type' => 'textbox'
+                    ]
+                ]
+            ])
+            ->add('link', [
+                'componentSrc' => 'bearcms-link-element',
+                'componentFilename' => $contextDir . '/components/bearcmsLinkElement.php',
+                'fields' => [
+                    [
+                        'id' => 'url',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'text',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'title',
+                        'type' => 'textbox'
+                    ]
+                ]
+            ])
+            ->add('video', [
+                'componentSrc' => 'bearcms-video-element',
+                'componentFilename' => $contextDir . '/components/bearcmsVideoElement.php',
+                'fields' => [
+                    [
+                        'id' => 'url',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'filename',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'width',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'align',
+                        'type' => 'list',
+                        'defaultValue' => 'left',
+                        'options' => [
+                            [
+                                'value' => 'left'
+                            ],
+                            [
+                                'value' => 'center'
+                            ],
+                            [
+                                'value' => 'right'
+                            ]
+                        ]
+                    ],
+                ]
+            ])
+            ->add('image', [
+                'componentSrc' => 'bearcms-image-element',
+                'componentFilename' => $contextDir . '/components/bearcmsImageElement.php',
+                'fields' => [
+                    [
+                        'id' => 'filename',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'title',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'onClick',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'url',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'width',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'align',
+                        'type' => 'list',
+                        'defaultValue' => 'left',
+                        'options' => [
+                            [
+                                'value' => 'left'
+                            ],
+                            [
+                                'value' => 'center'
+                            ],
+                            [
+                                'value' => 'right'
+                            ]
+                        ]
+                    ],
+                ]
+            ])
+            ->add('imageGallery', [
+                'componentSrc' => 'bearcms-image-gallery-element',
+                'componentFilename' => $contextDir . '/components/bearcmsImageGalleryElement.php',
+                'fields' => [
+                    [
+                        'id' => 'type',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'columnsCount',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'imageSize',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'imageAspectRatio',
+                        'type' => 'textbox'
+                    ]
+                ],
+                'updateComponentFromData' => function($component, $data) {
+                    if (isset($data['files']) && is_array($data['files'])) {
+                        $innerHTML = '';
+                        foreach ($data['files'] as $file) {
+                            if (isset($file['filename'])) {
+                                $innerHTML .= '<file filename="' . htmlentities($file['filename']) . '"/>';
                             }
-                            $component->innerHTML = $innerHTML;
                         }
-                        return $component;
-                    },
-                    'updateDataFromComponent' => function($component, $data) {
-                        $domDocument = new IvoPetkov\HTML5DOMDocument();
-                        $domDocument->loadHTML($component->innerHTML);
-                        $files = [];
-                        $filesElements = $domDocument->querySelectorAll('file');
-                        foreach ($filesElements as $fileElement) {
-                            $files[] = ['filename' => $fileElement->getAttribute('filename')];
-                        }
-                        $data['files'] = $files;
-                        return $data;
+                        $component->innerHTML = $innerHTML;
                     }
-                ])
-                ->add('navigation', [
-                    'componentSrc' => 'bearcms-navigation-element',
-                    'componentFilename' => $contextDir . '/components/bearcmsNavigationElement.php',
-                    'fields' => [
-                        [
-                            'id' => 'source',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'sourceParentPageID',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'showHomeLink',
-                            'type' => 'checkbox'
-                        ],
-                        [
-                            'id' => 'homeLinkText',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'itemsType',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'items',
-                            'type' => 'textbox'
-                        ]
-                    ]
-                ])
-                ->add('html', [
-                    'componentSrc' => 'bearcms-html-element',
-                    'componentFilename' => $contextDir . '/components/bearcmsHtmlElement.php',
-                    'fields' => [
-                        [
-                            'id' => 'code',
-                            'type' => 'textbox'
-                        ]
-                    ]
-                ])
-                ->add('blogPosts', [
-                    'componentSrc' => 'bearcms-blog-posts-element',
-                    'componentFilename' => $contextDir . '/components/bearcmsBlogPostsElement.php',
-                    'fields' => [
-                        [
-                            'id' => 'type',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'showDate',
-                            'type' => 'checkbox'
-                        ],
-                        [
-                            'id' => 'limit',
-                            'type' => 'number'
-                        ]
-                    ]
-                ])
-                ->add('comments', [
-                    'componentSrc' => 'bearcms-comments-element',
-                    'componentFilename' => $contextDir . '/components/bearcmsCommentsElement.php',
-                    'fields' => [
-                        [
-                            'id' => 'threadID',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'count',
-                            'type' => 'number'
-                        ]
+                    return $component;
+                },
+                'updateDataFromComponent' => function($component, $data) {
+                    $domDocument = new HTML5DOMDocument();
+                    $domDocument->loadHTML($component->innerHTML);
+                    $files = [];
+                    $filesElements = $domDocument->querySelectorAll('file');
+                    foreach ($filesElements as $fileElement) {
+                        $files[] = ['filename' => $fileElement->getAttribute('filename')];
+                    }
+                    $data['files'] = $files;
+                    return $data;
+                }
+            ])
+            ->add('navigation', [
+                'componentSrc' => 'bearcms-navigation-element',
+                'componentFilename' => $contextDir . '/components/bearcmsNavigationElement.php',
+                'fields' => [
+                    [
+                        'id' => 'source',
+                        'type' => 'textbox'
                     ],
-                    'onDelete' => function($data) use ($app) {
-                        if (isset($data['threadID'])) {
-                            $app->data->delete('bearcms/comments/thread/' . md5($data['threadID']) . '.json');
-                        }
-                    }
-                ])
-                ->add('contactForm', [
-                    'componentSrc' => 'bearcms-contact-form-element',
-                    'componentFilename' => $contextDir . '/components/bearcmsContactFormElement.php',
-                    'fields' => [
-                        [
-                            'id' => 'email',
-                            'type' => 'textbox'
-                        ]
+                    [
+                        'id' => 'sourceParentPageID',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'showHomeLink',
+                        'type' => 'checkbox'
+                    ],
+                    [
+                        'id' => 'homeLinkText',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'itemsType',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'items',
+                        'type' => 'textbox'
                     ]
-                ])
-                ->add('forumPosts', [
-                    'componentSrc' => 'bearcms-forum-posts-element',
-                    'componentFilename' => $contextDir . '/components/bearcmsForumPostsElement.php',
-                    'fields' => [
-                        [
-                            'id' => 'categoryID',
-                            'type' => 'textbox'
-                        ],
-                        [
-                            'id' => 'count',
-                            'type' => 'number'
-                        ]
+                ]
+            ])
+            ->add('html', [
+                'componentSrc' => 'bearcms-html-element',
+                'componentFilename' => $contextDir . '/components/bearcmsHtmlElement.php',
+                'fields' => [
+                    [
+                        'id' => 'code',
+                        'type' => 'textbox'
                     ]
-        ]);
-    }
-
-    // Load the CMS managed addons
-    if (Options::hasFeature('ADDONS')) {
-        $addons = InternalData\Addons::getList();
-        foreach ($addons as $addonData) {
-            $addonID = $addonData['id'];
-            $addonDir = Options::$addonsDir . DIRECTORY_SEPARATOR . $addonID . DIRECTORY_SEPARATOR;
-            if (is_file($addonDir . 'autoload.php')) {
-                include $addonDir . 'autoload.php';
-            } else {
-                throw new Exception('Cannot find autoload.php file for ' . $addonID);
-            }
-            if (\BearFramework\Addons::exists($addonID)) {
-                $_addonData = \BearFramework\Addons::get($addonID);
-                $_addonOptions = $_addonData->options;
-                if (isset($_addonOptions['bearCMS']) && is_array($_addonOptions['bearCMS']) && isset($_addonOptions['bearCMS']['assetsDirs']) && is_array($_addonOptions['bearCMS']['assetsDirs'])) {
-                    foreach ($_addonOptions['bearCMS']['assetsDirs'] as $dir) {
-                        if (is_string($dir)) {
-                            $app->assets->addDir($addonDir . $dir);
-                        }
+                ]
+            ])
+            ->add('blogPosts', [
+                'componentSrc' => 'bearcms-blog-posts-element',
+                'componentFilename' => $contextDir . '/components/bearcmsBlogPostsElement.php',
+                'fields' => [
+                    [
+                        'id' => 'type',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'showDate',
+                        'type' => 'checkbox'
+                    ],
+                    [
+                        'id' => 'limit',
+                        'type' => 'number'
+                    ]
+                ]
+            ])
+            ->add('comments', [
+                'componentSrc' => 'bearcms-comments-element',
+                'componentFilename' => $contextDir . '/components/bearcmsCommentsElement.php',
+                'fields' => [
+                    [
+                        'id' => 'threadID',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'count',
+                        'type' => 'number'
+                    ]
+                ],
+                'onDelete' => function($data) use ($app) {
+                    if (isset($data['threadID'])) {
+                        $app->data->delete('bearcms/comments/thread/' . md5($data['threadID']) . '.json');
                     }
                 }
-                if ($addonData['enabled']) {
-                    $app->addons->add($addonID, ['addedByBearCMS' => true]);
+            ])
+            ->add('contactForm', [
+                'componentSrc' => 'bearcms-contact-form-element',
+                'componentFilename' => $contextDir . '/components/bearcmsContactFormElement.php',
+                'fields' => [
+                    [
+                        'id' => 'email',
+                        'type' => 'textbox'
+                    ]
+                ]
+            ])
+            ->add('forumPosts', [
+                'componentSrc' => 'bearcms-forum-posts-element',
+                'componentFilename' => $contextDir . '/components/bearcmsForumPostsElement.php',
+                'fields' => [
+                    [
+                        'id' => 'categoryID',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'count',
+                        'type' => 'number'
+                    ]
+                ]
+    ]);
+}
+
+// Load the CMS managed addons
+if (Options::hasFeature('ADDONS')) {
+    $addons = InternalData\Addons::getList();
+    foreach ($addons as $addonData) {
+        $addonID = $addonData['id'];
+        $addonDir = Options::$addonsDir . DIRECTORY_SEPARATOR . $addonID . DIRECTORY_SEPARATOR;
+        if (is_file($addonDir . 'autoload.php')) {
+            include $addonDir . 'autoload.php';
+        } else {
+            throw new Exception('Cannot find autoload.php file for ' . $addonID);
+        }
+        if (\BearFramework\Addons::exists($addonID)) {
+            $_addonData = \BearFramework\Addons::get($addonID);
+            $_addonOptions = $_addonData->options;
+            if (isset($_addonOptions['bearCMS']) && is_array($_addonOptions['bearCMS']) && isset($_addonOptions['bearCMS']['assetsDirs']) && is_array($_addonOptions['bearCMS']['assetsDirs'])) {
+                foreach ($_addonOptions['bearCMS']['assetsDirs'] as $dir) {
+                    if (is_string($dir)) {
+                        $app->assets->addDir($addonDir . $dir);
+                    }
                 }
-            } else {
-                throw new Exception('Addon ' . $addonID . ' not available');
             }
+            if ($addonData['enabled']) {
+                $app->addons->add($addonID, ['addedByBearCMS' => true]);
+            }
+        } else {
+            throw new Exception('Addon ' . $addonID . ' not available');
         }
     }
+}
 
-    // Automatically log in the user
-    if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_DEFAULT'))) {
-        $cookies = Cookies::getList(Cookies::TYPE_SERVER);
-        if (isset($cookies['_a']) && !$app->bearCMS->currentUser->exists()) {
-            Server::call('autologin', [], true);
-        }
+// Automatically log in the user
+if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_DEFAULT'))) {
+    $cookies = Cookies::getList(Cookies::TYPE_SERVER);
+    if (isset($cookies['_a']) && !$app->bearCMS->currentUser->exists()) {
+        Server::call('autologin', [], true);
     }
+}
 
-    // Register the system pages
-    if (Options::hasServer()) {
-        if (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_DEFAULT')) {
-            $app->routes->add([Options::$adminPagesPathPrefix . 'loggedin/'], function() use ($app) {
-                return new App\Response\TemporaryRedirect($app->request->base . '/');
-            });
-            $app->routes->add([Options::$adminPagesPathPrefix, Options::$adminPagesPathPrefix . '*/'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
-            $app->routes->add([rtrim(Options::$adminPagesPathPrefix, '/'), Options::$adminPagesPathPrefix . '*'], function() use ($app) {
-                return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
-            });
-        }
-        if (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) {
-            $app->routes->add('/-aj/', ['BearCMS\Internal\Controller', 'handleAjax'], ['POST']);
-            $app->routes->add('/-au/', ['BearCMS\Internal\Controller', 'handleFileUpload'], ['POST']);
-        }
+// Register the system pages
+if (Options::hasServer()) {
+    if (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_DEFAULT')) {
+        $app->routes->add([Options::$adminPagesPathPrefix . 'loggedin/'], function() use ($app) {
+            return new App\Response\TemporaryRedirect($app->request->base . '/');
+        });
+        $app->routes->add([Options::$adminPagesPathPrefix, Options::$adminPagesPathPrefix . '*/'], ['BearCMS\Internal\Controller', 'handleAdminPage']);
+        $app->routes->add([rtrim(Options::$adminPagesPathPrefix, '/'), Options::$adminPagesPathPrefix . '*'], function() use ($app) {
+            return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
+        });
     }
-
-    // Register the file handlers
-    if (Options::hasFeature('FILES')) {
-        $app->routes
-                ->add('/files/preview/*', ['BearCMS\Internal\Controller', 'handleFilePreview'])
-                ->add('/files/download/*', ['BearCMS\Internal\Controller', 'handleFileDownload']);
+    if (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) {
+        $app->routes->add('/-aj/', ['BearCMS\Internal\Controller', 'handleAjax'], ['POST']);
+        $app->routes->add('/-au/', ['BearCMS\Internal\Controller', 'handleFileUpload'], ['POST']);
     }
+}
 
-    // Register some other pages
+// Register the file handlers
+if (Options::hasFeature('FILES')) {
     $app->routes
-            ->add('/rss.xml', [
-                [$app->bearCMS, 'disabledCheck'],
-                function() use ($app) {
+            ->add('/files/preview/*', ['BearCMS\Internal\Controller', 'handleFilePreview'])
+            ->add('/files/download/*', ['BearCMS\Internal\Controller', 'handleFileDownload']);
+}
+
+// Register some other pages
+$app->routes
+        ->add('/rss.xml', [
+            [$app->bearCMS, 'disabledCheck'],
+            function() use ($app) {
+                $settings = $app->bearCMS->data->settings->get();
+                if ($settings['enableRSS']) {
+                    return BearCMS\Internal\Controller::handleRSS();
+                }
+            }
+        ])
+        ->add('/sitemap.xml', [
+            [$app->bearCMS, 'disabledCheck'],
+            function() {
+                return BearCMS\Internal\Controller::handleSitemap();
+            }
+        ])
+        ->add('/robots.txt', [
+            [$app->bearCMS, 'disabledCheck'],
+            function() {
+                return BearCMS\Internal\Controller::handleRobots();
+            }
+        ])
+        ->add('/-link-rel-icon-*', [
+            [$app->bearCMS, 'disabledCheck'],
+            function() use ($app) {
+                $size = str_replace('/-link-rel-icon-', '', (string) $app->request->path);
+                if (is_numeric($size)) {
                     $settings = $app->bearCMS->data->settings->get();
-                    if ($settings['enableRSS']) {
-                        return BearCMS\Internal\Controller::handleRSS();
+                    $icon = $settings['icon'];
+                    if (isset($icon{0})) {
+                        $filename = $app->bearCMS->data->getRealFilename($icon);
+                        $url = $app->assets->getUrl($filename, ['cacheMaxAge' => 999999999, 'width' => (int) $size, 'height' => (int) $size]);
+                        return new App\Response\TemporaryRedirect($url);
+                    }
+                }
+            }
+        ]);
+
+if (Options::hasFeature('COMMENTS')) {
+    $app->serverRequests
+            ->add('bearcms-comments-load-more', function($data) use ($app, $context) {
+                if (isset($data['serverData'], $data['listElementID'], $data['listCommentsCount'])) {
+                    $listElementID = (string) $data['listElementID'];
+                    $listCommentsCount = (int) $data['listCommentsCount'];
+                    $serverData = \BearCMS\Internal\TempClientData::get($data['serverData']);
+                    if (is_array($serverData) && isset($serverData['threadID'])) {
+                        $threadID = $serverData['threadID'];
+                        $listContent = $app->components->process('<component src="file:' . $context->dir . '/components/bearcmsCommentsElement/commentsList.php" count="' . htmlentities($listCommentsCount) . '" threadID="' . htmlentities($threadID) . '" />');
+                        return json_encode([
+                            'listElementID' => $listElementID,
+                            'listContent' => $listContent
+                        ]);
+                    }
+                }
+            });
+}
+
+if (Options::hasFeature('FORUMS')) {
+    $app->routes
+            ->add('/f/?/', [
+                [$app->bearCMS, 'disabledCheck'],
+                function() use ($app, $context) {
+                    $forumCategoryID = $app->request->path->getSegment(1);
+                    $forumCategory = $app->bearCMS->data->forumCategories->get($forumCategoryID);
+                    if ($forumCategory !== null) {
+                        $content = '<html>';
+                        $content .= '<head>';
+                        $content .= '<title>' . sprintf(__('bearcms.New post in %s'), htmlspecialchars($forumCategory->name)) . '</title>';
+                        $content .= '</head>';
+                        $content .= '<body>';
+                        $content .= '<div class="bearcms-forum-post-page-title-container"><h1 class="bearcms-forum-post-page-title">' . sprintf(__('bearcms.New post in %s'), htmlspecialchars($forumCategory->name)) . '</h1></div>';
+                        $content .= '<div class="bearcms-forum-post-page-content">';
+                        $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsForumPostsElement/forumPostNewForm.php" categoryID="' . htmlentities($forumCategoryID) . '" />';
+                        $content .= '</div>';
+                        $content .= '</body>';
+                        $content .= '</html>';
+
+                        $app->hooks->execute('bearCMSForumCategoryPageContentCreated', $content, $forumCategoryID);
+
+                        $response = new App\Response\HTML($app->components->process($content));
+                        $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex'));
+                        $app->hooks->execute('bearCMSResponseCreated', $response);
+                        $app->bearCMS->apply($response);
+                        return $response;
                     }
                 }
             ])
-            ->add('/sitemap.xml', [
+            ->add('/f/?/?/', [
                 [$app->bearCMS, 'disabledCheck'],
-                function() {
-                    return BearCMS\Internal\Controller::handleSitemap();
+                function() use ($app, $context) {
+                    $forumPostSlug = $app->request->path->getSegment(1); // todo validate
+                    $forumPostID = $app->request->path->getSegment(2);
+                    $forumPost = $app->bearCMS->data->forumPosts->get($forumPostID);
+                    if ($forumPost !== null) {
+                        $content = '<html>';
+                        $content .= '<head>';
+                        $content .= '<title>' . htmlspecialchars($forumPost->title) . '</title>';
+                        $content .= '</head>';
+                        $content .= '<body>';
+                        $content .= '<div class="bearcms-forum-post-page-title-container"><h1 class="bearcms-forum-post-page-title">' . htmlspecialchars($forumPost->title) . '</h1></div>';
+                        //$content .= '<div class="bearcms-forum-post-page-date-container"><div class="bearcms-forum-post-page-date">' . BearCMS\Internal\Localization::getDate($forumPost->createdTime) . '</div></div>';
+                        $content .= '<div class="bearcms-forum-post-page-content">';
+                        $content .= '<component src="file:' . $context->dir . '/components/bearcmsForumPostsElement/forumPostRepliesList.php" includePost="true" forumPostID="' . htmlentities($forumPost->id) . '" />';
+                        $content .= '</div>';
+                        $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsForumPostsElement/forumPostReplyForm.php" forumPostID="' . htmlentities($forumPost->id) . '" />';
+                        $content .= '</body>';
+                        $content .= '</html>';
+
+                        $forumPostID = $forumPost->id;
+                        $app->hooks->execute('bearCMSForumPostPageContentCreated', $content, $forumPostID);
+
+                        $response = new App\Response\HTML($app->components->process($content));
+                        $app->hooks->execute('bearCMSResponseCreated', $response);
+                        $app->bearCMS->apply($response);
+                        return $response;
+                    }
                 }
-            ])
-            ->add('/robots.txt', [
-                [$app->bearCMS, 'disabledCheck'],
-                function() {
-                    return BearCMS\Internal\Controller::handleRobots();
+    ]);
+    $app->serverRequests
+            ->add('bearcms-forumposts-load-more', function($data) use ($app, $context) {
+                if (isset($data['serverData'], $data['serverData'])) {
+                    $serverData = \BearCMS\Internal\TempClientData::get($data['serverData']);
+                    if (is_array($serverData) && isset($serverData['componentHTML'])) {
+                        $content = $app->components->process($serverData['componentHTML']);
+                        return json_encode([
+                            'content' => $content
+                        ]);
+                    }
                 }
-            ])
-            ->add('/-link-rel-icon-*', [
+            });
+}
+
+if (Options::hasFeature('BLOG')) {
+    $app->routes
+            ->add(Options::$blogPagesPathPrefix . '?/', [
                 [$app->bearCMS, 'disabledCheck'],
                 function() use ($app) {
-                    $size = str_replace('/-link-rel-icon-', '', (string) $app->request->path);
-                    if (is_numeric($size)) {
-                        $settings = $app->bearCMS->data->settings->get();
-                        $icon = $settings['icon'];
-                        if (isset($icon{0})) {
-                            $filename = $app->bearCMS->data->getRealFilename($icon);
-                            $url = $app->assets->getUrl($filename, ['cacheMaxAge' => 999999999, 'width' => (int) $size, 'height' => (int) $size]);
-                            return new App\Response\TemporaryRedirect($url);
+                    $slug = (string) $app->request->path->getSegment(1);
+                    $slugsList = InternalData\BlogPosts::getSlugsList('published');
+                    $blogPostID = array_search($slug, $slugsList);
+                    if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) && $app->bearCMS->currentUser->exists()) {
+                        $blogPost = $app->bearCMS->data->blogPosts->get(substr($slug, 6));
+                        if ($blogPost !== null) {
+                            $blogPostID = $blogPost['id'];
+                        }
+                    }
+                    if ($blogPostID !== false) {
+                        $blogPost = $app->bearCMS->data->blogPosts->get($blogPostID);
+                        if ($blogPost !== null) {
+                            $content = '<html><head>';
+                            $title = isset($blogPost->titleTagContent) ? trim($blogPost->titleTagContent) : '';
+                            if (!isset($title{0})) {
+                                $title = isset($blogPost->title) ? trim($blogPost->title) : '';
+                            }
+                            $description = isset($blogPost->descriptionTagContent) ? trim($blogPost->descriptionTagContent) : '';
+                            $keywords = isset($blogPost->keywordsTagContent) ? trim($blogPost->keywordsTagContent) : '';
+                            if (isset($title{0})) {
+                                $content .= '<title>' . htmlspecialchars($title) . '</title>';
+                            }
+                            if (isset($description{0})) {
+                                $content .= '<meta name="description" content="' . htmlentities($description) . '"/>';
+                            }
+                            if (isset($keywords{0})) {
+                                $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
+                            }
+                            $content .= '</head><body>';
+                            $content .= '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1></div>';
+                            $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? \BearCMS\Internal\Localization::getDate($blogPost['publishedTime']) : 'draft') . '</div></div>';
+                            $content .= '<div class="bearcms-blogpost-page-content"><component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/></div>';
+                            $content .= '</body></html>';
+
+                            $app->hooks->execute('bearCMSBlogPostPageContentCreated', $content, $blogPostID);
+
+                            $response = new App\Response\HTML($app->components->process($content));
+                            $app->hooks->execute('bearCMSResponseCreated', $response);
+                            $app->bearCMS->apply($response);
+                            return $response;
+                        }
+                    }
+                }
+            ])
+            ->add(Options::$blogPagesPathPrefix . '?', [
+                [$app->bearCMS, 'disabledCheck'],
+                function() use ($app) {
+                    return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
+                }
+    ]);
+    $app->serverRequests
+            ->add('bearcms-blogposts-load-more', function($data) use ($app, $context) {
+                if (isset($data['serverData'], $data['serverData'])) {
+                    $serverData = \BearCMS\Internal\TempClientData::get($data['serverData']);
+                    if (is_array($serverData) && isset($serverData['componentHTML'])) {
+                        $content = $app->components->process($serverData['componentHTML']);
+                        return json_encode([
+                            'content' => $content
+                        ]);
+                    }
+                }
+            });
+}
+
+// Register a home page and the dynamic pages handler
+if (Options::hasFeature('PAGES')) {
+    $app->routes
+            ->add('*', [
+                [$app->bearCMS, 'disabledCheck'],
+                function() use ($app) {
+                    $path = (string) $app->request->path;
+                    //echo $path."\n\n";
+                    if ($path === '/') {
+                        if (Options::$autoCreateHomePage) {
+                            $pageID = 'home';
+                        } else {
+                            $pageID = false;
+                        }
+                    } else {
+                        $hasSlash = substr($path, -1) === '/';
+                        $pathsList = InternalData\Pages::getPathsList((Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
+                        array_walk($pathsList, function(&$value) {
+                                    $value = implode('/', array_map('urlencode', explode('/', $value)));
+                                });
+                                //print_r($pathsList);exit;
+                        if ($hasSlash) {
+                            $pageID = array_search($path, $pathsList);
+                        } else {
+                            $pageID = array_search($path . '/', $pathsList);
+                            if ($pageID !== false) {
+                                return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
+                            }
+                        }
+                    }
+                    if ($pageID !== false) {
+                        $response = $app->bearCMS->disabledCheck();
+                        if ($response !== null) {
+                            return $response;
+                        }
+                        $found = false;
+                        if ($pageID === 'home') {
+                            $settings = $app->bearCMS->data->settings->get();
+                            $title = trim($settings->title);
+                            $description = trim($settings->description);
+                            $keywords = trim($settings->keywords);
+                            $found = true;
+                        } else {
+                            $page = $app->bearCMS->data->pages->get($pageID);
+                            if ($page !== null) {
+                                $title = isset($page->titleTagContent) ? trim($page->titleTagContent) : '';
+                                if (!isset($title{0})) {
+                                    $title = isset($page->name) ? trim($page->name) : '';
+                                }
+                                $description = isset($page->descriptionTagContent) ? trim($page->descriptionTagContent) : '';
+                                $keywords = isset($page->keywordsTagContent) ? trim($page->keywordsTagContent) : '';
+                                $found = true;
+                            }
+                        }
+                        if ($found) {
+                            $content = '<html><head>';
+                            if (isset($title{0})) {
+                                $content .= '<title>' . htmlspecialchars($title) . '</title>';
+                            }
+                            if (isset($description{0})) {
+                                $content .= '<meta name="description" content="' . htmlentities($description) . '"/>';
+                            }
+                            if (isset($keywords{0})) {
+                                $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
+                            }
+                            $content .= '</head><body>';
+                            $content .= '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
+                            $content .= '</body></html>';
+
+                            $app->hooks->execute('bearCMSPageContentCreated', $content, $pageID);
+
+                            $response = new App\Response\HTML($app->components->process($content));
+                            $app->hooks->execute('bearCMSResponseCreated', $response);
+                            $app->bearCMS->apply($response);
+                            return $response;
                         }
                     }
                 }
     ]);
+}
 
-    if (Options::hasFeature('COMMENTS')) {
-        $app->serverRequests->add('bearcms-comments-load-more', function($data) use ($app, $context) {
-            if (isset($data['serverData'], $data['listElementID'], $data['listCommentsCount'])) {
-                $listElementID = (string) $data['listElementID'];
-                $listCommentsCount = (int) $data['listCommentsCount'];
-                $serverData = \BearCMS\Internal\TempClientData::get($data['serverData']);
-                if (is_array($serverData) && isset($serverData['threadID'])) {
-                    $threadID = $serverData['threadID'];
-                    $listContent = $app->components->process('<component src="file:' . $context->dir . '/components/bearcmsCommentsElement/commentsList.php" count="' . htmlentities($listCommentsCount) . '" threadID="' . htmlentities($threadID) . '" />');
-                    return json_encode([
-                        'listElementID' => $listElementID,
-                        'listContent' => $listContent
-                    ]);
-                }
-            }
-        });
-    }
-
-    if (Options::hasFeature('FORUMS')) {
-        $app->routes
-                ->add('/f/?/', [
-                    [$app->bearCMS, 'disabledCheck'],
-                    function() use ($app, $context) {
-                        $forumCategoryID = $app->request->path->getSegment(1);
-                        $forumCategory = $app->bearCMS->data->forumCategories->get($forumCategoryID);
-                        if ($forumCategory !== null) {
-                            $content = '<html>';
-                            $content .= '<head>';
-                            $content .= '<title>' . sprintf(__('bearcms.New post in %s'), htmlspecialchars($forumCategory->name)) . '</title>';
-                            $content .= '</head>';
-                            $content .= '<body>';
-                            $content .= '<div class="bearcms-forum-post-page-title-container"><h1 class="bearcms-forum-post-page-title">' . sprintf(__('bearcms.New post in %s'), htmlspecialchars($forumCategory->name)) . '</h1></div>';
-                            $content .= '<div class="bearcms-forum-post-page-content">';
-                            $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsForumPostsElement/forumPostNewForm.php" categoryID="' . htmlentities($forumCategoryID) . '" />';
-                            $content .= '</div>';
-                            $content .= '</body>';
-                            $content .= '</html>';
-                            $response = new App\Response\HTML($content); //$app->components->process()
-                            $app->bearCMS->enableUI($response);
-                            $app->bearCMS->applyTheme($response);
-                            $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex'));
-                            return $response;
-                        }
-                    }
-                ])
-                ->add('/f/?/?/', [
-                    [$app->bearCMS, 'disabledCheck'],
-                    function() use ($app, $context) {
-                        $forumPostSlug = $app->request->path->getSegment(1); // todo validate
-                        $forumPostID = $app->request->path->getSegment(2);
-                        $forumPost = $app->bearCMS->data->forumPosts->get($forumPostID);
-                        if ($forumPost !== null) {
-                            $content = '<html>';
-                            $content .= '<head>';
-                            $content .= '<title>' . htmlspecialchars($forumPost->title) . '</title>';
-                            $content .= '</head>';
-                            $content .= '<body>';
-                            $content .= '<div class="bearcms-forum-post-page-title-container"><h1 class="bearcms-forum-post-page-title">' . htmlspecialchars($forumPost->title) . '</h1></div>';
-                            //$content .= '<div class="bearcms-forum-post-page-date-container"><div class="bearcms-forum-post-page-date">' . BearCMS\Internal\Localization::getDate($forumPost->createdTime) . '</div></div>';
-                            $content .= '<div class="bearcms-forum-post-page-content">';
-                            $content .= '<component src="file:' . $context->dir . '/components/bearcmsForumPostsElement/forumPostRepliesList.php" includePost="true" forumPostID="' . htmlentities($forumPost->id) . '" />';
-                            $content .= '</div>';
-                            $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsForumPostsElement/forumPostReplyForm.php" forumPostID="' . htmlentities($forumPost->id) . '" />';
-                            $content .= '</body>';
-                            $content .= '</html>';
-                            $response = new App\Response\HTML($content);
-                            $app->bearCMS->enableUI($response);
-                            $app->bearCMS->applyTheme($response);
-                            $response->bearCMSForumPostID = $forumPost->id;
-                            return $response;
-                        }
-                    }
-        ]);
-        $app->serverRequests->add('bearcms-forumposts-load-more', function($data) use ($app, $context) {
-            if (isset($data['serverData'], $data['serverData'])) {
-                $serverData = \BearCMS\Internal\TempClientData::get($data['serverData']);
-                if (is_array($serverData) && isset($serverData['componentHTML'])) {
-                    $content = $app->components->process($serverData['componentHTML']);
-                    return json_encode([
-                        'content' => $content
-                    ]);
-                }
-            }
-        });
-    }
-
-    if (Options::hasFeature('BLOG')) {
-        $app->routes
-                ->add(Options::$blogPagesPathPrefix . '?/', [
-                    [$app->bearCMS, 'disabledCheck'],
-                    function() use ($app) {
-                        $slug = (string) $app->request->path->getSegment(1);
-                        $slugsList = InternalData\BlogPosts::getSlugsList('published');
-                        $blogPostID = array_search($slug, $slugsList);
-                        if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) && $app->bearCMS->currentUser->exists()) {
-                            $blogPost = $app->bearCMS->data->blogPosts->get(substr($slug, 6));
-                            if ($blogPost !== null) {
-                                $blogPostID = $blogPost['id'];
-                            }
-                        }
-                        if ($blogPostID !== false) {
-                            $blogPost = $app->bearCMS->data->blogPosts->get($blogPostID);
-                            if ($blogPost !== null) {
-                                $content = '<html><head>';
-                                $title = isset($blogPost->titleTagContent) ? trim($blogPost->titleTagContent) : '';
-                                if (!isset($title{0})) {
-                                    $title = isset($blogPost->title) ? trim($blogPost->title) : '';
-                                }
-                                $description = isset($blogPost->descriptionTagContent) ? trim($blogPost->descriptionTagContent) : '';
-                                $keywords = isset($blogPost->keywordsTagContent) ? trim($blogPost->keywordsTagContent) : '';
-                                $content .= '<title>' . htmlspecialchars($title) . '</title>';
-                                $content .= '<meta name="description" content="' . htmlentities($description) . '"/>';
-                                $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
-                                $content .= '</head><body>';
-                                $content .= '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1></div>';
-                                $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? \BearCMS\Internal\Localization::getDate($blogPost['publishedTime']) : 'draft') . '</div></div>';
-                                $content .= '<div class="bearcms-blogpost-page-content"><component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/></div>';
-                                $content .= '</body></html>';
-                                $response = new App\Response\HTML($content);
-                                $response->bearCMSBlogPostID = $blogPostID;
-                                $app->bearCMS->enableUI($response);
-                                $app->bearCMS->applyTheme($response);
-                                return $response;
-                            }
-                        }
-                    }
-                ])
-                ->add(Options::$blogPagesPathPrefix . '?', [
-                    [$app->bearCMS, 'disabledCheck'],
-                    function() use ($app) {
-                        return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
-                    }
-        ]);
-        $app->serverRequests->add('bearcms-blogposts-load-more', function($data) use ($app, $context) {
-            if (isset($data['serverData'], $data['serverData'])) {
-                $serverData = \BearCMS\Internal\TempClientData::get($data['serverData']);
-                if (is_array($serverData) && isset($serverData['componentHTML'])) {
-                    $content = $app->components->process($serverData['componentHTML']);
-                    return json_encode([
-                        'content' => $content
-                    ]);
-                }
-            }
-        });
-    }
-
-    // Register a home page and the dynamic pages handler
-    if (Options::hasFeature('PAGES')) {
-        $app->routes
-                ->add('*', [
-                    [$app->bearCMS, 'disabledCheck'],
-                    function() use ($app) {
-                        $path = (string) $app->request->path;
-                        if ($path === '/') {
-                            if (Options::$autoCreateHomePage) {
-                                $pageID = 'home';
-                            } else {
-                                $pageID = false;
-                            }
-                        } else {
-                            $hasSlash = substr($path, -1) === '/';
-                            $pathsList = InternalData\Pages::getPathsList((Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
-                            if ($hasSlash) {
-                                $pageID = array_search($path, $pathsList);
-                            } else {
-                                $pageID = array_search($path . '/', $pathsList);
-                                if ($pageID !== false) {
-                                    return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
-                                }
-                            }
-                        }
-                        if ($pageID !== false) {
-                            $response = $app->bearCMS->disabledCheck();
-                            if ($response !== null) {
-                                return $response;
-                            }
-                            $found = false;
-                            if ($pageID === 'home') {
-                                $settings = $app->bearCMS->data->settings->get();
-                                $title = trim($settings->title);
-                                $description = trim($settings->description);
-                                $keywords = trim($settings->keywords);
-                                $found = true;
-                            } else {
-                                $page = $app->bearCMS->data->pages->get($pageID);
-                                if ($page !== null) {
-                                    $title = isset($page->titleTagContent) ? trim($page->titleTagContent) : '';
-                                    if (!isset($title{0})) {
-                                        $title = isset($page->name) ? trim($page->name) : '';
-                                    }
-                                    $description = isset($page->descriptionTagContent) ? trim($page->descriptionTagContent) : '';
-                                    $keywords = isset($page->keywordsTagContent) ? trim($page->keywordsTagContent) : '';
-                                    $found = true;
-                                }
-                            }
-                            if ($found) {
-                                $content = '<html><head>';
-                                $content .= '<title>' . htmlspecialchars($title) . '</title>';
-                                $content .= '<meta name="description" content="' . htmlentities($description) . '"/>';
-                                $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
-                                $content .= '</head><body>';
-                                $content .= '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
-                                $content .= '</body></html>';
-                                $response = new App\Response\HTML($content);
-                                $response->bearCMSPageID = $pageID;
-                                $app->bearCMS->enableUI($response);
-                                $app->bearCMS->applyTheme($response);
-                                return $response;
-                            }
-                        }
-                    }
-        ]);
-    }
-
-    $app->serverRequests->add('bearcms-elements-load-more', function($data) use ($app, $context, $getEditableElementsHtml) {
-        if (isset($data['serverData'])) {
-            $serverData = \BearCMS\Internal\TempClientData::get($data['serverData']);
-            if (is_array($serverData) && isset($serverData['componentHTML'])) {
-                $content = $app->components->process($serverData['componentHTML']);
-                $editorContent = $getEditableElementsHtml(true);
-                return json_encode([
-                    'content' => $content,
-                    'editorContent' => (isset($editorContent[0]) ? $editorContent : ''),
-                    'nextLazyLoadData' => (string) ElementsHelper::$lastLoadMoreServerData
-                ]);
-            }
-        }
-    });
-});
-
-$componentCreatedStatus = [];
-// Updates the Bear CMS components when created
 if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
     $app->hooks
-            ->add('componentCreated', function($component) use ($app, &$componentCreatedStatus) {
+            ->add('componentCreated', function($component) {
+                // Updates the Bear CMS components when created
                 if ($component->src === 'bearcms-elements') {
                     ElementsHelper::updateContainerComponent($component);
-
-//            $componentHTML = (string) $component;
-//            $cacheKey = 'bearcms-elements-' . $componentHTML;
-//            if (!isset($componentCreatedStatus[$cacheKey])) {
-//                $content = $app->cache->getValue($cacheKey);
-//                if ($content === null) {
-//                    $componentCreatedStatus[$cacheKey] = 1;
-//                    $content = $app->components->process($componentHTML);
-//                    unset($componentCreatedStatus[$cacheKey]);
-//                    $app->cache->set($app->cache->make($cacheKey, $content));
-//                }
-//                $component->src = 'data:base64,' . base64_encode($content);
-//            }
                 } elseif (isset(BearCMS\Internal\ElementsHelper::$elementsTypesFilenames[$component->src])) {
                     $component->setAttribute('bearcms-internal-attribute-type', BearCMS\Internal\ElementsHelper::$elementsTypesCodes[$component->src]);
                     $component->setAttribute('bearcms-internal-attribute-filename', BearCMS\Internal\ElementsHelper::$elementsTypesFilenames[$component->src]);
                     ElementsHelper::updateElementComponent($component);
-
-//            $componentHTML = (string) $component;
-//            $cacheKey = 'bearcms-elements-' . $componentHTML;
-//            if (!isset($componentCreatedStatus[$cacheKey])) {
-//                $content = $app->cache->getValue($cacheKey);
-//                if ($content === null) {
-//                    $componentCreatedStatus[$cacheKey] = 1;
-//                    $content = $app->components->process($componentHTML);
-//                    unset($componentCreatedStatus[$cacheKey]);
-//                    $app->cache->set($app->cache->make($cacheKey, $content));
-//                }
-//                $component->src = 'data:base64,' . base64_encode($content);
-//            }
+                }
+            });
+    $app->serverRequests
+            ->add('bearcms-elements-load-more', function($data) use ($app) {
+                if (isset($data['serverData'])) {
+                    $serverData = \BearCMS\Internal\TempClientData::get($data['serverData']);
+                    if (is_array($serverData) && isset($serverData['componentHTML'])) {
+                        $content = $app->components->process($serverData['componentHTML']);
+                        $editorContent = ElementsHelper::getEditableElementsHtml();
+                        return json_encode([
+                            'content' => $content,
+                            'editorContent' => (isset($editorContent[0]) ? $editorContent : ''),
+                            'nextLazyLoadData' => (string) ElementsHelper::$lastLoadMoreServerData
+                        ]);
+                    }
                 }
             });
 }
@@ -827,39 +792,37 @@ if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
 $app->hooks
         ->add('responseCreated', function($response) use ($app) {
             if ($response instanceof App\Response\NotFound) {
-                $app->bearCMS->enableUI($response);
-                $app->bearCMS->applyTheme($response);
                 $response->headers->set($response->headers->make('Content-Type', 'text/html'));
+                $app->bearCMS->apply($response);
             } elseif ($response instanceof App\Response\TemporaryUnavailable) {
-                $app->bearCMS->enableUI($response);
-                $app->bearCMS->applyTheme($response);
                 $response->headers->set($response->headers->make('Content-Type', 'text/html'));
-            } elseif ($app->request->path === '/' && $response instanceof App\Response\HTML) {
-                $app->bearCMS->enableUI($response);
-                $app->bearCMS->applyTheme($response);
+                $app->bearCMS->apply($response);
             }
         })
-        ->add('assetPrepare', function($data) use ($app, $context) {
+        ->add('assetPrepare', function($filename, $options, &$returnValue, &$preventDefault) use ($app, $context) { // Download the server files
             $serverUrl = \BearCMS\Internal\Options::$serverUrl;
             $matchingDir = $context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 's' . DIRECTORY_SEPARATOR;
-            if (strpos($data->filename, $matchingDir) === 0) {
-                $fileServerUrl = $serverUrl . str_replace('\\', '/', str_replace($matchingDir, '', $data->filename));
-                $data->filename = null;
+            if (strpos($filename, $matchingDir) === 0) {
+                $preventDefault = true;
+                $fileServerUrl = $serverUrl . str_replace('\\', '/', str_replace($matchingDir, '', $filename));
+                $returnValue = null;
                 $fileInfo = pathinfo($fileServerUrl);
                 if (isset($fileInfo['extension'])) {
                     $tempFileKey = '.temp/bearcms/serverfiles/' . md5($fileServerUrl) . '.' . $fileInfo['extension'];
                     $tempFilename = $app->data->getFilename($tempFileKey);
-                    if ($app->data->exists($tempFileKey)) {
-                        $data->filename = $tempFilename;
+                    if ($app->data->exists($tempFileKey) && false) {
+                        $returnValue = $tempFilename;
                     } else {
                         $ch = curl_init();
                         curl_setopt($ch, CURLOPT_URL, $fileServerUrl);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
                         $response = curl_exec($ch);
-                        if ((int) curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200) {
+                        if ((int) curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200 && strlen($response) > 0) {
                             $app->data->set($app->data->make($tempFileKey, $response));
-                            $data->filename = $tempFilename;
+                            $returnValue = $tempFilename;
+                        } else {
+                            throw new Exception('Cannot download Bear CMS Server file (' . $fileServerUrl . ')');
                         }
                         curl_close($ch);
                     }
@@ -871,155 +834,12 @@ if (!(isset($options['addDefaultThemes']) && $options['addDefaultThemes'] === fa
     require $context->dir . '/themes/theme1/index.php';
 }
 
-$app->hooks
-        ->add('initialized', function() use ($app) {
-            $currentThemeID = $app->bearCMS->currentTheme->getID();
-            $app->bearCMS->themes->initialize($currentThemeID);
-            if ($app->bearCMS->currentUser->exists()) {
-                $app->bearCMS->themes->initializeAll();
-            }
-        })
-        ->add('responseCreated', function($response) use ($app, $context, $getEditableElementsHtml) {
-            if (!isset($response->enableBearCMSUI)) {
-                return;
-            }
-            $app->bearCMS->themes->apply($response);
-
-            $componentContent = '<html><head>';
-
-            $currentUserExists = Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) ? $app->bearCMS->currentUser->exists() : false;
-            $settings = $app->bearCMS->data->settings->get();
-            if (!$response->headers->exists('Cache-Control')) {
-                $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0, no-cache, no-store'));
-            }
-            $componentContent .= '<meta name="generator" content="Bear Framework v' . App::VERSION . ', Bear CMS v' . \BearCMS::VERSION . '"/>';
-            $icon = $settings['icon'];
-            if (isset($icon{0})) {
-                $baseUrl = $app->urls->get();
-                $componentContent .= '<link rel="apple-touch-icon" sizes="57x57" href="' . htmlentities($baseUrl . '-link-rel-icon-57') . '">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="60x60" href="' . htmlentities($baseUrl . '-link-rel-icon-60') . '">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="72x72" href="' . htmlentities($baseUrl . '-link-rel-icon-72') . '">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="76x76" href="' . htmlentities($baseUrl . '-link-rel-icon-76') . '">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="114x114" href="' . htmlentities($baseUrl . '-link-rel-icon-114') . '">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="120x120" href="' . htmlentities($baseUrl . '-link-rel-icon-120') . '">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="144x144" href="' . htmlentities($baseUrl . '-link-rel-icon-144') . '">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="152x152" href="' . htmlentities($baseUrl . '-link-rel-icon-152') . '">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="180x180" href="' . htmlentities($baseUrl . '-link-rel-icon-180') . '">';
-                $componentContent .= '<link rel="icon" sizes="32x32" href="' . htmlentities($baseUrl . '-link-rel-icon-32') . '">';
-                $componentContent .= '<link rel="icon" sizes="192x192" href="' . htmlentities($baseUrl . '-link-rel-icon-192') . '">';
-                $componentContent .= '<link rel="icon" sizes="96x96" href="' . htmlentities($baseUrl . '-link-rel-icon-96') . '">';
-                $componentContent .= '<link rel="icon" sizes="16x16" href="' . htmlentities($baseUrl . '-link-rel-icon-16') . '">';
-            } else if ($currentUserExists) {
-                $componentContent .= '<link rel="apple-touch-icon" sizes="57x57" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="60x60" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="72x72" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="76x76" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="114x114" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="120x120" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="144x144" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="152x152" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-                $componentContent .= '<link rel="apple-touch-icon" sizes="180x180" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-                $componentContent .= '<link rel="icon" sizes="32x32" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-                $componentContent .= '<link rel="icon" sizes="192x192" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-                $componentContent .= '<link rel="icon" sizes="96x96" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-                $componentContent .= '<link rel="icon" sizes="16x16" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            }
-            if (empty($settings['allowSearchEngines'])) {
-                $componentContent .= '<meta name="robots" content="noindex">';
-            }
-            $componentContent .= '<link rel="canonical" href="' . htmlentities(rtrim($app->request->base . $app->request->path, '/') . '/') . '"/>';
-            if ($settings['enableRSS']) {
-                $componentContent .= '<link rel="alternate" type="application/rss+xml" title="' . (isset($settings['title']) ? trim($settings['title']) : '') . '" href="' . $app->request->base . '/rss.xml" />';
-            }
-            $componentContent .= '</head><body>';
-
-            if ($response instanceof \BearFramework\App\Response\HTML) { // is not temporary disabled
-                $externalLinksAreEnabled = !empty($settings['externalLinks']);
-                if ($externalLinksAreEnabled || $currentUserExists) {
-                    $componentContent .= '<script id="bearcms-bearframework-addon-script-10" src="' . htmlentities($context->assets->getUrl('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
-                }
-            }
-            $componentContent .= '</body></html>';
-
-            $domDocument = new HTML5DOMDocument();
-            $domDocument->loadHTML($componentContent);
-            $domDocument->insertHTML($response->content);
-            $response->content = $app->components->process($domDocument->saveHTML()); // Needed to fill $editorData
-
-            if (!$currentUserExists) {
-                return;
-            }
-
-            $serverCookies = Cookies::getList(Cookies::TYPE_SERVER);
-            if (!empty($serverCookies['tmcs']) || !empty($serverCookies['tmpr'])) {
-                ElementsHelper::$editorData = [];
-            }
-
-            $requestArguments = [];
-            $requestArguments['hasEditableElements'] = empty(ElementsHelper::$editorData) ? '0' : '1';
-            $requestArguments['hasEditableContainers'] = '0';
-            $requestArguments['isDisabled'] = $settings->disabled ? '1' : '0';
-            foreach (ElementsHelper::$editorData as $itemData) {
-                if ($itemData[0] === 'container') {
-                    $requestArguments['hasEditableContainers'] = '1';
-                }
-            }
-
-            $cacheKey = json_encode([
-                'adminUI',
-                $app->request->base,
-                $requestArguments,
-                $app->bearCMS->currentUser->getSessionKey(),
-                $app->bearCMS->currentUser->getPermissions(),
-                get_class_vars('\BearCMS\Internal\Options'),
-                $serverCookies
-            ]);
-
-            $adminUIData = $app->cache->getValue($cacheKey);
-            if (!is_array($adminUIData)) {
-                $adminUIData = Server::call('adminui', $requestArguments, true);
-                $cacheItem = $app->cache->make($cacheKey, $adminUIData);
-                $cacheItem->ttl = is_array($adminUIData) && isset($adminUIData['result']) ? 99999 : 10;
-                $app->cache->set($cacheItem);
-            }
-            // The user does not exists on the server
-            if (is_array($adminUIData) && isset($adminUIData['result']) && $adminUIData['result'] === 'noUser') {
-                $app->bearCMS->currentUser->logout();
-                return;
-            }
-
-            if (is_array($adminUIData) && isset($adminUIData['result']) && is_array($adminUIData['result']) && isset($adminUIData['result']['content']) && strlen($adminUIData['result']['content']) > 0) {
-                $content = $adminUIData['result']['content'];
-                $contentToInsert = $getEditableElementsHtml();
-                // It's needed even when there is no editable zone on the current page (editing a blog post for instance)
-                $domDocument = new HTML5DOMDocument();
-                $domDocument->loadHTML($content);
-                $htmlToInsert = [];
-                if (isset($contentToInsert[0])) {
-                    $htmlToInsert[] = ['source' => $contentToInsert];
-                }
-                $htmlToInsert[] = ['source' => '<html><body><script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script></body></html>'];
-                $domDocument->insertHTMLMulti($htmlToInsert);
-                $content = $domDocument->saveHTML();
-
-                $content = Server::updateAssetsUrls($content, false);
-                if (strpos($content, '{body}') !== false) {
-                    $content = str_replace('{body}', '<component src="data:base64,' . base64_encode($response->content) . '"/>', $content);
-                } elseif (strpos($content, '{jsonEncodedBody}') !== false) {
-                    $content = str_replace('{jsonEncodedBody}', json_encode($app->components->process($response->content)), $content);
-                }
-                $response->content = $content; //$app->components->process();
-            } else {
-                //$response = new App\Response\TemporaryUnavailable();
-            }
-        }, ['priority' => 900]);
-
 if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*'))) {
     $app->hooks
             ->add('responseCreated', function($response) use ($app) {
                 Cookies::apply($response);
-                if (\BearCMS\Internal\Data::$hasContentChange) {
+                if (InternalData::$hasContentChange) {
                     $app->hooks->execute('bearCMSContentChanged');
                 }
-            }, ['priority' => 902]);
+            });
 }

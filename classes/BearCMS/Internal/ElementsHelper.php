@@ -285,7 +285,7 @@ final class ElementsHelper
             }
 
             $columnWidth = rtrim(rtrim(number_format($columnsSizes[$i] / $totalSize * 100, 3, '.', ''), 0), '.') . '%';
-            $columnStyle = 'width:calc(' . $columnWidth . ' - (' . $spacing . '*' . ($columnsCount - 1) . '/' . $columnsCount . '));';
+            $columnStyle = 'flex:' . $columnsSizes[$i] . ' 0 auto;max-width:calc(' . $columnWidth . ' - (' . $spacing . '*' . ($columnsCount - 1) . '/' . $columnsCount . '));';
             if ($columnsCount > $i + 1) {
                 $columnStyle .= 'margin-right:' . $spacing . ';';
             }
@@ -306,6 +306,7 @@ final class ElementsHelper
             $attributes .= ' data-srvri="t2 s' . $spacing . '"'; // data-responsive-attributes="w<=500=>data-srvri-vertical=1"
 
             $styles = '';
+            $styles .= '.' . $className . '[data-srvri~="t2"]{display:flex !important;}';
             $styles .= '.' . $className . '[data-srvri-vertical="1"]>div{display:block !important;width:100% !important;margin-right:0 !important;}';
             $styles .= '.' . $className . '[data-srvri-vertical="1"]>div:not(:empty):not(:last-child){margin-bottom:' . $spacing . ' !important;}';
             $styles .= '.' . $className . '[data-rvr-editable][data-srvri-vertical="1"]>div:not(:last-child){margin-bottom:' . $spacing . ' !important;}';
@@ -491,6 +492,41 @@ final class ElementsHelper
             }
         }
         return $result;
+    }
+
+    static function getEditableElementsHtml()
+    {
+        $app = App::get();
+        $html = '';
+        if ((Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) && !empty(self::$editorData)) {
+            $requestArguments = [];
+            $requestArguments['data'] = json_encode(self::$editorData);
+            $cacheKey = json_encode([
+                'elementsEditor',
+                $app->request->base,
+                $requestArguments,
+                $app->bearCMS->currentUser->getSessionKey(),
+                $app->bearCMS->currentUser->getPermissions(),
+                get_class_vars('\BearCMS\Internal\Options'),
+                Cookies::getList(Cookies::TYPE_SERVER),
+                2, //version
+            ]);
+            $elementsEditorData = $app->cache->getValue($cacheKey);
+            if (!is_array($elementsEditorData)) {
+                $elementsEditorData = Server::call('elementseditor', $requestArguments, true);
+                $cacheItem = $app->cache->make($cacheKey, $elementsEditorData);
+                $cacheItem->ttl = is_array($elementsEditorData) && isset($elementsEditorData['result']) ? 99999 : 10;
+                $app->cache->set($cacheItem);
+            }
+
+            if (is_array($elementsEditorData) && isset($elementsEditorData['result']) && is_array($elementsEditorData['result']) && isset($elementsEditorData['result']['content'])) {
+                $html = $elementsEditorData['result']['content'];
+                $html = Server::updateAssetsUrls($html, false);
+            } else {
+                //$response = new App\Response\TemporaryUnavailable();
+            }
+        }
+        return $html;
     }
 
 }
