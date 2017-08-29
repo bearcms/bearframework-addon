@@ -191,8 +191,10 @@ final class Controller
         $app = App::get();
         $urls = [];
         $baseUrl = $app->request->base;
+
         $addUrl = function($path) use (&$urls, $baseUrl) {
-            $urls[] = '<url><loc>' . $baseUrl . $path . '</loc></url>';
+            $encodedPath = implode('/', array_map('urlencode', explode('/', $path)));
+            $urls[] = '<url><loc>' . $baseUrl . $encodedPath . '</loc></url>';
         };
         $addUrl('/');
 
