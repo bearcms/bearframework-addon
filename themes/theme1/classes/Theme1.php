@@ -17,8 +17,9 @@ class Theme1
 
     static function initialize(App $app, Context $context)
     {
-        $context->assets->addDir('themes/theme1/assets');
-        
+        $context->assets
+                ->addDir('themes/theme1/assets');
+
         $app->localization
                 ->addDictionary('en', function() use ($context) {
                     return include $context->dir . '/themes/theme1/locales/en.php';
