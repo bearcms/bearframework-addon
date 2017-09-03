@@ -67,7 +67,13 @@ final class Controller
             $pathinfo = pathinfo($filename);
             if (isset($pathinfo['dirname'])) {
                 if (!is_dir($pathinfo['dirname'])) {
-                    mkdir($pathinfo['dirname'], 0777, true);
+                    try {
+                        mkdir($pathinfo['dirname'], 0777, true);
+                    } catch (\Exception $e) {
+                        if ($e->getMessage() !== 'mkdir(): File exists') { // The directory may be just created in other process.
+                            throw $e;
+                        }
+                    }
                 }
             }
             move_uploaded_file($file->filename, $filename);
