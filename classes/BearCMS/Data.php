@@ -57,7 +57,7 @@ class Data
             },
             'readonly' => true
         ]);
-            $this->defineProperty('forumCategories', [
+        $this->defineProperty('forumCategories', [
             'init' => function() {
                 return new \BearCMS\Data\ForumCategories();
             },
@@ -126,6 +126,15 @@ class Data
             }
         }
         return $filename;
+    }
+
+    /**
+     * 
+     * @return int
+     */
+    public function getUploadsSize()
+    {
+        return \BearCMS\Internal\Data\UploadsSize::getSize();
     }
 
 }
