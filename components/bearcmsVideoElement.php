@@ -46,13 +46,24 @@ if (strlen($component->url) > 0) {
     $aspectRatio = 0.75;
     $cacheKey = 'bearcms-video-element-data-' . md5($component->url) . '-2';
     $cachedData = $app->cache->getValue($cacheKey);
-    if ($cachedData === null) {
+    if (is_array($cachedData)) {
+        $html = $cachedData['html'];
+        $aspectRatio = $cachedData['aspectRatio'];
+    } else {
         $tempDataKey = '.temp/bearcms/videoelementdata/' . md5($component->url);
         $tempData = $app->data->getValue($tempDataKey);
-        if ($tempData === null) {
+        if ($tempData !== null) {
+            $tempData = json_decode($tempData, true);
+        }
+        if (is_array($tempData)) {
+            $html = $tempData['html'];
+            $aspectRatio = $tempData['aspectRatio'];
+        } else {
             try {
                 $embed = new IvoPetkov\VideoEmbed($component->url);
-                $aspectRatio = $embed->width / $embed->height;
+                if ($embed->width > 0 && $embed->height) {
+                    $aspectRatio = $embed->width / $embed->height;
+                }
                 $embed->setSize('100%', '100%');
                 $html = $embed->html;
             } catch (\Exception $e) {
@@ -61,19 +72,12 @@ if (strlen($component->url) > 0) {
             if ($html !== '') {
                 $app->data->set($app->data->make($tempDataKey, json_encode(['html' => $html, 'aspectRatio' => $aspectRatio])));
             }
-        } else {
-            $tempData = json_decode($tempData, true);
-            $html = $tempData['html'];
-            $aspectRatio = $tempData['aspectRatio'];
         }
         $cacheItem = $app->cache->make($cacheKey, ['html' => $html, 'aspectRatio' => $aspectRatio]);
         if ($html === '') {
             $cacheItem->ttl = 60;
         }
         $app->cache->set($cacheItem);
-    } else {
-        $html = $cachedData['html'];
-        $aspectRatio = $cachedData['aspectRatio'];
     }
     if ($html !== '') {
         $content = '<div style="position:absolute;top:0;left:0;width:100%;height:100%;">' . $html . '</div>';
