@@ -23,6 +23,7 @@ class UploadsSize
         $dataKey = 'bearcms/uploadssize.json';
         $app->data->set($app->data->make($dataKey, json_encode($data)));
         \BearCMS\Internal\Data::setChanged($dataKey);
+        $app->hooks->execute('bearCMSUploadsSizeChanged');
     }
 
     static function remove($key)
@@ -35,6 +36,7 @@ class UploadsSize
             $dataKey = 'bearcms/uploadssize.json';
             $app->data->set($app->data->make($dataKey, json_encode($data)));
             \BearCMS\Internal\Data::setChanged($dataKey);
+            $app->hooks->execute('bearCMSUploadsSizeChanged');
         }
     }
 
