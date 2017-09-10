@@ -139,7 +139,7 @@ class BearCMS
         $domDocument->insertHTML($response->content, 'afterBodyBegin');
         $response->content = $domDocument->saveHTML();
 
-        $app->users->enableUI($response);
+        $app->users->applyUI($response);
     }
 
     public function applyAdminUI(Response $response): void

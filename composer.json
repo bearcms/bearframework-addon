@@ -16,7 +16,7 @@
         "ivopetkov/html-server-components-bearframework-addon": "0.2.*|0.3.*|0.4.*|0.5.*@beta",
         "ivopetkov/image-gallery-bearframework-addon": "0.1.*@beta",
         "ivopetkov/navigation-menu-bearframework-addon": "0.1.*@beta",
-        "ivopetkov/users-bearframework-addon": "0.1.*",
+        "ivopetkov/users-bearframework-addon": "0.2.*",
         "ivopetkov/server-requests-bearframework-addon": "0.3.*@beta",
         "ivopetkov/video-embed": "0.1.*",
         "ivopetkov/html5-dom-document-php": "0.3.*|0.4.*|0.5.*",
