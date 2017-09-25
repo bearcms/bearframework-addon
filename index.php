@@ -453,6 +453,60 @@ if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature
     }
 }
 
+$generateMetaTags = function($content, $generateTitle, $generateDescription, $generateKeywords) {
+    $result = '';
+    $domDocument = new HTML5DOMDocument();
+    $domDocument->loadHTML($content);
+    if ($generateTitle) {
+        $h1Element = $domDocument->querySelector('h1');
+        if ($h1Element !== null) {
+            $innerHTML = $h1Element->innerHTML;
+            if (isset($innerHTML{0})) {
+                $result .= '<title>' . $innerHTML . '</title>';
+            }
+        }
+    }
+    if ($generateDescription || $generateKeywords) {
+        $bodyElement = $domDocument->querySelector('body');
+        if ($bodyElement !== null) {
+            $scriptTags = $bodyElement->querySelectorAll('script');
+            foreach ($scriptTags as $scriptElement) {
+                $scriptElement->parentNode->removeChild($scriptElement);
+            }
+            $textContent = $bodyElement->innerHTML;
+            $textContent = preg_replace('/<.*?>/', ' $0 ', $textContent);
+            $textContent = preg_replace('/\s/', ' ', $textContent);
+            $textContent = strip_tags($textContent);
+            while (strpos($textContent, '  ') !== false) {
+                $textContent = str_replace('  ', ' ', $textContent);
+            }
+            $textContent = html_entity_decode(trim($textContent));
+            if (isset($textContent{0})) {
+                if ($generateDescription) {
+                    $result .= '<meta name="description" content="' . htmlentities(substr($textContent, 0, 150) . ' ...') . '"/>';
+                }
+                $words = explode(' ', strtolower($textContent));
+                $wordsCount = array_count_values($words);
+                arsort($wordsCount);
+                $selectedWords = [];
+                foreach ($wordsCount as $word => $wordCount) {
+                    if (strlen($word) >= 3) {
+                        $selectedWords[] = $word;
+                        if (sizeof($selectedWords) === 7) {
+                            break;
+                        }
+                    }
+                }
+                $result .= '<meta name="keywords" content="' . htmlentities(implode(', ', $selectedWords)) . '"/>';
+            }
+        }
+    }
+    if (isset($result{0})) {
+        $result = '<html><head>' . $result . '</head></html>';
+    }
+    return $result;
+};
+
 // Register the system pages
 if (Options::hasServer()) {
     if (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_DEFAULT')) {
@@ -627,7 +681,7 @@ if (Options::hasFeature('BLOG')) {
     $app->routes
             ->add(Options::$blogPagesPathPrefix . '?/', [
                 [$app->bearCMS, 'disabledCheck'],
-                function() use ($app) {
+                function() use ($app, $generateMetaTags) {
                     $slug = (string) $app->request->path->getSegment(1);
                     $slugsList = InternalData\BlogPosts::getSlugsList('published');
                     $blogPostID = array_search($slug, $slugsList);
@@ -640,6 +694,9 @@ if (Options::hasFeature('BLOG')) {
                     if ($blogPostID !== false) {
                         $blogPost = $app->bearCMS->data->blogPosts->get($blogPostID);
                         if ($blogPost !== null) {
+                            $generateTitle = true;
+                            $generateDescription = true;
+                            $generateKeywords = true;
                             $content = '<html><head>';
                             $title = isset($blogPost->titleTagContent) ? trim($blogPost->titleTagContent) : '';
                             if (!isset($title{0})) {
@@ -649,12 +706,15 @@ if (Options::hasFeature('BLOG')) {
                             $keywords = isset($blogPost->keywordsTagContent) ? trim($blogPost->keywordsTagContent) : '';
                             if (isset($title{0})) {
                                 $content .= '<title>' . htmlspecialchars($title) . '</title>';
+                                $generateTitle = false;
                             }
                             if (isset($description{0})) {
                                 $content .= '<meta name="description" content="' . htmlentities($description) . '"/>';
+                                $generateDescription = false;
                             }
                             if (isset($keywords{0})) {
                                 $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
+                                $generateKeywords = false;
                             }
                             $content .= '</head><body>';
                             $content .= '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1></div>';
@@ -664,7 +724,19 @@ if (Options::hasFeature('BLOG')) {
 
                             $app->hooks->execute('bearCMSBlogPostPageContentCreated', $content, $blogPostID);
 
-                            $response = new App\Response\HTML($app->components->process($content));
+                            $content = $app->components->process($content);
+
+                            if ($generateTitle || $generateDescription || $generateKeywords) {
+                                $metaTagsContent = $generateMetaTags($content, $generateTitle, $generateDescription, $generateKeywords);
+                                if (isset($metaTagsContent{0})) {
+                                    $domDocument = new HTML5DOMDocument();
+                                    $domDocument->loadHTML($content);
+                                    $domDocument->insertHTML($metaTagsContent);
+                                    $content = $domDocument->saveHTML();
+                                }
+                            }
+
+                            $response = new App\Response\HTML($content);
                             $app->hooks->execute('bearCMSResponseCreated', $response);
                             $app->bearCMS->apply($response);
                             return $response;
@@ -697,7 +769,7 @@ if (Options::hasFeature('PAGES')) {
     $app->routes
             ->add('*', [
                 [$app->bearCMS, 'disabledCheck'],
-                function() use ($app) {
+                function() use ($app, $generateMetaTags) {
                     $path = (string) $app->request->path;
                     //echo $path."\n\n";
                     if ($path === '/') {
@@ -748,14 +820,20 @@ if (Options::hasFeature('PAGES')) {
                         }
                         if ($found) {
                             $content = '<html><head>';
+                            $generateTitle = true;
+                            $generateDescription = true;
+                            $generateKeywords = true;
                             if (isset($title{0})) {
                                 $content .= '<title>' . htmlspecialchars($title) . '</title>';
+                                $generateTitle = false;
                             }
                             if (isset($description{0})) {
                                 $content .= '<meta name="description" content="' . htmlentities($description) . '"/>';
+                                $generateDescription = false;
                             }
                             if (isset($keywords{0})) {
                                 $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
+                                $generateKeywords = false;
                             }
                             $content .= '</head><body>';
                             $content .= '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
@@ -763,7 +841,19 @@ if (Options::hasFeature('PAGES')) {
 
                             $app->hooks->execute('bearCMSPageContentCreated', $content, $pageID);
 
-                            $response = new App\Response\HTML($app->components->process($content));
+                            $content = $app->components->process($content);
+
+                            if ($generateTitle || $generateDescription || $generateKeywords) {
+                                $metaTagsContent = $generateMetaTags($content, $generateTitle, $generateDescription, $generateKeywords);
+                                if (isset($metaTagsContent{0})) {
+                                    $domDocument = new HTML5DOMDocument();
+                                    $domDocument->loadHTML($content);
+                                    $domDocument->insertHTML($metaTagsContent);
+                                    $content = $domDocument->saveHTML();
+                                }
+                            }
+
+                            $response = new App\Response\HTML($content);
                             $app->hooks->execute('bearCMSResponseCreated', $response);
                             $app->bearCMS->apply($response);
                             return $response;
