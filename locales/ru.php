@@ -26,6 +26,7 @@ return [
     'bearcms.forumPosts.Content' => 'Содержание',
     'bearcms.forumPosts.Post' => 'Пост',
     'bearcms.forumPosts.Posting ...' => 'Опубликовать ...',
+    'bearcms.forumPosts.pending approval' => 'ожидает одобрения',
     'bearcms.blogPosts.Show more posts' => 'Просмотреть больше статей',
     'bearcms.blogPosts.Read more' => 'Подробнее',
     'bearcms.rss.Read the full post at %s' => 'Читайте полный текст статьи на %s',

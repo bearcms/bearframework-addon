@@ -26,6 +26,7 @@ return [
     'bearcms.forumPosts.Content' => 'Content',
     'bearcms.forumPosts.Post' => 'Post',
     'bearcms.forumPosts.Posting ...' => 'Posting ...',
+    'bearcms.forumPosts.pending approval' => 'pending approval',
     'bearcms.blogPosts.Show more posts' => 'Show more posts',
     'bearcms.blogPosts.Read more' => 'Read more',
     'bearcms.rss.Read the full post at %s' => 'Read the full post at %s',

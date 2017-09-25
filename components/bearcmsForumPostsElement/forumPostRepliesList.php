@@ -34,16 +34,14 @@ $elementID = 'frl' . md5($forumPostID);
     <body><?php
         echo '<div id="' . $elementID . '">';
         $forumPost = $app->bearCMS->data->forumPosts->get($forumPostID);
-
-
         if ($forumPost !== null) {
 
-            $renderItem = function($item) {
+            $renderItem = function($reply) {
                 $statusText = '';
-                if ($item->status === 'pendingApproval') {
-                    $statusText = ', pending approval';
+                if ($reply->status === 'pendingApproval') {
+                    $statusText = __('bearcms.forumPosts.pending approval') . ', ';
                 }
-                $profile = PublicProfile::getFromAuthor($item->author);
+                $profile = PublicProfile::getFromAuthor($reply->author);
                 $linkAttributes = '';
                 if (strlen($profile->url) > 0) {
                     $tagName = 'a';
@@ -55,8 +53,8 @@ $elementID = 'frl' . md5($forumPostID);
                 $linkAttributes .= ' title="' . htmlentities($profile->name) . '"';
                 echo '<div class="bearcms-forum-post-page-reply">';
                 echo '<' . $tagName . ' class="bearcms-forum-post-page-reply-author-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></' . $tagName . '>';
-                echo '<' . $tagName . ' class="bearcms-forum-post-page-reply-author-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</' . $tagName . '> <span class="bearcms-forum-post-page-reply-date">' . Localization::getTimeAgo($item->createdTime) . $statusText . '</span>';
-                echo '<div class="bearcms-forum-post-page-reply-text">' . nl2br(htmlspecialchars($item->text)) . '</div>';
+                echo '<' . $tagName . ' class="bearcms-forum-post-page-reply-author-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</' . $tagName . '> <span class="bearcms-forum-post-page-reply-date">' . $statusText . Localization::getTimeAgo($reply->createdTime) . '</span>';
+                echo '<div class="bearcms-forum-post-page-reply-text">' . nl2br(htmlspecialchars($reply->text)) . '</div>';
                 echo '</div>';
             };
 
@@ -64,7 +62,17 @@ $elementID = 'frl' . md5($forumPostID);
                 $renderItem($forumPost);
             }
             foreach ($forumPost->replies as $reply) {
-                $renderItem($reply);
+                $render = false;
+                if ($reply->status === 'approved') {
+                    $render = true;
+                } elseif ($reply->status === 'pendingApproval') {
+                    if ($app->currentUser->exists()) {
+                        $render = $app->currentUser->provider === $reply->author['provider'] && $app->currentUser->id === $reply->author['id'];
+                    }
+                }
+                if ($render) {
+                    $renderItem($reply);
+                }
             }
         }
         echo '</div>';

@@ -20,6 +20,17 @@ $categoryID = $component->categoryID;
 
 $posts = $app->bearCMS->data->forumPosts->getList()
         ->filterBy('categoryID', $categoryID)
+        ->filter(function($forumPost) use ($app) {
+            if ($forumPost->status === 'approved') {
+                return true;
+            }
+            if ($forumPost->status === 'pendingApproval') {
+                if ($app->currentUser->exists()) {
+                    return $app->currentUser->provider === $forumPost->author['provider'] && $app->currentUser->id === $forumPost->author['id'];
+                }
+            }
+            return false;
+        })
         ->sortBy('createdTime', 'desc');
 $counter = 0;
 echo '<div>';
@@ -27,7 +38,11 @@ foreach ($posts as $post) {
     $postUrl = $app->request->base . '/f/' . $post->id . '/' . $post->id . '/';
     $repliesCount = $post->replies->length;
     echo '<div class="bearcms-forum-posts-post">';
-    echo '<a class="bearcms-forum-posts-post-title" href="' . htmlentities($postUrl) . '">' . htmlspecialchars($post->title) . '</a>';
+    $statusText = '';
+    if ($post->status === 'pendingApproval') {
+        $statusText = ' (' . __('bearcms.forumPosts.pending approval') . ')';
+    }
+    echo '<a class="bearcms-forum-posts-post-title" href="' . htmlentities($postUrl) . '">' . htmlspecialchars($post->title) . $statusText . '</a>';
     echo '<div class="bearcms-forum-posts-post-replies-count">' . ($repliesCount === 1 ? __('bearcms.forumPosts.1 reply') : sprintf(__('bearcms.forumPosts.%s replies'), $repliesCount)) . '</div>';
     echo '</div>';
     $counter++;

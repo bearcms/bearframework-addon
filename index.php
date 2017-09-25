@@ -572,6 +572,19 @@ if (Options::hasFeature('FORUMS')) {
                     $forumPostID = $app->request->path->getSegment(2);
                     $forumPost = $app->bearCMS->data->forumPosts->get($forumPostID);
                     if ($forumPost !== null) {
+
+                        $render = false;
+                        if ($forumPost->status === 'approved') {
+                            $render = true;
+                        } elseif ($forumPost->status === 'pendingApproval') {
+                            if ($app->currentUser->exists()) {
+                                $render = $app->currentUser->provider === $forumPost->author['provider'] && $app->currentUser->id === $forumPost->author['id'];
+                            }
+                        }
+                        if (!$render) {
+                            return;
+                        }
+
                         $content = '<html>';
                         $content .= '<head>';
                         $content .= '<title>' . htmlspecialchars($forumPost->title) . '</title>';
@@ -699,7 +712,7 @@ if (Options::hasFeature('PAGES')) {
                         array_walk($pathsList, function(&$value) {
                                     $value = implode('/', array_map('urlencode', explode('/', $value)));
                                 });
-                                //print_r($pathsList);exit;
+                        //print_r($pathsList);exit;
                         if ($hasSlash) {
                             $pageID = array_search($path, $pathsList);
                         } else {
