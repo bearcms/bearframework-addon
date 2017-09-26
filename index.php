@@ -902,19 +902,18 @@ $app->hooks
                 $app->bearCMS->apply($response);
             }
         })
-        ->add('assetPrepare', function($filename, $options, &$returnValue, &$preventDefault) use ($app, $context) { // Download the server files
+        ->add('assetPrepare', function(&$filename, $options) use ($app, $context) { // Download the server files
             $serverUrl = \BearCMS\Internal\Options::$serverUrl;
             $matchingDir = $context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 's' . DIRECTORY_SEPARATOR;
             if (strpos($filename, $matchingDir) === 0) {
-                $preventDefault = true;
                 $fileServerUrl = $serverUrl . str_replace('\\', '/', str_replace($matchingDir, '', $filename));
-                $returnValue = null;
+                $filename = null;
                 $fileInfo = pathinfo($fileServerUrl);
                 if (isset($fileInfo['extension'])) {
                     $tempFileKey = '.temp/bearcms/serverfiles/' . md5($fileServerUrl) . '.' . $fileInfo['extension'];
                     $tempFilename = $app->data->getFilename($tempFileKey);
                     if ($app->data->exists($tempFileKey) && false) {
-                        $returnValue = $tempFilename;
+                        $filename = $tempFilename;
                     } else {
                         $ch = curl_init();
                         curl_setopt($ch, CURLOPT_URL, $fileServerUrl);
@@ -923,7 +922,7 @@ $app->hooks
                         $response = curl_exec($ch);
                         if ((int) curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200 && strlen($response) > 0) {
                             $app->data->set($app->data->make($tempFileKey, $response));
-                            $returnValue = $tempFilename;
+                            $filename = $tempFilename;
                         } else {
                             throw new Exception('Cannot download Bear CMS Server file (' . $fileServerUrl . ')');
                         }
