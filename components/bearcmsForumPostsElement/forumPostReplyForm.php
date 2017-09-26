@@ -11,7 +11,7 @@ use \BearFramework\App;
 $app = App::get();
 $context = $app->context->get(__FILE__);
 
-$form->constraints->setRequired('fprtext', 'Your reply cannot be empty!');
+$form->constraints->setRequired('fprtext');
 
 $form->onSubmit = function($values) use ($component, $app, $context) {
     $contextData = json_decode($values['fprcontext'], true);

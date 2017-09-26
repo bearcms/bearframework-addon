@@ -11,8 +11,8 @@ use \BearFramework\App;
 $app = App::get();
 $context = $app->context->get(__FILE__);
 
-$form->constraints->setRequired('fptitle', 'Your title cannot be empty!');
-$form->constraints->setRequired('fptext', 'Your comment cannot be empty!');
+$form->constraints->setRequired('fptitle');
+$form->constraints->setRequired('fptext');
 
 $form->onSubmit = function($values) use ($component, $app) {
 
