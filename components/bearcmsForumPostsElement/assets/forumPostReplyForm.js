@@ -18,7 +18,7 @@ bearCMS.forumPostReplyForm = (function () {
                 return;
             }
         }
-        var listElementID = event.target.previousSibling.id;
+        var listElementID = event.target.previousSibling.firstChild.id;
         event.target.querySelector('input[type="hidden"]').value = JSON.stringify({
             'listElementID': listElementID
         });
