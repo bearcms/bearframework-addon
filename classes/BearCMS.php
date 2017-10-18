@@ -79,12 +79,101 @@ class BearCMS
     {
         $app = App::get();
 
-        $html = '<html><head>';
-        $currentUserExists = Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
-        $settings = $this->data->settings->get();
         if (!$response->headers->exists('Cache-Control')) {
             $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0, no-cache, no-store'));
         }
+
+        $currentUserExists = Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
+        $settings = $this->data->settings->get();
+
+        $document = new HTML5DOMDocument();
+        $document->loadHTML($response->content);
+
+        if (isset($settings['language']) && strlen($settings['language']) > 0) {
+            $html = '<html lang="' . htmlentities($settings['language']) . '">';
+        } else {
+            $html = '<html>';
+        }
+        $html .= '<head>';
+
+        $title = '';
+        $titleElement = $document->querySelector('title');
+        if ($titleElement !== null && strlen($titleElement->innerHTML) > 0) {
+            $title = html_entity_decode($titleElement->innerHTML);
+        } else {
+            $h1Element = $document->querySelector('h1');
+            if ($h1Element !== null) {
+                $innerHTML = $h1Element->innerHTML;
+                if (isset($innerHTML{0})) {
+                    $title = $innerHTML;
+                    $html .= '<title>' . $innerHTML . '</title>';
+                }
+            }
+        }
+
+        $strlen = function(string $string) {
+            return function_exists('mb_strlen') ? mb_strlen($string) : strlen($string);
+        };
+
+        $substr = function(string $string, int $start, int $length = null) {
+            return function_exists('mb_substr') ? mb_substr($string, $start, $length) : substr($string, $start, $length);
+        };
+
+        $strtolower = function(string $string) {
+            return function_exists('mb_strtolower') ? mb_strtolower($string) : strtolower($string);
+        };
+
+        $metaElements = $document->querySelectorAll('meta');
+        $generateDescriptionMetaTag = true;
+        $generateKeywordsMetaTag = true;
+        foreach ($metaElements as $metaElement) {
+            $metaElementName = $metaElement->getAttribute('name');
+            if ($metaElementName === 'description' && $strlen($metaElement->getAttribute('content')) > 0) {
+                $generateDescriptionMetaTag = true;
+            } elseif ($metaElementName === 'keywords' && $strlen($metaElement->getAttribute('content')) > 0) {
+                $generateKeywordsMetaTag = true;
+            }
+        }
+
+        if ($generateDescriptionMetaTag || $generateKeywordsMetaTag) {
+            $bodyElement = $document->querySelector('body');
+            if ($bodyElement !== null) {
+                $textContent = $bodyElement->innerHTML;
+
+                $textContent = preg_replace('/<script.*?<\/script>/', '', $textContent);
+                $textContent = preg_replace('/<.*?>/', ' $0 ', $textContent);
+                $textContent = preg_replace('/\s/', ' ', $textContent);
+                $textContent = strip_tags($textContent);
+                while (strpos($textContent, '  ') !== false) {
+                    $textContent = str_replace('  ', ' ', $textContent);
+                }
+
+                $textContent = html_entity_decode(trim($textContent));
+
+                if (isset($textContent{0})) {
+                    if ($generateDescriptionMetaTag) {
+                        $description = $substr($textContent, 0, 150);
+                        $html .= '<meta name="description" content="' . htmlentities($description . ' ...') . '"/>';
+                    }
+                    $wordsText = str_replace(['.', ',', '/', '\\'], '', $strtolower($textContent));
+                    $words = explode(' ', $wordsText);
+                    $wordsCount = array_count_values($words);
+                    arsort($wordsCount);
+                    $selectedWords = [];
+                    foreach ($wordsCount as $word => $wordCount) {
+                        $wordLength = $strlen($word);
+                        if ($wordLength >= 3 && !is_numeric($word)) {
+                            $selectedWords[] = $word;
+                            if (sizeof($selectedWords) === 7) {
+                                break;
+                            }
+                        }
+                    }
+                    $html .= '<meta name="keywords" content="' . htmlentities(implode(', ', $selectedWords)) . '"/>';
+                }
+            }
+        }
+
         $html .= '<meta name="generator" content="Bear Framework v' . App::VERSION . ', Bear CMS v' . \BearCMS::VERSION . '"/>';
         $icon = $settings['icon'];
         if (isset($icon{0})) {
@@ -122,7 +211,7 @@ class BearCMS
         }
         $html .= '<link rel="canonical" href="' . htmlentities(rtrim($app->request->base . $app->request->path, '/') . '/') . '"/>';
         if ($settings['enableRSS']) {
-            $html .= '<link rel="alternate" type="application/rss+xml" title="' . (isset($settings['title']) ? trim($settings['title']) : '') . '" href="' . $app->request->base . '/rss.xml" />';
+            $html .= '<link rel="alternate" type="application/rss+xml" title="' . (isset($settings['title']) ? htmlentities(trim($settings['title'])) : '') . '" href="' . $app->request->base . '/rss.xml" />';
         }
         $html .= '</head><body>';
 
@@ -134,10 +223,18 @@ class BearCMS
             }
         }
         $html .= '</body></html>';
-        $domDocument = new HTML5DOMDocument();
-        $domDocument->loadHTML($html);
-        $domDocument->insertHTML($response->content, 'afterBodyBegin');
-        $response->content = $domDocument->saveHTML();
+        $document->insertHTML($html);
+
+        if (strlen($title) > 0) {
+            $imageElements = $document->querySelectorAll('img');
+            foreach ($imageElements as $imageElement) {
+                if (strlen($imageElement->getAttribute('alt')) === 0) {
+                    $imageElement->setAttribute('alt', $title);
+                }
+            }
+        }
+
+        $response->content = $document->saveHTML();
 
         $app->users->applyUI($response);
     }
@@ -190,22 +287,22 @@ class BearCMS
         if (is_array($adminUIData) && isset($adminUIData['result']) && is_array($adminUIData['result']) && isset($adminUIData['result']['content']) && strlen($adminUIData['result']['content']) > 0) {
             $content = $adminUIData['result']['content'];
             $content = Server::updateAssetsUrls($content, false);
-            $domDocument = new HTML5DOMDocument();
+            $document = new HTML5DOMDocument();
             $htmlToInsert = [];
             if (strpos($content, '{body}')) {
-                $content = str_replace('{body}', (string) $domDocument->createInsertTarget('body'), $content);
+                $content = str_replace('{body}', (string) $document->createInsertTarget('body'), $content);
                 $htmlToInsert[] = ['source' => $response->content, 'target' => 'body'];
             } elseif (strpos($content, '{jsonEncodedBody}')) {
                 $content = str_replace('{jsonEncodedBody}', json_encode($app->components->process($response->content)), $content);
             }
-            $domDocument->loadHTML($content);
+            $document->loadHTML($content);
             $elementsHtml = ElementsHelper::getEditableElementsHtml();
             if (isset($elementsHtml[0])) {
                 $htmlToInsert[] = ['source' => $elementsHtml];
             }
             $htmlToInsert[] = ['source' => '<html><body><script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script></body></html>'];
-            $domDocument->insertHTMLMulti($htmlToInsert);
-            $response->content = $domDocument->saveHTML();
+            $document->insertHTMLMulti($htmlToInsert);
+            $response->content = $document->saveHTML();
         } else {
             //$response = new App\Response\TemporaryUnavailable();
         }
