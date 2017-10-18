@@ -221,8 +221,11 @@ final class Controller
 
     static function handleRobots(): \BearFramework\App\Response
     {
+        $app = App::get();
         $response = new App\Response('User-agent: *
-Disallow:');
+Disallow:
+
+Sitemap: ' . $app->request->base . '/sitemap.xml');
         $response->headers->set($response->headers->make('Content-Type', 'text/plain'));
         return $response;
     }
