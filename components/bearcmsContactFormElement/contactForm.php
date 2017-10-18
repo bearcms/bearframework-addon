@@ -61,11 +61,11 @@ $form->onSubmit = function($values) use ($app, $component) {
     </head>
     <body><?php
         echo '<form onrequestsent="bearCMS.contactFormElement.onRequestSent(event);" onresponsereceived="bearCMS.contactFormElement.onResponseReceived(event);" onsubmitdone="bearCMS.contactFormElement.onSubmitDone(event);">';
-        echo '<label for="email" class="bearcms-contact-form-element-email-label">' . __('bearcms.contactForm.Email') . '</label>';
+        echo '<label class="bearcms-contact-form-element-email-label">' . __('bearcms.contactForm.Email') . '</label>';
         echo '<input type="text" name="email" class="bearcms-contact-form-element-email"/>';
-        echo '<label for="message" class="bearcms-contact-form-element-message-label">' . __('bearcms.contactForm.Message') . '</label>';
+        echo '<label class="bearcms-contact-form-element-message-label">' . __('bearcms.contactForm.Message') . '</label>';
         echo '<textarea name="message" class="bearcms-contact-form-element-message"></textarea>';
-        echo '<span onclick="this.parentNode.submit();" href="javascript:void(0);" class="bearcms-contact-form-element-send-button">' . __('bearcms.contactForm.Send') . '</span>';
+        echo '<span onclick="this.parentNode.submit();" class="bearcms-contact-form-element-send-button">' . __('bearcms.contactForm.Send') . '</span>';
         echo '<span style="display:none;" class="bearcms-contact-form-element-send-button bearcms-contact-form-element-send-button-waiting">' . __('bearcms.contactForm.Sending ...') . '</span>';
         echo '</form>';
         ?></body>

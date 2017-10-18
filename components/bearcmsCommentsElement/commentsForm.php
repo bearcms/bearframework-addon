@@ -74,7 +74,7 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         . '>';
         echo '<input type="hidden" name="cfcontext"/>';
         echo '<textarea placeholder="' . __('bearcms.comments.Your comment') . '" name="cfcomment" class="bearcms-comments-element-text" onfocus="bearCMS.commentsElement.onFocusTextarea(event);"></textarea>';
-        echo '<span onclick="this.parentNode.submit();" href="javascript:void(0);" class="bearcms-comments-element-send-button">' . __('bearcms.comments.Send') . '</span>';
+        echo '<span onclick="this.parentNode.submit();" class="bearcms-comments-element-send-button">' . __('bearcms.comments.Send') . '</span>';
         echo '<span style="display:none;" class="bearcms-comments-element-send-button bearcms-comments-element-send-button-waiting">' . __('bearcms.comments.Sending ...') . '</span>';
         echo '</form>';
         ?></body>

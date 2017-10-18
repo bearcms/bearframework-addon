@@ -67,13 +67,13 @@ $form->onSubmit = function($values) use ($component, $app) {
         . ' onrequestsent="bearCMS.forumPostNewForm.onFormRequestSent(event);"'
         . ' onresponsereceived="bearCMS.forumPostNewForm.onFormResponseReceived(event);"'
         . '>';
-        echo '<label for="fptitle" class="bearcms-new-forum-post-page-title-label">'.__('bearcms.forumPosts.Title').'</label>';
+        echo '<label class="bearcms-new-forum-post-page-title-label">'.__('bearcms.forumPosts.Title').'</label>';
         echo '<input type="text" name="fptitle" class="bearcms-new-forum-post-page-title"/><br/>';
-        echo '<label for="fptext" class="bearcms-new-forum-post-page-text-label">'.__('bearcms.forumPosts.Content').'</label>';
+        echo '<label class="bearcms-new-forum-post-page-text-label">'.__('bearcms.forumPosts.Content').'</label>';
         echo '<textarea name="fptext" class="bearcms-new-forum-post-page-text"></textarea>';
-        echo '<span onclick="this.parentNode.submit();" href="javascript:void(0);" class="bearcms-new-forum-post-page-send-button">'.__('bearcms.forumPosts.Post').'</span>';
+        echo '<span onclick="this.parentNode.submit();" class="bearcms-new-forum-post-page-send-button">'.__('bearcms.forumPosts.Post').'</span>';
         echo '<span style="display:none;" class="bearcms-new-forum-post-page-send-button bearcms-new-forum-post-page-send-button-waiting">'.__('bearcms.forumPosts.Posting ...').'</span>';
         echo '</form>';
-        echo '<script id="bearcms-bearframework-addon-script-7" src="' . htmlentities($context->assets->getUrl('components/bearcmsForumPostsElement/assets/forumPostNewForm.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
+        echo '<script id="bearcms-bearframework-addon-script-7" src="' . htmlentities($context->assets->getUrl('components/bearcmsForumPostsElement/assets/forumPostNewForm.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
         ?></body>
 </html>

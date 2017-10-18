@@ -5,7 +5,6 @@
  * Free to use under the MIT license.
  */
 
-
 if (typeof bearCMS === 'undefined') {
     bearCMS = {};
 }
