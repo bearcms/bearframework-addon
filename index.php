@@ -453,8 +453,8 @@ if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature
     }
 }
 
-$generateMetaTags = function($content, $generateTitle, $generateDescription, $generateKeywords) {
-    $result = '';
+$generateMetaTags = function($content, $generateTitle, $generateDescription, $generateKeywords) use ($app) {
+    $tags = '';
     $domDocument = new HTML5DOMDocument();
     $domDocument->loadHTML($content);
     if ($generateTitle) {
@@ -462,7 +462,7 @@ $generateMetaTags = function($content, $generateTitle, $generateDescription, $ge
         if ($h1Element !== null) {
             $innerHTML = $h1Element->innerHTML;
             if (isset($innerHTML{0})) {
-                $result .= '<title>' . $innerHTML . '</title>';
+                $tags .= '<title>' . $innerHTML . '</title>';
             }
         }
     }
@@ -483,7 +483,7 @@ $generateMetaTags = function($content, $generateTitle, $generateDescription, $ge
             $textContent = html_entity_decode(trim($textContent));
             if (isset($textContent{0})) {
                 if ($generateDescription) {
-                    $result .= '<meta name="description" content="' . htmlentities(substr($textContent, 0, 150) . ' ...') . '"/>';
+                    $tags .= '<meta name="description" content="' . htmlentities(substr($textContent, 0, 150) . ' ...') . '"/>';
                 }
                 $words = explode(' ', strtolower($textContent));
                 $wordsCount = array_count_values($words);
@@ -497,13 +497,18 @@ $generateMetaTags = function($content, $generateTitle, $generateDescription, $ge
                         }
                     }
                 }
-                $result .= '<meta name="keywords" content="' . htmlentities(implode(', ', $selectedWords)) . '"/>';
+                $tags .= '<meta name="keywords" content="' . htmlentities(implode(', ', $selectedWords)) . '"/>';
             }
         }
     }
-    if (isset($result{0})) {
-        $result = '<html><head>' . $result . '</head></html>';
+
+    $settings = $app->bearCMS->data->settings->get();
+    if (isset($settings['language']) && strlen($settings['language']) > 0) {
+        $result = '<html lang="' . htmlentities($settings['language']) . '">';
+    } else {
+        $result = '<html>';
     }
+    $result .= '<head>' . $tags . '</head></html>';
     return $result;
 };
 
