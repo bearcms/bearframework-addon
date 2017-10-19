@@ -13,9 +13,29 @@ use BearCMS\Internal\Options;
 $app = App::get();
 $context = $app->context->get(__FILE__);
 
+$source = 'allPosts';
+if (strlen($component->source) > 0 && array_search($component->source, ['allPosts', 'postsInCategories']) !== false) {
+    $source = $component->source;
+}
+
 $list = $app->bearCMS->data->blogPosts->getList()
         ->filterBy('status', 'published')
         ->sortBy('publishedTime', 'desc');
+
+if ($source === 'postsInCategories') {
+    $categoriesIDs = strlen($component->sourceCategoriesIDs) > 0 ? explode(';', $component->sourceCategoriesIDs) : [];
+    $list->filter(function($blogPost) use ($app, $categoriesIDs) {
+        foreach ($blogPost->categories as $categoryID) {
+            if (array_search($categoryID, $categoriesIDs) !== false) {
+                $blogCategory = $app->bearCMS->data->blogCategories->get($categoryID);
+                if ($blogCategory !== null && $blogCategory->status === 'published') {
+                    return true;
+                }
+            }
+        }
+        return false;
+    });
+}
 
 $type = 'full';
 if (strlen($component->type) > 0) {

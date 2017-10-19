@@ -25,8 +25,8 @@ $context->classes
         ->add('BearCMS', 'classes/BearCMS.php')
         ->add('BearCMS\CurrentUser', 'classes/BearCMS/CurrentUser.php')
         ->add('BearCMS\Data', 'classes/BearCMS/Data.php')
-        ->add('BearCMS\Data\Addon', 'classes/BearCMS/Data/Addon.php')
-        ->add('BearCMS\Data\Addons', 'classes/BearCMS/Data/Addons.php')
+        ->add('BearCMS\Data\BlogCategories', 'classes/BearCMS/Data/BlogCategories.php')
+        ->add('BearCMS\Data\BlogCategory', 'classes/BearCMS/Data/BlogCategory.php')
         ->add('BearCMS\Data\BlogPost', 'classes/BearCMS/Data/BlogPost.php')
         ->add('BearCMS\Data\BlogPosts', 'classes/BearCMS/Data/BlogPosts.php')
         ->add('BearCMS\Data\Comment', 'classes/BearCMS/Data/Comment.php')
@@ -356,6 +356,14 @@ if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
                 'componentSrc' => 'bearcms-blog-posts-element',
                 'componentFilename' => $contextDir . '/components/bearcmsBlogPostsElement.php',
                 'fields' => [
+                    [
+                        'id' => 'source',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'sourceCategoriesIDs',
+                        'type' => 'textbox'
+                    ],
                     [
                         'id' => 'type',
                         'type' => 'textbox'

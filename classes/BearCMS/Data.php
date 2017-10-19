@@ -14,8 +14,8 @@ use BearFramework\App;
 /**
  * Contains reference to the different data types
  * 
- * @property \BearCMS\Data\Addons $addons Information about the addons managed by Bear CMS
- * @property \BearCMS\Data\Blog $blog Information about the blog posts
+ * @property \BearCMS\Data\BlogCategories $blogCategories Information about the blog categories
+ * @property \BearCMS\Data\BlogPosts $blogPosts Information about the blog posts
  * @property \BearCMS\Data\Comments $comments Information about the comments
  * @property \BearCMS\Data\CommentsThreads $commentsThreads Information about the comments threads
  * @property \BearCMS\Data\ForumCategories $forumCategories Information about the forum categories
@@ -33,9 +33,15 @@ class Data
 
     function __construct()
     {
-        $this->defineProperty('addons', [
+//        $this->defineProperty('addons', [
+//            'init' => function() {
+//                return new \BearCMS\Data\Addons();
+//            },
+//            'readonly' => true
+//        ]);
+        $this->defineProperty('blogCategories', [
             'init' => function() {
-                return new \BearCMS\Data\Addons();
+                return new \BearCMS\Data\BlogCategories();
             },
             'readonly' => true
         ]);

@@ -509,7 +509,7 @@ final class ElementsHelper
                 $app->bearCMS->currentUser->getPermissions(),
                 get_class_vars('\BearCMS\Internal\Options'),
                 Cookies::getList(Cookies::TYPE_SERVER),
-                2, //version
+                3, //version
             ]);
             $elementsEditorData = $app->cache->getValue($cacheKey);
             if (!is_array($elementsEditorData)) {
