@@ -10,9 +10,12 @@ use \BearFramework\App;
 
 $app = App::get();
 
-$domDocument = new IvoPetkov\HTML5DOMDocument();
-$domDocument->loadHTML($component->innerHTML);
-$files = $domDocument->querySelectorAll('file');
+$files = null;
+if (strlen($component->innerHTML) > 0) {
+    $domDocument = new IvoPetkov\HTML5DOMDocument();
+    $domDocument->loadHTML($component->innerHTML);
+    $files = $domDocument->querySelectorAll('file');
+}
 
 $spacing = $component->spacing;
 
@@ -41,13 +44,14 @@ if (strlen($component->lazyLoadImages) > 0) {
 }
 
 $content .= '<component src="image-gallery" spacing="' . $spacing . '"' . $attributes . '>';
-foreach ($files as $file) {
-    $filename = $app->bearCMS->data->getRealFilename($file->getAttribute('filename'));
-    $content .= '<file class="bearcms-image-gallery-element-image" filename="' . htmlentities($filename) . '"/>';
+if ($files !== null) {
+    foreach ($files as $file) {
+        $filename = $app->bearCMS->data->getRealFilename($file->getAttribute('filename'));
+        $content .= '<file class="bearcms-image-gallery-element-image" filename="' . htmlentities($filename) . '"/>';
+    }
 }
 $content .= '</component>';
 $content .= '</div>';
-
 ?><html>
     <body><?= $content ?></body>
 </html>
