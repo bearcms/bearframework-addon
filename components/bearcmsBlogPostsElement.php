@@ -25,11 +25,13 @@ $list = $app->bearCMS->data->blogPosts->getList()
 if ($source === 'postsInCategories') {
     $categoriesIDs = strlen($component->sourceCategoriesIDs) > 0 ? explode(';', $component->sourceCategoriesIDs) : [];
     $list->filter(function($blogPost) use ($app, $categoriesIDs) {
-        foreach ($blogPost->categories as $categoryID) {
-            if (array_search($categoryID, $categoriesIDs) !== false) {
-                $blogCategory = $app->bearCMS->data->blogCategories->get($categoryID);
-                if ($blogCategory !== null && $blogCategory->status === 'published') {
-                    return true;
+        if (isset($blogPost->categoriesIDs)) {
+            foreach ($blogPost->categoriesIDs as $categoryID) {
+                if (array_search($categoryID, $categoriesIDs) !== false) {
+                    $blogCategory = $app->bearCMS->data->blogCategories->get($categoryID);
+                    if ($blogCategory !== null && $blogCategory->status === 'published') {
+                        return true;
+                    }
                 }
             }
         }
