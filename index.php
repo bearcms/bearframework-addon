@@ -863,10 +863,14 @@ if (!(isset($options['addDefaultThemes']) && $options['addDefaultThemes'] === fa
 
 if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*'))) {
     $app->hooks
-            ->add('responseCreated', function($response) use ($app) {
+            ->add('responseCreated', function($response) {
                 Cookies::apply($response);
-                if (InternalData::$hasContentChange) {
-                    $app->hooks->execute('bearCMSContentChanged');
-                }
             });
 }
+
+$app->hooks
+        ->add('responseCreated', function() use ($app) {
+            if (InternalData::$hasContentChange) {
+                $app->hooks->execute('bearCMSContentChanged');
+            }
+        });
