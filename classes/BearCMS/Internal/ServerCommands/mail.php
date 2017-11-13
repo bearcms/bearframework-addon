@@ -11,7 +11,6 @@ use BearFramework\App;
 
 return function($data) {
     $app = App::get();
-    $app->logger->log('mail', json_encode(['message' => $data]));
 
     $defaultEmailSender = \BearCMS\Internal\Options::$defaultEmailSender;
     if (!is_array($defaultEmailSender)) {

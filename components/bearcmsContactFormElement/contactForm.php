@@ -22,11 +22,6 @@ $form->onSubmit = function($values) use ($app, $component) {
     $replyToEmail = strtolower($values['email']);
     foreach ($recipients as $recipient) {
         $recipient = trim($recipient);
-        $data = [];
-        $data['subject'] = sprintf(__('bearcms.contactForm.Message in %s'), $app->request->host);
-        $data['body'] = sprintf(__('bearcms.contactForm.Message from %s'), $replyToEmail) . "\n\n" . $values['message'];
-        $data['recipient'] = $recipient;
-        $app->logger->log('mail', json_encode(['message' => $data]));
         $defaultEmailSender = \BearCMS\Internal\Options::$defaultEmailSender;
         if (!is_array($defaultEmailSender)) {
             throw new \Exception('The defaultEmailSender option is empty.');
@@ -34,9 +29,9 @@ $form->onSubmit = function($values) use ($app, $component) {
         $email = $app->emails->make();
         $email->sender->email = $defaultEmailSender['email'];
         $email->sender->name = $defaultEmailSender['name'];
-        $email->subject = $data['subject'];
-        $email->content->add($data['body']);
-        $email->recipients->add($data['recipient']);
+        $email->subject = sprintf(__('bearcms.contactForm.Message in %s'), $app->request->host);
+        $email->content->add(sprintf(__('bearcms.contactForm.Message from %s'), $replyToEmail) . "\n\n" . $values['message']);
+        $email->recipients->add($recipient);
         $email->replyTo->email = $replyToEmail;
         $app->emails->send($email);
     }
