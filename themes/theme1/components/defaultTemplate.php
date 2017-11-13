@@ -31,7 +31,7 @@ $footerVisibility = $options['footerVisibility'];
 $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
 ?><html>
     <head>
-        <meta name="viewport" content="width=device-width,initial-scale=1,minimal-ui">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,minimal-ui">
         <style>
             html, body{
                 padding: 0;
