@@ -712,8 +712,8 @@ if (Options::hasFeature('PAGES')) {
             ->add('*', [
                 [$app->bearCMS, 'disabledCheck'],
                 function() use ($app, $onResponseCreated) {
-                    $path = (string) $app->request->path;
-                    //echo $path."\n\n";
+                    $path = $app->request->path->get();
+                    $path = implode('/', array_map('urldecode', explode('/', $path))); // waiting for next bearframework version
                     if ($path === '/') {
                         if (Options::$autoCreateHomePage) {
                             $pageID = 'home';
@@ -723,10 +723,6 @@ if (Options::hasFeature('PAGES')) {
                     } else {
                         $hasSlash = substr($path, -1) === '/';
                         $pathsList = InternalData\Pages::getPathsList((Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) && $app->bearCMS->currentUser->exists() ? 'all' : 'published');
-                        array_walk($pathsList, function(&$value) {
-                                    $value = implode('/', array_map('urlencode', explode('/', $value)));
-                                });
-                        //print_r($pathsList);exit;
                         if ($hasSlash) {
                             $pageID = array_search($path, $pathsList);
                         } else {
