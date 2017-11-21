@@ -196,10 +196,7 @@ class Data
             $data = new \ArrayObject();
             $rawElementData = \BearCMS\Internal\Data::getValue($key);
             $elementData = ElementsHelper::decodeElementRawData($rawElementData);
-            $data->id = $elementData['id'];
-            $data->type = $elementData['type'];
-            $data->data = $elementData['data'];
-            $app->hooks->execute('bearCMSElementChanged', $data);
+            $app->hooks->execute('bearCMSElementChanged', $elementData['id']);
         }
     }
 

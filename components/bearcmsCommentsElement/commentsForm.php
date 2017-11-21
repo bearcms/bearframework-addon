@@ -31,18 +31,16 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         'provider' => $app->currentUser->provider,
         'id' => $app->currentUser->id
     ];
+    $text = $values['cfcomment'];
+    $status = 'approved';
+    $cancel = false;
+    $cancelMessage = '';
 
-    $data = new ArrayObject();
-    $data->author = $author;
-    $data->text = $values['cfcomment'];
-    $data->cancel = false;
-    $data->cancelMessage = '';
-    $data->status = 'approved';
-    $app->hooks->execute('bearCMSCommentAdd', $data);
-    if ($data->cancel) {
-        $this->throwError($data->cancelMessage);
+    $app->hooks->execute('bearCMSCommentAdd', $author, $text, $status, $cancel, $cancelMessage);
+    if ($cancel) {
+        $this->throwError($cancelMessage);
     }
-    \BearCMS\Internal\Data\Comments::add($threadID, $author, $values['cfcomment'], $data->status);
+    \BearCMS\Internal\Data\Comments::add($threadID, $author, $text, $status);
 
     $listContent = $app->components->process('<component src="file:' . $context->dir . '/components/bearcmsCommentsElement/commentsList.php" count="' . htmlentities($listCommentsCount) . '" threadID="' . htmlentities($threadID) . '" />');
     return [

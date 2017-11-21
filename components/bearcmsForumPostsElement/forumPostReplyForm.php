@@ -30,18 +30,16 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         'provider' => $app->currentUser->provider,
         'id' => $app->currentUser->id
     ];
+    $text = $values['fprtext'];
+    $status = 'approved';
+    $cancel = false;
+    $cancelMessage = '';
 
-    $data = new ArrayObject();
-    $data->author = $author;
-    $data->text = $values['fprtext'];
-    $data->cancel = false;
-    $data->cancelMessage = '';
-    $data->status = 'approved';
-    $app->hooks->execute('bearCMSForumPostReplyAdd', $data);
-    if ($data->cancel) {
-        $this->throwError($data->cancelMessage);
+    $app->hooks->execute('bearCMSForumPostReplyAdd', $forumPostID, $author, $text, $status, $cancel, $cancelMessage);
+    if ($cancel) {
+        $this->throwError($cancelMessage);
     }
-    \BearCMS\Internal\Data\ForumPostsReplies::add($forumPostID, $author, $values['fprtext'], $data->status);
+    \BearCMS\Internal\Data\ForumPostsReplies::add($forumPostID, $author, $text, $status);
 
     $listContent = $app->components->process('<component src="file:' . $context->dir . '/components/bearcmsForumPostsElement/forumPostRepliesList.php" includePost="true" forumPostID="' . htmlentities($forumPostID) . '" />');
     return [

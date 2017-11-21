@@ -27,19 +27,17 @@ $form->onSubmit = function($values) use ($component, $app) {
         'provider' => $app->currentUser->provider,
         'id' => $app->currentUser->id
     ];
+    $title = $values['fptitle'];
+    $text = $values['fptext'];
+    $status = 'approved';
+    $cancel = false;
+    $cancelMessage = '';
 
-    $data = new ArrayObject();
-    $data->author = $author;
-    $data->title = $values['fptitle'];
-    $data->text = $values['fptext'];
-    $data->cancel = false;
-    $data->cancelMessage = '';
-    $data->status = 'approved';
-    $app->hooks->execute('bearCMSForumPostAdd', $data);
-    if ($data->cancel) {
-        $this->throwError($data->cancelMessage);
+    $app->hooks->execute('bearCMSForumPostAdd', $categoryID, $author, $title, $text, $status, $cancel, $cancelMessage);
+    if ($cancel) {
+        $this->throwError($cancelMessage);
     }
-    $forumPostID = \BearCMS\Internal\Data\ForumPosts::add($categoryID, $author, $values['fptitle'], $values['fptext'], $data->status);
+    $forumPostID = \BearCMS\Internal\Data\ForumPosts::add($categoryID, $author, $title, $text, $status);
 
     $slug = $forumPostID; //todo
     return [
@@ -67,12 +65,12 @@ $form->onSubmit = function($values) use ($component, $app) {
         . ' onrequestsent="bearCMS.forumPostNewForm.onFormRequestSent(event);"'
         . ' onresponsereceived="bearCMS.forumPostNewForm.onFormResponseReceived(event);"'
         . '>';
-        echo '<label class="bearcms-new-forum-post-page-title-label">'.__('bearcms.forumPosts.Title').'</label>';
+        echo '<label class="bearcms-new-forum-post-page-title-label">' . __('bearcms.forumPosts.Title') . '</label>';
         echo '<input type="text" name="fptitle" class="bearcms-new-forum-post-page-title"/><br/>';
-        echo '<label class="bearcms-new-forum-post-page-text-label">'.__('bearcms.forumPosts.Content').'</label>';
+        echo '<label class="bearcms-new-forum-post-page-text-label">' . __('bearcms.forumPosts.Content') . '</label>';
         echo '<textarea name="fptext" class="bearcms-new-forum-post-page-text"></textarea>';
-        echo '<span onclick="this.parentNode.submit();" class="bearcms-new-forum-post-page-send-button">'.__('bearcms.forumPosts.Post').'</span>';
-        echo '<span style="display:none;" class="bearcms-new-forum-post-page-send-button bearcms-new-forum-post-page-send-button-waiting">'.__('bearcms.forumPosts.Posting ...').'</span>';
+        echo '<span onclick="this.parentNode.submit();" class="bearcms-new-forum-post-page-send-button">' . __('bearcms.forumPosts.Post') . '</span>';
+        echo '<span style="display:none;" class="bearcms-new-forum-post-page-send-button bearcms-new-forum-post-page-send-button-waiting">' . __('bearcms.forumPosts.Posting ...') . '</span>';
         echo '</form>';
         echo '<script id="bearcms-bearframework-addon-script-7" src="' . htmlentities($context->assets->getUrl('components/bearcmsForumPostsElement/assets/forumPostNewForm.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
         ?></body>
