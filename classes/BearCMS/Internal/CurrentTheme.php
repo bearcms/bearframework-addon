@@ -11,6 +11,7 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 use BearCMS\Internal\Cookies;
+use BearCMS\Internal\Themes as InternalThemes;
 
 /**
  * Information about the current theme
@@ -39,6 +40,16 @@ class CurrentTheme
         return self::$cache['id'];
     }
 
+    static public function getCacheItemKey($userID = null)
+    {
+        $themeID = self::getID();
+        $version = InternalThemes::getVersion($themeID);
+        if ($version === null) {
+            return null;
+        }
+        return 'bearcms-theme-options-' . md5($themeID) . '-' . md5($version) . '-' . md5($userID);
+    }
+
     /**
      * Returns an array containing all theme options
      * 
@@ -46,7 +57,23 @@ class CurrentTheme
      */
     static public function getOptions(): \BearCMS\Themes\Options
     {
-        return new \BearCMS\Themes\Options(self::walkOptions(1), self::getOptionsHtml());
+        if (!isset(self::$cache['options'])) {
+            $app = App::get();
+            $cacheKey = self::getCacheItemKey($app->bearCMS->currentUser->exists() ? $app->bearCMS->currentUser->getID() : null);
+            if ($cacheKey === null) {
+                $value = [self::walkOptions(1), self::getOptionsHtml()];
+            } else {
+                $value = $app->cache->getValue($cacheKey);
+                if ($value === null) {
+                    $value = [self::walkOptions(1), self::getOptionsHtml()];
+                    $app->cache->set($app->cache->make($cacheKey, json_encode($value)));
+                } else {
+                    $value = json_decode($value, true);
+                }
+            }
+            self::$cache['options'] = new \BearCMS\Themes\Options($value[0], $value[1]);
+        }
+        return self::$cache['options'];
     }
 
     /**

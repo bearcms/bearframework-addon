@@ -16,9 +16,9 @@ class Themes
 
     static $list = [];
 
-    static function add(string $id, callable $initializeCallback, callable $applyCallback, array $options = [])
+    static function add(string $id, array $options = [])
     {
-        self::$list[$id] = [$initializeCallback, $applyCallback, $options];
+        self::$list[$id] = $options;
     }
 
     static function getActiveThemeID(): string
@@ -37,22 +37,48 @@ class Themes
     static function getList(): array
     {
         $list = Options::$useEmptyTheme ? ['none'] : [];
-        $list = array_merge($list, array_keys(\BearCMS\Internal\Themes::$list));
+        $list = array_merge($list, array_keys(self::$list));
         return $list;
     }
 
-    static function getManifest(string $id): array
+    static function getVersion(string $id): ?string
     {
-        if (isset(\BearCMS\Internal\Themes::$list[$id])) {
-            $themeOptions = \BearCMS\Internal\Themes::$list[$id][2];
-            if (isset($themeOptions['manifest'])) {
-                if (is_array($themeOptions['manifest'])) {
-                    return $themeOptions['manifest'];
-                } elseif (is_callable($themeOptions['manifest'])) {
-                    return call_user_func($themeOptions['manifest']);
+        if (isset(self::$list[$id])) {
+            $options = self::$list[$id];
+            if (isset($options['version'])) {
+                return $options['version'];
+            }
+        }
+        return null;
+    }
+
+    static function getManifest(string $id, $updateMediaFilenames = true): array
+    {
+        if (isset(self::$list[$id])) {
+            $options = self::$list[$id];
+            if (isset($options['manifest'])) {
+                $app = App::get();
+                $context = $app->context->get(__FILE__);
+                if (is_array($options['manifest'])) {
+                    $result = $options['manifest'];
+                } elseif (is_callable($options['manifest'])) {
+                    $result = call_user_func($options['manifest']);
                 } else {
-                    throw new \Exception('');
+                    $result = null;
                 }
+                if (!is_array($result)) {
+                    throw new \Exception('Invalid theme manifest value for theme ' . $id . '!');
+                }
+                if ($updateMediaFilenames) {
+                    if (isset($result['media']) && is_array($result['media'])) {
+                        foreach ($result['media'] as $i => $mediaItem) {
+                            if (is_array($mediaItem) && isset($mediaItem['filename']) && is_string($mediaItem['filename'])) {
+                                $result['media'][$i]['filename'] = $context->dir . '/assets/tm/' . md5($id) . '/' . md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION);
+                            }
+                        }
+                    }
+                }
+                return $result;
             }
         }
         return [];
@@ -60,16 +86,23 @@ class Themes
 
     static function getOptions(string $id): array
     {
-        if (isset(\BearCMS\Internal\Themes::$list[$id])) {
-            $themeOptions = \BearCMS\Internal\Themes::$list[$id][2];
-            if (isset($themeOptions['options'])) {
-                if (is_array($themeOptions['options'])) {
-                    return $themeOptions['options'];
-                } elseif (is_callable($themeOptions['options'])) {
-                    return call_user_func($themeOptions['options']);
+        if (isset(self::$list[$id])) {
+            $options = self::$list[$id];
+            if (isset($options['options'])) {
+                if (is_array($options['options'])) {
+                    $result = $options['options'];
+                } elseif (is_callable($options['options'])) {
+                    $result = call_user_func($options['options']);
                 } else {
-                    throw new \Exception('');
+                    $result = null;
                 }
+                if (is_array($result)) {
+                    return $result;
+                }
+                if ($result instanceof \BearCMS\Themes\OptionsDefinition) {
+                    return $result->toArray();
+                }
+                throw new \Exception('Invalid theme options value for theme ' . $id . '!');
             }
         }
         return [];
@@ -77,16 +110,20 @@ class Themes
 
     static function getStyles(string $id): array
     {
-        if (isset(\BearCMS\Internal\Themes::$list[$id])) {
-            $themeOptions = \BearCMS\Internal\Themes::$list[$id][2];
-            if (isset($themeOptions['styles'])) {
-                if (is_array($themeOptions['styles'])) {
-                    return $themeOptions['styles'];
-                } elseif (is_callable($themeOptions['styles'])) {
-                    return call_user_func($themeOptions['styles']);
+        if (isset(self::$list[$id])) {
+            $options = self::$list[$id];
+            if (isset($options['styles'])) {
+                if (is_array($options['styles'])) {
+                    $result = $options['styles'];
+                } elseif (is_callable($options['styles'])) {
+                    $result = call_user_func($options['styles']);
                 } else {
-                    throw new \Exception('');
+                    $result = null;
                 }
+                if (is_array($result)) {
+                    return $result;
+                }
+                throw new \Exception('Invalid theme styles value for theme ' . $id . '!');
             }
         }
         return [];

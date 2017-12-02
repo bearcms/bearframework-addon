@@ -14,19 +14,26 @@ use BearCMS\Internal\CurrentTheme;
 class Themes
 {
 
-    public function add(string $id, callable $initializeCallback, callable $applyCallback, array $options = [])
+    public function add(string $id, array $options = [])
     {
-        \BearCMS\Internal\Themes::add($id, $initializeCallback, $applyCallback, $options);
+        \BearCMS\Internal\Themes::add($id, $options);
 
         // Initialize current theme
-        $currentThemeID = CurrentTheme::getID();
-        if ($id === $currentThemeID) {
-            if (is_callable($initializeCallback)) {
-                call_user_func($initializeCallback, CurrentTheme::getOptions());
+        if (isset($options['initialize'])) {
+            $currentThemeID = CurrentTheme::getID();
+            if ($id === $currentThemeID) {
+                if (is_callable($options['initialize'])) {
+                    call_user_func($options['initialize'], CurrentTheme::getOptions());
+                }
             }
         }
 
         return $this;
+    }
+
+    public function makeOptionsDefinition()
+    {
+        return new \BearCMS\Themes\OptionsDefinition();
     }
 
 }

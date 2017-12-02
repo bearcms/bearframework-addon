@@ -50,6 +50,8 @@ $context->classes
         ->add('BearCMS\DataSchema', 'classes/BearCMS/DataSchema.php')
         ->add('BearCMS\Themes', 'classes/BearCMS/Themes.php')
         ->add('BearCMS\Themes\Options', 'classes/BearCMS/Themes/Options.php')
+        ->add('BearCMS\Themes\OptionsDefinition', 'classes/BearCMS/Themes/OptionsDefinition.php')
+        ->add('BearCMS\Themes\OptionsDefinitionGroup', 'classes/BearCMS/Themes/OptionsDefinitionGroup.php')
         ->add('BearCMS\ElementsTypes', 'classes/BearCMS/ElementsTypes.php')
         ->add('BearCMS\Internal\Data', 'classes/BearCMS/Internal/Data.php')
         ->add('BearCMS\Internal\Data\Addons', 'classes/BearCMS/Internal/Data/Addons.php')
@@ -638,7 +640,7 @@ if (Options::hasFeature('FORUMS')) {
 
 if (Options::hasFeature('BLOG')) {
     $app->routes
-            ->add(Options::$blogPagesPathPrefix . '?/', [
+            ->add([Options::$blogPagesPathPrefix . '?', Options::$blogPagesPathPrefix . '?/'], [
                 [$app->bearCMS, 'disabledCheck'],
                 function() use ($app, $onResponseCreated) {
                     $slug = (string) $app->request->path->getSegment(1);
@@ -653,6 +655,11 @@ if (Options::hasFeature('BLOG')) {
                     if ($blogPostID !== false) {
                         $blogPost = $app->bearCMS->data->blogPosts->get($blogPostID);
                         if ($blogPost !== null) {
+                            $path = $app->request->path->get();
+                            $hasSlash = substr($path, -1) === '/';
+                            if (!$hasSlash) {
+                                return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
+                            }
                             $content = '<html><head>';
                             $title = isset($blogPost->titleTagContent) ? trim($blogPost->titleTagContent) : '';
                             if (!isset($title{0})) {
@@ -684,12 +691,6 @@ if (Options::hasFeature('BLOG')) {
                             return $response;
                         }
                     }
-                }
-            ])
-            ->add(Options::$blogPagesPathPrefix . '?', [
-                [$app->bearCMS, 'disabledCheck'],
-                function() use ($app) {
-                    return new App\Response\PermanentRedirect($app->request->base . $app->request->path . '/');
                 }
     ]);
     $app->serverRequests
@@ -823,31 +824,59 @@ $app->hooks
                 $app->bearCMS->apply($response);
             }
         })
-        ->add('assetPrepare', function(&$filename, $options) use ($app, $context) { // Download the server files
-            $serverUrl = \BearCMS\Internal\Options::$serverUrl;
-            $matchingDir = $context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 's' . DIRECTORY_SEPARATOR;
+        ->add('assetPrepare', function(&$filename, $options) use ($app, $context) {
+            // Theme media file
+            $matchingDir = $context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'tm' . DIRECTORY_SEPARATOR;
             if (strpos($filename, $matchingDir) === 0) {
-                $fileServerUrl = $serverUrl . str_replace('\\', '/', str_replace($matchingDir, '', $filename));
-                $filename = null;
-                $fileInfo = pathinfo($fileServerUrl);
-                if (isset($fileInfo['extension'])) {
-                    $tempFileKey = '.temp/bearcms/serverfiles/' . md5($fileServerUrl) . '.' . $fileInfo['extension'];
-                    $tempFilename = $app->data->getFilename($tempFileKey);
-                    if ($app->data->exists($tempFileKey) && false) {
-                        $filename = $tempFilename;
-                    } else {
-                        $ch = curl_init();
-                        curl_setopt($ch, CURLOPT_URL, $fileServerUrl);
-                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                        $response = curl_exec($ch);
-                        if ((int) curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200 && strlen($response) > 0) {
-                            $app->data->set($app->data->make($tempFileKey, $response));
+                $pathParts = explode(DIRECTORY_SEPARATOR, substr($filename, strlen($matchingDir)), 2);
+                if (isset($pathParts[0], $pathParts[1])) {
+                    $themeIDMD5 = $pathParts[0];
+                    $themeMediaFilenameMD5 = $pathParts[1];
+                    $themes = BearCMS\Internal\Themes::getList();
+                    foreach ($themes as $id) {
+                        if ($themeIDMD5 === md5($id)) {
+                            $themeManifest = BearCMS\Internal\Themes::getManifest($id, false);
+                            if (isset($themeManifest['media'])) {
+                                foreach ($themeManifest['media'] as $i => $mediaItem) {
+                                    if (isset($mediaItem['filename'])) {
+                                        if ($themeMediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
+                                            $filename = $mediaItem['filename'];
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            } else {
+                // Download the server files
+                $serverUrl = \BearCMS\Internal\Options::$serverUrl;
+                $matchingDir = $context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 's' . DIRECTORY_SEPARATOR;
+                if (strpos($filename, $matchingDir) === 0) {
+                    $fileServerUrl = $serverUrl . str_replace('\\', '/', str_replace($matchingDir, '', $filename));
+                    $filename = null;
+                    $fileInfo = pathinfo($fileServerUrl);
+                    if (isset($fileInfo['extension'])) {
+                        $tempFileKey = '.temp/bearcms/serverfiles/' . md5($fileServerUrl) . '.' . $fileInfo['extension'];
+                        $tempFilename = $app->data->getFilename($tempFileKey);
+                        if ($app->data->exists($tempFileKey) && false) {
                             $filename = $tempFilename;
                         } else {
-                            throw new Exception('Cannot download Bear CMS Server file (' . $fileServerUrl . ')');
+                            $ch = curl_init();
+                            curl_setopt($ch, CURLOPT_URL, $fileServerUrl);
+                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                            $response = curl_exec($ch);
+                            if ((int) curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200 && strlen($response) > 0) {
+                                $app->data->set($app->data->make($tempFileKey, $response));
+                                $filename = $tempFilename;
+                            } else {
+                                throw new Exception('Cannot download Bear CMS Server file (' . $fileServerUrl . ')');
+                            }
+                            curl_close($ch);
                         }
-                        curl_close($ch);
                     }
                 }
             }
@@ -856,6 +885,23 @@ $app->hooks
 if (!(isset($options['addDefaultThemes']) && $options['addDefaultThemes'] === false)) {
     require $context->dir . '/themes/theme1/index.php';
 }
+
+$app->hooks
+        ->add('dataItemChanged', function($key) { // Has Theme change
+            if (strpos($key, '.temp/bearcms/userthemeoptions/') === 0 || strpos($key, 'bearcms/themes/theme/') === 0) {
+                $app = App::get();
+                if ($app->bearCMS->currentUser->exists()) {
+                    $cacheItemKey = CurrentTheme::getCacheItemKey($app->bearCMS->currentUser->getID());
+                    if ($cacheItemKey !== null) {
+                        $app->cache->delete($cacheItemKey);
+                    }
+                }
+                $cacheItemKey = CurrentTheme::getCacheItemKey();
+                if ($cacheItemKey !== null) {
+                    $app->cache->delete($cacheItemKey);
+                }
+            }
+        });
 
 if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*'))) {
     $app->hooks

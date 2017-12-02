@@ -8,6 +8,7 @@
  */
 
 use BearFramework\App;
+use BearCMS\Themes\Theme1;
 
 $app = App::get();
 $context = $app->context->get(__FILE__);
@@ -16,12 +17,16 @@ $context->classes
         ->add('BearCMS\Themes\Theme1', 'themes/theme1/classes/Theme1.php');
 
 $app->bearCMS->themes
-        ->add('bearcms/theme1', function() use ($app, $context) {
-            BearCMS\Themes\Theme1::initialize($app, $context);
-        }, function($response, $options) use ($app, $context) {
-            BearCMS\Themes\Theme1::apply($app, $context, $response, $options);
-        }, [
-            'manifest' => function() use ($context) {
+        ->add('bearcms/theme1', [
+            'version' => '1',
+            'initialize' => function() use ($app, $context) {
+                Theme1::initialize($app, $context);
+            },
+            'apply' => function($response, $options) use ($app, $context) {
+                Theme1::apply($app, $context, $response, $options);
+            },
+            'manifest' => function() use ($app, $context) {
+                Theme1::initializeLocalization($app, $context);
                 return [
                     'name' => __('bearcms.themes.theme1.name'),
                     'description' => 'This is the default starter theme for each Bear CMS powered website. Simple yet highly customizable it enables you to create websites that look great on desktops, tables and smartphones. You can change the colors and visibility of the different content blocks.',

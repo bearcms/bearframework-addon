@@ -20,6 +20,11 @@ class Theme1
         $context->assets
                 ->addDir('themes/theme1/assets');
 
+        self::initializeLocalization($app, $context);
+    }
+
+    static function initializeLocalization(App $app, Context $context)
+    {
         $app->localization
                 ->addDictionary('en', function() use ($context) {
                     return include $context->dir . '/themes/theme1/locales/en.php';

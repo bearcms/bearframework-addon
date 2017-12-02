@@ -15,6 +15,7 @@ use BearCMS\Internal\Cookies;
 use BearCMS\Internal\ElementsHelper;
 use BearCMS\Internal\Server;
 use BearCMS\Internal\CurrentTheme;
+use BearCMS\Internal\Themes as InternalThemes;
 
 /**
  * Contains references to all Bear CMS related objects.
@@ -241,6 +242,11 @@ class BearCMS
 
     public function applyAdminUI(Response $response): void
     {
+        $currentUserExists = Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
+        if (!$currentUserExists) {
+            return;
+        }
+
         $app = App::get();
         $context = $app->context->get(__FILE__);
 
@@ -312,8 +318,8 @@ class BearCMS
     {
         $app = App::get();
         $currentThemeID = CurrentTheme::getID();
-        if (isset(\BearCMS\Internal\Themes::$list[$currentThemeID])) {
-            $callback = \BearCMS\Internal\Themes::$list[$currentThemeID][1];
+        if (isset(InternalThemes::$list[$currentThemeID], InternalThemes::$list[$currentThemeID]['apply'])) {
+            $callback = InternalThemes::$list[$currentThemeID]['apply'];
             if (is_callable($callback)) {
                 call_user_func($callback, $response, CurrentTheme::getOptions());
             }
