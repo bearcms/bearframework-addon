@@ -44,7 +44,7 @@ class Themes
      * @return array A list containing the theme options
      * @throws \InvalidArgumentException
      */
-    public function getTempOptions(string $id, string $userID): array
+    public function getTempOptions(string $id, string $userID): ?array
     {
         $data = \BearCMS\Internal\Data::getValue('.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json');
         if ($data !== null) {
@@ -53,7 +53,7 @@ class Themes
                 return $data['options'];
             }
         }
-        return [];
+        return null;
     }
 
 }

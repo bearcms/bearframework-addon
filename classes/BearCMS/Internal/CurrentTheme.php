@@ -89,12 +89,15 @@ class CurrentTheme
         if (!isset(self::$cache[$cacheKey])) {
             $currentThemeID = self::getID();
             $result = [];
-            $values = $app->bearCMS->data->themes->getOptions($currentThemeID);
+            $values = null;
             if ($app->bearCMS->currentUser->exists()) {
                 $userOptions = $app->bearCMS->data->themes->getTempOptions($currentThemeID, $app->bearCMS->currentUser->getID());
-                if (!empty($userOptions)) {
-                    $values = array_merge($values, $userOptions);
+                if (is_array($userOptions)) {
+                    $values = $userOptions;
                 }
+            }
+            if ($values === null) {
+                $values = $app->bearCMS->data->themes->getOptions($currentThemeID);
             }
 // todo optimize
             $themeOptions = \BearCMS\Internal\Themes::getOptions($currentThemeID);
