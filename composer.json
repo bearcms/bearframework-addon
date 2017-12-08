@@ -10,7 +10,7 @@
     "require": {
         "php": ">=7.1.0",
         "bearframework/bearframework": "0.10.*@beta",
-        "bearframework/html-template": "0.1.*",
+        "bearframework/html-template": "0.2.*",
         "bearframework/emails-addon": "0.4.*@beta|0.5.*@beta",
         "bearframework/localization-addon": "0.2.*@beta",
         "ivopetkov/html-server-components-bearframework-addon": "0.2.*|0.3.*|0.4.*|0.5.*@beta",

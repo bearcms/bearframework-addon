@@ -6,7 +6,7 @@ $app = App::get();
 
 $options = $app->bearCMS->themes->makeOptionsDefinition();
 
-$options->addGroup(__("bearcms.themes.theme1.options.Header"))
+$options->addGroup(__("bearcms.themes.universal.options.Header"))
         ->add([
             "id" => "headerCSS",
             "type" => "css",
@@ -26,11 +26,11 @@ $options->addGroup(__("bearcms.themes.theme1.options.Header"))
             ]
         ])
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Logo"))
+                $options->makeGroup(__("bearcms.themes.universal.options.Logo"))
                 ->add([
                     "id" => "headerLogoImage",
                     "type" => "image",
-                    "name" => __("bearcms.themes.theme1.options.Image")
+                    "name" => __("bearcms.themes.universal.options.Image")
                 ])
                 ->add([
                     "id" => "headerLogoImageCSS",
@@ -45,7 +45,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Header"))
                     ]
                 ])
                 ->add(
-                        $options->makeGroup(__("bearcms.themes.theme1.options.Container"))
+                        $options->makeGroup(__("bearcms.themes.universal.options.Container"))
                         ->add([
                             "id" => "headerLogoImageContainerCSS",
                             "type" => "css",
@@ -62,20 +62,20 @@ $options->addGroup(__("bearcms.themes.theme1.options.Header"))
                 )
         )
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Title"))
+                $options->makeGroup(__("bearcms.themes.universal.options.Title"))
                 ->add([
                     "id" => "headerTitleVisibility",
                     "type" => "list",
-                    "name" => __("bearcms.themes.theme1.options.Visibility"),
+                    "name" => __("bearcms.themes.universal.options.Visibility"),
                     "defaultValue" => "1",
                     "values" => [
                         [
                             "value" => "1",
-                            "name" => __("bearcms.themes.theme1.options.Visible")
+                            "name" => __("bearcms.themes.universal.options.Visible")
                         ],
                         [
                             "value" => "0",
-                            "name" => __("bearcms.themes.theme1.options.Hidden")
+                            "name" => __("bearcms.themes.universal.options.Hidden")
                         ]
                     ]
                 ])
@@ -96,7 +96,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Header"))
                     ]
                 ])
                 ->add(
-                        $options->makeGroup(__("bearcms.themes.theme1.options.Container"))
+                        $options->makeGroup(__("bearcms.themes.universal.options.Container"))
                         ->add([
                             "id" => "headerTitleContainerCSS",
                             "type" => "css",
@@ -113,20 +113,20 @@ $options->addGroup(__("bearcms.themes.theme1.options.Header"))
                 )
         )
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Description"))
+                $options->makeGroup(__("bearcms.themes.universal.options.Description"))
                 ->add([
                     "id" => "headerDescriptionVisibility",
                     "type" => "list",
-                    "name" => __("bearcms.themes.theme1.options.Visibility"),
+                    "name" => __("bearcms.themes.universal.options.Visibility"),
                     "defaultValue" => "1",
                     "values" => [
                         [
                             "value" => "1",
-                            "name" => __("bearcms.themes.theme1.options.Visible")
+                            "name" => __("bearcms.themes.universal.options.Visible")
                         ],
                         [
                             "value" => "0",
-                            "name" => __("bearcms.themes.theme1.options.Hidden")
+                            "name" => __("bearcms.themes.universal.options.Hidden")
                         ]
                     ]
                 ])
@@ -145,7 +145,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Header"))
                     ]
                 ])
                 ->add(
-                        $options->makeGroup(__("bearcms.themes.theme1.options.Container"))
+                        $options->makeGroup(__("bearcms.themes.universal.options.Container"))
                         ->add([
                             "id" => "headerDescriptionContainerCSS",
                             "type" => "css",
@@ -162,7 +162,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Header"))
                 )
         )
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Container"))
+                $options->makeGroup(__("bearcms.themes.universal.options.Container"))
                 ->add([
                     "id" => "headerContainerCSS",
                     "type" => "css",
@@ -177,20 +177,20 @@ $options->addGroup(__("bearcms.themes.theme1.options.Header"))
                 ])
 );
 
-$options->addGroup(__("bearcms.themes.theme1.options.Navigation"))
+$options->addGroup(__("bearcms.themes.universal.options.Navigation"))
         ->add([
             "id" => "navigationPosition",
             "type" => "list",
-            "name" => __("bearcms.themes.theme1.options.Position"),
+            "name" => __("bearcms.themes.universal.options.Position"),
             "defaultValue" => "2",
             "values" => [
                 [
                     "value" => "1",
-                    "name" => __("bearcms.themes.theme1.options.Top")
+                    "name" => __("bearcms.themes.universal.options.Top")
                 ],
                 [
                     "value" => "2",
-                    "name" => __("bearcms.themes.theme1.options.Bottom")
+                    "name" => __("bearcms.themes.universal.options.Bottom")
                 ]
             ]
         ])
@@ -212,7 +212,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Navigation"))
             ]
         ])
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Item"))
+                $options->makeGroup(__("bearcms.themes.universal.options.Item"))
                 ->add([
                     "id" => "navigationItemCSS",
                     "type" => "css",
@@ -255,7 +255,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Navigation"))
                     ]
                 ])
                 ->add(
-                        $options->makeGroup(__("bearcms.themes.theme1.options.Selected"))
+                        $options->makeGroup(__("bearcms.themes.universal.options.Selected"))
                         ->add([
                             "id" => "navigationSelectedItemCSS",
                             "type" => "css",
@@ -280,7 +280,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Navigation"))
                 )
         )
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Subitem"))
+                $options->makeGroup(__("bearcms.themes.universal.options.Subitem"))
                 ->add([
                     "id" => "navigationSubitemCSS",
                     "type" => "css",
@@ -320,7 +320,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Navigation"))
                     ]
                 ])
                 ->add(
-                        $options->makeGroup(__("bearcms.themes.theme1.options.Selected"))
+                        $options->makeGroup(__("bearcms.themes.universal.options.Selected"))
                         ->add([
                             "id" => "navigationSelectedSubitemCSS",
                             "type" => "css",
@@ -343,7 +343,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Navigation"))
                 )
         )
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Container"))
+                $options->makeGroup(__("bearcms.themes.universal.options.Container"))
                 ->add([
                     "id" => "navigationContainerCSS",
                     "type" => "css",
@@ -358,20 +358,20 @@ $options->addGroup(__("bearcms.themes.theme1.options.Navigation"))
                 ])
 );
 
-$options->addGroup(__("bearcms.themes.theme1.options.Home page special block"), "This content block is placed above the navigation on the home page. It is useful for welcoming your visitors with images, videos or text.")
+$options->addGroup(__("bearcms.themes.universal.options.Home page special block"), "This content block is placed above the navigation on the home page. It is useful for welcoming your visitors with images, videos or text.")
         ->add([
             "id" => "homePageSpecialContentBlockVisibility",
             "type" => "list",
-            "name" => __("bearcms.themes.theme1.options.Visibility"),
+            "name" => __("bearcms.themes.universal.options.Visibility"),
             "defaultValue" => "1",
             "values" => [
                 [
                     "value" => "1",
-                    "name" => __("bearcms.themes.theme1.options.Visible")
+                    "name" => __("bearcms.themes.universal.options.Visible")
                 ],
                 [
                     "value" => "0",
-                    "name" => __("bearcms.themes.theme1.options.Hidden")
+                    "name" => __("bearcms.themes.universal.options.Hidden")
                 ]
             ]
         ])
@@ -394,11 +394,11 @@ $options->addGroup(__("bearcms.themes.theme1.options.Home page special block"), 
             ]
         ])
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Elements"))
+                $options->makeGroup(__("bearcms.themes.universal.options.Elements"))
                 ->addElements('homePageSpecialContentBlockElements', '.template-homepage-special-content-block')
         )
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Container"))
+                $options->makeGroup(__("bearcms.themes.universal.options.Container"))
                 ->add([
                     "id" => "homePageSpecialContentBlockContainerCSS",
                     "type" => "css",
@@ -413,7 +413,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Home page special block"), 
                 ])
 );
 
-$options->addGroup(__("bearcms.themes.theme1.options.Content"))
+$options->addGroup(__("bearcms.themes.universal.options.Content"))
         ->add([
             "id" => "contentCSS",
             "type" => "css",
@@ -434,11 +434,11 @@ $options->addGroup(__("bearcms.themes.theme1.options.Content"))
             ]
         ])
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Elements"))
+                $options->makeGroup(__("bearcms.themes.universal.options.Elements"))
                 ->addElements('contentElements', '.template-content')
         )
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Container"))
+                $options->makeGroup(__("bearcms.themes.universal.options.Container"))
                 ->add([
                     "id" => "contentContainerCSS",
                     "type" => "css",
@@ -453,20 +453,20 @@ $options->addGroup(__("bearcms.themes.theme1.options.Content"))
                 ])
 );
 
-$options->addGroup(__("bearcms.themes.theme1.options.Footer"))
+$options->addGroup(__("bearcms.themes.universal.options.Footer"))
         ->add([
             "id" => "footerVisibility",
             "type" => "list",
-            "name" => __("bearcms.themes.theme1.options.Visibility"),
+            "name" => __("bearcms.themes.universal.options.Visibility"),
             "defaultValue" => "1",
             "values" => [
                 [
                     "value" => "1",
-                    "name" => __("bearcms.themes.theme1.options.Visible")
+                    "name" => __("bearcms.themes.universal.options.Visible")
                 ],
                 [
                     "value" => "0",
-                    "name" => __("bearcms.themes.theme1.options.Hidden")
+                    "name" => __("bearcms.themes.universal.options.Hidden")
                 ]
             ]
         ])
@@ -489,24 +489,24 @@ $options->addGroup(__("bearcms.themes.theme1.options.Footer"))
             ]
         ])
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Elements"))
+                $options->makeGroup(__("bearcms.themes.universal.options.Elements"))
                 ->addElements('footerElements', '.template-footer')
         )
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Powered by link"), "This link is located at the bottom of your website and shows your visitors you are proud of using Bear CMS")
+                $options->makeGroup(__("bearcms.themes.universal.options.Powered by link"), "This link is located at the bottom of your website and shows your visitors you are proud of using Bear CMS")
                 ->add([
                     "id" => "poweredByLinkVisibility",
                     "type" => "list",
-                    "name" => __("bearcms.themes.theme1.options.Visibility"),
+                    "name" => __("bearcms.themes.universal.options.Visibility"),
                     "defaultValue" => "1",
                     "values" => [
                         [
                             "value" => "1",
-                            "name" => __("bearcms.themes.theme1.options.Visible")
+                            "name" => __("bearcms.themes.universal.options.Visible")
                         ],
                         [
                             "value" => "0",
-                            "name" => __("bearcms.themes.theme1.options.Hidden")
+                            "name" => __("bearcms.themes.universal.options.Hidden")
                         ]
                     ]
                 ])
@@ -528,7 +528,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Footer"))
                     ]
                 ])
                 ->add(
-                        $options->makeGroup(__("bearcms.themes.theme1.options.Container"))
+                        $options->makeGroup(__("bearcms.themes.universal.options.Container"))
                         ->add([
                             "id" => "poweredByLinkContainerCSS",
                             "type" => "css",
@@ -544,7 +544,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Footer"))
                 )
         )
         ->add(
-                $options->makeGroup(__("bearcms.themes.theme1.options.Container"))
+                $options->makeGroup(__("bearcms.themes.universal.options.Container"))
                 ->add([
                     "id" => "footerContainerCSS",
                     "type" => "css",
@@ -559,7 +559,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Footer"))
                 ])
 );
 
-$options->addGroup(__("bearcms.themes.theme1.options.Window"))
+$options->addGroup(__("bearcms.themes.universal.options.Window"))
         ->add([
             "id" => "bodyCSS",
             "type" => "css",
@@ -572,7 +572,7 @@ $options->addGroup(__("bearcms.themes.theme1.options.Window"))
             ]
         ]);
 
-$options->addGroup(__('bearcms.themes.theme1.Pages'))
+$options->addGroup(__('bearcms.themes.universal.Pages'))
         ->addPages();
 
 $options->addCustomCSS();

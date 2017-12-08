@@ -45,11 +45,11 @@ class OptionsDefinitionGroup
         $this->options = array_merge($this->options, [
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.options.Heading"),
+                "name" => __("bearcms.themes.universal.options.Heading"),
                 "options" => [
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Large"),
+                        "name" => __("bearcms.themes.universal.options.Large"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "HeadingLargeCSS",
@@ -74,7 +74,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Medium"),
+                        "name" => __("bearcms.themes.universal.options.Medium"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "HeadingMediumCSS",
@@ -99,7 +99,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Small"),
+                        "name" => __("bearcms.themes.universal.options.Small"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "HeadingSmallCSS",
@@ -126,7 +126,7 @@ class OptionsDefinitionGroup
             ],
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.options.Text"),
+                "name" => __("bearcms.themes.universal.options.Text"),
                 "options" => [
                     [
                         "id" => $idPrefix . "TextCSS",
@@ -143,7 +143,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Links"),
+                        "name" => __("bearcms.themes.universal.options.Links"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "TextLinkCSS",
@@ -168,7 +168,7 @@ class OptionsDefinitionGroup
             ],
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.options.Link"),
+                "name" => __("bearcms.themes.universal.options.Link"),
                 "options" => [
                     [
                         "id" => $idPrefix . "LinkCSS",
@@ -194,7 +194,7 @@ class OptionsDefinitionGroup
             ],
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.options.Image"),
+                "name" => __("bearcms.themes.universal.options.Image"),
                 "options" => [
                     [
                         "id" => $idPrefix . "ImageCSS",
@@ -209,7 +209,7 @@ class OptionsDefinitionGroup
             ],
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.options.Image gallery"),
+                "name" => __("bearcms.themes.universal.options.Image gallery"),
                 "options" => [
                     [
                         "id" => $idPrefix . "ImageGalleryCSS",
@@ -221,7 +221,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Image"),
+                        "name" => __("bearcms.themes.universal.options.Image"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "ImageGalleryImageCSS",
@@ -238,7 +238,7 @@ class OptionsDefinitionGroup
             ],
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.options.Video"),
+                "name" => __("bearcms.themes.universal.options.Video"),
                 "options" => [
                     [
                         "id" => $idPrefix . "VideoCSS",
@@ -253,7 +253,7 @@ class OptionsDefinitionGroup
             ],
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.options.Navigation"),
+                "name" => __("bearcms.themes.universal.options.Navigation"),
                 "options" => [
                     [
                         "id" => $idPrefix . "NavigationCSS",
@@ -265,7 +265,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Elements"),
+                        "name" => __("bearcms.themes.universal.options.Elements"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "NavigationItemLinkCSS",
@@ -290,11 +290,11 @@ class OptionsDefinitionGroup
             ],
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.options.Contact Form"),
+                "name" => __("bearcms.themes.universal.options.Contact Form"),
                 "options" => [
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.contactForm.Email label"),
+                        "name" => __("bearcms.themes.universal.options.contactForm.Email label"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "ContactFormEmailLabelCSS",
@@ -314,7 +314,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.contactForm.Email input"),
+                        "name" => __("bearcms.themes.universal.options.contactForm.Email input"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "ContactFormEmailInputCSS",
@@ -352,7 +352,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.contactForm.Message label"),
+                        "name" => __("bearcms.themes.universal.options.contactForm.Message label"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "ContactFormMessageLabelCSS",
@@ -373,7 +373,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.contactForm.Message input"),
+                        "name" => __("bearcms.themes.universal.options.contactForm.Message input"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "ContactFormMessageInputCSS",
@@ -413,7 +413,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.contactForm.Send button"),
+                        "name" => __("bearcms.themes.universal.options.contactForm.Send button"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "ContactFormSendButtonCSS",
@@ -438,7 +438,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.contactForm.Send button waiting"),
+                                "name" => __("bearcms.themes.universal.options.contactForm.Send button waiting"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "ContactFormSendButtonWaitingCSS",
@@ -459,11 +459,11 @@ class OptionsDefinitionGroup
             ],
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.options.Comments"),
+                "name" => __("bearcms.themes.universal.options.Comments"),
                 "options" => [
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.comments.Comment"),
+                        "name" => __("bearcms.themes.universal.options.comments.Comment"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "CommentsCommentCSS",
@@ -479,7 +479,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.comments.Author name"),
+                                "name" => __("bearcms.themes.universal.options.comments.Author name"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "CommentsAuthorNameCSS",
@@ -502,7 +502,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.comments.Author image"),
+                                "name" => __("bearcms.themes.universal.options.comments.Author image"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "CommentsAuthorImageCSS",
@@ -522,7 +522,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.comments.Date"),
+                                "name" => __("bearcms.themes.universal.options.comments.Date"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "CommentsDateCSS",
@@ -542,7 +542,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.comments.Text"),
+                                "name" => __("bearcms.themes.universal.options.comments.Text"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "CommentsTextCSS",
@@ -561,7 +561,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.comments.Text links"),
+                                "name" => __("bearcms.themes.universal.options.comments.Text links"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "CommentsTextLinksCSS",
@@ -586,7 +586,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.comments.Text input"),
+                        "name" => __("bearcms.themes.universal.options.comments.Text input"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "CommentsTextInputCSS",
@@ -625,7 +625,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.comments.Send button"),
+                        "name" => __("bearcms.themes.universal.options.comments.Send button"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "CommentsSendButtonCSS",
@@ -650,7 +650,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.comments.Send button waiting"),
+                                "name" => __("bearcms.themes.universal.options.comments.Send button waiting"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "CommentsSendButtonWaitingCSS",
@@ -669,7 +669,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.comments.Show more button"),
+                        "name" => __("bearcms.themes.universal.options.comments.Show more button"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "CommentsShowMoreButtonCSS",
@@ -691,7 +691,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.comments.Container"),
+                                "name" => __("bearcms.themes.universal.options.comments.Container"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "CommentsShowMoreButtonContainerCSS",
@@ -709,11 +709,11 @@ class OptionsDefinitionGroup
             ],
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.options.Forum posts"),
+                "name" => __("bearcms.themes.universal.options.Forum posts"),
                 "options" => [
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.forumPosts.Post"),
+                        "name" => __("bearcms.themes.universal.options.forumPosts.Post"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "ForumPostsPostCSS",
@@ -728,7 +728,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.forumPosts.Title"),
+                                "name" => __("bearcms.themes.universal.options.forumPosts.Title"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "ForumPostsTitleCSS",
@@ -750,7 +750,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.forumPosts.Replies count"),
+                                "name" => __("bearcms.themes.universal.options.forumPosts.Replies count"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "ForumPostsRepliesCountCSS",
@@ -772,7 +772,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.forumPosts.Show more button"),
+                        "name" => __("bearcms.themes.universal.options.forumPosts.Show more button"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "ForumPostsShowMoreButtonCSS",
@@ -794,7 +794,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.forumPosts.Container"),
+                                "name" => __("bearcms.themes.universal.options.forumPosts.Container"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "ForumPostsShowMoreButtonContainerCSS",
@@ -810,7 +810,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.forumPosts.New post bitton"),
+                        "name" => __("bearcms.themes.universal.options.forumPosts.New post bitton"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "ForumPostsNewPostButtonCSS",
@@ -831,7 +831,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.forumPosts.Container"),
+                                "name" => __("bearcms.themes.universal.options.forumPosts.Container"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "ForumPostsShowMoreButtonContainerCSS",
@@ -849,7 +849,7 @@ class OptionsDefinitionGroup
             ],
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.options.HTML code"),
+                "name" => __("bearcms.themes.universal.options.HTML code"),
                 "options" => [
                     [
                         "id" => $idPrefix . "HtmlCSS",
@@ -866,7 +866,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Links"),
+                        "name" => __("bearcms.themes.universal.options.Links"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "HtmlLinkCSS",
@@ -891,7 +891,7 @@ class OptionsDefinitionGroup
             ],
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.options.Blog posts"),
+                "name" => __("bearcms.themes.universal.options.Blog posts"),
                 "options" => [
                     [
                         "id" => $idPrefix . "BlogPostsCSS",
@@ -903,7 +903,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Post"),
+                        "name" => __("bearcms.themes.universal.options.Post"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "BlogPostsPostCSS",
@@ -915,7 +915,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Title"),
+                                "name" => __("bearcms.themes.universal.options.Title"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "BlogPostsPostTitleCSS",
@@ -933,7 +933,7 @@ class OptionsDefinitionGroup
                                     ],
                                     [
                                         "type" => "group",
-                                        "name" => __("bearcms.themes.theme1.options.Container"),
+                                        "name" => __("bearcms.themes.universal.options.Container"),
                                         "options" => [
                                             [
                                                 "id" => $idPrefix . "BlogPostsPostTitleContainerCSS",
@@ -949,7 +949,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Date"),
+                                "name" => __("bearcms.themes.universal.options.Date"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "BlogPostsPostDateCSS",
@@ -966,7 +966,7 @@ class OptionsDefinitionGroup
                                     ],
                                     [
                                         "type" => "group",
-                                        "name" => __("bearcms.themes.theme1.options.Container"),
+                                        "name" => __("bearcms.themes.universal.options.Container"),
                                         "options" => [
                                             [
                                                 "id" => $idPrefix . "BlogPostsPostDateContainerCSS",
@@ -982,7 +982,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Content"),
+                                "name" => __("bearcms.themes.universal.options.Content"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "BlogPostsPostContentCSS",
@@ -998,7 +998,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.blogPosts.Show more button"),
+                        "name" => __("bearcms.themes.universal.options.blogPosts.Show more button"),
                         "options" => [
                             [
                                 "id" => $idPrefix . "BlogPostsShowMoreButtonCSS",
@@ -1020,7 +1020,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.blogPosts.Container"),
+                                "name" => __("bearcms.themes.universal.options.blogPosts.Container"),
                                 "options" => [
                                     [
                                         "id" => $idPrefix . "BlogPostsShowMoreButtonContainerCSS",
@@ -1045,11 +1045,11 @@ class OptionsDefinitionGroup
         $this->options = array_merge($this->options, [
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.options.Blog post page"),
+                "name" => __("bearcms.themes.universal.options.Blog post page"),
                 "options" => [
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Title"),
+                        "name" => __("bearcms.themes.universal.options.Title"),
                         "options" => [
                             [
                                 "id" => "blogPostPageTitleCSS",
@@ -1072,7 +1072,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Container"),
+                                "name" => __("bearcms.themes.universal.options.Container"),
                                 "options" => [
                                     [
                                         "id" => "blogPostPageTitleContainerCSS",
@@ -1088,7 +1088,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Date"),
+                        "name" => __("bearcms.themes.universal.options.Date"),
                         "options" => [
                             [
                                 "id" => "blogPostPageDateVisibility",
@@ -1122,7 +1122,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.Container"),
+                                "name" => __("bearcms.themes.universal.options.Container"),
                                 "options" => [
                                     [
                                         "id" => "blogPostPageDateContainerCSS",
@@ -1138,7 +1138,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.Content"),
+                        "name" => __("bearcms.themes.universal.options.Content"),
                         "options" => [
                             [
                                 "id" => "blogPostPageContentCSS",
@@ -1157,11 +1157,11 @@ class OptionsDefinitionGroup
             ],
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.New forum post page"),
+                "name" => __("bearcms.themes.universal.New forum post page"),
                 "options" => [
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.newForumPostPage.Title label"),
+                        "name" => __("bearcms.themes.universal.options.newForumPostPage.Title label"),
                         "options" => [
                             [
                                 "id" => "newForumPostPageTitleLabelCSS",
@@ -1181,7 +1181,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.newForumPostPage.Title input"),
+                        "name" => __("bearcms.themes.universal.options.newForumPostPage.Title input"),
                         "options" => [
                             [
                                 "id" => "newForumPostPageTitleInputCSS",
@@ -1218,7 +1218,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.newForumPostPage.Text label"),
+                        "name" => __("bearcms.themes.universal.options.newForumPostPage.Text label"),
                         "options" => [
                             [
                                 "id" => "newForumPostPageTextLabelCSS",
@@ -1239,7 +1239,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.newForumPostPage.Text input"),
+                        "name" => __("bearcms.themes.universal.options.newForumPostPage.Text input"),
                         "options" => [
                             [
                                 "id" => "newForumPostPageTextInputCSS",
@@ -1278,7 +1278,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.newForumPostPage.Send button"),
+                        "name" => __("bearcms.themes.universal.options.newForumPostPage.Send button"),
                         "options" => [
                             [
                                 "id" => "newForumPostPageSendButtonCSS",
@@ -1303,7 +1303,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.newForumPostPage.Send button waiting"),
+                                "name" => __("bearcms.themes.universal.options.newForumPostPage.Send button waiting"),
                                 "options" => [
                                     [
                                         "id" => "newForumPostPageSendButtonWaitingCSS",
@@ -1324,11 +1324,11 @@ class OptionsDefinitionGroup
             ],
             [
                 "type" => "group",
-                "name" => __("bearcms.themes.theme1.Forum post page"),
+                "name" => __("bearcms.themes.universal.Forum post page"),
                 "options" => [
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Title"),
+                        "name" => __("bearcms.themes.universal.options.forumPostPage.Title"),
                         "options" => [
                             [
                                 "id" => "forumPostPageTitleCSS",
@@ -1351,7 +1351,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.forumPostPage.Container"),
+                                "name" => __("bearcms.themes.universal.options.forumPostPage.Container"),
                                 "options" => [
                                     [
                                         "id" => "forumPostPageTitleContainerCSS",
@@ -1367,7 +1367,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Date"),
+                        "name" => __("bearcms.themes.universal.options.forumPostPage.Date"),
                         "options" => [
                             [
                                 "id" => "forumPostPageDateCSS",
@@ -1385,7 +1385,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.forumPostPage.Container"),
+                                "name" => __("bearcms.themes.universal.options.forumPostPage.Container"),
                                 "options" => [
                                     [
                                         "id" => "forumPostPageDateContainerCSS",
@@ -1401,7 +1401,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Content"),
+                        "name" => __("bearcms.themes.universal.options.forumPostPage.Content"),
                         "options" => [
                             [
                                 "id" => "forumPostPageContentCSS",
@@ -1418,7 +1418,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Reply"),
+                        "name" => __("bearcms.themes.universal.options.forumPostPage.Reply"),
                         "options" => [
                             [
                                 "id" => "forumPostPageReplyCSS",
@@ -1434,7 +1434,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.forumPostPage.Author name"),
+                                "name" => __("bearcms.themes.universal.options.forumPostPage.Author name"),
                                 "options" => [
                                     [
                                         "id" => "forumPostPageReplyAuthorNameCSS",
@@ -1457,7 +1457,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.forumPostPage.Author image"),
+                                "name" => __("bearcms.themes.universal.options.forumPostPage.Author image"),
                                 "options" => [
                                     [
                                         "id" => "forumPostPageReplyAuthorImageCSS",
@@ -1477,7 +1477,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.forumPostPage.Date"),
+                                "name" => __("bearcms.themes.universal.options.forumPostPage.Date"),
                                 "options" => [
                                     [
                                         "id" => "forumPostPageReplyDateCSS",
@@ -1497,7 +1497,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.forumPostPage.Text"),
+                                "name" => __("bearcms.themes.universal.options.forumPostPage.Text"),
                                 "options" => [
                                     [
                                         "id" => "forumPostPageReplyTextCSS",
@@ -1516,7 +1516,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.forumPostPage.Text links"),
+                                "name" => __("bearcms.themes.universal.options.forumPostPage.Text links"),
                                 "options" => [
                                     [
                                         "id" => "forumPostPageReplyTextLinksCSS",
@@ -1541,7 +1541,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Text input"),
+                        "name" => __("bearcms.themes.universal.options.forumPostPage.Text input"),
                         "options" => [
                             [
                                 "id" => "forumPostPageTextInputCSS",
@@ -1580,7 +1580,7 @@ class OptionsDefinitionGroup
                     ],
                     [
                         "type" => "group",
-                        "name" => __("bearcms.themes.theme1.options.forumPostPage.Send button"),
+                        "name" => __("bearcms.themes.universal.options.forumPostPage.Send button"),
                         "options" => [
                             [
                                 "id" => "forumPostPageSendButtonCSS",
@@ -1605,7 +1605,7 @@ class OptionsDefinitionGroup
                             ],
                             [
                                 "type" => "group",
-                                "name" => __("bearcms.themes.theme1.options.forumPostPage.Send button waiting"),
+                                "name" => __("bearcms.themes.universal.options.forumPostPage.Send button waiting"),
                                 "options" => [
                                     [
                                         "id" => "forumPostPageSendButtonWaitingCSS",
@@ -1633,7 +1633,7 @@ class OptionsDefinitionGroup
         $this->options[] = [
             "id" => "customCSS",
             "type" => "cssCode",
-            "name" => __("bearcms.themes.theme1.options.Custom CSS")
+            "name" => __("bearcms.themes.universal.options.Custom CSS")
         ];
         return $this;
     }
