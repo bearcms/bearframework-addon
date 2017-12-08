@@ -47,7 +47,7 @@ class CurrentTheme
         if ($version === null) {
             return null;
         }
-        return 'bearcms-theme-options-' . md5($themeID) . '-' . md5($version) . '-' . md5($userID);
+        return 'bearcms-theme-options-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . md5($themeID) . '-' . md5($version) . '-' . md5($userID);
     }
 
     /**
