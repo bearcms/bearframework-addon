@@ -16,7 +16,12 @@ class Themes
 
     static $list = [];
 
-    static function add(string $id, array $options = [])
+    /**
+     * 
+     * @param string $id
+     * @param array|callable $options
+     */
+    static function add(string $id, $options = [])
     {
         self::$list[$id] = $options;
     }
@@ -41,9 +46,17 @@ class Themes
         return $list;
     }
 
+    static function prepareOptions($id)
+    {
+        if (isset(self::$list[$id]) && is_callable(self::$list[$id])) {
+            self::$list[$id] = call_user_func(self::$list[$id]);
+        }
+    }
+
     static function getVersion(string $id): ?string
     {
         if (isset(self::$list[$id])) {
+            self::prepareOptions($id);
             $options = self::$list[$id];
             if (isset($options['version'])) {
                 return $options['version'];
@@ -55,6 +68,7 @@ class Themes
     static function getManifest(string $id, $updateMediaFilenames = true): array
     {
         if (isset(self::$list[$id])) {
+            self::prepareOptions($id);
             $options = self::$list[$id];
             if (isset($options['manifest'])) {
                 $app = App::get();
@@ -87,6 +101,7 @@ class Themes
     static function getOptions(string $id): array
     {
         if (isset(self::$list[$id])) {
+            self::prepareOptions($id);
             $options = self::$list[$id];
             if (isset($options['options'])) {
                 if (is_array($options['options'])) {
@@ -111,6 +126,7 @@ class Themes
     static function getStyles(string $id): array
     {
         if (isset(self::$list[$id])) {
+            self::prepareOptions($id);
             $options = self::$list[$id];
             if (isset($options['styles'])) {
                 if (is_array($options['styles'])) {
