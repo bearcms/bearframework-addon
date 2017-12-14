@@ -2,6 +2,7 @@
 
 return [
     'bearcms.themes.universal.name' => 'Universal',
+    'bearcms.themes.universal.description' => 'As the name implies, this theme is universal. Simple yet highly customizable it enables you to create websites that look great on desktops, tablets and smartphones. With multiple styles, you can use it for personal, business and fan websites. It provides a unique content block on the home page that can be used for news, promos or other welcoming information.',
     'bearcms.themes.universal.options.Header' => 'Header',
     'bearcms.themes.universal.options.Logo' => 'Logo',
     'bearcms.themes.universal.options.Container' => 'Container',

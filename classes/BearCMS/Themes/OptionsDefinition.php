@@ -36,7 +36,11 @@ class OptionsDefinition extends \BearCMS\Themes\OptionsDefinitionGroup
             foreach ($options as $i => $option) {
                 if ($option instanceof \BearCMS\Themes\OptionsDefinitionGroup) {
                     if ($walkOptions($option->options)) {
-                        return true;
+                        return;
+                    }
+                } elseif (is_array($option) && isset($option['type'], $option['options']) && $option['type'] === 'group') {
+                    if ($walkOptions($options[$i]['options'])) {
+                        return;
                     }
                 } elseif (is_array($option) && isset($option['id']) && isset($values[$option['id']])) {
                     $options[$i]['defaultValue'] = $values[$option['id']];

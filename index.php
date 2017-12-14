@@ -883,7 +883,7 @@ $app->hooks
         });
 
 if (!(isset($options['addDefaultThemes']) && $options['addDefaultThemes'] === false)) {
-    require $context->dir . '/themes/universal/index.php';
+    $app->bearCMS->themes->addDefault();
 }
 
 $app->hooks

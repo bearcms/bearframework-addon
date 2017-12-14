@@ -9,6 +9,7 @@
 
 namespace BearCMS;
 
+use BearFramework\App;
 use BearCMS\Internal\CurrentTheme;
 
 class Themes
@@ -21,10 +22,17 @@ class Themes
      */
     public function add(string $id, $options = [])
     {
+        $app = App::get();
         $currentThemeID = CurrentTheme::getID();
         $initialize = $id === $currentThemeID;
         if ($initialize && is_callable($options)) {
             $options = call_user_func($options);
+        }
+        if ($app->hooks->exists('bearCMSThemeAdd')) {
+            if (is_callable($options)) {
+                $options = call_user_func($options);
+            }
+            $app->hooks->execute('bearCMSThemeAdd', $id, $options);
         }
 
         \BearCMS\Internal\Themes::add($id, $options);
@@ -34,6 +42,23 @@ class Themes
             call_user_func($options['initialize'], CurrentTheme::getOptions());
         }
 
+        if ($app->hooks->exists('bearCMSThemeAdded')) {
+            $app->hooks->execute('bearCMSThemeAdded', $id, $options);
+        }
+
+        return $this;
+    }
+
+    public function addDefault()
+    {
+        $app = App::get();
+        $context = $app->context->get(__FILE__);
+        require $context->dir . '/themes/universal/index.php';
+    }
+
+    public function defineElementOption($definition)
+    {
+        \BearCMS\Internal\Themes::defineElementOption($definition);
         return $this;
     }
 

@@ -18,7 +18,7 @@ return function($data) {
     $themes = BearCMS\Internal\Themes::getList();
     foreach ($themes as $id) {
         if ($id === $data['id']) {
-            $styles = BearCMS\Internal\Themes::getStyles($id);
+            $styles = BearCMS\Internal\Themes::getStyles($id, true);
             return $styles;
         }
     }

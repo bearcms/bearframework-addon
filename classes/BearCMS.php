@@ -318,11 +318,42 @@ class BearCMS
     {
         $app = App::get();
         $currentThemeID = CurrentTheme::getID();
+        $currentThemeOptions = CurrentTheme::getOptions();
+        if ($app->hooks->exists('bearCMSThemeApply')) {
+            $app->hooks->execute('bearCMSThemeApply', $currentThemeID, $response, $currentThemeOptions);
+        }
+
+        $content = $response->content;
+
+        $hasChange = false;
+        $domDocument = null;
+        $getDocument = function() use ($content, &$domDocument) {
+            if ($domDocument === null) {
+                $domDocument = new HTML5DOMDocument();
+                $domDocument->loadHTML($content);
+            }
+            return $domDocument;
+        };
+        if (strpos($content, 'class="bearcms-blogpost-page-date-container"') !== false && $currentThemeOptions['blogPostPageDateVisibility'] === '0') {
+            $domDocument = $getDocument();
+            $element = $domDocument->querySelector('div.bearcms-blogpost-page-date-container');
+            if ($element) {
+                $element->parentNode->removeChild($element);
+                $hasChange = true;
+            }
+        }
+        if ($hasChange) {
+            $response->content = $domDocument->saveHTML();
+        }
+
         if (isset(InternalThemes::$list[$currentThemeID], InternalThemes::$list[$currentThemeID]['apply'])) {
             $callback = InternalThemes::$list[$currentThemeID]['apply'];
             if (is_callable($callback)) {
-                call_user_func($callback, $response, CurrentTheme::getOptions());
+                call_user_func($callback, $response, $currentThemeOptions);
             }
+        }
+        if ($app->hooks->exists('bearCMSThemeApplied')) {
+            $app->hooks->execute('bearCMSThemeApplied', $currentThemeID, $response, $currentThemeOptions);
         }
     }
 

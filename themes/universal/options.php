@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * Bear CMS addon for Bear Framework
+ * https://bearcms.com/
+ * Copyright (c) 2016 Amplilabs Ltd.
+ * Free to use under the MIT license.
+ */
+
 use BearFramework\App;
 
 $app = App::get();
@@ -14,15 +21,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Header"))
             "cssOutput" => [
                 ["rule", ".template-header", "box-sizing:border-box;"],
                 ["selector", ".template-header"]
-            ],
-            "defaultValue" => [
-                "max-width" => "800px",
-                "margin-left" => "auto",
-                "margin-right" => "auto",
-                "padding-right" => "40px",
-                "padding-bottom" => "40px",
-                "padding-left" => "40px",
-                "padding-top" => "80px"
             ]
         ])
         ->add(
@@ -39,9 +37,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Header"))
                     "cssOutput" => [
                         ["rule", ".template-header-logo", "box-sizing:border-box;display:inline-block;overflow:hidden;font-size:0;"],
                         ["selector", ".template-header-logo"]
-                    ],
-                    "defaultValue" => [
-                        "width" => "300px"
                     ]
                 ])
                 ->add(
@@ -53,10 +48,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Header"))
                             "cssOutput" => [
                                 ["rule", ".template-header-logo-container", "box-sizing:border-box;"],
                                 ["selector", ".template-header-logo-container"]
-                            ],
-                            "defaultValue" => [
-                                "margin-bottom" => "40px",
-                                "text-align" => "center"
                             ]
                         ])
                 )
@@ -67,7 +58,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Header"))
                     "id" => "headerTitleVisibility",
                     "type" => "list",
                     "name" => __("bearcms.themes.universal.options.Visibility"),
-                    "defaultValue" => "1",
                     "values" => [
                         [
                             "value" => "1",
@@ -85,14 +75,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Header"))
                     "cssOutput" => [
                         ["rule", ".template-header-title", "display:inline-block;text-decoration:none;"],
                         ["selector", ".template-header-title"]
-                    ],
-                    "defaultValue" => [
-                        "font-family" => "googlefonts:Open Sans",
-                        "font-size" => "40px",
-                        "font-weight" => "bold",
-                        "color" => "#1BB0CE",
-                        "color:hover" => "#1099B5",
-                        "color:active" => "#0A7D94"
                     ]
                 ])
                 ->add(
@@ -104,10 +86,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Header"))
                             "cssOutput" => [
                                 ["rule", ".template-header-title-container", "box-sizing:border-box;"],
                                 ["selector", ".template-header-title-container"]
-                            ],
-                            "defaultValue" => [
-                                "margin-bottom" => "40px",
-                                "text-align" => "center"
                             ]
                         ])
                 )
@@ -118,7 +96,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Header"))
                     "id" => "headerDescriptionVisibility",
                     "type" => "list",
                     "name" => __("bearcms.themes.universal.options.Visibility"),
-                    "defaultValue" => "1",
                     "values" => [
                         [
                             "value" => "1",
@@ -137,11 +114,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Header"))
                     "cssOutput" => [
                         ["rule", ".template-header-description", "box-sizing:border-box;display:inline-block;"],
                         ["selector", ".template-header-description"]
-                    ],
-                    "defaultValue" => [
-                        "color" => "#666666",
-                        "font-family" => "googlefonts:Open Sans",
-                        "font-size" => "15px"
                     ]
                 ])
                 ->add(
@@ -153,10 +125,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Header"))
                             "cssOutput" => [
                                 ["rule", ".template-header-description-container", "box-sizing:border-box;"],
                                 ["selector", ".template-header-description-container"]
-                            ],
-                            "defaultValue" => [
-                                "margin-bottom" => "40px",
-                                "text-align" => "center"
                             ]
                         ])
                 )
@@ -170,19 +138,30 @@ $options->addGroup(__("bearcms.themes.universal.options.Header"))
                     "cssOutput" => [
                         ["rule", ".template-header-container", "box-sizing:border-box;"],
                         ["selector", ".template-header-container"]
-                    ],
-                    "defaultValue" => [
-                        "background-color" => "#ffffff"
                     ]
                 ])
 );
 
 $options->addGroup(__("bearcms.themes.universal.options.Navigation"))
         ->add([
+            "id" => "navigationVisibility",
+            "type" => "list",
+            "name" => __("bearcms.themes.universal.options.Visibility"),
+            "values" => [
+                [
+                    "value" => "1",
+                    "name" => __("bearcms.themes.universal.options.Visible")
+                ],
+                [
+                    "value" => "0",
+                    "name" => __("bearcms.themes.universal.options.Hidden")
+                ]
+            ]
+        ])
+        ->add([
             "id" => "navigationPosition",
             "type" => "list",
             "name" => __("bearcms.themes.universal.options.Position"),
-            "defaultValue" => "2",
             "values" => [
                 [
                     "value" => "1",
@@ -201,14 +180,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Navigation"))
             "cssOutput" => [
                 ["rule", ".template-navigation", "box-sizing:border-box;"],
                 ["selector", ".template-navigation"]
-            ],
-            "defaultValue" => [
-                "max-width" => "800px",
-                "margin-left" => "auto",
-                "margin-right" => "auto",
-                "padding-right" => "15px",
-                "padding-left" => "15px",
-                "text-align" => "center"
             ]
         ])
         ->add(
@@ -216,7 +187,7 @@ $options->addGroup(__("bearcms.themes.universal.options.Navigation"))
                 ->add([
                     "id" => "navigationItemCSS",
                     "type" => "css",
-                    "cssTypes" => ["cssPadding"],
+                    "cssTypes" => ["cssPadding", "cssText", "cssTextShadow", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                     "cssOutput" => [
                         ["rule", ".template-navigation .template-navigation-content > .bearcms-navigation-element-item", "display:inline-block;"],
                         ["rule", ".template-navigation .template-navigation-content > .bearcms-navigation-element-item > a", "display:block;white-space:nowrap;text-overflow:ellipsis;"],
@@ -224,34 +195,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Navigation"))
                         ["selector", ".template-navigation .template-navigation-content > .bearcms-navigation-element-item > a"],
                         ["selector", ".template-navigation #template-navigation-toggle-button + label"],
                         ["selector", ".template-navigation #template-navigation-toggle-button:checked + label"]
-                    ],
-                    "defaultValue" => [
-                        "line-height" => "44px",
-                        "padding-left" => "16px",
-                        "padding-right" => "16px",
-                        "height" => "44px"
-                    ]
-                ])
-                ->add([
-                    "id" => "navigationItemCSS2",
-                    "type" => "css",
-                    "cssTypes" => ["cssText", "cssTextShadow", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                    "cssOutput" => [
-                        ["selector", ".template-navigation .template-navigation-content > .bearcms-navigation-element-item"],
-                        ["selector", ".template-navigation #template-navigation-toggle-button + label"],
-                        ["selector", ".template-navigation #template-navigation-toggle-button:checked + label"]
-                    ],
-                    "defaultValue" => [
-                        "color" => "#ffffff",
-                        "color:hover" => "#ffffff",
-                        "color:active" => "#ffffff",
-                        "text-decoration" => "none",
-                        "font-family" => "Arial",
-                        "font-size" => "15px",
-                        "line-height" => "100%",
-                        "background-color:hover" => "#1099B5",
-                        "background-color:active" => "#0A7D94",
-                        "text-align" => "left"
                     ]
                 ])
                 ->add(
@@ -259,22 +202,10 @@ $options->addGroup(__("bearcms.themes.universal.options.Navigation"))
                         ->add([
                             "id" => "navigationSelectedItemCSS",
                             "type" => "css",
-                            "cssTypes" => ["cssPadding"],
+                            "cssTypes" => ["cssPadding", "cssText", "cssTextShadow", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
                                 ["selector", ".template-navigation .template-navigation-content > .bearcms-navigation-element-item-selected > a"],
                                 ["selector", ".template-navigation #template-navigation-toggle-button:checked + label"]
-                            ]
-                        ])
-                        ->add([
-                            "id" => "navigationSelectedItemCSS2",
-                            "type" => "css",
-                            "cssTypes" => ["cssText", "cssTextShadow", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                            "cssOutput" => [
-                                ["selector", ".template-navigation .template-navigation-content > .bearcms-navigation-element-item-selected"],
-                                ["selector", ".template-navigation #template-navigation-toggle-button:checked + label"]
-                            ],
-                            "defaultValue" => [
-                                "background-color" => "#1BB0CE"
                             ]
                         ])
                 )
@@ -284,39 +215,12 @@ $options->addGroup(__("bearcms.themes.universal.options.Navigation"))
                 ->add([
                     "id" => "navigationSubitemCSS",
                     "type" => "css",
-                    "cssTypes" => ["cssPadding"],
+                    "cssTypes" => ["cssPadding", "cssText", "cssTextShadow", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                     "cssOutput" => [
                         ["rule", ".template-navigation .template-navigation-content .bearcms-navigation-element-item-children > .bearcms-navigation-element-item", "display:block;"],
                         ["rule", ".template-navigation .template-navigation-content .bearcms-navigation-element-item-children > .bearcms-navigation-element-item > a", "display:block;white-space:nowrap;text-overflow:ellipsis;"],
                         ["rule", ".template-navigation .template-navigation-content .bearcms-navigation-element-item-children > .bearcms-navigation-element-item > a", "font-family:inherit;color:inherit;font-size:inherit;font-weight:inherit;font-style:inherit;text-decoration:inherit;text-align:inherit;line-height:inherit;letter-spacing:inherit;text-shadow:inherit;"],
                         ["selector", ".template-navigation .template-navigation-content .bearcms-navigation-element-item-children > .bearcms-navigation-element-item > a"]
-                    ],
-                    "defaultValue" => [
-                        "line-height" => "44px",
-                        "padding-left" => "16px",
-                        "padding-right" => "16px",
-                        "height" => "44px"
-                    ]
-                ])
-                ->add([
-                    "id" => "navigationSubitemCSS2",
-                    "type" => "css",
-                    "cssTypes" => ["cssText", "cssTextShadow", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                    "cssOutput" => [
-                        ["selector", ".template-navigation .template-navigation-content .bearcms-navigation-element-item-children > .bearcms-navigation-element-item"]
-                    ],
-                    "defaultValue" => [
-                        "color" => "#ffffff",
-                        "color:hover" => "#ffffff",
-                        "color:active" => "#ffffff",
-                        "text-decoration" => "none",
-                        "font-family" => "Arial",
-                        "font-size" => "15px",
-                        "line-height" => "100%",
-                        "background-color" => "#1BB0CE",
-                        "background-color:hover" => "#1099B5",
-                        "background-color:active" => "#0A7D94",
-                        "text-align" => "left"
                     ]
                 ])
                 ->add(
@@ -324,20 +228,9 @@ $options->addGroup(__("bearcms.themes.universal.options.Navigation"))
                         ->add([
                             "id" => "navigationSelectedSubitemCSS",
                             "type" => "css",
-                            "cssTypes" => ["cssPadding"],
+                            "cssTypes" => ["cssPadding", "cssText", "cssTextShadow", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
                                 ["selector", ".template-navigation .template-navigation-content .bearcms-navigation-element-item-children > .bearcms-navigation-element-item-selected > a"]
-                            ]
-                        ])
-                        ->add([
-                            "id" => "navigationSelectedSubitemCSS2",
-                            "type" => "css",
-                            "cssTypes" => ["cssText", "cssTextShadow", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                            "cssOutput" => [
-                                ["selector", ".template-navigation .template-navigation-content .bearcms-navigation-element-item-children > .bearcms-navigation-element-item-selected"]
-                            ],
-                            "defaultValue" => [
-                                "background-color" => "#1BB0CE"
                             ]
                         ])
                 )
@@ -351,9 +244,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Navigation"))
                     "cssOutput" => [
                         ["rule", ".template-navigation-container", "box-sizing:border-box;"],
                         ["selector", ".template-navigation-container"]
-                    ],
-                    "defaultValue" => [
-                        "background-color" => "#333333"
                     ]
                 ])
 );
@@ -363,7 +253,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Home page special block"
             "id" => "homePageSpecialContentBlockVisibility",
             "type" => "list",
             "name" => __("bearcms.themes.universal.options.Visibility"),
-            "defaultValue" => "1",
             "values" => [
                 [
                     "value" => "1",
@@ -382,15 +271,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Home page special block"
             "cssOutput" => [
                 ["rule", ".template-homepage-special-content-block", "box-sizing:border-box;"],
                 ["selector", ".template-homepage-special-content-block"]
-            ],
-            "defaultValue" => [
-                "max-width" => "800px",
-                "margin-left" => "auto",
-                "margin-right" => "auto",
-                "padding-top" => "25px",
-                "padding-right" => "15px",
-                "padding-bottom" => "25px",
-                "padding-left" => "15px"
             ]
         ])
         ->add(
@@ -406,9 +286,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Home page special block"
                     "cssOutput" => [
                         ["rule", ".template-homepage-special-content-block-container", "box-sizing:border-box;"],
                         ["selector", ".template-homepage-special-content-block-container"]
-                    ],
-                    "defaultValue" => [
-                        "background-color" => "#111111"
                     ]
                 ])
 );
@@ -421,16 +298,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Content"))
             "cssOutput" => [
                 ["rule", ".template-content", "box-sizing:border-box;"],
                 ["selector", ".template-content"]
-            ],
-            "defaultValue" => [
-                "max-width" => "800px",
-                "margin-left" => "auto",
-                "margin-right" => "auto",
-                "padding-top" => "40px",
-                "padding-right" => "15px",
-                "padding-bottom" => "40px",
-                "padding-left" => "15px",
-                "min-height" => "300px"
             ]
         ])
         ->add(
@@ -446,9 +313,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Content"))
                     "cssOutput" => [
                         ["rule", ".template-content-container", "box-sizing:border-box;"],
                         ["selector", ".template-content-container"]
-                    ],
-                    "defaultValue" => [
-                        "background-color" => "#ffffff"
                     ]
                 ])
 );
@@ -458,7 +322,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Footer"))
             "id" => "footerVisibility",
             "type" => "list",
             "name" => __("bearcms.themes.universal.options.Visibility"),
-            "defaultValue" => "1",
             "values" => [
                 [
                     "value" => "1",
@@ -477,15 +340,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Footer"))
             "cssOutput" => [
                 ["rule", ".template-footer", "box-sizing:border-box;"],
                 ["selector", ".template-footer"]
-            ],
-            "defaultValue" => [
-                "max-width" => "800px",
-                "margin-left" => "auto",
-                "margin-right" => "auto",
-                "padding-top" => "40px",
-                "padding-right" => "15px",
-                "padding-bottom" => "40px",
-                "padding-left" => "15px"
             ]
         ])
         ->add(
@@ -498,7 +352,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Footer"))
                     "id" => "poweredByLinkVisibility",
                     "type" => "list",
                     "name" => __("bearcms.themes.universal.options.Visibility"),
-                    "defaultValue" => "1",
                     "values" => [
                         [
                             "value" => "1",
@@ -516,15 +369,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Footer"))
                     "cssOutput" => [
                         ["rule", ".template-powered-by-link", "display:inline-block;"],
                         ["selector", ".template-powered-by-link"]
-                    ],
-                    "defaultValue" => [
-                        "color" => "#ffffff",
-                        "text-decoration" => "none",
-                        "text-decoration:hover" => "underline",
-                        "font-family" => "Arial",
-                        "font-size" => "14px",
-                        "line-height" => "180%",
-                        "margin-top" => "20px"
                     ]
                 ])
                 ->add(
@@ -536,9 +380,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Footer"))
                             "cssOutput" => [
                                 ["rule", ".template-powered-by-link-container", "box-sizing:border-box;"],
                                 ["selector", ".template-powered-by-link-container"]
-                            ],
-                            "defaultValue" => [
-                                "text-align" => "center"
                             ]
                         ])
                 )
@@ -552,9 +393,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Footer"))
                     "cssOutput" => [
                         ["rule", ".template-footer-container", "box-sizing:border-box;"],
                         ["selector", ".template-footer-container"]
-                    ],
-                    "defaultValue" => [
-                        "background-color" => "#111111"
                     ]
                 ])
 );
@@ -566,9 +404,6 @@ $options->addGroup(__("bearcms.themes.universal.options.Window"))
             "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
             "cssOutput" => [
                 ["selector", "body"]
-            ],
-            "defaultValue" => [
-                "background-color" => "#111111"
             ]
         ]);
 

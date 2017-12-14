@@ -40,6 +40,11 @@ class CurrentTheme
         return self::$cache['id'];
     }
 
+    /**
+     * 
+     * @param string|null $userID
+     * @return string|null
+     */
     static public function getCacheItemKey($userID = null)
     {
         $themeID = self::getID();

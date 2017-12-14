@@ -15,6 +15,7 @@ class Themes
 {
 
     static $list = [];
+    static $elementsOptions = [];
 
     /**
      * 
@@ -58,9 +59,11 @@ class Themes
         if (isset(self::$list[$id])) {
             self::prepareOptions($id);
             $options = self::$list[$id];
+            $version = null;
             if (isset($options['version'])) {
-                return $options['version'];
+                $version = $options['version'];
             }
+            return $version;
         }
         return null;
     }
@@ -68,10 +71,10 @@ class Themes
     static function getManifest(string $id, $updateMediaFilenames = true): array
     {
         if (isset(self::$list[$id])) {
+            $app = App::get();
             self::prepareOptions($id);
             $options = self::$list[$id];
             if (isset($options['manifest'])) {
-                $app = App::get();
                 $context = $app->context->get(__FILE__);
                 if (is_array($options['manifest'])) {
                     $result = $options['manifest'];
@@ -92,8 +95,10 @@ class Themes
                         }
                     }
                 }
-                return $result;
+            } else {
+                $result = [];
             }
+            return $result;
         }
         return [];
     }
@@ -111,24 +116,28 @@ class Themes
                 } else {
                     $result = null;
                 }
-                if (is_array($result)) {
-                    return $result;
-                }
                 if ($result instanceof \BearCMS\Themes\OptionsDefinition) {
-                    return $result->toArray();
+                    $result = $result->toArray();
                 }
-                throw new \Exception('Invalid theme options value for theme ' . $id . '!');
+                if (!is_array($result)) {
+                    throw new \Exception('Invalid theme options value for theme ' . $id . '!');
+                }
+            } else {
+                $result = [];
             }
+            return $result;
         }
         return [];
     }
 
-    static function getStyles(string $id): array
+    static function getStyles(string $id, $updateMediaFilenames = true): array
     {
         if (isset(self::$list[$id])) {
+            $app = App::get();
             self::prepareOptions($id);
             $options = self::$list[$id];
             if (isset($options['styles'])) {
+                $context = $app->context->get(__FILE__);
                 if (is_array($options['styles'])) {
                     $result = $options['styles'];
                 } elseif (is_callable($options['styles'])) {
@@ -136,13 +145,31 @@ class Themes
                 } else {
                     $result = null;
                 }
-                if (is_array($result)) {
-                    return $result;
+                if (!is_array($result)) {
+                    throw new \Exception('Invalid theme styles value for theme ' . $id . '!');
                 }
-                throw new \Exception('Invalid theme styles value for theme ' . $id . '!');
+                if ($updateMediaFilenames) {
+                    foreach ($result as $j => $style) {
+                        if (isset($style['media']) && is_array($style['media'])) {
+                            foreach ($style['media'] as $i => $mediaItem) {
+                                if (is_array($mediaItem) && isset($mediaItem['filename']) && is_string($mediaItem['filename'])) {
+                                    $result[$j]['media'][$i]['filename'] = $context->dir . '/assets/tm/' . md5($id) . '/' . md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION);
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                $result = [];
             }
+            return $result;
         }
         return [];
+    }
+
+    static function defineElementOption($definition)
+    {
+        self::$elementsOptions[] = $definition;
     }
 
 }

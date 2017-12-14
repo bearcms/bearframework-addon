@@ -57,17 +57,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-heading-element-large", "font-weight:normal;"], // ?????
                                     ["selector", $parentSelector . " .bearcms-heading-element-large"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => $idPrefix === 'contentElements' ? "#1BB0CE" : "#ffffff",
-                                    "font-family" => "googlefonts:Open Sans",
-                                    "font-size" => "28px",
-                                    "text-align" => "center",
-                                    "line-height" => "180%",
-                                    "margin-top" => "0",
-                                    "margin-right" => "0",
-                                    "margin-bottom" => "0",
-                                    "margin-left" => "0"
                                 ]
                             ]
                         ]
@@ -82,17 +71,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-heading-element-medium", "font-weight:normal;"], // ?????
                                     ["selector", $parentSelector . " .bearcms-heading-element-medium"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => $idPrefix === 'contentElements' ? "#1BB0CE" : "#ffffff",
-                                    "font-family" => "googlefonts:Open Sans",
-                                    "font-size" => "22px",
-                                    "text-align" => "center",
-                                    "line-height" => "180%",
-                                    "margin-top" => "0",
-                                    "margin-right" => "0",
-                                    "margin-bottom" => "0",
-                                    "margin-left" => "0"
                                 ]
                             ]
                         ]
@@ -107,17 +85,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-heading-element-small", "font-weight:normal;"], // ?????
                                     ["selector", $parentSelector . " .bearcms-heading-element-small"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => $idPrefix === 'contentElements' ? "#1BB0CE" : "#ffffff",
-                                    "font-family" => "googlefonts:Open Sans",
-                                    "font-size" => "18px",
-                                    "text-align" => "center",
-                                    "line-height" => "180%",
-                                    "margin-top" => "0",
-                                    "margin-right" => "0",
-                                    "margin-bottom" => "0",
-                                    "margin-left" => "0"
                                 ]
                             ]
                         ]
@@ -133,12 +100,6 @@ class OptionsDefinitionGroup
                         "type" => "css",
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-text-element"]
-                        ],
-                        "defaultValue" => [
-                            "color" => $idPrefix === 'contentElements' ? "#000000" : "#ffffff",
-                            "font-family" => "Arial",
-                            "font-size" => "14px",
-                            "line-height" => "180%"
                         ]
                     ],
                     [
@@ -151,15 +112,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-text-element a", "display:inline-block;"], // ?????
                                     ["selector", $parentSelector . " .bearcms-text-element a"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#1BB0CE",
-                                    "color:hover" => "#1099B5",
-                                    "color:active" => "#0A7D94",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%",
-                                    "text-decoration" => "underline"
                                 ]
                             ]
                         ]
@@ -176,18 +128,6 @@ class OptionsDefinitionGroup
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-link-element", "display:inline-block;text-decoration:none;"], // ??????
                             ["selector", $parentSelector . " .bearcms-link-element"]
-                        ],
-                        "defaultValue" => [
-                            "color" => "#ffffff",
-                            "font-family" => "Arial",
-                            "font-size" => "14px",
-                            "line-height" => "42px",
-                            "padding-left" => "15px",
-                            "padding-right" => "15px",
-                            "height" => "42px",
-                            "background-color" => "#1BB0CE",
-                            "background-color:hover" => "#1099B5",
-                            "background-color:active" => "#0A7D94"
                         ]
                     ]
                 ]
@@ -273,15 +213,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-navigation-element-item a", "display:inline-block;"], // ??????
                                     ["selector", $parentSelector . " .bearcms-navigation-element-item a"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#1BB0CE",
-                                    "color:hover" => "#1099B5",
-                                    "color:active" => "#0A7D94",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%",
-                                    "text-decoration" => "underline"
                                 ]
                             ]
                         ]
@@ -302,12 +233,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-contact-form-element-email-label", "display:block;"], // ?????? inline-block
                                     ["selector", $parentSelector . " .bearcms-contact-form-element-email-label"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => $idPrefix === 'contentElements' ? "#000000" : "#ffffff",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%"
                                 ]
                             ],
                         ]
@@ -323,29 +248,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-contact-form-element-email", "box-sizing:border-box;border:0;"], // ??????
                                     ["selector", $parentSelector . " .bearcms-contact-form-element-email"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#000000",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "42px",
-                                    "padding-left" => "15px",
-                                    "padding-right" => "15px",
-                                    "width" => "100%",
-                                    "max-width" => "400px",
-                                    "height" => "42px",
-                                    "border-top" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
-                                    "border-bottom" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
-                                    "border-left" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
-                                    "border-right" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
-                                    "border-top:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
-                                    "border-bottom:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
-                                    "border-left:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
-                                    "border-right:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
-                                    "border-top:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
-                                    "border-bottom:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
-                                    "border-left:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
-                                    "border-right:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
                                 ]
                             ],
                         ]
@@ -360,13 +262,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-contact-form-element-message-label", "display:block;"], // ?????? inline-block
                                     ["selector", $parentSelector . " .bearcms-contact-form-element-message-label"]
-                                ],
-                                "defaultValue" => [
-                                    "margin-top" => "10px",
-                                    "color" => $idPrefix === 'contentElements' ? "#000000" : "#ffffff",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%"
                                 ]
                             ],
                         ]
@@ -382,31 +277,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-contact-form-element-message", "box-sizing:border-box;border:0;"], // ??????
                                     ["selector", $parentSelector . " .bearcms-contact-form-element-message"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#000000",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%",
-                                    "padding-left" => "15px",
-                                    "padding-right" => "15px",
-                                    "padding-top" => "10px",
-                                    "padding-bottom" => "10px",
-                                    "width" => "100%",
-                                    "max-width" => "400px",
-                                    "height" => "200px",
-                                    "border-top" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
-                                    "border-bottom" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
-                                    "border-left" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
-                                    "border-right" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
-                                    "border-top:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
-                                    "border-bottom:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
-                                    "border-left:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
-                                    "border-right:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
-                                    "border-top:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
-                                    "border-bottom:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
-                                    "border-left:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
-                                    "border-right:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
                                 ]
                             ],
                         ]
@@ -421,19 +291,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-contact-form-element-send-button", "display:inline-block;text-decoration:none;"], // ?????? 
                                     ["selector", $parentSelector . " .bearcms-contact-form-element-send-button"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#ffffff",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "42px",
-                                    "padding-left" => "15px",
-                                    "padding-right" => "15px",
-                                    "height" => "42px",
-                                    "background-color" => "#1BB0CE",
-                                    "background-color:hover" => "#1099B5",
-                                    "background-color:active" => "#0A7D94",
-                                    "margin-top" => "10px"
                                 ]
                             ],
                             [
@@ -446,9 +303,6 @@ class OptionsDefinitionGroup
                                         "cssOutput" => [
                                             ["rule", $parentSelector . " .bearcms-contact-form-element-send-button-waiting", "display:inline-block;text-decoration:none;"], // ??????
                                             ["selector", $parentSelector . " .bearcms-contact-form-element-send-button-waiting"]
-                                        ],
-                                        "defaultValue" => [
-                                            "background-color" => "#aaaaaa"
                                         ]
                                     ]
                                 ]
@@ -472,9 +326,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", ".bearcms-comments-comment", "overflow:hidden;"], // ??????
                                     ["selector", $parentSelector . " .bearcms-comments-comment"]
-                                ],
-                                "defaultValue" => [
-                                    "margin-bottom" => "10px",
                                 ]
                             ],
                             [
@@ -487,15 +338,6 @@ class OptionsDefinitionGroup
                                         "cssOutput" => [
                                             ["rule", $parentSelector . " .bearcms-comments-comment-author-name", "display:inline-block;"], // ??????
                                             ["selector", $parentSelector . " .bearcms-comments-comment-author-name"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "text-decoration" => "underline",
-                                            "margin-bottom" => "4px"
                                         ]
                                     ]
                                 ]
@@ -511,11 +353,6 @@ class OptionsDefinitionGroup
                                         "cssOutput" => [
                                             ["rule", $parentSelector . " .bearcms-comments-comment-author-image", "display:inline-block;float:left;"], // ??????
                                             ["selector", $parentSelector . " .bearcms-comments-comment-author-image"]
-                                        ],
-                                        "defaultValue" => [
-                                            "width" => "50px",
-                                            "height" => "50px",
-                                            "margin-right" => "8px",
                                         ]
                                     ]
                                 ]
@@ -530,12 +367,6 @@ class OptionsDefinitionGroup
                                         "cssOutput" => [
                                             ["rule", $parentSelector . " .bearcms-comments-comment-date", "display:inline-block;float:right;"], // ??????
                                             ["selector", $parentSelector . " .bearcms-comments-comment-date"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#aaa",
-                                            "font-family" => "Arial",
-                                            "font-size" => "12px",
-                                            "line-height" => "180%",
                                         ]
                                     ]
                                 ]
@@ -549,12 +380,6 @@ class OptionsDefinitionGroup
                                         "type" => "css",
                                         "cssOutput" => [
                                             ["selector", $parentSelector . " .bearcms-comments-comment-text"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => $idPrefix === 'contentElements' ? "#000000" : "#ffffff",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%"
                                         ]
                                     ]
                                 ]
@@ -569,15 +394,6 @@ class OptionsDefinitionGroup
                                         "cssOutput" => [
                                             ["rule", $parentSelector . " .bearcms-comments-comment-text a", "display:inline-block;"], // ??????
                                             ["selector", $parentSelector . " .bearcms-comments-comment-text a"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%",
-                                            "text-decoration" => "underline"
                                         ]
                                     ]
                                 ]
@@ -593,32 +409,8 @@ class OptionsDefinitionGroup
                                 "type" => "css",
                                 "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-comments-element-text", "box-sizing:border-box;border:0;"], // ??????
-                                    ["selector", $parentSelector . " .bearcms-comments-element-text"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#000000",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%",
-                                    "padding-left" => "15px",
-                                    "padding-right" => "15px",
-                                    "padding-top" => "10px",
-                                    "padding-bottom" => "10px",
-                                    "width" => "100%",
-                                    "height" => "80px",
-                                    "border-top" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
-                                    "border-bottom" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
-                                    "border-left" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
-                                    "border-right" => $idPrefix === 'contentElements' ? "1px solid #cccccc" : "",
-                                    "border-top:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
-                                    "border-bottom:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
-                                    "border-left:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
-                                    "border-right:hover" => $idPrefix === 'contentElements' ? "1px solid #aaaaaa" : "",
-                                    "border-top:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
-                                    "border-bottom:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
-                                    "border-left:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
-                                    "border-right:active" => $idPrefix === 'contentElements' ? "1px solid #888888" : "",
+                                    ["rule", $parentSelector . " .bearcms-comments-element-text-input", "box-sizing:border-box;border:0;"], // ??????
+                                    ["selector", $parentSelector . " .bearcms-comments-element-text-input"]
                                 ]
                             ],
                         ]
@@ -633,19 +425,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-comments-element-send-button", "display:inline-block;text-decoration:none;"], // ??????
                                     ["selector", $parentSelector . " .bearcms-comments-element-send-button"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#ffffff",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "42px",
-                                    "padding-left" => "15px",
-                                    "padding-right" => "15px",
-                                    "height" => "42px",
-                                    "background-color" => "#1BB0CE",
-                                    "background-color:hover" => "#1099B5",
-                                    "background-color:active" => "#0A7D94",
-                                    "margin-top" => "10px"
                                 ]
                             ],
                             [
@@ -658,9 +437,6 @@ class OptionsDefinitionGroup
                                         "cssOutput" => [
                                             ["rule", $parentSelector . " .bearcms-comments-element-send-button-waiting", "display:inline-block;text-decoration:none;"], // ??????
                                             ["selector", $parentSelector . " .bearcms-comments-element-send-button-waiting"]
-                                        ],
-                                        "defaultValue" => [
-                                            "background-color" => "#aaaaaa"
                                         ]
                                     ]
                                 ]
@@ -677,16 +453,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-comments-show-more-button", "display:inline-block;"], // ??????
                                     ["selector", $parentSelector . " .bearcms-comments-show-more-button"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#1BB0CE",
-                                    "color:hover" => "#1099B5",
-                                    "color:active" => "#0A7D94",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%",
-                                    "text-decoration" => "underline",
-                                    "margin-bottom" => "5px"
                                 ]
                             ],
                             [
@@ -721,9 +487,6 @@ class OptionsDefinitionGroup
                                 "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
                                     ["selector", $parentSelector . " .bearcms-forum-posts-post"]
-                                ],
-                                "defaultValue" => [
-                                    "margin-bottom" => "5px",
                                 ]
                             ],
                             [
@@ -735,15 +498,6 @@ class OptionsDefinitionGroup
                                         "type" => "css",
                                         "cssOutput" => [
                                             ["selector", $parentSelector . " .bearcms-forum-posts-post-title"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%",
-                                            "text-decoration" => "underline"
                                         ]
                                     ]
                                 ]
@@ -758,12 +512,6 @@ class OptionsDefinitionGroup
                                         "cssOutput" => [
                                             ["rule", $parentSelector . " .bearcms-forum-posts-post-replies-count", "display:inline-block;float:right;"], // ??????
                                             ["selector", $parentSelector . " .bearcms-forum-posts-post-replies-count"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#aaa",
-                                            "font-family" => "Arial",
-                                            "font-size" => "12px",
-                                            "line-height" => "180%",
                                         ]
                                     ]
                                 ]
@@ -780,16 +528,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-forum-posts-show-more-button", "display:inline-block;"], // ??????
                                     ["selector", $parentSelector . " .bearcms-forum-posts-show-more-button"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#1BB0CE",
-                                    "color:hover" => "#1099B5",
-                                    "color:active" => "#0A7D94",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%",
-                                    "text-decoration" => "underline",
-                                    "margin-bottom" => "5px"
                                 ]
                             ],
                             [
@@ -818,15 +556,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-forum-posts-new-post-button", "display:inline-block;"], // ??????
                                     ["selector", $parentSelector . " .bearcms-forum-posts-new-post-button"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#1BB0CE",
-                                    "color:hover" => "#1099B5",
-                                    "color:active" => "#0A7D94",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%",
-                                    "text-decoration" => "underline"
                                 ]
                             ],
                             [
@@ -856,12 +585,6 @@ class OptionsDefinitionGroup
                         "type" => "css",
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-html-element"]
-                        ],
-                        "defaultValue" => [
-                            "color" => $idPrefix === 'contentElements' ? "#000000" : "#ffffff",
-                            "font-family" => "Arial",
-                            "font-size" => "14px",
-                            "line-height" => "180%"
                         ]
                     ],
                     [
@@ -874,15 +597,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-html-element a", "display:inline-block;"], // ??????
                                     ["selector", $parentSelector . " .bearcms-html-element a"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#1BB0CE",
-                                    "color:hover" => "#1099B5",
-                                    "color:active" => "#0A7D94",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%",
-                                    "text-decoration" => "underline"
                                 ]
                             ]
                         ]
@@ -922,13 +636,6 @@ class OptionsDefinitionGroup
                                         "type" => "css",
                                         "cssOutput" => [
                                             ["selector", $parentSelector . " .bearcms-blog-posts-element-post-title"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "font-family" => "googlefonts:Open Sans",
-                                            "font-size" => "22px",
-                                            "text-align" => "left",
-                                            "line-height" => "180%"
                                         ]
                                     ],
                                     [
@@ -956,12 +663,6 @@ class OptionsDefinitionGroup
                                         "type" => "css",
                                         "cssOutput" => [
                                             ["selector", $parentSelector . " .bearcms-blog-posts-element-post-date"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => $idPrefix === 'contentElements' ? "#777777" : "#eeeeee",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%"
                                         ]
                                     ],
                                     [
@@ -1006,16 +707,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-blog-posts-element-show-more-button", "display:inline-block;"], // ????
                                     ["selector", $parentSelector . " .bearcms-blog-posts-element-show-more-button"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#1BB0CE",
-                                    "color:hover" => "#1099B5",
-                                    "color:active" => "#0A7D94",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%",
-                                    "text-decoration" => "underline",
-                                    "margin-bottom" => "5px"
                                 ]
                             ],
                             [
@@ -1037,6 +728,12 @@ class OptionsDefinitionGroup
                 ]
             ]
         ]);
+        foreach (\BearCMS\Internal\Themes::$elementsOptions as $elementOption) {
+            $defintion = call_user_func($elementOption, $idPrefix, $parentSelector);
+            if (is_array($defintion)) {
+                $this->options[] = $defintion;
+            }
+        }
         return $this;
     }
 
@@ -1057,17 +754,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", ".bearcms-blogpost-page-title", "font-weight:normal;"], // ????
                                     ["selector", ".bearcms-blogpost-page-title"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#1BB0CE",
-                                    "font-family" => "Arial",
-                                    "font-size" => "28px",
-                                    "text-align" => "center",
-                                    "line-height" => "180%",
-                                    "margin-top" => "0",
-                                    "margin-right" => "0",
-                                    "margin-bottom" => "0",
-                                    "margin-left" => "0"
                                 ]
                             ],
                             [
@@ -1093,8 +779,7 @@ class OptionsDefinitionGroup
                             [
                                 "id" => "blogPostPageDateVisibility",
                                 "type" => "list",
-                                "name" => "Видимост", //TODO
-                                "defaultValue" => "1",
+                                "name" => "Видимост",
                                 "values" => [
                                     [
                                         "value" => "1",
@@ -1111,13 +796,6 @@ class OptionsDefinitionGroup
                                 "type" => "css",
                                 "cssOutput" => [
                                     ["selector", ".bearcms-blogpost-page-date"] // ????? + inline-block
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#777777",
-                                    "font-family" => "Arial",
-                                    "text-align" => "center",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%"
                                 ]
                             ],
                             [
@@ -1146,9 +824,6 @@ class OptionsDefinitionGroup
                                 "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
                                     ["selector", ".bearcms-blogpost-page-content"]
-                                ],
-                                "defaultValue" => [
-                                    "padding-top" => "15px"
                                 ]
                             ]
                         ]
@@ -1169,12 +844,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", ".bearcms-new-forum-post-page-title-label", "display:block;"], // ?????
                                     ["selector", ".bearcms-new-forum-post-page-title-label"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#000000",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%"
                                 ]
                             ],
                         ]
@@ -1190,28 +859,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", ".bearcms-new-forum-post-page-title", "box-sizing:border-box;border:0;"],
                                     ["selector", ".bearcms-new-forum-post-page-title"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#000000",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "42px",
-                                    "padding-left" => "15px",
-                                    "padding-right" => "15px",
-                                    "width" => "100%",
-                                    "height" => "42px",
-                                    "border-top" => "1px solid #cccccc",
-                                    "border-bottom" => "1px solid #cccccc",
-                                    "border-left" => "1px solid #cccccc",
-                                    "border-right" => "1px solid #cccccc",
-                                    "border-top:hover" => "1px solid #aaaaaa",
-                                    "border-bottom:hover" => "1px solid #aaaaaa",
-                                    "border-left:hover" => "1px solid #aaaaaa",
-                                    "border-right:hover" => "1px solid #aaaaaa",
-                                    "border-top:active" => "1px solid #888888",
-                                    "border-bottom:active" => "1px solid #888888",
-                                    "border-left:active" => "1px solid #888888",
-                                    "border-right:active" => "1px solid #888888",
                                 ]
                             ],
                         ]
@@ -1226,13 +873,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", ".bearcms-new-forum-post-page-text-label", "display:block;"],
                                     ["selector", ".bearcms-new-forum-post-page-text-label"]
-                                ],
-                                "defaultValue" => [
-                                    "margin-top" => "10px",
-                                    "color" => "#000000",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%"
                                 ]
                             ],
                         ]
@@ -1248,30 +888,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", ".bearcms-new-forum-post-page-text", "box-sizing:border-box;border:0;"],
                                     ["selector", ".bearcms-new-forum-post-page-text"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#000000",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%",
-                                    "padding-left" => "15px",
-                                    "padding-right" => "15px",
-                                    "padding-top" => "10px",
-                                    "padding-bottom" => "10px",
-                                    "width" => "100%",
-                                    "height" => "200px",
-                                    "border-top" => "1px solid #cccccc",
-                                    "border-bottom" => "1px solid #cccccc",
-                                    "border-left" => "1px solid #cccccc",
-                                    "border-right" => "1px solid #cccccc",
-                                    "border-top:hover" => "1px solid #aaaaaa",
-                                    "border-bottom:hover" => "1px solid #aaaaaa",
-                                    "border-left:hover" => "1px solid #aaaaaa",
-                                    "border-right:hover" => "1px solid #aaaaaa",
-                                    "border-top:active" => "1px solid #888888",
-                                    "border-bottom:active" => "1px solid #888888",
-                                    "border-left:active" => "1px solid #888888",
-                                    "border-right:active" => "1px solid #888888",
                                 ]
                             ],
                         ]
@@ -1286,19 +902,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", ".bearcms-new-forum-post-page-send-button", "display:inline-block;text-decoration:none;"],
                                     ["selector", ".bearcms-new-forum-post-page-send-button"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#ffffff",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "42px",
-                                    "padding-left" => "15px",
-                                    "padding-right" => "15px",
-                                    "height" => "42px",
-                                    "background-color" => "#1BB0CE",
-                                    "background-color:hover" => "#1099B5",
-                                    "background-color:active" => "#0A7D94",
-                                    "margin-top" => "10px"
                                 ]
                             ],
                             [
@@ -1311,9 +914,6 @@ class OptionsDefinitionGroup
                                         "cssOutput" => [
                                             ["rule", ".bearcms-new-forum-post-page-send-button-waiting", "display:inline-block;text-decoration:none;"],
                                             ["selector", ".bearcms-new-forum-post-page-send-button-waiting"]
-                                        ],
-                                        "defaultValue" => [
-                                            "background-color" => "#aaaaaa"
                                         ]
                                     ]
                                 ]
@@ -1336,17 +936,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", ".bearcms-forum-post-page-title", "font-weight:normal;"],
                                     ["selector", ".bearcms-forum-post-page-title"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#1BB0CE",
-                                    "font-family" => "Arial",
-                                    "font-size" => "28px",
-                                    "text-align" => "center",
-                                    "line-height" => "180%",
-                                    "margin-top" => "0",
-                                    "margin-right" => "0",
-                                    "margin-bottom" => "0",
-                                    "margin-left" => "0"
                                 ]
                             ],
                             [
@@ -1374,13 +963,6 @@ class OptionsDefinitionGroup
                                 "type" => "css",
                                 "cssOutput" => [
                                     ["selector", ".bearcms-forum-post-page-date"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#777777",
-                                    "font-family" => "Arial",
-                                    "text-align" => "center",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%"
                                 ]
                             ],
                             [
@@ -1409,9 +991,6 @@ class OptionsDefinitionGroup
                                 "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
                                     ["selector", ".bearcms-forum-post-page-content"]
-                                ],
-                                "defaultValue" => [
-                                    "padding-top" => "15px"
                                 ]
                             ]
                         ]
@@ -1427,9 +1006,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", ".bearcms-forum-post-page-reply", "overflow:hidden;"],
                                     ["selector", ".bearcms-forum-post-page-reply"]
-                                ],
-                                "defaultValue" => [
-                                    "margin-bottom" => "10px",
                                 ]
                             ],
                             [
@@ -1442,15 +1018,6 @@ class OptionsDefinitionGroup
                                         "cssOutput" => [
                                             ["rule", ".bearcms-forum-post-page-reply-author-name", "display:inline-block;"],
                                             ["selector", ".bearcms-forum-post-page-reply-author-name"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "text-decoration" => "underline",
-                                            "margin-bottom" => "4px"
                                         ]
                                     ]
                                 ]
@@ -1466,11 +1033,6 @@ class OptionsDefinitionGroup
                                         "cssOutput" => [
                                             ["rule", ".bearcms-forum-post-page-reply-author-image", "display:inline-block;float:left;"],
                                             ["selector", ".bearcms-forum-post-page-reply-author-image"]
-                                        ],
-                                        "defaultValue" => [
-                                            "width" => "50px",
-                                            "height" => "50px",
-                                            "margin-right" => "8px",
                                         ]
                                     ]
                                 ]
@@ -1485,12 +1047,6 @@ class OptionsDefinitionGroup
                                         "cssOutput" => [
                                             ["rule", ".bearcms-forum-post-page-reply-date", "display:inline-block;float:right;"],
                                             ["selector", ".bearcms-forum-post-page-reply-date"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#aaa",
-                                            "font-family" => "Arial",
-                                            "font-size" => "12px",
-                                            "line-height" => "180%",
                                         ]
                                     ]
                                 ]
@@ -1504,12 +1060,6 @@ class OptionsDefinitionGroup
                                         "type" => "css",
                                         "cssOutput" => [
                                             ["selector", ".bearcms-forum-post-page-reply-text"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#000000",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%"
                                         ]
                                     ]
                                 ]
@@ -1524,15 +1074,6 @@ class OptionsDefinitionGroup
                                         "cssOutput" => [
                                             ["rule", ".bearcms-forum-post-page-reply-text a", "display:inline-block;"],
                                             ["selector", ".bearcms-forum-post-page-reply-text a"]
-                                        ],
-                                        "defaultValue" => [
-                                            "color" => "#1BB0CE",
-                                            "color:hover" => "#1099B5",
-                                            "color:active" => "#0A7D94",
-                                            "font-family" => "Arial",
-                                            "font-size" => "14px",
-                                            "line-height" => "180%",
-                                            "text-decoration" => "underline"
                                         ]
                                     ]
                                 ]
@@ -1550,30 +1091,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", ".bearcms-forum-post-page-text", "box-sizing:border-box;border:0;"],
                                     ["selector", ".bearcms-forum-post-page-text"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#000000",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "180%",
-                                    "padding-left" => "15px",
-                                    "padding-right" => "15px",
-                                    "padding-top" => "10px",
-                                    "padding-bottom" => "10px",
-                                    "width" => "100%",
-                                    "height" => "80px",
-                                    "border-top" => "1px solid #cccccc",
-                                    "border-bottom" => "1px solid #cccccc",
-                                    "border-left" => "1px solid #cccccc",
-                                    "border-right" => "1px solid #cccccc",
-                                    "border-top:hover" => "1px solid #aaaaaa",
-                                    "border-bottom:hover" => "1px solid #aaaaaa",
-                                    "border-left:hover" => "1px solid #aaaaaa",
-                                    "border-right:hover" => "1px solid #aaaaaa",
-                                    "border-top:active" => "1px solid #888888",
-                                    "border-bottom:active" => "1px solid #888888",
-                                    "border-left:active" => "1px solid #888888",
-                                    "border-right:active" => "1px solid #888888",
                                 ]
                             ],
                         ]
@@ -1588,19 +1105,6 @@ class OptionsDefinitionGroup
                                 "cssOutput" => [
                                     ["rule", ".bearcms-forum-post-page-send-button", "display:inline-block;text-decoration:none;"],
                                     ["selector", ".bearcms-forum-post-page-send-button"]
-                                ],
-                                "defaultValue" => [
-                                    "color" => "#ffffff",
-                                    "font-family" => "Arial",
-                                    "font-size" => "14px",
-                                    "line-height" => "42px",
-                                    "padding-left" => "15px",
-                                    "padding-right" => "15px",
-                                    "height" => "42px",
-                                    "background-color" => "#1BB0CE",
-                                    "background-color:hover" => "#1099B5",
-                                    "background-color:active" => "#0A7D94",
-                                    "margin-top" => "10px"
                                 ]
                             ],
                             [
@@ -1613,9 +1117,6 @@ class OptionsDefinitionGroup
                                         "cssOutput" => [
                                             ["rule", ".bearcms-forum-post-page-send-button-waiting", "display:inline-block;text-decoration:none;"],
                                             ["selector", ".bearcms-forum-post-page-send-button-waiting"]
-                                        ],
-                                        "defaultValue" => [
-                                            "background-color" => "#aaaaaa"
                                         ]
                                     ]
                                 ]

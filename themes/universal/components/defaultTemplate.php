@@ -10,7 +10,6 @@ use \BearFramework\App;
 
 $app = App::get();
 
-$hasPages = sizeof($app->bearCMS->data->pages->getList()->filterBy('status', 'published'));
 $settings = $app->bearCMS->data->settings->get();
 $isHomePage = (string) $app->request->path === '/';
 
@@ -18,13 +17,12 @@ $headerLogoImage = $options['headerLogoImage'];
 $headerTitleVisibility = $options['headerTitleVisibility'];
 $headerDescriptionVisibility = $options['headerDescriptionVisibility'];
 
+$navigationVisibility = $options['navigationVisibility'];
 $navigationPosition = $options['navigationPosition'];
-$navigationHomeButtonVisibility = $options['navigationHomeButtonVisibility'];
-$navigationhomeLinkText = $options['navigationhomeLinkText'];
-$navigationItemCSS2 = !empty($options['navigationItemCSS2']) ? json_decode($options['navigationItemCSS2'], true) : [];
-$navigationItemColor = isset($navigationItemCSS2['color']) ? $navigationItemCSS2['color'] : '#ffffff';
-$navigationItemHoverColor = isset($navigationItemCSS2['color:hover']) ? $navigationItemCSS2['color:hover'] : $navigationItemColor;
-$navigationItemActiveColor = isset($navigationItemCSS2['color:active']) ? $navigationItemCSS2['color:active'] : $navigationItemHoverColor;
+$navigationItemCSS = !empty($options['navigationItemCSS']) ? json_decode($options['navigationItemCSS'], true) : [];
+$navigationItemColor = isset($navigationItemCSS['color']) ? $navigationItemCSS['color'] : '#ffffff';
+$navigationItemHoverColor = isset($navigationItemCSS['color:hover']) ? $navigationItemCSS['color:hover'] : $navigationItemColor;
+$navigationItemActiveColor = isset($navigationItemCSS['color:active']) ? $navigationItemCSS['color:active'] : $navigationItemHoverColor;
 
 $homePageSpecialContentBlockVisibility = $options['homePageSpecialContentBlockVisibility'];
 $footerVisibility = $options['footerVisibility'];
@@ -38,7 +36,7 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
                 margin: 0;
                 min-height: 100%;
             }
-            <?php if ($hasPages) { ?>
+            <?php if ($navigationVisibility === '1') { ?>
                 .template-navigation ul, .template-navigation li{
                     list-style-type: none;
                     list-style-position: outside;
@@ -100,7 +98,7 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
     </head>
     <body><?php
         $navigationContent = '';
-        if ($hasPages) {
+        if ($navigationVisibility === '1') {
             $navigationContent .= '<div class="template-navigation-container">';
             $navigationContent .= '<nav class="template-navigation">';
             $navigationContent .= '<div>';
@@ -111,7 +109,7 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
             $navigationContent .= '</div>';
         }
 
-        if ($hasPages && $navigationPosition === '1') {
+        if ($navigationPosition === '1') {
             echo $navigationContent;
         }
 
@@ -132,16 +130,16 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
         echo '</header>';
         echo '</div>';
 
+        if ($navigationPosition === '2') {
+            echo $navigationContent;
+        }
+
         if ($isHomePage && $homePageSpecialContentBlockVisibility === '1') {
             echo '<div class="template-homepage-special-content-block-container">';
             echo '<section class="template-homepage-special-content-block">';
             echo '<component src="bearcms-elements" editable="true" class="homepage-special-bearcms-elements" id="homepage-special"/>';
             echo '</section>';
             echo '</div>';
-        }
-
-        if ($hasPages && $navigationPosition === '2') {
-            echo $navigationContent;
         }
 
         echo '<div class="template-content-container">';
