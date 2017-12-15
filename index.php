@@ -831,7 +831,7 @@ $app->hooks
                 $pathParts = explode(DIRECTORY_SEPARATOR, substr($filename, strlen($matchingDir)), 2);
                 if (isset($pathParts[0], $pathParts[1])) {
                     $themeIDMD5 = $pathParts[0];
-                    $themeMediaFilenameMD5 = $pathParts[1];
+                    $mediaFilenameMD5 = $pathParts[1];
                     $themes = BearCMS\Internal\Themes::getList();
                     foreach ($themes as $id) {
                         if ($themeIDMD5 === md5($id)) {
@@ -839,17 +839,30 @@ $app->hooks
                             if (isset($themeManifest['media'])) {
                                 foreach ($themeManifest['media'] as $i => $mediaItem) {
                                     if (isset($mediaItem['filename'])) {
-                                        if ($themeMediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
+                                        if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
                                             $filename = $mediaItem['filename'];
-                                            break;
+                                            return;
                                         }
                                     }
                                 }
                             }
-                            break;
+                            $themeStyles = BearCMS\Internal\Themes::getStyles($id, false);
+                            foreach ($themeStyles as $themeStyle) {
+                                if (isset($themeStyle['media'])) {
+                                    foreach ($themeStyle['media'] as $i => $mediaItem) {
+                                        if (isset($mediaItem['filename'])) {
+                                            if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
+                                                $filename = $mediaItem['filename'];
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+                $filename = null;
             } else {
                 // Download the server files
                 $serverUrl = \BearCMS\Internal\Options::$serverUrl;
