@@ -27,7 +27,7 @@ return [
     'navigationSubitemCSS' => '{"line-height":"43px","padding-left":"16px","padding-right":"16px","height":"44px","color":"#ffffff","color:hover":"#ffffff","color:active":"#ffffff","text-decoration":"none","font-family":"Arial","font-size":"15px","background-color":"#1BB0CE","background-color:hover":"#1099B5","background-color:active":"#0A7D94","text-align":"left"}',
     'navigationSelectedSubitemCSS' => '{"background-color":"#1BB0CE"}',
     'navigationContainerCSS' => '{"background-color":"#333333"}',
-    'homePageSpecialContentBlockVisibility' => '1',
+    'homePageSpecialContentBlockVisibility' => '0',
     'homePageSpecialContentBlockCSS' => '{"max-width":"900px","margin-left":"auto","margin-right":"auto","padding-top":"25px","padding-right":"15px","padding-bottom":"25px","padding-left":"15px"}',
     'homePageSpecialContentBlockElementsHeadingLargeCSS' => '{"color":"#ffffff","font-family":"googlefonts:Open Sans","font-size":"28px","text-align":"center","line-height":"180%","margin-top":"0","margin-right":"0","margin-bottom":"0","margin-left":"0"}',
     'homePageSpecialContentBlockElementsHeadingMediumCSS' => '{"color":"#ffffff","font-family":"googlefonts:Open Sans","font-size":"22px","text-align":"center","line-height":"180%","margin-top":"0","margin-right":"0","margin-bottom":"0","margin-left":"0"}',
