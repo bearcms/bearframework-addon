@@ -26,7 +26,7 @@ $app->bearCMS->themes
             $context->assets
             ->addDir('themes/universal/assets');
             return [
-                'version' => '1.1',
+                'version' => '1.2',
                 'initialize' => function() use ($context) {
                     
                 },

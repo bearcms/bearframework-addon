@@ -256,8 +256,8 @@ class CurrentTheme
         }
         $style = $applyImageUrls($style);
         $style = $applyFontNames($style);
-        $style .= $cssCode;
-        return '<html><head>' . implode('', $linkTags) . '<style>' . $style . '</style></head></html>';
+        $cssCode = trim($cssCode); // Positioned in different style tag just in case it's invalid
+        return '<html><head>' . implode('', $linkTags) . '<style>' . $style . '</style>' . ($cssCode !== '' ? '<style>' . $cssCode . '</style>' : '') . '</head></html>';
     }
 
 }
