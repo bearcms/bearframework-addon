@@ -32,7 +32,7 @@ $form->onSubmit = function($values) use ($app, $component) {
         $email->subject = sprintf(__('bearcms.contactForm.Message in %s'), $app->request->host);
         $email->content->add(sprintf(__('bearcms.contactForm.Message from %s'), $replyToEmail) . "\n\n" . $values['message']);
         $email->recipients->add($recipient);
-        $email->replyTo->email = $replyToEmail;
+        $email->replyToRecipients->add($replyToEmail);
         $app->emails->send($email);
     }
 
