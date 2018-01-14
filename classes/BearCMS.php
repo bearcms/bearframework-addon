@@ -130,9 +130,9 @@ class BearCMS
         foreach ($metaElements as $metaElement) {
             $metaElementName = $metaElement->getAttribute('name');
             if ($metaElementName === 'description' && $strlen($metaElement->getAttribute('content')) > 0) {
-                $generateDescriptionMetaTag = true;
+                $generateDescriptionMetaTag = false;
             } elseif ($metaElementName === 'keywords' && $strlen($metaElement->getAttribute('content')) > 0) {
-                $generateKeywordsMetaTag = true;
+                $generateKeywordsMetaTag = false;
             }
         }
 
