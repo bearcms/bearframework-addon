@@ -351,6 +351,14 @@ if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
                     [
                         'id' => 'code',
                         'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'originalCode',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'renderMode',
+                        'type' => 'textbox'
                     ]
                 ]
             ])

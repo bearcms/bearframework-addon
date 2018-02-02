@@ -33,6 +33,7 @@ final class Options
     static $useDataCache = false;
     static $dataCachePrefix = null;
     static $useEmptyTheme = true;
+    static $htmlSandboxUrl = '';
 
     /**
      * 
@@ -119,6 +120,9 @@ final class Options
         }
         if (isset($data['useEmptyTheme'])) {
             self::$useEmptyTheme = (int) $data['useEmptyTheme'] > 0;
+        }
+        if (isset($data['htmlSandboxUrl'])) {
+            self::$htmlSandboxUrl = (string) $data['htmlSandboxUrl'];
         }
     }
 
