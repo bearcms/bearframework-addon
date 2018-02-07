@@ -67,7 +67,6 @@ $context->classes
         ->add('BearCMS\Internal\Cookies', 'classes/BearCMS/Internal/Cookies.php')
         ->add('BearCMS\Internal\CurrentTheme', 'classes/BearCMS/Internal/CurrentTheme.php')
         ->add('BearCMS\Internal\ElementsHelper', 'classes/BearCMS/Internal/ElementsHelper.php')
-        ->add('BearCMS\Internal\Localization', 'classes/BearCMS/Internal/Localization.php')
         ->add('BearCMS\Internal\Options', 'classes/BearCMS/Internal/Options.php')
         ->add('BearCMS\Internal\PublicProfile', 'classes/BearCMS/Internal/PublicProfile.php')
         ->add('BearCMS\Internal\Server', 'classes/BearCMS/Internal/Server.php')
@@ -686,7 +685,7 @@ if (Options::hasFeature('BLOG')) {
                             }
                             $content .= '</head><body>';
                             $content .= '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1></div>';
-                            $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? \BearCMS\Internal\Localization::getDate($blogPost['publishedTime']) : 'draft') . '</div></div>';
+                            $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? $app->localization->formatDate($blogPost['publishedTime'], ['date']) : 'draft') . '</div></div>';
                             $content .= '<div class="bearcms-blogpost-page-content"><component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/></div>';
                             $content .= '</body></html>';
 

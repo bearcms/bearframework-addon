@@ -73,7 +73,7 @@ if ($list->length === 0) {
         if ($showDate) {
             $content .= '<div class="bearcms-blog-posts-element-post-date-container">';
             $content .= '<span class="bearcms-blog-posts-element-post-date">';
-            $content .= \BearCMS\Internal\Localization::getDate($publishedTime);
+            $content .= $app->localization->formatDate($publishedTime, ['date']);
             $content .= '</span>';
             $content .= '</div>';
         }
