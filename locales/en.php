@@ -21,7 +21,7 @@ return [
     'bearcms.forumPosts.Your reply' => 'Your reply',
     'bearcms.forumPosts.Send' => 'Send',
     'bearcms.forumPosts.Sending ...' => 'Sending ...',
-    'bearcms.New post in %s' => 'bearcms.New post in %s',
+    'bearcms.New post in %s' => 'New post in %s',
     'bearcms.forumPosts.Title' => 'Title',
     'bearcms.forumPosts.Content' => 'Content',
     'bearcms.forumPosts.Post' => 'Post',
