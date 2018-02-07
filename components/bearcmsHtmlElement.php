@@ -22,7 +22,7 @@ if ($code !== '') {
     } else if ($renderMode === 'sandbox') {
         if (strlen($htmlSandboxUrl) > 0) {
             $addHTMLSandbox = true;
-            $content = '<div class="bearcms-html-element"><div data-html-sandbox="' . htmlentities($code) . '" data-html-sandbox-url="' . htmlentities($htmlSandboxUrl) . '"></div><script>htmlSandbox.run();</script></div>';
+            $content = '<div class="bearcms-html-element" style="font-size:0;"><div data-html-sandbox="' . htmlentities($code) . '" data-html-sandbox-url="' . htmlentities($htmlSandboxUrl) . '"></div><script>htmlSandbox.run();</script></div>';
         }
     }
 }
