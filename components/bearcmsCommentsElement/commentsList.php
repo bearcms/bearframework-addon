@@ -54,7 +54,7 @@ if ($thread !== null) {
         $linkAttributes = '';
         if (strlen($profile->url) > 0) {
             $tagName = 'a';
-            $linkAttributes .= ' href="' . htmlentities($profile->url) . '" target="_blank" rel="nofollow"';
+            $linkAttributes .= ' href="' . htmlentities($profile->url) . '" target="_blank" rel="nofollow noopener"';
         } else {
             $tagName = 'span';
             $linkAttributes .= ' href="javascript:void(0);"';

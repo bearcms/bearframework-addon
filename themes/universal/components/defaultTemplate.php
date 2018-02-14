@@ -154,7 +154,7 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
             echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer"/>';
             if ($poweredByLinkVisibility === '1') {
                 echo '<div class="template-powered-by-link-container">';
-                echo '<a class="template-powered-by-link" href="https://bearcms.com/" target="_blank">Powered by Bear CMS</a>';
+                echo '<a class="template-powered-by-link" href="https://bearcms.com/" target="_blank" rel="noopener">Powered by Bear CMS</a>';
                 echo '</div>';
             }
             echo '</footer>';
