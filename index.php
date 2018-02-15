@@ -823,12 +823,14 @@ if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
 
 $app->hooks
         ->add('responseCreated', function($response) use ($app) {
-            if ($response instanceof App\Response\NotFound) {
-                $response->headers->set($response->headers->make('Content-Type', 'text/html'));
-                $app->bearCMS->apply($response);
-            } elseif ($response instanceof App\Response\TemporaryUnavailable) {
-                $response->headers->set($response->headers->make('Content-Type', 'text/html'));
-                $app->bearCMS->apply($response);
+            if (strpos((string) $app->request->path, $app->config->assetsPathPrefix) !== 0) {
+                if ($response instanceof App\Response\NotFound) {
+                    $response->headers->set($response->headers->make('Content-Type', 'text/html'));
+                    $app->bearCMS->apply($response);
+                } elseif ($response instanceof App\Response\TemporaryUnavailable) {
+                    $response->headers->set($response->headers->make('Content-Type', 'text/html'));
+                    $app->bearCMS->apply($response);
+                }
             }
         })
         ->add('assetPrepare', function(&$filename, $options) use ($app, $context) {
