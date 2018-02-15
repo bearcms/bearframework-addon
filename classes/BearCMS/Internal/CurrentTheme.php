@@ -52,7 +52,7 @@ class CurrentTheme
         if ($version === null) {
             return null;
         }
-        return 'bearcms-theme-options-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . md5($themeID) . '-' . md5($version) . '-' . md5($userID);
+        return 'bearcms-theme-options-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . md5($themeID) . '-' . md5($version) . '-' . md5($userID) . '-2';
     }
 
     /**
@@ -76,6 +76,27 @@ class CurrentTheme
                     $value = json_decode($value, true);
                 }
             }
+
+            $applyImageUrls = function($text) use ($app) {
+                $matches = [];
+                preg_match_all('/url\((.*?)\)/', $text, $matches);
+                if (!empty($matches[1])) {
+                    $matches[1] = array_unique($matches[1]);
+                    $search = [];
+                    $replace = [];
+                    foreach ($matches[1] as $key) {
+                        $filename = $app->bearCMS->data->getRealFilename($key);
+                        if ($filename !== $key) {
+                            $search[] = $key;
+                            $replace[] = $app->assets->getUrl($filename, ['cacheMaxAge' => 999999999]);
+                        }
+                    }
+                    $text = str_replace($search, $replace, $text);
+                }
+                return $text;
+            };
+
+            $value[1] = $applyImageUrls($value[1]);
             self::$cache['options'] = new \BearCMS\Themes\Options($value[0], $value[1]);
         }
         return self::$cache['options'];
@@ -142,19 +163,6 @@ class CurrentTheme
         $app = App::get();
         $result = [];
         $options = self::walkOptions(2);
-        $applyImageUrls = function($text) use ($app) {
-            $matches = [];
-            preg_match_all('/url\((.*?)\)/', $text, $matches);
-            if (!empty($matches[1])) {
-                foreach ($matches[1] as $key) {
-                    $filename = $app->bearCMS->data->getRealFilename($key);
-                    if ($filename !== $key) {
-                        $text = str_replace($key, is_file($filename) ? $app->assets->getUrl($filename, ['cacheMaxAge' => 999999999, 'version' => 1]) : "", $text);
-                    }
-                }
-            }
-            return $text;
-        };
         $applyFontNames = function($text) use (&$linkTags) {
             $webSafeFonts = [
                 'Arial' => 'Arial,Helvetica,sans-serif',
@@ -254,7 +262,6 @@ class CurrentTheme
         foreach ($result as $key => $value) {
             $style .= $key . '{' . $value . '}';
         }
-        $style = $applyImageUrls($style);
         $style = $applyFontNames($style);
         $cssCode = trim($cssCode); // Positioned in different style tag just in case it's invalid
         return '<html><head>' . implode('', $linkTags) . '<style>' . $style . '</style>' . ($cssCode !== '' ? '<style>' . $cssCode . '</style>' : '') . '</head></html>';
