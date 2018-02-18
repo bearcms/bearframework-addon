@@ -656,6 +656,9 @@ if (Options::hasFeature('BLOG')) {
                     if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) && $app->bearCMS->currentUser->exists()) {
                         $blogPost = $app->bearCMS->data->blogPosts->get(substr($slug, 6));
                         if ($blogPost !== null) {
+                            if ($blogPost->status === 'published') {
+                                return new App\Response\PermanentRedirect($app->urls->get(Options::$blogPagesPathPrefix . $blogPost->slug . '/'));
+                            }
                             $blogPostID = $blogPost['id'];
                         }
                     }
