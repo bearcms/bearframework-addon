@@ -688,7 +688,7 @@ if (Options::hasFeature('BLOG')) {
                             }
                             $content .= '</head><body>';
                             $content .= '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost['title']) . '</h1></div>';
-                            $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? $app->localization->formatDate($blogPost['publishedTime'], ['date']) : 'draft') . '</div></div>';
+                            $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost['status'] === 'published' ? $app->localization->formatDate($blogPost['publishedTime'], ['date']) : __('bearcms.blogPost.draft')) . '</div></div>';
                             $content .= '<div class="bearcms-blogpost-page-content"><component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/></div>';
                             $content .= '</body></html>';
 

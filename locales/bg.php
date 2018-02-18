@@ -29,6 +29,7 @@ return [
     'bearcms.forumPosts.pending approval' => 'очаква одобрение',
     'bearcms.blogPosts.Show more posts' => 'Покажи още статии',
     'bearcms.blogPosts.Read more' => 'Прочети повече',
+    'bearcms.blogPost.draft' => 'чернова',
     'bearcms.rss.Read the full post at %s' => 'Прочетете цялата статия на %s',
     'bearcms.rss.Read the post at %s' => 'Прочетете статията на %s',
     'bearcms.navigation.home' => 'Начало',
