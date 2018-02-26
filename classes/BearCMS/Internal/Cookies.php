@@ -131,13 +131,13 @@ final class Cookies
             $cookieData = array('name' => '', 'value' => '', 'expire' => '', 'path' => '', 'domain' => '', 'secure' => false, 'httponly' => false);
             foreach ($cookieMatchData as $i => $value) {
                 $valueParts = explode('=', $value, 2);
-                $partName = trim($valueParts[0]);
+                $partName = strtolower(trim($valueParts[0]));
                 $partValue = isset($valueParts[1]) ? trim($valueParts[1]) : '';
-                if ($i == 0) {
+                if ($i === 0) {
                     $cookieData['name'] = $partName;
                     $cookieData['value'] = $partValue;
                 }
-                if ($partName == 'path') {
+                if ($partName === 'path') {
                     if (isset($serverUrlParts['path']) && strlen($serverUrlParts['path']) > 0 && $partValue === $serverUrlParts['path']) {
                         $partValue = '/';
                     }
@@ -147,16 +147,16 @@ final class Cookies
                         $cookieData['path'] = $partValue;
                     }
                 }
-                if ($partName == 'httponly') {
+                if ($partName === 'httponly') {
                     $cookieData['httponly'] = true;
                 }
-                if ($partName == 'expires') {
+                if ($partName === 'expires') {
                     $cookieData['expire'] = strtotime($partValue);
                 }
-                if ($partName == 'secure') {
+                if ($partName === 'secure') {
                     $cookieData['secure'] = $app->request->scheme === 'https';
                 }
-                if ($partName == 'domain' && isset($requestUrlParts['host'], $serverUrlParts['host'])) {
+                if ($partName === 'domain' && isset($requestUrlParts['host'], $serverUrlParts['host'])) {
                     if ($partValue === $serverUrlParts['host']) {
                         $cookieData['domain'] = $requestUrlParts['host'];
                     }
