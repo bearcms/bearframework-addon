@@ -200,4 +200,33 @@ class Data
         }
     }
 
+    static function sendNotification($type, $status, $authorName, $message, $pendingApprovalCount)
+    {
+        $app = App::get();
+        $host = $app->request->host;
+        if ($status === 'pendingApproval') {
+            $title = sprintf(__('bearcms.notifications.' . $type . '.new.pendingApproval'), $host);
+            if ($pendingApprovalCount === 1) {
+                $text = $authorName . ':' . "\n" . $message;
+            } elseif ($pendingApprovalCount === 2) {
+                $text = sprintf(__('bearcms.notifications.' . $type . '.new.thisAndOneMoreArePendingApproval'), $authorName);
+            } elseif ($pendingApprovalCount > 2) {
+                $text = sprintf(__('bearcms.notifications.' . $type . '.new.thisAndSomeMoreArePendingApproval'), $authorName, $pendingApprovalCount);
+            }
+        } else {
+            $title = sprintf(__('bearcms.notifications.' . $type . '.new.notPendingApproval'), $host);
+            if ($pendingApprovalCount === 0) {
+                $text = $authorName . ':' . "\n" . $message;
+            } elseif ($pendingApprovalCount === 1) {
+                $text = sprintf(__('bearcms.notifications.' . $type . '.new.oneOtherIsPendingApproval'), $authorName);
+            } elseif ($pendingApprovalCount > 1) {
+                $text = sprintf(__('bearcms.notifications.' . $type . '.new.manyOthersArePendingApproval'), $authorName, $pendingApprovalCount);
+            }
+        }
+        $notification = $app->notifications->make($title, $text);
+        $notification->clickUrl = $app->urls->get() . '#admin-open-' . $type;
+        $notification->type = 'bearcms-' . $type . '-new';
+        $app->notifications->send('bearcms-user-administrator', $notification);
+    }
+
 }

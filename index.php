@@ -14,7 +14,6 @@ use BearCMS\Internal\Server;
 use BearCMS\Internal\ElementsHelper;
 use BearCMS\Internal\Options;
 use BearCMS\Internal\CurrentTheme;
-use BearCMS\Internal\Themes;
 use IvoPetkov\HTML5DOMDocument;
 
 $app = App::get();
@@ -940,3 +939,48 @@ $app->hooks
                 $app->hooks->execute('bearCMSContentChanged');
             }
         });
+
+if (Options::hasFeature('NOTIFICATIONS')) {
+    $app->tasks
+            ->define('bearcms-send-new-comment-notification', function($data) use ($app) {
+                $threadID = $data['threadID'];
+                $commentID = $data['commentID'];
+                $comments = $app->bearCMS->data->comments->getList()
+                        ->filterBy('threadID', $threadID)
+                        ->filterBy('id', $commentID);
+                if (isset($comments[0])) {
+                    $comment = $comments[0];
+                    $comments = $app->bearCMS->data->comments->getList()
+                            ->filterBy('status', 'pendingApproval');
+                    $pendingApprovalCount = $comments->length;
+                    $profile = \BearCMS\Internal\PublicProfile::getFromAuthor($comment->author);
+                    \BearCMS\Internal\Data::sendNotification('comments', $comment->status, $profile->name, $comment->text, $pendingApprovalCount);
+                }
+            })
+            ->define('bearcms-send-new-forum-post-notification', function($data) use ($app) {
+                $forumPostID = $data['forumPostID'];
+                $forumPost = $app->bearCMS->data->forumPosts->get($forumPostID);
+                if ($forumPost !== null) {
+                    $forumPosts = $app->bearCMS->data->forumPosts->getList()
+                            ->filterBy('status', 'pendingApproval');
+                    $pendingApprovalCount = $forumPosts->length;
+                    $profile = \BearCMS\Internal\PublicProfile::getFromAuthor($forumPost->author);
+                    \BearCMS\Internal\Data::sendNotification('forum-posts', $forumPost->status, $profile->name, $forumPost->title, $pendingApprovalCount);
+                }
+            })
+            ->define('bearcms-send-new-forum-post-reply-notification', function($data) use ($app) {
+                $forumPostID = $data['forumPostID'];
+                $forumPostReplyID = $data['forumPostReplyID'];
+                $forumPostsReplies = $app->bearCMS->data->forumPostsReplies->getList()
+                        ->filterBy('forumPostID', $forumPostID)
+                        ->filterBy('id', $forumPostReplyID);
+                if (isset($forumPostsReplies[0])) {
+                    $forumPostsReply = $forumPostsReplies[0];
+                    $forumPostsReplies = $app->bearCMS->data->forumPostsReplies->getList()
+                            ->filterBy('status', 'pendingApproval');
+                    $pendingApprovalCount = $forumPostsReplies->length;
+                    $profile = \BearCMS\Internal\PublicProfile::getFromAuthor($forumPostsReply->author);
+                    \BearCMS\Internal\Data::sendNotification('forum-posts-replies', $forumPostsReply->status, $profile->name, $forumPostsReply->text, $pendingApprovalCount);
+                }
+            });
+}

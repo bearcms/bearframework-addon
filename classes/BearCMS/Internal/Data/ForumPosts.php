@@ -10,6 +10,7 @@
 namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
+use BearCMS\Internal\Options;
 
 final class ForumPosts
 {
@@ -30,6 +31,16 @@ final class ForumPosts
 
         $dataKey = 'bearcms/forums/posts/post/' . md5($id) . '.json';
         $app->data->set($app->data->make($dataKey, json_encode($data)));
+
+        if (Options::hasFeature('NOTIFICATIONS')) {
+            if (!$app->tasks->exists('bearcms-send-new-forum-post-notification')) {
+                $app->tasks->add('bearcms-send-new-forum-post-notification', [
+                    'categoryID' => $categoryID,
+                    'forumPostID' => $id
+                        ], ['id' => 'bearcms-send-new-forum-post-notification']);
+            }
+        }
+
         \BearCMS\Internal\Data::setChanged($dataKey);
         return $id;
     }

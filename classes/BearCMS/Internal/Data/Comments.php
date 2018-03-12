@@ -11,6 +11,7 @@ namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
 use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal\Options;
 
 final class Comments
 {
@@ -26,8 +27,9 @@ final class Comments
         if (empty($data['comments'])) {
             $data['comments'] = [];
         }
+        $commentID = md5(uniqid());
         $data['comments'][] = [
-            'id' => md5(uniqid()),
+            'id' => $commentID,
             'status' => $status,
             'author' => $author,
             'text' => $text,
@@ -35,6 +37,16 @@ final class Comments
         ];
         $dataKey = 'bearcms/comments/thread/' . md5($threadID) . '.json';
         $app->data->set($app->data->make($dataKey, json_encode($data)));
+
+        if (Options::hasFeature('NOTIFICATIONS')) {
+            if (!$app->tasks->exists('bearcms-send-new-comment-notification')) {
+                $app->tasks->add('bearcms-send-new-comment-notification', [
+                    'threadID' => $threadID,
+                    'commentID' => $commentID
+                        ], ['id' => 'bearcms-send-new-comment-notification']);
+            }
+        }
+
         \BearCMS\Internal\Data::setChanged($dataKey);
     }
 

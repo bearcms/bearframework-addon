@@ -10,6 +10,7 @@
 namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
+use BearCMS\Internal\Options;
 
 final class ForumPostsReplies
 {
@@ -25,8 +26,9 @@ final class ForumPostsReplies
         if (empty($data['replies'])) {
             $data['replies'] = [];
         }
+        $forumPostReplyID = md5(uniqid());
         $data['replies'][] = [
-            'id' => md5(uniqid()),
+            'id' => $forumPostReplyID,
             'status' => $status,
             'author' => $author,
             'text' => $text,
@@ -34,6 +36,16 @@ final class ForumPostsReplies
         ];
         $dataKey = 'bearcms/forums/posts/post/' . md5($forumPostID) . '.json';
         $app->data->set($app->data->make($dataKey, json_encode($data)));
+
+        if (Options::hasFeature('NOTIFICATIONS')) {
+            if (!$app->tasks->exists('bearcms-send-new-forum-post-reply-notification')) {
+                $app->tasks->add('bearcms-send-new-forum-post-reply-notification', [
+                    'forumPostID' => $forumPostID,
+                    'forumPostReplyID' => $forumPostReplyID
+                        ], ['id' => 'bearcms-send-new-forum-post-reply-notification']);
+            }
+        }
+
         \BearCMS\Internal\Data::setChanged($dataKey);
     }
 
