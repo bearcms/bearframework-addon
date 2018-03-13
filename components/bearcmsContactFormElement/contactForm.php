@@ -26,14 +26,21 @@ $form->onSubmit = function($values) use ($app, $component) {
         if (!is_array($defaultEmailSender)) {
             throw new \Exception('The defaultEmailSender option is empty.');
         }
-        $email = $app->emails->make();
-        $email->sender->email = $defaultEmailSender['email'];
-        $email->sender->name = $defaultEmailSender['name'];
-        $email->subject = sprintf(__('bearcms.contactForm.Message in %s'), $app->request->host);
-        $email->content->add(sprintf(__('bearcms.contactForm.Message from %s'), $replyToEmail) . "\n\n" . $values['message']);
-        $email->recipients->add($recipient);
-        $email->replyToRecipients->add($replyToEmail);
-        $app->emails->send($email);
+
+        $data = [
+            'senderEmail' => $defaultEmailSender['email'],
+            'senderName' => $defaultEmailSender['name'],
+            'subject' => sprintf(__('bearcms.contactForm.Message in %s'), $app->request->host),
+            'content' => sprintf(__('bearcms.contactForm.Message from %s'), $replyToEmail) . "\n\n" . $values['message'],
+            'recipientEmail' => $recipient,
+            'replyToEmail' => $replyToEmail
+        ];
+        $taskID = 'bearcms-send-contact-form->email-' . md5(serialize($data));
+        if (!$app->tasks->exists($taskID)) {
+            $app->tasks->add('bearcms-send-contact-form->email', $data, [
+                'id' => $taskID
+            ]);
+        }
     }
 
     return [

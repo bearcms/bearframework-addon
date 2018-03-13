@@ -984,3 +984,17 @@ if (Options::hasFeature('NOTIFICATIONS')) {
                 }
             });
 }
+
+if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
+    $app->tasks
+            ->define('bearcms-send-contact-form->email', function($data) use ($app) {
+                $email = $app->emails->make();
+                $email->sender->email = $data['senderEmail'];
+                $email->sender->name = $data['senderName'];
+                $email->subject = $data['subject'];
+                $email->content->add($data['content']);
+                $email->recipients->add($data['recipientEmail']);
+                $email->replyToRecipients->add($data['replyToEmail']);
+                $app->emails->send($email);
+            });
+}
