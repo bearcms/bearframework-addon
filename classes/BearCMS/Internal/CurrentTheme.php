@@ -213,18 +213,20 @@ class CurrentTheme
                                 $selectorVariants = ['', '', ''];
                                 if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
                                     $temp = isset($optionValue[0]) ? json_decode($optionValue, true) : [];
-                                    foreach ($temp as $key => $value) {
-                                        $pseudo = substr($key, -6);
-                                        if ($pseudo === ':hover') {
-                                            $selectorVariants[1] .= substr($key, 0, -6) . ':' . $value . ';';
-                                        } else if ($pseudo === 'active') { // optimization
-                                            if (substr($key, -7) === ':active') {
-                                                $selectorVariants[2] .= substr($key, 0, -7) . ':' . $value . ';';
+                                    if (is_array($temp)) {
+                                        foreach ($temp as $key => $value) {
+                                            $pseudo = substr($key, -6);
+                                            if ($pseudo === ':hover') {
+                                                $selectorVariants[1] .= substr($key, 0, -6) . ':' . $value . ';';
+                                            } else if ($pseudo === 'active') { // optimization
+                                                if (substr($key, -7) === ':active') {
+                                                    $selectorVariants[2] .= substr($key, 0, -7) . ':' . $value . ';';
+                                                } else {
+                                                    $selectorVariants[0] .= $key . ':' . $value . ';';
+                                                }
                                             } else {
                                                 $selectorVariants[0] .= $key . ':' . $value . ';';
                                             }
-                                        } else {
-                                            $selectorVariants[0] .= $key . ':' . $value . ';';
                                         }
                                     }
                                 }

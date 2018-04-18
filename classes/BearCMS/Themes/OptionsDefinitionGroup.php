@@ -55,7 +55,7 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "HeadingLargeCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-heading-element-large", "font-weight:normal;"], // ?????
+                                    ["rule", $parentSelector . " .bearcms-heading-element-large", "font-weight:normal;"],
                                     ["selector", $parentSelector . " .bearcms-heading-element-large"]
                                 ]
                             ]
@@ -69,7 +69,7 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "HeadingMediumCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-heading-element-medium", "font-weight:normal;"], // ?????
+                                    ["rule", $parentSelector . " .bearcms-heading-element-medium", "font-weight:normal;"],
                                     ["selector", $parentSelector . " .bearcms-heading-element-medium"]
                                 ]
                             ]
@@ -83,7 +83,7 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "HeadingSmallCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-heading-element-small", "font-weight:normal;"], // ?????
+                                    ["rule", $parentSelector . " .bearcms-heading-element-small", "font-weight:normal;"],
                                     ["selector", $parentSelector . " .bearcms-heading-element-small"]
                                 ]
                             ]
@@ -110,7 +110,6 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "TextLinkCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-text-element a", "display:inline-block;"], // ?????
                                     ["selector", $parentSelector . " .bearcms-text-element a"]
                                 ]
                             ]
@@ -126,7 +125,7 @@ class OptionsDefinitionGroup
                         "id" => $idPrefix . "LinkCSS",
                         "type" => "css",
                         "cssOutput" => [
-                            ["rule", $parentSelector . " .bearcms-link-element", "display:inline-block;text-decoration:none;"], // ??????
+                            ["rule", $parentSelector . " .bearcms-link-element", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                             ["selector", $parentSelector . " .bearcms-link-element"]
                         ]
                     ]
@@ -141,7 +140,7 @@ class OptionsDefinitionGroup
                         "type" => "css",
                         "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
                         "cssOutput" => [
-                            ["rule", $parentSelector . " .bearcms-image-element", "overflow:hidden;"], // ??????
+                            ["rule", $parentSelector . " .bearcms-image-element", "overflow:hidden;"],
                             ["selector", $parentSelector . " .bearcms-image-element"]
                         ]
                     ]
@@ -168,7 +167,7 @@ class OptionsDefinitionGroup
                                 "type" => "css",
                                 "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-image-gallery-element-image", "overflow:hidden;"], // ??????
+                                    ["rule", $parentSelector . " .bearcms-image-gallery-element-image", "overflow:hidden;"],
                                     ["selector", $parentSelector . " .bearcms-image-gallery-element-image"]
                                 ]
                             ]
@@ -185,7 +184,7 @@ class OptionsDefinitionGroup
                         "type" => "css",
                         "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
                         "cssOutput" => [
-                            ["rule", $parentSelector . " .bearcms-video-element", "overflow:hidden;"], // ??????
+                            ["rule", $parentSelector . " .bearcms-video-element", "overflow:hidden;"],
                             ["selector", $parentSelector . " .bearcms-video-element"]
                         ]
                     ]
@@ -211,7 +210,7 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "NavigationItemLinkCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-navigation-element-item a", "display:inline-block;"], // ??????
+                                    ["rule", $parentSelector . " .bearcms-navigation-element-item a", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                                     ["selector", $parentSelector . " .bearcms-navigation-element-item a"]
                                 ]
                             ]
@@ -231,7 +230,7 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "ContactFormEmailLabelCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-contact-form-element-email-label", "display:block;"], // ?????? inline-block
+                                    ["rule", $parentSelector . " .bearcms-contact-form-element-email-label", "display:block;"],
                                     ["selector", $parentSelector . " .bearcms-contact-form-element-email-label"]
                                 ]
                             ],
@@ -246,7 +245,7 @@ class OptionsDefinitionGroup
                                 "type" => "css",
                                 "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-contact-form-element-email", "box-sizing:border-box;border:0;"], // ??????
+                                    ["rule", $parentSelector . " .bearcms-contact-form-element-email", "box-sizing:border-box;border:0;"],
                                     ["selector", $parentSelector . " .bearcms-contact-form-element-email"]
                                 ]
                             ],
@@ -260,7 +259,7 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "ContactFormMessageLabelCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-contact-form-element-message-label", "display:block;"], // ?????? inline-block
+                                    ["rule", $parentSelector . " .bearcms-contact-form-element-message-label", "display:block;"],
                                     ["selector", $parentSelector . " .bearcms-contact-form-element-message-label"]
                                 ]
                             ],
@@ -275,7 +274,7 @@ class OptionsDefinitionGroup
                                 "type" => "css",
                                 "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-contact-form-element-message", "box-sizing:border-box;border:0;"], // ??????
+                                    ["rule", $parentSelector . " .bearcms-contact-form-element-message", "box-sizing:border-box;border:0;"],
                                     ["selector", $parentSelector . " .bearcms-contact-form-element-message"]
                                 ]
                             ],
@@ -289,7 +288,7 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "ContactFormSendButtonCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-contact-form-element-send-button", "display:inline-block;text-decoration:none;"], // ?????? 
+                                    ["rule", $parentSelector . " .bearcms-contact-form-element-send-button", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                                     ["selector", $parentSelector . " .bearcms-contact-form-element-send-button"]
                                 ]
                             ],
@@ -301,7 +300,7 @@ class OptionsDefinitionGroup
                                         "id" => $idPrefix . "ContactFormSendButtonWaitingCSS",
                                         "type" => "css",
                                         "cssOutput" => [
-                                            ["rule", $parentSelector . " .bearcms-contact-form-element-send-button-waiting", "display:inline-block;text-decoration:none;"], // ??????
+                                            ["rule", $parentSelector . " .bearcms-contact-form-element-send-button-waiting", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                                             ["selector", $parentSelector . " .bearcms-contact-form-element-send-button-waiting"]
                                         ]
                                     ]
@@ -324,7 +323,7 @@ class OptionsDefinitionGroup
                                 "type" => "css",
                                 "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
-                                    ["rule", ".bearcms-comments-comment", "overflow:hidden;"], // ??????
+                                    ["rule", ".bearcms-comments-comment", "overflow:hidden;"],
                                     ["selector", $parentSelector . " .bearcms-comments-comment"]
                                 ]
                             ],
@@ -336,7 +335,7 @@ class OptionsDefinitionGroup
                                         "id" => $idPrefix . "CommentsAuthorNameCSS",
                                         "type" => "css",
                                         "cssOutput" => [
-                                            ["rule", $parentSelector . " .bearcms-comments-comment-author-name", "display:inline-block;"], // ??????
+                                            ["rule", $parentSelector . " .bearcms-comments-comment-author-name", "display:inline-block;"],
                                             ["selector", $parentSelector . " .bearcms-comments-comment-author-name"]
                                         ]
                                     ]
@@ -351,7 +350,7 @@ class OptionsDefinitionGroup
                                         "type" => "css",
                                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                         "cssOutput" => [
-                                            ["rule", $parentSelector . " .bearcms-comments-comment-author-image", "display:inline-block;float:left;"], // ??????
+                                            ["rule", $parentSelector . " .bearcms-comments-comment-author-image", "display:inline-block;float:left;"],
                                             ["selector", $parentSelector . " .bearcms-comments-comment-author-image"]
                                         ]
                                     ]
@@ -365,7 +364,7 @@ class OptionsDefinitionGroup
                                         "id" => $idPrefix . "CommentsDateCSS",
                                         "type" => "css",
                                         "cssOutput" => [
-                                            ["rule", $parentSelector . " .bearcms-comments-comment-date", "display:inline-block;float:right;"], // ??????
+                                            ["rule", $parentSelector . " .bearcms-comments-comment-date", "display:inline-block;float:right;"],
                                             ["selector", $parentSelector . " .bearcms-comments-comment-date"]
                                         ]
                                     ]
@@ -392,7 +391,7 @@ class OptionsDefinitionGroup
                                         "id" => $idPrefix . "CommentsTextLinksCSS",
                                         "type" => "css",
                                         "cssOutput" => [
-                                            ["rule", $parentSelector . " .bearcms-comments-comment-text a", "display:inline-block;"], // ??????
+                                            ["rule", $parentSelector . " .bearcms-comments-comment-text a", "display:inline-block;"],
                                             ["selector", $parentSelector . " .bearcms-comments-comment-text a"]
                                         ]
                                     ]
@@ -409,7 +408,7 @@ class OptionsDefinitionGroup
                                 "type" => "css",
                                 "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-comments-element-text-input", "box-sizing:border-box;border:0;"], // ??????
+                                    ["rule", $parentSelector . " .bearcms-comments-element-text-input", "box-sizing:border-box;border:0;"],
                                     ["selector", $parentSelector . " .bearcms-comments-element-text-input"]
                                 ]
                             ],
@@ -423,7 +422,7 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "CommentsSendButtonCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-comments-element-send-button", "display:inline-block;text-decoration:none;"], // ??????
+                                    ["rule", $parentSelector . " .bearcms-comments-element-send-button", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                                     ["selector", $parentSelector . " .bearcms-comments-element-send-button"]
                                 ]
                             ],
@@ -435,7 +434,7 @@ class OptionsDefinitionGroup
                                         "id" => $idPrefix . "CommentsSendButtonWaitingCSS",
                                         "type" => "css",
                                         "cssOutput" => [
-                                            ["rule", $parentSelector . " .bearcms-comments-element-send-button-waiting", "display:inline-block;text-decoration:none;"], // ??????
+                                            ["rule", $parentSelector . " .bearcms-comments-element-send-button-waiting", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                                             ["selector", $parentSelector . " .bearcms-comments-element-send-button-waiting"]
                                         ]
                                     ]
@@ -451,7 +450,7 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "CommentsShowMoreButtonCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-comments-show-more-button", "display:inline-block;"], // ??????
+                                    ["rule", $parentSelector . " .bearcms-comments-show-more-button", "display:inline-block;"],
                                     ["selector", $parentSelector . " .bearcms-comments-show-more-button"]
                                 ]
                             ],
@@ -510,7 +509,7 @@ class OptionsDefinitionGroup
                                         "id" => $idPrefix . "ForumPostsRepliesCountCSS",
                                         "type" => "css",
                                         "cssOutput" => [
-                                            ["rule", $parentSelector . " .bearcms-forum-posts-post-replies-count", "display:inline-block;float:right;"], // ??????
+                                            ["rule", $parentSelector . " .bearcms-forum-posts-post-replies-count", "display:inline-block;float:right;"],
                                             ["selector", $parentSelector . " .bearcms-forum-posts-post-replies-count"]
                                         ]
                                     ]
@@ -526,7 +525,7 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "ForumPostsShowMoreButtonCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-forum-posts-show-more-button", "display:inline-block;"], // ??????
+                                    ["rule", $parentSelector . " .bearcms-forum-posts-show-more-button", "display:inline-block;"],
                                     ["selector", $parentSelector . " .bearcms-forum-posts-show-more-button"]
                                 ]
                             ],
@@ -554,7 +553,7 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "ForumPostsNewPostButtonCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-forum-posts-new-post-button", "display:inline-block;"], // ??????
+                                    ["rule", $parentSelector . " .bearcms-forum-posts-new-post-button", "display:inline-block;"],
                                     ["selector", $parentSelector . " .bearcms-forum-posts-new-post-button"]
                                 ]
                             ],
@@ -565,7 +564,7 @@ class OptionsDefinitionGroup
                                     [
                                         "id" => $idPrefix . "ForumPostsShowMoreButtonContainerCSS",
                                         "type" => "css",
-                                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"], // ??????
+                                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                         "cssOutput" => [
                                             ["selector", $parentSelector . " .bearcms-forum-posts-new-post-button-container"]
                                         ]
@@ -595,7 +594,7 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "HtmlLinkCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-html-element a", "display:inline-block;"], // ??????
+                                    ["rule", $parentSelector . " .bearcms-html-element a", "display:inline-block;"],
                                     ["selector", $parentSelector . " .bearcms-html-element a"]
                                 ]
                             ]
@@ -705,7 +704,7 @@ class OptionsDefinitionGroup
                                 "id" => $idPrefix . "BlogPostsShowMoreButtonCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-blog-posts-element-show-more-button", "display:inline-block;"], // ????
+                                    ["rule", $parentSelector . " .bearcms-blog-posts-element-show-more-button", "display:inline-block;"],
                                     ["selector", $parentSelector . " .bearcms-blog-posts-element-show-more-button"]
                                 ]
                             ],
@@ -752,7 +751,7 @@ class OptionsDefinitionGroup
                                 "id" => "blogPostPageTitleCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", ".bearcms-blogpost-page-title", "font-weight:normal;"], // ????
+                                    ["rule", ".bearcms-blogpost-page-title", "font-weight:normal;"],
                                     ["selector", ".bearcms-blogpost-page-title"]
                                 ]
                             ],
@@ -795,7 +794,7 @@ class OptionsDefinitionGroup
                                 "id" => "blogPostPageDateCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["selector", ".bearcms-blogpost-page-date"] // ????? + inline-block
+                                    ["selector", ".bearcms-blogpost-page-date"]
                                 ]
                             ],
                             [
@@ -842,7 +841,7 @@ class OptionsDefinitionGroup
                                 "id" => "newForumPostPageTitleLabelCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", ".bearcms-new-forum-post-page-title-label", "display:block;"], // ?????
+                                    ["rule", ".bearcms-new-forum-post-page-title-label", "display:block;"],
                                     ["selector", ".bearcms-new-forum-post-page-title-label"]
                                 ]
                             ],
@@ -900,7 +899,7 @@ class OptionsDefinitionGroup
                                 "id" => "newForumPostPageSendButtonCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", ".bearcms-new-forum-post-page-send-button", "display:inline-block;text-decoration:none;"],
+                                    ["rule", ".bearcms-new-forum-post-page-send-button", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                                     ["selector", ".bearcms-new-forum-post-page-send-button"]
                                 ]
                             ],
@@ -912,7 +911,7 @@ class OptionsDefinitionGroup
                                         "id" => "newForumPostPageSendButtonWaitingCSS",
                                         "type" => "css",
                                         "cssOutput" => [
-                                            ["rule", ".bearcms-new-forum-post-page-send-button-waiting", "display:inline-block;text-decoration:none;"],
+                                            ["rule", ".bearcms-new-forum-post-page-send-button-waiting", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                                             ["selector", ".bearcms-new-forum-post-page-send-button-waiting"]
                                         ]
                                     ]
@@ -974,7 +973,7 @@ class OptionsDefinitionGroup
                                         "type" => "css",
                                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                         "cssOutput" => [
-                                            ["selector", ".bearcms-blogpost-page-date-container"]
+                                            ["selector", ".bearcms-forum-post-page-date-container"]
                                         ]
                                     ]
                                 ]
@@ -1103,7 +1102,7 @@ class OptionsDefinitionGroup
                                 "id" => "forumPostPageSendButtonCSS",
                                 "type" => "css",
                                 "cssOutput" => [
-                                    ["rule", ".bearcms-forum-post-page-send-button", "display:inline-block;text-decoration:none;"],
+                                    ["rule", ".bearcms-forum-post-page-send-button", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                                     ["selector", ".bearcms-forum-post-page-send-button"]
                                 ]
                             ],
@@ -1115,7 +1114,7 @@ class OptionsDefinitionGroup
                                         "id" => "forumPostPageSendButtonWaitingCSS",
                                         "type" => "css",
                                         "cssOutput" => [
-                                            ["rule", ".bearcms-forum-post-page-send-button-waiting", "display:inline-block;text-decoration:none;"],
+                                            ["rule", ".bearcms-forum-post-page-send-button-waiting", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                                             ["selector", ".bearcms-forum-post-page-send-button-waiting"]
                                         ]
                                     ]

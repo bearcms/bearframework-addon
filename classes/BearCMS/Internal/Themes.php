@@ -148,6 +148,25 @@ class Themes
                 if (!is_array($result)) {
                     throw new \Exception('Invalid theme styles value for theme ' . $id . '!');
                 }
+                foreach ($result as $j => $style) {
+                    if (isset($result[$j]['id'])) {
+                        $result[$j]['id'] = (string) $result[$j]['id'];
+                    } else {
+                        $result[$j]['id'] = 'style' . $j;
+                    }
+                    if (isset($result[$j]['name'])) {
+                        $result[$j]['name'] = (string) $result[$j]['name'];
+                    } else {
+                        $result[$j]['name'] = '';
+                    }
+                    if (isset($result[$j]['media'])) {
+                        if (!is_array($result[$j]['media'])) {
+                            throw new \Exception('');
+                        }
+                    } else {
+                        $result[$j]['media'] = [];
+                    }
+                }
                 if ($updateMediaFilenames) {
                     foreach ($result as $j => $style) {
                         if (isset($style['media']) && is_array($style['media'])) {
