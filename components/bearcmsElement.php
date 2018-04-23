@@ -12,6 +12,7 @@ use BearCMS\Internal\ElementsHelper;
 $editable = $component->editable === 'true';
 $typeCode = $component->getAttribute('bearcms-internal-attribute-type');
 $containerType = $component->getAttribute('bearcms-internal-attribute-container');
+$inElementsContainer = $component->getAttribute('bearcms-internal-attribute-in-elements-container') === 'true';
 
 if ($editable) {
     $componentContextData = ElementsHelper::getComponentContextData($component);
@@ -88,5 +89,13 @@ if ($containerType === 'none') {
         $htmlElementID = 'brelc' . md5($component->id);
         $attributes .= ' id="' . $htmlElementID . '"';
     }
-    echo '<div' . $attributes . '>' . $componentHTML . '</div>';
+    if ($editable && !$inElementsContainer) {
+        echo '<div>';
+    }
+    echo '<div' . $attributes . '>';
+    echo $componentHTML;
+    echo '</div>';
+    if ($editable && !$inElementsContainer) {
+        echo '</div>';
+    }
 }

@@ -153,6 +153,7 @@ if ($renderElementsContainer) {
         if (!empty($elements)) {
             $childrenContextData = $contextData;
             $childrenContextData['width'] = '100%';
+            $childrenContextData['inElementsContainer'] = '1';
             foreach ($elements as $elementContainerData) {
                 if ($hasLazyLoading && array_search($elementContainerData['id'], $elementsToLoad) === false) {
                     continue;
