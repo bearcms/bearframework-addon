@@ -242,6 +242,7 @@ final class ElementsHelper
                 . ' src="' . $componentName . '"'
                 . ' editable="' . ($editable ? 'true' : 'false') . '"'
                 . ' bearcms-internal-attribute-raw-data="' . htmlentities($rawData) . '"'
+                . ' bearcms-internal-attribute-in-elements-container="' . ((int) $contextData['inElementsContainer'] === 1 ? 'true' : 'false') . '"'
                 . ' width="' . $contextData['width'] . '"'
                 . ' spacing="' . $contextData['spacing'] . '"'
                 . ' color="' . $contextData['color'] . '"'
@@ -366,7 +367,7 @@ final class ElementsHelper
             return $content;
         };
 
-        $content .= '<div style="margin-' . ($position === 'left' ? 'right' : 'left') . ':' . $spacing . ';float:' . $position . ';width:' . $width . ';">' . $getElementsContent('inside') . '</div>';
+        $content .= '<div style="margin-' . ($position === 'left' ? 'right' : 'left') . ':' . $spacing . ';float:' . $position . ';width:calc(' . $width . ' - ' . $spacing . '/2);">' . $getElementsContent('inside') . '</div>';
         $content .= '<div style="display:block;">' . $getElementsContent('outside') . '</div>';
 
         if ($inContainer) {
