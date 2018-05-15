@@ -50,7 +50,7 @@ final class Controller
     {
         $data = Server::proxyAjax();
         $response = new App\Response\JSON($data);
-        $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex'));
+        $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
         return $response;
     }
 
