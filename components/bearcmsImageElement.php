@@ -64,7 +64,10 @@ if (isset($innerContainerStyle{0})) {
     $content .= '<div style="' . $innerContainerStyle . '">';
 }
 if (isset($filename{0})) {
-    $filename = $app->bearCMS->data->getRealFilename($filename);
+    $newFilename = $app->bearCMS->data->getRealFilename($filename);
+    if ($newFilename !== null) {
+        $filename = $newFilename;
+    }
     $content .= '<component src="image-gallery" columnsCount="1"' . $attributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
     $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' ? ' url="' . htmlentities($component->url) . '"' : '') . ' title="' . htmlentities($component->title) . '" filename="' . $filename . '"/>';
     $content .= '</component>';

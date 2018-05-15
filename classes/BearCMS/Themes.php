@@ -195,7 +195,7 @@ class Themes
                     $replace = [];
                     foreach ($matches[1] as $key) {
                         $filename = $app->bearCMS->data->getRealFilename($key);
-                        if ($filename !== $key) {
+                        if ($filename !== null) {
                             $search[] = $key;
                             $replace[] = $app->assets->getUrl($filename, ['cacheMaxAge' => 999999999]);
                         }
@@ -419,7 +419,7 @@ class Themes
         $filesValuesToUpdate = [];
         foreach ($filesInValues as $key) {
             $filename = $app->bearCMS->data->getRealFilename($key);
-            if ($filename !== $key) {
+            if ($filename !== null) {
                 $attachmentName = 'files/' . (sizeof($filesToAttach) + 1) . '.' . pathinfo($key, PATHINFO_EXTENSION); // the slash helps in import (shows if the value is encoded)
                 $attachmentName = rtrim($attachmentName, '.');
                 $filesToAttach[$attachmentName] = $filename;

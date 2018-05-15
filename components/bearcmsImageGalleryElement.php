@@ -46,7 +46,11 @@ if (strlen($component->lazyLoadImages) > 0) {
 $content .= '<component src="image-gallery" spacing="' . $spacing . '"' . $attributes . '>';
 if ($files !== null) {
     foreach ($files as $file) {
-        $filename = $app->bearCMS->data->getRealFilename($file->getAttribute('filename'));
+        $filename = $file->getAttribute('filename');
+        $newFilename = $app->bearCMS->data->getRealFilename($filename);
+        if ($newFilename !== null) {
+            $filename = $newFilename;
+        }
         $content .= '<file class="bearcms-image-gallery-element-image" filename="' . htmlentities($filename) . '"/>';
     }
 }

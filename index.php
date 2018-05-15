@@ -532,8 +532,10 @@ $app->routes
                     $icon = $settings['icon'];
                     if (isset($icon{0})) {
                         $filename = $app->bearCMS->data->getRealFilename($icon);
-                        $url = $app->assets->getUrl($filename, ['cacheMaxAge' => 999999999, 'width' => (int) $size, 'height' => (int) $size]);
-                        return new App\Response\TemporaryRedirect($url);
+                        if ($filename !== null) {
+                            $url = $app->assets->getUrl($filename, ['cacheMaxAge' => 999999999, 'width' => (int) $size, 'height' => (int) $size]);
+                            return new App\Response\TemporaryRedirect($url);
+                        }
                     }
                 }
             }

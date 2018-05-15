@@ -87,7 +87,11 @@ if (strlen($component->url) > 0) {
         $content = '';
     }
 } elseif (strlen($component->filename) > 0) {
-    $filename = $app->bearCMS->data->getRealFilename($component->filename);
+    $filename = $component->filename;
+    $newFilename = $app->bearCMS->data->getRealFilename($filename);
+    if ($newFilename !== null) {
+        $filename = $newFilename;
+    }
     $content = '<div class="bearcms-video-element" style="font-size:0;">' . $innerContainerStartTag . '<video style="width:100%" controls>';
     $content .= '<source src="' . $app->assets->getUrl($filename) . '" type="video/mp4">';
     $content .= '</video>' . $innerContainerEndTag . '</div>';

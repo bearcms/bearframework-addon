@@ -111,27 +111,25 @@ class Data
      * Converts data:, app:, addon:id: filenames to real filenames
      * 
      * @param string $filename
-     * @return string The real filename
-     * @throws \InvalidArgumentException
+     * @return ?string The real filename or null if not found
      */
-    public function getRealFilename(string $filename)
+    public function getRealFilename(string $filename): ?string
     {
         $app = App::get();
         if (substr($filename, 0, 5) === 'data:') {
-            $filename = $app->data->getFilename(substr($filename, 5));
+            return $app->data->getFilename(substr($filename, 5));
         } elseif (substr($filename, 0, 4) === 'app:') {
-            $filename = $app->config->appDir . DIRECTORY_SEPARATOR . substr($filename, 4);
+            return $app->config->appDir . DIRECTORY_SEPARATOR . substr($filename, 4);
         } elseif (substr($filename, 0, 6) === 'addon:') {
             $temp = explode(':', $filename, 3);
             if (sizeof($temp) === 3) {
                 $addon = \BearFramework\Addons::get($temp[1]);
-                if ($addon === null) {
-                    throw new \Exception('Cannot find addon ' . $temp[1]);
+                if ($addon !== null) {
+                    return $addon->dir . DIRECTORY_SEPARATOR . $temp[2];
                 }
-                $filename = $addon->dir . DIRECTORY_SEPARATOR . $temp[2];
             }
         }
-        return $filename;
+        return null;
     }
 
     /**
