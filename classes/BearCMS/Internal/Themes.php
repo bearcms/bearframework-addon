@@ -191,4 +191,13 @@ class Themes
         self::$elementsOptions[] = $definition;
     }
 
+    static public function getCacheItemKey(string $id, $userID = null)
+    {
+        $version = self::getVersion($id);
+        if ($version === null) {
+            return null;
+        }
+        return 'bearcms-theme-options-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . md5($id) . '-' . md5($version) . '-' . md5($userID) . '-2';
+    }
+
 }

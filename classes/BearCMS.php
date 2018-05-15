@@ -318,7 +318,8 @@ class BearCMS
     {
         $app = App::get();
         $currentThemeID = CurrentTheme::getID();
-        $currentThemeOptions = CurrentTheme::getOptions();
+        $currentUserID = $app->bearCMS->currentUser->exists() ? $app->bearCMS->currentUser->getID() : null;
+        $currentThemeOptions = $this->themes->getOptionsValues($currentThemeID, $currentUserID);
         if ($app->hooks->exists('bearCMSThemeApply')) {
             $app->hooks->execute('bearCMSThemeApply', $currentThemeID, $response, $currentThemeOptions);
         }

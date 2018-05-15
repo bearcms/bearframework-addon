@@ -911,15 +911,16 @@ if (!(isset($options['addDefaultThemes']) && $options['addDefaultThemes'] === fa
 }
 
 $app->hooks
-        ->add('dataItemChanged', function($key) use ($app) { // Has Theme change
+        ->add('dataItemChanged', function($key) use ($app) { // has theme change
             if (strpos($key, '.temp/bearcms/userthemeoptions/') === 0 || strpos($key, 'bearcms/themes/theme/') === 0) {
+                $currentThemeID = \BearCMS\Internal\CurrentTheme::getID();
                 if ($app->bearCMS->currentUser->exists()) {
-                    $cacheItemKey = CurrentTheme::getCacheItemKey($app->bearCMS->currentUser->getID());
+                    $cacheItemKey = \BearCMS\Internal\Themes::getCacheItemKey($currentThemeID, $app->bearCMS->currentUser->getID());
                     if ($cacheItemKey !== null) {
                         $app->cache->delete($cacheItemKey);
                     }
                 }
-                $cacheItemKey = CurrentTheme::getCacheItemKey();
+                $cacheItemKey = \BearCMS\Internal\Themes::getCacheItemKey($currentThemeID);
                 if ($cacheItemKey !== null) {
                     $app->cache->delete($cacheItemKey);
                 }
