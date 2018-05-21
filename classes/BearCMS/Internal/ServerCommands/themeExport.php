@@ -11,7 +11,7 @@ use BearFramework\App;
 
 return function($data) {
     $app = App::get();
-    $themeID = $data['themeID'];
+    $themeID = $data['id'];
     $dataKey = $app->bearCMS->themes->export($themeID);
     $app->data->makePublic($dataKey);
     return ['downloadUrl' => $app->assets->getUrl($app->data->getFilename($dataKey), ['download' => true])];

@@ -14,10 +14,11 @@ return function($data) {
     if (!isset($data['id'])) {
         throw new Exception('');
     }
+    $themeID = $data['id'];
 
     $themes = BearCMS\Internal\Themes::getList();
     foreach ($themes as $id) {
-        if ($id === $data['id']) {
+        if ($id === $themeID) {
             $styles = BearCMS\Internal\Themes::getStyles($id, true);
             return $styles;
         }

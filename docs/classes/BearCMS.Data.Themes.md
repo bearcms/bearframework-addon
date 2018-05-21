@@ -20,7 +20,7 @@ _Returns_
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A list containing the theme options
 
 ```php
-public array getTempOptions ( array $id , array $userID )
+public array getUserOptions ( array $id , array $userID )
 ```
 
 Returns a list containing the theme options a specific user has made
@@ -58,7 +58,7 @@ $options = $app->bearCMS->data->themes->getOptions('bearcms/theme1');
 List last unsaved theme options for a specific user.
 
 ```php
-$options = $app->bearCMS->data->themes->getTempOptions('bearcms/theme1', 'abcdefghijk1');
+$options = $app->bearCMS->data->themes->getUserOptions('bearcms/theme1', 'abcdefghijk1');
 
 // Array
 // (

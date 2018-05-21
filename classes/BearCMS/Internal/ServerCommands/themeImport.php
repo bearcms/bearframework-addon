@@ -11,11 +11,11 @@ use BearFramework\App;
 
 return function($data) {
     $app = App::get();
-    $dataKey = $data['key'];
-    $themeID = $data['themeID'];
+    $sourceDataKey = $data['sourceDataKey'];
+    $themeID = $data['id'];
     $userID = $data['userID'];
     try {
-        $app->bearCMS->themes->import($dataKey, $themeID, $userID);
+        $app->bearCMS->themes->import($sourceDataKey, $themeID, $userID);
         return ['status' => 'ok'];
     } catch (\Exception $e) {
         return ['status' => 'error', 'errorCode' => $e->getCode()];

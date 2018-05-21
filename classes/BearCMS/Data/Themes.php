@@ -44,7 +44,7 @@ class Themes
      * @return array A list containing the theme options
      * @throws \InvalidArgumentException
      */
-    public function getTempOptions(string $id, string $userID): ?array
+    public function getUserOptions(string $id, string $userID): ?array
     {
         $data = \BearCMS\Internal\Data::getValue('.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json');
         if ($data !== null) {
@@ -54,6 +54,116 @@ class Themes
             }
         }
         return null;
+    }
+
+    /**
+     * 
+     * @param string $id The theme ID
+     * @param array|null $values Option values
+     * @param string $userID The user ID
+     */
+    private function setOptionsValues(string $id, $values, string $userID = null): void
+    {
+        if (!is_array($values) && $values !== null) {
+            throw new \InvalidArgumentException('The values argument is not valid');
+        }
+        $app = App::get();
+        $hasUser = strlen($userID) > 0;
+        $dataKeysToDelete = [];
+
+        if ($hasUser) {
+            $currentValues = $this->getUserOptions($id, $userID);
+            if ($currentValues === null) {
+                $currentValues = [];
+            }
+        } else {
+            $currentValues = $this->getOptions($id);
+        }
+        $filesInCurrentValues = \BearCMS\Internal\Themes::getFilesInValues($currentValues);
+        foreach ($filesInCurrentValues as $key) {
+            if (strpos($key, 'data:') === 0) {
+                $dataKay = substr($key, 5);
+                if ($hasUser && strpos($dataKay, 'bearcms/files/themeimage/') === 0) {
+                    // Do not delete theme files when changes to the user values are made
+                } else {
+                    $dataKeysToDelete[] = $dataKay;
+                }
+            }
+        }
+
+        $dataKey = $hasUser ? '.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json' : 'bearcms/themes/theme/' . md5($id) . '.json';
+        if ($values === null) {
+            $app->data->delete($dataKey);
+        } else {
+            $filesInNewValues = \BearCMS\Internal\Themes::getFilesInValues($values);
+            foreach ($filesInNewValues as $key) {
+                if (strpos($key, 'data:') === 0) {
+                    $dataKay = substr($key, 5);
+                    $dataKeysToDelete = array_diff($dataKeysToDelete, [$dataKay]);
+                }
+            }
+
+            $dataToSet = [];
+            $dataToSet['id'] = $id;
+            if ($hasUser) {
+                $dataToSet['userID'] = $userID;
+            }
+            $dataToSet['options'] = $values;
+            $app->data->setValue($dataKey, json_encode($dataToSet));
+        }
+        \BearCMS\Internal\Data::setChanged($dataKey);
+
+        $recycleBinPrefix = '.recyclebin/bearcms/theme-changes-' . str_replace('.', '-', microtime(true)) . '/';
+        foreach ($dataKeysToDelete as $dataKeyToDelete) {
+            if ($app->data->exists($dataKeyToDelete)) {
+                $app->data->rename($dataKeyToDelete, $recycleBinPrefix . $dataKeyToDelete);
+            }
+        }
+
+        $cacheItemKey = $hasUser ? \BearCMS\Internal\Themes::getCacheItemKey($id, $userID) : \BearCMS\Internal\Themes::getCacheItemKey($id);
+        if ($cacheItemKey !== null) {
+            $app->cache->delete($cacheItemKey);
+        }
+    }
+
+    /**
+     * 
+     * @param string $id The theme ID
+     * @param string $values The values
+     */
+    public function setOptions(string $id, array $values): void
+    {
+        $this->setOptionsValues($id, $values);
+    }
+
+    /**
+     * 
+     * @param string $id The theme ID
+     * @param string $userID The user ID
+     * @param string $values The values
+     */
+    public function setUserOptions(string $id, string $userID, array $values): void
+    {
+        $this->setOptionsValues($id, $values, $userID);
+    }
+
+    /**
+     * 
+     * @param string $id The theme ID
+     * @param string $userID The user ID
+     */
+    public function discardUserOptions(string $id, string $userID): void
+    {
+        $this->setOptionsValues($id, null, $userID);
+    }
+
+    /**
+     * 
+     * @param string $id The theme ID
+     */
+    public function discardOptions(string $id): void
+    {
+        $this->setOptionsValues($id, null);
     }
 
 }

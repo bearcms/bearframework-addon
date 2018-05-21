@@ -167,22 +167,153 @@ class Themes
             $app = App::get();
             $cacheKey = \BearCMS\Internal\Themes::getCacheItemKey($id, $userID);
             $useCache = $cacheKey !== null;
-            $value = null;
+            $resultData = null;
             if ($useCache) {
-                $value = $app->cache->getValue($cacheKey);
-                if ($value !== null) {
-                    $value = json_decode($value, true);
+                $resultData = $app->cache->getValue($cacheKey);
+                if ($resultData !== null) {
+                    $resultData = json_decode($resultData, true);
                 }
             }
-            if ($value === null) {
-                $optionsData = $this->getOptionsData($id, $userID);
+            if ($resultData === null) {
                 $values = [];
-                foreach ($optionsData as $name => $optionData) {
-                    $values[$name] = $optionData[0];
+                $html = '';
+                $currentValues = null;
+                if ($userID !== null) {
+                    $userOptions = $app->bearCMS->data->themes->getUserOptions($id, $userID);
+                    if (is_array($userOptions)) {
+                        $currentValues = $userOptions;
+                    }
                 }
-                $value = [$values, $this->getOptionsHtml($optionsData)];
+                if ($currentValues === null) {
+                    $currentValues = $app->bearCMS->data->themes->getOptions($id);
+                }
+                $themeOptions = \BearCMS\Internal\Themes::getOptions($id);
+                if (!empty($themeOptions)) {
+                    $cssRules = [];
+                    $cssCode = '';
+                    $walkOptions = function($options) use (&$values, &$cssRules, &$cssCode, $currentValues, &$walkOptions) {
+                        foreach ($options as $option) {
+                            if (isset($option['id'])) {
+                                $optionID = $option['id'];
+                                if (isset($currentValues[$optionID])) {
+                                    $value = $currentValues[$optionID];
+                                } else {
+                                    $value = isset($option['defaultValue']) ? (is_array($option['defaultValue']) ? json_encode($option['defaultValue']) : $option['defaultValue']) : null;
+                                }
+                                $values[$optionID] = $value;
+
+                                if (isset($option['type'])) {
+                                    $optionType = $option['type'];
+                                    if ($optionType === 'cssCode') {
+                                        $cssCode .= $value;
+                                    } else {
+                                        if (isset($option['cssOutput'])) {
+                                            foreach ($option['cssOutput'] as $outputDefinition) {
+                                                if (is_array($outputDefinition)) {
+                                                    if (isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
+                                                        $selector = $outputDefinition[1];
+                                                        $selectorVariants = ['', '', ''];
+                                                        if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
+                                                            $temp = isset($value[0]) ? json_decode($value, true) : [];
+                                                            if (is_array($temp)) {
+                                                                foreach ($temp as $key => $value) {
+                                                                    $pseudo = substr($key, -6);
+                                                                    if ($pseudo === ':hover') {
+                                                                        $selectorVariants[1] .= substr($key, 0, -6) . ':' . $value . ';';
+                                                                    } else if ($pseudo === 'active') { // optimization
+                                                                        if (substr($key, -7) === ':active') {
+                                                                            $selectorVariants[2] .= substr($key, 0, -7) . ':' . $value . ';';
+                                                                        } else {
+                                                                            $selectorVariants[0] .= $key . ':' . $value . ';';
+                                                                        }
+                                                                    } else {
+                                                                        $selectorVariants[0] .= $key . ':' . $value . ';';
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        if ($selectorVariants[0] !== '') {
+                                                            if (!isset($cssRules[$selector])) {
+                                                                $cssRules[$selector] = '';
+                                                            }
+                                                            $cssRules[$selector] .= $selectorVariants[0];
+                                                        }
+                                                        if ($selectorVariants[1] !== '') {
+                                                            if (!isset($cssRules[$selector . ':hover'])) {
+                                                                $cssRules[$selector . ':hover'] = '';
+                                                            }
+                                                            $cssRules[$selector . ':hover'] .= $selectorVariants[1];
+                                                        }
+                                                        if ($selectorVariants[2] !== '') {
+                                                            if (!isset($cssRules[$selector . ':active'])) {
+                                                                $cssRules[$selector . ':active'] = '';
+                                                            }
+                                                            $cssRules[$selector . ':active'] .= $selectorVariants[2];
+                                                        }
+                                                    } elseif (isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'rule') {
+                                                        $selector = $outputDefinition[1];
+                                                        if (!isset($cssRules[$selector])) {
+                                                            $cssRules[$selector] = '';
+                                                        }
+                                                        $cssRules[$selector] .= $outputDefinition[2];
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (isset($option['options'])) {
+                                $walkOptions($option['options']);
+                            }
+                        }
+                    };
+                    $walkOptions($themeOptions);
+                    $style = '';
+                    foreach ($cssRules as $key => $value) {
+                        $style .= $key . '{' . $value . '}';
+                    }
+                    $linkTags = [];
+                    $applyFontNames = function($text) use (&$linkTags) {
+                        $webSafeFonts = [
+                            'Arial' => 'Arial,Helvetica,sans-serif',
+                            'Arial Black' => '"Arial Black",Gadget,sans-serif',
+                            'Comic Sans' => '"Comic Sans MS",cursive,sans-serif',
+                            'Courier' => '"Courier New",Courier,monospace',
+                            'Georgia' => 'Georgia,serif',
+                            'Impact' => 'Impact,Charcoal,sans-serif',
+                            'Lucida' => '"Lucida Sans Unicode","Lucida Grande",sans-serif',
+                            'Lucida Console' => '"Lucida Console",Monaco,monospace',
+                            'Palatino' => '"Palatino Linotype","Book Antiqua",Palatino,serif',
+                            'Tahoma' => 'Tahoma,Geneva,sans-serif',
+                            'Times New Roman' => '"Times New Roman",Times,serif',
+                            'Trebuchet' => '"Trebuchet MS",Helvetica,sans-serif',
+                            'Verdana' => 'Verdana,Geneva,sans-serif'
+                        ];
+
+                        $matches = [];
+                        preg_match_all('/font\-family\:(.*?);/', $text, $matches);
+                        foreach ($matches[0] as $i => $match) {
+                            $fontName = $matches[1][$i];
+                            if (isset($webSafeFonts[$fontName])) {
+                                $text = str_replace($match, 'font-family:' . $webSafeFonts[$fontName] . ';', $text);
+                            } elseif (strpos($fontName, 'googlefonts:') === 0) {
+                                $googleFontName = substr($fontName, strlen('googlefonts:'));
+                                $text = str_replace($match, 'font-family:\'' . $googleFontName . '\';', $text);
+                                if (!isset($linkTags[$googleFontName])) {
+                                    $linkTags[$googleFontName] = '<link href="//fonts.googleapis.com/css?family=' . urlencode($googleFontName) . '" rel="stylesheet" type="text/css" />';
+                                }
+                            }
+                        }
+                        return $text;
+                    };
+                    $style = $applyFontNames($style);
+                    $cssCode = trim($cssCode); // Positioned in different style tag just in case it's invalid
+                    $html = '<html><head>' . implode('', $linkTags) . '<style>' . $style . '</style>' . ($cssCode !== '' ? '<style>' . $cssCode . '</style>' : '') . '</head></html>';
+                }
+                $resultData = [$values, $html];
                 if ($useCache) {
-                    $app->cache->set($app->cache->make($cacheKey, json_encode($value)));
+                    $app->cache->set($app->cache->make($cacheKey, json_encode($resultData)));
                 }
             }
 
@@ -205,237 +336,47 @@ class Themes
                 return $text;
             };
 
-            $value[1] = $applyImageUrls($value[1]);
-            self::$cache[$localCacheKey] = new \BearCMS\Themes\Options($value[0], $value[1]);
+            $resultData[1] = $applyImageUrls($resultData[1]);
+            self::$cache[$localCacheKey] = new \BearCMS\Themes\Options($resultData[0], $resultData[1]);
         }
         return self::$cache[$localCacheKey];
     }
 
     /**
-     * Returns HTML code generated by the options
      * 
-     * @return string The HTML code for the options
+     * @param string $id The theme ID
+     * @return string
+     * @throws \Exception
      */
-    private function getOptionsHtml($optionsData): string
-    {
-        $linkTags = [];
-        $result = [];
-        $applyFontNames = function($text) use (&$linkTags) {
-            $webSafeFonts = [
-                'Arial' => 'Arial,Helvetica,sans-serif',
-                'Arial Black' => '"Arial Black",Gadget,sans-serif',
-                'Comic Sans' => '"Comic Sans MS",cursive,sans-serif',
-                'Courier' => '"Courier New",Courier,monospace',
-                'Georgia' => 'Georgia,serif',
-                'Impact' => 'Impact,Charcoal,sans-serif',
-                'Lucida' => '"Lucida Sans Unicode","Lucida Grande",sans-serif',
-                'Lucida Console' => '"Lucida Console",Monaco,monospace',
-                'Palatino' => '"Palatino Linotype","Book Antiqua",Palatino,serif',
-                'Tahoma' => 'Tahoma,Geneva,sans-serif',
-                'Times New Roman' => '"Times New Roman",Times,serif',
-                'Trebuchet' => '"Trebuchet MS",Helvetica,sans-serif',
-                'Verdana' => 'Verdana,Geneva,sans-serif'
-            ];
-
-            $matches = [];
-            preg_match_all('/font\-family\:(.*?);/', $text, $matches);
-            foreach ($matches[0] as $i => $match) {
-                $fontName = $matches[1][$i];
-                if (isset($webSafeFonts[$fontName])) {
-                    $text = str_replace($match, 'font-family:' . $webSafeFonts[$fontName] . ';', $text);
-                } elseif (strpos($fontName, 'googlefonts:') === 0) {
-                    $googleFontName = substr($fontName, strlen('googlefonts:'));
-                    $text = str_replace($match, 'font-family:\'' . $googleFontName . '\';', $text);
-                    if (!isset($linkTags[$googleFontName])) {
-                        $linkTags[$googleFontName] = '<link href="//fonts.googleapis.com/css?family=' . urlencode($googleFontName) . '" rel="stylesheet" type="text/css" />';
-                    }
-                }
-            }
-            return $text;
-        };
-
-        $cssCode = '';
-        foreach ($optionsData as $optionData) {
-            $optionValue = (string) $optionData[0];
-            $optionDefinition = $optionData[1];
-            $optionType = $optionDefinition['type'];
-            if ($optionType === 'cssCode') {
-                $cssCode .= $optionValue;
-            } else {
-                if (isset($optionDefinition['cssOutput'])) {
-                    foreach ($optionDefinition['cssOutput'] as $outputDefinition) {
-                        if (is_array($outputDefinition)) {
-                            if (isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
-                                $selector = $outputDefinition[1];
-                                $selectorVariants = ['', '', ''];
-                                if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
-                                    $temp = isset($optionValue[0]) ? json_decode($optionValue, true) : [];
-                                    if (is_array($temp)) {
-                                        foreach ($temp as $key => $value) {
-                                            $pseudo = substr($key, -6);
-                                            if ($pseudo === ':hover') {
-                                                $selectorVariants[1] .= substr($key, 0, -6) . ':' . $value . ';';
-                                            } else if ($pseudo === 'active') { // optimization
-                                                if (substr($key, -7) === ':active') {
-                                                    $selectorVariants[2] .= substr($key, 0, -7) . ':' . $value . ';';
-                                                } else {
-                                                    $selectorVariants[0] .= $key . ':' . $value . ';';
-                                                }
-                                            } else {
-                                                $selectorVariants[0] .= $key . ':' . $value . ';';
-                                            }
-                                        }
-                                    }
-                                }
-                                if ($selectorVariants[0] !== '') {
-                                    if (!isset($result[$selector])) {
-                                        $result[$selector] = '';
-                                    }
-                                    $result[$selector] .= $selectorVariants[0];
-                                }
-                                if ($selectorVariants[1] !== '') {
-                                    if (!isset($result[$selector . ':hover'])) {
-                                        $result[$selector . ':hover'] = '';
-                                    }
-                                    $result[$selector . ':hover'] .= $selectorVariants[1];
-                                }
-                                if ($selectorVariants[2] !== '') {
-                                    if (!isset($result[$selector . ':active'])) {
-                                        $result[$selector . ':active'] = '';
-                                    }
-                                    $result[$selector . ':active'] .= $selectorVariants[2];
-                                }
-                            } elseif (isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'rule') {
-                                $selector = $outputDefinition[1];
-                                if (!isset($result[$selector])) {
-                                    $result[$selector] = '';
-                                }
-                                $result[$selector] .= $outputDefinition[2];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        $style = '';
-        foreach ($result as $key => $value) {
-            $style .= $key . '{' . $value . '}';
-        }
-        $style = $applyFontNames($style);
-        $cssCode = trim($cssCode); // Positioned in different style tag just in case it's invalid
-        return '<html><head>' . implode('', $linkTags) . '<style>' . $style . '</style>' . ($cssCode !== '' ? '<style>' . $cssCode . '</style>' : '') . '</head></html>';
-    }
-
-    /**
-     * 
-     * @return array
-     */
-    private function getOptionsData(string $id, string $userID = null): array
-    {
-        $localCacheKey = 'options-data-' . $id . '-' . $userID;
-        $app = App::get();
-        if (!isset(self::$cache[$localCacheKey])) {
-            $result = [];
-            $values = null;
-            if ($userID !== null) {
-                $userOptions = $app->bearCMS->data->themes->getTempOptions($id, $userID);
-                if (is_array($userOptions)) {
-                    $values = $userOptions;
-                }
-            }
-            if ($values === null) {
-                $values = $app->bearCMS->data->themes->getOptions($id);
-            }
-            $themeOptions = \BearCMS\Internal\Themes::getOptions($id);
-            if (!empty($themeOptions)) {
-                $walkOptions = function($options) use (&$result, $values, &$walkOptions) {
-                    foreach ($options as $option) {
-                        if (isset($option['id'])) {
-                            if (isset($values[$option['id']])) {
-                                $value = $values[$option['id']];
-                            } else {
-                                $value = isset($option['defaultValue']) ? (is_array($option['defaultValue']) ? json_encode($option['defaultValue']) : $option['defaultValue']) : null;
-                            }
-                            $result[$option['id']] = [$value, $option];
-                        }
-                        if (isset($option['options'])) {
-                            $walkOptions($option['options']);
-                        }
-                    }
-                };
-                $walkOptions($themeOptions);
-            }
-            self::$cache[$localCacheKey] = $result;
-        }
-        return self::$cache[$localCacheKey];
-    }
-
-    private function getFilesFromValues($values)
-    {
-        $result = [];
-        foreach ($values as $value) {
-            $matches = [];
-            preg_match_all('/url\((.*?)\)/', $value, $matches);
-            if (!empty($matches[1])) {
-                $matches[1] = array_unique($matches[1]);
-                foreach ($matches[1] as $key) {
-                    $jsJsonEncoded = is_array(json_decode($value, true));
-                    $result[] = $jsJsonEncoded ? json_decode('"' . $key . '"') : $key;
-                }
-            }
-        }
-        return array_unique($result);
-    }
-
-    private function updateFilesInValues($values, $changes)
-    {
-        $search = [];
-        $replace = [];
-        foreach ($changes as $oldKey => $newKey) {
-            $search[] = 'url(' . $oldKey . ')';
-            $replace[] = 'url(' . $newKey . ')';
-            $search[] = trim(json_encode('url(' . $oldKey . ')'), '"');
-            $replace[] = trim(json_encode('url(' . $newKey . ')'), '"');
-        }
-        foreach ($values as $name => $value) {
-            $values[$name] = str_replace($search, $replace, $values[$name]);
-        }
-        return $values;
-    }
-
-    public function export(string $id)
+    public function export(string $id): string
     {
         if (!isset(\BearCMS\Internal\Themes::$list[$id])) {
-            return null;
+            throw new \Exception('Theme does not exists!');
         }
         $app = App::get();
-        $values = [];
-        $optionsData = $this->getOptionsData($id);
-        foreach ($optionsData as $name => $optionData) {
-            $values[$name] = $optionData[0];
-        }
+        $optionsValues = $this->getOptionsValues($id);
+        $values = $optionsValues->toArray();
         $filesToAttach = [];
-        $filesInValues = $this->getFilesFromValues($values);
-        $filesValuesToUpdate = [];
+        $filesInValues = \BearCMS\Internal\Themes::getFilesInValues($values);
+        $filesKeysToUpdate = [];
         foreach ($filesInValues as $key) {
             $filename = $app->bearCMS->data->getRealFilename($key);
             if ($filename !== null) {
                 $attachmentName = 'files/' . (sizeof($filesToAttach) + 1) . '.' . pathinfo($key, PATHINFO_EXTENSION); // the slash helps in import (shows if the value is encoded)
-                $attachmentName = rtrim($attachmentName, '.');
                 $filesToAttach[$attachmentName] = $filename;
-                $filesValuesToUpdate[$key] = $attachmentName;
+                $filesKeysToUpdate[$key] = 'data:' . $attachmentName;
             }
         }
-        $values = $this->updateFilesInValues($values, $filesValuesToUpdate);
+        $values = \BearCMS\Internal\Themes::updateFilesInValues($values, $filesKeysToUpdate);
 
         $manifest = [
             'themeID' => $id,
             'exportDate' => date('c')
         ];
 
-        $archiveFileKey = '.temp/bearcms/theme-export-' . md5(uniqid()) . '.zip';
-        $archiveFilename = $app->data->getFilename($archiveFileKey);
-        $app->data->setValue($archiveFileKey . '_', 'temp'); // needed to make the dir for the archive file
+        $archiveFileDataKey = '.temp/bearcms/theme-export-' . md5(uniqid()) . '.zip';
+        $archiveFilename = $app->data->getFilename($archiveFileDataKey);
+        $app->data->setValue($archiveFileDataKey . '_', 'temp'); // needed to make the dir for the archive file
         $zip = new \ZipArchive();
         if ($zip->open($archiveFilename, \ZipArchive::CREATE) === true) {
             $zip->addFromString('manifest.json', json_encode($manifest));
@@ -447,11 +388,18 @@ class Themes
         } else {
             throw new \Exception('Cannot open zip archive (' . $archiveFilename . ')');
         }
-        $app->data->delete($archiveFileKey . '_');
-        return $archiveFileKey;
+        $app->data->delete($archiveFileDataKey . '_'); // remove the temp file
+        return $archiveFileDataKey;
     }
 
-    public function import(string $fileDataKey, string $id, string $userID = null)
+    /**
+     * 
+     * @param string $fileDataKey The import file data key
+     * @param string $id The theme ID
+     * @param string $userID The user ID
+     * @throws \Exception
+     */
+    public function import(string $fileDataKey, string $id, string $userID = null): void
     {
         if (!isset(\BearCMS\Internal\Themes::$list[$id])) {
             throw new \Exception('Theme does not exists!', 1);
@@ -493,21 +441,22 @@ class Themes
             };
             $values = $getValues();
 
-            $changes = $this->getFilesFromValues($values);
-            $filesValuesToUpdate = [];
-            foreach ($changes as $key) {
-                if (strpos($key, 'files/') !== 0) {
+            $filesInValues = \BearCMS\Internal\Themes::getFilesInValues($values);
+            $filesKeysToUpdate = [];
+            foreach ($filesInValues as $key) {
+                if (strpos($key, 'data:files/') !== 0) {
                     throw new \Exception('Invalid file (' . $key . ')!', 6);
                 }
-                $data = $zip->getFromName($key);
+                $filename = substr($key, 5);
+                $data = $zip->getFromName($filename);
                 if ($data !== false) {
-                    $extension = pathinfo($key, PATHINFO_EXTENSION);
-                    if(array_search($extension, ['jpg', 'jpeg', 'gif', 'png']) === false){
-                        throw new \Exception('Invalid file (' . $key . ')!', 9);
+                    $extension = pathinfo($filename, PATHINFO_EXTENSION);
+                    if (array_search($extension, ['jpg', 'jpeg', 'gif', 'png']) === false) {
+                        throw new \Exception('Invalid file (' . $filename . ')!', 9);
                     }
-                    $dataKey = ($hasUser ? '.temp/bearcms/files/themeimage/' : 'bearcms/files/themeimage/') . md5($key . '-' . uniqid()) . '.' . $extension;
+                    $dataKey = ($hasUser ? '.temp/bearcms/files/themeimage/' : 'bearcms/files/themeimage/') . md5($filename . '-' . uniqid()) . '.' . $extension;
                     $app->data->setValue($dataKey, $data);
-                    $filesValuesToUpdate[$key] = 'data:' . $dataKey;
+                    $filesKeysToUpdate[$key] = 'data:' . $dataKey;
                     $isInvalid = false;
                     try {
                         $size = $app->images->getSize($app->data->getFilename($dataKey));
@@ -518,7 +467,7 @@ class Themes
                         $isInvalid = true;
                     }
                     if ($isInvalid) {
-                        foreach ($filesValuesToUpdate as $dataKeyWithPrefix) {
+                        foreach ($filesKeysToUpdate as $dataKeyWithPrefix) { // remove previously added files
                             $app->data->delete(substr($dataKeyWithPrefix, 5));
                         }
                         throw new \Exception('Invalid file (' . $key . ')!', 7);
@@ -527,46 +476,46 @@ class Themes
                 }
             }
 
-            $dataKeysInDelete = [];
-            $values = $this->updateFilesInValues($values, $filesValuesToUpdate);
-
-            $optionsData = $this->getOptionsData($id, $userID);
-            $currentValues = [];
-            foreach ($optionsData as $name => $optionData) {
-                $currentValues[$name] = $optionData[0];
-            }
-            $currentFilesInValues = $this->getFilesFromValues($currentValues);
-            foreach ($currentFilesInValues as $key) {
-                if (strpos($key, 'data:') === 0) {
-                    $dataKeysInDelete[] = substr($key, 5);
-                }
-            }
-
-            $dataToSet = [];
-            $dataToSet['id'] = $id;
+            $values = \BearCMS\Internal\Themes::updateFilesInValues($values, $filesKeysToUpdate);
             if ($hasUser) {
-                $dataToSet['userID'] = $userID;
+                $app->bearCMS->data->themes->setUserOptions($id, $userID, $values);
+            } else {
+                $app->bearCMS->data->themes->setOptions($id, $values);
             }
-            $dataToSet['options'] = $values;
-            $dataKey = $hasUser ? '.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json' : 'bearcms/themes/theme/' . md5($id) . '.json';
-            $app->data->setValue($dataKey, json_encode($dataToSet));
-            \BearCMS\Internal\Data::setChanged($dataKey);
-
-            foreach ($dataKeysInDelete as $dataKeyInDelete) {
-                if ($app->data->exists($dataKeyInDelete)) {
-                    $app->data->rename($dataKeyInDelete, '.recyclebin/' . $dataKeyInDelete . '-' . uniqid());
-                }
-            }
+            self::$cache = [];
 
             $zip->close();
-
-            self::$cache = [];
-            $cacheItemKey = $hasUser ? \BearCMS\Internal\Themes::getCacheItemKey($id, $userID) : \BearCMS\Internal\Themes::getCacheItemKey($id);
-            if ($cacheItemKey !== null) {
-                $app->cache->delete($cacheItemKey);
-            }
         } else {
             throw new \Exception('Cannot open zip archive (' . $archiveFilename . ')', 8);
+        }
+    }
+
+    /**
+     * 
+     * @param string $id The theme ID
+     * @param string $userID The user ID
+     */
+    public function applyUserValues(string $id, string $userID): void
+    {
+        $app = App::get();
+        $values = $app->bearCMS->data->themes->getUserOptions($id, $userID);
+        if (is_array($values)) {
+            $filesInValues = \BearCMS\Internal\Themes::getFilesInValues($values);
+            $filesKeysToUpdate = [];
+            foreach ($filesInValues as $key) {
+                if (strpos($key, 'data:') === 0) {
+                    $dataKay = substr($key, 5);
+                    if (strpos($dataKay, '.temp/bearcms/files/themeimage/') === 0) {
+                        $newDataKey = 'bearcms/files/themeimage/' . pathinfo($dataKay, PATHINFO_BASENAME);
+                        $app->data->duplicate($dataKay, $newDataKey); // setValues() will remove the files in the user options 
+                        $filesKeysToUpdate['data:' . $dataKay] = 'data:' . $newDataKey;
+                    }
+                }
+            }
+            $values = \BearCMS\Internal\Themes::updateFilesInValues($values, $filesKeysToUpdate);
+            $app->bearCMS->data->themes->setOptions($id, $values);
+            $app->bearCMS->data->themes->discardUserOptions($id, $userID);
+            self::$cache = [];
         }
     }
 

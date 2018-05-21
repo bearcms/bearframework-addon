@@ -14,11 +14,12 @@ return function($data) {
     if (!isset($data['id'])) {
         throw new Exception('');
     }
+    $themeID = $data['id'];
 
     $includeOptions = isset($data['includeOptions']) && !empty($data['includeOptions']);
     $themes = BearCMS\Internal\Themes::getList();
     foreach ($themes as $id) {
-        if ($id === $data['id']) {
+        if ($id === $themeID) {
             $options = BearCMS\Internal\Themes::getOptions($id);
             $themeManifest = BearCMS\Internal\Themes::getManifest($id);
             $themeData = $themeManifest;

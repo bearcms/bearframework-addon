@@ -200,4 +200,58 @@ class Themes
         return 'bearcms-theme-options-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . md5($id) . '-' . md5($version) . '-' . md5($userID) . '-2';
     }
 
+    /**
+     * 
+     * @param type $values
+     * @return array
+     */
+    static public function getFilesInValues($values): array
+    {
+        $result = [];
+        foreach ($values as $value) {
+            $matches = [];
+            preg_match_all('/url\((.*?)\)/', $value, $matches);
+            if (!empty($matches[1])) {
+                $matches[1] = array_unique($matches[1]);
+                foreach ($matches[1] as $key) {
+                    $jsJsonEncoded = is_array(json_decode($value, true));
+                    $result[] = $jsJsonEncoded ? json_decode('"' . $key . '"') : $key;
+                }
+            }
+            if (strpos($value, 'data:') === 0 || strpos($value, 'app:') === 0 || strpos($value, 'addon:') === 0) {
+                $result[] = $value;
+            }
+        }
+        return array_values(array_unique($result));
+    }
+
+    /**
+     * 
+     * @param type $values
+     * @param type $keysToUpdate
+     * @return array
+     */
+    static public function updateFilesInValues($values, $keysToUpdate): array
+    {
+        if (!empty($keysToUpdate)) {
+            $search = [];
+            $replace = [];
+            foreach ($keysToUpdate as $oldKey => $newKey) {
+                $search[] = 'url(' . $oldKey . ')';
+                $replace[] = 'url(' . $newKey . ')';
+                $search[] = trim(json_encode('url(' . $oldKey . ')'), '"');
+                $replace[] = trim(json_encode('url(' . $newKey . ')'), '"');
+            }
+            foreach ($values as $name => $value) {
+                $values[$name] = str_replace($search, $replace, $values[$name]);
+            }
+            foreach ($values as $name => $value) {
+                if (isset($keysToUpdate[$value])) {
+                    $values[$name] = $keysToUpdate[$value];
+                }
+            }
+        }
+        return $values;
+    }
+
 }
