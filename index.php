@@ -432,34 +432,34 @@ if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
 }
 
 // Load the CMS managed addons
-if (Options::hasFeature('ADDONS')) {
-    $addons = InternalData\Addons::getList();
-    foreach ($addons as $addonData) {
-        $addonID = $addonData['id'];
-        $addonDir = Options::$addonsDir . DIRECTORY_SEPARATOR . $addonID . DIRECTORY_SEPARATOR;
-        if (is_file($addonDir . 'autoload.php')) {
-            include $addonDir . 'autoload.php';
-        } else {
-            throw new Exception('Cannot find autoload.php file for ' . $addonID);
-        }
-        if (\BearFramework\Addons::exists($addonID)) {
-            $_addonData = \BearFramework\Addons::get($addonID);
-            $_addonOptions = $_addonData->options;
-            if (isset($_addonOptions['bearCMS']) && is_array($_addonOptions['bearCMS']) && isset($_addonOptions['bearCMS']['assetsDirs']) && is_array($_addonOptions['bearCMS']['assetsDirs'])) {
-                foreach ($_addonOptions['bearCMS']['assetsDirs'] as $dir) {
-                    if (is_string($dir)) {
-                        $app->assets->addDir($addonDir . $dir);
-                    }
-                }
-            }
-            if ($addonData['enabled']) {
-                $app->addons->add($addonID, ['addedByBearCMS' => true]);
-            }
-        } else {
-            throw new Exception('Addon ' . $addonID . ' not available');
-        }
-    }
-}
+//if (Options::hasFeature('ADDONS')) {
+//    $addons = InternalData\Addons::getList();
+//    foreach ($addons as $addonData) {
+//        $addonID = $addonData['id'];
+//        $addonDir = Options::$addonsDir . DIRECTORY_SEPARATOR . $addonID . DIRECTORY_SEPARATOR;
+//        if (is_file($addonDir . 'autoload.php')) {
+//            include $addonDir . 'autoload.php';
+//        } else {
+//            throw new Exception('Cannot find autoload.php file for ' . $addonID);
+//        }
+//        if (\BearFramework\Addons::exists($addonID)) {
+//            $_addonData = \BearFramework\Addons::get($addonID);
+//            $_addonOptions = $_addonData->options;
+//            if (isset($_addonOptions['bearCMS']) && is_array($_addonOptions['bearCMS']) && isset($_addonOptions['bearCMS']['assetsDirs']) && is_array($_addonOptions['bearCMS']['assetsDirs'])) {
+//                foreach ($_addonOptions['bearCMS']['assetsDirs'] as $dir) {
+//                    if (is_string($dir)) {
+//                        $app->assets->addDir($addonDir . $dir);
+//                    }
+//                }
+//            }
+//            if ($addonData['enabled']) {
+//                $app->addons->add($addonID, ['addedByBearCMS' => true]);
+//            }
+//        } else {
+//            throw new Exception('Addon ' . $addonID . ' not available');
+//        }
+//    }
+//}
 
 // Automatically log in the user
 if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_DEFAULT'))) {
