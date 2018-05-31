@@ -175,7 +175,7 @@ class BearCMS
             }
         }
 
-        $html .= '<meta name="generator" content="Bear Framework v' . App::VERSION . ', Bear CMS v' . \BearCMS::VERSION . '"/>';
+        $html .= '<meta name="generator" content="Bear CMS (powered by Bear Framework)"/>';
         $icon = $settings['icon'];
         if (isset($icon{0})) {
             $baseUrl = $app->urls->get();
