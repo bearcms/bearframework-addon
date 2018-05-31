@@ -16,16 +16,11 @@ class PagesDataTest extends BearFrameworkAddonTestCase
     /**
      * 
      */
-    public function testUsers()
+    public function testPages()
     {
         $app = $this->getApp();
-        $pageDir = $app->config->dataDir . '/objects/bearcms/pages/page/';
-        $structureDir = $app->config->dataDir . '/objects/bearcms/pages/';
-        mkdir($pageDir, 0777, true);
 
-        $this->assertFalse($app->bearCMS->data->users->hasUsers());
-
-        file_put_contents($pageDir . md5('ec983ebad290fc046a7308661627fef1') . '.json', '{
+        $app->data->setValue('bearcms/pages/page/' . md5('ec983ebad290fc046a7308661627fef1') . '.json', '{
     "id": "ec983ebad290fc046a7308661627fef1",
     "name": "Products",
     "slug": "products",
@@ -37,7 +32,7 @@ class PagesDataTest extends BearFrameworkAddonTestCase
     "keywordsTagContent": ""
 }');
 
-        file_put_contents($pageDir . md5('ec983ebad290fc046a7308661627fef2') . '.json', '{
+        $app->data->setValue('bearcms/pages/page/' . md5('ec983ebad290fc046a7308661627fef2') . '.json', '{
     "id": "ec983ebad290fc046a7308661627fef2",
     "name": "Printers",
     "slug": "printers",
@@ -49,7 +44,7 @@ class PagesDataTest extends BearFrameworkAddonTestCase
     "keywordsTagContent": ""
 }');
 
-        file_put_contents($pageDir . md5('ec983ebad290fc046a7308661627fef3') . '.json', '{
+        $app->data->setValue('bearcms/pages/page/' . md5('ec983ebad290fc046a7308661627fef3') . '.json', '{
     "id": "ec983ebad290fc046a7308661627fef3",
     "name": "Laptops",
     "slug": "laptops",
@@ -61,7 +56,7 @@ class PagesDataTest extends BearFrameworkAddonTestCase
     "keywordsTagContent": ""
 }');
 
-        file_put_contents($pageDir . md5('ec983ebad290fc046a7308661627fef4') . '.json', '{
+        $app->data->setValue('bearcms/pages/page/' . md5('ec983ebad290fc046a7308661627fef4') . '.json', '{
     "id": "ec983ebad290fc046a7308661627fef4",
     "name": "Contacts",
     "slug": "contacts",
@@ -73,7 +68,7 @@ class PagesDataTest extends BearFrameworkAddonTestCase
     "keywordsTagContent": ""
 }');
 
-        file_put_contents($pageDir . md5('ec983ebad290fc046a7308661627fef5') . '.json', '{
+        $app->data->setValue('bearcms/pages/page/' . md5('ec983ebad290fc046a7308661627fef5') . '.json', '{
     "id": "ec983ebad290fc046a7308661627fef5",
     "name": "Services",
     "slug": "services",
@@ -85,7 +80,7 @@ class PagesDataTest extends BearFrameworkAddonTestCase
     "keywordsTagContent": ""
 }');
 
-        file_put_contents($structureDir . 'structure.json', '[
+        $app->data->setValue('bearcms/pages/structure.json', '[
     {
         "id": "ec983ebad290fc046a7308661627fef1",
         "children": [
@@ -114,7 +109,7 @@ class PagesDataTest extends BearFrameworkAddonTestCase
         $this->assertTrue($list[4]->id === 'ec983ebad290fc046a7308661627fef5');
 
         $list = $app->bearCMS->data->pages->getList() //default sort
-                ->filterBy('parentID', '')
+                ->filterBy('parentID', null)
                 ->filterBy('status', 'published');
         $this->assertTrue($list[0]->id === 'ec983ebad290fc046a7308661627fef1');
         $this->assertTrue($list[1]->id === 'ec983ebad290fc046a7308661627fef4');

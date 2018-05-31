@@ -19,12 +19,10 @@ class UsersDataTest extends BearFrameworkAddonTestCase
     public function testUsers()
     {
         $app = $this->getApp();
-        $userDir = $app->config->dataDir . '/objects/bearcms/users/user/';
-        mkdir($userDir, 0777, true);
 
         $this->assertFalse($app->bearCMS->data->users->hasUsers());
 
-        file_put_contents($userDir . md5('ewo8phkta3fa1') . '.json', '{
+        $app->data->setValue('bearcms/users/user/' . md5('ewo8phkta3fa1') . '.json', '{
     "id": "ewo8phkta3fa1",
     "registerTime": 1464920375,
     "lastLoginTime": 1464920375,
@@ -45,7 +43,7 @@ class UsersDataTest extends BearFrameworkAddonTestCase
     ]
 }');
 
-        file_put_contents($userDir . md5('ewo8phkta3fa2') . '.json', '{
+        $app->data->setValue('bearcms/users/user/' . md5('ewo8phkta3fa2') . '.json', '{
     "id": "ewo8phkta3fa2",
     "registerTime": 1464920375,
     "lastLoginTime": 1464920375,
@@ -71,7 +69,7 @@ class UsersDataTest extends BearFrameworkAddonTestCase
         $this->assertTrue($list[0]->id === 'ewo8phkta3fa1');
         $this->assertTrue($list[1]->id === 'ewo8phkta3fa2');
 
-        $user = $app->bearCMS->data->users->getUser('ewo8phkta3fa1');
+        $user = $app->bearCMS->data->users->get('ewo8phkta3fa1');
         $this->assertTrue($user->id === 'ewo8phkta3fa1');
 
         $this->assertTrue($app->bearCMS->data->users->hasUsers());

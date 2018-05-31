@@ -15,12 +15,12 @@ class ImageGalleryElementTest extends BearFrameworkAddonTestCase
 
     private function requireEditable($result)
     {
-        $this->assertTrue(strpos($result, '<body><div id="brelc') !== false);
+        $this->assertTrue(strpos($result, '<div id="brelc') !== false);
     }
 
     private function requireNotEditable($result)
     {
-        $this->assertTrue(strpos($result, '<body><div id="brelc') === false);
+        $this->assertTrue(strpos($result, '<div id="brelc') === false);
     }
 
     /**
