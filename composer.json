@@ -9,23 +9,24 @@
     },
     "require": {
         "php": ">=7.1.0",
-        "bearframework/bearframework": "0.10.*@beta",
+        "ext-curl": "*",
+        "bearframework/bearframework": "0.10.*",
         "bearframework/html-template": "0.2.*",
         "bearframework/emails-addon": "0.5.*|0.6.*",
-        "bearframework/localization-addon": "0.2.*@beta",
-        "ivopetkov/html-server-components-bearframework-addon": "0.2.*|0.3.*|0.4.*|0.5.*@beta",
-        "ivopetkov/image-gallery-bearframework-addon": "0.1.*@beta",
-        "ivopetkov/navigation-menu-bearframework-addon": "0.1.*@beta",
+        "bearframework/localization-addon": "0.2.*",
+        "ivopetkov/html-server-components-bearframework-addon": "0.2.*|0.3.*|0.4.*|0.5.*",
+        "ivopetkov/image-gallery-bearframework-addon": "0.1.*",
+        "ivopetkov/navigation-menu-bearframework-addon": "0.1.*",
         "ivopetkov/users-bearframework-addon": "0.2.*",
-        "ivopetkov/server-requests-bearframework-addon": "0.3.*@beta",
+        "ivopetkov/server-requests-bearframework-addon": "0.3.*",
         "ivopetkov/video-embed": "0.1.*",
         "ivopetkov/html5-dom-document-php": "0.3.*|0.4.*|0.5.*",
         "ivopetkov/data-object": "0.*",
-        "ivopetkov/form-bearframework-addon": "0.2.*@beta",
+        "ivopetkov/form-bearframework-addon": "0.2.*",
         "ivopetkov/data-bundle-bearframework-addon": "0.2.*",
         "ivopetkov/encryption-bearframework-addon": "0.1.*",
         "bearframework/tasks-addon": "0.3.*",
-        "ivopetkov/notifications-bearframework-addon": "dev-master"
+        "ivopetkov/notifications-bearframework-addon": "0.1.*"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8"
@@ -35,6 +36,5 @@
             "": "classes/"
         },
         "files": ["autoload.php"]
-    },
-    "minimum-stability": "beta"
+    }
 }
