@@ -11,9 +11,9 @@ use BearFramework\App;
 
 return function() {
     $app = App::get();
-    $userInvitation = $app->bearCMS->data->usersInvitations->getList();
+    $userInvitations = $app->bearCMS->data->usersInvitations->getList();
     $result = [];
-    foreach ($userInvitation as $user) {
+    foreach ($userInvitations as $userInvitation) {
         $result[] = $userInvitation->toArray();
     }
     return $result;
