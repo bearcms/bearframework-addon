@@ -7,13 +7,12 @@
  * Free to use under the MIT license.
  */
 
-use BearFramework\App;
-
 return function() {
     $result = [];
-    $result['siteID'] = BearCMS\Internal\Options::$siteID;
+    if (strlen(BearCMS\Internal\Options::$appSecretKey) > 0) {
+        $temp = explode('-', BearCMS\Internal\Options::$appSecretKey);
+        $result['appID'] = $temp[0];
+    }
     $result['phpVersion'] = phpversion();
-    $result['frameworkVersion'] = App::VERSION;
-    $result['addonVersion'] = BearCMS::VERSION;
     return $result;
 };
