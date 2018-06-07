@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Bear CMS addon for Bear Framework
+ * BearCMS addon for Bear Framework
  * https://bearcms.com/
  * Copyright (c) 2016 Amplilabs Ltd.
  * Free to use under the MIT license.
@@ -18,7 +18,7 @@ use BearCMS\Internal\CurrentTheme;
 use BearCMS\Internal\Themes as InternalThemes;
 
 /**
- * Contains references to all Bear CMS related objects.
+ * Contains references to all BearCMS related objects.
  * 
  * @property-read \BearCMS\Data $data A reference to the data related objects
  * @property-read \BearCMS\CurrentUser $currentUser Information about the current loggedin user
@@ -175,7 +175,7 @@ class BearCMS
             }
         }
 
-        $html .= '<meta name="generator" content="Bear CMS (powered by Bear Framework)"/>';
+        $html .= '<meta name="generator" content="BearCMS (powered by Bear Framework)"/>';
         $icon = $settings['icon'];
         if (isset($icon{0})) {
             $baseUrl = $app->urls->get();

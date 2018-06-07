@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Bear CMS addon for Bear Framework
+ * BearCMS addon for Bear Framework
  * https://bearcms.com/
  * Copyright (c) 2016 Amplilabs Ltd.
  * Free to use under the MIT license.
@@ -56,10 +56,10 @@ class LinkElementTest extends BearFrameworkAddonTestCase
     {
         $app = $this->getApp();
 
-        $result = $app->components->process('<component src="bearcms-link-element" url="https://bearcms.com/" text="Bear CMS" title="Bear CMS"/>');
+        $result = $app->components->process('<component src="bearcms-link-element" url="https://bearcms.com/" text="BearCMS" title="BearCMS"/>');
         $this->assertTrue(strpos($result, 'href="https://bearcms.com/"') !== false);
-        $this->assertTrue(strpos($result, 'title="Bear CMS') !== false);
-        $this->assertTrue(strpos($result, '>Bear CMS<') !== false);
+        $this->assertTrue(strpos($result, 'title="BearCMS') !== false);
+        $this->assertTrue(strpos($result, '>BearCMS<') !== false);
     }
 
 }

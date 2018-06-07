@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Bear CMS addon for Bear Framework
+ * BearCMS addon for Bear Framework
  * https://bearcms.com/
  * Copyright (c) 2016 Amplilabs Ltd.
  * Free to use under the MIT license.
@@ -194,7 +194,7 @@ final class Server
             }
         }
         if (Options::$logServerRequests) {
-            $log = "Bear CMS server request:\n";
+            $log = "BearCMS server request:\n";
             $log .= 'User: ' . $app->bearCMS->currentUser->getID() . "\n";
             $log .= 'Time: ' . curl_getinfo($ch, CURLINFO_TOTAL_TIME) . ' / dns: ' . curl_getinfo($ch, CURLINFO_NAMELOOKUP_TIME) . ', connect: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) . ', download: ' . curl_getinfo($ch, CURLINFO_STARTTRANSFER_TIME) . "\n";
             $log .= 'Request: ' . trim(curl_getinfo($ch, CURLINFO_HEADER_OUT)) . "\n";
@@ -255,7 +255,7 @@ final class Server
 
             if (Options::$logServerRequests && Options::$logServerRequestsData) {
                 if (strlen($app->config->logsDir) > 0) {
-                    $log = "Bear CMS response data:\n";
+                    $log = "BearCMS response data:\n";
                     $log .= 'Data: ' . trim(print_r($responseData, true));
                     $app->logger->log('info', $log);
                 }

@@ -9,7 +9,7 @@ Contains reference to the different data types
 
 `public \BearCMS\Data\Addons $addons`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the addons managed by Bear CMS
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the addons managed by BearCMS
 
 `public \BearCMS\Data\Blog $blog`
 

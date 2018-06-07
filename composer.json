@@ -1,7 +1,7 @@
 {
     "name": "bearcms/bearframework-addon",
-    "description": "Bear CMS addon for Bear Framework",
-    "keywords": ["Bear CMS", "Bear Framework addon"],
+    "description": "BearCMS addon for Bear Framework",
+    "keywords": ["BearCMS", "Bear Framework addon"],
     "homepage": "https://bearcms.com/",
     "license": "MIT",
     "support": {

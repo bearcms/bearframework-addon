@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Bear CMS addon for Bear Framework
+ * BearCMS addon for Bear Framework
  * https://bearcms.com/
  * Copyright (c) 2016 Amplilabs Ltd.
  * Free to use under the MIT license.
@@ -800,7 +800,7 @@ if (Options::hasFeature('PAGES')) {
 if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
     $app->hooks
             ->add('componentCreated', function($component) {
-                // Updates the Bear CMS components when created
+                // Updates the BearCMS components when created
                 if ($component->src === 'bearcms-elements') {
                     ElementsHelper::updateContainerComponent($component);
                 } elseif (isset(BearCMS\Internal\ElementsHelper::$elementsTypesFilenames[$component->src])) {
@@ -900,7 +900,7 @@ $app->hooks
                                 $app->data->set($app->data->make($tempFileKey, $response));
                                 $filename = $tempFilename;
                             } else {
-                                throw new Exception('Cannot download Bear CMS Server file (' . $fileServerUrl . ')');
+                                throw new Exception('Cannot download BearCMS Server file (' . $fileServerUrl . ')');
                             }
                             curl_close($ch);
                         }

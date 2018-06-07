@@ -1,5 +1,5 @@
 # BearCMS
-Contains references to all Bear CMS related objects.
+Contains references to all BearCMS related objects.
 
 ## Constants
 

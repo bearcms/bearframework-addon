@@ -1,5 +1,5 @@
 # BearCMS\Data\Addons
-Information about the addons managed by Bear CMS
+Information about the addons managed by BearCMS
 
 ## Methods
 
@@ -31,7 +31,7 @@ _Returns_
 
 ## Examples
 
-List of all Bear CMS managed addons.
+List of all BearCMS managed addons.
 
 ```php
 $list = $app->bearCMS->data->addons->getList();
@@ -52,7 +52,7 @@ $list = $app->bearCMS->data->addons->getList();
 // )
 ```
 
-Information about a specific Bear CMS managed addon.
+Information about a specific BearCMS managed addon.
 
 ```php
 $addon = $app->bearCMS->data->addons->getAddon('test/test1-addon');

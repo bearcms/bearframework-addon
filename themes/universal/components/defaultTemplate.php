@@ -1,6 +1,6 @@
 <?php
 /*
- * Bear CMS addon for Bear Framework
+ * BearCMS addon for Bear Framework
  * https://bearcms.com/
  * Copyright (c) 2016 Amplilabs Ltd.
  * Free to use under the MIT license.
@@ -154,7 +154,7 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
             echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer"/>';
             if ($poweredByLinkVisibility === '1') {
                 echo '<div class="template-powered-by-link-container">';
-                echo '<a class="template-powered-by-link" href="https://bearcms.com/" target="_blank" rel="noopener">Powered by Bear CMS</a>';
+                echo '<a class="template-powered-by-link" href="https://bearcms.com/" target="_blank" rel="noopener">Powered by BearCMS</a>';
                 echo '</div>';
             }
             echo '</footer>';

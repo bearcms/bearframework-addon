@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Bear CMS addon for Bear Framework
+ * BearCMS addon for Bear Framework
  * https://bearcms.com/
  * Copyright (c) 2016 Amplilabs Ltd.
  * Free to use under the MIT license.
@@ -347,7 +347,7 @@ $options->addGroup(__("bearcms.themes.universal.options.Footer"))
                 ->addElements('footerElements', '.template-footer')
         )
         ->add(
-                $options->makeGroup(__("bearcms.themes.universal.options.Powered by link"), "This link is located at the bottom of your website and shows your visitors you are proud of using Bear CMS")
+                $options->makeGroup(__("bearcms.themes.universal.options.Powered by link"), "This link is located at the bottom of your website and shows your visitors you are proud of using BearCMS")
                 ->add([
                     "id" => "poweredByLinkVisibility",
                     "type" => "list",

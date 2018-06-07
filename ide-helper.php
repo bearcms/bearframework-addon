@@ -3,7 +3,7 @@
 namespace BearFramework {
 
     /**
-     * @property-read \BearCMS $bearCMS Bear CMS client utilities
+     * @property-read \BearCMS $bearCMS BearCMS client utilities
      */
     class App
     {

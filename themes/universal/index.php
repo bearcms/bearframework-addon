@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Bear CMS addon for Bear Framework
+ * BearCMS addon for Bear Framework
  * https://bearcms.com/
  * Copyright (c) 2016 Amplilabs Ltd.
  * Free to use under the MIT license.
@@ -69,7 +69,7 @@ $app->bearCMS->themes
                         'name' => __('bearcms.themes.universal.name'),
                         'description' => __('bearcms.themes.universal.description'),
                         'author' => [
-                            'name' => 'Bear CMS Team',
+                            'name' => 'BearCMS Team',
                             'url' => 'https://bearcms.com/addons/',
                             'email' => 'addons@bearcms.com',
                         ],
