@@ -25,8 +25,12 @@ $app->bearCMS->themes
 
             $context->assets
             ->addDir('themes/universal/assets');
+
+            $version = '1.2';
+            $version .= '.' . (int) $app->bearCMS->isWhitelabel();
+
             return [
-                'version' => '1.2',
+                'version' => $version,
                 'initialize' => function() use ($context) {
                     
                 },
@@ -43,6 +47,8 @@ $app->bearCMS->themes
                     } else {
                         return;
                     }
+
+                    $isWhitelabel = $app->bearCMS->isWhitelabel(); // used inside
 
                     ob_start();
                     // $options is used inside

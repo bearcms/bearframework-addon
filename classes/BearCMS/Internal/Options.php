@@ -36,6 +36,7 @@ final class Options
     static $defaultThemeID = 'bearcms/universal';
     static $htmlSandboxUrl = '';
     static $useDefaultUserProfile = true;
+    static $whitelabel = false;
 
     /**
      * 
@@ -128,6 +129,9 @@ final class Options
         }
         if (isset($data['useDefaultUserProfile'])) {
             self::$useDefaultUserProfile = (int) $data['useDefaultUserProfile'] > 0;
+        }
+        if (isset($data['whitelabel'])) {
+            self::$whitelabel = (int) $data['whitelabel'] > 0;
         }
     }
 

@@ -140,6 +140,7 @@ final class Server
             };
             $clientData['appSecretKey'] = $getHashedAppSecretKey();
         }
+        $clientData['whitelabel'] = (int) Options::$whitelabel;
         $clientData['requestBase'] = $app->request->base;
         $clientData['cookiePrefix'] = Options::$cookiePrefix;
         if ($app->bearCMS->currentUser->exists()) {

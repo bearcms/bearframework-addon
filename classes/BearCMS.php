@@ -175,7 +175,9 @@ class BearCMS
             }
         }
 
-        $html .= '<meta name="generator" content="BearCMS (powered by Bear Framework)"/>';
+        if (!\BearCMS\Internal\Options::$whitelabel) {
+            $html .= '<meta name="generator" content="BearCMS (powered by Bear Framework)"/>';
+        }
         $icon = $settings['icon'];
         if (isset($icon{0})) {
             $baseUrl = $app->urls->get();
@@ -360,7 +362,6 @@ class BearCMS
 
     public function disabledCheck(): ?Response
     {
-        $app = App::get();
         $currentUserExists = Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
         $settings = $this->data->settings->get();
         $isDisabled = !$currentUserExists && $settings->disabled;
@@ -368,6 +369,11 @@ class BearCMS
             return new App\Response\TemporaryUnavailable(htmlspecialchars($settings->disabledText));
         }
         return null;
+    }
+
+    public function isWhitelabel()
+    {
+        return \BearCMS\Internal\Options::$whitelabel;
     }
 
 }

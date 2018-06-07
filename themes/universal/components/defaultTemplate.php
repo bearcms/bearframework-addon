@@ -26,7 +26,7 @@ $navigationItemActiveColor = isset($navigationItemCSS['color:active']) ? $naviga
 
 $homePageSpecialContentBlockVisibility = $options['homePageSpecialContentBlockVisibility'];
 $footerVisibility = $options['footerVisibility'];
-$poweredByLinkVisibility = $options['poweredByLinkVisibility'];
+$poweredByLinkVisibility = (int) $options['poweredByLinkVisibility'] && !$isWhitelabel;
 ?><html>
     <head>
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,minimal-ui">
@@ -152,7 +152,7 @@ $poweredByLinkVisibility = $options['poweredByLinkVisibility'];
             echo '<div class="template-footer-container">';
             echo '<footer class="template-footer">';
             echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer"/>';
-            if ($poweredByLinkVisibility === '1') {
+            if ($poweredByLinkVisibility) {
                 echo '<div class="template-powered-by-link-container">';
                 echo '<a class="template-powered-by-link" href="https://bearcms.com/" target="_blank" rel="noopener">Powered by BearCMS</a>';
                 echo '</div>';

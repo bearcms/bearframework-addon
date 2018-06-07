@@ -317,7 +317,7 @@ $options->addGroup(__("bearcms.themes.universal.options.Content"))
                 ])
 );
 
-$options->addGroup(__("bearcms.themes.universal.options.Footer"))
+$group = $options->addGroup(__("bearcms.themes.universal.options.Footer"))
         ->add([
             "id" => "footerVisibility",
             "type" => "list",
@@ -343,49 +343,53 @@ $options->addGroup(__("bearcms.themes.universal.options.Footer"))
             ]
         ])
         ->add(
-                $options->makeGroup(__("bearcms.themes.universal.options.Elements"))
-                ->addElements('footerElements', '.template-footer')
-        )
-        ->add(
-                $options->makeGroup(__("bearcms.themes.universal.options.Powered by link"), "This link is located at the bottom of your website and shows your visitors you are proud of using BearCMS")
-                ->add([
-                    "id" => "poweredByLinkVisibility",
-                    "type" => "list",
-                    "name" => __("bearcms.themes.universal.options.Visibility"),
-                    "values" => [
-                        [
-                            "value" => "1",
-                            "name" => __("bearcms.themes.universal.options.Visible")
-                        ],
-                        [
-                            "value" => "0",
-                            "name" => __("bearcms.themes.universal.options.Hidden")
-                        ]
-                    ]
-                ])
-                ->add([
-                    "id" => "poweredByLinkCSS",
-                    "type" => "css",
-                    "cssOutput" => [
-                        ["rule", ".template-powered-by-link", "display:inline-block;"],
-                        ["selector", ".template-powered-by-link"]
-                    ]
-                ])
-                ->add(
-                        $options->makeGroup(__("bearcms.themes.universal.options.Container"))
-                        ->add([
-                            "id" => "poweredByLinkContainerCSS",
-                            "type" => "css",
-                            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTextAlign"],
-                            "cssOutput" => [
-                                ["rule", ".template-powered-by-link-container", "box-sizing:border-box;"],
-                                ["selector", ".template-powered-by-link-container"]
+        $options->makeGroup(__("bearcms.themes.universal.options.Elements"))
+        ->addElements('footerElements', '.template-footer')
+);
+
+if (!$app->bearCMS->isWhitelabel()) {
+    $group->add(
+            $options->makeGroup(__("bearcms.themes.universal.options.Powered by link"), "This link is located at the bottom of your website and shows your visitors you are proud of using BearCMS")
+                    ->add([
+                        "id" => "poweredByLinkVisibility",
+                        "type" => "list",
+                        "name" => __("bearcms.themes.universal.options.Visibility"),
+                        "values" => [
+                            [
+                                "value" => "1",
+                                "name" => __("bearcms.themes.universal.options.Visible")
+                            ],
+                            [
+                                "value" => "0",
+                                "name" => __("bearcms.themes.universal.options.Hidden")
                             ]
-                        ])
-                )
-        )
-        ->add(
-                $options->makeGroup(__("bearcms.themes.universal.options.Container"))
+                        ]
+                    ])
+                    ->add([
+                        "id" => "poweredByLinkCSS",
+                        "type" => "css",
+                        "cssOutput" => [
+                            ["rule", ".template-powered-by-link", "display:inline-block;"],
+                            ["selector", ".template-powered-by-link"]
+                        ]
+                    ])
+                    ->add(
+                            $options->makeGroup(__("bearcms.themes.universal.options.Container"))
+                            ->add([
+                                "id" => "poweredByLinkContainerCSS",
+                                "type" => "css",
+                                "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTextAlign"],
+                                "cssOutput" => [
+                                    ["rule", ".template-powered-by-link-container", "box-sizing:border-box;"],
+                                    ["selector", ".template-powered-by-link-container"]
+                                ]
+                            ])
+                    )
+    );
+}
+
+$group->add(
+        $options->makeGroup(__("bearcms.themes.universal.options.Container"))
                 ->add([
                     "id" => "footerContainerCSS",
                     "type" => "css",
