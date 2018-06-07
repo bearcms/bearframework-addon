@@ -25,6 +25,7 @@ use BearFramework\App;
  * @property \BearCMS\Data\Settings $settings Information about the site settings
  * @property \BearCMS\Data\Themes $themes Information about the site themes
  * @property \BearCMS\Data\Users $users Information about the CMS users (administrators)
+ * @property \BearCMS\Data\UsersInvitations $usersInvitations Information about the invited CMS users (administrators)
  */
 class Data
 {
@@ -102,6 +103,12 @@ class Data
         $this->defineProperty('users', [
             'init' => function() {
                 return new \BearCMS\Data\Users();
+            },
+            'readonly' => true
+        ]);
+        $this->defineProperty('usersInvitations', [
+            'init' => function() {
+                return new \BearCMS\Data\UsersInvitations();
             },
             'readonly' => true
         ]);

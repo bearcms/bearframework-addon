@@ -127,7 +127,19 @@ final class Server
             'addonVersion' => \BearCMS::VERSION
         ];
         $clientData['siteID'] = Options::$siteID;
-        $clientData['siteSecretHash'] = hash('sha256', Options::$siteSecret);
+        if (Options::$siteSecret !== null) {
+            $clientData['siteSecretHash'] = hash('sha256', Options::$siteSecret);
+        }
+        if (Options::$appSecretKey !== null) {
+            $getHashedAppSecretKey = function() {
+                $parts = explode('-', Options::$appSecretKey, 2);
+                if (sizeof($parts) === 2) {
+                    return strtoupper('sha256-' . $parts[0] . '-' . hash('sha256', $parts[1]));
+                }
+                return '';
+            };
+            $clientData['appSecretKey'] = $getHashedAppSecretKey();
+        }
         $clientData['requestBase'] = $app->request->base;
         $clientData['cookiePrefix'] = Options::$cookiePrefix;
         if ($app->bearCMS->currentUser->exists()) {

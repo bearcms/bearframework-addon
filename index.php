@@ -13,7 +13,6 @@ use BearCMS\Internal\Data as InternalData;
 use BearCMS\Internal\Server;
 use BearCMS\Internal\ElementsHelper;
 use BearCMS\Internal\Options;
-use BearCMS\Internal\CurrentTheme;
 use IvoPetkov\HTML5DOMDocument;
 
 $app = App::get();
@@ -43,7 +42,9 @@ $context->classes
         ->add('BearCMS\Data\Settings', 'classes/BearCMS/Data/Settings.php')
         ->add('BearCMS\Data\Themes', 'classes/BearCMS/Data/Themes.php')
         ->add('BearCMS\Data\User', 'classes/BearCMS/Data/User.php')
+        ->add('BearCMS\Data\UserInvitation', 'classes/BearCMS/Data/UserInvitation.php')
         ->add('BearCMS\Data\Users', 'classes/BearCMS/Data/Users.php')
+        ->add('BearCMS\Data\UsersInvitations', 'classes/BearCMS/Data/UsersInvitations.php')
         ->add('BearCMS\DataList', 'classes/BearCMS/DataList.php')
         ->add('BearCMS\DataObject', 'classes/BearCMS/DataObject.php')
         ->add('BearCMS\DataSchema', 'classes/BearCMS/DataSchema.php')
@@ -70,7 +71,8 @@ $context->classes
         ->add('BearCMS\Internal\PublicProfile', 'classes/BearCMS/Internal/PublicProfile.php')
         ->add('BearCMS\Internal\Server', 'classes/BearCMS/Internal/Server.php')
         ->add('BearCMS\Internal\TempClientData', 'classes/BearCMS/Internal/TempClientData.php')
-        ->add('BearCMS\Internal\Themes', 'classes/BearCMS/Internal/Themes.php');
+        ->add('BearCMS\Internal\Themes', 'classes/BearCMS/Internal/Themes.php')
+        ->add('BearCMS\Internal\UserProvider', 'classes/BearCMS/Internal/UserProvider.php');
 
 Options::set($options);
 
@@ -460,7 +462,6 @@ if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
 //        }
 //    }
 //}
-
 // Automatically log in the user
 if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_DEFAULT'))) {
     $cookies = Cookies::getList(Cookies::TYPE_SERVER);
@@ -930,6 +931,24 @@ $app->hooks
         });
 
 if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_*'))) {
+
+    if (Options::$useDefaultUserProfile) {
+        $app->users
+                ->addProvider('bearcms', \BearCMS\Internal\UserProvider::class);
+
+        if ($app->bearCMS->currentUser->exists()) {
+            if (!$app->currentUser->exists()) {
+                $app->currentUser->login('bearcms', $app->bearCMS->currentUser->getID());
+            }
+        } else {
+            if ($app->currentUser->exists()) {
+                if ($app->currentUser->provider === 'bearcms') {
+                    $app->currentUser->logout();
+                }
+            }
+        }
+    }
+
     $app->hooks
             ->add('responseCreated', function($response) {
                 Cookies::apply($response);

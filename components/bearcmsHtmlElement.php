@@ -18,7 +18,7 @@ $addHTMLSandbox = false;
 $content = '';
 if ($code !== '') {
     if ($renderMode === 'clean' || $renderMode === 'default') {
-        $content = '<div class="bearcms-html-element">' . $code . '</div>';
+        $content = '<div class="bearcms-html-element"><component src="data:base64,' . base64_encode($code) . '" /></div>';
     } else if ($renderMode === 'sandbox') {
         if (strlen($htmlSandboxUrl) > 0) {
             $addHTMLSandbox = true;

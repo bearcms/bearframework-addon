@@ -37,14 +37,15 @@ class Themes
                 return $data['id'];
             }
         }
+        if (strlen(\BearCMS\Internal\Options::$defaultThemeID) > 0) {
+            return \BearCMS\Internal\Options::$defaultThemeID;
+        }
         return 'none';
     }
 
     static function getList(): array
     {
-        $list = Options::$useEmptyTheme ? ['none'] : [];
-        $list = array_merge($list, array_keys(self::$list));
-        return $list;
+        return array_keys(self::$list);
     }
 
     static function prepareOptions($id)

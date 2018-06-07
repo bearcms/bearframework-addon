@@ -29,7 +29,13 @@ class Settings
         if ($data !== null) {
             $data = json_decode($data, true);
         } else {
-            $data = [];
+            $data = [
+                'title' => 'MY COMPANY',
+                'description' => 'The slogan of my company',
+                'language' => 'en',
+                'allowSearchEngines' => true,
+                'externalLinks' => true,
+            ];
         }
         if (!isset($data['title'])) {
             $data['title'] = '';

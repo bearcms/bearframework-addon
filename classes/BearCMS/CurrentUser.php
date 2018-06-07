@@ -105,6 +105,9 @@ class CurrentUser
     public function hasPermission(string $name): bool
     {
         $permissions = $this->getPermissions();
+        if (array_search('all', $permissions) !== false) {
+            return true;
+        }
         return array_search($name, $permissions) !== false;
     }
 

@@ -11,11 +11,10 @@ use BearFramework\App;
 
 return function() {
     $app = App::get();
-    $result = $app->data->getList()
-            ->filterBy('key', 'bearcms/users/invitation/', 'startWith');
-    $temp = [];
-    foreach ($result as $item) {
-        $temp[] = json_decode($item->value, true);
+    $userInvitation = $app->bearCMS->data->usersInvitations->getList();
+    $result = [];
+    foreach ($userInvitation as $user) {
+        $result[] = $userInvitation->toArray();
     }
-    return $temp;
+    return $result;
 };

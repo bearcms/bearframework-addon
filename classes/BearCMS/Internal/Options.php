@@ -17,6 +17,7 @@ final class Options
     static $serverUrl = null;
     static $siteID = null;
     static $siteSecret = null;
+    static $appSecretKey = null;
     static $language = 'en';
     static $features = ['ALL'];
     static $cookiePrefix = null;
@@ -32,8 +33,9 @@ final class Options
     static $maxUploadsSize = null;
     static $useDataCache = false;
     static $dataCachePrefix = null;
-    static $useEmptyTheme = true;
+    static $defaultThemeID = 'bearcms/universal';
     static $htmlSandboxUrl = '';
+    static $useDefaultUserProfile = true;
 
     /**
      * 
@@ -45,15 +47,15 @@ final class Options
     {
 
         if (isset($data['serverUrl']) && strlen($data['serverUrl']) > 0) {
-            if (!isset($data['siteID']) || strlen($data['siteID']) === 0) {
-                throw new \Exception('siteID option is not set for bearcms/bearframework-addon');
-            }
-            if (!isset($data['siteSecret']) || strlen($data['siteSecret']) === 0) {
-                throw new \Exception('siteSecret option is not set for bearcms/bearframework-addon');
+            if (isset($data['siteID'], $data['siteSecret']) && strlen($data['siteID']) > 0 && strlen($data['siteSecret']) > 0) {
+                self::$siteID = $data['siteID'];
+                self::$siteSecret = $data['siteSecret'];
+            } elseif (isset($data['appSecretKey']) && strlen($data['appSecretKey']) > 0) {
+                self::$appSecretKey = $data['appSecretKey'];
+            } else {
+                throw new \Exception('siteID and siteSecret (or appSecretKey) options are required for bearcms/bearframework-addon');
             }
             self::$serverUrl = $data['serverUrl'];
-            self::$siteID = $data['siteID'];
-            self::$siteSecret = $data['siteSecret'];
         }
 
         $app = App::get();
@@ -118,11 +120,14 @@ final class Options
         if (isset($data['dataCachePrefix'])) {
             self::$dataCachePrefix = (string) $data['dataCachePrefix'];
         }
-        if (isset($data['useEmptyTheme'])) {
-            self::$useEmptyTheme = (int) $data['useEmptyTheme'] > 0;
+        if (isset($data['defaultThemeID'])) {
+            self::$defaultThemeID = $data['defaultThemeID'];
         }
         if (isset($data['htmlSandboxUrl'])) {
             self::$htmlSandboxUrl = (string) $data['htmlSandboxUrl'];
+        }
+        if (isset($data['useDefaultUserProfile'])) {
+            self::$useDefaultUserProfile = (int) $data['useDefaultUserProfile'] > 0;
         }
     }
 
