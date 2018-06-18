@@ -46,6 +46,11 @@ if (strlen($component->type) > 0) {
     }
 }
 
+$spacing = '';
+if (strlen($component->spacing) > 0) {
+    $spacing = $component->spacing;
+}
+
 $showDate = $component->showDate === 'true';
 $limit = (int) $component->limit;
 if ($limit < 1) {
@@ -120,17 +125,64 @@ if ($list->length === 0) {
                         if ($break) {
                             break;
                         }
+                    } elseif (isset($elementContainerData['data'], $elementContainerData['data']['type']) && $elementContainerData['data']['type'] === 'floatingBox') {
+                        $break = false;
+                        if (isset($elementContainerData['data']['elements'])) {
+                            if (isset($elementContainerData['data']['elements']['inside'])) {
+                                foreach ($elementContainerData['data']['elements']['inside'] as $elementInFloatingBoxData) {
+                                    if ($walkElements($elementInFloatingBoxData['id'])) {
+                                        $break = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (isset($elementContainerData['data']['elements']['outside'])) {
+                                foreach ($elementContainerData['data']['elements']['outside'] as $elementInFloatingBoxData) {
+                                    if ($walkElements($elementInFloatingBoxData['id'])) {
+                                        $break = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if ($break) {
+                            break;
+                        }
                     } else {
                         if ($walkElements($elementContainerData['id'])) {
                             break;
                         }
                     }
                 }
-                if ($imageElementData !== null) {
+                $hasImage = $imageElementData !== null;
+                $hasText = $textElementData !== null;
+                if ($hasImage && $hasText) {
+                    $content .= ElementsHelper::renderFloatingBox([
+                                'data' => [
+                                    'type' => 'floatingBox',
+                                    'position' => 'left',
+                                    'width' => '33%',
+                                    'elements' => [
+                                        'inside' => [
+                                            ['id' => $imageElementData['id']]
+                                        ],
+                                        'outside' => [
+                                            ['id' => $textElementData['id']]
+                                        ]
+                                    ]
+                                ]
+                                    ], false, [
+                                'spacing' => $spacing,
+                                'width' => '100%',
+                                'color' => '#000',
+                                'inElementsContainer' => true
+                                    ], true);
+                } elseif ($hasImage) {
                     $content .= '<component src="bearcms-image-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($imageElementData)) . '"/>';
-                }
-                if ($textElementData !== null) {
+                } elseif ($hasText) {
                     $content .= '<component src="bearcms-text-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($textElementData)) . '"/>';
+                }
+                if ($hasImage || $hasText) {
                     $readMoreText = '<a href="' . htmlentities($url) . '">' . __('bearcms.blogPosts.Read more') . '</a>';
                     $content .= '<component src="bearcms-text-element" text="' . htmlentities($readMoreText) . '"/>';
                 }
