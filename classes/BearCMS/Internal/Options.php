@@ -33,7 +33,7 @@ final class Options
     static $maxUploadsSize = null;
     static $useDataCache = false;
     static $dataCachePrefix = null;
-    static $defaultThemeID = 'bearcms/universal';
+    static $defaultThemeID = null;
     static $htmlSandboxUrl = '';
     static $useDefaultUserProfile = true;
     static $whitelabel = false;
