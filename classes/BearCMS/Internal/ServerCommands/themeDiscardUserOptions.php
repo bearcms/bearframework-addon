@@ -13,5 +13,7 @@ return function($data) {
     $app = App::get();
     $themeID = $data['id'];
     $userID = $data['userID'];
-    $app->bearCMS->data->themes->discardUserOptions($themeID, $userID);
+    if (strlen($themeID) > 0 && strlen($userID) > 0) {
+        $app->bearCMS->data->themes->discardUserOptions($themeID, $userID);
+    }
 };
