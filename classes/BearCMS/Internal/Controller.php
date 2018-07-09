@@ -32,6 +32,11 @@ final class Controller
         $arguments = [];
         $arguments['path'] = $path;
         $data = Server::call('adminpage', $arguments, true);
+        if (isset($data['error'])) {
+            if (isset($data['errorMessage'])) {
+                return new App\Response\TemporaryUnavailable($data['errorMessage']);
+            }
+        }
         if (isset($data['result'])) {
             if ($data['result'] === 'notFound') {
                 return new App\Response\NotFound();
@@ -40,6 +45,7 @@ final class Controller
                 $content = Server::updateAssetsUrls($content, false);
                 $response = new App\Response\HTML($content);
                 $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0, no-cache, no-store'));
+                $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
                 return $response;
             }
         }
@@ -83,9 +89,9 @@ final class Controller
                 foreach ($queryList as $queryListItem) {
                     $temp[$queryListItem->name] = $queryListItem->value;
                 }
-                $response = Server::call('fileupload', array('tempFilename' => $tempFilename, 'requestData' => json_encode($temp)));
-                if (isset($response['result'])) {
-                    return new App\Response\JSON($response['result']);
+                $data = Server::call('fileupload', ['tempFilename' => $tempFilename, 'requestData' => json_encode($temp)]);
+                if (isset($data['result'])) {
+                    return new App\Response\JSON($data['result']);
                 } else {
                     return new App\Response\TemporaryUnavailable();
                 }

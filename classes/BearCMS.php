@@ -33,7 +33,7 @@ class BearCMS
     /**
      * Addon version
      */
-    const VERSION = 'dev';
+    const VERSION = '0.4.5';
 
     /**
      * The constructor
@@ -283,36 +283,34 @@ class BearCMS
         if (!is_array($adminUIData)) {
             $adminUIData = Server::call('adminui', $requestArguments, true);
             $cacheItem = $app->cache->make($cacheKey, $adminUIData);
-            $cacheItem->ttl = is_array($adminUIData) && isset($adminUIData['result']) ? 99999 : 10;
+            $cacheItem->ttl = is_array($adminUIData) && isset($adminUIData['result']) ? 86400 : 10;
             $app->cache->set($cacheItem);
         }
-        // The user does not exists on the server
-        if (is_array($adminUIData) && isset($adminUIData['result']) && $adminUIData['result'] === 'noUser') {
-            $this->currentUser->logout();
-            return;
-        }
-
-        if (is_array($adminUIData) && isset($adminUIData['result']) && is_array($adminUIData['result']) && isset($adminUIData['result']['content']) && strlen($adminUIData['result']['content']) > 0) {
-            $content = $adminUIData['result']['content'];
-            $content = Server::updateAssetsUrls($content, false);
-            $document = new HTML5DOMDocument();
-            $htmlToInsert = [];
-            if (strpos($content, '{body}')) {
-                $content = str_replace('{body}', (string) $document->createInsertTarget('body'), $content);
-                $htmlToInsert[] = ['source' => $response->content, 'target' => 'body'];
-            } elseif (strpos($content, '{jsonEncodedBody}')) {
-                $content = str_replace('{jsonEncodedBody}', json_encode($app->components->process($response->content)), $content);
+        if (is_array($adminUIData) && isset($adminUIData['result'])) {
+            if ($adminUIData['result'] === 'noUser') { // The user does not exists on the server
+                $this->currentUser->logout();
+                return;
             }
-            $document->loadHTML($content);
-            $elementsHtml = ElementsHelper::getEditableElementsHtml();
-            if (isset($elementsHtml[0])) {
-                $htmlToInsert[] = ['source' => $elementsHtml];
+            if (is_array($adminUIData['result']) && isset($adminUIData['result']['content']) && strlen($adminUIData['result']['content']) > 0) {
+                $content = $adminUIData['result']['content'];
+                $content = Server::updateAssetsUrls($content, false);
+                $document = new HTML5DOMDocument();
+                $htmlToInsert = [];
+                if (strpos($content, '{body}')) {
+                    $content = str_replace('{body}', (string) $document->createInsertTarget('body'), $content);
+                    $htmlToInsert[] = ['source' => $response->content, 'target' => 'body'];
+                } elseif (strpos($content, '{jsonEncodedBody}')) {
+                    $content = str_replace('{jsonEncodedBody}', json_encode($app->components->process($response->content)), $content);
+                }
+                $document->loadHTML($content);
+                $elementsHtml = ElementsHelper::getEditableElementsHtml();
+                if (isset($elementsHtml[0])) {
+                    $htmlToInsert[] = ['source' => $elementsHtml];
+                }
+                $htmlToInsert[] = ['source' => '<html><body><script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script></body></html>'];
+                $document->insertHTMLMulti($htmlToInsert);
+                $response->content = $document->saveHTML();
             }
-            $htmlToInsert[] = ['source' => '<html><body><script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script></body></html>'];
-            $document->insertHTMLMulti($htmlToInsert);
-            $response->content = $document->saveHTML();
-        } else {
-            //$response = new App\Response\TemporaryUnavailable();
         }
     }
 

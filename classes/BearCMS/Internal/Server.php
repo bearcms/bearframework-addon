@@ -36,7 +36,11 @@ final class Server
         }
         $response = self::sendRequest(Options::$serverUrl . '-aj/', $temp, true);
         if (self::isRetryResponse($response)) {
-            return json_encode(array('js' => 'window.location.reload(true);'), JSON_UNESCAPED_UNICODE);
+            return json_encode(['js' => 'window.location.reload(true);'], JSON_UNESCAPED_UNICODE);
+        }
+
+        if (is_array($response['body']) && isset($response['body']['error'])) {
+            return json_encode(['js' => 'alert("' . (isset($response['body']['errorMessage']) ? $response['body']['errorMessage'] : 'An error occurred! Please, try again later and contact the administrator if the problem persists!') . '");'], JSON_UNESCAPED_UNICODE);
         }
 
         if (isset($response['bodyPrefix'])) {
@@ -61,7 +65,7 @@ final class Server
         return $response1;
     }
 
-    static function isRetryResponse(\ArrayObject $response): bool
+    static function isRetryResponse(array $response): bool
     {
         $responseHeader = $response['header'];
         return strpos($responseHeader, 'X-App-Sr: qyi') > 0 ||
@@ -116,7 +120,7 @@ final class Server
         return $content;
     }
 
-    static function makeRequest(string $url, array $data, array $cookies): \ArrayObject
+    static function makeRequest(string $url, array $data, array $cookies): array
     {
         $app = App::get();
 
@@ -220,10 +224,10 @@ final class Server
         if (isset($error{0})) {
             throw new \Exception('Request curl error: ' . $error . ' (1027)');
         }
-        return new \ArrayObject(['header' => $responseHeader, 'body' => $responseBody]);
+        return ['header' => $responseHeader, 'body' => $responseBody];
     }
 
-    static function sendRequest(string $url, array $data = [], bool $sendCookies = false): \ArrayObject
+    static function sendRequest(string $url, array $data = [], bool $sendCookies = false): array
     {
         $app = App::get();
         $context = $app->context->get(__FILE__);

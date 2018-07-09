@@ -466,7 +466,10 @@ if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
 if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_DEFAULT'))) {
     $cookies = Cookies::getList(Cookies::TYPE_SERVER);
     if (isset($cookies['_a']) && !$app->bearCMS->currentUser->exists()) {
-        Server::call('autologin', [], true);
+        $data = Server::call('autologin', [], true);
+        if (isset($data['error'])) {
+            $app->bearCMS->currentUser->logout(); // kill the autologin cookie
+        }
     }
 }
 

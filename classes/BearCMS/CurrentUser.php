@@ -115,11 +115,15 @@ class CurrentUser
      * Login a user without email and password validation. This methods must be enabled on the CMS server.
      * 
      * @param string $userID
-     * @throws \InvalidArgumentException
+     * @return bool Returns TRUE if the user is logged in successfully, FALSE otherwise.
      */
-    public function login(string $userID): void
+    public function login(string $userID): bool
     {
-        \BearCMS\Internal\Server::call('login', ['userID' => $userID], true);
+        $data = \BearCMS\Internal\Server::call('login', ['userID' => $userID], true);
+        if (isset($data['result'])) {
+            return $data['result'] === 'ok';
+        }
+        return false;
     }
 
     /**
@@ -130,7 +134,10 @@ class CurrentUser
      */
     public function logout(): void
     {
-        \BearCMS\Internal\Cookies::setList(\BearCMS\Internal\Cookies::TYPE_SERVER, [['name' => '_s', 'value' => 'deleted', 'expire' => 0]]);
+        \BearCMS\Internal\Cookies::setList(\BearCMS\Internal\Cookies::TYPE_SERVER, [
+            ['name' => '_s', 'value' => 'deleted', 'expire' => 0],
+            ['name' => '_a', 'value' => 'deleted', 'expire' => 0]
+        ]);
         self::$cache = [];
     }
 

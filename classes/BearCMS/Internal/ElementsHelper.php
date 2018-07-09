@@ -516,7 +516,7 @@ final class ElementsHelper
             if (!is_array($elementsEditorData)) {
                 $elementsEditorData = Server::call('elementseditor', $requestArguments, true);
                 $cacheItem = $app->cache->make($cacheKey, $elementsEditorData);
-                $cacheItem->ttl = is_array($elementsEditorData) && isset($elementsEditorData['result']) ? 99999 : 10;
+                $cacheItem->ttl = is_array($elementsEditorData) && isset($elementsEditorData['result']) ? 86400 : 10;
                 $app->cache->set($cacheItem);
             }
 
