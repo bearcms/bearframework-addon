@@ -33,9 +33,6 @@
         "phpunit/phpunit": "^4.8"
     },
     "autoload": {
-        "psr-4": {
-            "": "classes/"
-        },
         "files": ["autoload.php"]
     }
 }
