@@ -21,8 +21,7 @@ final class Options
     static $language = 'en';
     static $features = ['ALL'];
     static $cookiePrefix = null;
-    static $logServerRequests = true;
-    static $logServerRequestsData = false;
+    static $logServerRequests = false;
     static $addonsDir = false;
     static $uiColor = '#1BB0CE';
     static $uiTextColor = '#ffffff';
@@ -79,11 +78,8 @@ final class Options
 
         self::$cookiePrefix = substr(md5(md5($app->request->base) . md5(self::$serverUrl)), 0, 14) . '_bearcms_';
 
-        if (isset($data['logServerRequests']) && $data['logServerRequests'] === false) {
-            self::$logServerRequests = false;
-        }
-        if (isset($data['logServerRequestsData']) && $data['logServerRequestsData']) {
-            self::$logServerRequestsData = true;
+        if (isset($data['logServerRequests']) && $data['logServerRequests'] === true) {
+            self::$logServerRequests = true;
         }
 
         if (isset($data['uiColor'])) {

@@ -298,7 +298,7 @@ final class Server
             if ($counter > 10) {
                 throw new \Exception('Too much requests');
             }
-            $requestResponse = self::makeRequest($url, array_merge($data, $requestData, ['requestNumber' => $counter]), $cookies, Options::$logServerRequests || true);
+            $requestResponse = self::makeRequest($url, array_merge($data, $requestData, ['requestNumber' => $counter]), $cookies, Options::$logServerRequests);
             if (self::isRetryResponse($requestResponse)) {
                 return $requestResponse;
             }
@@ -317,7 +317,7 @@ final class Server
 
             $requestResponseMeta = isset($requestResponseData['meta']) ? $requestResponseData['meta'] : [];
 
-            if (Options::$logServerRequests || true) {
+            if (Options::$logServerRequests) {
                 $logData = $requestResponse['logData'];
                 $logData['response']['data'] = [
                     'value' => $response['value'],
