@@ -33,7 +33,7 @@ class BearCMS
     /**
      * Addon version
      */
-    const VERSION = '0.4.5-beta.1';
+    const VERSION = '0.5.0';
 
     /**
      * The constructor
