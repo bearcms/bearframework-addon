@@ -24,11 +24,11 @@ class SettingsDataTest extends BearFrameworkAddonTestCase
         mkdir($settingsDir, 0777, true);
 
         $settings = $app->bearCMS->data->settings->get();
-        $this->assertTrue($settings['title'] === '');
+        $this->assertTrue($settings['title'] === 'MY COMPANY'); // This is the default value
 
         file_put_contents($settingsDir . 'settings.json', '{
-    "title": "MY COMPANY",
-    "description": "The slogan of my company",
+    "title": "MY COMPANY 2",
+    "description": "The slogan of my company 2",
     "language": "en",
     "allowSearchEngines": true,
     "externalLinks": true,
@@ -36,7 +36,7 @@ class SettingsDataTest extends BearFrameworkAddonTestCase
 }');
 
         $settings = $app->bearCMS->data->settings->get();
-        $this->assertTrue($settings['title'] === 'MY COMPANY');
+        $this->assertTrue($settings['title'] === 'MY COMPANY 2');
     }
 
 }

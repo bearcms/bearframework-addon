@@ -50,8 +50,7 @@ class BearFrameworkAddonTestCase extends PHPUnit_Framework_TestCase
 
             $this->app->addons->add('bearcms/bearframework-addon', [
                 'serverUrl' => 'http://dummy.bearcms.com/',
-                'siteID' => 'dummy1',
-                'siteSecret' => 'dummy1',
+                'appSecretKey' => 'dummy1',
                 'addonsDir' => realpath(__DIR__ . '/../addons/'),
                 'language' => 'en'
             ]);
