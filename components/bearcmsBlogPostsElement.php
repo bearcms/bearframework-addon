@@ -6,7 +6,7 @@
  * Free to use under the MIT license.
  */
 
-use \BearFramework\App;
+use BearFramework\App;
 use BearCMS\Internal\ElementsHelper;
 use BearCMS\Internal\Options;
 
@@ -211,10 +211,10 @@ if ($list->length === 0) {
 }
 ?><html>
     <head><?php
-        if ($list->length > $limit) {
-            echo '<script id="bearcms-bearframework-addon-script-2" src="' . htmlentities($context->assets->getUrl('components/bearcmsBlogPostsElement/assets/blogPostsElement.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
-            echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
-        }
-        ?></head>
+if ($list->length > $limit) {
+    echo '<script id="bearcms-bearframework-addon-script-2" src="' . htmlentities($context->assets->getUrl('components/bearcmsBlogPostsElement/assets/blogPostsElement.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
+    echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
+}
+?></head>
     <body><?= $content ?></body>
 </html>

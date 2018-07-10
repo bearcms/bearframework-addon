@@ -6,8 +6,8 @@
  * Free to use under the MIT license.
  */
 
-use \BearFramework\App;
-use \BearCMS\Internal\PublicProfile;
+use BearFramework\App;
+use BearCMS\Internal\PublicProfile;
 
 $app = App::get();
 

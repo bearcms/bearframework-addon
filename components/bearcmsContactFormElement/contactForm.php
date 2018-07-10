@@ -6,7 +6,7 @@
  * Free to use under the MIT license.
  */
 
-use \BearFramework\App;
+use BearFramework\App;
 
 $app = App::get();
 $context = $app->context->get(__FILE__);

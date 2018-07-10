@@ -9,7 +9,7 @@
 
 namespace BearCMS\Data;
 
-use \BearFramework\App;
+use BearFramework\App;
 
 class Page extends \BearCMS\DataObject
 {
