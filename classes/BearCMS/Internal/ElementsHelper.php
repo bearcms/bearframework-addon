@@ -505,26 +505,15 @@ final class ElementsHelper
             $cacheKey = json_encode([
                 'elementsEditor',
                 $app->request->base,
-                $requestArguments,
                 $app->bearCMS->currentUser->getSessionKey(),
                 $app->bearCMS->currentUser->getPermissions(),
                 get_class_vars('\BearCMS\Internal\Options'),
-                Cookies::getList(Cookies::TYPE_SERVER),
-                3, //version
+                Cookies::getList(Cookies::TYPE_SERVER)
             ]);
-            $elementsEditorData = $app->cache->getValue($cacheKey);
-            if (!is_array($elementsEditorData)) {
-                $elementsEditorData = Server::call('elementseditor', $requestArguments, true);
-                $cacheItem = $app->cache->make($cacheKey, $elementsEditorData);
-                $cacheItem->ttl = is_array($elementsEditorData) && isset($elementsEditorData['result']) ? 86400 : 10;
-                $app->cache->set($cacheItem);
-            }
-
+            $elementsEditorData = Server::call('elementseditor', $requestArguments, true, $cacheKey);
             if (is_array($elementsEditorData) && isset($elementsEditorData['result']) && is_array($elementsEditorData['result']) && isset($elementsEditorData['result']['content'])) {
                 $html = $elementsEditorData['result']['content'];
                 $html = Server::updateAssetsUrls($html, false);
-            } else {
-                //$response = new App\Response\TemporaryUnavailable();
             }
         }
         return $html;

@@ -17,8 +17,8 @@ return function($data, $response) {
         $requestArguments['jsMode'] = 1;
         $elementsEditorData = Server::call('elementseditor', $requestArguments, true);
         if (is_array($elementsEditorData) && isset($elementsEditorData['result'], $elementsEditorData['result']['content'])) {
-            $response['body'] = Server::mergeAjaxResponses($response['body'], json_decode($elementsEditorData['result']['content'], true));
-            $response['body'] = Server::updateAssetsUrls($response['body'], true);
+            $response['value'] = Server::mergeAjaxResponses($response['value'], json_decode($elementsEditorData['result']['content'], true));
+            $response['value'] = Server::updateAssetsUrls($response['value'], true);
         } else {
             throw new Exception('');
         }

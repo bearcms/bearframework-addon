@@ -12,7 +12,7 @@ use BearCMS\Internal\Server;
 
 return function($data, $response) {
     $app = App::get();
-    $body = json_encode($response['body']);
+    $value = json_encode($response['value']);
     $content = $app->components->process($data['content']);
     $domDocument = new \IvoPetkov\HTML5DOMDocument();
     $domDocument->loadHTML($content);
@@ -20,14 +20,14 @@ return function($data, $response) {
     $content = $bodyElement->innerHTML;
     $bodyElement->parentNode->removeChild($bodyElement);
     $allButBody = $domDocument->saveHTML();
-    $startPosition = strpos($body, '{bearcms-replace-content-' . $data['id'] . '-');
+    $startPosition = strpos($value, '{bearcms-replace-content-' . $data['id'] . '-');
     if ($startPosition === false) {
         return;
     }
 
-    $endPosition = strpos($body, '}', $startPosition);
+    $endPosition = strpos($value, '}', $startPosition);
 
-    $modificationsString = substr($body, $startPosition + 58, $endPosition - $startPosition - 58);
+    $modificationsString = substr($value, $startPosition + 58, $endPosition - $startPosition - 58);
     $parts = explode('\'', $modificationsString);
     $singleQuoteSlashesCount = strlen($parts[0]);
     $doubleQuoteSlashesCount = strlen($parts[1]) - 1;
@@ -37,9 +37,9 @@ return function($data, $response) {
     for ($i = 0; $i < $singleQuoteSlashesCount; $i += 2) {
         $content = addslashes($content);
     }
-    $body = str_replace(substr($body, $startPosition, $endPosition - $startPosition + 1), $content, $body);
+    $value = str_replace(substr($value, $startPosition, $endPosition - $startPosition + 1), $content, $value);
     //todo optimize
     $response1 = ['js' => 'html5DOMDocument.insert(' . json_encode($allButBody, true) . ');'];
-    $response2 = json_decode($body, true);
-    $response['body'] = Server::mergeAjaxResponses($response1, $response2);
+    $response2 = json_decode($value, true);
+    $response['value'] = Server::mergeAjaxResponses($response1, $response2);
 };

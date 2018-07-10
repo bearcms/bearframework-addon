@@ -16,14 +16,42 @@ use BearCMS\Internal\Options;
 final class Server
 {
 
-    static function call(string $name, array $arguments = [], bool $sendCookies = false)
+    static function call(string $name, array $arguments = [], bool $sendCookies = false, string $cacheKey = null)
     {
-        $url = Options::$serverUrl . '?name=' . $name;
-        $response = self::sendRequest($url, $arguments, $sendCookies);
-        if ($sendCookies && self::isRetryResponse($response)) {
+        $app = App::get();
+        $send = function() use($name, $arguments, $sendCookies) {
+            $url = Options::$serverUrl . '?name=' . $name;
             $response = self::sendRequest($url, $arguments, $sendCookies);
+            if ($sendCookies && self::isRetryResponse($response)) {
+                $response = self::sendRequest($url, $arguments, $sendCookies);
+            }
+            return $response;
+        };
+        if ($cacheKey !== null) {
+            $cacheKey = md5($cacheKey) . md5($name) . md5(json_encode($arguments));
+            $data = $app->cache->getValue($cacheKey);
+            if (is_array($data)) {
+                return $data['value'];
+            } elseif ($data === 'invalid') {
+                return [];
+            } else {
+                $data = $send();
+                if (is_array($data) && isset($data['value'])) {
+                    if (isset($data['cache']) && (int) $data['cache'] === 1) {
+                        $cacheItem = $app->cache->make($cacheKey, $data);
+                        $cacheItem->ttl = isset($data['cacheTTL']) ? (int) $data['cacheTTL'] : 10;
+                        $app->cache->set($cacheItem);
+                    }
+                    return $data['value'];
+                } else {
+                    $cacheItem = $app->cache->make($cacheKey, 'invalid');
+                    $cacheItem->ttl = 10;
+                    $app->cache->set($cacheItem);
+                    return [];
+                }
+            }
         }
-        return $response['body'];
+        return $send()['value'];
     }
 
     static function proxyAjax(): string
@@ -39,15 +67,17 @@ final class Server
             return json_encode(['js' => 'window.location.reload(true);'], JSON_UNESCAPED_UNICODE);
         }
 
-        if (is_array($response['body']) && isset($response['body']['error'])) {
-            return json_encode(['js' => 'alert("' . (isset($response['body']['errorMessage']) ? $response['body']['errorMessage'] : 'An error occurred! Please, try again later and contact the administrator if the problem persists!') . '");'], JSON_UNESCAPED_UNICODE);
+        if (is_array($response['value']) && isset($response['value']['error'])) {
+            return json_encode(['js' => 'alert("' . (isset($response['value']['errorMessage']) ? $response['value']['errorMessage'] : 'An error occurred! Please, try again later and contact the administrator if the problem persists!') . '");'], JSON_UNESCAPED_UNICODE);
         }
 
-        if (isset($response['bodyPrefix'])) {
-            $response['body'] = self::mergeAjaxResponses($response['bodyPrefix'], $response['body']);
+        if (isset($response['previousValues'])) {
+            foreach ($response['previousValues'] as $previousValue) {
+                $response['value'] = self::mergeAjaxResponses($previousValue, $response['value']);
+            }
         }
-        $response['body'] = self::updateAssetsUrls($response['body'], true);
-        return json_encode($response['body']);
+        $response['value'] = self::updateAssetsUrls($response['value'], true);
+        return json_encode($response['value']);
     }
 
     static function mergeAjaxResponses(array $response1, array $response2): array
@@ -67,11 +97,11 @@ final class Server
 
     static function isRetryResponse(array $response): bool
     {
-        $responseHeader = $response['header'];
-        return strpos($responseHeader, 'X-App-Sr: qyi') > 0 ||
-                strpos($responseHeader, 'X-App-Sr: pkr') > 0 ||
-                strpos($responseHeader, 'X-App-Sr: jke') > 0 ||
-                strpos($responseHeader, 'X-App-Sr: wpr') > 0;
+        $responseHeaders = $response['headers'];
+        return strpos($responseHeaders, 'X-App-Sr: qyi') > 0 ||
+                strpos($responseHeaders, 'X-App-Sr: pkr') > 0 ||
+                strpos($responseHeaders, 'X-App-Sr: jke') > 0 ||
+                strpos($responseHeaders, 'X-App-Sr: wpr') > 0;
     }
 
     static function updateAssetsUrls($content, bool $ajaxMode)
@@ -88,7 +118,7 @@ final class Server
 
         if ($ajaxMode) {
             $hasChange = false;
-            $contentData = $content; //json_decode($content, true);
+            $contentData = $content;
             if (isset($contentData['jsFiles'])) {
                 foreach ($contentData['jsFiles'] as $i => $src) {
                     if (isset($src{0}) && strpos($src, $serverUrl) === 0) {
@@ -120,15 +150,24 @@ final class Server
         return $content;
     }
 
-    static function makeRequest(string $url, array $data, array $cookies): array
+    /**
+     * 
+     * @param string $url
+     * @param array $data
+     * @param array $cookies
+     * @param bool $includeLogData
+     * @return array Returns an array in the following format: ['headers' => ..., 'body' => ..., 'logData' => ...]
+     * @throws \Exception
+     */
+    static function makeRequest(string $url, array $data, array $cookies, bool $includeLogData = false): array
     {
         $app = App::get();
 
         $clientData = [];
-        $clientData['info'] = [
+        $clientData['about'] = [
             'type' => 'bearframework-addon',
-            'bearframeworkVersion' => $app::VERSION,
-            'addonVersion' => \BearCMS::VERSION
+            'bearFrameworkVersion' => $app::VERSION,
+            'bearCMSAddonVersion' => \BearCMS::VERSION
         ];
         $clientData['siteID'] = Options::$siteID;
         if (Options::$siteSecret !== null) {
@@ -188,45 +227,58 @@ final class Server
         $response = curl_exec($ch);
         $error = curl_error($ch);
 
-        $responseHeaderSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $responseHeader = trim(substr($response, 0, $responseHeaderSize));
-        $responseBody = substr($response, $responseHeaderSize);
-        if (strpos($responseHeader, 'X-App-Bg: 1') !== false) {
+        $responseHeadersSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $responseHeaders = trim(substr($response, 0, $responseHeadersSize));
+        $responseBody = substr($response, $responseHeadersSize);
+        if (strpos($responseHeaders, 'X-App-Bg: 1') !== false) {
             try {
                 $responseBody = gzuncompress($responseBody);
             } catch (\Exception $e) {
-                throw new \Exception('Invalid response');
+                throw new \Exception('Invalid response!');
             }
         }
-        if (Options::$logServerRequests) {
-            $log = "BearCMS server request:\n";
-            $log .= 'User: ' . $app->bearCMS->currentUser->getID() . "\n";
-            $log .= 'Time: ' . curl_getinfo($ch, CURLINFO_TOTAL_TIME) . ' / dns: ' . curl_getinfo($ch, CURLINFO_NAMELOOKUP_TIME) . ', connect: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) . ', download: ' . curl_getinfo($ch, CURLINFO_STARTTRANSFER_TIME) . "\n";
-            $log .= 'Request: ' . trim(curl_getinfo($ch, CURLINFO_HEADER_OUT)) . "\n";
-            if (Options::$logServerRequestsData) {
-                $log .= 'Data: ' . trim(print_r($data, true)) . "\n";
-            }
-            curl_close($ch);
-            foreach ($cookies as $key => $value) {
-                $log = str_replace($value, '*' . strlen($value) . 'chars*', $log);
-            }
-            $log .= 'Response: ' . $responseHeader . "\n";
-            $newCookies = Cookies::parseServerCookies($responseHeader);
-            foreach ($newCookies as $newCookie) {
-                $log = str_replace($newCookie['value'], '*' . strlen($newCookie['value']) . 'chars*', $log);
-            }
-            //$log .= 'Response body: ' . $responseBody;
-            $log .= 'Body: ' . '*' . strlen($responseBody) . 'chars*';
-            if (strlen($app->config->logsDir) > 0) {
-                $app->logger->log('info', $log);
-            }
+
+        $logData = null;
+        if ($includeLogData) {
+            $logData = [];
+            $logData['userID'] = $app->bearCMS->currentUser->getID();
+            $logData['timing'] = [
+                'total' => curl_getinfo($ch, CURLINFO_TOTAL_TIME),
+                'dns' => curl_getinfo($ch, CURLINFO_NAMELOOKUP_TIME),
+                'connect' => curl_getinfo($ch, CURLINFO_CONNECT_TIME),
+                'waiting' => curl_getinfo($ch, CURLINFO_STARTTRANSFER_TIME)
+            ];
+            $logData['request'] = [
+                'url' => $url,
+                'headers' => trim(curl_getinfo($ch, CURLINFO_HEADER_OUT)),
+                'data' => $data
+            ];
+            $logData['response'] = [
+                'headers' => $responseHeaders,
+                'body' => $responseBody
+            ];
         }
+        curl_close($ch);
         if (isset($error{0})) {
             throw new \Exception('Request curl error: ' . $error . ' (1027)');
         }
-        return ['header' => $responseHeader, 'body' => $responseBody];
+        $result = [
+            'headers' => $responseHeaders,
+            'body' => $responseBody
+        ];
+        if ($logData !== null) {
+            $result['logData'] = $logData;
+        }
+        return $result;
     }
 
+    /**
+     * 
+     * @param string $url
+     * @param array $data
+     * @param bool $sendCookies
+     * @return array Returns an array in the following format: ['headers' => ..., 'value' => ..., 'cache' => ..., 'cacheTTL' => ...]
+     */
     static function sendRequest(string $url, array $data = [], bool $sendCookies = false): array
     {
         $app = App::get();
@@ -246,32 +298,42 @@ final class Server
             if ($counter > 10) {
                 throw new \Exception('Too much requests');
             }
-            $response = self::makeRequest($url, array_merge($data, $requestData, ['requestNumber' => $counter]), $cookies);
-            if (self::isRetryResponse($response)) {
-                return $response;
+            $requestResponse = self::makeRequest($url, array_merge($data, $requestData, ['requestNumber' => $counter]), $cookies, Options::$logServerRequests || true);
+            if (self::isRetryResponse($requestResponse)) {
+                return $requestResponse;
             }
-            $responseData = json_decode($response['body'], true);
-            if (!is_array($responseData) || !array_key_exists('response', $responseData)) {
-                throw new \Exception('Invalid response. Body: ' . $response['body']);
+            $requestResponseBody = json_decode($requestResponse['body'], true);
+            if (!is_array($requestResponseBody) || !array_key_exists('response', $requestResponseBody)) {
+                throw new \Exception('Invalid response. Body: ' . $requestResponse['body']);
             }
-            $responseData = $responseData['response'];
-            $response['body'] = $responseData['body'];
-            $responseMeta = $responseData['meta'];
+            $requestResponseData = $requestResponseBody['response'];
 
-            if (Options::$logServerRequests && Options::$logServerRequestsData) {
-                if (strlen($app->config->logsDir) > 0) {
-                    $log = "BearCMS response data:\n";
-                    $log .= 'Data: ' . trim(print_r($responseData, true));
-                    $app->logger->log('info', $log);
-                }
+            $response = new \ArrayObject([// Must be ArrayObject so it can be passed by reference to the internal commands
+                'headers' => $requestResponse['headers'],
+                'value' => isset($requestResponseData['value']) ? $requestResponseData['value'] : '',
+                'cache' => isset($requestResponseData['cache']) ? (int) $requestResponseData['cache'] > 0 : false,
+                'cacheTTL' => isset($requestResponseData['cacheTTL']) ? (int) $requestResponseData['cacheTTL'] : 0,
+            ]);
+
+            $requestResponseMeta = isset($requestResponseData['meta']) ? $requestResponseData['meta'] : [];
+
+            if (Options::$logServerRequests || true) {
+                $logData = $requestResponse['logData'];
+                $logData['response']['data'] = [
+                    'value' => $response['value'],
+                    'meta' => $requestResponseMeta,
+                    'cache' => $response['cache'],
+                    'cacheTTL' => $response['cacheTTL']
+                ];
+                $app->logger->log('bearcms-server-requests', print_r($logData, true));
             }
 
-            $resend = isset($responseMeta['resend']) && (int) $responseMeta['resend'] > 0;
-            $resendRequestData = [];
+            $resend = isset($requestResponseMeta['resend']) && (int) $requestResponseMeta['resend'] > 0;
+            $resendData = [];
 
-            if (isset($responseMeta['commands']) && is_array($responseMeta['commands'])) {
+            if (isset($requestResponseMeta['commands']) && is_array($requestResponseMeta['commands'])) {
                 $commandsResults = [];
-                foreach ($responseMeta['commands'] as $commandData) {
+                foreach ($requestResponseMeta['commands'] as $commandData) {
                     if (isset($commandData['name']) && isset($commandData['data'])) {
                         $commandResult = '';
                         $commandFilename = $context->dir . '/classes/BearCMS/Internal/ServerCommands/' . str_replace(['.', '/', '\\'], '', $commandData['name']) . '.php';
@@ -288,17 +350,19 @@ final class Server
                     }
                 }
                 if ($resend) {
-                    $resendRequestData['commandsResults'] = json_encode($commandsResults, JSON_UNESCAPED_UNICODE);
+                    $resendData['commandsResults'] = json_encode($commandsResults, JSON_UNESCAPED_UNICODE);
                 }
             }
-            if (isset($responseMeta['clientEvents'])) {
-                $resendRequestData['clientEvents'] = $responseMeta['clientEvents'];
+
+            if (isset($requestResponseMeta['clientEvents'])) {
+                $resendData['clientEvents'] = $requestResponseMeta['clientEvents'];
                 $resend = true;
             }
-            if (isset($responseMeta['currentUser'])) {
+
+            if (isset($requestResponseMeta['currentUser'])) {
                 for ($i = 1; $i <= 3; $i++) {
                     try {
-                        $currentUserData = $responseMeta['currentUser'];
+                        $currentUserData = $requestResponseMeta['currentUser'];
                         $dataKey = '.temp/bearcms/userkeys/' . md5($currentUserData['key']);
                         $app->data->set($app->data->make($dataKey, $currentUserData['id']));
                         \BearCMS\Internal\Data::setChanged($dataKey);
@@ -313,23 +377,24 @@ final class Server
                     }
                 }
             }
-            $responseBody = null;
-            if (isset($responseMeta['clientEvents'])) {
-                $responseBody = $response['body']; // Can be changed in a command
+
+            $previousValues = [];
+            if (isset($requestResponseMeta['clientEvents'])) {
+                $previousValues[] = $response['value']; // Can be changed in a command so use from the response object
             }
             if ($resend) {
-                $response = $send($resendRequestData, $counter + 1);
+                $response = $send($resendData, $counter + 1);
             }
-            if (isset($responseMeta['clientEvents']) && !empty($responseBody) > 0) {
-                $response['bodyPrefix'] = $responseBody;
+            if (!empty($previousValues)) {
+                $response['previousValues'] = $previousValues;
             }
             return $response;
         };
         $response = $send();
         if ($sendCookies) {
-            Cookies::setList(Cookies::TYPE_SERVER, Cookies::parseServerCookies($response['header']));
+            Cookies::setList(Cookies::TYPE_SERVER, Cookies::parseServerCookies($response['headers']));
         }
-        return $response;
+        return (array) $response;
     }
 
 }

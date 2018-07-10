@@ -272,20 +272,13 @@ class BearCMS
         $cacheKey = json_encode([
             'adminUI',
             $app->request->base,
-            $requestArguments,
             $this->currentUser->getSessionKey(),
             $this->currentUser->getPermissions(),
             get_class_vars('\BearCMS\Internal\Options'),
             $serverCookies
         ]);
 
-        $adminUIData = $app->cache->getValue($cacheKey);
-        if (!is_array($adminUIData)) {
-            $adminUIData = Server::call('adminui', $requestArguments, true);
-            $cacheItem = $app->cache->make($cacheKey, $adminUIData);
-            $cacheItem->ttl = is_array($adminUIData) && isset($adminUIData['result']) ? 86400 : 10;
-            $app->cache->set($cacheItem);
-        }
+        $adminUIData = Server::call('adminui', $requestArguments, true, $cacheKey);
         if (is_array($adminUIData) && isset($adminUIData['result'])) {
             if ($adminUIData['result'] === 'noUser') { // The user does not exists on the server
                 $this->currentUser->logout();

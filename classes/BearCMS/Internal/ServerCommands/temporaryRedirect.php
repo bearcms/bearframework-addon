@@ -15,7 +15,7 @@ return function($data, $response) {
     if (!isset($data['url'])) {
         throw new Exception('');
     }
-    Cookies::setList(Cookies::TYPE_SERVER, Cookies::parseServerCookies($response['header']));
+    Cookies::setList(Cookies::TYPE_SERVER, Cookies::parseServerCookies($response['headers']));
     $response = new App\Response\TemporaryRedirect($data['url']);
     Cookies::apply($response);
     $app->respond($response);

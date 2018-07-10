@@ -10,7 +10,7 @@
 use BearCMS\Internal\Server;
 
 return function($data, $response) {
-    $response1 = $response['body'];
+    $response1 = $response['value'];
     $response2 = ['js' => 'var e=document.querySelector(\'#' . $data['elementID'] . '\');if(e){html5DOMDocument.evalElement(e);}'];
-    $response['body'] = Server::mergeAjaxResponses($response1, $response2);
+    $response['value'] = Server::mergeAjaxResponses($response1, $response2);
 };
