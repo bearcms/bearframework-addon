@@ -169,10 +169,6 @@ final class Server
             'bearFrameworkVersion' => $app::VERSION,
             'bearCMSAddonVersion' => \BearCMS::VERSION
         ];
-        $clientData['siteID'] = Options::$siteID;
-        if (Options::$siteSecret !== null) {
-            $clientData['siteSecretHash'] = hash('sha256', Options::$siteSecret);
-        }
         if (Options::$appSecretKey !== null) {
             $getHashedAppSecretKey = function() {
                 $parts = explode('-', Options::$appSecretKey, 2);

@@ -15,8 +15,6 @@ final class Options
 {
 
     static $serverUrl = null;
-    static $siteID = null;
-    static $siteSecret = null;
     static $appSecretKey = null;
     static $language = 'en';
     static $features = ['ALL'];
@@ -47,13 +45,10 @@ final class Options
     {
 
         if (isset($data['serverUrl']) && strlen($data['serverUrl']) > 0) {
-            if (isset($data['siteID'], $data['siteSecret']) && strlen($data['siteID']) > 0 && strlen($data['siteSecret']) > 0) {
-                self::$siteID = $data['siteID'];
-                self::$siteSecret = $data['siteSecret'];
-            } elseif (isset($data['appSecretKey']) && strlen($data['appSecretKey']) > 0) {
+            if (isset($data['appSecretKey']) && strlen($data['appSecretKey']) > 0) {
                 self::$appSecretKey = $data['appSecretKey'];
             } else {
-                throw new \Exception('siteID and siteSecret (or appSecretKey) options are required for bearcms/bearframework-addon');
+                throw new \Exception('The appSecretKey is required for bearcms/bearframework-addon');
             }
             self::$serverUrl = $data['serverUrl'];
         }
