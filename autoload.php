@@ -9,18 +9,17 @@
 
 BearFramework\Addons::register('bearcms/bearframework-addon', __DIR__, [
     'require' => [
-        //'bearframework/maintenance-addon',
+        'bearframework/emails-addon',
+        'bearframework/localization-addon',
+        'bearframework/tasks-addon',
         'ivopetkov/html-server-components-bearframework-addon',
         'ivopetkov/image-gallery-bearframework-addon',
         'ivopetkov/navigation-menu-bearframework-addon',
-        'ivopetkov/form-bearframework-addon',
-        //'ivopetkov/users-bearframework-addon',
+        'ivopetkov/users-bearframework-addon',
         'ivopetkov/server-requests-bearframework-addon',
-        'bearframework/emails-addon',
-        'bearframework/localization-addon',
+        'ivopetkov/form-bearframework-addon',
         'ivopetkov/data-bundle-bearframework-addon',
         'ivopetkov/encryption-bearframework-addon',
-        'bearframework/tasks-addon',
         'ivopetkov/notifications-bearframework-addon'
     ]
 ]);
