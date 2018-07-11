@@ -12,7 +12,7 @@ require __DIR__ . '/../vendor/autoload.php';
 /**
  * 
  */
-class BearFrameworkAddonTestCase extends PHPUnit_Framework_TestCase
+class BearFrameworkAddonTestCase extends PHPUnit\Framework\TestCase
 {
 
     private $app = null;

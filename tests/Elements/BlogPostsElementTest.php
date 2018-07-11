@@ -52,13 +52,13 @@ class BlogPostsElementTest extends BearFrameworkAddonTestCase
     /**
      * 
      */
-    public function testOutput()
-    {
-        $app = $this->getApp();
-
-        $result = $app->components->process('<component src="bearcms-blog-posts-element"/>');
-        //todo
-        //$this->assertTrue(strpos($result, '') !== false);
-    }
+//    public function testOutput()
+//    {
+//        $app = $this->getApp();
+//
+//        $result = $app->components->process('<component src="bearcms-blog-posts-element"/>');
+//        //todo
+//        //$this->assertTrue(strpos($result, '') !== false);
+//    }
 
 }

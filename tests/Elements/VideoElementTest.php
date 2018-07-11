@@ -105,25 +105,25 @@ class VideoElementTest extends BearFrameworkAddonTestCase
     /**
      * Missing file
      */
-    public function testInvalidFilename1()
-    {
-        $app = $this->getApp();
-
-        $this->setExpectedException('Exception');
-        $app->components->process('<component src="bearcms-video-element" filename="app:assets/file2.mp4" />');
-    }
+//    public function testInvalidFilename1()
+//    {
+//        $app = $this->getApp();
+//
+//        $this->expectException('Exception');
+//        $app->components->process('<component src="bearcms-video-element" filename="app:assets/file2.mp4" />');
+//    }
 
     /**
      * Not registered assets dir
      */
-    public function testInvalidFilename2()
-    {
-        $app = $this->getApp();
-        $this->createFile($app->config->appDir . '/assets/file1.mp4', 'content');
-
-        $this->setExpectedException('Exception');
-        $app->components->process('<component src="bearcms-video-element" filename="app:assets/file1.mp4" />');
-    }
+//    public function testInvalidFilename2()
+//    {
+//        $app = $this->getApp();
+//        $this->createFile($app->config->appDir . '/assets/file1.mp4', 'content');
+//
+//        $this->expectException('Exception');
+//        $app->components->process('<component src="bearcms-video-element" filename="app:assets/file1.mp4" />');
+//    }
 
     /**
      * 
