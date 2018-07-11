@@ -73,7 +73,9 @@ final class Server
 
         if (isset($response['previousValues'])) {
             foreach ($response['previousValues'] as $previousValue) {
-                $response['value'] = self::mergeAjaxResponses($previousValue, $response['value']);
+                if (is_array($previousValue)) {
+                    $response['value'] = self::mergeAjaxResponses($previousValue, $response['value']);
+                }
             }
         }
         $response['value'] = self::updateAssetsUrls($response['value'], true);
