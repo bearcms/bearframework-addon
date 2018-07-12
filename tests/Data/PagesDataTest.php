@@ -10,7 +10,7 @@
 /**
  * @runTestsInSeparateProcesses
  */
-class PagesDataTest extends BearFrameworkAddonTestCase
+class PagesDataTest extends BearCMSTestCase
 {
 
     /**

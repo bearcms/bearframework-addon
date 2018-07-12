@@ -10,7 +10,7 @@
 /**
  * @runTestsInSeparateProcesses
  */
-class NavigationElementTest extends BearFrameworkAddonTestCase
+class NavigationElementTest extends BearCMSTestCase
 {
 
     private function requireEditable($result)

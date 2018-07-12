@@ -10,13 +10,13 @@
 /**
  * @runTestsInSeparateProcesses
  */
-class DefaultThemeTest extends BearFrameworkAddonTestCase
+class DefaultThemeTest extends BearCMSTestCase
 {
 
     /**
      * 
      */
-    public function testBlogPostsElement()
+    public function testDefaults()
     {
         $this->assertTrue(true);
 //        $app = $this->getApp();

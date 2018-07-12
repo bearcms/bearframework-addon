@@ -10,7 +10,7 @@
 /**
  * @runTestsInSeparateProcesses
  */
-class ImageGalleryElementTest extends BearFrameworkAddonTestCase
+class ImageGalleryElementTest extends BearCMSTestCase
 {
 
     private function requireEditable($result)
@@ -55,9 +55,9 @@ class ImageGalleryElementTest extends BearFrameworkAddonTestCase
     public function testOutput()
     {
         $app = $this->getApp();
-        $this->createSampleFile($app->config->appDir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'file1.jpg', 'jpg');
-        $this->createSampleFile($app->config->appDir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'file2.jpg', 'jpg');
-        $this->createSampleFile($app->config->appDir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'file3.jpg', 'jpg');
+        $this->makeSampleFile($app->config->appDir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'file1.jpg', 'jpg');
+        $this->makeSampleFile($app->config->appDir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'file2.jpg', 'jpg');
+        $this->makeSampleFile($app->config->appDir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'file3.jpg', 'jpg');
         $app->assets->addDir($app->config->appDir . DIRECTORY_SEPARATOR . 'assets');
         $result = $app->components->process('<component src="bearcms-image-gallery-element">'
                 . '<file filename="app:assets' . DIRECTORY_SEPARATOR . 'file1.jpg"/>'

@@ -10,7 +10,7 @@
 /**
  * @runTestsInSeparateProcesses
  */
-class SettingsDataTest extends BearFrameworkAddonTestCase
+class SettingsDataTest extends BearCMSTestCase
 {
 
     /**
@@ -20,13 +20,10 @@ class SettingsDataTest extends BearFrameworkAddonTestCase
     {
         $app = $this->getApp();
 
-        $settingsDir = $app->config->dataDir . '/objects/bearcms/';
-        mkdir($settingsDir, 0777, true);
-
         $settings = $app->bearCMS->data->settings->get();
         $this->assertTrue($settings['title'] === 'MY COMPANY'); // This is the default value
 
-        file_put_contents($settingsDir . 'settings.json', '{
+        $app->data->setValue('bearcms/settings.json', '{
     "title": "MY COMPANY 2",
     "description": "The slogan of my company 2",
     "language": "en",

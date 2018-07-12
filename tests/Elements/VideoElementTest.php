@@ -10,7 +10,7 @@
 /**
  * @runTestsInSeparateProcesses
  */
-class VideoElementTest extends BearFrameworkAddonTestCase
+class VideoElementTest extends BearCMSTestCase
 {
 
     private function requireEditable($result)
@@ -40,9 +40,9 @@ class VideoElementTest extends BearFrameworkAddonTestCase
     private function createSampleVideoFiles()
     {
         $app = $this->getApp();
-        $this->createDir($app->config->appDir . '/assets/');
+        $this->makeDir($app->config->appDir . '/assets/');
         $app->assets->addDir($app->config->appDir . '/assets/');
-        $this->createFile($app->config->appDir . '/assets/file1.mp4', 'content');
+        $this->makeFile($app->config->appDir . '/assets/file1.mp4', 'content');
     }
 
     /**

@@ -10,7 +10,7 @@
 /**
  * @runTestsInSeparateProcesses
  */
-class LinkElementTest extends BearFrameworkAddonTestCase
+class LinkElementTest extends BearCMSTestCase
 {
 
     private function requireEditable($result)

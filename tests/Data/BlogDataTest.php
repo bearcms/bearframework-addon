@@ -10,21 +10,17 @@
 /**
  * @runTestsInSeparateProcesses
  */
-class BlogDataTest extends BearFrameworkAddonTestCase
+class BlogDataTest extends BearCMSTestCase
 {
 
     /**
      * 
      */
-    public function testUsers()
+    public function testData()
     {
         $app = $this->getApp();
-        $blogPostsDir = $app->config->dataDir . '/objects/bearcms/blog/post/';
-        mkdir($blogPostsDir, 0777, true);
 
-        $this->assertFalse($app->bearCMS->data->users->hasUsers());
-
-        file_put_contents($blogPostsDir . md5('cd763a6f1574e1d326c511a2fda878d1') . '.json', '{
+        $app->data->setValue('bearcms/blog/post/' . md5('cd763a6f1574e1d326c511a2fda878d1') . '.json', '{
     "id": "cd763a6f1574e1d326c511a2fda878d1",
     "title": "My blog post 1",
     "slug": "",
@@ -38,7 +34,7 @@ class BlogDataTest extends BearFrameworkAddonTestCase
     "lastChangeTime": 1477377111
 }');
 
-        file_put_contents($blogPostsDir . md5('cd763a6f1574e1d326c511a2fda878d2') . '.json', '{
+        $app->data->setValue('bearcms/blog/post/' . md5('cd763a6f1574e1d326c511a2fda878d2') . '.json', '{
     "id": "cd763a6f1574e1d326c511a2fda878d2",
     "title": "My blog post 2",
     "slug": "",
@@ -51,7 +47,7 @@ class BlogDataTest extends BearFrameworkAddonTestCase
     "lastChangeTime": 1477377112
 }');
 
-        file_put_contents($blogPostsDir . md5('cd763a6f1574e1d326c511a2fda878d3') . '.json', '{
+        $app->data->setValue('bearcms/blog/post/' . md5('cd763a6f1574e1d326c511a2fda878d3') . '.json', '{
     "id": "cd763a6f1574e1d326c511a2fda878d3",
     "title": "My blog post 3",
     "slug": "",
@@ -65,7 +61,7 @@ class BlogDataTest extends BearFrameworkAddonTestCase
     "lastChangeTime": 1477377113
 }');
 
-        file_put_contents($blogPostsDir . md5('cd763a6f1574e1d326c511a2fda878d4') . '.json', '{
+        $app->data->setValue('bearcms/blog/post/' . md5('cd763a6f1574e1d326c511a2fda878d4') . '.json', '{
     "id": "cd763a6f1574e1d326c511a2fda878d4",
     "title": "My blog post 4",
     "slug": "",

@@ -10,7 +10,7 @@
 /**
  * @runTestsInSeparateProcesses
  */
-class ImageElementTest extends BearFrameworkAddonTestCase
+class ImageElementTest extends BearCMSTestCase
 {
 
     private function requireEditable($result)
@@ -55,7 +55,7 @@ class ImageElementTest extends BearFrameworkAddonTestCase
     public function testOutput()
     {
         $app = $this->getApp();
-        $this->createSampleFile($app->config->appDir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'file1.jpg', 'jpg');
+        $this->makeSampleFile($app->config->appDir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'file1.jpg', 'jpg');
         $app->assets->addDir($app->config->appDir . DIRECTORY_SEPARATOR . 'assets');
         $result = $app->components->process('<component src="bearcms-image-element" filename="app:assets' . DIRECTORY_SEPARATOR . 'file1.jpg"/>');
         $this->assertTrue(strpos($result, 'file1.jpg') !== false);

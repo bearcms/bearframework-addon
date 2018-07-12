@@ -12,15 +12,12 @@
         </testsuite>
     </testsuites>
     <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+        <whitelist>
             <directory>./classes/</directory>
             <directory>./components/</directory>
-            <file>./autoload.php</file>
-            <file>./ide-helper.php</file>
+            <directory>./locales/</directory>
+            <directory>./themes/</directory>
             <file>./index.php</file>
         </whitelist>
     </filter>
-    <php>
-        <ini name="date.timezone" value="UTC"/>
-    </php>
 </phpunit>
