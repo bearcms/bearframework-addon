@@ -193,10 +193,11 @@ class Data
             self::_updateGroupValue('all');
         }
         if (strpos($key, 'bearcms/elements/element/') === 0 && $app->hooks->exists('bearCMSElementChanged')) {
-            $data = new \ArrayObject();
             $rawElementData = \BearCMS\Internal\Data::getValue($key);
             $elementData = ElementsHelper::decodeElementRawData($rawElementData);
-            $app->hooks->execute('bearCMSElementChanged', $elementData['id']);
+            if (is_array($elementData)) {
+                $app->hooks->execute('bearCMSElementChanged', $elementData['id']);
+            }
         }
     }
 

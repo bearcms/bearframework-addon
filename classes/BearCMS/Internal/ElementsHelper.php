@@ -176,45 +176,35 @@ final class ElementsHelper
         $elementData = null;
         if (strlen($rawData) > 0) {
             $elementData = self::decodeElementRawData($rawData);
-            $component->id = $elementData['id'];
+            if (is_array($elementData)) {
+                $component->id = $elementData['id'];
+            }
         } elseif (strlen($component->id) > 0) {
             $elementsRawData = self::getElementsRawData([$component->id]);
             if (isset($elementsRawData[$component->id])) {
                 $component->setAttribute('bearcms-internal-attribute-raw-data', $elementsRawData[$component->id]);
-                //$elementData = self::decodeElementRawData($elementsRawData[$component->id]);
             }
         }
-        //if ($elementData !== null) {
-        //self::updateComponentFromRawData($component, $elementData);
-        //}
-
         self::updateComponentEditableAttribute($component);
         self::updateComponentContextAttributes($component);
     }
 
     /**
-     * 
-     * @param type $data
-     * @return type
-     * @throws \Exception
+     * Returns an array (['id' => ..., 'type' => ..., 'data' => ...]) or null if data is invalid
+     * @param string $data
+     * @return array|null
      */
-    static function decodeElementRawData($data)
+    static function decodeElementRawData(string $data): ?array
     {
-        $data2 = $data;
         $data = json_decode($data, true);
-        if (!is_array($data)) {
-            throw new \Exception('Invalid element data');
+        if (is_array($data) &&
+                isset($data['id']) && is_string($data['id']) && strlen($data['id']) > 0 &&
+                isset($data['type']) && is_string($data['type']) && strlen($data['type']) > 0 &&
+                isset($data['data']) && is_array($data['data'])
+        ) {
+            return $data;
         }
-        if (!isset($data['id']) || !is_string($data['id'])) {
-            throw new \Exception('Missing element id');
-        }
-        if (!isset($data['type']) || !is_string($data['type'])) {
-            throw new \Exception('Missing element type');
-        }
-        if (!isset($data['data']) || !is_array($data['data'])) {
-            throw new \Exception('Missing element data');
-        }
-        return $data;
+        return null;
     }
 
     /**
@@ -228,11 +218,8 @@ final class ElementsHelper
     static function renderElement($rawData, $editable, $contextData)
     {
         $elementData = self::decodeElementRawData($rawData);
-        if (!isset($elementData['id']) || strlen($elementData['id']) === 0) {
-            throw new \Exception('Missing element id');
-        }
-        if (!isset($elementData['type']) || strlen($elementData['type']) === 0) {
-            throw new \Exception('Missing element type');
+        if (!is_array($elementData)) {
+            return '';
         }
         $componentName = array_search($elementData['type'], self::$elementsTypesCodes);
         if ($componentName === false) {

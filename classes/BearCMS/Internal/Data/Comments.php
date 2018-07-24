@@ -131,7 +131,7 @@ final class Comments
             $elementsRawData = ElementsHelper::getElementsRawData($containerElementIDs);
             foreach ($elementsRawData as $elementRawData) {
                 $elementData = ElementsHelper::decodeElementRawData($elementRawData);
-                if ($elementData['type'] === 'comments') {
+                if (is_array($elementData) && $elementData['type'] === 'comments') {
                     if (isset($elementData['data']['threadID'])) {
                         $result[$elementData['data']['threadID']] = $app->request->base . $page->path;
                     }
@@ -144,7 +144,7 @@ final class Comments
             $elementsRawData = ElementsHelper::getElementsRawData($containerElementIDs);
             foreach ($elementsRawData as $elementRawData) {
                 $elementData = ElementsHelper::decodeElementRawData($elementRawData);
-                if ($elementData['type'] === 'comments') {
+                if (is_array($elementData) && $elementData['type'] === 'comments') {
                     if (isset($elementData['data']['threadID'])) {
                         $result[$elementData['data']['threadID']] = $app->request->base . Options::$blogPagesPathPrefix . $blogPost->slug . '/';
                     }
