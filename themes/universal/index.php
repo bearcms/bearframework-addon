@@ -20,7 +20,7 @@ $app->bearCMS->themes
                 return include $context->dir . '/themes/universal/locales/en.php';
             })
             ->addDictionary('bg', function() use ($context) {
-                return include $context->dir . '/themes/universal//locales/bg.php';
+                return include $context->dir . '/themes/universal/locales/bg.php';
             });
 
             $context->assets
