@@ -19,7 +19,7 @@ if ($editable) {
 }
 
 $rawData = $component->getAttribute('bearcms-internal-attribute-raw-data');
-if ($rawData !== null) {
+if ($rawData !== null && strlen($rawData) > 0) {
     $rawData = json_decode($rawData, true);
     $data = $rawData['data'];
     $options = ElementsHelper::$elementsTypesOptions[$component->src];

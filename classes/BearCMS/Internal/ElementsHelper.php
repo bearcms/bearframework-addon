@@ -181,9 +181,7 @@ final class ElementsHelper
             }
         } elseif (strlen($component->id) > 0) {
             $elementsRawData = self::getElementsRawData([$component->id]);
-            if (isset($elementsRawData[$component->id])) {
-                $component->setAttribute('bearcms-internal-attribute-raw-data', $elementsRawData[$component->id]);
-            }
+            $component->setAttribute('bearcms-internal-attribute-raw-data', $elementsRawData[$component->id]);
         }
         self::updateComponentEditableAttribute($component);
         self::updateComponentContextAttributes($component);
@@ -267,7 +265,10 @@ final class ElementsHelper
                     }
                     $elementsInColumnRawData = self::getElementsRawData($elementsIDs);
                     foreach ($elementsInColumn as $elementInColumnContainerData) {
-                        $columnContent .= self::renderElement($elementsInColumnRawData[$elementInColumnContainerData['id']], $editable, $elementsInColumnContextData);
+                        $elementInColumnRawData = $elementsInColumnRawData[$elementInColumnContainerData['id']];
+                        if ($elementInColumnRawData !== null) {
+                            $columnContent .= self::renderElement($elementInColumnRawData, $editable, $elementsInColumnContextData);
+                        }
                     }
                 }
             }
@@ -348,7 +349,10 @@ final class ElementsHelper
                 }
                 $elementsRawData = self::getElementsRawData($elementsIDs);
                 foreach ($elements as $elementData) {
-                    $content .= self::renderElement($elementsRawData[$elementData['id']], $editable, $elementsContextData);
+                    $elementRawData = $elementsRawData[$elementData['id']];
+                    if ($elementRawData !== null) {
+                        $content .= self::renderElement($elementRawData, $editable, $elementsContextData);
+                    }
                 }
             }
             return $content;
@@ -403,7 +407,7 @@ final class ElementsHelper
      */
     static function getElementsRawData($elementsIDs)
     {
-        $app = App::get();
+        //$app = App::get();
         $result = [];
         //$commands = [];
         $elementsIDs = array_values($elementsIDs);

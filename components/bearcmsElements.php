@@ -163,7 +163,10 @@ if ($renderElementsContainer) {
                 } elseif (isset($elementContainerData['data'], $elementContainerData['data']['type']) && $elementContainerData['data']['type'] === 'floatingBox') {
                     echo ElementsHelper::renderFloatingBox($elementContainerData, $editable, $childrenContextData, !(isset($floatingBoxID{0}) && !$inContainer));
                 } else {
-                    echo ElementsHelper::renderElement($elementsRawData[$elementContainerData['id']], $editable, $childrenContextData);
+                    $elementRawData = $elementsRawData[$elementContainerData['id']];
+                    if ($elementRawData !== null) {
+                        echo ElementsHelper::renderElement($elementRawData, $editable, $childrenContextData);
+                    }
                 }
             }
         }

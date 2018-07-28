@@ -91,8 +91,11 @@ if ($list->length === 0) {
                 $imageElementData = null;
 
                 $walkElements = function($elementID) use (&$textElementData, &$imageElementData) {
-                    $data = ElementsHelper::getElementsRawData([$elementID]);
-                    $elementData = json_decode($data[$elementID], true);
+                    $elementsRawData = ElementsHelper::getElementsRawData([$elementID]);
+                    if ($elementsRawData[$elementID] === null) {
+                        return false;
+                    }
+                    $elementData = json_decode($elementsRawData[$elementID], true);
                     if (isset($elementData['type'])) {
                         if ($textElementData === null && $elementData['type'] === 'text') {
                             $textElementData = $elementData;
@@ -211,10 +214,10 @@ if ($list->length === 0) {
 }
 ?><html>
     <head><?php
-if ($list->length > $limit) {
-    echo '<script id="bearcms-bearframework-addon-script-2" src="' . htmlentities($context->assets->getUrl('components/bearcmsBlogPostsElement/assets/blogPostsElement.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
-    echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
-}
-?></head>
+        if ($list->length > $limit) {
+            echo '<script id="bearcms-bearframework-addon-script-2" src="' . htmlentities($context->assets->getUrl('components/bearcmsBlogPostsElement/assets/blogPostsElement.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
+            echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
+        }
+        ?></head>
     <body><?= $content ?></body>
 </html>

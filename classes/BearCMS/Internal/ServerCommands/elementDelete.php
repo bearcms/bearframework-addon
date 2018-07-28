@@ -17,7 +17,7 @@ return function($data) {
     }
     $elementID = $data['id'];
     $rawDataList = ElementsHelper::getElementsRawData([$elementID]);
-    if (isset($rawDataList[$elementID])) {
+    if ($rawDataList[$elementID] !== null) {
         $elementData = json_decode($rawDataList[$elementID], true);
         $app->data->delete('bearcms/elements/element/' . md5($elementID) . '.json');
         if (isset($elementData['type'])) {

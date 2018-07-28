@@ -130,6 +130,9 @@ final class Comments
             $containerElementIDs = ElementsHelper::getContainerElementsIDs('bearcms-page-' . $page->id);
             $elementsRawData = ElementsHelper::getElementsRawData($containerElementIDs);
             foreach ($elementsRawData as $elementRawData) {
+                if ($elementRawData === null) {
+                    continue;
+                }
                 $elementData = ElementsHelper::decodeElementRawData($elementRawData);
                 if (is_array($elementData) && $elementData['type'] === 'comments') {
                     if (isset($elementData['data']['threadID'])) {
@@ -143,6 +146,9 @@ final class Comments
             $containerElementIDs = ElementsHelper::getContainerElementsIDs('bearcms-blogpost-' . $blogPost->id);
             $elementsRawData = ElementsHelper::getElementsRawData($containerElementIDs);
             foreach ($elementsRawData as $elementRawData) {
+                if ($elementRawData === null) {
+                    continue;
+                }
                 $elementData = ElementsHelper::decodeElementRawData($elementRawData);
                 if (is_array($elementData) && $elementData['type'] === 'comments') {
                     if (isset($elementData['data']['threadID'])) {
