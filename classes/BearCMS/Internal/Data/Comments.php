@@ -124,38 +124,58 @@ final class Comments
     {
         // todo cache
         $app = App::get();
-        $result = [];
-        $pages = $app->bearCMS->data->pages->getList();
-        foreach ($pages as $page) {
-            $containerElementIDs = ElementsHelper::getContainerElementsIDs('bearcms-page-' . $page->id);
-            $elementsRawData = ElementsHelper::getElementsRawData($containerElementIDs);
-            foreach ($elementsRawData as $elementRawData) {
-                if ($elementRawData === null) {
-                    continue;
-                }
-                $elementData = ElementsHelper::decodeElementRawData($elementRawData);
-                if (is_array($elementData) && $elementData['type'] === 'comments') {
-                    if (isset($elementData['data']['threadID'])) {
-                        $result[$elementData['data']['threadID']] = $app->request->base . $page->path;
-                    }
-                }
-            }
+        $cacheKey = 'bearcms-comments-elements-locations';
+        $result = $app->cache->getValue($cacheKey);
+        if ($result !== null) {
+            $result = json_decode($result, true);
         }
-        $blogPosts = $app->bearCMS->data->blogPosts->getList();
-        foreach ($blogPosts as $blogPost) {
-            $containerElementIDs = ElementsHelper::getContainerElementsIDs('bearcms-blogpost-' . $blogPost->id);
-            $elementsRawData = ElementsHelper::getElementsRawData($containerElementIDs);
-            foreach ($elementsRawData as $elementRawData) {
-                if ($elementRawData === null) {
-                    continue;
-                }
-                $elementData = ElementsHelper::decodeElementRawData($elementRawData);
-                if (is_array($elementData) && $elementData['type'] === 'comments') {
-                    if (isset($elementData['data']['threadID'])) {
-                        $result[$elementData['data']['threadID']] = $app->request->base . Options::$blogPagesPathPrefix . $blogPost->slug . '/';
+        if (!is_array($result)) {
+            $result = [];
+
+            $pages = $app->bearCMS->data->pages->getList();
+            $walkPageElements = function($pageID, $path) use ($app, &$result) {
+                $url = null;
+                $containerElementIDs = ElementsHelper::getContainerElementsIDs('bearcms-page-' . $pageID);
+                $elementsRawData = ElementsHelper::getElementsRawData($containerElementIDs);
+                foreach ($elementsRawData as $elementRawData) {
+                    if ($elementRawData === null) {
+                        continue;
+                    }
+                    $elementData = ElementsHelper::decodeElementRawData($elementRawData);
+                    if (is_array($elementData) && $elementData['type'] === 'comments') {
+                        if (isset($elementData['data']['threadID'])) {
+                            if ($url === null) {
+                                $url = $app->urls->get($path);
+                            }
+                            $result[$elementData['data']['threadID']] = $url;
+                        }
                     }
                 }
+            };
+            $walkPageElements('home', '/');
+            foreach ($pages as $page) {
+                $walkPageElements($page->id, $page->path);
             }
+            $blogPosts = $app->bearCMS->data->blogPosts->getList();
+            foreach ($blogPosts as $blogPost) {
+                $url = $app->urls->get(Options::$blogPagesPathPrefix . (strlen($blogPost->slug) === 0 ? 'draft-' . $blogPost->id : $blogPost->slug) . '/');
+                $threadID = 'bearcms-blogpost-' . $blogPost->id;
+                $result[$threadID] = $url;
+//            $containerElementIDs = ElementsHelper::getContainerElementsIDs('bearcms-blogpost-' . $blogPost->id);
+//            $elementsRawData = ElementsHelper::getElementsRawData($containerElementIDs);
+//            foreach ($elementsRawData as $elementRawData) {
+//                if ($elementRawData === null) {
+//                    continue;
+//                }
+//                $elementData = ElementsHelper::decodeElementRawData($elementRawData);
+//                if (is_array($elementData) && $elementData['type'] === 'comments') {
+//                    if (isset($elementData['data']['threadID'])) {
+//                        $result[$elementData['data']['threadID']] = $url;
+//                    }
+//                }
+//            }
+            }
+            $app->cache->set($app->cache->make($cacheKey, json_encode($result)));
         }
         return $result;
     }
