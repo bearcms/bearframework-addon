@@ -192,7 +192,9 @@ class Data
             self::$cache = [];
             self::_updateGroupValue('all');
         }
-        $app->cache->delete('bearcms-comments-elements-locations');
+        if (strpos($key, 'bearcms/elements/') === 0 || strpos($key, 'bearcms/pages/') === 0) {
+            $app->cache->delete('bearcms-comments-elements-locations');
+        }
         if (strpos($key, 'bearcms/elements/element/') === 0 && $app->hooks->exists('bearCMSElementChanged')) {
             $rawElementData = \BearCMS\Internal\Data::getValue($key);
             $elementData = ElementsHelper::decodeElementRawData($rawElementData);
