@@ -36,6 +36,10 @@ $poweredByLinkVisibility = (int) $options['poweredByLinkVisibility'] && !$isWhit
                 margin: 0;
                 min-height: 100%;
             }
+            *{outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+            ul,ol,li{list-style-position:inside;}
+            img{border:0;}
+            a{text-decoration:none;}
             <?php if ($navigationVisibility === '1') { ?>
                 .template-navigation ul, .template-navigation li{
                     list-style-type: none;
