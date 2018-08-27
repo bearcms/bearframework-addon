@@ -913,8 +913,10 @@ $app->hooks
             }
         });
 
-if (!(isset($options['addDefaultThemes']) && $options['addDefaultThemes'] === false)) {
-    $app->bearCMS->themes->addDefault();
+if (Options::hasFeature('THEMES')) {
+    if (!(isset($options['addDefaultThemes']) && $options['addDefaultThemes'] === false)) {
+        $app->bearCMS->themes->addDefault();
+    }
 }
 
 $app->hooks
