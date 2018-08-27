@@ -168,7 +168,7 @@ final class Server
         $clientData = [];
         $clientData['about'] = [
             'type' => 'bearframework-addon',
-            'bearFrameworkVersion' => defined('\BearFramework\App::VERSION') ? $app::VERSION : defined('\BearFramework::VERSION') ? \BearFramework::VERSION : '',
+            'bearFrameworkVersion' => defined('\BearFramework\App::VERSION') ? $app::VERSION : (defined('\BearFramework::VERSION') ? \BearFramework::VERSION : ''),
             'bearCMSAddonVersion' => \BearCMS::VERSION
         ];
         if (Options::$appSecretKey !== null) {
