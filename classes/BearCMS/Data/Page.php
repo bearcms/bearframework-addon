@@ -14,16 +14,17 @@ use BearFramework\App;
 class Page extends \BearCMS\DataObject
 {
 
-    function initialize()
+    function __construct(array $data = [])
     {
-
-        $this->defineProperty('children', [
-            'get' => function() {
-                $app = App::get();
-                return $app->bearCMS->data->pages->getList()
+        $this
+                ->defineProperty('children', [
+                    'get' => function() {
+                        $app = App::get();
+                        return $app->bearCMS->data->pages->getList()
                                 ->filterBy('parentID', $this->id);
-            }
+                    }
         ]);
+        parent::__construct($data);
     }
 
 }
