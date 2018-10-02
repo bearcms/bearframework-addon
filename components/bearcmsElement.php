@@ -83,7 +83,7 @@ $componentHTML = (string) $component;
 if ($containerType === 'none') {
     echo $componentHTML;
 } else {
-    $attributes = '';
+    $attributes = ' class="bearcms-elements-element-container"';
     if ($editable) {
         ElementsHelper::$editorData[] = ['element', $component->id, $componentContextData, $typeCode];
         $htmlElementID = 'brelc' . md5($component->id);

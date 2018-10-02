@@ -278,13 +278,12 @@ final class ElementsHelper
             if ($columnsCount > $i + 1) {
                 $columnStyle .= 'margin-right:' . $spacing . ';';
             }
-            $content .= '<div style="' . $columnStyle . '">' . $columnContent . '</div>';
+            $content .= '<div class="bearcms-elements-columns-column" style="' . $columnStyle . '">' . $columnContent . '</div>';
         }
 
         if ($inContainer) {
-            $attributes = '';
             $className = 'bre' . md5($spacing);
-            $attributes .= ' class="' . $className . '"';
+            $attributes = ' class="bearcms-elements-element-container bearcms-elements-columns ' . $className . '"';
 
             if ($editable) {
                 $htmlElementID = 'brelb' . md5($elementContainerData['id']);
@@ -358,13 +357,12 @@ final class ElementsHelper
             return $content;
         };
 
-        $content .= '<div style="margin-' . ($position === 'left' ? 'right' : 'left') . ':' . $spacing . ';float:' . $position . ';width:calc(' . $width . ' - ' . $spacing . '/2);">' . $getElementsContent('inside') . '</div>';
-        $content .= '<div style="display:block;">' . $getElementsContent('outside') . '</div>';
+        $content .= '<div class="bearcms-elements-floating-box-inside" style="margin-' . ($position === 'left' ? 'right' : 'left') . ':' . $spacing . ';float:' . $position . ';width:calc(' . $width . ' - ' . $spacing . '/2);">' . $getElementsContent('inside') . '</div>';
+        $content .= '<div class="bearcms-elements-floating-box-outside" style="display:block;">' . $getElementsContent('outside') . '</div>';
 
         if ($inContainer) {
-            $attributes = '';
             $className = 'bre' . md5($spacing);
-            $attributes .= ' class="' . $className . '"';
+            $attributes = ' class="bearcms-elements-element-container bearcms-elements-floating-box ' . $className . '"';
 
             if ($editable) {
                 $htmlElementID = 'brelb' . md5($elementContainerData['id']);
