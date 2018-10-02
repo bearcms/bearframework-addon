@@ -99,7 +99,8 @@ class OptionsDefinitionGroup
                         "id" => $idPrefix . "TextCSS",
                         "type" => "css",
                         "cssOutput" => [
-                            ["selector", $parentSelector . " .bearcms-text-element"]
+                            ["selector", $parentSelector . " .bearcms-text-element"],
+                            ["rule", $parentSelector . " .bearcms-text-element ul,ol,li", "list-style-position:inside;"]
                         ]
                     ],
                     [
@@ -141,6 +142,7 @@ class OptionsDefinitionGroup
                         "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-image-element", "overflow:hidden;"],
+                            ["rule", $parentSelector . " .bearcms-image-element img", "border:0;"],
                             ["selector", $parentSelector . " .bearcms-image-element"]
                         ]
                     ]
@@ -168,6 +170,7 @@ class OptionsDefinitionGroup
                                 "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-image-gallery-element-image", "overflow:hidden;"],
+                                    ["rule", $parentSelector . " .bearcms-image-gallery-element-image img", "border:0;"],
                                     ["selector", $parentSelector . " .bearcms-image-gallery-element-image"]
                                 ]
                             ]
@@ -323,7 +326,7 @@ class OptionsDefinitionGroup
                                 "type" => "css",
                                 "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                                 "cssOutput" => [
-                                    ["rule", ".bearcms-comments-comment", "overflow:hidden;"],
+                                    ["rule", $parentSelector . " .bearcms-comments-comment", "overflow:hidden;"],
                                     ["selector", $parentSelector . " .bearcms-comments-comment"]
                                 ]
                             ],
@@ -583,7 +586,8 @@ class OptionsDefinitionGroup
                         "id" => $idPrefix . "HtmlCSS",
                         "type" => "css",
                         "cssOutput" => [
-                            ["selector", $parentSelector . " .bearcms-html-element"]
+                            ["selector", $parentSelector . " .bearcms-html-element"],
+                            ["rule", $parentSelector . " .bearcms-html-element ul,ol,li", "list-style-position:inside;"]
                         ]
                     ],
                     [
