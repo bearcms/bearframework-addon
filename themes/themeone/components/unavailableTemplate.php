@@ -19,7 +19,7 @@
             body{
                 background-color:#000;
                 color:#fff;
-                font-family:Arial,Helvetica,sans-serif;
+                font-family:Helvetica,Arial,sans-serif;
                 font-size:14px;
                 height:100%;
                 box-sizing:border-box;

@@ -130,7 +130,7 @@ class Themes
     {
         $app = App::get();
         $context = $app->context->get(__FILE__);
-        require $context->dir . '/themes/universal/index.php';
+        require $context->dir . '/themes/themeone/index.php';
     }
 
     /**
