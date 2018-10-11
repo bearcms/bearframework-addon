@@ -83,12 +83,13 @@ $componentHTML = (string) $component;
 if ($containerType === 'none') {
     echo $componentHTML;
 } else {
-    $attributes = ' class="bearcms-elements-element-container"';
+    $attributes = '';
     if ($editable) {
         ElementsHelper::$editorData[] = ['element', $component->id, $componentContextData, $typeCode];
         $htmlElementID = 'brelc' . md5($component->id);
         $attributes .= ' id="' . $htmlElementID . '"';
     }
+    $attributes .= ' class="bearcms-elements-element-container"';
     if ($editable && !$inElementsContainer) {
         echo '<div>';
     }

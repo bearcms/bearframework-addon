@@ -283,13 +283,14 @@ final class ElementsHelper
 
         if ($inContainer) {
             $className = 'bre' . md5($spacing);
-            $attributes = ' class="bearcms-elements-element-container bearcms-elements-columns ' . $className . '"';
+            $attributes = '';
 
             if ($editable) {
                 $htmlElementID = 'brelb' . md5($elementContainerData['id']);
                 $attributes .= ' id="' . $htmlElementID . '"';
                 ElementsHelper::$editorData[] = ['columns', $elementContainerData['id'], $contextData];
             }
+            $attributes .= ' class="bearcms-elements-element-container bearcms-elements-columns ' . $className . '"';
 
             $attributes .= ' data-srvri="t2 s' . $spacing . '"'; // data-responsive-attributes="w<=500=>data-srvri-vertical=1"
 
@@ -362,13 +363,14 @@ final class ElementsHelper
 
         if ($inContainer) {
             $className = 'bre' . md5($spacing);
-            $attributes = ' class="bearcms-elements-element-container bearcms-elements-floating-box ' . $className . '"';
+            $attributes = '';
 
             if ($editable) {
                 $htmlElementID = 'brelb' . md5($elementContainerData['id']);
                 $attributes .= ' id="' . $htmlElementID . '"';
                 ElementsHelper::$editorData[] = ['floatingBox', $elementContainerData['id'], $contextData];
             }
+            $attributes .= ' class="bearcms-elements-element-container bearcms-elements-floating-box ' . $className . '"';
 
             $attributes .= ' data-srvri="t3 s' . $spacing . '"'; // data-responsive-attributes="w<=500=>data-srvri-vertical=1"
 
