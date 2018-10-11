@@ -22,7 +22,7 @@ final class Options
     static $logServerRequests = false;
     static $addonsDir = false;
     static $uiColor = null;
-    static $uiTextColor = '#ffffff';
+    static $uiTextColor = null;
     static $adminPagesPathPrefix = '/admin/';
     static $blogPagesPathPrefix = '/b/';
     static $autoCreateHomePage = true;
