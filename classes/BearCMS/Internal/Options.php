@@ -21,7 +21,7 @@ final class Options
     static $cookiePrefix = null;
     static $logServerRequests = false;
     static $addonsDir = false;
-    static $uiColor = '#1BB0CE';
+    static $uiColor = null;
     static $uiTextColor = '#ffffff';
     static $adminPagesPathPrefix = '/admin/';
     static $blogPagesPathPrefix = '/b/';
