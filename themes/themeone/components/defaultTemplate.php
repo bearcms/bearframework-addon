@@ -52,7 +52,7 @@ foreach ($cssRules as $cssRuleSelector => $cssRuleValue) {
 <?php } ?>
 <?php if ($hasHeaderTitle) { ?>
                 .template-header-title-container{margin-top:40px;text-align:center;}
-                .template-header-title{text-decoration:none;color:<?= $accentColor ?>;font-size:25px;font-weight:bold;}
+                .template-header-title{text-decoration:none;color:<?= $accentColor ?>;font-size:<?= $isHomePage ? 25 : 18 ?>px;}
 <?php } ?>
             .template-content{min-height:400px;max-width:860px;margin:35px auto;padding:0 15px;}
 
@@ -131,7 +131,7 @@ foreach ($cssRules as $cssRuleSelector => $cssRuleValue) {
                         box-sizing: border-box;
                         margin-top:10px;
                     }
-                                                                                                        
+                                                                                                                
                     #template-navigation-toggle-button:checked + label + div .template-navigation-content > .bearcms-navigation-element-item{
                         margin-left:0;
                         margin-top:5px;
@@ -142,9 +142,9 @@ foreach ($cssRules as $cssRuleSelector => $cssRuleValue) {
 $elementsStyles = '.template-content .bearcms-heading-element-large{color:' . $accentColor . ';font-size:21px;line-height:180%;text-align:center;}
             .template-content .bearcms-heading-element-medium{color:' . $accentColor . ';font-size:18px;line-height:180%;text-align:center;}
             .template-content .bearcms-heading-element-small{color:' . $accentColor . ';;font-size:15px;line-height:180%;text-align:center;}
-            .template-content .bearcms-text-element{line-height:180%;text-align:justify;}
+            .template-content .bearcms-text-element{line-height:180%;}
             .template-content .bearcms-text-element a{text-decoration:underline;color:' . $accentColor . ';}
-            .template-content .bearcms-html-element{line-height:180%;text-align:justify;}
+            .template-content .bearcms-html-element{line-height:180%;}
             .template-content .bearcms-html-element a{text-decoration:underline;color:' . $accentColor . ';}
             .template-content .bearcms-link-element{line-height:180%;text-decoration:underline;color:' . $accentColor . ';}
             .template-content .bearcms-image-element-image{border-radius:2px;}
@@ -178,7 +178,10 @@ $elementsStyles = '.template-content .bearcms-heading-element-large{color:' . $a
             .template-content .bearcms-comments-element-text-input{border:1px solid ' . $textColor . ';color:' . $textColor . ';margin-bottom:10px;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:180%;height:100px;padding:5px 10px;width:100%;background-color:transparent;border-radius:2px;}
             .template-content .bearcms-comments-element-send-button{color:' . $accentColor . ';text-decoration:underline;}
             .template-content .bearcms-comments-element-send-button-waiting{color:' . $textColor . ';text-decoration:none;}
-                                                                                    
+            
+            .template-content .bearcms-blog-posts-element-post:not(:first-child){margin-top:15px;}
+            .template-content .bearcms-blog-posts-element-show-more-button-container{margin-top:15px;}
+            .template-content .bearcms-blog-posts-element-show-more-button{text-decoration:underline;color:' . $accentColor . ';}
             .template-content .bearcms-blog-posts-element-post-title{font-size:18px;text-decoration:underline;color:' . $accentColor . ';}
             .template-content .bearcms-blog-posts-element-post-date-container{padding-top:10px;}
             .template-content .bearcms-blog-posts-element-post-date{font-size:11px;}
@@ -194,7 +197,7 @@ if ($hasFooter) {
     echo str_replace('.template-content', '.template-footer', $elementsStyles);
 }
 ?>            
-            .template-separator{margin:0 auto;max-width:250px;border-top:1px solid <?= $accentColor ?>;}
+            .template-separator{margin:0 auto;max-width:250px;border-top:1px solid <?= $textColor ?>;}
 <?php if (!$isWhitelabel) { ?>
                 .template-powered-by-link-container{max-width:860px;margin:35px auto;text-align:center;}
                 .template-powered-by-link{color:<?= $textColor ?> !important;text-decoration:none !important;}
@@ -209,7 +212,7 @@ if ($hasFooter) {
                 echo '<div class="template-header-logo-container">' . $imageHTML . '</div>';
             }
             if ($hasHeaderTitle) {
-                echo '<div class="template-header-title-container"><a class="template-header-title" href="' . htmlentities($app->urls->get()) . '">' . htmlspecialchars($settings['title']) . '</a></div>';
+                echo '<div class="template-header-title-container"><' . ($isHomePage ? 'span' : 'a href="' . htmlentities($app->urls->get()) . '"') . ' class="template-header-title">' . htmlspecialchars($settings['title']) . '</' . ($isHomePage ? 'span' : 'a') . '></div>';
             }
 
             if ($hasNavigation) {
