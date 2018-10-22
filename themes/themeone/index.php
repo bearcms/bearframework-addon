@@ -26,11 +26,11 @@ $app->bearCMS->themes
             $context->assets
             ->addDir('themes/themeone/assets');
 
-            $version = '1.0';
+            $version = '1.1';
             $version .= '.' . (int) $app->bearCMS->isWhitelabel();
 
             return [
-                //'version' => $version,
+                'version' => $version,
                 'initialize' => function() use ($context) {
                     
                 },
