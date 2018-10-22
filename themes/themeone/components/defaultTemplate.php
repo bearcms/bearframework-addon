@@ -54,9 +54,10 @@ foreach ($cssRules as $cssRuleSelector => $cssRuleValue) {
                 .template-header-title-container{margin-top:40px;text-align:center;}
                 .template-header-title{text-decoration:none;color:<?= $accentColor ?>;font-size:<?= $isHomePage ? 25 : 18 ?>px;}
 <?php } ?>
-            .template-content{min-height:400px;max-width:860px;margin:35px auto;padding:0 15px;}
+            .template-content{min-height:400px;max-width:860px;margin:0 auto;padding:35px 15px;}
 
-            .template-footer{max-width:860px;margin:35px auto;padding:0 15px;}
+            .template-footer{background-color:#111;}
+            .template-footer > div{max-width:860px;margin:0 auto;padding:35px 15px;}
             
 <?php if ($hasNavigation) { ?>
                 .template-navigation ul, .template-navigation li{
@@ -131,7 +132,6 @@ foreach ($cssRules as $cssRuleSelector => $cssRuleValue) {
                         box-sizing: border-box;
                         margin-top:10px;
                     }
-                                                                                                                
                     #template-navigation-toggle-button:checked + label + div .template-navigation-content > .bearcms-navigation-element-item{
                         margin-left:0;
                         margin-top:5px;
@@ -139,68 +139,68 @@ foreach ($cssRules as $cssRuleSelector => $cssRuleValue) {
                 }
 <?php } ?>
 <?php
-$elementsStyles = '.template-content .bearcms-heading-element-large{color:' . $accentColor . ';font-size:21px;line-height:180%;text-align:center;}
-            .template-content .bearcms-heading-element-medium{color:' . $accentColor . ';font-size:18px;line-height:180%;text-align:center;}
-            .template-content .bearcms-heading-element-small{color:' . $accentColor . ';;font-size:15px;line-height:180%;text-align:center;}
-            .template-content .bearcms-text-element{line-height:180%;}
-            .template-content .bearcms-text-element a{text-decoration:underline;color:' . $accentColor . ';}
-            .template-content .bearcms-html-element{line-height:180%;}
-            .template-content .bearcms-html-element a{text-decoration:underline;color:' . $accentColor . ';}
-            .template-content .bearcms-link-element{line-height:180%;text-decoration:underline;color:' . $accentColor . ';}
-            .template-content .bearcms-image-element-image{border-radius:2px;}
-            .template-content .bearcms-image-gallery-element-image{border-radius:2px;}
-            .template-content .bearcms-video-element{border-radius:2px;}
-            .template-content .bearcms-blog-posts-element{}
-            .template-content .bearcms-comments-element{}
-            .template-content .bearcms-navigation-element-item a{line-height:180%;text-decoration:underline;color:' . $accentColor . ';}
+for ($i = 0; $i < ($hasFooter ? 2 : 1); $i++) {
+    $containerClassName = $i === 0 ? '.template-content' : '.template-footer';
+    $elementsAccentColor = $i === 0 ? $accentColor : '#fff';
+    $elementsTextColor = $i === 0 ? $textColor : '#fff';
+    echo '' . $containerClassName . ' .bearcms-heading-element-large{color:' . $elementsAccentColor . ';font-size:21px;line-height:180%;text-align:center;}
+            ' . $containerClassName . ' .bearcms-heading-element-medium{color:' . $elementsAccentColor . ';font-size:18px;line-height:180%;text-align:center;}
+            ' . $containerClassName . ' .bearcms-heading-element-small{color:' . $elementsAccentColor . ';;font-size:15px;line-height:180%;text-align:center;}
+            ' . $containerClassName . ' .bearcms-text-element{line-height:180%;color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-text-element a{text-decoration:underline;color:' . $elementsAccentColor . ';}
+            ' . $containerClassName . ' .bearcms-html-element{line-height:180%;color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-html-element a{text-decoration:underline;color:' . $elementsAccentColor . ';}
+            ' . $containerClassName . ' .bearcms-link-element{line-height:180%;text-decoration:underline;color:' . $elementsAccentColor . ';}
+            ' . $containerClassName . ' .bearcms-image-element-image{border-radius:2px;}
+            ' . $containerClassName . ' .bearcms-image-gallery-element-image{border-radius:2px;}
+            ' . $containerClassName . ' .bearcms-video-element{border-radius:2px;}
+            ' . $containerClassName . ' .bearcms-blog-posts-element{}
+            ' . $containerClassName . ' .bearcms-comments-element{}
+            ' . $containerClassName . ' .bearcms-navigation-element-item a{line-height:180%;text-decoration:underline;color:' . $elementsAccentColor . ';}
                                         
             @media(min-width: 500px) {
-                .template-content .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-large{margin:0 20px;}
-                .template-content .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-medium{margin:0 20px;}
-                .template-content .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-small{margin:0 20px;}
-                .template-content .bearcms-elements > .bearcms-elements-element-container > .bearcms-text-element{margin:0 20px;}
-                .template-content .bearcms-elements > .bearcms-elements-element-container > .bearcms-html-element{margin:0 20px;}
-                .template-content .bearcms-elements > .bearcms-elements-element-container > .bearcms-link-element{margin:0 20px;}
-                .template-content .bearcms-elements > .bearcms-elements-element-container > .bearcms-blog-posts-element{margin:0 20px;}
-                .template-content .bearcms-elements > .bearcms-elements-element-container > .bearcms-comments-element{margin:0 20px;}
-                .template-content .bearcms-elements > .bearcms-elements-element-container > .bearcms-navigation-element{margin:0 20px !important;}
-                .template-content .bearcms-elements > .bearcms-elements-columns{margin:0 20px;}
-                .template-content .bearcms-elements > .bearcms-elements-floating-box{margin:0 20px;}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-large{margin:0 20px;}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-medium{margin:0 20px;}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-small{margin:0 20px;}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-text-element{margin:0 20px;}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-html-element{margin:0 20px;}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-link-element{margin:0 20px;}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-blog-posts-element{margin:0 20px;}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-comments-element{margin:0 20px;}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-navigation-element{margin:0 20px !important;}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-columns{margin:0 20px;}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-floating-box{margin:0 20px;}
             }
 
-            .template-content .bearcms-comments-comment{margin-bottom:10px;}
-            .template-content .bearcms-comments-show-more-button-container{padding-bottom:10px;}
-            .template-content .bearcms-comments-show-more-button{text-decoration:underline;color:' . $textColor . ';}
-            .template-content .bearcms-comments-comment-author-image{width:50px;height:50px;margin-right:10px;border-radius:2px;}
-            .template-content .bearcms-comments-comment-author-name{text-decoration:underline;color:' . $textColor . ';}
-            .template-content .bearcms-comments-comment-text{line-height:180%;}
-            .template-content .bearcms-comments-comment-date{font-size:11px;}
-            .template-content .bearcms-comments-element-text-input{border:1px solid ' . $textColor . ';color:' . $textColor . ';margin-bottom:10px;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:180%;height:100px;padding:5px 10px;width:100%;background-color:transparent;border-radius:2px;}
-            .template-content .bearcms-comments-element-send-button{color:' . $accentColor . ';text-decoration:underline;}
-            .template-content .bearcms-comments-element-send-button-waiting{color:' . $textColor . ';text-decoration:none;}
+            ' . $containerClassName . ' .bearcms-comments-comment{margin-bottom:10px;}
+            ' . $containerClassName . ' .bearcms-comments-show-more-button-container{padding-bottom:10px;}
+            ' . $containerClassName . ' .bearcms-comments-show-more-button{text-decoration:underline;color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-comments-comment-author-image{width:50px;height:50px;margin-right:10px;border-radius:2px;}
+            ' . $containerClassName . ' .bearcms-comments-comment-author-name{text-decoration:underline;color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-comments-comment-text{line-height:180%;color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-comments-comment-date{font-size:11px;color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-comments-element-text-input{border:1px solid ' . $elementsTextColor . ';color:' . $elementsTextColor . ';margin-bottom:10px;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:180%;height:100px;padding:5px 10px;width:100%;background-color:transparent;border-radius:2px;}
+            ' . $containerClassName . ' .bearcms-comments-element-send-button{color:' . $elementsAccentColor . ';text-decoration:underline;}
+            ' . $containerClassName . ' .bearcms-comments-element-send-button-waiting{color:' . $elementsTextColor . ';text-decoration:none;}
             
-            .template-content .bearcms-blog-posts-element-post:not(:first-child){margin-top:15px;}
-            .template-content .bearcms-blog-posts-element-show-more-button-container{margin-top:15px;}
-            .template-content .bearcms-blog-posts-element-show-more-button{text-decoration:underline;color:' . $accentColor . ';}
-            .template-content .bearcms-blog-posts-element-post-title{font-size:18px;text-decoration:underline;color:' . $accentColor . ';}
-            .template-content .bearcms-blog-posts-element-post-date-container{padding-top:10px;}
-            .template-content .bearcms-blog-posts-element-post-date{font-size:11px;}
-            .template-content .bearcms-blog-posts-element-post-content{padding-top:10px;}
+            ' . $containerClassName . ' .bearcms-blog-posts-element-post:not(:first-child){margin-top:15px;}
+            ' . $containerClassName . ' .bearcms-blog-posts-element-show-more-button-container{margin-top:15px;}
+            ' . $containerClassName . ' .bearcms-blog-posts-element-show-more-button{text-decoration:underline;color:' . $elementsAccentColor . ';}
+            ' . $containerClassName . ' .bearcms-blog-posts-element-post-title{font-size:18px;text-decoration:underline;color:' . $elementsAccentColor . ';}
+            ' . $containerClassName . ' .bearcms-blog-posts-element-post-date-container{padding-top:10px;}
+            ' . $containerClassName . ' .bearcms-blog-posts-element-post-date{font-size:11px;color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-blog-posts-element-post-content{padding-top:10px;}
                                                                                     
-            .template-content .bearcms-blogpost-page-title{color:' . $accentColor . ';font-size:21px;line-height:180%;text-align:center;}
-            .template-content .bearcms-blogpost-page-date-container{padding-top:15px;}
-            .template-content .bearcms-blogpost-page-date{font-size:11px;line-height:180%;text-align:center;}
-            .template-content .bearcms-blogpost-page-content{padding-top:15px;}';
-
-echo $elementsStyles;
-if ($hasFooter) {
-    echo str_replace('.template-content', '.template-footer', $elementsStyles);
+            ' . $containerClassName . ' .bearcms-blogpost-page-title{color:' . $elementsAccentColor . ';font-size:21px;line-height:180%;text-align:center;}
+            ' . $containerClassName . ' .bearcms-blogpost-page-date-container{padding-top:15px;}
+            ' . $containerClassName . ' .bearcms-blogpost-page-date{font-size:11px;line-height:180%;text-align:center;}
+            ' . $containerClassName . ' .bearcms-blogpost-page-content{padding-top:15px;}';
 }
 ?>            
-            .template-separator{margin:0 auto;max-width:250px;border-top:1px solid <?= $textColor ?>;}
 <?php if (!$isWhitelabel) { ?>
-                .template-powered-by-link-container{max-width:860px;margin:35px auto;text-align:center;}
-                .template-powered-by-link{color:<?= $textColor ?> !important;text-decoration:none !important;}
+                .template-powered-by-link-container{background-color:#000;}
+                .template-powered-by-link-container > div{max-width:860px;margin:0 auto;padding:35px 15px;text-align:center;}
+                .template-powered-by-link{color:#fff !important;text-decoration:none !important;}
 <?php } ?>
         </style>
     </head>
@@ -231,16 +231,14 @@ if ($hasFooter) {
             echo '</section>';
 
             if ($hasFooter) {
-                echo '<div class="template-separator"></div>';
-                echo '<footer class="template-footer">';
-                echo '<component src="bearcms-elements" editable="true" color="#c15303" class="footer-bearcms-elements" id="footer"/>';
-                echo '</footer>';
+                echo '<footer class="template-footer"><div>';
+                echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer"/>';
+                echo '</div></footer>';
             }
             if (!$isWhitelabel) {
-                echo '<div class="template-separator"></div>';
-                echo '<div class="template-powered-by-link-container">';
+                echo '<div class="template-powered-by-link-container"><div>';
                 echo '<a class="template-powered-by-link" href="https://bearcms.com/" target="_blank" rel="noopener" title="This website is powered by Bear CMS.">Powered by Bear CMS</a>';
-                echo '</div>';
+                echo '</div></div>';
             }
             ?></div></body>
 </html>
