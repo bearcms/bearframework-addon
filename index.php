@@ -892,7 +892,7 @@ $app->hooks
                     if (isset($fileInfo['extension'])) {
                         $tempFileKey = '.temp/bearcms/serverfiles/' . md5($fileServerUrl) . '.' . $fileInfo['extension'];
                         $tempFilename = $app->data->getFilename($tempFileKey);
-                        if ($app->data->exists($tempFileKey) && false) {
+                        if ($app->data->exists($tempFileKey)) {
                             $filename = $tempFilename;
                         } else {
                             $ch = curl_init();
