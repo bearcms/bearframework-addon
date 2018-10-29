@@ -41,6 +41,7 @@ foreach ($cssRules as $cssRuleSelector => $cssRuleValue) {
     <head>
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,minimal-ui">
         <style>
+            body{margin:0;}
 <?= implode('', $cssStyles); ?>
             .template-container *{margin:0;padding:0;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);}
             .template-container{min-height:100vh;font-family:Helvetica,Arial,sans-serif;font-size:14px;background-color:<?= $backgroundColor ?>;color:<?= $textColor ?>;overflow:auto;}

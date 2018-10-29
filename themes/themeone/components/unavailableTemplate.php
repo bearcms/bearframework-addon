@@ -12,8 +12,7 @@
             html{
                 height:100%;
             }
-            html, body{
-                padding:0;
+            body{
                 margin:0;
             }
             body{
