@@ -42,25 +42,25 @@ foreach ($cssRules as $cssRuleSelector => $cssRuleValue) {
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,minimal-ui">
         <style>
             body{margin:0;}
-<?= implode('', $cssStyles); ?>
+            <?= implode('', $cssStyles); ?>
             .template-container *{margin:0;padding:0;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);}
-            .template-container{min-height:100vh;font-family:Helvetica,Arial,sans-serif;font-size:14px;background-color:<?= $backgroundColor ?>;color:<?= $textColor ?>;overflow:auto;}
+            .template-container{min-height:100vh;font-family:Helvetica,Arial,sans-serif;font-size:14px;background-color:<?= $backgroundColor ?>;color:<?= $textColor ?>;display:flex;flex-direction:column;}
 
-            .template-header{max-width:860px;margin:0 auto;padding:0 15px;}
-<?php if ($hasHeaderLogo) { ?>
+            .template-header{width:100%;max-width:860px;margin:0 auto;padding:0 15px;}
+            <?php if ($hasHeaderLogo) { ?>
                 .template-header-logo-container{margin-top:40px;}
                 .template-header-logo{max-width:<?= $headerLogoMaxWidth ?>px;margin:0 auto;}
-<?php } ?>
-<?php if ($hasHeaderTitle) { ?>
+            <?php } ?>
+            <?php if ($hasHeaderTitle) { ?>
                 .template-header-title-container{margin-top:40px;text-align:center;}
                 .template-header-title{text-decoration:none;color:<?= $accentColor ?>;font-size:<?= $isHomePage ? 25 : 18 ?>px;}
-<?php } ?>
-            .template-content{min-height:400px;max-width:860px;margin:0 auto;padding:35px 15px;}
+            <?php } ?>
+            .template-content{width:100%;min-height:400px;max-width:860px;margin:0 auto;padding:35px 15px;flex:1 0 auto;}
 
-            .template-footer{background-color:#111;}
+            .template-footer{width:100%;background-color:#111;}
             .template-footer > div{max-width:860px;margin:0 auto;padding:35px 15px;}
-            
-<?php if ($hasNavigation) { ?>
+
+            <?php if ($hasNavigation) { ?>
                 .template-navigation ul, .template-navigation li{
                     list-style-type: none;
                     list-style-position: outside;
@@ -138,13 +138,13 @@ foreach ($cssRules as $cssRuleSelector => $cssRuleValue) {
                         margin-top:5px;
                     }
                 }
-<?php } ?>
-<?php
-for ($i = 0; $i < ($hasFooter ? 2 : 1); $i++) {
-    $containerClassName = $i === 0 ? '.template-content' : '.template-footer';
-    $elementsAccentColor = $i === 0 ? $accentColor : '#fff';
-    $elementsTextColor = $i === 0 ? $textColor : '#fff';
-    echo '' . $containerClassName . ' .bearcms-heading-element-large{color:' . $elementsAccentColor . ';font-size:21px;line-height:180%;text-align:center;}
+            <?php } ?>
+            <?php
+            for ($i = 0; $i < ($hasFooter ? 2 : 1); $i++) {
+                $containerClassName = $i === 0 ? '.template-content' : '.template-footer';
+                $elementsAccentColor = $i === 0 ? $accentColor : '#fff';
+                $elementsTextColor = $i === 0 ? $textColor : '#fff';
+                echo '' . $containerClassName . ' .bearcms-heading-element-large{color:' . $elementsAccentColor . ';font-size:21px;line-height:180%;text-align:center;}
             ' . $containerClassName . ' .bearcms-heading-element-medium{color:' . $elementsAccentColor . ';font-size:18px;line-height:180%;text-align:center;}
             ' . $containerClassName . ' .bearcms-heading-element-small{color:' . $elementsAccentColor . ';;font-size:15px;line-height:180%;text-align:center;}
             ' . $containerClassName . ' .bearcms-text-element{line-height:180%;color:' . $elementsTextColor . ';}
@@ -196,13 +196,13 @@ for ($i = 0; $i < ($hasFooter ? 2 : 1); $i++) {
             ' . $containerClassName . ' .bearcms-blogpost-page-date-container{padding-top:15px;}
             ' . $containerClassName . ' .bearcms-blogpost-page-date{font-size:11px;line-height:180%;text-align:center;}
             ' . $containerClassName . ' .bearcms-blogpost-page-content{padding-top:15px;}';
-}
-?>            
-<?php if (!$isWhitelabel) { ?>
-                .template-powered-by-link-container{background-color:#000;}
+            }
+            ?>            
+            <?php if (!$isWhitelabel) { ?>
+                .template-powered-by-link-container{width:100%;background-color:#000;}
                 .template-powered-by-link-container > div{max-width:860px;margin:0 auto;padding:35px 15px;text-align:center;}
                 .template-powered-by-link{color:#fff !important;text-decoration:none !important;}
-<?php } ?>
+            <?php } ?>
         </style>
     </head>
     <body><div class="template-container"><?php
@@ -233,7 +233,7 @@ for ($i = 0; $i < ($hasFooter ? 2 : 1); $i++) {
 
             if ($hasFooter) {
                 echo '<footer class="template-footer"><div>';
-                echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer"/>';
+                //echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer"/>';
                 echo '</div></footer>';
             }
             if (!$isWhitelabel) {
