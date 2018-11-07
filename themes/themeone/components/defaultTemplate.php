@@ -233,7 +233,7 @@ foreach ($cssRules as $cssRuleSelector => $cssRuleValue) {
 
             if ($hasFooter) {
                 echo '<footer class="template-footer"><div>';
-                //echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer"/>';
+                echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer"/>';
                 echo '</div></footer>';
             }
             if (!$isWhitelabel) {
