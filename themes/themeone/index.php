@@ -26,13 +26,17 @@ $app->bearCMS->themes
             $context->assets
             ->addDir('themes/themeone/assets');
 
-            $version = '1.1';
+            $version = '1.2';
             $version .= '.' . (int) $app->bearCMS->isWhitelabel();
 
             return [
                 'version' => $version,
-                'initialize' => function() use ($context) {
-                    
+                'initialize' => function() use ($app) {
+                    $app->hooks->add('componentCreated', function($component) {
+                                if ($component->src === 'bearcms-elements') {
+                                    $component->spacing = '1.5rem';
+                                }
+                            });
                 },
                 'apply' => function($response, $options) use ($app, $context) {
                     if ($response instanceof App\Response\HTML) {

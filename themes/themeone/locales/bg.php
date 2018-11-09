@@ -21,4 +21,12 @@ return [
     'bearcms.themes.themeone.options.Visible' => 'Видим',
     'bearcms.themes.themeone.options.Hidden' => 'Скрит',
     'bearcms.themes.themeone.options.Footer' => 'Футър',
+    'bearcms.themes.themeone.options.Text size' => 'Размер на текста',
+    'bearcms.themes.themeone.options.Text small' => 'Малък',
+    'bearcms.themes.themeone.options.Text normal' => 'Нормален',
+    'bearcms.themes.themeone.options.Text large' => 'Голям',
+    'bearcms.themes.themeone.options.Content width' => 'Широчина на съдържанието',
+    'bearcms.themes.themeone.options.Content small' => 'Малка',
+    'bearcms.themes.themeone.options.Content normal' => 'Нормална',
+    'bearcms.themes.themeone.options.Content large' => 'Голяма',
 ];

@@ -21,4 +21,12 @@ return [
     'bearcms.themes.themeone.options.Visible' => 'Visible',
     'bearcms.themes.themeone.options.Hidden' => 'Hidden',
     'bearcms.themes.themeone.options.Footer' => 'Footer',
+    'bearcms.themes.themeone.options.Text size' => 'Text size',
+    'bearcms.themes.themeone.options.Text small' => 'Small',
+    'bearcms.themes.themeone.options.Text normal' => 'Normal',
+    'bearcms.themes.themeone.options.Text large' => 'Large',
+    'bearcms.themes.themeone.options.Content width' => 'Content width',
+    'bearcms.themes.themeone.options.Content small' => 'Small',
+    'bearcms.themes.themeone.options.Content normal' => 'Normal',
+    'bearcms.themes.themeone.options.Content large' => 'Large',
 ];

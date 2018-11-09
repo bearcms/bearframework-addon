@@ -32,6 +32,46 @@ $options->add([
     "name" => __("bearcms.themes.themeone.options.Background color"),
     "defaultValue" => '#ffffff'
 ]);
+$options->add([
+    "id" => "textSize",
+    "type" => "list",
+    "name" => __("bearcms.themes.themeone.options.Text size"),
+    "values" => [
+        [
+            "value" => "1",
+            "name" => __("bearcms.themes.themeone.options.Text small")
+        ],
+        [
+            "value" => "2",
+            "name" => __("bearcms.themes.themeone.options.Text normal")
+        ],
+        [
+            "value" => "3",
+            "name" => __("bearcms.themes.themeone.options.Text large")
+        ]
+    ],
+    "defaultValue" => "2"
+]);
+$options->add([
+    "id" => "contentWidth",
+    "type" => "list",
+    "name" => __("bearcms.themes.themeone.options.Content width"),
+    "values" => [
+        [
+            "value" => "1",
+            "name" => __("bearcms.themes.themeone.options.Content small")
+        ],
+        [
+            "value" => "2",
+            "name" => __("bearcms.themes.themeone.options.Content normal")
+        ],
+        [
+            "value" => "3",
+            "name" => __("bearcms.themes.themeone.options.Content large")
+        ]
+    ],
+    "defaultValue" => "2"
+]);
 
 $group = $options->addGroup(__("bearcms.themes.themeone.options.Header"));
 
