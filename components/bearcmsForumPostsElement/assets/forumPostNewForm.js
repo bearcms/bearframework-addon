@@ -1,5 +1,5 @@
 /*
- * BearCMS addon for Bear Framework
+ * Bear CMS addon for Bear Framework
  * https://bearcms.com/
  * Copyright (c) Amplilabs Ltd.
  * Free to use under the MIT license.
