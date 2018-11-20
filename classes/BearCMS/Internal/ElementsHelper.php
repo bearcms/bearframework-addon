@@ -459,20 +459,16 @@ final class ElementsHelper
                     continue;
                 } elseif ($elementData['data']['type'] === 'floatingBox' && isset($elementData['data']['elements'])) {
                     if (isset($elementData['data']['elements']['inside'])) {
-                        foreach ($elementData['data']['elements']['inside'] as $insideElements) {
-                            foreach ($insideElements as $insideElement) {
-                                if (isset($insideElement['id'])) {
-                                    $result[] = $insideElement['id'];
-                                }
+                        foreach ($elementData['data']['elements']['inside'] as $insideElement) {
+                            if (isset($insideElement['id'])) {
+                                $result[] = $insideElement['id'];
                             }
                         }
                     }
                     if (isset($elementData['data']['elements']['outside'])) {
-                        foreach ($elementData['data']['elements']['outside'] as $outsideElements) {
-                            foreach ($outsideElements as $outsideElement) {
-                                if (isset($outsideElement['id'])) {
-                                    $result[] = $outsideElement['id'];
-                                }
+                        foreach ($elementData['data']['elements']['outside'] as $outsideElement) {
+                            if (isset($outsideElement['id'])) {
+                                $result[] = $outsideElement['id'];
                             }
                         }
                     }
