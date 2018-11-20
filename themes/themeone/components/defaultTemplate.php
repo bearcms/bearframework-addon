@@ -232,13 +232,7 @@ switch ((int) $contentWidthOptionValue) {
                 ' . $containerClassName . ' .bearcms-blogpost-page-date-container{margin-left: ' . $spacing . ';margin-right: ' . $spacing . ';}
             }';
             }
-            ?>            
-            <?php if (!$isWhitelabel) { ?>
-                .template-powered-by-link-container{width:100%;background-color:#000;}
-                .template-powered-by-link-container > div{max-width:<?= $contentWidth ?>;margin:0 auto;padding:3rem 1.2rem;text-align:center;}
-                .template-powered-by-link{color:#fff !important;text-decoration:none !important;}
-            <?php } ?>
-        </style>
+            ?></style>
     </head>
     <body><div class="template-container"><?php
             echo '<header class="template-header">';
@@ -270,11 +264,6 @@ switch ((int) $contentWidthOptionValue) {
                 echo '<footer class="template-footer"><div>';
                 echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer"/>';
                 echo '</div></footer>';
-            }
-            if (!$isWhitelabel) {
-                echo '<div class="template-powered-by-link-container"><div>';
-                echo '<a class="template-powered-by-link" href="https://bearcms.com/" target="_blank" rel="noopener" title="This website is powered by Bear CMS.">Powered by Bear CMS</a>';
-                echo '</div></div>';
             }
             ?></div></body>
 </html>

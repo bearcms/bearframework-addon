@@ -138,10 +138,10 @@ $app->hooks
             }
         });
 
+// Enable elements
 if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
-    $contextDir = $context->dir;
     $app->components
-            ->addAlias('bearcms-elements', 'file:' . $contextDir . '/components/bearcmsElements.php');
+            ->addAlias('bearcms-elements', 'file:' . $context->dir . '/components/bearcmsElements.php');
     \BearCMS\Internal\ElementsTypes::addDefault();
 }
 

@@ -26,8 +26,7 @@ $app->bearCMS->themes
             $context->assets
             ->addDir('themes/themeone/assets');
 
-            $version = '1.2';
-            $version .= '.' . (int) $app->bearCMS->isWhitelabel();
+            $version = '1.3';
 
             return [
                 'version' => $version,
@@ -49,12 +48,11 @@ $app->bearCMS->themes
                         return;
                     }
 
-                    $isWhitelabel = $app->bearCMS->isWhitelabel();
-                    $templateContent = (function($filename, $isWhitelabel, $options) { // used inside
+                    $templateContent = (function($filename, $options) { // used inside
                                         ob_start();
                                         include $filename;
                                         return ob_get_clean();
-                                    })($templateFilename, $isWhitelabel, $options);
+                                    })($templateFilename, $options);
 
                     $template = new \BearFramework\HTMLTemplate($templateContent);
                     $template->insert($options->toHTML());
