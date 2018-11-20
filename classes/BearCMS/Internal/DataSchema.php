@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS;
+namespace BearCMS\Internal;
 
 /**
  * Contains information about the data schema fields

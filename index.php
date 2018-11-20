@@ -51,7 +51,7 @@ $context->classes
         ->add('BearCMS\Data\UsersInvitations', 'classes/BearCMS/Data/UsersInvitations.php')
         ->add('BearCMS\DataList', 'classes/BearCMS/DataList.php')
         ->add('BearCMS\DataObject', 'classes/BearCMS/DataObject.php')
-        ->add('BearCMS\DataSchema', 'classes/BearCMS/DataSchema.php')
+        ->add('BearCMS\Internal\DataSchema', 'classes/BearCMS/Internal/DataSchema.php')
         ->add('BearCMS\Themes', 'classes/BearCMS/Themes.php')
         ->add('BearCMS\Themes\Options', 'classes/BearCMS/Themes/Options.php')
         ->add('BearCMS\Themes\OptionsDefinition', 'classes/BearCMS/Themes/OptionsDefinition.php')

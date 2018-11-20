@@ -14,7 +14,7 @@ return function($data) {
         return [];
     }
     $app = App::get();
-    $dataSchema = new BearCMS\DataSchema($data['id']);
+    $dataSchema = new BearCMS\Internal\DataSchema($data['id']);
     $app->hooks->execute('bearCMSDataSchemaRequested', $dataSchema);
     return $dataSchema->fields;
 };
