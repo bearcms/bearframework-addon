@@ -1,7 +1,7 @@
 <?php
 
 /*
- * BearCMS addon for Bear Framework
+ * Bear CMS addon for Bear Framework
  * https://bearcms.com/
  * Copyright (c) Amplilabs Ltd.
  * Free to use under the MIT license.
@@ -34,6 +34,7 @@ final class Options
     static $htmlSandboxUrl = '';
     static $useDefaultUserProfile = true;
     static $whitelabel = false;
+    static $addonManager = null;
 
     /**
      * 
@@ -124,6 +125,14 @@ final class Options
         if (isset($data['whitelabel'])) {
             self::$whitelabel = (int) $data['whitelabel'] > 0;
         }
+        if (isset($data['addonManager'])) {
+            self::$addonManager = $data['addonManager'];
+        } else {
+            $index = array_search('ADDONS', self::$features);
+            if ($index !== false) {
+                unset(self::$features[$index]);
+            }
+        }
     }
 
     static function hasServer(): bool
@@ -142,6 +151,17 @@ final class Options
             }
         }
         return array_search($name, self::$features) !== false || (sizeof(self::$features) === 1 && self::$features[0] === 'ALL');
+    }
+
+    static function getAddonManager()
+    {
+        if (is_callable(self::$addonManager)) {
+            $object = call_user_func(self::$addonManager);
+            if (method_exists($object, 'addAddon') && method_exists($object, 'removeAddon')) {
+                return $object;
+            }
+        }
+        return null;
     }
 
 }

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * BearCMS addon for Bear Framework
+ * Bear CMS addon for Bear Framework
  * https://bearcms.com/
  * Copyright (c) Amplilabs Ltd.
  * Free to use under the MIT license.
@@ -21,8 +21,12 @@ $options = $app->addons->get('bearcms/bearframework-addon')->options;
 
 $context->classes
         ->add('BearCMS', 'classes/BearCMS.php')
+        ->add('BearCMS\Addons', 'classes/BearCMS/Addons.php')
+        ->add('BearCMS\Addons\Addon', 'classes/BearCMS/Addons/Addon.php')
         ->add('BearCMS\CurrentUser', 'classes/BearCMS/CurrentUser.php')
         ->add('BearCMS\Data', 'classes/BearCMS/Data.php')
+        ->add('BearCMS\Data\Addon', 'classes/BearCMS/Data/Addon.php')
+        ->add('BearCMS\Data\Addons', 'classes/BearCMS/Data/Addons.php')
         ->add('BearCMS\Data\BlogCategories', 'classes/BearCMS/Data/BlogCategories.php')
         ->add('BearCMS\Data\BlogCategory', 'classes/BearCMS/Data/BlogCategory.php')
         ->add('BearCMS\Data\BlogPost', 'classes/BearCMS/Data/BlogPost.php')
@@ -434,35 +438,6 @@ if (Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) {
     ]);
 }
 
-// Load the CMS managed addons
-//if (Options::hasFeature('ADDONS')) {
-//    $addons = InternalData\Addons::getList();
-//    foreach ($addons as $addonData) {
-//        $addonID = $addonData['id'];
-//        $addonDir = Options::$addonsDir . DIRECTORY_SEPARATOR . $addonID . DIRECTORY_SEPARATOR;
-//        if (is_file($addonDir . 'autoload.php')) {
-//            include $addonDir . 'autoload.php';
-//        } else {
-//            throw new Exception('Cannot find autoload.php file for ' . $addonID);
-//        }
-//        if (\BearFramework\Addons::exists($addonID)) {
-//            $_addonData = \BearFramework\Addons::get($addonID);
-//            $_addonOptions = $_addonData->options;
-//            if (isset($_addonOptions['bearCMS']) && is_array($_addonOptions['bearCMS']) && isset($_addonOptions['bearCMS']['assetsDirs']) && is_array($_addonOptions['bearCMS']['assetsDirs'])) {
-//                foreach ($_addonOptions['bearCMS']['assetsDirs'] as $dir) {
-//                    if (is_string($dir)) {
-//                        $app->assets->addDir($addonDir . $dir);
-//                    }
-//                }
-//            }
-//            if ($addonData['enabled']) {
-//                $app->addons->add($addonID, ['addedByBearCMS' => true]);
-//            }
-//        } else {
-//            throw new Exception('Addon ' . $addonID . ' not available');
-//        }
-//    }
-//}
 // Automatically log in the user
 if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature('USERS_LOGIN_DEFAULT'))) {
     $cookies = Cookies::getList(Cookies::TYPE_SERVER);
@@ -472,6 +447,11 @@ if (Options::hasServer() && (Options::hasFeature('USERS') || Options::hasFeature
             $app->bearCMS->currentUser->logout(); // kill the autologin cookie
         }
     }
+}
+
+// Load the CMS managed addons
+if (Options::hasFeature('ADDONS')) {
+    InternalData\Addons::addToApp();
 }
 
 $onResponseCreated = function($response) use ($app) {
@@ -843,70 +823,85 @@ $app->hooks
             }
         })
         ->add('assetPrepare', function(&$filename, $options) use ($app, $context) {
-            // Theme media file
-            $matchingDir = $context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'tm' . DIRECTORY_SEPARATOR;
-            if (strpos($filename, $matchingDir) === 0) {
-                $pathParts = explode(DIRECTORY_SEPARATOR, substr($filename, strlen($matchingDir)), 2);
-                if (isset($pathParts[0], $pathParts[1])) {
-                    $themeIDMD5 = $pathParts[0];
-                    $mediaFilenameMD5 = $pathParts[1];
-                    $themes = BearCMS\Internal\Themes::getList();
-                    foreach ($themes as $id) {
-                        if ($themeIDMD5 === md5($id)) {
-                            $themeManifest = BearCMS\Internal\Themes::getManifest($id, false);
-                            if (isset($themeManifest['media'])) {
-                                foreach ($themeManifest['media'] as $i => $mediaItem) {
-                                    if (isset($mediaItem['filename'])) {
-                                        if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
-                                            $filename = $mediaItem['filename'];
-                                            return;
+            $addonAssetsDir = $context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR;
+            if (strpos($filename, $addonAssetsDir) === 0) {
+
+                $downloadUrl = function($url) use ($app) {
+                    $tempFileKey = '.temp/bearcms/urlassets/' . md5($url) . '.' . pathinfo($url, PATHINFO_EXTENSION);
+                    $tempFilename = $app->data->getFilename($tempFileKey);
+                    if ($app->data->exists($tempFileKey)) {
+                        return $tempFilename;
+                    } else {
+                        $ch = curl_init();
+                        curl_setopt($ch, CURLOPT_URL, $url);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                        $response = curl_exec($ch);
+                        $valid = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200 && strlen($response) > 0;
+                        curl_close($ch);
+                        if ($valid) {
+                            $app->data->set($app->data->make($tempFileKey, $response));
+                            return $tempFilename;
+                        } else {
+                            throw new Exception('Cannot download file from URL (' . $url . ')');
+                        }
+                    }
+                };
+
+                // Proxy
+                $matchingDir = $addonAssetsDir . 'p' . DIRECTORY_SEPARATOR;
+                if (strpos($filename, $matchingDir) === 0) {
+                    $pathParts = explode(DIRECTORY_SEPARATOR, substr($filename, strlen($matchingDir)), 3);
+                    if (isset($pathParts[0], $pathParts[1], $pathParts[2])) {
+                        $url = $pathParts[0] . '://' . $pathParts[1] . '/' . str_replace('\\', '/', $pathParts[2]);
+                        $filename = null;
+                        $filename = $downloadUrl($url);
+                    }
+                } else { // Theme media file
+                    $matchingDir = $addonAssetsDir . 'tm' . DIRECTORY_SEPARATOR;
+                    if (strpos($filename, $matchingDir) === 0) {
+                        $pathParts = explode(DIRECTORY_SEPARATOR, substr($filename, strlen($matchingDir)), 2);
+                        if (isset($pathParts[0], $pathParts[1])) {
+                            $themeIDMD5 = $pathParts[0];
+                            $mediaFilenameMD5 = $pathParts[1];
+                            $themes = BearCMS\Internal\Themes::getList();
+                            foreach ($themes as $id) {
+                                if ($themeIDMD5 === md5($id)) {
+                                    $themeManifest = BearCMS\Internal\Themes::getManifest($id, false);
+                                    if (isset($themeManifest['media'])) {
+                                        foreach ($themeManifest['media'] as $i => $mediaItem) {
+                                            if (isset($mediaItem['filename'])) {
+                                                if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
+                                                    $filename = $mediaItem['filename'];
+                                                    return;
+                                                }
+                                            }
                                         }
                                     }
-                                }
-                            }
-                            $themeStyles = BearCMS\Internal\Themes::getStyles($id, false);
-                            foreach ($themeStyles as $themeStyle) {
-                                if (isset($themeStyle['media'])) {
-                                    foreach ($themeStyle['media'] as $i => $mediaItem) {
-                                        if (isset($mediaItem['filename'])) {
-                                            if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
-                                                $filename = $mediaItem['filename'];
-                                                return;
+                                    $themeStyles = BearCMS\Internal\Themes::getStyles($id, false);
+                                    foreach ($themeStyles as $themeStyle) {
+                                        if (isset($themeStyle['media'])) {
+                                            foreach ($themeStyle['media'] as $i => $mediaItem) {
+                                                if (isset($mediaItem['filename'])) {
+                                                    if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
+                                                        $filename = $mediaItem['filename'];
+                                                        return;
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                }
-                $filename = null;
-            } else {
-                // Download the server files
-                $serverUrl = \BearCMS\Internal\Options::$serverUrl;
-                $matchingDir = $context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 's' . DIRECTORY_SEPARATOR;
-                if (strpos($filename, $matchingDir) === 0) {
-                    $fileServerUrl = $serverUrl . str_replace('\\', '/', str_replace($matchingDir, '', $filename));
-                    $filename = null;
-                    $fileInfo = pathinfo($fileServerUrl);
-                    if (isset($fileInfo['extension'])) {
-                        $tempFileKey = '.temp/bearcms/serverfiles/' . md5($fileServerUrl) . '.' . $fileInfo['extension'];
-                        $tempFilename = $app->data->getFilename($tempFileKey);
-                        if ($app->data->exists($tempFileKey)) {
-                            $filename = $tempFilename;
-                        } else {
-                            $ch = curl_init();
-                            curl_setopt($ch, CURLOPT_URL, $fileServerUrl);
-                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                            $response = curl_exec($ch);
-                            if ((int) curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200 && strlen($response) > 0) {
-                                $app->data->set($app->data->make($tempFileKey, $response));
-                                $filename = $tempFilename;
-                            } else {
-                                throw new Exception('Cannot download BearCMS Server file (' . $fileServerUrl . ')');
-                            }
-                            curl_close($ch);
+                        $filename = null;
+                    } else {
+                        // Download the server files
+                        $matchingDir = $addonAssetsDir . 's' . DIRECTORY_SEPARATOR;
+                        if (strpos($filename, $matchingDir) === 0) {
+                            $url = \BearCMS\Internal\Options::$serverUrl . str_replace('\\', '/', substr($filename, strlen($matchingDir)));
+                            $filename = null;
+                            $filename = $downloadUrl($url);
                         }
                     }
                 }

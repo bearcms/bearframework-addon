@@ -24,6 +24,7 @@ use BearCMS\Internal\Themes as InternalThemes;
  * @property-read \BearCMS\CurrentUser $currentUser Information about the current loggedin user
  * @property-read \BearCMS\ElementsTypes $elementsTypes Information about the available elements types
  * @property-read \BearCMS\Themes $themes
+ * @property-read \BearCMS\Addons $addons
  */
 class BearCMS
 {
@@ -40,33 +41,38 @@ class BearCMS
      */
     function __construct()
     {
-        $this->defineProperty('data', [
-            'init' => function() {
-                return new \BearCMS\Data();
-            },
-            'readonly' => true
-        ]);
-
-        $this->defineProperty('currentUser', [
-            'init' => function() {
-                return new \BearCMS\CurrentUser();
-            },
-            'readonly' => true
-        ]);
-
-        $this->defineProperty('elementsTypes', [
-            'init' => function() {
-                return new \BearCMS\ElementsTypes();
-            },
-            'readonly' => true
-        ]);
-
-        $this->defineProperty('themes', [
-            'init' => function() {
-                return new \BearCMS\Themes();
-            },
-            'readonly' => true
-        ]);
+        $this
+                ->defineProperty('data', [
+                    'init' => function() {
+                        return new \BearCMS\Data();
+                    },
+                    'readonly' => true
+                ])
+                ->defineProperty('currentUser', [
+                    'init' => function() {
+                        return new \BearCMS\CurrentUser();
+                    },
+                    'readonly' => true
+                ])
+                ->defineProperty('elementsTypes', [
+                    'init' => function() {
+                        return new \BearCMS\ElementsTypes();
+                    },
+                    'readonly' => true
+                ])
+                ->defineProperty('themes', [
+                    'init' => function() {
+                        return new \BearCMS\Themes();
+                    },
+                    'readonly' => true
+                ])
+                ->defineProperty('addons', [
+                    'init' => function() {
+                        return new \BearCMS\Addons();
+                    },
+                    'readonly' => true
+                ])
+        ;
     }
 
     public function apply(Response $response): void
