@@ -11,6 +11,7 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 use BearCMS\Internal\ElementsHelper;
+use IvoPetkov\HTML5DOMDocument;
 
 /**
  * Contains information about the available elements types

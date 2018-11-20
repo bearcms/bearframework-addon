@@ -13,7 +13,6 @@ use BearCMS\Internal\Data as InternalData;
 use BearCMS\Internal\Server;
 use BearCMS\Internal\ElementsHelper;
 use BearCMS\Internal\Options;
-use IvoPetkov\HTML5DOMDocument;
 
 $app = App::get();
 $context = $app->context->get(__FILE__);
