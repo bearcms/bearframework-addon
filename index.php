@@ -56,7 +56,7 @@ $context->classes
         ->add('BearCMS\Themes\Options', 'classes/BearCMS/Themes/Options.php')
         ->add('BearCMS\Themes\OptionsDefinition', 'classes/BearCMS/Themes/OptionsDefinition.php')
         ->add('BearCMS\Themes\OptionsDefinitionGroup', 'classes/BearCMS/Themes/OptionsDefinitionGroup.php')
-        ->add('BearCMS\ElementsTypes', 'classes/BearCMS/ElementsTypes.php')
+        ->add('BearCMS\Internal\ElementsTypes', 'classes/BearCMS/Internal/ElementsTypes.php')
         ->add('BearCMS\Internal\Data', 'classes/BearCMS/Internal/Data.php')
         ->add('BearCMS\Internal\Data\Addons', 'classes/BearCMS/Internal/Data/Addons.php')
         ->add('BearCMS\Internal\Data\BlogPosts', 'classes/BearCMS/Internal/Data/BlogPosts.php')

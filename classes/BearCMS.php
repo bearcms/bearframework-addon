@@ -22,7 +22,6 @@ use BearCMS\Internal\Themes as InternalThemes;
  * 
  * @property-read \BearCMS\Data $data A reference to the data related objects
  * @property-read \BearCMS\CurrentUser $currentUser Information about the current loggedin user
- * @property-read \BearCMS\ElementsTypes $elementsTypes Information about the available elements types
  * @property-read \BearCMS\Themes $themes
  * @property-read \BearCMS\Addons $addons
  */
@@ -51,12 +50,6 @@ class BearCMS
                 ->defineProperty('currentUser', [
                     'init' => function() {
                         return new \BearCMS\CurrentUser();
-                    },
-                    'readonly' => true
-                ])
-                ->defineProperty('elementsTypes', [
-                    'init' => function() {
-                        return new \BearCMS\ElementsTypes();
                     },
                     'readonly' => true
                 ])

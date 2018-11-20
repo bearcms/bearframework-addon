@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS;
+namespace BearCMS\Internal;
 
 use BearFramework\App;
 use BearCMS\Internal\ElementsHelper;
@@ -27,7 +27,7 @@ class ElementsTypes
         $this->contextDir = $context->dir;
     }
 
-    public function add(string $typeCode, array $options = []): \BearCMS\ElementsTypes
+    public function add(string $typeCode, array $options = []): self
     {
         $app = App::get();
         $app->components->addAlias($options['componentSrc'], 'file:' . $this->contextDir . '/components/bearcmsElement.php');
