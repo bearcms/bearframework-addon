@@ -333,14 +333,11 @@ final class Server
                 $commandsResults = [];
                 foreach ($requestResponseMeta['commands'] as $commandData) {
                     if (isset($commandData['name']) && isset($commandData['data'])) {
+                        $commmandName = $commandData['name'];
                         $commandResult = '';
-                        $commandFilename = $context->dir . '/classes/BearCMS/Internal/ServerCommands/' . str_replace(['.', '/', '\\'], '', $commandData['name']) . '.php';
-                        $callback = null;
-                        if (is_file($commandFilename)) {
-                            $callback = include $commandFilename;
-                        }
-                        if (is_callable($callback)) {
-                            $commandResult = call_user_func($callback, $commandData['data'], $response);
+                        $callable = ['\BearCMS\Internal\ServerCommands', $commmandName];
+                        if (is_callable($callable)) {
+                            $commandResult = call_user_func($callable, $commandData['data'], $response);
                         }
                         if (isset($commandData['key'])) {
                             $commandsResults[$commandData['key']] = $commandResult;

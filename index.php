@@ -69,6 +69,7 @@ $context->classes
         ->add('BearCMS\Internal\Config', 'classes/BearCMS/Internal/Config.php')
         ->add('BearCMS\Internal\PublicProfile', 'classes/BearCMS/Internal/PublicProfile.php')
         ->add('BearCMS\Internal\Server', 'classes/BearCMS/Internal/Server.php')
+        ->add('BearCMS\Internal\ServerCommands', 'classes/BearCMS/Internal/ServerCommands.php')
         ->add('BearCMS\Internal\TempClientData', 'classes/BearCMS/Internal/TempClientData.php')
         ->add('BearCMS\Internal\Themes', 'classes/BearCMS/Internal/Themes.php')
         ->add('BearCMS\Internal\UserProvider', 'classes/BearCMS/Internal/UserProvider.php');
