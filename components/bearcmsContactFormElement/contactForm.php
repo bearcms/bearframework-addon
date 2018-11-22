@@ -7,6 +7,7 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal\Config;
 
 $app = App::get();
 $context = $app->context->get(__FILE__);
@@ -22,7 +23,7 @@ $form->onSubmit = function($values) use ($app, $component) {
     $replyToEmail = strtolower($values['email']);
     foreach ($recipients as $recipient) {
         $recipient = trim($recipient);
-        $defaultEmailSender = \BearCMS\Internal\Options::$defaultEmailSender;
+        $defaultEmailSender = Config::$defaultEmailSender;
         if (!is_array($defaultEmailSender)) {
             throw new \Exception('The defaultEmailSender option is empty.');
         }
@@ -35,9 +36,9 @@ $form->onSubmit = function($values) use ($app, $component) {
             'recipientEmail' => $recipient,
             'replyToEmail' => $replyToEmail
         ];
-        $taskID = 'bearcms-send-contact-form->email-' . md5(serialize($data));
+        $taskID = 'bearcms-send-contact-form-email-' . md5(serialize($data));
         if (!$app->tasks->exists($taskID)) {
-            $app->tasks->add('bearcms-send-contact-form->email', $data, [
+            $app->tasks->add('bearcms-send-contact-form-email', $data, [
                 'id' => $taskID
             ]);
         }

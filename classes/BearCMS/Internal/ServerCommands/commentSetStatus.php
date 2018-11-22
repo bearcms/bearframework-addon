@@ -20,6 +20,6 @@ return function($data) {
     if (!isset($data['status'])) {
         throw new Exception('');
     }
-    BearCMS\Internal\Data\Comments::setStatus($data['threadID'], $data['commentID'], $data['status']);
+    Internal\Data\Comments::setStatus($data['threadID'], $data['commentID'], $data['status']);
     return true;
 };

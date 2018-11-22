@@ -9,7 +9,7 @@
 
 namespace BearCMS\Internal\Data;
 
-use BearFramework\App;
+use BearCMS\Internal;
 
 final class Pages
 {
@@ -21,7 +21,7 @@ final class Pages
      */
     static function getPathsList(string $status = 'all'): array
     {
-        $list = \BearCMS\Internal\Data::getList('bearcms/pages/page/');
+        $list = Internal\Data::getList('bearcms/pages/page/');
         $result = [];
         foreach ($list as $value) {
             $pageData = json_decode($value, true);

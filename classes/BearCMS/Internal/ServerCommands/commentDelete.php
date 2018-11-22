@@ -17,6 +17,6 @@ return function($data) {
     if (!isset($data['commentID'])) {
         throw new Exception('');
     }
-    BearCMS\Internal\Data\Comments::deleteCommentForever($data['threadID'], $data['commentID']);
+    Internal\Data\Comments::deleteCommentForever($data['threadID'], $data['commentID']);
     return true;
 };

@@ -20,6 +20,6 @@ return function($data) {
     if (!isset($data['status'])) {
         throw new Exception('');
     }
-    BearCMS\Internal\Data\ForumPostsReplies::setStatus($data['forumPostID'], $data['replyID'], $data['status']);
+    Internal\Data\ForumPostsReplies::setStatus($data['forumPostID'], $data['replyID'], $data['status']);
     return true;
 };

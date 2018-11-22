@@ -10,6 +10,8 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
+use BearCMS\Internal\Config;
+use BearCMS\Internal;
 
 class Data
 {
@@ -26,7 +28,7 @@ class Data
             return self::$cache[$localCacheKey];
         }
         $app = App::get();
-        $cacheKey = 'bearcms-group-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . $key;
+        $cacheKey = 'bearcms-group-' . Config::$dataCachePrefix . '-' . $key;
         $data = $app->cache->getValue($cacheKey);
         self::$cacheRequests[] = ['get', 'group', $key];
         if ($data !== null) {
@@ -40,7 +42,7 @@ class Data
     {
         $localCacheKey = 'group-' . $key;
         $app = App::get();
-        $cacheKey = 'bearcms-group-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . $key;
+        $cacheKey = 'bearcms-group-' . Config::$dataCachePrefix . '-' . $key;
         $data = md5(uniqid());
         $app->cache->set($app->cache->make($cacheKey, $data));
         self::$cacheRequests[] = ['set', 'group', $key];
@@ -50,7 +52,7 @@ class Data
 
     static function _get(string $type, string $key, callable $callback)
     {
-        if (!\BearCMS\Internal\Options::$useDataCache) {
+        if (!Config::$useDataCache) {
             return $callback();
         }
         $localCacheKey = $type . '-' . $key;
@@ -58,7 +60,7 @@ class Data
             return self::$cache[$localCacheKey];
         }
         $app = App::get();
-        $cacheKey = 'bearcms-data-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . $key . '-' . self::_getGroupValue('all');
+        $cacheKey = 'bearcms-data-' . Config::$dataCachePrefix . '-' . $key . '-' . self::_getGroupValue('all');
         $cachedValue = $app->cache->getValue($cacheKey);
         self::$cacheRequests[] = ['get', $type, $key];
         if ($cachedValue !== null && is_array($cachedValue) && isset($cachedValue[0]) && $cachedValue[0] === 'bd') {
@@ -76,11 +78,11 @@ class Data
 
     static function loadCacheBundle($requestPath)
     {
-        if (!\BearCMS\Internal\Options::$useDataCache) {
+        if (!Config::$useDataCache) {
             return;
         }
         $app = App::get();
-        $cacheKey = 'bearcms-bundle-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . $requestPath . '-' . self::_getGroupValue('all');
+        $cacheKey = 'bearcms-bundle-' . Config::$dataCachePrefix . '-' . $requestPath . '-' . self::_getGroupValue('all');
         $bundle = $app->cache->getValue($cacheKey);
         if ($bundle !== null) {
             foreach ($bundle[1] as $data) {
@@ -93,7 +95,7 @@ class Data
 
     static function saveCacheBundle($requestPath)
     {
-        if (!\BearCMS\Internal\Options::$useDataCache) {
+        if (!Config::$useDataCache) {
             return;
         }
         $app = App::get();
@@ -114,7 +116,7 @@ class Data
         }
         $hash = md5(serialize($bundle));
         if (self::$loadedBundleHash !== $hash) {
-            $cacheKey = 'bearcms-bundle-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . $requestPath . '-' . self::_getGroupValue('all');
+            $cacheKey = 'bearcms-bundle-' . Config::$dataCachePrefix . '-' . $requestPath . '-' . self::_getGroupValue('all');
             try {
                 $app->cache->set($app->cache->make($cacheKey, [$hash, $bundle]));
             } catch (\Exception $e) {
@@ -188,7 +190,7 @@ class Data
         if (strpos($key, '.temp/') !== 0) {
             self::$hasContentChange = true;
         }
-        if (\BearCMS\Internal\Options::$useDataCache) {
+        if (Config::$useDataCache) {
             self::$cache = [];
             self::_updateGroupValue('all');
         }
@@ -196,7 +198,7 @@ class Data
             $app->cache->delete('bearcms-comments-elements-locations');
         }
         if (strpos($key, 'bearcms/elements/element/') === 0 && $app->hooks->exists('bearCMSElementChanged')) {
-            $rawElementData = \BearCMS\Internal\Data::getValue($key);
+            $rawElementData = Internal\Data::getValue($key);
             $elementData = ElementsHelper::decodeElementRawData($rawElementData);
             if (is_array($elementData)) {
                 $app->hooks->execute('bearCMSElementChanged', $elementData['id']);

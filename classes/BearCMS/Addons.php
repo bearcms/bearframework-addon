@@ -9,6 +9,8 @@
 
 namespace BearCMS;
 
+use BearCMS\Internal;
+
 /**
  * 
  */
@@ -24,7 +26,7 @@ class Addons
      */
     public function announce(string $addonID, callable $callback): self
     {
-        \BearCMS\Internal\Data\Addons::$announcements[$addonID] = $callback;
+        Internal\Data\Addons::$announcements[$addonID] = $callback;
         return $this;
     }
 

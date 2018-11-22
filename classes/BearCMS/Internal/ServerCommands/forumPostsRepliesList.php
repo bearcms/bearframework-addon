@@ -8,7 +8,7 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal\PublicProfile;
+use BearCMS\Internal;
 
 return function($data) {
     $app = App::get();
@@ -32,7 +32,7 @@ return function($data) {
     $result = $result->slice($data['limit'] * ($data['page'] - 1), $data['limit']);
     foreach ($result as $i => $item) {
         $result[$i]->location = '';
-        $result[$i]->author = PublicProfile::getFromAuthor($item->author)->toArray();
+        $result[$i]->author = Internal\PublicProfile::getFromAuthor($item->author)->toArray();
     }
     return $result->toArray();
 };

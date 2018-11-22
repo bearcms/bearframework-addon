@@ -1,4 +1,4 @@
-![BearCMS](http://bearcms.github.io/bearcms-logo-for-github.png)
+![Bear CMS](http://bearcms.github.io/bearcms-logo-for-github.png)
 
 Addon for Bear Framework
 
@@ -128,15 +128,15 @@ Here is a list of options that can be passed to `$app->addons->add('bearcms/bear
 
 `serverUrl`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The URL of the CMS server. Can be found at your BearCMS account.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The URL of the CMS server. Can be found at your Bear CMS account.
 
 `siteID`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The site ID. Can be found at your BearCMS account.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The site ID. Can be found at your Bear CMS account.
 
 `siteSecret`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The site secret key. Can be found at your BearCMS account.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The site secret key. Can be found at your Bear CMS account.
 
 `language`
 
@@ -213,4 +213,4 @@ Here is a list of options that can be passed to `$app->addons->add('bearcms/bear
 Bear CMS addon for Bear Framework is open-sourced software. It's free to use under the MIT license. See the [license file](https://github.com/bearcms/bearframework-addon/blob/master/LICENSE) for more information.
 
 ## Author
-This addon is created by the BearCMS team. Feel free to contact us at [support@bearcms.com](mailto:support@bearcms.com) or [bearcms.com](https://bearcms.com/).
+This addon is created by the Bear CMS team. Feel free to contact us at [support@bearcms.com](mailto:support@bearcms.com) or [bearcms.com](https://bearcms.com/).

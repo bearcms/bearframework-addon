@@ -7,7 +7,7 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal\PublicProfile;
+use BearCMS\Internal;
 
 $app = App::get();
 
@@ -40,7 +40,7 @@ $elementID = 'frl' . md5($forumPostID);
                 if ($reply->status === 'pendingApproval') {
                     $statusText = __('bearcms.forumPosts.pending approval') . ', ';
                 }
-                $profile = PublicProfile::getFromAuthor($reply->author);
+                $profile = Internal\PublicProfile::getFromAuthor($reply->author);
                 $linkAttributes = '';
                 if (strlen($profile->url) > 0) {
                     $tagName = 'a';

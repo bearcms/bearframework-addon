@@ -10,6 +10,7 @@
 namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
+use BearCMS\Internal;
 
 class UploadsSize
 {
@@ -22,7 +23,7 @@ class UploadsSize
         $data[$key] = $size;
         $dataKey = 'bearcms/uploadssize.json';
         $app->data->set($app->data->make($dataKey, json_encode($data)));
-        \BearCMS\Internal\Data::setChanged($dataKey);
+        Internal\Data::setChanged($dataKey);
         $app->hooks->execute('bearCMSUploadsSizeChanged');
     }
 
@@ -35,7 +36,7 @@ class UploadsSize
             unset($data[$key]);
             $dataKey = 'bearcms/uploadssize.json';
             $app->data->set($app->data->make($dataKey, json_encode($data)));
-            \BearCMS\Internal\Data::setChanged($dataKey);
+            Internal\Data::setChanged($dataKey);
             $app->hooks->execute('bearCMSUploadsSizeChanged');
         }
     }
@@ -43,7 +44,7 @@ class UploadsSize
     static function getSize()
     {
         $app = App::get();
-        $data = \BearCMS\Internal\Data::getValue('bearcms/uploadssize.json');
+        $data = Internal\Data::getValue('bearcms/uploadssize.json');
         $data = $data === null ? [] : json_decode($data, true);
         return array_sum($data);
     }

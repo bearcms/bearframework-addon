@@ -8,7 +8,7 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal\PublicProfile;
+use BearCMS\Internal;
 
 $app = App::get();
 
@@ -50,7 +50,7 @@ if ($thread !== null) {
         if ($comment->status === 'pendingApproval') {
             $statusText = __('bearcms.comments.pending approval') . ', ';
         }
-        $profile = PublicProfile::getFromAuthor($comment->author);
+        $profile = Internal\PublicProfile::getFromAuthor($comment->author);
         $linkAttributes = '';
         if (strlen($profile->url) > 0) {
             $tagName = 'a';

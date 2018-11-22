@@ -7,10 +7,12 @@
  * Free to use under the MIT license.
  */
 
+use BearCMS\Internal\Config;
+
 return function() {
     $result = [];
-    if (strlen(BearCMS\Internal\Options::$appSecretKey) > 0) {
-        $temp = explode('-', BearCMS\Internal\Options::$appSecretKey);
+    if (strlen(Config::$appSecretKey) > 0) {
+        $temp = explode('-', Config::$appSecretKey);
         $result['appID'] = $temp[0];
     }
     $result['phpVersion'] = phpversion();

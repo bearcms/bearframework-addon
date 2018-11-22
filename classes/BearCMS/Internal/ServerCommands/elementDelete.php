@@ -8,7 +8,7 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal;
 
 return function($data) {
     $app = App::get();
@@ -16,13 +16,13 @@ return function($data) {
         throw new Exception('');
     }
     $elementID = $data['id'];
-    $rawDataList = ElementsHelper::getElementsRawData([$elementID]);
+    $rawDataList = Internal\ElementsHelper::getElementsRawData([$elementID]);
     if ($rawDataList[$elementID] !== null) {
         $elementData = json_decode($rawDataList[$elementID], true);
         $app->data->delete('bearcms/elements/element/' . md5($elementID) . '.json');
         if (isset($elementData['type'])) {
-            $componentName = array_search($elementData['type'], ElementsHelper::$elementsTypesCodes);
-            $options = ElementsHelper::$elementsTypesOptions[$componentName];
+            $componentName = array_search($elementData['type'], Internal\ElementsHelper::$elementsTypesCodes);
+            $options = Internal\ElementsHelper::$elementsTypesOptions[$componentName];
             if (isset($options['onDelete']) && is_callable($options['onDelete'])) {
                 call_user_func($options['onDelete'], isset($elementData['data']) ? $elementData['data'] : []);
             }

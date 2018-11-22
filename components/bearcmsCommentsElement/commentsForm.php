@@ -7,6 +7,7 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal;
 
 $app = App::get();
 $context = $app->context->get(__FILE__);
@@ -40,7 +41,7 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
     if ($cancel) {
         $this->throwError($cancelMessage);
     }
-    \BearCMS\Internal\Data\Comments::add($threadID, $author, $text, $status);
+    Internal\Data\Comments::add($threadID, $author, $text, $status);
 
     $listContent = $app->components->process('<component src="file:' . $context->dir . '/components/bearcmsCommentsElement/commentsList.php" count="' . htmlentities($listCommentsCount) . '" threadID="' . htmlentities($threadID) . '" />');
     return [

@@ -8,5 +8,5 @@
  */
 
 return function($data) {
-    BearCMS\Internal\Data\UploadsSize::add($data['key'], $data['size']);
+    Internal\Data\UploadsSize::add($data['key'], $data['size']);
 };

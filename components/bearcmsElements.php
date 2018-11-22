@@ -6,17 +6,17 @@
  * Free to use under the MIT license.
  */
 
-use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal;
 
 $app = BearFramework\App::get();
 $context = $app->context->get(__FILE__);
 
 $lazyLimit = 70;
-$contextData = ElementsHelper::getComponentContextData($component);
+$contextData = Internal\ElementsHelper::getComponentContextData($component);
 $editable = $component->editable === 'true';
 $group = $component->group;
 
-$containerData = ElementsHelper::getContainerData($component->id);
+$containerData = Internal\ElementsHelper::getContainerData($component->id);
 
 $elements = $containerData['elements'];
 $hasLazyLoading = sizeof($elements) > $lazyLimit;
@@ -84,7 +84,7 @@ if (empty($elements)) {
             }
         }
     }
-    $elementsRawData = ElementsHelper::getElementsRawData($elementsIDs);
+    $elementsRawData = Internal\ElementsHelper::getElementsRawData($elementsIDs);
 }
 
 if ($hasLazyLoading) {
@@ -94,7 +94,7 @@ if ($hasLazyLoading) {
         $loadMoreComponent->setAttribute('bearcms-internal-attribute-remaining-lazy-load-elements', implode(',', $remainingLazyLoadElements));
         $loadMoreComponent->setAttribute('bearcms-internal-attribute-container', 'none');
         $lazyLoadServerData = \BearCMS\Internal\TempClientData::set(['componentHTML' => (string) $loadMoreComponent]);
-        ElementsHelper::$lastLoadMoreServerData = $lazyLoadServerData;
+        Internal\ElementsHelper::$lastLoadMoreServerData = $lazyLoadServerData;
     }
 }
 
@@ -107,7 +107,7 @@ if ($renderElementsContainer) {
     $attributes = '';
     if ($editable) {
         $htmlElementID = 'brela' . md5($component->id);
-        ElementsHelper::$editorData[] = ['container', $component->id, $contextData, $group];
+        Internal\ElementsHelper::$editorData[] = ['container', $component->id, $contextData, $group];
         $attributes .= ' id="' . $htmlElementID . '"';
     }
 
@@ -159,13 +159,13 @@ if ($renderElementsContainer) {
                     continue;
                 }
                 if (isset($elementContainerData['data'], $elementContainerData['data']['type']) && ($elementContainerData['data']['type'] === 'column' || $elementContainerData['data']['type'] === 'columns')) {
-                    echo ElementsHelper::renderColumn($elementContainerData, $editable, $childrenContextData, !(isset($columnID{0}) && !$inContainer));
+                    echo Internal\ElementsHelper::renderColumn($elementContainerData, $editable, $childrenContextData, !(isset($columnID{0}) && !$inContainer));
                 } elseif (isset($elementContainerData['data'], $elementContainerData['data']['type']) && $elementContainerData['data']['type'] === 'floatingBox') {
-                    echo ElementsHelper::renderFloatingBox($elementContainerData, $editable, $childrenContextData, !(isset($floatingBoxID{0}) && !$inContainer));
+                    echo Internal\ElementsHelper::renderFloatingBox($elementContainerData, $editable, $childrenContextData, !(isset($floatingBoxID{0}) && !$inContainer));
                 } else {
                     $elementRawData = $elementsRawData[$elementContainerData['id']];
                     if ($elementRawData !== null) {
-                        echo ElementsHelper::renderElement($elementRawData, $editable, $childrenContextData);
+                        echo Internal\ElementsHelper::renderElement($elementRawData, $editable, $childrenContextData);
                     }
                 }
             }

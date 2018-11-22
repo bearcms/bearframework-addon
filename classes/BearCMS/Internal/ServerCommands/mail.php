@@ -8,11 +8,12 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal\Config;
 
 return function($data) {
     $app = App::get();
 
-    $defaultEmailSender = \BearCMS\Internal\Options::$defaultEmailSender;
+    $defaultEmailSender = Config::$defaultEmailSender;
     if (!is_array($defaultEmailSender)) {
         throw new \Exception('The defaultEmailSender option is empty.');
     }

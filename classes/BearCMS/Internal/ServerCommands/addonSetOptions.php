@@ -8,12 +8,12 @@
  */
 
 return function($data) {
-    BearCMS\Internal\Data\Addons::setOptions($data['id'], $data['options']);
+    Internal\Data\Addons::setOptions($data['id'], $data['options']);
     if ($data['enabled'] !== null) {
         if ($data['enabled']) {
-            BearCMS\Internal\Data\Addons::enable($data['id']);
+            Internal\Data\Addons::enable($data['id']);
         } else {
-            BearCMS\Internal\Data\Addons::disable($data['id']);
+            Internal\Data\Addons::disable($data['id']);
         }
     }
 };

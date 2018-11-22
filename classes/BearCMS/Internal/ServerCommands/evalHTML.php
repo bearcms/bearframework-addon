@@ -7,10 +7,10 @@
  * Free to use under the MIT license.
  */
 
-use BearCMS\Internal\Server;
+use BearCMS\Internal;
 
 return function($data, $response) {
     $response1 = $response['value'];
     $response2 = ['js' => 'var e=document.querySelector(\'#' . $data['elementID'] . '\');if(e){html5DOMDocument.evalElement(e);}'];
-    $response['value'] = Server::mergeAjaxResponses($response1, $response2);
+    $response['value'] = Internal\Server::mergeAjaxResponses($response1, $response2);
 };

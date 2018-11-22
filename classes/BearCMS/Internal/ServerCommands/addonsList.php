@@ -7,6 +7,8 @@
  * Free to use under the MIT license.
  */
 
+use BearCMS\Internal;
+
 return function() {
-    return \BearCMS\Internal\Data\Addons::getList()->toArray();
+    return Internal\Data\Addons::getList()->toArray();
 };

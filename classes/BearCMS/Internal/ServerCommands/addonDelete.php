@@ -8,5 +8,5 @@
  */
 
 return function($data) {
-    BearCMS\Internal\Data\Addons::delete($data['id']);
+    Internal\Data\Addons::delete($data['id']);
 };

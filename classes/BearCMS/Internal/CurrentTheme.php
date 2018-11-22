@@ -9,9 +9,7 @@
 
 namespace BearCMS\Internal;
 
-use BearFramework\App;
-use BearCMS\Internal\Cookies;
-use BearCMS\Internal\Themes as InternalThemes;
+use BearCMS\Internal;
 
 /**
  * Information about the current theme
@@ -34,7 +32,7 @@ class CurrentTheme
     static public function getID(): string
     {
         if (!isset(self::$cache['id'])) {
-            $cookies = Cookies::getList(Cookies::TYPE_SERVER);
+            $cookies = Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER);
             self::$cache['id'] = isset($cookies['tmpr']) ? $cookies['tmpr'] : \BearCMS\Internal\Themes::getActiveThemeID();
         }
         return self::$cache['id'];

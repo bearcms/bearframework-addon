@@ -7,14 +7,16 @@
  * Free to use under the MIT license.
  */
 
+use BearCMS\Internal;
+
 return function($data) {
     try {
-        BearCMS\Internal\Data\Addons::add($data['id']);
+        Internal\Data\Addons::add($data['id']);
         if ($data['enabled'] !== null) {
             if ($data['enabled']) {
-                BearCMS\Internal\Data\Addons::enable($data['id']);
+                Internal\Data\Addons::enable($data['id']);
             } else {
-                BearCMS\Internal\Data\Addons::disable($data['id']);
+                Internal\Data\Addons::disable($data['id']);
             }
         }
     } catch (\Exception $e) {

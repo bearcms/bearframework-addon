@@ -8,11 +8,12 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal;
 
 return function() {
     $app = App::get();
-    $list = \BearCMS\Internal\Data::getList('bearcms/blog/categories/category/');
-    $structure = \BearCMS\Internal\Data::getValue('bearcms/blog/categories/structure.json');
+    $list = Internal\Data::getList('bearcms/blog/categories/category/');
+    $structure = Internal\Data::getValue('bearcms/blog/categories/structure.json');
     $temp = [];
     $temp['structure'] = $structure !== null ? json_decode($structure, true) : [];
     $temp['categories'] = [];

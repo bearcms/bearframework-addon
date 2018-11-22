@@ -8,6 +8,7 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal;
 
 return function($data) {
     $app = App::get();
@@ -30,7 +31,7 @@ return function($data) {
                 $themeData['options'] = [
                     'definition' => $options
                 ];
-                $result = \BearCMS\Internal\Data::getValue('bearcms/themes/theme/' . md5($id) . '.json');
+                $result = Internal\Data::getValue('bearcms/themes/theme/' . md5($id) . '.json');
                 if ($result !== null) {
                     $temp = json_decode($result, true);
                     $optionsValues = isset($temp['options']) ? $temp['options'] : [];
@@ -39,7 +40,7 @@ return function($data) {
                 }
                 $themeData['options']['activeValues'] = $optionsValues;
 
-                $result = \BearCMS\Internal\Data::getValue('.temp/bearcms/userthemeoptions/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($id) . '.json');
+                $result = Internal\Data::getValue('.temp/bearcms/userthemeoptions/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($id) . '.json');
                 if ($result !== null) {
                     $temp = json_decode($result, true);
                     $optionsValues = isset($temp['options']) ? $temp['options'] : [];

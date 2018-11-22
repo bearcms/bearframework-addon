@@ -10,6 +10,7 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
+use BearCMS\Internal\Config;
 
 final class Cookies
 {
@@ -45,7 +46,7 @@ final class Cookies
                 throw new \InvalidArgumentException('');
             }
             $result = [];
-            $cookiePrefix = \BearCMS\Internal\Options::$cookiePrefix;
+            $cookiePrefix = Config::$cookiePrefix;
             $cookiePrefixLength = strlen($cookiePrefix);
             $cookies = $app->request->cookies->getList();
             foreach ($cookies as $cookie) {
@@ -88,7 +89,7 @@ final class Cookies
         if ($type !== self::TYPE_SERVER && $type !== self::TYPE_CLIENT) {
             throw new \InvalidArgumentException('');
         }
-        $cookieTypePrefix = \BearCMS\Internal\Options::$cookiePrefix . ($type === self::TYPE_SERVER ? 's_' : 'c_');
+        $cookieTypePrefix = Config::$cookiePrefix . ($type === self::TYPE_SERVER ? 's_' : 'c_');
         foreach ($cookiesData as $cookieData) {
             $cookieData['name'] = $cookieTypePrefix . $cookieData['name'];
             self::$pending[$cookieData['name']] = $cookieData;
@@ -123,7 +124,7 @@ final class Cookies
         $app = App::get();
         $result = [];
         $requestUrlParts = parse_url($app->request->base);
-        $serverUrlParts = parse_url(\BearCMS\Internal\Options::$serverUrl);
+        $serverUrlParts = parse_url(Config::$serverUrl);
         $cookieMatches = [];
         preg_match_all('/Set-Cookie:(.*)/u', $headers, $cookieMatches);
         foreach ($cookieMatches[1] as $cookieMatch) {

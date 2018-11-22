@@ -10,8 +10,8 @@
 namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
-use BearCMS\Internal\ElementsHelper;
-use BearCMS\Internal\Options;
+use BearCMS\Internal;
+use BearCMS\Internal\Config;
 
 final class Comments
 {
@@ -38,7 +38,7 @@ final class Comments
         $dataKey = 'bearcms/comments/thread/' . md5($threadID) . '.json';
         $app->data->set($app->data->make($dataKey, json_encode($data)));
 
-        if (Options::hasFeature('NOTIFICATIONS')) {
+        if (Config::hasFeature('NOTIFICATIONS')) {
             if (!$app->tasks->exists('bearcms-send-new-comment-notification')) {
                 $app->tasks->add('bearcms-send-new-comment-notification', [
                     'threadID' => $threadID,
@@ -47,7 +47,7 @@ final class Comments
             }
         }
 
-        \BearCMS\Internal\Data::setChanged($dataKey);
+        Internal\Data::setChanged($dataKey);
     }
 
     static function setStatus(string $threadID, string $commentID, string $status): void
@@ -74,7 +74,7 @@ final class Comments
         }
         if ($hasChange) {
             $app->data->set($app->data->make($dataKey, json_encode($threadData)));
-            \BearCMS\Internal\Data::setChanged($dataKey);
+            Internal\Data::setChanged($dataKey);
         }
     }
 
@@ -99,7 +99,7 @@ final class Comments
         if ($hasChange) {
             $threadData['comments'] = array_values($threadData['comments']);
             $app->data->set($app->data->make($dataKey, json_encode($threadData)));
-            \BearCMS\Internal\Data::setChanged($dataKey);
+            Internal\Data::setChanged($dataKey);
         }
     }
 
@@ -135,13 +135,13 @@ final class Comments
             $pages = $app->bearCMS->data->pages->getList();
             $walkPageElements = function($pageID, $path) use ($app, &$result) {
                 $url = null;
-                $containerElementIDs = ElementsHelper::getContainerElementsIDs('bearcms-page-' . $pageID);
-                $elementsRawData = ElementsHelper::getElementsRawData($containerElementIDs);
+                $containerElementIDs = Internal\ElementsHelper::getContainerElementsIDs('bearcms-page-' . $pageID);
+                $elementsRawData = Internal\ElementsHelper::getElementsRawData($containerElementIDs);
                 foreach ($elementsRawData as $elementRawData) {
                     if ($elementRawData === null) {
                         continue;
                     }
-                    $elementData = ElementsHelper::decodeElementRawData($elementRawData);
+                    $elementData = Internal\ElementsHelper::decodeElementRawData($elementRawData);
                     if (is_array($elementData) && $elementData['type'] === 'comments') {
                         if (isset($elementData['data']['threadID'])) {
                             if ($url === null) {
@@ -158,16 +158,16 @@ final class Comments
             }
             $blogPosts = $app->bearCMS->data->blogPosts->getList();
             foreach ($blogPosts as $blogPost) {
-                $url = $app->urls->get(Options::$blogPagesPathPrefix . (strlen($blogPost->slug) === 0 ? 'draft-' . $blogPost->id : $blogPost->slug) . '/');
+                $url = $app->urls->get(Config::$blogPagesPathPrefix . (strlen($blogPost->slug) === 0 ? 'draft-' . $blogPost->id : $blogPost->slug) . '/');
                 $threadID = 'bearcms-blogpost-' . $blogPost->id;
                 $result[$threadID] = $url;
-//            $containerElementIDs = ElementsHelper::getContainerElementsIDs('bearcms-blogpost-' . $blogPost->id);
-//            $elementsRawData = ElementsHelper::getElementsRawData($containerElementIDs);
+//            $containerElementIDs = Internal\ElementsHelper::getContainerElementsIDs('bearcms-blogpost-' . $blogPost->id);
+//            $elementsRawData = Internal\ElementsHelper::getElementsRawData($containerElementIDs);
 //            foreach ($elementsRawData as $elementRawData) {
 //                if ($elementRawData === null) {
 //                    continue;
 //                }
-//                $elementData = ElementsHelper::decodeElementRawData($elementRawData);
+//                $elementData = Internal\ElementsHelper::decodeElementRawData($elementRawData);
 //                if (is_array($elementData) && $elementData['type'] === 'comments') {
 //                    if (isset($elementData['data']['threadID'])) {
 //                        $result[$elementData['data']['threadID']] = $url;

@@ -8,7 +8,7 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal\Server;
+use BearCMS\Internal;
 
 return function($data, $response) {
     $app = App::get();
@@ -41,5 +41,5 @@ return function($data, $response) {
     //todo optimize
     $response1 = ['js' => 'html5DOMDocument.insert(' . json_encode($allButBody, true) . ');'];
     $response2 = json_decode($value, true);
-    $response['value'] = Server::mergeAjaxResponses($response1, $response2);
+    $response['value'] = Internal\Server::mergeAjaxResponses($response1, $response2);
 };

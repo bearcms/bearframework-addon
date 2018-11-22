@@ -10,8 +10,8 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
-use BearCMS\Internal\Cookies;
-use BearCMS\Internal\Options;
+use BearCMS\Internal;
+use BearCMS\Internal\Config;
 
 final class Server
 {
@@ -20,7 +20,7 @@ final class Server
     {
         $app = App::get();
         $send = function() use($name, $arguments, $sendCookies) {
-            $url = Options::$serverUrl . '?name=' . $name;
+            $url = Config::$serverUrl . '?name=' . $name;
             $response = self::sendRequest($url, $arguments, $sendCookies);
             if ($sendCookies && self::isRetryResponse($response)) {
                 $response = self::sendRequest($url, $arguments, $sendCookies);
@@ -62,7 +62,7 @@ final class Server
         foreach ($formDataList as $formDataItem) {
             $temp[$formDataItem->name] = $formDataItem->value;
         }
-        $response = self::sendRequest(Options::$serverUrl . '-aj/', $temp, true);
+        $response = self::sendRequest(Config::$serverUrl . '-aj/', $temp, true);
         if (self::isRetryResponse($response)) {
             return json_encode(['js' => 'window.location.reload(true);'], JSON_UNESCAPED_UNICODE);
         }
@@ -108,7 +108,7 @@ final class Server
 
     static function updateAssetsUrls($content, bool $ajaxMode)
     {
-        $serverUrl = \BearCMS\Internal\Options::$serverUrl;
+        $serverUrl = Config::$serverUrl;
         $app = App::get();
         $context = $app->context->get(__FILE__);
         $updateUrl = function($url) use ($app, $context, $serverUrl) {
@@ -171,9 +171,9 @@ final class Server
             'bearFrameworkVersion' => defined('\BearFramework\App::VERSION') ? $app::VERSION : (defined('\BearFramework::VERSION') ? \BearFramework::VERSION : ''),
             'bearCMSAddonVersion' => \BearCMS::VERSION
         ];
-        if (Options::$appSecretKey !== null) {
+        if (Config::$appSecretKey !== null) {
             $getHashedAppSecretKey = function() {
-                $parts = explode('-', Options::$appSecretKey, 2);
+                $parts = explode('-', Config::$appSecretKey, 2);
                 if (sizeof($parts) === 2) {
                     return strtoupper('sha256-' . $parts[0] . '-' . hash('sha256', $parts[1]));
                 }
@@ -181,11 +181,11 @@ final class Server
             };
             $clientData['appSecretKey'] = $getHashedAppSecretKey();
         }
-        $clientData['whitelabel'] = (int) Options::$whitelabel;
+        $clientData['whitelabel'] = (int) Config::$whitelabel;
         $clientData['requestBase'] = $app->request->base;
-        $clientData['cookiePrefix'] = Options::$cookiePrefix;
+        $clientData['cookiePrefix'] = Config::$cookiePrefix;
         if ($app->bearCMS->currentUser->exists()) {
-            $currentUserData = \BearCMS\Internal\Data::getValue('bearcms/users/user/' . md5($app->bearCMS->currentUser->getID()) . '.json');
+            $currentUserData = Internal\Data::getValue('bearcms/users/user/' . md5($app->bearCMS->currentUser->getID()) . '.json');
             $currentUserID = null;
             if ($currentUserData !== null) {
                 $currentUserData = json_decode($currentUserData, true);
@@ -194,15 +194,15 @@ final class Server
             $clientData['currentUserID'] = $currentUserID;
         }
 
-        $clientData['features'] = json_encode(Options::$features);
-        $clientData['language'] = Options::$language;
-        $clientData['uiColor'] = Options::$uiColor;
-        $clientData['uiTextColor'] = Options::$uiTextColor;
-        $clientData['adminPagesPathPrefix'] = Options::$adminPagesPathPrefix;
-        $clientData['blogPagesPathPrefix'] = Options::$blogPagesPathPrefix;
-        if (Options::$maxUploadsSize !== null) {
-            $clientData['maxUploadsSize'] = Options::$maxUploadsSize;
-            $clientData['uploadsSize'] = \BearCMS\Internal\Data\UploadsSize::getSize();
+        $clientData['features'] = json_encode(Config::$features);
+        $clientData['language'] = Config::$language;
+        $clientData['uiColor'] = Config::$uiColor;
+        $clientData['uiTextColor'] = Config::$uiTextColor;
+        $clientData['adminPagesPathPrefix'] = Config::$adminPagesPathPrefix;
+        $clientData['blogPagesPathPrefix'] = Config::$blogPagesPathPrefix;
+        if (Config::$maxUploadsSize !== null) {
+            $clientData['maxUploadsSize'] = Config::$maxUploadsSize;
+            $clientData['uploadsSize'] = Internal\Data\UploadsSize::getSize();
         }
         $data['clientData'] = json_encode($clientData, JSON_UNESCAPED_UNICODE);
 
@@ -287,16 +287,16 @@ final class Server
 
         $data['responseType'] = 'jsongz';
         if (isset($data['_ajaxreferer'])) {
-            $data['_ajaxreferer'] = str_replace($app->request->base . '/', Options::$serverUrl, $data['_ajaxreferer']);
+            $data['_ajaxreferer'] = str_replace($app->request->base . '/', Config::$serverUrl, $data['_ajaxreferer']);
         }
 
-        $cookies = $sendCookies ? Cookies::getList(Cookies::TYPE_SERVER) : [];
+        $cookies = $sendCookies ? Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER) : [];
 
         $send = function($requestData = [], $counter = 1) use(&$send, $app, $url, $data, $cookies, $context) {
             if ($counter > 10) {
                 throw new \Exception('Too much requests');
             }
-            $requestResponse = self::makeRequest($url, array_merge($data, $requestData, ['requestNumber' => $counter]), $cookies, Options::$logServerRequests);
+            $requestResponse = self::makeRequest($url, array_merge($data, $requestData, ['requestNumber' => $counter]), $cookies, Config::$logServerRequests);
             if (self::isRetryResponse($requestResponse)) {
                 return $requestResponse;
             }
@@ -315,7 +315,7 @@ final class Server
 
             $requestResponseMeta = isset($requestResponseData['meta']) ? $requestResponseData['meta'] : [];
 
-            if (Options::$logServerRequests) {
+            if (Config::$logServerRequests) {
                 $logData = $requestResponse['logData'];
                 $logData['response']['data'] = [
                     'value' => $response['value'],
@@ -363,7 +363,7 @@ final class Server
                         $currentUserData = $requestResponseMeta['currentUser'];
                         $dataKey = '.temp/bearcms/userkeys/' . md5($currentUserData['key']);
                         $app->data->set($app->data->make($dataKey, $currentUserData['id']));
-                        \BearCMS\Internal\Data::setChanged($dataKey);
+                        Internal\Data::setChanged($dataKey);
                         break;
                     } catch (\BearFramework\App\Data\DataLockedException $e) {
                         
@@ -390,7 +390,7 @@ final class Server
         };
         $response = $send();
         if ($sendCookies) {
-            Cookies::setList(Cookies::TYPE_SERVER, Cookies::parseServerCookies($response['headers']));
+            Internal\Cookies::setList(Internal\Cookies::TYPE_SERVER, Internal\Cookies::parseServerCookies($response['headers']));
         }
         return (array) $response;
     }

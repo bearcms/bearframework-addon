@@ -10,7 +10,7 @@
 namespace BearCMS;
 
 use BearFramework\App;
-use BearCMS\Internal\CurrentTheme;
+use BearCMS\Internal;
 
 class Themes
 {
@@ -30,7 +30,7 @@ class Themes
     public function add(string $id, $options = [])
     {
         $app = App::get();
-        $currentThemeID = CurrentTheme::getID();
+        $currentThemeID = Internal\CurrentTheme::getID();
         $currentUserID = $app->bearCMS->currentUser->exists() ? $app->bearCMS->currentUser->getID() : null;
         $initialize = $id === $currentThemeID;
         if ($initialize && is_callable($options)) {

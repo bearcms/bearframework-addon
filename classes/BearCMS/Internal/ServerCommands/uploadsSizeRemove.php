@@ -8,5 +8,5 @@
  */
 
 return function($data) {
-    BearCMS\Internal\Data\UploadsSize::remove($data['key']);
+    Internal\Data\UploadsSize::remove($data['key']);
 };

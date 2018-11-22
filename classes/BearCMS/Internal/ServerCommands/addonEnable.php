@@ -8,5 +8,5 @@
  */
 
 return function($data) {
-    BearCMS\Internal\Data\Addons::enable($data['id']);
+    Internal\Data\Addons::enable($data['id']);
 };

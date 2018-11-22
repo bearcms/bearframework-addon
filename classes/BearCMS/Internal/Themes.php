@@ -10,6 +10,8 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
+use BearCMS\Internal\Config;
+use BearCMS\Internal;
 
 class Themes
 {
@@ -30,15 +32,15 @@ class Themes
     static function getActiveThemeID(): string
     {
         $app = App::get();
-        $data = \BearCMS\Internal\Data::getValue('bearcms/themes/active.json');
+        $data = Internal\Data::getValue('bearcms/themes/active.json');
         if ($data !== null) {
             $data = json_decode($data, true);
             if (isset($data['id'])) {
                 return $data['id'];
             }
         }
-        if (strlen(\BearCMS\Internal\Options::$defaultThemeID) > 0) {
-            return \BearCMS\Internal\Options::$defaultThemeID;
+        if (strlen(Config::$defaultThemeID) > 0) {
+            return Config::$defaultThemeID;
         }
         return 'none';
     }
@@ -198,7 +200,7 @@ class Themes
         if ($version === null) {
             return null;
         }
-        return 'bearcms-theme-options-' . \BearCMS\Internal\Options::$dataCachePrefix . '-' . md5($id) . '-' . md5($version) . '-' . md5($userID) . '-2';
+        return 'bearcms-theme-options-' . Config::$dataCachePrefix . '-' . md5($id) . '-' . md5($version) . '-' . md5($userID) . '-2';
     }
 
     /**

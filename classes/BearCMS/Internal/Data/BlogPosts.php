@@ -9,7 +9,7 @@
 
 namespace BearCMS\Internal\Data;
 
-use BearFramework\App;
+use BearCMS\Internal;
 
 final class BlogPosts
 {
@@ -21,7 +21,7 @@ final class BlogPosts
      */
     static function getSlugsList(string $status = 'all'): array
     {
-        $list = \BearCMS\Internal\Data::getList('bearcms/blog/post/');
+        $list = Internal\Data::getList('bearcms/blog/post/');
         $result = [];
         foreach ($list as $value) {
             $blogPostData = json_decode($value, true);

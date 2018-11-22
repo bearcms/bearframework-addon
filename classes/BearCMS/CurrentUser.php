@@ -10,7 +10,7 @@
 namespace BearCMS;
 
 use BearFramework\App;
-use BearCMS\Internal\Cookies;
+use BearCMS\Internal;
 
 /**
  * Information about the current logged in user
@@ -44,7 +44,7 @@ class CurrentUser
     {
         $cacheKey = 'sessionkey';
         if (!isset(self::$cache[$cacheKey])) {
-            $cookies = Cookies::getList(Cookies::TYPE_SERVER);
+            $cookies = Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER);
             $cookieKey = '_s';
             $key = isset($cookies[$cookieKey]) ? (string) $cookies[$cookieKey] : '';
             self::$cache[$cacheKey] = strlen((string) $key) > 70 ? $key : null;
@@ -66,8 +66,7 @@ class CurrentUser
         $cacheKey = 'id-' . $sessionKey;
         if (!isset(self::$cache[$cacheKey])) {
             self::$cache[$cacheKey] = null;
-            $app = App::get();
-            $data = \BearCMS\Internal\Data::getValue('.temp/bearcms/userkeys/' . md5($sessionKey));
+            $data = Internal\Data::getValue('.temp/bearcms/userkeys/' . md5($sessionKey));
             if ($data !== null) {
                 self::$cache[$cacheKey] = $data;
             }
@@ -86,8 +85,7 @@ class CurrentUser
         if ($userID === null) {
             return [];
         }
-        $app = App::get();
-        $data = \BearCMS\Internal\Data::getValue('bearcms/users/user/' . md5($userID) . '.json');
+        $data = Internal\Data::getValue('bearcms/users/user/' . md5($userID) . '.json');
         if ($data !== null) {
             $user = json_decode($data, true);
             return isset($user['permissions']) ? $user['permissions'] : [];
@@ -127,14 +125,14 @@ class CurrentUser
     }
 
     /**
-     * Logouts the current user.
+     * Logout the current user.
      * 
      * @param string $userID
      * @throws \InvalidArgumentException
      */
     public function logout(): void
     {
-        \BearCMS\Internal\Cookies::setList(\BearCMS\Internal\Cookies::TYPE_SERVER, [
+        Internal\Cookies::setList(\Internal\Cookies::TYPE_SERVER, [
             ['name' => '_s', 'value' => 'deleted', 'expire' => 0],
             ['name' => '_a', 'value' => 'deleted', 'expire' => 0]
         ]);

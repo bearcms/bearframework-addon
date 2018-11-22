@@ -17,6 +17,6 @@ return function($data) {
     if (!isset($data['replyID'])) {
         throw new Exception('');
     }
-    BearCMS\Internal\Data\ForumPostsReplies::deleteReplyForever($data['forumPostID'], $data['replyID']);
+    Internal\Data\ForumPostsReplies::deleteReplyForever($data['forumPostID'], $data['replyID']);
     return true;
 };

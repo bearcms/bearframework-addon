@@ -10,6 +10,7 @@
 namespace BearCMS;
 
 use BearFramework\App;
+use BearCMS\Internal;
 
 /**
  * Contains reference to the different data types
@@ -145,7 +146,7 @@ class Data
      */
     public function getUploadsSize()
     {
-        return \BearCMS\Internal\Data\UploadsSize::getSize();
+        return Internal\Data\UploadsSize::getSize();
     }
 
 }

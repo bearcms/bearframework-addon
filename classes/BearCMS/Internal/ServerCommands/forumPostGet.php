@@ -8,7 +8,7 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal\PublicProfile;
+use BearCMS\Internal;
 
 return function($data) {
     $app = App::get();
@@ -16,7 +16,7 @@ return function($data) {
         throw new Exception('');
     }
     $result = $app->bearCMS->data->forumPosts->get($data['forumPostID']);
-    $result->author = PublicProfile::getFromAuthor($result->author)->toArray();
+    $result->author = Internal\PublicProfile::getFromAuthor($result->author)->toArray();
     $result->replies = new \BearCMS\DataList();
     return $result->toArray();
 };

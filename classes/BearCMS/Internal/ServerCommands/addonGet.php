@@ -7,8 +7,10 @@
  * Free to use under the MIT license.
  */
 
+use BearCMS\Internal;
+
 return function($data) {
-    $addon = \BearCMS\Internal\Data\Addons::get($data['id']);
+    $addon = Internal\Data\Addons::get($data['id']);
     if ($addon !== null) {
         return $addon->toArray();
     }

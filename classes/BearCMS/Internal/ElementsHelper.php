@@ -10,6 +10,7 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
+use BearCMS\Internal;
 
 final class ElementsHelper
 {
@@ -73,7 +74,7 @@ final class ElementsHelper
             }
         }
         if ((string) $component->color === '') {
-            $component->color = Options::$uiColor;
+            $component->color = Config::$uiColor;
         }
 
         // Update canEdit
@@ -417,7 +418,7 @@ final class ElementsHelper
 //                'key' => 'bearcms/elements/element/' . md5($elementID) . '.json',
 //                'result' => ['body']
 //            ];
-            $result[$elementID] = \BearCMS\Internal\Data::getValue('bearcms/elements/element/' . md5($elementID) . '.json');
+            $result[$elementID] = Internal\Data::getValue('bearcms/elements/element/' . md5($elementID) . '.json');
         }
         //$data = $app->data->execute($commands);
 //        foreach ($elementsIDs as $index => $elementID) {
@@ -431,7 +432,7 @@ final class ElementsHelper
     static function getContainerData($id)
     {
         $app = App::get();
-        $container = \BearCMS\Internal\Data::getValue('bearcms/elements/container/' . md5($id) . '.json');
+        $container = Internal\Data::getValue('bearcms/elements/container/' . md5($id) . '.json');
         $data = $container !== null ? json_decode($container, true) : [];
         if (!isset($data['elements'])) {
             $data['elements'] = [];
@@ -486,7 +487,7 @@ final class ElementsHelper
     {
         $app = App::get();
         $html = '';
-        if ((Options::hasFeature('ELEMENTS') || Options::hasFeature('ELEMENTS_*')) && !empty(self::$editorData)) {
+        if ((Config::hasFeature('ELEMENTS') || Config::hasFeature('ELEMENTS_*')) && !empty(self::$editorData)) {
             $requestArguments = [];
             $requestArguments['data'] = json_encode(self::$editorData);
             $cacheKey = json_encode([
@@ -494,7 +495,7 @@ final class ElementsHelper
                 $app->request->base,
                 $app->bearCMS->currentUser->getSessionKey(),
                 $app->bearCMS->currentUser->getPermissions(),
-                get_class_vars('\BearCMS\Internal\Options'),
+                get_class_vars('\BearCMS\Internal\Config'),
                 Cookies::getList(Cookies::TYPE_SERVER)
             ]);
             $elementsEditorData = Server::call('elementseditor', $requestArguments, true, $cacheKey);

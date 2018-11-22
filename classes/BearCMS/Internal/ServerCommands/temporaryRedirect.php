@@ -8,16 +8,16 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal\Cookies;
+use BearCMS\Internal;
 
 return function($data, $response) {
     $app = App::get();
     if (!isset($data['url'])) {
         throw new Exception('');
     }
-    Cookies::setList(Cookies::TYPE_SERVER, Cookies::parseServerCookies($response['headers']));
+    Internal\Cookies::setList(Internal\Cookies::TYPE_SERVER, Internal\Cookies::parseServerCookies($response['headers']));
     $response = new App\Response\TemporaryRedirect($data['url']);
-    Cookies::apply($response);
+    Internal\Cookies::apply($response);
     $app->respond($response);
     exit;
 };

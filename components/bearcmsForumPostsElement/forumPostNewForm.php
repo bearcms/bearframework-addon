@@ -7,6 +7,7 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal;
 
 $app = App::get();
 $context = $app->context->get(__FILE__);
@@ -37,7 +38,7 @@ $form->onSubmit = function($values) use ($component, $app) {
     if ($cancel) {
         $this->throwError($cancelMessage);
     }
-    $forumPostID = \BearCMS\Internal\Data\ForumPosts::add($categoryID, $author, $title, $text, $status);
+    $forumPostID = Internal\Data\ForumPosts::add($categoryID, $author, $title, $text, $status);
 
     $slug = $forumPostID; //todo
     return [

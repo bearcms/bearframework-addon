@@ -10,7 +10,7 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
-use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal;
 use IvoPetkov\HTML5DOMDocument;
 
 /**
@@ -30,9 +30,9 @@ class ElementsTypes
         }
         $contextDir = self::$contextDir;
         $app->components->addAlias($options['componentSrc'], 'file:' . $contextDir . '/components/bearcmsElement.php');
-        ElementsHelper::$elementsTypesCodes[$options['componentSrc']] = $typeCode;
-        ElementsHelper::$elementsTypesFilenames[$options['componentSrc']] = $options['componentFilename'];
-        ElementsHelper::$elementsTypesOptions[$options['componentSrc']] = $options;
+        Internal\ElementsHelper::$elementsTypesCodes[$options['componentSrc']] = $typeCode;
+        Internal\ElementsHelper::$elementsTypesFilenames[$options['componentSrc']] = $options['componentFilename'];
+        Internal\ElementsHelper::$elementsTypesOptions[$options['componentSrc']] = $options;
     }
 
     public static function addDefault()

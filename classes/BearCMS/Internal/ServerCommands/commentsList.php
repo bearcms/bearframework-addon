@@ -8,7 +8,7 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal\PublicProfile;
+use BearCMS\Internal;
 
 return function($data) {
     $app = App::get();
@@ -27,14 +27,14 @@ return function($data) {
         $result->filterBy('status', $data['type']);
     }
     $result = $result->slice($data['limit'] * ($data['page'] - 1), $data['limit']);
-    $locations = BearCMS\Internal\Data\Comments::getCommentsElementsLocations();
+    $locations = Internal\Data\Comments::getCommentsElementsLocations();
     foreach ($result as $i => $item) {
         if (isset($locations[$item->threadID])) {
             $result[$i]->location = $locations[$item->threadID];
         } else {
             $result[$i]->location = '';
         }
-        $result[$i]->author = PublicProfile::getFromAuthor($item->author)->toArray();
+        $result[$i]->author = Internal\PublicProfile::getFromAuthor($item->author)->toArray();
     }
     return $result->toArray();
 };

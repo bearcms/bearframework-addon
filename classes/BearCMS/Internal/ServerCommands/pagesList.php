@@ -8,11 +8,12 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal;
 
 return function() {
     $app = App::get();
-    $list = \BearCMS\Internal\Data::getList('bearcms/pages/page/');
-    $structure = \BearCMS\Internal\Data::getValue('bearcms/pages/structure.json');
+    $list = Internal\Data::getList('bearcms/pages/page/');
+    $structure = Internal\Data::getValue('bearcms/pages/structure.json');
     $temp = [];
     $temp['structure'] = $structure !== null ? json_decode($structure, true) : [];
     $temp['pages'] = [];

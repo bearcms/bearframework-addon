@@ -8,6 +8,7 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal;
 
 return function($data) {
     $result = [];
@@ -34,7 +35,7 @@ return function($data) {
         } elseif ($command === 'set') {
             $validateKey($commandData['key']);
             $app->data->set($app->data->make($commandData['key'], $commandData['body']));
-            \BearCMS\Internal\Data::setChanged($commandData['key']);
+            Internal\Data::setChanged($commandData['key']);
         } elseif ($command === 'delete') {
             $validateKey($commandData['key']);
             if ($app->data->exists($commandData['key'])) {

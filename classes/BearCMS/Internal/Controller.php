@@ -10,8 +10,8 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
-use BearCMS\Internal\Server;
-use BearCMS\Internal\Options;
+use BearCMS\Internal;
+use BearCMS\Internal\Config;
 
 final class Controller
 {
@@ -20,18 +20,18 @@ final class Controller
     {
         $app = App::get();
         $path = (string) $app->request->path;
-        if ($path === Options::$adminPagesPathPrefix) {
+        if ($path === Config::$adminPagesPathPrefix) {
             if (!$app->bearCMS->data->users->hasUsers()) {
-                return new App\Response\TemporaryRedirect($app->request->base . Options::$adminPagesPathPrefix . 'firstrun/');
+                return new App\Response\TemporaryRedirect($app->request->base . Config::$adminPagesPathPrefix . 'firstrun/');
             }
-        } elseif ($path === Options::$adminPagesPathPrefix . 'firstrun/') {
+        } elseif ($path === Config::$adminPagesPathPrefix . 'firstrun/') {
             if ($app->bearCMS->data->users->hasUsers()) {
-                return new App\Response\TemporaryRedirect($app->request->base . Options::$adminPagesPathPrefix);
+                return new App\Response\TemporaryRedirect($app->request->base . Config::$adminPagesPathPrefix);
             }
         }
         $arguments = [];
         $arguments['path'] = $path;
-        $data = Server::call('adminpage', $arguments, true);
+        $data = Internal\Server::call('adminpage', $arguments, true);
         if (isset($data['error'])) {
             if (isset($data['errorMessage'])) {
                 return new App\Response\TemporaryUnavailable($data['errorMessage']);
@@ -42,7 +42,7 @@ final class Controller
                 return new App\Response\NotFound();
             } elseif (is_array($data['result']) && isset($data['result']['content'])) {
                 $content = $data['result']['content'];
-                $content = Server::updateAssetsUrls($content, false);
+                $content = Internal\Server::updateAssetsUrls($content, false);
                 $response = new App\Response\HTML($content);
                 $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0, no-cache, no-store'));
                 $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
@@ -54,7 +54,7 @@ final class Controller
 
     static function handleAjax(): \BearFramework\App\Response
     {
-        $data = Server::proxyAjax();
+        $data = Internal\Server::proxyAjax();
         $response = new App\Response\JSON($data);
         $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
         return $response;
@@ -89,7 +89,7 @@ final class Controller
                 foreach ($queryList as $queryListItem) {
                     $temp[$queryListItem->name] = $queryListItem->value;
                 }
-                $data = Server::call('fileupload', ['tempFilename' => $tempFilename, 'requestData' => json_encode($temp)]);
+                $data = Internal\Server::call('fileupload', ['tempFilename' => $tempFilename, 'requestData' => json_encode($temp)]);
                 if (isset($data['result'])) {
                     return new App\Response\JSON($data['result']);
                 } else {
@@ -107,7 +107,7 @@ final class Controller
     {
         $app = App::get();
         $filename = (string) $app->request->path->getSegment(2);
-        $fileData = \BearCMS\Internal\Data\Files::getFileData($filename);
+        $fileData = Internal\Data\Files::getFileData($filename);
         $download = false;
         if (is_array($fileData)) {
             if ($fileData['published'] === 1) {
@@ -163,7 +163,7 @@ final class Controller
         $contentType = $settings['rssType'];
         $counter = 0;
         foreach ($blogPosts as $blogPost) {
-            $blogPostUrl = isset($blogPost['slug']) ? $baseUrl . Options::$blogPagesPathPrefix . $blogPost['slug'] . '/' : '';
+            $blogPostUrl = isset($blogPost['slug']) ? $baseUrl . Config::$blogPagesPathPrefix . $blogPost['slug'] . '/' : '';
             $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPost['id'] . '"/>');
             $domDocument = new \IvoPetkov\HTML5DOMDocument();
             $domDocument->loadHTML($blogPostContent);
@@ -210,14 +210,14 @@ final class Controller
         };
         $addUrl('/');
 
-        $list = \BearCMS\Internal\Data\Pages::getPathsList('published');
+        $list = Internal\Data\Pages::getPathsList('published');
         foreach ($list as $path) {
             $addUrl($path);
         }
 
-        $list = \BearCMS\Internal\Data\BlogPosts::getSlugsList('published');
+        $list = Internal\Data\BlogPosts::getSlugsList('published');
         foreach ($list as $slug) {
-            $addUrl(Options::$blogPagesPathPrefix . $slug . '/');
+            $addUrl(Config::$blogPagesPathPrefix . $slug . '/');
         }
 
         $response = new App\Response('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">' . implode('', $urls) . '</urlset>');

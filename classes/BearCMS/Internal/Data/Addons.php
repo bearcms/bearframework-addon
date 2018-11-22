@@ -10,6 +10,7 @@
 namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
+use BearCMS\Internal\Config;
 
 final class Addons
 {
@@ -90,7 +91,7 @@ final class Addons
 
     static function add(string $addonID)
     {
-        $manager = \BearCMS\Internal\Options::getAddonManager();
+        $manager = Config::getAddonManager();
         $manager->addAddon($addonID);
         $data = self::getData($addonID);
         if ($data === null) {
@@ -101,7 +102,7 @@ final class Addons
 
     static function delete(string $addonID)
     {
-        $manager = \BearCMS\Internal\Options::getAddonManager();
+        $manager = Config::getAddonManager();
         $manager->removeAddon($addonID);
         $app = App::get();
         $dataKey = 'bearcms/addons/addon/' . md5($addonID) . '.json';
@@ -195,10 +196,10 @@ final class Addons
         foreach ($addonIDsToAdd as $addonID) {
             if (\BearFramework\Addons::exists($addonID)) {
                 $app->addons->add($addonID);
-                if(isset(self::$announcements[$addonID])){
+                if (isset(self::$announcements[$addonID])) {
                     $addon = new \BearCMS\Addons\Addon($addonID);
                     call_user_func(self::$announcements[$addonID], $addon);
-                    if(is_callable($addon->initialize)){
+                    if (is_callable($addon->initialize)) {
                         call_user_func($addon->initialize);
                     }
                 }

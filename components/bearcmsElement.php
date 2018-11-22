@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal;
 
 $editable = $component->editable === 'true';
 $typeCode = $component->getAttribute('bearcms-internal-attribute-type');
@@ -15,14 +15,14 @@ $containerType = $component->getAttribute('bearcms-internal-attribute-container'
 $inElementsContainer = $component->getAttribute('bearcms-internal-attribute-in-elements-container') === 'true';
 
 if ($editable) {
-    $componentContextData = ElementsHelper::getComponentContextData($component);
+    $componentContextData = Internal\ElementsHelper::getComponentContextData($component);
 }
 
 $rawData = $component->getAttribute('bearcms-internal-attribute-raw-data');
 if ($rawData !== null && strlen($rawData) > 0) {
     $rawData = json_decode($rawData, true);
     $data = $rawData['data'];
-    $options = ElementsHelper::$elementsTypesOptions[$component->src];
+    $options = Internal\ElementsHelper::$elementsTypesOptions[$component->src];
     if (isset($options['fields'])) {
         foreach ($options['fields'] as $field) {
             $fieldID = $field['id'];
@@ -46,7 +46,7 @@ if ($rawData !== null && strlen($rawData) > 0) {
 } else {
     if (strlen($component->id) > 0 && $component->editable === 'true') {
         $getRawDataFromComponent = function($component) {
-            $options = ElementsHelper::$elementsTypesOptions[$component->src];
+            $options = Internal\ElementsHelper::$elementsTypesOptions[$component->src];
             $data = [];
             if (isset($options['fields'])) {
                 foreach ($options['fields'] as $field) {
@@ -64,7 +64,7 @@ if ($rawData !== null && strlen($rawData) > 0) {
             if (isset($options['updateDataFromComponent'])) {
                 $data = call_user_func($options['updateDataFromComponent'], clone($component), $data);
             }
-            return json_encode(['id' => $component->id, 'type' => ElementsHelper::$elementsTypesCodes[$component->src], 'data' => $data]);
+            return json_encode(['id' => $component->id, 'type' => Internal\ElementsHelper::$elementsTypesCodes[$component->src], 'data' => $data]);
         };
         if ($editable) {
             $componentContextData['rawData'] = $getRawDataFromComponent($component);
@@ -85,7 +85,7 @@ if ($containerType === 'none') {
 } else {
     $attributes = '';
     if ($editable) {
-        ElementsHelper::$editorData[] = ['element', $component->id, $componentContextData, $typeCode];
+        Internal\ElementsHelper::$editorData[] = ['element', $component->id, $componentContextData, $typeCode];
         $htmlElementID = 'brelc' . md5($component->id);
         $attributes .= ' id="' . $htmlElementID . '"';
     }

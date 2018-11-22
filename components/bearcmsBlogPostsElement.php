@@ -7,8 +7,8 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal\ElementsHelper;
-use BearCMS\Internal\Options;
+use BearCMS\Internal;
+use BearCMS\Internal\Config;
 
 $app = App::get();
 $context = $app->context->get(__FILE__);
@@ -67,7 +67,7 @@ if ($list->length === 0) {
     foreach ($list as $blogPost) {
         $counter++;
         $title = isset($blogPost['title']) ? $blogPost['title'] : 'Unknown';
-        $url = $app->request->base . Options::$blogPagesPathPrefix . (isset($blogPost['slug']) ? $blogPost['slug'] : 'unknown') . '/';
+        $url = $app->request->base . Config::$blogPagesPathPrefix . (isset($blogPost['slug']) ? $blogPost['slug'] : 'unknown') . '/';
         $publishedTime = isset($blogPost['publishedTime']) ? $blogPost['publishedTime'] : '';
 
         $content .= '<div class="bearcms-blog-posts-element-post">';
@@ -86,12 +86,12 @@ if ($list->length === 0) {
             $containerID = 'bearcms-blogpost-' . $blogPost['id'];
             $content .= '<div class="bearcms-blog-posts-element-post-content">';
             if ($type === 'summary') {
-                $containerData = ElementsHelper::getContainerData($containerID);
+                $containerData = Internal\ElementsHelper::getContainerData($containerID);
                 $textElementData = null;
                 $imageElementData = null;
 
                 $walkElements = function($elementID) use (&$textElementData, &$imageElementData) {
-                    $elementsRawData = ElementsHelper::getElementsRawData([$elementID]);
+                    $elementsRawData = Internal\ElementsHelper::getElementsRawData([$elementID]);
                     if ($elementsRawData[$elementID] === null) {
                         return false;
                     }
@@ -160,7 +160,7 @@ if ($list->length === 0) {
                 $hasImage = $imageElementData !== null;
                 $hasText = $textElementData !== null;
                 if ($hasImage && $hasText) {
-                    $content .= ElementsHelper::renderFloatingBox([
+                    $content .= Internal\ElementsHelper::renderFloatingBox([
                                 'data' => [
                                     'type' => 'floatingBox',
                                     'position' => 'left',

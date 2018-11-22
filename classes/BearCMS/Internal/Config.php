@@ -11,7 +11,7 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 
-final class Options
+final class Config
 {
 
     static $serverUrl = null;
@@ -35,6 +35,7 @@ final class Options
     static $useDefaultUserProfile = true;
     static $whitelabel = false;
     static $addonManager = null;
+    static $addDefaultThemes = true;
 
     /**
      * 
@@ -132,6 +133,9 @@ final class Options
             if ($index !== false) {
                 unset(self::$features[$index]);
             }
+        }
+        if (isset($data['addDefaultThemes'])) {
+            self::$addDefaultThemes = (int) $data['addDefaultThemes'];
         }
     }
 
