@@ -7,14 +7,14 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Data;
+namespace BearCMS\Internal\Data2;
 
 /**
- * @property string $id
- * @property string $name
- * @property string $status
+ * @property string $key
+ * @property string $email
+ * @property array $permissions
  */
-class BlogCategory
+class UserInvitation
 {
 
     use \IvoPetkov\DataObjectTrait;
@@ -22,14 +22,14 @@ class BlogCategory
 
     function __construct()
     {
-        $this->defineProperty('id', [
+        $this->defineProperty('key', [
             'type' => 'string'
         ]);
-        $this->defineProperty('name', [
+        $this->defineProperty('email', [
             'type' => 'string'
         ]);
-        $this->defineProperty('status', [
-            'type' => 'string'
+        $this->defineProperty('permissions', [
+            'type' => 'array'
         ]);
     }
 

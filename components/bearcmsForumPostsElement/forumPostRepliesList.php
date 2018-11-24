@@ -8,6 +8,7 @@
 
 use BearFramework\App;
 use BearCMS\Internal;
+use BearCMS\Internal2;
 
 $app = App::get();
 
@@ -32,7 +33,7 @@ $elementID = 'frl' . md5($forumPostID);
     </head>
     <body><?php
         echo '<div id="' . $elementID . '">';
-        $forumPost = $app->bearCMS->data->forumPosts->get($forumPostID);
+        $forumPost = Internal2::$data2->forumPosts->get($forumPostID);
         if ($forumPost !== null) {
 
             $renderItem = function($reply) use ($app) {

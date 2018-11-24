@@ -117,7 +117,7 @@ class CurrentUser
      */
     public function login(string $userID): bool
     {
-        $data = \BearCMS\Internal\Server::call('login', ['userID' => $userID], true);
+        $data = Internal\Server::call('login', ['userID' => $userID], true);
         if (isset($data['result'])) {
             return $data['result'] === 'ok';
         }
@@ -132,7 +132,7 @@ class CurrentUser
      */
     public function logout(): void
     {
-        Internal\Cookies::setList(\Internal\Cookies::TYPE_SERVER, [
+        Internal\Cookies::setList(Internal\Cookies::TYPE_SERVER, [
             ['name' => '_s', 'value' => 'deleted', 'expire' => 0],
             ['name' => '_a', 'value' => 'deleted', 'expire' => 0]
         ]);

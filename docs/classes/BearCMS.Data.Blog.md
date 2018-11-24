@@ -34,7 +34,7 @@ _Returns_
 Returns a collection containing all blog posts
 
 ```php
-$list = $app->bearCMS->data->blogPosts->getList();
+$list = Internal2::$data2->blogPosts->getList();
 
 // \BearCMS\DataList
 // (
@@ -68,7 +68,7 @@ $list = $app->bearCMS->data->blogPosts->getList();
 Returns an object containing the blog post data
 
 ```php
-$post = $app->bearCMS->data->blogPosts->getPost('abcdefghijk1');
+$post = Internal2::$data2->blogPosts->getPost('abcdefghijk1');
 
 // \BearCMS\DataObject
 // (

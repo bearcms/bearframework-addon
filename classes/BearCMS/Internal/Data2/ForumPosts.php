@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Data;
+namespace BearCMS\Internal\Data2;
 
 use BearFramework\App;
 
@@ -17,17 +17,17 @@ use BearFramework\App;
 class ForumPosts
 {
 
-    private function makeForumPostFromRawData($rawData): \BearCMS\Data\ForumPost
+    private function makeForumPostFromRawData($rawData): \BearCMS\Internal\Data2\ForumPost
     {
         $rawData = json_decode($rawData, true);
-        $user = new \BearCMS\Data\ForumPost();
+        $user = new \BearCMS\Internal\Data2\ForumPost();
         $properties = ['id', 'status', 'author', 'title', 'text', 'categoryID', 'createdTime', 'replies'];
         foreach ($properties as $property) {
             if ($property === 'replies') {
                 $temp = new \BearCMS\DataList();
                 if (isset($rawData['replies'])) {
                     foreach ($rawData['replies'] as $replyData) {
-                        $reply = new \BearCMS\Data\ForumPostReply();
+                        $reply = new \BearCMS\Internal\Data2\ForumPostReply();
                         $reply->id = $replyData['id'];
                         $reply->status = $replyData['status'];
                         $reply->author = $replyData['author'];
@@ -51,7 +51,7 @@ class ForumPosts
      * @return \BearCMS\DataObject|null The forum post data or null if the thread not found
      * @throws \InvalidArgumentException
      */
-    public function get(string $id): ?\BearCMS\Data\ForumPost
+    public function get(string $id): ?\BearCMS\Internal\Data2\ForumPost
     {
         $data = \BearCMS\Internal\Data::getValue('bearcms/forums/posts/post/' . md5($id) . '.json');
         if ($data !== null) {
@@ -63,7 +63,7 @@ class ForumPosts
     /**
      * Retrieves a list of all forum posts
      * 
-     * @return \BearCMS\DataList|\BearCMS\Data\ForumPost[] List containing all forum posts data
+     * @return \BearCMS\DataList|\BearCMS\Internal\Data2\ForumPost[] List containing all forum posts data
      */
     public function getList()
     {

@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Data;
+namespace BearCMS\Internal\Data2;
 
 /**
  * @property string $id
@@ -17,9 +17,9 @@ namespace BearCMS\Data;
  * @property ?string $text
  * @property string $categoryID
  * @property ?int $createdTime
- * @property \BearCMS\DataList|\BearCMS\Data\ForumPostReply[] $replies
+ * @property \BearCMS\DataList|\BearCMS\Internal\Data2\ForumPostReply[] $replies
  */
-class ForumPost
+class ForumPostReply
 {
 
     use \IvoPetkov\DataObjectTrait;
@@ -36,23 +36,11 @@ class ForumPost
         $this->defineProperty('author', [
             'type' => 'array'
         ]);
-        $this->defineProperty('title', [
-            'type' => '?string'
-        ]);
         $this->defineProperty('text', [
             'type' => '?string'
         ]);
-        $this->defineProperty('categoryID', [
-            'type' => 'string'
-        ]);
         $this->defineProperty('createdTime', [
             'type' => '?int'
-        ]);
-        $this->defineProperty('replies', [
-            'type' => '\BearCMS\DataList',
-            'init' => function() {
-                return new \BearCMS\DataList();
-            }
         ]);
     }
 

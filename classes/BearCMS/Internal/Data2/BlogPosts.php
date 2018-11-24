@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Data;
+namespace BearCMS\Internal\Data2;
 
 use BearFramework\App;
 
@@ -17,9 +17,9 @@ use BearFramework\App;
 class BlogPosts
 {
 
-    private function makeBlogPostFromRawData($rawData): \BearCMS\Data\BlogPost
+    private function makeBlogPostFromRawData($rawData): \BearCMS\Internal\Data2\BlogPost
     {
-        return new \BearCMS\Data\BlogPost(json_decode($rawData, true));
+        return new \BearCMS\Internal\Data2\BlogPost(json_decode($rawData, true));
     }
 
     /**

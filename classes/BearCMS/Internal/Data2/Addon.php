@@ -3,13 +3,13 @@
 /*
  * Bear CMS addon for Bear Framework
  * https://bearcms.com/
- * Copyright (c) Amplilabs Ltd.
+ * Copyright (c) 2016 Amplilabs Ltd.
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Data;
+namespace BearCMS\Internal\Data2;
 
-class BlogPost extends \BearCMS\DataObject
+class Addon extends \BearCMS\DataObject
 {
     
 }

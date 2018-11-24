@@ -11,10 +11,10 @@ use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use IvoPetkov\HTML5DOMDocument;
+use BearCMS\Internal2;
 
 /**
  * 
- * @property-read \BearCMS\Data $data A reference to the data related objects
  * @property-read \BearCMS\CurrentUser $currentUser Information about the current loggedin user
  * @property-read \BearCMS\Themes $themes
  * @property-read \BearCMS\Addons $addons
@@ -47,12 +47,6 @@ class BearCMS
     function __construct()
     {
         $this
-                ->defineProperty('data', [
-                    'init' => function() {
-                        return new \BearCMS\Data();
-                    },
-                    'readonly' => true
-                ])
                 ->defineProperty('currentUser', [
                     'init' => function() {
                         return new \BearCMS\CurrentUser();
@@ -198,7 +192,7 @@ class BearCMS
                 ->add('/rss.xml', [
                     [$this, 'disabledCheck'],
                     function() {
-                        $settings = $this->data->settings->get();
+                        $settings = Internal2::$data2->settings->get();
                         if ($settings['enableRSS']) {
                             return Internal\Controller::handleRSS();
                         }
@@ -221,10 +215,10 @@ class BearCMS
                     function() {
                         $size = str_replace('/-link-rel-icon-', '', (string) $this->app->request->path);
                         if (is_numeric($size)) {
-                            $settings = $this->data->settings->get();
+                            $settings = Internal2::$data2->settings->get();
                             $icon = $settings['icon'];
                             if (isset($icon{0})) {
-                                $filename = $this->data->getRealFilename($icon);
+                                $filename = Internal2::$data2->getRealFilename($icon);
                                 if ($filename !== null) {
                                     $url = $this->app->assets->getUrl($filename, ['cacheMaxAge' => 999999999, 'width' => (int) $size, 'height' => (int) $size]);
                                     return new App\Response\TemporaryRedirect($url);
@@ -259,7 +253,7 @@ class BearCMS
                         [$this, 'disabledCheck'],
                         function() use ($onResponseCreated) {
                             $forumCategoryID = $this->app->request->path->getSegment(1);
-                            $forumCategory = $this->data->forumCategories->get($forumCategoryID);
+                            $forumCategory = Internal2::$data2->forumCategories->get($forumCategoryID);
                             if ($forumCategory !== null) {
                                 $content = '<html>';
                                 $content .= '<head>';
@@ -287,7 +281,7 @@ class BearCMS
                         function() use ($onResponseCreated) {
                             $forumPostSlug = $this->app->request->path->getSegment(1); // todo validate
                             $forumPostID = $this->app->request->path->getSegment(2);
-                            $forumPost = $this->data->forumPosts->get($forumPostID);
+                            $forumPost = Internal2::$data2->forumPosts->get($forumPostID);
                             if ($forumPost !== null) {
 
                                 $render = false;
@@ -348,7 +342,7 @@ class BearCMS
                             $slugsList = Internal\Data\BlogPosts::getSlugsList('published');
                             $blogPostID = array_search($slug, $slugsList);
                             if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) && $this->currentUser->exists()) {
-                                $blogPost = $this->data->blogPosts->get(substr($slug, 6));
+                                $blogPost = Internal2::$data2->blogPosts->get(substr($slug, 6));
                                 if ($blogPost !== null) {
                                     if ($blogPost->status === 'published') {
                                         return new App\Response\PermanentRedirect($this->app->urls->get(Config::$blogPagesPathPrefix . $blogPost->slug . '/'));
@@ -357,7 +351,7 @@ class BearCMS
                                 }
                             }
                             if ($blogPostID !== false) {
-                                $blogPost = $this->data->blogPosts->get($blogPostID);
+                                $blogPost = Internal2::$data2->blogPosts->get($blogPostID);
                                 if ($blogPost !== null) {
                                     $path = $this->app->request->path->get();
                                     $hasSlash = substr($path, -1) === '/';
@@ -444,13 +438,13 @@ class BearCMS
                                 }
                                 $found = false;
                                 if ($pageID === 'home') {
-                                    $settings = $this->data->settings->get();
+                                    $settings = Internal2::$data2->settings->get();
                                     $title = trim($settings->title);
                                     $description = trim($settings->description);
                                     $keywords = trim($settings->keywords);
                                     $found = true;
                                 } else {
-                                    $page = $this->data->pages->get($pageID);
+                                    $page = Internal2::$data2->pages->get($pageID);
                                     if ($page !== null) {
                                         $title = isset($page->titleTagContent) ? trim($page->titleTagContent) : '';
                                         if (!isset($title{0})) {
@@ -620,12 +614,12 @@ class BearCMS
                     ->define('bearcms-send-new-comment-notification', function($data) {
                         $threadID = $data['threadID'];
                         $commentID = $data['commentID'];
-                        $comments = $this->data->comments->getList()
+                        $comments = Internal2::$data2->comments->getList()
                                 ->filterBy('threadID', $threadID)
                                 ->filterBy('id', $commentID);
                         if (isset($comments[0])) {
                             $comment = $comments[0];
-                            $comments = $this->data->comments->getList()
+                            $comments = Internal2::$data2->comments->getList()
                                     ->filterBy('status', 'pendingApproval');
                             $pendingApprovalCount = $comments->length;
                             $profile = Internal\PublicProfile::getFromAuthor($comment->author);
@@ -634,9 +628,9 @@ class BearCMS
                     })
                     ->define('bearcms-send-new-forum-post-notification', function($data) {
                         $forumPostID = $data['forumPostID'];
-                        $forumPost = $this->data->forumPosts->get($forumPostID);
+                        $forumPost = Internal2::$data2->forumPosts->get($forumPostID);
                         if ($forumPost !== null) {
-                            $forumPosts = $this->data->forumPosts->getList()
+                            $forumPosts = Internal2::$data2->forumPosts->getList()
                                     ->filterBy('status', 'pendingApproval');
                             $pendingApprovalCount = $forumPosts->length;
                             $profile = Internal\PublicProfile::getFromAuthor($forumPost->author);
@@ -646,12 +640,12 @@ class BearCMS
                     ->define('bearcms-send-new-forum-post-reply-notification', function($data) {
                         $forumPostID = $data['forumPostID'];
                         $forumPostReplyID = $data['forumPostReplyID'];
-                        $forumPostsReplies = $this->data->forumPostsReplies->getList()
+                        $forumPostsReplies = Internal2::$data2->forumPostsReplies->getList()
                                 ->filterBy('forumPostID', $forumPostID)
                                 ->filterBy('id', $forumPostReplyID);
                         if (isset($forumPostsReplies[0])) {
                             $forumPostsReply = $forumPostsReplies[0];
-                            $forumPostsReplies = $this->data->forumPostsReplies->getList()
+                            $forumPostsReplies = Internal2::$data2->forumPostsReplies->getList()
                                     ->filterBy('status', 'pendingApproval');
                             $pendingApprovalCount = $forumPostsReplies->length;
                             $profile = Internal\PublicProfile::getFromAuthor($forumPostsReply->author);
@@ -685,7 +679,7 @@ class BearCMS
         }
 
         $currentUserExists = Config::hasServer() && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
-        $settings = $this->data->settings->get();
+        $settings = Internal2::$data2->settings->get();
 
         $document = new HTML5DOMDocument();
         $document->loadHTML($response->content);
@@ -853,7 +847,7 @@ class BearCMS
             return;
         }
 
-        $settings = $this->data->settings->get();
+        $settings = Internal2::$data2->settings->get();
 
         $serverCookies = Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER);
         if (!empty($serverCookies['tmcs']) || !empty($serverCookies['tmpr'])) {
@@ -973,7 +967,7 @@ class BearCMS
     public function disabledCheck(): ?\BearFramework\App\Response
     {
         $currentUserExists = Config::hasServer() && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
-        $settings = $this->data->settings->get();
+        $settings = Internal2::$data2->settings->get();
         $isDisabled = !$currentUserExists && $settings->disabled;
         if ($isDisabled) {
             return new App\Response\TemporaryUnavailable(htmlspecialchars($settings->disabledText));

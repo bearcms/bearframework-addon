@@ -12,6 +12,7 @@ namespace BearCMS\Internal\Data;
 use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
+use BearCMS\Internal2;
 
 final class Comments
 {
@@ -107,7 +108,7 @@ final class Comments
     {
         $dataList = new \BearCMS\DataList();
         foreach ($rawCommentsData as $rawCommentData) {
-            $comment = new \BearCMS\Data\Comment();
+            $comment = new \BearCMS\Internal\Data2\Comment();
             $properties = ['id', 'status', 'author', 'text', 'createdTime'];
             foreach ($properties as $property) {
                 if (array_key_exists($property, $rawCommentData)) {
@@ -132,7 +133,7 @@ final class Comments
         if (!is_array($result)) {
             $result = [];
 
-            $pages = $app->bearCMS->data->pages->getList();
+            $pages = Internal2::$data2->pages->getList();
             $walkPageElements = function($pageID, $path) use ($app, &$result) {
                 $url = null;
                 $containerElementIDs = Internal\ElementsHelper::getContainerElementsIDs('bearcms-page-' . $pageID);
@@ -156,7 +157,7 @@ final class Comments
             foreach ($pages as $page) {
                 $walkPageElements($page->id, $page->path);
             }
-            $blogPosts = $app->bearCMS->data->blogPosts->getList();
+            $blogPosts = Internal2::$data2->blogPosts->getList();
             foreach ($blogPosts as $blogPost) {
                 $url = $app->urls->get(Config::$blogPagesPathPrefix . (strlen($blogPost->slug) === 0 ? 'draft-' . $blogPost->id : $blogPost->slug) . '/');
                 $threadID = 'bearcms-blogpost-' . $blogPost->id;

@@ -34,7 +34,7 @@ _Returns_
 List of all BearCMS managed addons.
 
 ```php
-$list = $app->bearCMS->data->addons->getList();
+$list = Internal2::$data2->addons->getList();
 
 // \BearCMS\DataList
 // (
@@ -55,7 +55,7 @@ $list = $app->bearCMS->data->addons->getList();
 Information about a specific BearCMS managed addon.
 
 ```php
-$addon = $app->bearCMS->data->addons->getAddon('test/test1-addon');
+$addon = Internal2::$data2->addons->getAddon('test/test1-addon');
 
 // \BearCMS\DataObject
 // (

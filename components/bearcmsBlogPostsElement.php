@@ -9,6 +9,7 @@
 use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
+use BearCMS\Internal2;
 
 $app = App::get();
 $context = $app->context->get(__FILE__);
@@ -18,7 +19,7 @@ if (strlen($component->source) > 0 && array_search($component->source, ['allPost
     $source = $component->source;
 }
 
-$list = $app->bearCMS->data->blogPosts->getList()
+$list = Internal2::$data2->blogPosts->getList()
         ->filterBy('status', 'published')
         ->sortBy('publishedTime', 'desc');
 
@@ -28,7 +29,7 @@ if ($source === 'postsInCategories') {
         if (isset($blogPost->categoriesIDs)) {
             foreach ($blogPost->categoriesIDs as $categoryID) {
                 if (array_search($categoryID, $categoriesIDs) !== false) {
-                    $blogCategory = $app->bearCMS->data->blogCategories->get($categoryID);
+                    $blogCategory = Internal2::$data2->blogCategories->get($categoryID);
                     if ($blogCategory !== null && $blogCategory->status === 'published') {
                         return true;
                     }

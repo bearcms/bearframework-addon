@@ -7,10 +7,11 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal2;
 
 $app = App::get();
 
-$settings = $app->bearCMS->data->settings->get();
+$settings = Internal2::$data2->settings->get();
 $isHomePage = (string) $app->request->path === '/';
 
 $backgroundColor = $options['backgroundColor'];
@@ -23,7 +24,7 @@ $headerLogoImage = $options['headerLogoImage'];
 
 $hasHeaderLogo = strlen($headerLogoImage) > 0;
 if ($hasHeaderLogo) {
-    $headerLogoImageSize = $app->images->getSize($app->bearCMS->data->getRealFilename($headerLogoImage));
+    $headerLogoImageSize = $app->images->getSize(Internal2::$data2->getRealFilename($headerLogoImage));
     $headerLogoMaxWidth = $headerLogoImageSize[0] * ($isHomePage ? 180 : 90) / $headerLogoImageSize[1];
 }
 

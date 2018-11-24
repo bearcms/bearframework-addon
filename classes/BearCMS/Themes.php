@@ -11,6 +11,7 @@ namespace BearCMS;
 
 use BearFramework\App;
 use BearCMS\Internal;
+use BearCMS\Internal2;
 
 class Themes
 {
@@ -179,13 +180,13 @@ class Themes
                 $html = '';
                 $currentValues = null;
                 if ($userID !== null) {
-                    $userOptions = $app->bearCMS->data->themes->getUserOptions($id, $userID);
+                    $userOptions = Internal2::$data2->themes->getUserOptions($id, $userID);
                     if (is_array($userOptions)) {
                         $currentValues = $userOptions;
                     }
                 }
                 if ($currentValues === null) {
-                    $currentValues = $app->bearCMS->data->themes->getOptions($id);
+                    $currentValues = Internal2::$data2->themes->getOptions($id);
                 }
                 $themeOptions = \BearCMS\Internal\Themes::getOptions($id);
                 if (!empty($themeOptions)) {
@@ -325,7 +326,7 @@ class Themes
                     $search = [];
                     $replace = [];
                     foreach ($matches[1] as $key) {
-                        $filename = $app->bearCMS->data->getRealFilename($key);
+                        $filename = Internal2::$data2->getRealFilename($key);
                         if ($filename !== null) {
                             $search[] = $key;
                             $replace[] = $app->assets->getUrl($filename, ['cacheMaxAge' => 999999999]);
@@ -360,7 +361,7 @@ class Themes
         $filesInValues = \BearCMS\Internal\Themes::getFilesInValues($values);
         $filesKeysToUpdate = [];
         foreach ($filesInValues as $key) {
-            $filename = $app->bearCMS->data->getRealFilename($key);
+            $filename = Internal2::$data2->getRealFilename($key);
             if ($filename !== null) {
                 $attachmentName = 'files/' . (sizeof($filesToAttach) + 1) . '.' . pathinfo($key, PATHINFO_EXTENSION); // the slash helps in import (shows if the value is encoded)
                 $filesToAttach[$attachmentName] = $filename;
@@ -478,9 +479,9 @@ class Themes
 
             $values = \BearCMS\Internal\Themes::updateFilesInValues($values, $filesKeysToUpdate);
             if ($hasUser) {
-                $app->bearCMS->data->themes->setUserOptions($id, $userID, $values);
+                Internal2::$data2->themes->setUserOptions($id, $userID, $values);
             } else {
-                $app->bearCMS->data->themes->setOptions($id, $values);
+                Internal2::$data2->themes->setOptions($id, $values);
             }
             self::$cache = [];
 
@@ -498,7 +499,7 @@ class Themes
     public function applyUserValues(string $id, string $userID): void
     {
         $app = App::get();
-        $values = $app->bearCMS->data->themes->getUserOptions($id, $userID);
+        $values = Internal2::$data2->themes->getUserOptions($id, $userID);
         if (is_array($values)) {
             $filesInValues = \BearCMS\Internal\Themes::getFilesInValues($values);
             $filesKeysToUpdate = [];
@@ -513,8 +514,8 @@ class Themes
                 }
             }
             $values = \BearCMS\Internal\Themes::updateFilesInValues($values, $filesKeysToUpdate);
-            $app->bearCMS->data->themes->setOptions($id, $values);
-            $app->bearCMS->data->themes->discardUserOptions($id, $userID);
+            Internal2::$data2->themes->setOptions($id, $values);
+            Internal2::$data2->themes->discardUserOptions($id, $userID);
             self::$cache = [];
         }
     }

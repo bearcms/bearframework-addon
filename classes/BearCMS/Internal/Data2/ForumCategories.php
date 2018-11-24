@@ -7,25 +7,27 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Data;
-
-use BearFramework\App;
+namespace BearCMS\Internal\Data2;
 
 /**
  * Information about the site pages
  */
-class Pages
+class ForumCategories
 {
 
     static private $cache = [];
 
-    private function makePageFromRawData($rawData): \BearCMS\Data\Page
+    private function makeForumCategoryFromRawData($rawData): \BearCMS\Internal\Data2\ForumCategory
     {
-        $data = json_decode($rawData, true);
-        if (isset($data['parentID']) && strlen($data['parentID']) === 0) {
-            $data['parentID'] = null;
+        $rawData = json_decode($rawData, true);
+        $forumCategory = new \BearCMS\Internal\Data2\ForumCategory();
+        $properties = ['id', 'name', 'status'];
+        foreach ($properties as $property) {
+            if (array_key_exists($property, $rawData)) {
+                $forumCategory->$property = $rawData[$property];
+            }
         }
-        return new \BearCMS\Data\Page($data);
+        return $forumCategory;
     }
 
     /**
@@ -35,11 +37,11 @@ class Pages
      * @return \BearCMS\DataObject|null The page data or null if page not found
      * @throws \InvalidArgumentException
      */
-    public function get(string $id): ?\BearCMS\Data\Page
+    public function get(string $id): ?\BearCMS\Internal\Data2\ForumCategory
     {
-        $data = \BearCMS\Internal\Data::getValue('bearcms/pages/page/' . md5($id) . '.json');
+        $data = \BearCMS\Internal\Data::getValue('bearcms/forums/categories/category/' . md5($id) . '.json');
         if ($data !== null) {
-            return $this->makePageFromRawData($data);
+            return $this->makeForumCategoryFromRawData($data);
         }
         return null;
     }
@@ -47,29 +49,22 @@ class Pages
     /**
      * Retrieves a list of all pages
      * 
-     * @return \BearCMS\DataList List containing all pages data
+     * @return \BearCMS\DataList|\BearCMS\Internal\Data2\ForumCategory[] List containing all pages data
      */
     public function getList(): \BearCMS\DataList
     {
         if (!isset(self::$cache['list'])) {
-            $list = \BearCMS\Internal\Data::getList('bearcms/pages/page/');
+            $list = \BearCMS\Internal\Data::getList('bearcms/forums/categories/category/');
             array_walk($list, function(&$value) {
-                $value = $this->makePageFromRawData($value);
+                $value = $this->makeForumCategoryFromRawData($value);
             });
-            $structureData = \BearCMS\Internal\Data::getValue('bearcms/pages/structure.json');
+
+            $structureData = \BearCMS\Internal\Data::getValue('bearcms/forums/categories/structure.json');
             $structureData = $structureData === null ? [] : json_decode($structureData, true);
             $flattenStructureData = [];
-            $flattenStructure = function($structureData) use (&$flattenStructure, &$flattenStructureData) {
-                foreach ($structureData as $item) {
-                    $flattenStructureData[] = $item['id'];
-                    if (isset($item['children'])) {
-                        $flattenStructure($item['children']);
-                    }
-                }
-            };
-            $flattenStructure($structureData);
-            unset($flattenStructure);
-            unset($structureData);
+            foreach ($structureData as $itemData) {
+                $flattenStructureData[] = $itemData['id'];
+            }
             $flattenStructureData = array_flip($flattenStructureData);
             usort($list, function($object1, $object2) use ($flattenStructureData) {
                 return $flattenStructureData[$object1->id] - $flattenStructureData[$object2->id];

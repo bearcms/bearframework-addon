@@ -44,7 +44,7 @@ _Returns_
 Returns an object containing information about the user specified 
 
 ```php
-$user = $app->bearCMS->data->users->getUser('abcdefghijk1');
+$user = Internal2::$data2->users->getUser('abcdefghijk1');
 
 // \BearCMS\DataObject
 // (
@@ -74,7 +74,7 @@ $user = $app->bearCMS->data->users->getUser('abcdefghijk1');
 Returns a collection containing all users data
 
 ```php
-$list = $app->bearCMS->data->users->getList();
+$list = Internal2::$data2->users->getList();
 
 // \BearCMS\DataList
 // (
@@ -125,7 +125,7 @@ $list = $app->bearCMS->data->users->getList();
 Check if there are any users
 
 ```php
-$result = $app->bearCMS->data->users->hasUsers()
+$result = Internal2::$data2->users->hasUsers()
 
 // TRUE or FALSE
 ```

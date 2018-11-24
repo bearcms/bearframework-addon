@@ -8,6 +8,8 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal;
+use BearCMS\Internal2;
 
 $app = App::get();
 $context = $app->context->get(__FILE__);
@@ -18,7 +20,7 @@ if ($count < 1) {
 }
 $categoryID = $component->categoryID;
 
-$posts = $app->bearCMS->data->forumPosts->getList()
+$posts = Internal2::$data2->forumPosts->getList()
         ->filterBy('categoryID', $categoryID)
         ->filter(function($forumPost) use ($app) {
             if ($forumPost->status === 'approved') {

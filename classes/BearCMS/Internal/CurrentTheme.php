@@ -33,7 +33,7 @@ class CurrentTheme
     {
         if (!isset(self::$cache['id'])) {
             $cookies = Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER);
-            self::$cache['id'] = isset($cookies['tmpr']) ? $cookies['tmpr'] : \BearCMS\Internal\Themes::getActiveThemeID();
+            self::$cache['id'] = isset($cookies['tmpr']) ? $cookies['tmpr'] : Internal\Themes::getActiveThemeID();
         }
         return self::$cache['id'];
     }

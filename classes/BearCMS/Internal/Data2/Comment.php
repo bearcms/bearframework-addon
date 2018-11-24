@@ -7,14 +7,16 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Data;
+namespace BearCMS\Internal\Data2;
 
 /**
  * @property string $id
- * @property string $name
  * @property string $status
+ * @property array $author
+ * @property ?string $text
+ * @property ?int $createdTime
  */
-class ForumCategory
+class Comment
 {
 
     use \IvoPetkov\DataObjectTrait;
@@ -25,11 +27,17 @@ class ForumCategory
         $this->defineProperty('id', [
             'type' => 'string'
         ]);
-        $this->defineProperty('name', [
-            'type' => 'string'
-        ]);
         $this->defineProperty('status', [
             'type' => 'string'
+        ]);
+        $this->defineProperty('author', [
+            'type' => 'array'
+        ]);
+        $this->defineProperty('text', [
+            'type' => '?string'
+        ]);
+        $this->defineProperty('createdTime', [
+            'type' => '?int'
         ]);
     }
 

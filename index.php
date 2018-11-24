@@ -19,37 +19,38 @@ $context->classes
         ->add('BearCMS\Addons', 'classes/BearCMS/Addons.php')
         ->add('BearCMS\Addons\Addon', 'classes/BearCMS/Addons/Addon.php')
         ->add('BearCMS\CurrentUser', 'classes/BearCMS/CurrentUser.php')
-        ->add('BearCMS\Data', 'classes/BearCMS/Data.php')
-        ->add('BearCMS\Data\Addon', 'classes/BearCMS/Data/Addon.php')
-        ->add('BearCMS\Data\Addons', 'classes/BearCMS/Data/Addons.php')
-        ->add('BearCMS\Data\BlogCategories', 'classes/BearCMS/Data/BlogCategories.php')
-        ->add('BearCMS\Data\BlogCategory', 'classes/BearCMS/Data/BlogCategory.php')
-        ->add('BearCMS\Data\BlogPost', 'classes/BearCMS/Data/BlogPost.php')
-        ->add('BearCMS\Data\BlogPosts', 'classes/BearCMS/Data/BlogPosts.php')
-        ->add('BearCMS\Data\Comment', 'classes/BearCMS/Data/Comment.php')
-        ->add('BearCMS\Data\Comments', 'classes/BearCMS/Data/Comments.php')
-        ->add('BearCMS\Data\CommentsThread', 'classes/BearCMS/Data/CommentsThread.php')
-        ->add('BearCMS\Data\CommentsThreads', 'classes/BearCMS/Data/CommentsThreads.php')
-        ->add('BearCMS\Data\ForumCategories', 'classes/BearCMS/Data/ForumCategories.php')
-        ->add('BearCMS\Data\ForumCategory', 'classes/BearCMS/Data/ForumCategory.php')
-        ->add('BearCMS\Data\ForumPost', 'classes/BearCMS/Data/ForumPost.php')
-        ->add('BearCMS\Data\ForumPosts', 'classes/BearCMS/Data/ForumPosts.php')
-        ->add('BearCMS\Data\ForumPostReply', 'classes/BearCMS/Data/ForumPostReply.php')
-        ->add('BearCMS\Data\ForumPostsReplies', 'classes/BearCMS/Data/ForumPostsReplies.php')
-        ->add('BearCMS\Data\Page', 'classes/BearCMS/Data/Page.php')
-        ->add('BearCMS\Data\Pages', 'classes/BearCMS/Data/Pages.php')
-        ->add('BearCMS\Data\Settings', 'classes/BearCMS/Data/Settings.php')
-        ->add('BearCMS\Data\Themes', 'classes/BearCMS/Data/Themes.php')
-        ->add('BearCMS\Data\User', 'classes/BearCMS/Data/User.php')
-        ->add('BearCMS\Data\UserInvitation', 'classes/BearCMS/Data/UserInvitation.php')
-        ->add('BearCMS\Data\Users', 'classes/BearCMS/Data/Users.php')
-        ->add('BearCMS\Data\UsersInvitations', 'classes/BearCMS/Data/UsersInvitations.php')
         ->add('BearCMS\DataList', 'classes/BearCMS/DataList.php')
         ->add('BearCMS\DataObject', 'classes/BearCMS/DataObject.php')
         ->add('BearCMS\Themes', 'classes/BearCMS/Themes.php')
         ->add('BearCMS\Themes\Options', 'classes/BearCMS/Themes/Options.php')
         ->add('BearCMS\Themes\OptionsDefinition', 'classes/BearCMS/Themes/OptionsDefinition.php')
         ->add('BearCMS\Themes\OptionsDefinitionGroup', 'classes/BearCMS/Themes/OptionsDefinitionGroup.php')
+        ->add('BearCMS\Internal2', 'classes/BearCMS/Internal2.php')
+        ->add('BearCMS\Internal\Data2', 'classes/BearCMS/Internal/Data2.php')
+        ->add('BearCMS\Internal\Data2\Addon', 'classes/BearCMS/Internal/Data2/Addon.php')
+        ->add('BearCMS\Internal\Data2\Addons', 'classes/BearCMS/Internal/Data2/Addons.php')
+        ->add('BearCMS\Internal\Data2\BlogCategories', 'classes/BearCMS/Internal/Data2/BlogCategories.php')
+        ->add('BearCMS\Internal\Data2\BlogCategory', 'classes/BearCMS/Internal/Data2/BlogCategory.php')
+        ->add('BearCMS\Internal\Data2\BlogPost', 'classes/BearCMS/Internal/Data2/BlogPost.php')
+        ->add('BearCMS\Internal\Data2\BlogPosts', 'classes/BearCMS/Internal/Data2/BlogPosts.php')
+        ->add('BearCMS\Internal\Data2\Comment', 'classes/BearCMS/Internal/Data2/Comment.php')
+        ->add('BearCMS\Internal\Data2\Comments', 'classes/BearCMS/Internal/Data2/Comments.php')
+        ->add('BearCMS\Internal\Data2\CommentsThread', 'classes/BearCMS/Internal/Data2/CommentsThread.php')
+        ->add('BearCMS\Internal\Data2\CommentsThreads', 'classes/BearCMS/Internal/Data2/CommentsThreads.php')
+        ->add('BearCMS\Internal\Data2\ForumCategories', 'classes/BearCMS/Internal/Data2/ForumCategories.php')
+        ->add('BearCMS\Internal\Data2\ForumCategory', 'classes/BearCMS/Internal/Data2/ForumCategory.php')
+        ->add('BearCMS\Internal\Data2\ForumPost', 'classes/BearCMS/Internal/Data2/ForumPost.php')
+        ->add('BearCMS\Internal\Data2\ForumPosts', 'classes/BearCMS/Internal/Data2/ForumPosts.php')
+        ->add('BearCMS\Internal\Data2\ForumPostReply', 'classes/BearCMS/Internal/Data2/ForumPostReply.php')
+        ->add('BearCMS\Internal\Data2\ForumPostsReplies', 'classes/BearCMS/Internal/Data2/ForumPostsReplies.php')
+        ->add('BearCMS\Internal\Data2\Page', 'classes/BearCMS/Internal/Data2/Page.php')
+        ->add('BearCMS\Internal\Data2\Pages', 'classes/BearCMS/Internal/Data2/Pages.php')
+        ->add('BearCMS\Internal\Data2\Settings', 'classes/BearCMS/Internal/Data2/Settings.php')
+        ->add('BearCMS\Internal\Data2\Themes', 'classes/BearCMS/Internal/Data2/Themes.php')
+        ->add('BearCMS\Internal\Data2\User', 'classes/BearCMS/Internal/Data2/User.php')
+        ->add('BearCMS\Internal\Data2\UserInvitation', 'classes/BearCMS/Internal/Data2/UserInvitation.php')
+        ->add('BearCMS\Internal\Data2\Users', 'classes/BearCMS/Internal/Data2/Users.php')
+        ->add('BearCMS\Internal\Data2\UsersInvitations', 'classes/BearCMS/Internal/Data2/UsersInvitations.php')
         ->add('BearCMS\Internal\Data', 'classes/BearCMS/Internal/Data.php')
         ->add('BearCMS\Internal\Data\Addons', 'classes/BearCMS/Internal/Data/Addons.php')
         ->add('BearCMS\Internal\Data\BlogPosts', 'classes/BearCMS/Internal/Data/BlogPosts.php')
@@ -101,6 +102,8 @@ $app->shortcuts
         ->add('bearCMS', function() {
             return new BearCMS();
         });
+
+BearCMS\Internal2::initialize();
 
 if ($app->request->method === 'GET') {
     if (strlen($app->config->assetsPathPrefix) > 0 && strpos($app->request->path, $app->config->assetsPathPrefix) === 0) {
@@ -156,4 +159,3 @@ $app->hooks
                 $app->hooks->execute('bearCMSContentChanged');
             }
         });
-

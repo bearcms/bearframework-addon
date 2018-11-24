@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Data;
+namespace BearCMS\Internal\Data2;
 
 use BearFramework\App;
 
@@ -17,10 +17,10 @@ use BearFramework\App;
 class Users
 {
 
-    private function makeUserFromRawData($rawData): \BearCMS\Data\User
+    private function makeUserFromRawData($rawData): \BearCMS\Internal\Data2\User
     {
         $rawData = json_decode($rawData, true);
-        $user = new \BearCMS\Data\User();
+        $user = new \BearCMS\Internal\Data2\User();
         $properties = ['id', 'registerTime', 'lastLoginTime', 'hashedPassword', 'emails', 'permissions'];
         foreach ($properties as $property) {
             if (array_key_exists($property, $rawData)) {
@@ -34,9 +34,9 @@ class Users
      * Retrieves information about the user specified
      * 
      * @param string $id The user ID
-     * @return \BearCMS\Data\User|null The user data or null if user not found
+     * @return \BearCMS\Internal\Data2\User|null The user data or null if user not found
      */
-    public function get(string $id): ?\BearCMS\Data\User
+    public function get(string $id): ?\BearCMS\Internal\Data2\User
     {
         $data = \BearCMS\Internal\Data::getValue('bearcms/users/user/' . md5($id) . '.json');
         if ($data !== null) {
@@ -48,7 +48,7 @@ class Users
     /**
      * Retrieves a list of all users
      * 
-     * @return \BearCMS\DataList|\BearCMS\Data\User[] List containing all users data
+     * @return \BearCMS\DataList|\BearCMS\Internal\Data2\User[] List containing all users data
      */
     public function getList()
     {

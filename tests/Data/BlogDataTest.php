@@ -75,7 +75,7 @@ class BlogDataTest extends BearCMSTestCase
     "lastChangeTime": 1477377114
 }');
 
-        $list = $app->bearCMS->data->blogPosts->getList()
+        $list = Internal2::$data2->blogPosts->getList()
                 ->sortBy('createdTime');
         $this->assertTrue($list[0]->id === 'cd763a6f1574e1d326c511a2fda878d1');
         $this->assertTrue($list[1]->id === 'cd763a6f1574e1d326c511a2fda878d2');
@@ -86,7 +86,7 @@ class BlogDataTest extends BearCMSTestCase
         $this->assertTrue($list[0]->id === 'cd763a6f1574e1d326c511a2fda878d1');
         $this->assertTrue($list[1]->id === 'cd763a6f1574e1d326c511a2fda878d3');
 
-        $blogPost = $app->bearCMS->data->blogPosts->get('cd763a6f1574e1d326c511a2fda878d4');
+        $blogPost = Internal2::$data2->blogPosts->get('cd763a6f1574e1d326c511a2fda878d4');
         $this->assertTrue($blogPost->id === 'cd763a6f1574e1d326c511a2fda878d4');
     }
 

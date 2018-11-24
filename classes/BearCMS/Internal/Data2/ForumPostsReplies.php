@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Data;
+namespace BearCMS\Internal\Data2;
 
 use BearFramework\App;
 
@@ -31,7 +31,7 @@ class ForumPostsReplies
             $rawData = json_decode($value, true);
             if (isset($rawData['id'], $rawData['replies'])) {
                 foreach ($rawData['replies'] as $replyData) {
-                    $reply = new \BearCMS\Data\ForumPostReply();
+                    $reply = new \BearCMS\Internal\Data2\ForumPostReply();
                     $reply->id = $replyData['id'];
                     $reply->status = $replyData['status'];
                     $reply->author = $replyData['author'];

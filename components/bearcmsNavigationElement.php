@@ -7,6 +7,8 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal;
+use BearCMS\Internal2;
 
 $app = App::get();
 
@@ -81,11 +83,11 @@ if (strlen($component->menuType) > 0) {
 
 $pages = null;
 if ($source === 'topPages' || $source === 'allPages') {
-    $pages = $app->bearCMS->data->pages->getList()
+    $pages = Internal2::$data2->pages->getList()
             ->filterBy('parentID', null)
             ->filterBy('status', 'published');
 } elseif ($source === 'pageChildren') {
-    $pages = $app->bearCMS->data->pages->getList()
+    $pages = Internal2::$data2->pages->getList()
             ->filterBy('parentID', $sourceParentPageID)
             ->filterBy('status', 'published');
 }

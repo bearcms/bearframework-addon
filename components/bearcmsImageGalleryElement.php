@@ -7,6 +7,8 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal;
+use BearCMS\Internal2;
 
 $app = App::get();
 
@@ -47,7 +49,7 @@ $content .= '<component src="image-gallery" spacing="' . $spacing . '"' . $attri
 if ($files !== null) {
     foreach ($files as $file) {
         $filename = $file->getAttribute('filename');
-        $newFilename = $app->bearCMS->data->getRealFilename($filename);
+        $newFilename = Internal2::$data2->getRealFilename($filename);
         if ($newFilename !== null) {
             $filename = $newFilename;
         }

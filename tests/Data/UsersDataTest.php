@@ -20,7 +20,7 @@ class UsersDataTest extends BearCMSTestCase
     {
         $app = $this->getApp();
 
-        $this->assertFalse($app->bearCMS->data->users->hasUsers());
+        $this->assertFalse(Internal2::$data2->users->hasUsers());
 
         $app->data->setValue('bearcms/users/user/' . md5('ewo8phkta3fa1') . '.json', '{
     "id": "ewo8phkta3fa1",
@@ -64,15 +64,15 @@ class UsersDataTest extends BearCMSTestCase
     ]
 }');
 
-        $list = $app->bearCMS->data->users->getList()
+        $list = Internal2::$data2->users->getList()
                 ->sortBy('id');
         $this->assertTrue($list[0]->id === 'ewo8phkta3fa1');
         $this->assertTrue($list[1]->id === 'ewo8phkta3fa2');
 
-        $user = $app->bearCMS->data->users->get('ewo8phkta3fa1');
+        $user = Internal2::$data2->users->get('ewo8phkta3fa1');
         $this->assertTrue($user->id === 'ewo8phkta3fa1');
 
-        $this->assertTrue($app->bearCMS->data->users->hasUsers());
+        $this->assertTrue(Internal2::$data2->users->hasUsers());
     }
 
 }

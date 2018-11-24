@@ -18,7 +18,7 @@ _Returns_
 List all site settings.
 
 ```php
-$settings = $app->bearCMS->data->settings->get();
+$settings = Internal2::$data2->settings->get();
 
 // \BearCMS\DataObject
 // (

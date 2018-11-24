@@ -12,6 +12,7 @@ namespace BearCMS\Internal;
 use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
+use BearCMS\Internal2;
 
 final class Controller
 {
@@ -21,11 +22,11 @@ final class Controller
         $app = App::get();
         $path = (string) $app->request->path;
         if ($path === Config::$adminPagesPathPrefix) {
-            if (!$app->bearCMS->data->users->hasUsers()) {
+            if (!Internal2::$data2->users->hasUsers()) {
                 return new App\Response\TemporaryRedirect($app->request->base . Config::$adminPagesPathPrefix . 'firstrun/');
             }
         } elseif ($path === Config::$adminPagesPathPrefix . 'firstrun/') {
-            if ($app->bearCMS->data->users->hasUsers()) {
+            if (Internal2::$data2->users->hasUsers()) {
                 return new App\Response\TemporaryRedirect($app->request->base . Config::$adminPagesPathPrefix);
             }
         }
@@ -147,7 +148,7 @@ final class Controller
     static function handleRSS(): \BearFramework\App\Response
     {
         $app = App::get();
-        $settings = $app->bearCMS->data->settings->get();
+        $settings = Internal2::$data2->settings->get();
         $baseUrl = $app->request->base;
 
         $data = '<title>' . (isset($settings['title']) ? htmlspecialchars($settings['title']) : '') . '</title>';
@@ -157,7 +158,7 @@ final class Controller
         $data .= '<atom:link href="' . $baseUrl . '/rss.xml" rel="self" type="application/rss+xml">';
         $data .= '</atom:link>';
 
-        $blogPosts = $app->bearCMS->data->blogPosts->getList()
+        $blogPosts = Internal2::$data2->blogPosts->getList()
                 ->filterBy('status', 'published')
                 ->sortBy('publishedTime', 'desc');
         $contentType = $settings['rssType'];

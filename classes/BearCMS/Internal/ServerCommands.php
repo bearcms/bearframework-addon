@@ -12,6 +12,7 @@ namespace BearCMS\Internal;
 use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
+use BearCMS\Internal2;
 
 class ServerCommands
 {
@@ -127,7 +128,6 @@ class ServerCommands
 
     static function blogCategories()
     {
-        $app = App::get();
         $list = Internal\Data::getList('bearcms/blog/categories/category/');
         $structure = Internal\Data::getValue('bearcms/blog/categories/structure.json');
         $temp = [];
@@ -139,10 +139,10 @@ class ServerCommands
         return $temp;
     }
 
-    static function blogPostsList(array $data)
+    static function blogPostsList()
     {
         $app = App::get();
-        return $app->bearCMS->data->blogPosts->getList()->toArray();
+        return Internal2::$data2->blogPosts->getList()->toArray();
     }
 
     static function checkpoint(array $data)
@@ -152,7 +152,6 @@ class ServerCommands
 
     static function commentDelete(array $data)
     {
-        $app = App::get();
         if (!isset($data['threadID'])) {
             throw new Exception('');
         }
@@ -165,7 +164,6 @@ class ServerCommands
 
     static function commentSetStatus(array $data)
     {
-        $app = App::get();
         if (!isset($data['threadID'])) {
             throw new Exception('');
         }
@@ -185,7 +183,7 @@ class ServerCommands
         if (!isset($data['type'])) {
             throw new Exception('');
         }
-        $result = $app->bearCMS->data->comments->getList();
+        $result = Internal2::$data2->comments->getList();
         if ($data['type'] !== 'all') {
             $result->filterBy('status', $data['type']);
         }
@@ -204,7 +202,7 @@ class ServerCommands
         if (!isset($data['limit'])) {
             throw new Exception('');
         }
-        $result = $app->bearCMS->data->comments->getList();
+        $result = Internal2::$data2->comments->getList();
         $result->sortBy('createdTime', 'desc');
         if ($data['type'] !== 'all') {
             $result->filterBy('status', $data['type']);
@@ -286,7 +284,7 @@ class ServerCommands
             return [];
         }
         $app = App::get();
-        $dataSchema = new BearCMS\Internal\DataSchema($data['id']);
+        $dataSchema = new Internal\DataSchema($data['id']);
         $app->hooks->execute('bearCMSDataSchemaRequested', $dataSchema);
         return $dataSchema->fields;
     }
@@ -324,7 +322,7 @@ class ServerCommands
         }
     }
 
-    static function elementsEditor($data, $response)
+    static function elementsEditor(array $data, $response)
     {
         if (!empty(Internal\ElementsHelper::$editorData)) {
             $requestArguments = [];
@@ -435,7 +433,7 @@ class ServerCommands
         }
     }
 
-    static function files(array $data)
+    static function files()
     {
         $app = App::get();
         $result = $app->data->getList()
@@ -454,7 +452,6 @@ class ServerCommands
 
     static function forumCategories()
     {
-        $app = App::get();
         $list = Internal\Data::getList('bearcms/forums/categories/category/');
         $structure = Internal\Data::getValue('bearcms/forums/categories/structure.json');
         $temp = [];
@@ -472,7 +469,7 @@ class ServerCommands
         if (!isset($data['forumPostID'])) {
             throw new Exception('');
         }
-        $result = $app->bearCMS->data->forumPosts->get($data['forumPostID']);
+        $result = Internal2::$data2->forumPosts->get($data['forumPostID']);
         $result->author = Internal\PublicProfile::getFromAuthor($result->author)->toArray();
         $result->replies = new \BearCMS\DataList();
         return $result->toArray();
@@ -480,7 +477,6 @@ class ServerCommands
 
     static function forumPostReplyDelete(array $data)
     {
-        $app = App::get();
         if (!isset($data['forumPostID'])) {
             throw new Exception('');
         }
@@ -493,7 +489,6 @@ class ServerCommands
 
     static function forumPostReplySetStatus(array $data)
     {
-        $app = App::get();
         if (!isset($data['forumPostID'])) {
             throw new Exception('');
         }
@@ -509,7 +504,6 @@ class ServerCommands
 
     static function forumPostSetStatus(array $data)
     {
-        $app = App::get();
         if (!isset($data['forumPostID'])) {
             throw new Exception('');
         }
@@ -526,7 +520,7 @@ class ServerCommands
         if (!isset($data['type'])) {
             throw new Exception('');
         }
-        $result = $app->bearCMS->data->forumPosts->getList();
+        $result = Internal2::$data2->forumPosts->getList();
         if ($data['type'] !== 'all') {
             $result->filterBy('status', $data['type']);
         }
@@ -545,7 +539,7 @@ class ServerCommands
         if (!isset($data['limit'])) {
             throw new Exception('');
         }
-        $result = $app->bearCMS->data->forumPosts->getList();
+        $result = Internal2::$data2->forumPosts->getList();
         $result->sortBy('createdTime', 'desc');
         if ($data['type'] !== 'all') {
             $result->filterBy('status', $data['type']);
@@ -564,7 +558,7 @@ class ServerCommands
         if (!isset($data['type'])) {
             throw new Exception('');
         }
-        $result = $app->bearCMS->data->forumPostsReplies->getList();
+        $result = Internal2::$data2->forumPostsReplies->getList();
         if (isset($data['forumPostID']) && strlen($data['forumPostID']) > 0) {
             $result->filterBy('forumPostID', $data['forumPostID']);
         }
@@ -586,7 +580,7 @@ class ServerCommands
         if (!isset($data['limit'])) {
             throw new Exception('');
         }
-        $result = $app->bearCMS->data->forumPostsReplies->getList();
+        $result = Internal2::$data2->forumPostsReplies->getList();
         $result->sortBy('createdTime', 'desc');
         if (isset($data['forumPostID']) && strlen($data['forumPostID']) > 0) {
             $result->filterBy('forumPostID', $data['forumPostID']);
@@ -627,7 +621,6 @@ class ServerCommands
 
     static function pagesList()
     {
-        $app = App::get();
         $list = Internal\Data::getList('bearcms/pages/page/');
         $structure = Internal\Data::getValue('bearcms/pages/structure.json');
         $temp = [];
@@ -677,7 +670,7 @@ class ServerCommands
     static function settingsGet()
     {
         $app = App::get();
-        $result = $app->bearCMS->data->settings->get();
+        $result = Internal2::$data2->settings->get();
         return $result->toArray();
     }
 
@@ -706,7 +699,7 @@ class ServerCommands
     {
         $app = App::get();
         $themeID = $data['id'];
-        $app->bearCMS->data->themes->discardOptions($themeID);
+        Internal2::$data2->themes->discardOptions($themeID);
     }
 
     static function themeDiscardUserOptions(array $data)
@@ -715,7 +708,7 @@ class ServerCommands
         $themeID = $data['id'];
         $userID = $data['userID'];
         if (strlen($themeID) > 0 && strlen($userID) > 0) {
-            $app->bearCMS->data->themes->discardUserOptions($themeID, $userID);
+            Internal2::$data2->themes->discardUserOptions($themeID, $userID);
         }
     }
 
@@ -798,7 +791,7 @@ class ServerCommands
         $app = App::get();
         $themeID = $data['id'];
         $values = $data['values'];
-        $app->bearCMS->data->themes->setOptions($themeID, $values);
+        Internal2::$data2->themes->setOptions($themeID, $values);
     }
 
     static function themeSetUserOptions(array $data)
@@ -807,12 +800,11 @@ class ServerCommands
         $themeID = $data['id'];
         $userID = $data['userID'];
         $values = $data['values'];
-        $app->bearCMS->data->themes->setUserOptions($themeID, $userID, $values);
+        Internal2::$data2->themes->setUserOptions($themeID, $userID, $values);
     }
 
     static function themeStylesGet(array $data)
     {
-        $app = App::get();
         if (!isset($data['id'])) {
             throw new Exception('');
         }
@@ -859,7 +851,7 @@ class ServerCommands
         }
         $email = (string) $data['email'];
         $app = App::get();
-        $users = $app->bearCMS->data->users->getList();
+        $users = Internal2::$data2->users->getList();
         foreach ($users as $user) {
             if (array_search($email, $user->emails) !== false) {
                 return $user->id;
@@ -871,7 +863,7 @@ class ServerCommands
     static function usersIDs()
     {
         $app = App::get();
-        $users = $app->bearCMS->data->users->getList();
+        $users = Internal2::$data2->users->getList();
         $result = [];
         foreach ($users as $user) {
             $result[] = $user->id;
@@ -882,7 +874,7 @@ class ServerCommands
     static function usersInvitations()
     {
         $app = App::get();
-        $userInvitations = $app->bearCMS->data->usersInvitations->getList();
+        $userInvitations = Internal2::$data2->usersInvitations->getList();
         $result = [];
         foreach ($userInvitations as $userInvitation) {
             $result[] = $userInvitation->toArray();

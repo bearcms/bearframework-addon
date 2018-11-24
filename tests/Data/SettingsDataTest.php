@@ -20,7 +20,7 @@ class SettingsDataTest extends BearCMSTestCase
     {
         $app = $this->getApp();
 
-        $settings = $app->bearCMS->data->settings->get();
+        $settings = Internal2::$data2->settings->get();
         $this->assertTrue($settings['title'] === 'MY COMPANY'); // This is the default value
 
         $app->data->setValue('bearcms/settings.json', '{
@@ -32,7 +32,7 @@ class SettingsDataTest extends BearCMSTestCase
     "keywords": ""
 }');
 
-        $settings = $app->bearCMS->data->settings->get();
+        $settings = Internal2::$data2->settings->get();
         $this->assertTrue($settings['title'] === 'MY COMPANY 2');
     }
 

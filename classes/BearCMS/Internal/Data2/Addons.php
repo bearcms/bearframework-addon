@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Data;
+namespace BearCMS\Internal\Data2;
 
 use BearFramework\App;
 
@@ -17,9 +17,9 @@ use BearFramework\App;
 class Addons
 {
 
-    private function makeAddonFromRawData($rawData): \BearCMS\Data\Addon
+    private function makeAddonFromRawData($rawData): \BearCMS\Internal\Data2\Addon
     {
-        return new \BearCMS\Data\Addon(json_decode($rawData, true));
+        return new \BearCMS\Internal\Data2\Addon(json_decode($rawData, true));
     }
 
     /**

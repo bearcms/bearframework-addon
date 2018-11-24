@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Data;
+namespace BearCMS\Internal\Data2;
 
 use BearFramework\App;
 
@@ -20,7 +20,7 @@ class Comments
     /**
      * Retrieves a list of all comments
      * 
-     * @return \BearCMS\DataList|\BearCMS\Data\Comment[] List containing all comments data
+     * @return \BearCMS\DataList|\BearCMS\Internal\Data2\Comment[] List containing all comments data
      */
     public function getList()
     {

@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Data;
+namespace BearCMS\Internal\Data2;
 
 use BearFramework\App;
 
@@ -17,10 +17,10 @@ use BearFramework\App;
 class CommentsThreads
 {
 
-    private function makeCommentsThreadPostFromRawData($rawData): \BearCMS\Data\CommentsThread
+    private function makeCommentsThreadPostFromRawData($rawData): \BearCMS\Internal\Data2\CommentsThread
     {
         $rawData = json_decode($rawData, true);
-        $object = new \BearCMS\Data\CommentsThread($rawData);
+        $object = new \BearCMS\Internal\Data2\CommentsThread($rawData);
         $object->comments = \BearCMS\Internal\Data\Comments::createCommentsCollection($rawData['comments'], $rawData['id']);
         return $object;
     }
@@ -32,7 +32,7 @@ class CommentsThreads
      * @return \BearCMS\DataObject|null The comments thread data or null if the thread not found
      * @throws \InvalidArgumentException
      */
-    public function get(string $id): ?\BearCMS\Data\CommentsThread
+    public function get(string $id): ?\BearCMS\Internal\Data2\CommentsThread
     {
         $data = \BearCMS\Internal\Data::getValue('bearcms/comments/thread/' . md5($id) . '.json');
         if ($data !== null) {

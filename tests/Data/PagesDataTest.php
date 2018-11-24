@@ -100,7 +100,7 @@ class PagesDataTest extends BearCMSTestCase
     }
 ]');
 
-        $list = $app->bearCMS->data->pages->getList()
+        $list = Internal2::$data2->pages->getList()
                 ->sortBy('id');
         $this->assertTrue($list[0]->id === 'ec983ebad290fc046a7308661627fef1');
         $this->assertTrue($list[1]->id === 'ec983ebad290fc046a7308661627fef2');
@@ -108,13 +108,13 @@ class PagesDataTest extends BearCMSTestCase
         $this->assertTrue($list[3]->id === 'ec983ebad290fc046a7308661627fef4');
         $this->assertTrue($list[4]->id === 'ec983ebad290fc046a7308661627fef5');
 
-        $list = $app->bearCMS->data->pages->getList() //default sort
+        $list = Internal2::$data2->pages->getList() //default sort
                 ->filterBy('parentID', null)
                 ->filterBy('status', 'published');
         $this->assertTrue($list[0]->id === 'ec983ebad290fc046a7308661627fef1');
         $this->assertTrue($list[1]->id === 'ec983ebad290fc046a7308661627fef4');
 
-        $user = $app->bearCMS->data->pages->get('ec983ebad290fc046a7308661627fef1');
+        $user = Internal2::$data2->pages->get('ec983ebad290fc046a7308661627fef1');
         $this->assertTrue($user->id === 'ec983ebad290fc046a7308661627fef1');
     }
 

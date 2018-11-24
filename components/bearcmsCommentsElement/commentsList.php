@@ -9,6 +9,7 @@
 
 use BearFramework\App;
 use BearCMS\Internal;
+use BearCMS\Internal2;
 
 $app = App::get();
 
@@ -17,7 +18,7 @@ $threadID = $component->threadID;
 $elementID = 'cml' . md5($threadID);
 
 echo '<div id="' . $elementID . '" data-count="' . $count . '">';
-$thread = $app->bearCMS->data->commentsThreads->get($threadID);
+$thread = Internal2::$data2->commentsThreads->get($threadID);
 if ($thread !== null) {
     $thread->comments->filter(function($comment) use ($app) {
         if ($comment->status === 'approved') {

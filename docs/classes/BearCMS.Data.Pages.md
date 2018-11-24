@@ -34,7 +34,7 @@ _Returns_
 List of all pages
 
 ```php
-$list = $app->bearCMS->data->pages->getList();
+$list = Internal2::$data2->pages->getList();
 
 // \BearCMS\DataList
 // (

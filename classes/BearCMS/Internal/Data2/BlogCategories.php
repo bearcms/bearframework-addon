@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Data;
+namespace BearCMS\Internal\Data2;
 
 /**
  * Information about the site pages
@@ -17,10 +17,10 @@ class BlogCategories
 
     static private $cache = [];
 
-    private function makeBlogCategoryFromRawData($rawData): \BearCMS\Data\BlogCategory
+    private function makeBlogCategoryFromRawData($rawData): \BearCMS\Internal\Data2\BlogCategory
     {
         $rawData = json_decode($rawData, true);
-        $blogCategory = new \BearCMS\Data\BlogCategory();
+        $blogCategory = new \BearCMS\Internal\Data2\BlogCategory();
         $properties = ['id', 'name', 'status'];
         foreach ($properties as $property) {
             if (array_key_exists($property, $rawData)) {
@@ -37,7 +37,7 @@ class BlogCategories
      * @return \BearCMS\DataObject|null The page data or null if page not found
      * @throws \InvalidArgumentException
      */
-    public function get(string $id): ?\BearCMS\Data\BlogCategory
+    public function get(string $id): ?\BearCMS\Internal\Data2\BlogCategory
     {
         $data = \BearCMS\Internal\Data::getValue('bearcms/blog/categories/category/' . md5($id) . '.json');
         if ($data !== null) {
@@ -49,7 +49,7 @@ class BlogCategories
     /**
      * Retrieves a list of all pages
      * 
-     * @return \BearCMS\DataList|\BearCMS\Data\BlogCategory[] List containing all pages data
+     * @return \BearCMS\DataList|\BearCMS\Internal\Data2\BlogCategory[] List containing all pages data
      */
     public function getList(): \BearCMS\DataList
     {

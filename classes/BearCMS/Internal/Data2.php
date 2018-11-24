@@ -7,7 +7,7 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS;
+namespace BearCMS\Internal;
 
 use BearFramework\App;
 use BearCMS\Internal;
@@ -15,20 +15,20 @@ use BearCMS\Internal;
 /**
  * Contains reference to the different data types
  * 
- * @property \BearCMS\Data\BlogCategories $blogCategories Information about the blog categories
- * @property \BearCMS\Data\BlogPosts $blogPosts Information about the blog posts
- * @property \BearCMS\Data\Comments $comments Information about the comments
- * @property \BearCMS\Data\CommentsThreads $commentsThreads Information about the comments threads
- * @property \BearCMS\Data\ForumCategories $forumCategories Information about the forum categories
- * @property \BearCMS\Data\ForumPosts $forumPosts Information about the forum posts
- * @property \BearCMS\Data\ForumPostsReplies $forumPostsReplies Information about the forum replies
- * @property \BearCMS\Data\Pages $pages Information about the site pages
- * @property \BearCMS\Data\Settings $settings Information about the site settings
- * @property \BearCMS\Data\Themes $themes Information about the site themes
- * @property \BearCMS\Data\Users $users Information about the CMS users (administrators)
- * @property \BearCMS\Data\UsersInvitations $usersInvitations Information about the invited CMS users (administrators)
+ * @property \BearCMS\Internal\Data2\BlogCategories $blogCategories Information about the blog categories
+ * @property \BearCMS\Internal\Data2\BlogPosts $blogPosts Information about the blog posts
+ * @property \BearCMS\Internal\Data2\Comments $comments Information about the comments
+ * @property \BearCMS\Internal\Data2\CommentsThreads $commentsThreads Information about the comments threads
+ * @property \BearCMS\Internal\Data2\ForumCategories $forumCategories Information about the forum categories
+ * @property \BearCMS\Internal\Data2\ForumPosts $forumPosts Information about the forum posts
+ * @property \BearCMS\Internal\Data2\ForumPostsReplies $forumPostsReplies Information about the forum replies
+ * @property \BearCMS\Internal\Data2\Pages $pages Information about the site pages
+ * @property \BearCMS\Internal\Data2\Settings $settings Information about the site settings
+ * @property \BearCMS\Internal\Data2\Themes $themes Information about the site themes
+ * @property \BearCMS\Internal\Data2\Users $users Information about the CMS users (administrators)
+ * @property \BearCMS\Internal\Data2\UsersInvitations $usersInvitations Information about the invited CMS users (administrators)
  */
-class Data
+class Data2
 {
 
     use \IvoPetkov\DataObjectTrait;
@@ -37,79 +37,79 @@ class Data
     {
 //        $this->defineProperty('addons', [
 //            'init' => function() {
-//                return new \BearCMS\Data\Addons();
+//                return new \BearCMS\Internal\Data2\Addons();
 //            },
 //            'readonly' => true
 //        ]);
         $this->defineProperty('blogCategories', [
             'init' => function() {
-                return new \BearCMS\Data\BlogCategories();
+                return new \BearCMS\Internal\Data2\BlogCategories();
             },
             'readonly' => true
         ]);
         $this->defineProperty('blogPosts', [
             'init' => function() {
-                return new \BearCMS\Data\BlogPosts();
+                return new \BearCMS\Internal\Data2\BlogPosts();
             },
             'readonly' => true
         ]);
         $this->defineProperty('comments', [
             'init' => function() {
-                return new \BearCMS\Data\Comments();
+                return new \BearCMS\Internal\Data2\Comments();
             },
             'readonly' => true
         ]);
         $this->defineProperty('commentsThreads', [
             'init' => function() {
-                return new \BearCMS\Data\CommentsThreads();
+                return new \BearCMS\Internal\Data2\CommentsThreads();
             },
             'readonly' => true
         ]);
         $this->defineProperty('forumCategories', [
             'init' => function() {
-                return new \BearCMS\Data\ForumCategories();
+                return new \BearCMS\Internal\Data2\ForumCategories();
             },
             'readonly' => true
         ]);
         $this->defineProperty('forumPosts', [
             'init' => function() {
-                return new \BearCMS\Data\ForumPosts();
+                return new \BearCMS\Internal\Data2\ForumPosts();
             },
             'readonly' => true
         ]);
         $this->defineProperty('forumPostsReplies', [
             'init' => function() {
-                return new \BearCMS\Data\ForumPostsReplies();
+                return new \BearCMS\Internal\Data2\ForumPostsReplies();
             },
             'readonly' => true
         ]);
         $this->defineProperty('pages', [
             'init' => function() {
-                return new \BearCMS\Data\Pages();
+                return new \BearCMS\Internal\Data2\Pages();
             },
             'readonly' => true
         ]);
         $this->defineProperty('settings', [
             'init' => function() {
-                return new \BearCMS\Data\Settings();
+                return new \BearCMS\Internal\Data2\Settings();
             },
             'readonly' => true
         ]);
         $this->defineProperty('themes', [
             'init' => function() {
-                return new \BearCMS\Data\Themes();
+                return new \BearCMS\Internal\Data2\Themes();
             },
             'readonly' => true
         ]);
         $this->defineProperty('users', [
             'init' => function() {
-                return new \BearCMS\Data\Users();
+                return new \BearCMS\Internal\Data2\Users();
             },
             'readonly' => true
         ]);
         $this->defineProperty('usersInvitations', [
             'init' => function() {
-                return new \BearCMS\Data\UsersInvitations();
+                return new \BearCMS\Internal\Data2\UsersInvitations();
             },
             'readonly' => true
         ]);

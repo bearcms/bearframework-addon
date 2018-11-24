@@ -7,6 +7,8 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal;
+use BearCMS\Internal2;
 
 $app = App::get();
 $context = $app->context->get(__FILE__);
@@ -88,7 +90,7 @@ if (strlen($component->url) > 0) {
     }
 } elseif (strlen($component->filename) > 0) {
     $filename = $component->filename;
-    $newFilename = $app->bearCMS->data->getRealFilename($filename);
+    $newFilename = Internal2::$data2->getRealFilename($filename);
     if ($newFilename !== null) {
         $filename = $newFilename;
     }

@@ -7,27 +7,27 @@ Contains reference to the different data types
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dependency Injection container
 
-`public \BearCMS\Data\Addons $addons`
+`public \BearCMS\Internal\Data2\Addons $addons`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the addons managed by BearCMS
 
-`public \BearCMS\Data\Blog $blog`
+`public \BearCMS\Internal\Data2\Blog $blog`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the blog posts
 
-`public \BearCMS\Data\Pages $pages`
+`public \BearCMS\Internal\Data2\Pages $pages`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the site pages
 
-`public \BearCMS\Data\Settings $settings`
+`public \BearCMS\Internal\Data2\Settings $settings`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the site settings
 
-`public \BearCMS\Data\Themes $themes`
+`public \BearCMS\Internal\Data2\Themes $themes`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the site themes
 
-`public \BearCMS\Data\Users $users`
+`public \BearCMS\Internal\Data2\Users $users`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the CMS users (administrators)
 

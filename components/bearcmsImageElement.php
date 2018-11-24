@@ -7,6 +7,8 @@
  */
 
 use BearFramework\App;
+use BearCMS\Internal;
+use BearCMS\Internal2;
 
 $app = App::get();
 
@@ -64,7 +66,7 @@ if (isset($innerContainerStyle{0})) {
     $content .= '<div style="' . $innerContainerStyle . '">';
 }
 if (isset($filename{0})) {
-    $newFilename = $app->bearCMS->data->getRealFilename($filename);
+    $newFilename = Internal2::$data2->getRealFilename($filename);
     if ($newFilename !== null) {
         $filename = $newFilename;
     }
