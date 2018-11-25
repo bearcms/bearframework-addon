@@ -10,18 +10,14 @@
 class BearCMSTestCase extends BearFramework\AddonTests\PHPUnitTestCase
 {
 
-    /**
-     * 
-     */
-    protected function setUp()
+    protected function initializeApp(array $config = []): void
     {
-        $this->initializeApp([
-            'addonOptions' => [
-                'serverUrl' => 'http://dummy.bearcms.com/',
-                'appSecretKey' => 'dummy1',
-            ]
+        parent::initializeApp($config);
+        $app = $this->getApp();
+        $app->bearCMS->initialize([
+            'serverUrl' => 'https://dummy.bearcms.com/',
+            'appSecretKey' => 'dummy1'
         ]);
-        parent::setUp();
     }
 
     /**
