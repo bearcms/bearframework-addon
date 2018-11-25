@@ -10,7 +10,7 @@
 namespace BearCMS\Addons;
 
 /**
- * @property string $addonID The addonID.
+ * @property string $id The addonID.
  * @property ?callable $initialize A function to be called to initialize the addon.
  */
 class Addon
@@ -18,13 +18,13 @@ class Addon
 
     use \IvoPetkov\DataObjectTrait;
 
-    public function __construct(string $addonID)
+    public function __construct(string $id)
     {
         $this
-                ->defineProperty('addonID', [
+                ->defineProperty('id', [
                     'type' => 'string',
-                    'get' => function() use ($addonID) {
-                        return $addonID;
+                    'get' => function() use ($id) {
+                        return $id;
                     },
                     'readonly' => true
                 ])
