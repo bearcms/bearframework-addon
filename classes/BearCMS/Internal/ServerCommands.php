@@ -14,6 +14,9 @@ use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use BearCMS\Internal2;
 
+/**
+ * @internal
+ */
 class ServerCommands
 {
 
@@ -338,7 +341,7 @@ class ServerCommands
         }
     }
 
-    static function evalHTML(array $data, App\Response $response)
+    static function evalHTML(array $data, \ArrayObject $response)
     {
         $response1 = $response['value'];
         $response2 = ['js' => 'var e=document.querySelector(\'#' . $data['elementID'] . '\');if(e){html5DOMDocument.evalElement(e);}'];
@@ -471,7 +474,7 @@ class ServerCommands
         }
         $result = Internal2::$data2->forumPosts->get($data['forumPostID']);
         $result->author = Internal\PublicProfile::getFromAuthor($result->author)->toArray();
-        $result->replies = new \BearCMS\DataList();
+        $result->replies = new \BearCMS\Internal\DataList();
         return $result->toArray();
     }
 
@@ -669,7 +672,6 @@ class ServerCommands
 
     static function settingsGet()
     {
-        $app = App::get();
         $result = Internal2::$data2->settings->get();
         return $result->toArray();
     }
@@ -689,22 +691,19 @@ class ServerCommands
 
     static function themeApplyUserValues(array $data)
     {
-        $app = App::get();
         $themeID = $data['id'];
         $userID = $data['userID'];
-        $app->bearCMS->themes->applyUserValues($themeID, $userID);
+        Internal\Themes::applyUserValues($themeID, $userID);
     }
 
     static function themeDiscardOptions(array $data)
     {
-        $app = App::get();
         $themeID = $data['id'];
         Internal2::$data2->themes->discardOptions($themeID);
     }
 
     static function themeDiscardUserOptions(array $data)
     {
-        $app = App::get();
         $themeID = $data['id'];
         $userID = $data['userID'];
         if (strlen($themeID) > 0 && strlen($userID) > 0) {
@@ -716,7 +715,7 @@ class ServerCommands
     {
         $app = App::get();
         $themeID = $data['id'];
-        $dataKey = $app->bearCMS->themes->export($themeID);
+        $dataKey = Internal\Themes::export($themeID);
         $app->data->makePublic($dataKey);
         return ['downloadUrl' => $app->assets->getUrl($app->data->getFilename($dataKey), ['download' => true])];
     }
@@ -730,15 +729,15 @@ class ServerCommands
         $themeID = $data['id'];
 
         $includeOptions = isset($data['includeOptions']) && !empty($data['includeOptions']);
-        $themes = BearCMS\Internal\Themes::getList();
+        $themes = Internal\Themes::getIDs();
         foreach ($themes as $id) {
             if ($id === $themeID) {
-                $options = BearCMS\Internal\Themes::getOptions($id);
-                $themeManifest = BearCMS\Internal\Themes::getManifest($id);
+                $options = Internal\Themes::getOptionsSchema($id);
+                $themeManifest = Internal\Themes::getManifest($id);
                 $themeData = $themeManifest;
                 $themeData['id'] = $id;
                 $themeData['hasOptions'] = sizeof($options) > 0;
-                $themeData['hasStyles'] = sizeof(BearCMS\Internal\Themes::getStyles($id)) > 0;
+                $themeData['hasStyles'] = sizeof(Internal\Themes::getStyles($id)) > 0;
                 if ($includeOptions) {
                     $themeData['options'] = [
                         'definition' => $options
@@ -769,17 +768,16 @@ class ServerCommands
 
     static function themeGetActive()
     {
-        return \BearCMS\Internal\Themes::getActiveThemeID();
+        return Internal\Themes::getActiveThemeID();
     }
 
     static function themeImport(array $data)
     {
-        $app = App::get();
         $sourceDataKey = $data['sourceDataKey'];
         $themeID = $data['id'];
         $userID = $data['userID'];
         try {
-            $app->bearCMS->themes->import($sourceDataKey, $themeID, $userID);
+            Internal\Themes::import($sourceDataKey, $themeID, $userID);
             return ['status' => 'ok'];
         } catch (\Exception $e) {
             return ['status' => 'error', 'errorCode' => $e->getCode()];
@@ -810,10 +808,10 @@ class ServerCommands
         }
         $themeID = $data['id'];
 
-        $themes = BearCMS\Internal\Themes::getList();
+        $themes = Internal\Themes::getIDs();
         foreach ($themes as $id) {
             if ($id === $themeID) {
-                $styles = BearCMS\Internal\Themes::getStyles($id, true);
+                $styles = Internal\Themes::getStyles($id, true);
                 return $styles;
             }
         }
@@ -822,13 +820,13 @@ class ServerCommands
 
     static function themesList()
     {
-        $themes = BearCMS\Internal\Themes::getList();
+        $themes = Internal\Themes::getIDs();
         $result = [];
         foreach ($themes as $id) {
-            $themeManifest = BearCMS\Internal\Themes::getManifest($id);
+            $themeManifest = Internal\Themes::getManifest($id);
             $themeData = $themeManifest;
             $themeData['id'] = $id;
-            $themeData['hasOptions'] = sizeof(BearCMS\Internal\Themes::getOptions($id)) > 0;
+            $themeData['hasOptions'] = sizeof(Internal\Themes::getOptionsSchema($id)) > 0;
             $result[] = $themeData;
         }
         return $result;
