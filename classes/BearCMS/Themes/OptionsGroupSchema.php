@@ -11,6 +11,9 @@ namespace BearCMS\Themes;
 
 use BearCMS\Internal;
 
+/**
+ * 
+ */
 class OptionsGroupSchema
 {
 

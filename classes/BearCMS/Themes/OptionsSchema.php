@@ -9,6 +9,9 @@
 
 namespace BearCMS\Themes;
 
+/**
+ * 
+ */
 class OptionsSchema extends \BearCMS\Themes\OptionsGroupSchema
 {
 

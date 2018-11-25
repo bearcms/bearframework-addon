@@ -13,7 +13,10 @@ use BearFramework\App;
 use BearCMS\Internal\Config;
 use BearCMS\Internal;
 
-final class ForumPostsReplies
+/**
+ * @internal
+ */
+class ForumPostsReplies
 {
 
     static function add(string $forumPostID, array $author, string $text, string $status): void

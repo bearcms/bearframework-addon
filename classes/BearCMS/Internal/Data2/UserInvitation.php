@@ -13,6 +13,7 @@ namespace BearCMS\Internal\Data2;
  * @property string $key
  * @property string $email
  * @property array $permissions
+ * @internal
  */
 class UserInvitation
 {

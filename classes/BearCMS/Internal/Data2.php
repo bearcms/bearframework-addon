@@ -27,6 +27,7 @@ use BearCMS\Internal;
  * @property \BearCMS\Internal\Data2\Themes $themes Information about the site themes
  * @property \BearCMS\Internal\Data2\Users $users Information about the CMS users (administrators)
  * @property \BearCMS\Internal\Data2\UsersInvitations $usersInvitations Information about the invited CMS users (administrators)
+ * @internal
  */
 class Data2
 {

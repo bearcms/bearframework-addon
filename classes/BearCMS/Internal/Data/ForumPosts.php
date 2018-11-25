@@ -13,7 +13,10 @@ use BearFramework\App;
 use BearCMS\Internal\Config;
 use BearCMS\Internal;
 
-final class ForumPosts
+/**
+ * @internal
+ */
+class ForumPosts
 {
 
     static function add(string $categoryID, array $author, string $title, string $text, string $status): string

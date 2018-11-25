@@ -12,7 +12,7 @@ namespace BearCMS\Internal\Data2;
 use BearFramework\App;
 
 /**
- * Information about the blog posts
+ * @internal
  */
 class BlogPosts
 {
@@ -26,7 +26,7 @@ class BlogPosts
      * Retrieves information about the blog post specified
      * 
      * @param string $id The blog post ID
-     * @return \BearCMS\DataObject|null The blog post data or null if blog post not found
+     * @return \BearCMS\Internal\DataObject|null The blog post data or null if blog post not found
      * @throws \InvalidArgumentException
      */
     public function get(string $id)
@@ -41,7 +41,7 @@ class BlogPosts
     /**
      * Retrieves a list of all blog posts
      * 
-     * @return \BearCMS\DataList List containing all blog posts data
+     * @return \BearCMS\Internal\DataList List containing all blog posts data
      */
     public function getList()
     {
@@ -49,7 +49,7 @@ class BlogPosts
         array_walk($list, function(&$value) {
             $value = $this->makeBlogPostFromRawData($value);
         });
-        return new \BearCMS\DataList($list);
+        return new \BearCMS\Internal\DataList($list);
     }
 
 }

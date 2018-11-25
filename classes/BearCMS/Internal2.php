@@ -11,6 +11,7 @@ namespace BearCMS;
 
 /**
  * @property-read \BearCMS\Internal\Data2 $data2
+ * @internal
  */
 class Internal2
 {

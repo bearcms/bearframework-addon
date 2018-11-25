@@ -11,7 +11,10 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 
-final class PublicProfile
+/**
+ * @internal
+ */
+class PublicProfile
 {
 
     static function getFromAuthor($author)
@@ -37,7 +40,7 @@ final class PublicProfile
         if (!isset($data['imageLarge']) || strlen($data['imageLarge']) === 0) {
             $data['imageLarge'] = '';
         }
-        return new \BearCMS\DataObject($data);
+        return new \BearCMS\Internal\DataObject($data);
     }
 
 }

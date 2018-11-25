@@ -12,7 +12,7 @@ namespace BearCMS\Internal\Data2;
 use BearFramework\App;
 
 /**
- * Information about the comments
+ * @internal
  */
 class Comments
 {
@@ -20,12 +20,12 @@ class Comments
     /**
      * Retrieves a list of all comments
      * 
-     * @return \BearCMS\DataList|\BearCMS\Internal\Data2\Comment[] List containing all comments data
+     * @return \BearCMS\Internal\DataList|\BearCMS\Internal\Data2\Comment[] List containing all comments data
      */
     public function getList()
     {
         $list = \BearCMS\Internal\Data::getList('bearcms/comments/thread/');
-        $result = new \BearCMS\DataList();
+        $result = new \BearCMS\Internal\DataList();
         foreach ($list as $value) {
             $rawData = json_decode($value, true);
             $tempCollection = \BearCMS\Internal\Data\Comments::createCommentsCollection($rawData['comments'], $rawData['id']);

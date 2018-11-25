@@ -16,6 +16,7 @@ namespace BearCMS\Internal\Data2;
  * @property ?string $hashedPassword
  * @property array $emails
  * @property array $permissions
+ * @internal
  */
 class User
 {

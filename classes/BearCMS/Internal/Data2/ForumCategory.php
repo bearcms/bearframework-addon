@@ -13,6 +13,7 @@ namespace BearCMS\Internal\Data2;
  * @property string $id
  * @property string $name
  * @property string $status
+ * @internal
  */
 class ForumCategory
 {

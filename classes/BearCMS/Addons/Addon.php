@@ -11,7 +11,7 @@ namespace BearCMS\Addons;
 
 /**
  * @property-read string $id The addonID.
- * @property ?callable $initialize A function to be called to initialize the addon.
+ * @property callable|null $initialize A function to be called to initialize the addon.
  */
 class Addon
 {

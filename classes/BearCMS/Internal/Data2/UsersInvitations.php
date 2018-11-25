@@ -10,7 +10,7 @@
 namespace BearCMS\Internal\Data2;
 
 /**
- * Information about the CMS users (administrators)
+ * @internal
  */
 class UsersInvitations
 {
@@ -46,7 +46,7 @@ class UsersInvitations
     /**
      * Retrieves a list of all users invitations
      * 
-     * @return \BearCMS\DataList|\BearCMS\Internal\Data2\UserInvitation[] List containing all users invitations data
+     * @return \BearCMS\Internal\DataList|\BearCMS\Internal\Data2\UserInvitation[] List containing all users invitations data
      */
     public function getList()
     {
@@ -54,7 +54,7 @@ class UsersInvitations
         array_walk($list, function(&$value) {
             $value = $this->makeUserFromRawData($value);
         });
-        return new \BearCMS\DataList($list);
+        return new \BearCMS\Internal\DataList($list);
     }
 
 }

@@ -14,7 +14,10 @@ use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use BearCMS\Internal2;
 
-final class Controller
+/**
+ * @internal
+ */
+class Controller
 {
 
     static function handleAdminPage(): \BearFramework\App\Response

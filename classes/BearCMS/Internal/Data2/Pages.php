@@ -12,7 +12,7 @@ namespace BearCMS\Internal\Data2;
 use BearFramework\App;
 
 /**
- * Information about the site pages
+ * @internal
  */
 class Pages
 {
@@ -43,7 +43,7 @@ class Pages
      * Retrieves information about the page specified
      * 
      * @param string $id The page ID
-     * @return \BearCMS\DataObject|null The page data or null if page not found
+     * @return \BearCMS\Internal\DataObject|null The page data or null if page not found
      * @throws \InvalidArgumentException
      */
     public function get(string $id): ?\BearCMS\Internal\Data2\Page
@@ -58,9 +58,9 @@ class Pages
     /**
      * Retrieves a list of all pages
      * 
-     * @return \BearCMS\DataList List containing all pages data
+     * @return \BearCMS\Internal\DataList List containing all pages data
      */
-    public function getList(): \BearCMS\DataList
+    public function getList(): \BearCMS\Internal\DataList
     {
         if (!isset(self::$cache['list'])) {
             $list = \BearCMS\Internal\Data::getList('bearcms/pages/page/');
@@ -89,7 +89,7 @@ class Pages
             self::$cache['list'] = $list;
             unset($list);
         }
-        return new \BearCMS\DataList(self::$cache['list']);
+        return new \BearCMS\Internal\DataList(self::$cache['list']);
     }
 
 }

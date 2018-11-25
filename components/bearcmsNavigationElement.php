@@ -105,7 +105,7 @@ if (strlen($dataResponsiveAttributes) > 0) {
 }
 
 if ($pages !== null && $showHomeLink) {
-    $pages->unshift(new \BearCMS\DataObject(['id' => '_home', 'path' => '/', 'name' => $homeLinkText, 'parentID' => '', 'status' => 'published']));
+    $pages->unshift(new \BearCMS\Internal\DataObject(['id' => '_home', 'path' => '/', 'name' => $homeLinkText, 'parentID' => '', 'status' => 'published']));
 }
 
 $itemsHtml = (string) $component->innerHTML;

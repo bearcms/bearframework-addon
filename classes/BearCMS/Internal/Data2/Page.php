@@ -13,7 +13,10 @@ use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal2;
 
-class Page extends \BearCMS\DataObject
+/**
+ * @internal
+ */
+class Page extends \BearCMS\Internal\DataObject
 {
 
     function __construct(array $data = [])
@@ -41,7 +44,7 @@ class Page extends \BearCMS\DataObject
  * @property string|null $titleTagContent
  * @property string|null $descriptionTagContent
  * @property string|null $keywordsTagContent
- * @property-read \BearCMS\DataList|\BearCMS\Internal\Data2\Page[] $children
+ * @property-read \BearCMS\Internal\DataList|\BearCMS\Internal\Data2\Page[] $children
  */
 //class Page
 //{

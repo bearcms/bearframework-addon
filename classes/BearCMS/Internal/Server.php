@@ -13,7 +13,10 @@ use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
 
-final class Server
+/**
+ * @internal
+ */
+class Server
 {
 
     static function call(string $name, array $arguments = [], bool $sendCookies = false, string $cacheKey = null)

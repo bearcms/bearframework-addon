@@ -11,6 +11,9 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 
+/**
+ * @internal
+ */
 class TempClientData
 {
 

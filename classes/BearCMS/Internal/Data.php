@@ -13,6 +13,9 @@ use BearFramework\App;
 use BearCMS\Internal\Config;
 use BearCMS\Internal;
 
+/**
+ * @internal
+ */
 class Data
 {
 

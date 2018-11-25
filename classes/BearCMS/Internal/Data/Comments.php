@@ -14,7 +14,10 @@ use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use BearCMS\Internal2;
 
-final class Comments
+/**
+ * @internal
+ */
+class Comments
 {
 
     static function add(string $threadID, array $author, string $text, string $status): void
@@ -104,9 +107,9 @@ final class Comments
         }
     }
 
-    static function createCommentsCollection(array $rawCommentsData, string $threadID): \BearCMS\DataList
+    static function createCommentsCollection(array $rawCommentsData, string $threadID): \BearCMS\Internal\DataList
     {
-        $dataList = new \BearCMS\DataList();
+        $dataList = new \BearCMS\Internal\DataList();
         foreach ($rawCommentsData as $rawCommentData) {
             $comment = new \BearCMS\Internal\Data2\Comment();
             $properties = ['id', 'status', 'author', 'text', 'createdTime'];

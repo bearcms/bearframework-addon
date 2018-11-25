@@ -9,7 +9,10 @@
 
 namespace BearCMS\Internal\Data2;
 
-class Addon extends \BearCMS\DataObject
+/**
+ * @internal
+ */
+class Addon extends \BearCMS\Internal\DataObject
 {
     
 }

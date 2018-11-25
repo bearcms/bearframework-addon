@@ -11,7 +11,10 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 
-final class Config
+/**
+ * @internal
+ */
+class Config
 {
 
     static $serverUrl = null;

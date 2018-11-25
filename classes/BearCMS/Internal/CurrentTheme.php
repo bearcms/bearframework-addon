@@ -12,7 +12,7 @@ namespace BearCMS\Internal;
 use BearCMS\Internal;
 
 /**
- * Information about the current theme
+ * @internal
  */
 class CurrentTheme
 {

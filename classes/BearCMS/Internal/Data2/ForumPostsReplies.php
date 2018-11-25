@@ -12,7 +12,7 @@ namespace BearCMS\Internal\Data2;
 use BearFramework\App;
 
 /**
- * Information about the forum replies
+ * @internal
  */
 class ForumPostsReplies
 {
@@ -20,13 +20,13 @@ class ForumPostsReplies
     /**
      * Retrieves a list of all forum replies
      * 
-     * @return \BearCMS\DataList List containing all forum replies data
+     * @return \BearCMS\Internal\DataList List containing all forum replies data
      */
     public function getList()
     {
         $list = \BearCMS\Internal\Data::getList('bearcms/forums/posts/post/');
 
-        $result = new \BearCMS\DataList();
+        $result = new \BearCMS\Internal\DataList();
         foreach ($list as $value) {
             $rawData = json_decode($value, true);
             if (isset($rawData['id'], $rawData['replies'])) {

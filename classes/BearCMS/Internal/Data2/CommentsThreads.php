@@ -12,7 +12,7 @@ namespace BearCMS\Internal\Data2;
 use BearFramework\App;
 
 /**
- * Information about the comments threads
+ * @internal
  */
 class CommentsThreads
 {
@@ -29,7 +29,7 @@ class CommentsThreads
      * Retrieves information about the comments thread specified
      * 
      * @param string $id The comments thread ID
-     * @return \BearCMS\DataObject|null The comments thread data or null if the thread not found
+     * @return \BearCMS\Internal\DataObject|null The comments thread data or null if the thread not found
      * @throws \InvalidArgumentException
      */
     public function get(string $id): ?\BearCMS\Internal\Data2\CommentsThread
@@ -44,7 +44,7 @@ class CommentsThreads
     /**
      * Retrieves a list of all comments threads
      * 
-     * @return \BearCMS\DataList List containing all comments threads data
+     * @return \BearCMS\Internal\DataList List containing all comments threads data
      */
     public function getList()
     {
@@ -52,7 +52,7 @@ class CommentsThreads
         array_walk($list, function(&$value) {
             $value = $this->makeCommentsThreadPostFromRawData($value);
         });
-        return new \BearCMS\DataList($list);
+        return new \BearCMS\Internal\DataList($list);
     }
 
 }

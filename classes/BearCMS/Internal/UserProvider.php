@@ -9,6 +9,9 @@
 
 namespace BearCMS\Internal;
 
+/**
+ * @internal
+ */
 class UserProvider extends \IvoPetkov\BearFrameworkAddons\Users\GuestLoginProvider
 {
 

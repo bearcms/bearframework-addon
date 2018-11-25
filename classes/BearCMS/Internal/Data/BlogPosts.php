@@ -11,7 +11,10 @@ namespace BearCMS\Internal\Data;
 
 use BearCMS\Internal;
 
-final class BlogPosts
+/**
+ * @internal
+ */
+class BlogPosts
 {
 
     /**

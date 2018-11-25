@@ -12,7 +12,10 @@ namespace BearCMS\Internal;
 use BearFramework\App;
 use BearCMS\Internal\Config;
 
-final class Cookies
+/**
+ * @internal
+ */
+class Cookies
 {
 
     const TYPE_SERVER = 1;

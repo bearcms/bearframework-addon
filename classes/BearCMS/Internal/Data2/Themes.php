@@ -13,7 +13,7 @@ use BearFramework\App;
 use BearCMS\Internal;
 
 /**
- * Information about the site themes
+ * @internal
  */
 class Themes
 {

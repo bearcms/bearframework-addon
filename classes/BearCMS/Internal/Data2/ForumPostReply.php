@@ -17,7 +17,8 @@ namespace BearCMS\Internal\Data2;
  * @property ?string $text
  * @property string $categoryID
  * @property ?int $createdTime
- * @property \BearCMS\DataList|\BearCMS\Internal\Data2\ForumPostReply[] $replies
+ * @property \BearCMS\Internal\DataList|\BearCMS\Internal\Data2\ForumPostReply[] $replies
+ * @internal
  */
 class ForumPostReply
 {

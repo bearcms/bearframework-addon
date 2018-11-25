@@ -11,7 +11,10 @@ namespace BearCMS\Internal\Data;
 
 use BearCMS\Internal;
 
-final class Pages
+/**
+ * @internal
+ */
+class Pages
 {
 
     /**

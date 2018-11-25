@@ -9,7 +9,10 @@
 
 namespace BearCMS\Internal\Data2;
 
-class CommentsThread extends \BearCMS\DataObject
+/**
+ * @internal
+ */
+class CommentsThread extends \BearCMS\Internal\DataObject
 {
     
 }

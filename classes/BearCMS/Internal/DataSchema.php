@@ -10,7 +10,7 @@
 namespace BearCMS\Internal;
 
 /**
- * Contains information about the data schema fields
+ * @internal
  */
 class DataSchema
 {

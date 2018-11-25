@@ -14,7 +14,7 @@ use BearCMS\Internal;
 use IvoPetkov\HTML5DOMDocument;
 
 /**
- * Contains information about the available elements types
+ * @internal
  */
 class ElementsTypes
 {

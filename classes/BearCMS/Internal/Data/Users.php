@@ -11,7 +11,10 @@ namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
 
-final class Users
+/**
+ * @internal
+ */
+class Users
 {
     
 }

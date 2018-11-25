@@ -14,6 +14,9 @@ use BearCMS\Internal\Config;
 use BearCMS\Internal;
 use BearCMS\Internal2;
 
+/**
+ * @internal
+ */
 class Themes
 {
 

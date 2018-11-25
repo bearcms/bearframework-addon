@@ -12,7 +12,10 @@ namespace BearCMS\Internal;
 use BearFramework\App;
 use BearCMS\Internal;
 
-final class ElementsHelper
+/**
+ * @internal
+ */
+class ElementsHelper
 {
 
     static $editorData = [];

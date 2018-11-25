@@ -12,7 +12,7 @@ namespace BearCMS\Internal\Data2;
 use BearFramework\App;
 
 /**
- * Information about the addons managed by Bear CMS
+ * @internal
  */
 class Addons
 {
@@ -26,7 +26,7 @@ class Addons
      * Retrieves information about the addon specified
      * 
      * @param string $id The addon ID
-     * @return \BearCMS\DataObject|null The addon data or null if addon not found
+     * @return \BearCMS\Internal\DataObject|null The addon data or null if addon not found
      * @throws \InvalidArgumentException
      */
     public function get(string $id)
@@ -42,7 +42,7 @@ class Addons
     /**
      * Retrieves a list of all addons
      * 
-     * @return \BearCMS\DataList List containing all addons data
+     * @return \BearCMS\Internal\DataList List containing all addons data
      */
     public function getList()
     {
@@ -53,7 +53,7 @@ class Addons
         foreach ($list as $item) {
             $result[] = $this->makeAddonFromRawData($item->value);
         }
-        return new \BearCMS\DataList($result);
+        return new \BearCMS\Internal\DataList($result);
     }
 
 }

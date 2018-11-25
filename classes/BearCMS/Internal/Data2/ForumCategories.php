@@ -10,7 +10,7 @@
 namespace BearCMS\Internal\Data2;
 
 /**
- * Information about the site pages
+ * @internal
  */
 class ForumCategories
 {
@@ -34,7 +34,7 @@ class ForumCategories
      * Retrieves information about the page specified
      * 
      * @param string $id The page ID
-     * @return \BearCMS\DataObject|null The page data or null if page not found
+     * @return \BearCMS\Internal\DataObject|null The page data or null if page not found
      * @throws \InvalidArgumentException
      */
     public function get(string $id): ?\BearCMS\Internal\Data2\ForumCategory
@@ -49,9 +49,9 @@ class ForumCategories
     /**
      * Retrieves a list of all pages
      * 
-     * @return \BearCMS\DataList|\BearCMS\Internal\Data2\ForumCategory[] List containing all pages data
+     * @return \BearCMS\Internal\DataList|\BearCMS\Internal\Data2\ForumCategory[] List containing all pages data
      */
-    public function getList(): \BearCMS\DataList
+    public function getList(): \BearCMS\Internal\DataList
     {
         if (!isset(self::$cache['list'])) {
             $list = \BearCMS\Internal\Data::getList('bearcms/forums/categories/category/');
@@ -73,7 +73,7 @@ class ForumCategories
             self::$cache['list'] = $list;
             unset($list);
         }
-        return new \BearCMS\DataList(self::$cache['list']);
+        return new \BearCMS\Internal\DataList(self::$cache['list']);
     }
 
 }

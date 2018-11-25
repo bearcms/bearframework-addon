@@ -15,6 +15,7 @@ namespace BearCMS\Internal\Data2;
  * @property array $author
  * @property ?string $text
  * @property ?int $createdTime
+ * @internal
  */
 class Comment
 {

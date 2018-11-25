@@ -9,7 +9,10 @@
 
 namespace BearCMS\Internal\Data2;
 
-class BlogPost extends \BearCMS\DataObject
+/**
+ * @internal
+ */
+class BlogPost extends \BearCMS\Internal\DataObject
 {
     
 }

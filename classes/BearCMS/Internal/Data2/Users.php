@@ -12,7 +12,7 @@ namespace BearCMS\Internal\Data2;
 use BearFramework\App;
 
 /**
- * Information about the CMS users (administrators)
+ * @internal
  */
 class Users
 {
@@ -48,7 +48,7 @@ class Users
     /**
      * Retrieves a list of all users
      * 
-     * @return \BearCMS\DataList|\BearCMS\Internal\Data2\User[] List containing all users data
+     * @return \BearCMS\Internal\DataList|\BearCMS\Internal\Data2\User[] List containing all users data
      */
     public function getList()
     {
@@ -56,7 +56,7 @@ class Users
         array_walk($list, function(&$value) {
             $value = $this->makeUserFromRawData($value);
         });
-        return new \BearCMS\DataList($list);
+        return new \BearCMS\Internal\DataList($list);
     }
 
     /**

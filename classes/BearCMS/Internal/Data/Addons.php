@@ -12,7 +12,10 @@ namespace BearCMS\Internal\Data;
 use BearFramework\App;
 use BearCMS\Internal\Config;
 
-final class Addons
+/**
+ * @internal
+ */
+class Addons
 {
 
     static public $announcements = [];
@@ -29,7 +32,7 @@ final class Addons
         return $result;
     }
 
-    static function get(string $addonID): ?\BearCMS\DataObject
+    static function get(string $addonID): ?\BearCMS\Internal\DataObject
     {
         $data = self::getData($addonID);
         if ($data !== null) {
@@ -41,7 +44,7 @@ final class Addons
     static function makeFromRawData(string $raw)
     {
         $data = json_decode($raw, true);
-        return new \BearCMS\DataObject([
+        return new \BearCMS\Internal\DataObject([
             'id' => $data['id'],
             'enabled' => (isset($data['enabled']) ? (int) $data['enabled'] > 0 : false),
             'exists' => \BearFramework\Addons::exists($data['id']),
