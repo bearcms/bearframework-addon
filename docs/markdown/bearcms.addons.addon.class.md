@@ -6,7 +6,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The addonID.
 
-##### public ?callable $initialize
+##### public callable|null $initialize
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A function to be called to initialize the addon.
 

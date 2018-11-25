@@ -1,4 +1,4 @@
-![Bear CMS](http://bearcms.github.io/bearcms-logo-for-github.png)
+![Bear CMS](https://bearcms.github.io/bearcms-logo-for-github.png)
 
 Addon for Bear Framework
 
@@ -10,63 +10,31 @@ This addon enables you add CMS functionality to your [Bear Framework](https://be
 [![License](https://poser.pugx.org/bearcms/bearframework-addon/license)](https://packagist.org/packages/bearcms/bearframework-addon)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/45344c8c617d466bad42e4cbd5313b65)](https://www.codacy.com/app/ivo_2/bearframework-addon)
 
-## Download and install
+## Standalone version
 
-**Install via Composer**
+There is a standalone version that is easier to install and update. You can download the installer from your [bearcms.com](https://bearcms.com/) account.
+
+## Install via Composer
 
 ```shell
 composer require bearcms/bearframework-addon
-```
-
-**Download an archive**
-
-Download the [latest release](https://github.com/bearcms/bearframework-addon/releases) from the [GitHub page](https://github.com/bearcms/bearframework-addon) and include the autoload file.
-```php
-include '/path/to/the/addon/autoload.php';
 ```
 
 ## Enable the addon
 Enable the addon for your Bear Framework application.
 
 ```php
-$app->addons->add('bearcms/bearframework-addon', [
+$app->addons->add('bearcms/bearframework-addon');
+$app->bearCMS->initialize([
     'serverUrl' => 'https://example.bearcms.com/',
-    'siteID' => 'example',
-    'siteSecret' => 'example',
-    'addonsDir' => realpath(__DIR__ . '/../addons/'),
+    'appSecretKey' => '...',
     'language' => 'en'
 ]);
 ```
 
 ## Documentation
 
-You can configure the addon when added to your application. Here is a list of all [configuration options](http://).
-
-### Direct data access
-
-[$app->bearCMS->data->addons](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Addons.md)
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the CMS managed addons.
-
-[$app->bearCMS->data->blog](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Blog.md)
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the blog posts created by the CMS.
-
-[$app->bearCMS->data->pages](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Pages.md)
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the pages created by the CMS.
-
-[$app->bearCMS->data->settings](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Settings.md)
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the site settings available in the CMS.
-
-[$app->bearCMS->data->themes](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Themes.md)
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the themes customized by the administrators.
-
-[$app->bearCMS->data->users](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.Data.Users.md)
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve information about the administators.
+Full [documentation](https://github.com/ivopetkov/bearframework-addon/blob/master/docs/markdown/index.md) is available as part of this repository.
 
 ### Components
 
@@ -110,31 +78,15 @@ You can configure the addon when added to your application. Here is a list of al
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a video block.
 
-### Current theme
+### Configuration
 
-[$app->bearCMS->currentTheme](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.CurrentTheme.md)
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provides information about the current theme and it's customizations.
-
-### Current user
-
-[$app->bearCMS->currentUser](https://github.com/bearcms/bearframework-addon/blob/master/docs/classes/BearCMS.CurrentUser.md)
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provides information about the current user and it's permissions.
-
-### Addon options
-
-Here is a list of options that can be passed to `$app->addons->add('bearcms/bearframework-addon')` to customize the behaviour of the CMS.
+Here is a list of the configuration options of the CMS:
 
 `serverUrl`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The URL of the CMS server. Can be found at your Bear CMS account.
 
-`siteID`
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The site ID. Can be found at your Bear CMS account.
-
-`siteSecret`
+`appSecretKey`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The site secret key. Can be found at your Bear CMS account.
 
@@ -192,11 +144,6 @@ Here is a list of options that can be passed to `$app->addons->add('bearcms/bear
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`USERS_MANAGE_ACCOUNT` Enables the user to manage his account (change password and emails).
 
-
-`addonsDir`
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The directory where the CMS will install addons.
-
 `adminPagesPathPrefix`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The path prefix for the administrators login, lost password and invite pages. The default value is "/admin/".
@@ -210,7 +157,7 @@ Here is a list of options that can be passed to `$app->addons->add('bearcms/bear
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Automatically create editable elements container in the home page if no other response is defined. The default value is `true`.
 
 ## License
-Bear CMS addon for Bear Framework is open-sourced software. It's free to use under the MIT license. See the [license file](https://github.com/bearcms/bearframework-addon/blob/master/LICENSE) for more information.
+This project is licensed under the MIT License. See the [license file](https://github.com/bearcms/bearframework-addon/blob/master/LICENSE) for more information.
 
 ## Author
-This addon is created by the Bear CMS team. Feel free to contact us at [support@bearcms.com](mailto:support@bearcms.com) or [bearcms.com](https://bearcms.com/).
+This addon is created and maintained by the Bear CMS team. Feel free to contact us at [support@bearcms.com](mailto:support@bearcms.com) or [bearcms.com](https://bearcms.com/).
