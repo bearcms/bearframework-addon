@@ -34,7 +34,7 @@ $app->bearCMS->initialize([
 
 ## Documentation
 
-Full [documentation](https://github.com/ivopetkov/bearframework-addon/blob/master/docs/markdown/index.md) is available as part of this repository.
+Full [documentation](https://github.com/bearcms/bearframework-addon/blob/master/docs/markdown/index.md) is available as part of this repository.
 
 ### Components
 
