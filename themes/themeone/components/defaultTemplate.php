@@ -14,13 +14,13 @@ $app = App::get();
 $settings = Internal2::$data2->settings->get();
 $isHomePage = (string) $app->request->path === '/';
 
-$backgroundColor = $options['backgroundColor'];
-$textColor = $options['textColor'];
-$accentColor = $options['accentColor'];
-$textSizeOptionValue = $options['textSize'];
-$contentWidthOptionValue = $options['contentWidth'];
+$backgroundColor = $options->get('backgroundColor');
+$textColor = $options->get('textColor');
+$accentColor = $options->get('accentColor');
+$textSizeOptionValue = $options->get('textSize');
+$contentWidthOptionValue = $options->get('contentWidth');
 
-$headerLogoImage = $options['headerLogoImage'];
+$headerLogoImage = $options->get('headerLogoImage');
 
 $hasHeaderLogo = strlen($headerLogoImage) > 0;
 if ($hasHeaderLogo) {
@@ -28,14 +28,15 @@ if ($hasHeaderLogo) {
     $headerLogoMaxWidth = $headerLogoImageSize[0] * ($isHomePage ? 180 : 90) / $headerLogoImageSize[1];
 }
 
-$hasHeaderTitle = $options['headerTitleVisibility'] === '1';
-$hasNavigation = $options['navigationVisibility'] === '1';
-$hasFooter = $options['footerVisibility'] === '1';
+$hasHeaderTitle = $options->get('headerTitleVisibility') === '1';
+$hasNavigation = $options->get('navigationVisibility') === '1';
+$hasFooter = $options->get('footerVisibility') === '1';
 
-$elementsDefaults = $app->bearCMS->themes->makeOptionsDefinition();
+$elementsDefaults = $app->bearCMS->themes->makeOptionsSchema();
 $elementsDefaults->addElements('container', '.template-container');
 $elementsDefaults->addPages();
 $cssRules = $elementsDefaults->getCSSRules();
+
 $cssStyles = [];
 foreach ($cssRules as $cssRuleSelector => $cssRuleValue) {
     $cssStyles[] = $cssRuleSelector . '{' . $cssRuleValue . '}';

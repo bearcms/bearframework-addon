@@ -9,10 +9,6 @@
 
 namespace BearCMS;
 
-use BearFramework\App;
-use BearCMS\Internal;
-use BearCMS\Internal2;
-
 /**
  * @property-read \BearCMS\Internal\Data2 $data2
  */

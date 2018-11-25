@@ -10,7 +10,7 @@
 namespace BearCMS\Addons;
 
 /**
- * @property string $id The addonID.
+ * @property-read string $id The addonID.
  * @property ?callable $initialize A function to be called to initialize the addon.
  */
 class Addon
@@ -31,9 +31,6 @@ class Addon
                 ->defineProperty('initialize', [
                     'type' => '?callable'
                 ])
-//                ->defineProperty('options', [
-//                    'type' => 'array'
-//                ])
         ;
     }
 

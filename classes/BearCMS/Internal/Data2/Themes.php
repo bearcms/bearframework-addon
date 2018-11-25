@@ -10,6 +10,7 @@
 namespace BearCMS\Internal\Data2;
 
 use BearFramework\App;
+use BearCMS\Internal;
 
 /**
  * Information about the site themes
@@ -79,7 +80,7 @@ class Themes
         } else {
             $currentValues = $this->getOptions($id);
         }
-        $filesInCurrentValues = \BearCMS\Internal\Themes::getFilesInValues($currentValues);
+        $filesInCurrentValues = Internal\Themes::getFilesInValues($currentValues);
         foreach ($filesInCurrentValues as $key) {
             if (strpos($key, 'data:') === 0) {
                 $dataKay = substr($key, 5);
@@ -95,7 +96,7 @@ class Themes
         if ($values === null) {
             $app->data->delete($dataKey);
         } else {
-            $filesInNewValues = \BearCMS\Internal\Themes::getFilesInValues($values);
+            $filesInNewValues = Internal\Themes::getFilesInValues($values);
             foreach ($filesInNewValues as $key) {
                 if (strpos($key, 'data:') === 0) {
                     $dataKay = substr($key, 5);
@@ -120,7 +121,7 @@ class Themes
             }
         }
 
-        $cacheItemKey = $hasUser ? \BearCMS\Internal\Themes::getCacheItemKey($id, $userID) : \BearCMS\Internal\Themes::getCacheItemKey($id);
+        $cacheItemKey = $hasUser ? Internal\Themes::getCacheItemKey($id, $userID) : Internal\Themes::getCacheItemKey($id);
         if ($cacheItemKey !== null) {
             $app->cache->delete($cacheItemKey);
         }

@@ -9,7 +9,7 @@
 
 namespace BearCMS\Themes;
 
-class OptionsDefinition extends \BearCMS\Themes\OptionsDefinitionGroup
+class OptionsSchema extends \BearCMS\Themes\OptionsGroupSchema
 {
 
     public function __construct()
@@ -17,24 +17,24 @@ class OptionsDefinition extends \BearCMS\Themes\OptionsDefinitionGroup
         parent::__construct('', '');
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         $result = parent::toArray();
         return isset($result['options']) ? $result['options'] : [];
     }
 
-    public function setDefaultValue(string $id, $value)
+    public function setDefaultValue(string $id, $value): void
     {
         $this->setDefaultValues([$id => $value]);
     }
 
-    public function setDefaultValues(array $values)
+    public function setDefaultValues(array $values): void
     {
         $valuesSetCount = 0;
         $valuesCount = sizeof($values);
         $walkOptions = function(&$options) use (&$walkOptions, &$valuesSetCount, $valuesCount, $values) {
             foreach ($options as $i => $option) {
-                if ($option instanceof \BearCMS\Themes\OptionsDefinitionGroup) {
+                if ($option instanceof \BearCMS\Themes\OptionsGroupSchema) {
                     if ($walkOptions($option->options)) {
                         return;
                     }

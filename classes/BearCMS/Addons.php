@@ -20,13 +20,13 @@ class Addons
     /**
      * Announces a new addon.
      * 
-     * @param string $addonID The addon ID.
+     * @param string $id The addon ID.
      * @param callable $callback A function to define addon parameters.
      * @return self Returns a reference to itself.
      */
-    public function announce(string $addonID, callable $callback): self
+    public function announce(string $id, callable $callback): self
     {
-        Internal\Data\Addons::$announcements[$addonID] = $callback;
+        Internal\Data\Addons::$announcements[$id] = $callback;
         return $this;
     }
 

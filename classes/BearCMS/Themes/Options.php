@@ -10,9 +10,9 @@
 namespace BearCMS\Themes;
 
 /**
- * Data structure with array access containing all theme options
+ * 
  */
-class Options implements \ArrayAccess, \Iterator
+class Options
 {
 
     /**
@@ -21,13 +21,17 @@ class Options implements \ArrayAccess, \Iterator
      * @var array 
      */
     private $data = [];
+
+    /**
+     *
+     * @var string 
+     */
     private $html = '';
 
     /**
-     * The constructor
      * 
      * @param array $data
-     * @throws \InvalidArgumentException
+     * @param string $html
      */
     public function __construct(array $data, string $html)
     {
@@ -36,96 +40,29 @@ class Options implements \ArrayAccess, \Iterator
     }
 
     /**
-     * Cannot modify theme options
      * 
-     * @param string $offset
-     * @param mixed $value
-     * @throws \Exception
+     * @param string $name
+     * @return mixed|null
      */
-    public function offsetSet($offset, $value)
+    public function get(string $name)
     {
-        throw new \Exception('Cannot modify theme options');
+        return isset($this->data[$name]) ? $this->data[$name] : null;
     }
 
     /**
-     * Checks whether a option is set
      * 
-     * @param string $offset
-     * @return boolean TRUE if the option is set, FALSE otherwise
+     * @return array
      */
-    public function offsetExists($offset)
-    {
-        return isset($this->data[$offset]);
-    }
-
-    /**
-     * Cannot modify theme options
-     * 
-     * @param string $offset
-     * @throws \Exception
-     */
-    public function offsetUnset($offset)
-    {
-        throw new \Exception('Cannot modify theme options');
-    }
-
-    /**
-     * Returns the value of the option specified
-     * 
-     * @param string $offset
-     * @return mixed The value of the option specified or null
-     */
-    public function offsetGet($offset)
-    {
-        return isset($this->data[$offset]) ? $this->data[$offset] : null;
-    }
-
-    /**
-     * Iterator helper method
-     */
-    function rewind()
-    {
-        reset($this->data);
-    }
-
-    /**
-     * Iterator helper method
-     */
-    function current()
-    {
-        return current($this->data);
-    }
-
-    /**
-     * Iterator helper method
-     */
-    function key()
-    {
-        return key($this->data);
-    }
-
-    /**
-     * Iterator helper method
-     */
-    function next()
-    {
-        next($this->data);
-    }
-
-    /**
-     * Iterator helper method
-     */
-    function valid()
-    {
-        return isset($this->data[key($this->data)]);
-    }
-
-    function toArray()
+    function toArray(): array
     {
         return $this->data;
     }
 
-    function toHTML()
+    /**
+     * 
+     * @return string
+     */
+    function toHTML(): string
     {
         return $this->html;
     }
