@@ -12,7 +12,7 @@ namespace BearCMS;
 use BearCMS\Internal;
 
 /**
- * Information about the current logged in user
+ * 
  */
 class CurrentUser
 {

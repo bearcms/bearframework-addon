@@ -94,12 +94,13 @@ class BearCMS
             }
         }
 
-        // Enable elements
         $hasElements = Config::hasFeature('ELEMENTS');
+        $hasThemes = Config::hasFeature('THEMES');
+
+        // Enable elements
         if ($hasElements || Config::hasFeature('ELEMENTS_*')) {
             $this->app->components
                     ->addAlias('bearcms-elements', 'file:' . $this->context->dir . '/components/bearcmsElements.php');
-            Internal\ElementsTypes::addDefault();
 
             $this->app->hooks
                     ->add('componentCreated', function($component) {
@@ -140,8 +141,35 @@ class BearCMS
                         $this->app->emails->send($email);
                     });
 
-            if (Config::hasFeature('THEMES')) {
-                if ($hasElements || Config::hasFeature('ELEMENTS_HEADING')) {
+
+            if ($hasElements || Config::hasFeature('ELEMENTS_HEADING')) {
+                Internal\ElementsTypes::add('heading', [
+                    'componentSrc' => 'bearcms-heading-element',
+                    'componentFilename' => $this->context->dir . '/components/bearcmsHeadingElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'size',
+                            'type' => 'list',
+                            'defaultValue' => 'large',
+                            'options' => [
+                                [
+                                    'value' => 'large'
+                                ],
+                                [
+                                    'value' => 'medium'
+                                ],
+                                [
+                                    'value' => 'small'
+                                ]
+                            ]
+                        ],
+                        [
+                            'id' => 'text',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ]);
+                if ($hasThemes) {
                     Internal\Themes::$elementsOptions[] = function($idPrefix, $parentSelector) {
                         return [
                             "type" => "group",
@@ -193,7 +221,19 @@ class BearCMS
                         ];
                     };
                 }
-                if ($hasElements || Config::hasFeature('ELEMENTS_TEXT')) {
+            }
+            if ($hasElements || Config::hasFeature('ELEMENTS_TEXT')) {
+                Internal\ElementsTypes::add('text', [
+                    'componentSrc' => 'bearcms-text-element',
+                    'componentFilename' => $this->context->dir . '/components/bearcmsTextElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'text',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ]);
+                if ($hasThemes) {
                     Internal\Themes::$elementsOptions[] = function($idPrefix, $parentSelector) {
                         return [
                             "type" => "group",
@@ -224,7 +264,27 @@ class BearCMS
                         ];
                     };
                 }
-                if ($hasElements || Config::hasFeature('ELEMENTS_LINK')) {
+            }
+            if ($hasElements || Config::hasFeature('ELEMENTS_LINK')) {
+                Internal\ElementsTypes::add('link', [
+                    'componentSrc' => 'bearcms-link-element',
+                    'componentFilename' => $this->context->dir . '/components/bearcmsLinkElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'url',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'text',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'title',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ]);
+                if ($hasThemes) {
                     Internal\Themes::$elementsOptions[] = function($idPrefix, $parentSelector) {
                         return [
                             "type" => "group",
@@ -242,7 +302,51 @@ class BearCMS
                         ];
                     };
                 }
-                if ($hasElements || Config::hasFeature('ELEMENTS_IMAGE')) {
+            }
+            if ($hasElements || Config::hasFeature('ELEMENTS_IMAGE')) {
+                Internal\ElementsTypes::add('image', [
+                    'componentSrc' => 'bearcms-image-element',
+                    'componentFilename' => $this->context->dir . '/components/bearcmsImageElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'filename',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'title',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'onClick',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'url',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'width',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'align',
+                            'type' => 'list',
+                            'defaultValue' => 'left',
+                            'options' => [
+                                [
+                                    'value' => 'left'
+                                ],
+                                [
+                                    'value' => 'center'
+                                ],
+                                [
+                                    'value' => 'right'
+                                ]
+                            ]
+                        ],
+                    ]
+                ]);
+                if ($hasThemes) {
                     Internal\Themes::$elementsOptions[] = function($idPrefix, $parentSelector) {
                         return [
                             "type" => "group",
@@ -262,7 +366,54 @@ class BearCMS
                         ];
                     };
                 }
-                if ($hasElements || Config::hasFeature('ELEMENTS_IMAGE_GALLERY')) {
+            }
+            if ($hasElements || Config::hasFeature('ELEMENTS_IMAGE_GALLERY')) {
+                Internal\ElementsTypes::add('imageGallery', [
+                    'componentSrc' => 'bearcms-image-gallery-element',
+                    'componentFilename' => $this->context->dir . '/components/bearcmsImageGalleryElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'type',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'columnsCount',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'imageSize',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'imageAspectRatio',
+                            'type' => 'textbox'
+                        ]
+                    ],
+                    'updateComponentFromData' => function($component, $data) {
+                        if (isset($data['files']) && is_array($data['files'])) {
+                            $innerHTML = '';
+                            foreach ($data['files'] as $file) {
+                                if (isset($file['filename'])) {
+                                    $innerHTML .= '<file filename="' . htmlentities($file['filename']) . '"/>';
+                                }
+                            }
+                            $component->innerHTML = $innerHTML;
+                        }
+                        return $component;
+                    },
+                    'updateDataFromComponent' => function($component, $data) {
+                        $domDocument = new HTML5DOMDocument();
+                        $domDocument->loadHTML($component->innerHTML);
+                        $files = [];
+                        $filesElements = $domDocument->querySelectorAll('file');
+                        foreach ($filesElements as $fileElement) {
+                            $files[] = ['filename' => $fileElement->getAttribute('filename')];
+                        }
+                        $data['files'] = $files;
+                        return $data;
+                    }
+                ]);
+                if ($hasThemes) {
                     Internal\Themes::$elementsOptions[] = function($idPrefix, $parentSelector) {
                         return [
                             "type" => "group",
@@ -296,7 +447,43 @@ class BearCMS
                         ];
                     };
                 }
-                if ($hasElements || Config::hasFeature('ELEMENTS_VIDEO')) {
+            }
+            if ($hasElements || Config::hasFeature('ELEMENTS_VIDEO')) {
+                Internal\ElementsTypes::add('video', [
+                    'componentSrc' => 'bearcms-video-element',
+                    'componentFilename' => $this->context->dir . '/components/bearcmsVideoElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'url',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'filename',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'width',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'align',
+                            'type' => 'list',
+                            'defaultValue' => 'left',
+                            'options' => [
+                                [
+                                    'value' => 'left'
+                                ],
+                                [
+                                    'value' => 'center'
+                                ],
+                                [
+                                    'value' => 'right'
+                                ]
+                            ]
+                        ],
+                    ]
+                ]);
+                if ($hasThemes) {
                     Internal\Themes::$elementsOptions[] = function($idPrefix, $parentSelector) {
                         return [
                             "type" => "group",
@@ -315,7 +502,39 @@ class BearCMS
                         ];
                     };
                 }
-                if ($hasElements || Config::hasFeature('ELEMENTS_NAVIGATION')) {
+            }
+            if ($hasElements || Config::hasFeature('ELEMENTS_NAVIGATION')) {
+                Internal\ElementsTypes::add('navigation', [
+                    'componentSrc' => 'bearcms-navigation-element',
+                    'componentFilename' => $this->context->dir . '/components/bearcmsNavigationElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'source',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'sourceParentPageID',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'showHomeLink',
+                            'type' => 'checkbox'
+                        ],
+                        [
+                            'id' => 'homeLinkText',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'itemsType',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'items',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ]);
+                if ($hasThemes) {
                     Internal\Themes::$elementsOptions[] = function($idPrefix, $parentSelector) {
                         return [
                             "type" => "group",
@@ -347,7 +566,27 @@ class BearCMS
                         ];
                     };
                 }
-                if ($hasElements || Config::hasFeature('ELEMENTS_HTML')) {
+            }
+            if ($hasElements || Config::hasFeature('ELEMENTS_HTML')) {
+                Internal\ElementsTypes::add('html', [
+                    'componentSrc' => 'bearcms-html-element',
+                    'componentFilename' => $this->context->dir . '/components/bearcmsHtmlElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'code',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'originalCode',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'renderMode',
+                            'type' => 'textbox'
+                        ]
+                    ]
+                ]);
+                if ($hasThemes) {
                     Internal\Themes::$elementsOptions[] = function($idPrefix, $parentSelector) {
                         return [
                             "type" => "group",
@@ -379,7 +618,35 @@ class BearCMS
                         ];
                     };
                 }
-                if ($hasElements || Config::hasFeature('ELEMENTS_BLOGPOSTS')) {
+            }
+            if ($hasElements || Config::hasFeature('ELEMENTS_BLOG_POSTS')) {
+                Internal\ElementsTypes::add('blogPosts', [
+                    'componentSrc' => 'bearcms-blog-posts-element',
+                    'componentFilename' => $this->context->dir . '/components/bearcmsBlogPostsElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'source',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'sourceCategoriesIDs',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'type',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'showDate',
+                            'type' => 'checkbox'
+                        ],
+                        [
+                            'id' => 'limit',
+                            'type' => 'number'
+                        ]
+                    ]
+                ]);
+                if ($hasThemes) {
                     Internal\Themes::$elementsOptions[] = function($idPrefix, $parentSelector) {
                         return [
                             "type" => "group",
@@ -507,6 +774,43 @@ class BearCMS
                         ];
                     };
                 }
+            }
+            if ($hasElements || Config::hasFeature('ELEMENTS_COMMENTS')) {
+                Internal\ElementsTypes::add('comments', [
+                    'componentSrc' => 'bearcms-comments-element',
+                    'componentFilename' => $this->context->dir . '/components/bearcmsCommentsElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'threadID',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'count',
+                            'type' => 'number'
+                        ]
+                    ],
+                    'onDelete' => function($data) {
+                        if (isset($data['threadID'])) {
+                            $this->app->data->delete('bearcms/comments/thread/' . md5($data['threadID']) . '.json');
+                        }
+                    }
+                ]);
+            }
+            if ($hasElements || Config::hasFeature('ELEMENTS_FORUM_POSTS')) {
+                Internal\ElementsTypes::add('forumPosts', [
+                    'componentSrc' => 'bearcms-forum-posts-element',
+                    'componentFilename' => $this->context->dir . '/components/bearcmsForumPostsElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'categoryID',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'count',
+                            'type' => 'number'
+                        ]
+                    ]
+                ]);
             }
         }
 

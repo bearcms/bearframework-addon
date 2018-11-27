@@ -23,13 +23,11 @@ class Config
     static $features = ['ALL'];
     static $cookiePrefix = null;
     static $logServerRequests = false;
-    static $addonsDir = false;
     static $uiColor = null;
     static $uiTextColor = null;
     static $adminPagesPathPrefix = '/admin/';
     static $blogPagesPathPrefix = '/b/';
     static $autoCreateHomePage = true;
-    static $defaultEmailSender = null;
     static $maxUploadsSize = null;
     static $useDataCache = false;
     static $dataCachePrefix = null;
@@ -64,23 +62,13 @@ class Config
             self::$language = $data['language'];
         }
 
-        if (isset($data['addonsDir'])) {
-            $addonsDir = realpath($data['addonsDir']);
-            if ($addonsDir === false) {
-                throw new \Exception('addonsDir option is not value for bearcms/bearframework-addon');
-            }
-            self::$addonsDir = $addonsDir;
-        }
-
         if (isset($data['features']) && is_array($data['features']) && !empty($data['features'])) {
             self::$features = $data['features'];
         }
 
-        self::$cookiePrefix = substr(md5(md5($app->request->base) . md5(self::$serverUrl)), 0, 14) . '_bearcms_';
+        self::$cookiePrefix = isset($data['cookiePrefix']) ? $data['cookiePrefix'] : substr(md5(md5($app->request->base) . md5(self::$serverUrl)), 0, 14) . '_bearcms_';
 
-        if (isset($data['logServerRequests']) && $data['logServerRequests'] === true) {
-            self::$logServerRequests = true;
-        }
+        self::$logServerRequests = isset($data['logServerRequests']) && $data['logServerRequests'] === true;
 
         if (isset($data['uiColor'])) {
             self::$uiColor = $data['uiColor'];
@@ -101,13 +89,7 @@ class Config
         if (isset($data['autoCreateHomePage'])) {
             self::$autoCreateHomePage = $data['autoCreateHomePage'];
         }
-        if (isset($data['defaultEmailSender'])) {
-            if (is_array($data['defaultEmailSender']) && isset($data['defaultEmailSender']['email'], $data['defaultEmailSender']['name'])) {
-                self::$defaultEmailSender = $data['defaultEmailSender'];
-            } else {
-                throw new \Exception('defaultEmailSender option must be an array containg keys named \'email\' and \'name\' of the sender.');
-            }
-        }
+
         if (isset($data['maxUploadsSize'])) {
             self::$maxUploadsSize = (int) $data['maxUploadsSize'];
         }
