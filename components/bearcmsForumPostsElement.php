@@ -17,7 +17,7 @@ if ($count < 1) {
 }
 $categoryID = $component->categoryID;
 
-$content = '';
+$content = '<div class="bearcms-forum-posts-element">';
 $content .= '<component src="file:' . $context->dir . '/components/bearcmsForumPostsElement/forumPostsList.php" count="' . htmlentities($count) . '" categoryID="' . htmlentities($categoryID) . '" />';
 $content .= '<script id="bearcms-bearframework-addon-script-9" src="' . htmlentities($context->assets->getUrl('components/bearcmsForumPostsElement/assets/forumPostsElement.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
 $content .= '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
@@ -25,6 +25,7 @@ $content .= '<script id="bearcms-bearframework-addon-script-4" src="' . htmlenti
 $newPostUrl = $app->request->base . '/f/' . $categoryID . '/';
 $content .= '<div class="bearcms-forum-posts-new-post-button-container">';
 $content .= '<a class="bearcms-forum-posts-new-post-button" href="' . htmlentities($newPostUrl) . '">' . __('bearcms.forumPosts.New post') . '<a>';
+$content .= '</div>';
 $content .= '</div>';
 ?><html>
     <body><?= $content ?></body>
