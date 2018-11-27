@@ -1,7 +1,7 @@
 # BearCMS\Themes\OptionsSchema::toArray
 
 ```php
-public void toArray ( void )
+public array toArray ( void )
 ```
 
 ## Details

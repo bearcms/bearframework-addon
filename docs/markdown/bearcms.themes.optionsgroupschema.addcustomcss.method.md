@@ -1,7 +1,7 @@
 # BearCMS\Themes\OptionsGroupSchema::addCustomCSS
 
 ```php
-public void addCustomCSS ( [ string $id = 'customCSS' ] )
+public self addCustomCSS ( [ string $id = 'customCSS' ] )
 ```
 
 ## Parameters

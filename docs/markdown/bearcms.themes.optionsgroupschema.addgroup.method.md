@@ -1,7 +1,7 @@
 # BearCMS\Themes\OptionsGroupSchema::addGroup
 
 ```php
-public void addGroup ( string $name [, string $description = '' ] )
+public BearCMS\Themes\OptionsGroupSchema addGroup ( string $name [, string $description = '' ] )
 ```
 
 ## Parameters

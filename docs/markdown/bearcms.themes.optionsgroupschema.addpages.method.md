@@ -1,7 +1,7 @@
 # BearCMS\Themes\OptionsGroupSchema::addPages
 
 ```php
-public void addPages ( void )
+public self addPages ( void )
 ```
 
 ## Details

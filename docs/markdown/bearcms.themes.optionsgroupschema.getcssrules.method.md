@@ -1,7 +1,7 @@
 # BearCMS\Themes\OptionsGroupSchema::getCSSRules
 
 ```php
-public void getCSSRules ( void )
+public array getCSSRules ( void )
 ```
 
 ## Details

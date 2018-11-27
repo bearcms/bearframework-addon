@@ -1,7 +1,7 @@
 # BearCMS\Themes\OptionsGroupSchema::addOption
 
 ```php
-public void addOption ( string $id , string $type , string $name [, array $options = [] ] )
+public self addOption ( string $id , string $type , string $name [, array $options = [] ] )
 ```
 
 ## Parameters

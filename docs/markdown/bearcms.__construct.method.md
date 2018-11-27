@@ -1,6 +1,6 @@
 # BearCMS::__construct
 
-The constructor
+Constructs a new Bear CMS instance.
 
 ```php
 public __construct ( void )

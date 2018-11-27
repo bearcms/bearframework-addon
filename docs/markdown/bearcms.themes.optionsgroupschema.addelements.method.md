@@ -1,7 +1,7 @@
 # BearCMS\Themes\OptionsGroupSchema::addElements
 
 ```php
-public void addElements ( string $idPrefix , string $parentSelector )
+public self addElements ( string $idPrefix , string $parentSelector )
 ```
 
 ## Parameters

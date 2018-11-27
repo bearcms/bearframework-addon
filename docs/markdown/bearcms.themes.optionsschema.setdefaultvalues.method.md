@@ -1,7 +1,7 @@
 # BearCMS\Themes\OptionsSchema::setDefaultValues
 
 ```php
-public void setDefaultValues ( array $values )
+public self setDefaultValues ( array $values )
 ```
 
 ## Parameters

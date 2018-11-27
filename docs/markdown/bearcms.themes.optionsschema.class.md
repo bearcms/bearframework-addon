@@ -16,25 +16,25 @@ extends [BearCMS\Themes\OptionsGroupSchema](bearcms.themes.optionsgroupschema.cl
 
 ##### public [__construct](bearcms.themes.optionsschema.__construct.method.md) ( void )
 
-##### public void [setDefaultValue](bearcms.themes.optionsschema.setdefaultvalue.method.md) ( string $id ,  $value )
+##### public self [setDefaultValue](bearcms.themes.optionsschema.setdefaultvalue.method.md) ( string $id , mixed $value )
 
-##### public void [setDefaultValues](bearcms.themes.optionsschema.setdefaultvalues.method.md) ( array $values )
+##### public self [setDefaultValues](bearcms.themes.optionsschema.setdefaultvalues.method.md) ( array $values )
 
-##### public void [toArray](bearcms.themes.optionsschema.toarray.method.md) ( void )
+##### public array [toArray](bearcms.themes.optionsschema.toarray.method.md) ( void )
 
 ### Inherited from [BearCMS\Themes\OptionsGroupSchema](bearcms.themes.optionsgroupschema.class.md):
 
-##### public void [addCustomCSS](bearcms.themes.optionsgroupschema.addcustomcss.method.md) ( [ string $id = 'customCSS' ] )
+##### public self [addCustomCSS](bearcms.themes.optionsgroupschema.addcustomcss.method.md) ( [ string $id = 'customCSS' ] )
 
-##### public void [addElements](bearcms.themes.optionsgroupschema.addelements.method.md) ( string $idPrefix , string $parentSelector )
+##### public self [addElements](bearcms.themes.optionsgroupschema.addelements.method.md) ( string $idPrefix , string $parentSelector )
 
-##### public void [addGroup](bearcms.themes.optionsgroupschema.addgroup.method.md) ( string $name [, string $description = '' ] )
+##### public [BearCMS\Themes\OptionsGroupSchema](bearcms.themes.optionsgroupschema.class.md) [addGroup](bearcms.themes.optionsgroupschema.addgroup.method.md) ( string $name [, string $description = '' ] )
 
-##### public void [addOption](bearcms.themes.optionsgroupschema.addoption.method.md) ( string $id , string $type , string $name [, array $options = [] ] )
+##### public self [addOption](bearcms.themes.optionsgroupschema.addoption.method.md) ( string $id , string $type , string $name [, array $options = [] ] )
 
-##### public void [addPages](bearcms.themes.optionsgroupschema.addpages.method.md) ( void )
+##### public self [addPages](bearcms.themes.optionsgroupschema.addpages.method.md) ( void )
 
-##### public void [getCSSRules](bearcms.themes.optionsgroupschema.getcssrules.method.md) ( void )
+##### public array [getCSSRules](bearcms.themes.optionsgroupschema.getcssrules.method.md) ( void )
 
 ## Details
 
