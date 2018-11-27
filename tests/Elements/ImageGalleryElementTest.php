@@ -13,42 +13,6 @@
 class ImageGalleryElementTest extends BearCMSTestCase
 {
 
-    private function requireEditable($result)
-    {
-        $this->assertTrue(strpos($result, '<div id="brelc') !== false);
-    }
-
-    private function requireNotEditable($result)
-    {
-        $this->assertTrue(strpos($result, '<div id="brelc') === false);
-    }
-
-    /**
-     * 
-     */
-    public function testEditable()
-    {
-        $app = $this->getApp();
-        $this->createAndLoginUser();
-
-        $result = $app->components->process('<component src="bearcms-image-gallery-element" id="sample-element-1" editable="true"/>');
-        $this->requireEditable($result);
-    }
-
-    /**
-     * 
-     */
-    public function testNotEditable()
-    {
-        $app = $this->getApp();
-
-        $result = $app->components->process('<component src="bearcms-image-gallery-element"/>');
-        $this->requireNotEditable($result);
-
-        $result = $app->components->process('<component src="bearcms-image-gallery-element" id="sample-element-1" editable="true"/>');
-        $this->requireNotEditable($result);
-    }
-
     /**
      * 
      */

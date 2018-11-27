@@ -13,153 +13,22 @@
 class VideoElementTest extends BearCMSTestCase
 {
 
-    private function requireEditable($result)
-    {
-        $this->assertTrue(strpos($result, '<div id="brelc') !== false);
-    }
-
-    private function requireNotEditable($result)
-    {
-        $this->assertTrue(strpos($result, '<div id="brelc') === false);
-    }
-
-    private function requireValidFilenameHTML($result)
-    {
-        $this->assertTrue(strpos($result, '<video') !== false);
-        $this->assertTrue(strpos($result, 'file1.mp4') !== false);
-        $this->assertTrue(strpos($result, '<div class="bearcms-video-element"') !== false);
-    }
-
-    private function requireValidUrlHTML($result)
-    {
-//        $this->assertTrue(strpos($result, '<iframe') !== false);
-//        $this->assertTrue(strpos($result, 'https://www.youtube.com/embed/Pwe-pA6TaZk?feature=oembed') !== false);
-//        $this->assertTrue(strpos($result, '<div class="bearcms-video-element"') !== false);
-    }
-
-    private function createSampleVideoFiles()
-    {
-        $app = $this->getApp();
-        $this->makeDir($app->config->appDir . '/assets/');
-        $app->assets->addDir($app->config->appDir . '/assets/');
-        $this->makeFile($app->config->appDir . '/assets/file1.mp4', 'content');
-    }
-
     /**
      * 
      */
-    public function testEditable()
-    {
-        $app = $this->getApp();
-        $this->createAndLoginUser();
-
-        $result = $app->components->process('<component src="bearcms-video-element" id="sample-element-1" editable="true"/>');
-        $this->requireEditable($result);
-    }
-
-    /**
-     * 
-     */
-    public function testNotEditable()
-    {
-        $app = $this->getApp();
-
-        $result = $app->components->process('<component src="bearcms-video-element"/>');
-        $this->requireNotEditable($result);
-
-        $result = $app->components->process('<component src="bearcms-video-element" id="sample-element-1" editable="true"/>');
-        $this->requireNotEditable($result);
-    }
-
-    /**
-     * 
-     */
-    public function testEditableWithFilename()
-    {
-        $app = $this->getApp();
-        $this->createAndLoginUser();
-        $this->createSampleVideoFiles();
-
-        $result = $app->components->process('<component src="bearcms-video-element" id="sample-element-1" editable="true" filename="app:assets/file1.mp4" />');
-        $this->requireEditable($result);
-        $this->requireValidFilenameHTML($result);
-    }
-
-    /**
-     * 
-     */
-    public function testNotEditableWithFilename()
-    {
-        $app = $this->getApp();
-        $this->createSampleVideoFiles();
-
-        $result = $app->components->process('<component src="bearcms-video-element" filename="app:assets/file1.mp4" />');
-        $this->requireNotEditable($result);
-        $this->requireValidFilenameHTML($result);
-
-        $result = $app->components->process('<component src="bearcms-video-element" id="sample-element-1" editable="true" filename="app:assets/file1.mp4" />');
-        $this->requireNotEditable($result);
-        $this->requireValidFilenameHTML($result);
-    }
-
-    /**
-     * Missing file
-     */
-//    public function testInvalidFilename1()
-//    {
-//        $app = $this->getApp();
-//
-//        $this->expectException('Exception');
-//        $app->components->process('<component src="bearcms-video-element" filename="app:assets/file2.mp4" />');
-//    }
-
-    /**
-     * Not registered assets dir
-     */
-//    public function testInvalidFilename2()
-//    {
-//        $app = $this->getApp();
-//        $this->createFile($app->config->appDir . '/assets/file1.mp4', 'content');
-//
-//        $this->expectException('Exception');
-//        $app->components->process('<component src="bearcms-video-element" filename="app:assets/file1.mp4" />');
-//    }
-
-    /**
-     * 
-     */
-    public function testEditableWithUrl()
-    {
-        $app = $this->getApp();
-        $this->createAndLoginUser();
-
-        $result = $app->components->process('<component src="bearcms-video-element" id="sample-element-1" editable="true" url="https://www.youtube.com/watch?v=Pwe-pA6TaZk" />');
-        $this->requireEditable($result);
-        $this->requireValidUrlHTML($result);
-    }
-
-    /**
-     * 
-     */
-    public function testNotEditableWithUrl()
+    public function testOutput()
     {
         $app = $this->getApp();
 
         $result = $app->components->process('<component src="bearcms-video-element" url="https://www.youtube.com/watch?v=Pwe-pA6TaZk" />');
-        $this->requireNotEditable($result);
-        $this->requireValidUrlHTML($result);
+        $this->assertTrue(strpos($result, 'www.youtube.com/embed/Pwe-pA6TaZk') !== false);
+        $this->assertTrue(strpos($result, '<div class="bearcms-video-element"') !== false);
 
-        $result = $app->components->process('<component src="bearcms-video-element" id="sample-element-1" editable="true" url="https://www.youtube.com/watch?v=Pwe-pA6TaZk" />');
-        $this->requireNotEditable($result);
-        $this->requireValidUrlHTML($result);
-    }
-
-    /**
-     * 
-     */
-    public function testInvalidUrl()
-    {
-        $app = $this->getApp();
+        $app->assets->addDir($app->config->appDir . '/assets/');
+        $this->makeFile($app->config->appDir . '/assets/file1.mp4', 'content');
+        $result = $app->components->process('<component src="bearcms-video-element" filename="app:assets/file1.mp4" />');
+        $this->assertTrue(strpos($result, 'file1.mp4') !== false);
+        $this->assertTrue(strpos($result, '<div class="bearcms-video-element"') !== false);
 
         $result = $app->components->process('<component src="bearcms-video-element" url="https://wrong.url/" />');
         $this->assertTrue(strpos($result, '<div class="bearcms-elements-element-container"></div></body>') !== false);

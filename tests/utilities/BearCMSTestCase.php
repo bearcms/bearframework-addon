@@ -70,6 +70,16 @@ class BearCMSTestCase extends BearFramework\AddonTests\PHPUnitTestCase
      * 
      * @return void
      */
+    protected function logoutUser(): void
+    {
+        $app = $this->getApp();
+        $app->bearCMS->currentUser->logout();
+    }
+
+    /**
+     * 
+     * @return void
+     */
     protected function createAndLoginUser(): void
     {
         $userID = $this->createUser();

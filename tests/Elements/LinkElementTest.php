@@ -13,42 +13,6 @@
 class LinkElementTest extends BearCMSTestCase
 {
 
-    private function requireEditable($result)
-    {
-        $this->assertTrue(strpos($result, '<div id="brelc') !== false);
-    }
-
-    private function requireNotEditable($result)
-    {
-        $this->assertTrue(strpos($result, '<div id="brelc') === false);
-    }
-
-    /**
-     * 
-     */
-    public function testEditable()
-    {
-        $app = $this->getApp();
-        $this->createAndLoginUser();
-
-        $result = $app->components->process('<component src="bearcms-link-element" id="sample-element-1" editable="true"/>');
-        $this->requireEditable($result);
-    }
-
-    /**
-     * 
-     */
-    public function testNotEditable()
-    {
-        $app = $this->getApp();
-
-        $result = $app->components->process('<component src="bearcms-link-element"/>');
-        $this->requireNotEditable($result);
-
-        $result = $app->components->process('<component src="bearcms-link-element" id="sample-element-1" editable="true"/>');
-        $this->requireNotEditable($result);
-    }
-
     /**
      * 
      */

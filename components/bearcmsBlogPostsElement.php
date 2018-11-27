@@ -25,7 +25,7 @@ $list = Internal2::$data2->blogPosts->getList()
 
 if ($source === 'postsInCategories') {
     $categoriesIDs = strlen($component->sourceCategoriesIDs) > 0 ? explode(';', $component->sourceCategoriesIDs) : [];
-    $list->filter(function($blogPost) use ($app, $categoriesIDs) {
+    $list->filter(function($blogPost) use ($categoriesIDs) {
         if (isset($blogPost->categoriesIDs)) {
             foreach ($blogPost->categoriesIDs as $categoryID) {
                 if (array_search($categoryID, $categoriesIDs) !== false) {
@@ -58,12 +58,9 @@ if ($limit < 1) {
     $limit = 5;
 }
 
-if ($list->length === 0) {
-    $content = '';
-} else {
-    $content = '<div class="bearcms-blog-posts-element">';
-    $content .= '<div class="bearcms-blog-posts-element-posts">';
-
+$content = '<div class="bearcms-blog-posts-element">';
+$content .= '<div class="bearcms-blog-posts-element-posts">';
+if ($list->length > 0) {
     $counter = 0;
     foreach ($list as $blogPost) {
         $counter++;
@@ -211,8 +208,9 @@ if ($list->length === 0) {
         $content .= '<a class="bearcms-blog-posts-element-show-more-button" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">' . __('bearcms.blogPosts.Show more posts') . '</a>';
         $content .= '</div>';
     }
-    $content .= '</div>';
 }
+$content .= '</div>';
+$content .= '</div>';
 ?><html>
     <head><?php
         if ($list->length > $limit) {
