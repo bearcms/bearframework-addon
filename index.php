@@ -84,7 +84,6 @@ $context->assets
         ->addDir('assets')
         ->addDir('components/bearcmsBlogPostsElement/assets')
         ->addDir('components/bearcmsCommentsElement/assets')
-        ->addDir('components/bearcmsContactFormElement/assets')
         ->addDir('components/bearcmsForumPostsElement/assets');
 
 $app->localization
