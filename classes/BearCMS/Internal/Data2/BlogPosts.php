@@ -9,7 +9,7 @@
 
 namespace BearCMS\Internal\Data2;
 
-use BearFramework\App;
+use BearCMS\Internal;
 
 /**
  * @internal
@@ -19,7 +19,7 @@ class BlogPosts
 
     private function makeBlogPostFromRawData($rawData): \BearCMS\Internal\Data2\BlogPost
     {
-        return new \BearCMS\Internal\Data2\BlogPost(json_decode($rawData, true));
+        return new Internal\Data2\BlogPost(json_decode($rawData, true));
     }
 
     /**
@@ -31,7 +31,7 @@ class BlogPosts
      */
     public function get(string $id)
     {
-        $data = \BearCMS\Internal\Data::getValue('bearcms/blog/post/' . md5($id) . '.json');
+        $data = Internal\Data::getValue('bearcms/blog/post/' . md5($id) . '.json');
         if ($data !== null) {
             return $this->makeBlogPostFromRawData($data);
         }
@@ -45,11 +45,11 @@ class BlogPosts
      */
     public function getList()
     {
-        $list = \BearCMS\Internal\Data::getList('bearcms/blog/post/');
+        $list = Internal\Data::getList('bearcms/blog/post/');
         array_walk($list, function(&$value) {
             $value = $this->makeBlogPostFromRawData($value);
         });
-        return new \BearCMS\Internal\DataList($list);
+        return new Internal\DataList($list);
     }
 
 }

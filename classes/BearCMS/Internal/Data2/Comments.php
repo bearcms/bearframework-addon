@@ -9,7 +9,7 @@
 
 namespace BearCMS\Internal\Data2;
 
-use BearFramework\App;
+use BearCMS\Internal;
 
 /**
  * @internal
@@ -24,11 +24,11 @@ class Comments
      */
     public function getList()
     {
-        $list = \BearCMS\Internal\Data::getList('bearcms/comments/thread/');
-        $result = new \BearCMS\Internal\DataList();
+        $list = Internal\Data::getList('bearcms/comments/thread/');
+        $result = new Internal\DataList();
         foreach ($list as $value) {
             $rawData = json_decode($value, true);
-            $tempCollection = \BearCMS\Internal\Data\Comments::createCommentsCollection($rawData['comments'], $rawData['id']);
+            $tempCollection = Internal\Data\Comments::createCommentsCollection($rawData['comments'], $rawData['id']);
             foreach ($tempCollection as $dataObject) {
                 $result[] = $dataObject;
             }

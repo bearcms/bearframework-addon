@@ -9,6 +9,8 @@
 
 namespace BearCMS\Internal\Data2;
 
+use BearCMS\Internal;
+
 /**
  * @internal
  */
@@ -20,7 +22,7 @@ class BlogCategories
     private function makeBlogCategoryFromRawData($rawData): \BearCMS\Internal\Data2\BlogCategory
     {
         $rawData = json_decode($rawData, true);
-        $blogCategory = new \BearCMS\Internal\Data2\BlogCategory();
+        $blogCategory = new Internal\Data2\BlogCategory();
         $properties = ['id', 'name', 'status'];
         foreach ($properties as $property) {
             if (array_key_exists($property, $rawData)) {
@@ -39,7 +41,7 @@ class BlogCategories
      */
     public function get(string $id): ?\BearCMS\Internal\Data2\BlogCategory
     {
-        $data = \BearCMS\Internal\Data::getValue('bearcms/blog/categories/category/' . md5($id) . '.json');
+        $data = Internal\Data::getValue('bearcms/blog/categories/category/' . md5($id) . '.json');
         if ($data !== null) {
             return $this->makeBlogCategoryFromRawData($data);
         }
@@ -54,12 +56,12 @@ class BlogCategories
     public function getList(): \BearCMS\Internal\DataList
     {
         if (!isset(self::$cache['list'])) {
-            $list = \BearCMS\Internal\Data::getList('bearcms/blog/categories/category/');
+            $list = Internal\Data::getList('bearcms/blog/categories/category/');
             array_walk($list, function(&$value) {
                 $value = $this->makeBlogCategoryFromRawData($value);
             });
 
-            $structureData = \BearCMS\Internal\Data::getValue('bearcms/blog/categories/structure.json');
+            $structureData = Internal\Data::getValue('bearcms/blog/categories/structure.json');
             $structureData = $structureData === null ? [] : json_decode($structureData, true);
             $flattenStructureData = [];
             foreach ($structureData as $itemData) {
@@ -73,7 +75,7 @@ class BlogCategories
             self::$cache['list'] = $list;
             unset($list);
         }
-        return new \BearCMS\Internal\DataList(self::$cache['list']);
+        return new Internal\DataList(self::$cache['list']);
     }
 
 }

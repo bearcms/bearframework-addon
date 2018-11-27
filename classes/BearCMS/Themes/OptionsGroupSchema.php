@@ -21,25 +21,50 @@ class OptionsGroupSchema
     protected $description = '';
     protected $options = [];
 
+    /**
+     * 
+     * @param string $name
+     * @param string $description
+     */
     public function __construct(string $name, string $description = '')
     {
         $this->name = $name;
         $this->description = $description;
     }
 
+    /**
+     * 
+     * @param string $id
+     * @param string $type
+     * @param string $name
+     * @param array $options
+     * @return self
+     */
     public function addOption(string $id, string $type, string $name, array $options = []): self
     {
         $this->options[] = array_merge(['id' => $id, 'type' => $type, 'name' => $name], $options);
         return $this;
     }
 
-    public function addGroup(string $name, string $description = ''): self
+    /**
+     * 
+     * @param string $name
+     * @param string $description
+     * @return \BearCMS\Themes\OptionsGroupSchema
+     */
+    public function addGroup(string $name, string $description = ''): \BearCMS\Themes\OptionsGroupSchema
     {
         $group = new \BearCMS\Themes\OptionsGroupSchema($name, $description);
         $this->options[] = $group;
         return $group;
     }
 
+    /**
+     * 
+     * @param string $idPrefix
+     * @param string $parentSelector
+     * @return self
+     */
     public function addElements(string $idPrefix, string $parentSelector): self
     {
         foreach (Internal\Themes::$elementsOptions as $callable) {
@@ -51,6 +76,10 @@ class OptionsGroupSchema
         return $this;
     }
 
+    /**
+     * 
+     * @return self
+     */
     public function addPages(): self
     {
         foreach (Internal\Themes::$pagesOptions as $callable) {
@@ -62,6 +91,11 @@ class OptionsGroupSchema
         return $this;
     }
 
+    /**
+     * 
+     * @param string $id
+     * @return self
+     */
     public function addCustomCSS(string $id = 'customCSS'): self
     {
         $this->options[] = [
@@ -72,6 +106,10 @@ class OptionsGroupSchema
         return $this;
     }
 
+    /**
+     * 
+     * @return array
+     */
     public function toArray(): array
     {
         $result = [
@@ -88,7 +126,11 @@ class OptionsGroupSchema
         return $result;
     }
 
-    public function getCSSRules()
+    /**
+     * 
+     * @return array
+     */
+    public function getCSSRules(): array
     {
         $cssRules = [];
         $walkOptions = function($options) use (&$cssRules, &$walkOptions) {

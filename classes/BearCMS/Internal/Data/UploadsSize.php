@@ -18,38 +18,66 @@ use BearCMS\Internal;
 class UploadsSize
 {
 
-    static function add($key, $size)
+    /**
+     * 
+     * @param string $key
+     * @param int $size
+     * @return void
+     */
+    static function add(string $key, int $size): void
+    {
+        $data = self::getData();
+        $data[$key] = $size;
+        self::setData($data);
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return void
+     */
+    static function remove(string $key): void
+    {
+        $data = self::getData();
+        if (isset($data[$key])) {
+            unset($data[$key]);
+            self::setData($data);
+        }
+    }
+
+    /**
+     * 
+     * @return int
+     */
+    static function getSize(): int
+    {
+        $data = self::getData();
+        return array_sum($data);
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    static function getData(): array
     {
         $app = App::get();
         $data = $app->data->getValue('bearcms/uploadssize.json');
-        $data = $data === null ? [] : json_decode($data, true);
-        $data[$key] = $size;
+        return $data === null ? [] : json_decode($data, true);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function setData(array $data): void
+    {
+        $app = App::get();
         $dataKey = 'bearcms/uploadssize.json';
         $app->data->set($app->data->make($dataKey, json_encode($data)));
         Internal\Data::setChanged($dataKey);
         $app->hooks->execute('bearCMSUploadsSizeChanged');
-    }
-
-    static function remove($key)
-    {
-        $app = App::get();
-        $data = $app->data->getValue('bearcms/uploadssize.json');
-        $data = $data === null ? [] : json_decode($data, true);
-        if (isset($data[$key])) {
-            unset($data[$key]);
-            $dataKey = 'bearcms/uploadssize.json';
-            $app->data->set($app->data->make($dataKey, json_encode($data)));
-            Internal\Data::setChanged($dataKey);
-            $app->hooks->execute('bearCMSUploadsSizeChanged');
-        }
-    }
-
-    static function getSize()
-    {
-        $app = App::get();
-        $data = Internal\Data::getValue('bearcms/uploadssize.json');
-        $data = $data === null ? [] : json_decode($data, true);
-        return array_sum($data);
     }
 
 }

@@ -17,17 +17,22 @@ use BearFramework\App;
 class TempClientData
 {
 
-    static function get($key)
+    /**
+     * 
+     * @param string $key
+     * @return mixed|boolean
+     */
+    static function get(string $key)
     {
         $app = App::get();
         $dataHash = substr($key, 0, 32);
         try {
             $data = gzuncompress($app->encryption->decrypt(base64_decode(substr($key, 32))));
         } catch (\Exception $e) {
-            return;
+            return false;
         }
         if (md5($data) !== $dataHash) {
-            return;
+            return false;
         }
         $data = json_decode($data, true);
         if (is_array($data) && isset($data[0], $data[1]) && $data[0] === 'bearcms') {
@@ -36,7 +41,12 @@ class TempClientData
         return false;
     }
 
-    static function set($data)
+    /**
+     * 
+     * @param mixed $data
+     * @return string
+     */
+    static function set($data): string
     {
         $app = App::get();
         $encodedData = json_encode(['bearcms', $data]);

@@ -85,9 +85,10 @@ class Cookies
      * 
      * @param int $type
      * @param array $cookiesData
-     * @throws \Exception
+     * @return void
+     * @throws \InvalidArgumentException
      */
-    static function setList(int $type, array $cookiesData)
+    static function setList(int $type, array $cookiesData): void
     {
         if ($type !== self::TYPE_SERVER && $type !== self::TYPE_CLIENT) {
             throw new \InvalidArgumentException('');

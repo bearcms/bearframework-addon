@@ -10,6 +10,7 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
+use BearCMS\Internal;
 
 /**
  * @internal
@@ -17,7 +18,12 @@ use BearFramework\App;
 class PublicProfile
 {
 
-    static function getFromAuthor($author)
+    /**
+     * 
+     * @param array $author
+     * @return \BearCMS\Internal\DataObject
+     */
+    static function getFromAuthor(array $author): \BearCMS\Internal\DataObject
     {
         $data = [];
         if (isset($author['type']) && $author['type'] === 'user') {
@@ -40,7 +46,7 @@ class PublicProfile
         if (!isset($data['imageLarge']) || strlen($data['imageLarge']) === 0) {
             $data['imageLarge'] = '';
         }
-        return new \BearCMS\Internal\DataObject($data);
+        return new Internal\DataObject($data);
     }
 
 }

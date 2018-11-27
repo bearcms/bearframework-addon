@@ -10,6 +10,7 @@
 namespace BearCMS\Internal\Data2;
 
 use BearFramework\App;
+use BearCMS\Internal;
 
 /**
  * @internal
@@ -19,7 +20,7 @@ class Addons
 
     private function makeAddonFromRawData($rawData): \BearCMS\Internal\Data2\Addon
     {
-        return new \BearCMS\Internal\Data2\Addon(json_decode($rawData, true));
+        return new Internal\Data2\Addon(json_decode($rawData, true));
     }
 
     /**
@@ -53,7 +54,7 @@ class Addons
         foreach ($list as $item) {
             $result[] = $this->makeAddonFromRawData($item->value);
         }
-        return new \BearCMS\Internal\DataList($result);
+        return new Internal\DataList($result);
     }
 
 }

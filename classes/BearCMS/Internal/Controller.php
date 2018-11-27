@@ -20,6 +20,10 @@ use BearCMS\Internal2;
 class Controller
 {
 
+    /**
+     * 
+     * @return \BearFramework\App\Response
+     */
     static function handleAdminPage(): \BearFramework\App\Response
     {
         $app = App::get();
@@ -37,9 +41,7 @@ class Controller
         $arguments['path'] = $path;
         $data = Internal\Server::call('adminpage', $arguments, true);
         if (isset($data['error'])) {
-            if (isset($data['errorMessage'])) {
-                return new App\Response\TemporaryUnavailable($data['errorMessage']);
-            }
+            return new App\Response\TemporaryUnavailable(isset($data['errorMessage']) ? $data['errorMessage'] : 'Unknown error!');
         }
         if (isset($data['result'])) {
             if ($data['result'] === 'notFound') {
@@ -56,14 +58,24 @@ class Controller
         return new App\Response\TemporaryUnavailable();
     }
 
+    /**
+     * 
+     * @return \BearFramework\App\Response
+     */
     static function handleAjax(): \BearFramework\App\Response
     {
         $data = Internal\Server::proxyAjax();
         $response = new App\Response\JSON($data);
+        $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0, no-cache, no-store'));
         $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
         return $response;
     }
 
+    /**
+     * 
+     * @return \BearFramework\App\Response
+     * @throws \Exception
+     */
     static function handleFileUpload(): \BearFramework\App\Response
     {
         $app = App::get();
@@ -107,6 +119,11 @@ class Controller
         return $response;
     }
 
+    /**
+     * 
+     * @param bool $preview
+     * @return \BearFramework\App\Response
+     */
     static function handleFileRequest(bool $preview): \BearFramework\App\Response
     {
         $app = App::get();
@@ -138,27 +155,38 @@ class Controller
         return new App\Response\NotFound();
     }
 
+    /**
+     * 
+     * @return \BearFramework\App\Response
+     */
     static function handleFilePreview(): \BearFramework\App\Response
     {
         return self::handleFileRequest(true);
     }
 
+    /**
+     * 
+     * @return \BearFramework\App\Response
+     */
     static function handleFileDownload(): \BearFramework\App\Response
     {
         return self::handleFileRequest(false);
     }
 
+    /**
+     * 
+     * @return \BearFramework\App\Response
+     */
     static function handleRSS(): \BearFramework\App\Response
     {
         $app = App::get();
         $settings = Internal2::$data2->settings->get();
-        $baseUrl = $app->request->base;
 
         $data = '<title>' . (isset($settings['title']) ? htmlspecialchars($settings['title']) : '') . '</title>';
-        $data .= '<link>' . $baseUrl . '/</link>';
+        $data .= '<link>' . $app->urls->get('/') . '</link>';
         $data .= '<description>' . (isset($settings['description']) ? htmlspecialchars($settings['description']) : '') . '</description>';
         $data .= '<language>' . (isset($settings['language']) ? htmlspecialchars($settings['language']) : '') . '</language>';
-        $data .= '<atom:link href="' . $baseUrl . '/rss.xml" rel="self" type="application/rss+xml">';
+        $data .= '<atom:link href="' . $app->urls->get('/rss.xml') . '" rel="self" type="application/rss+xml">';
         $data .= '</atom:link>';
 
         $blogPosts = Internal2::$data2->blogPosts->getList()
@@ -167,7 +195,7 @@ class Controller
         $contentType = $settings['rssType'];
         $counter = 0;
         foreach ($blogPosts as $blogPost) {
-            $blogPostUrl = isset($blogPost['slug']) ? $baseUrl . Config::$blogPagesPathPrefix . $blogPost['slug'] . '/' : '';
+            $blogPostUrl = isset($blogPost['slug']) ? $app->urls->get(Config::$blogPagesPathPrefix . $blogPost['slug'] . '/') : '';
             $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPost['id'] . '"/>');
             $domDocument = new \IvoPetkov\HTML5DOMDocument();
             $domDocument->loadHTML($blogPostContent);
@@ -202,6 +230,10 @@ class Controller
         return $response;
     }
 
+    /**
+     * 
+     * @return \BearFramework\App\Response
+     */
     static function handleSitemap(): \BearFramework\App\Response
     {
         $app = App::get();
@@ -229,6 +261,10 @@ class Controller
         return $response;
     }
 
+    /**
+     * 
+     * @return \BearFramework\App\Response
+     */
     static function handleRobots(): \BearFramework\App\Response
     {
         $app = App::get();

@@ -20,10 +20,19 @@ use BearCMS\Internal2;
 class Comments
 {
 
+    /**
+     * 
+     * @param string $threadID
+     * @param array $author
+     * @param string $text
+     * @param string $status
+     * @return void
+     */
     static function add(string $threadID, array $author, string $text, string $status): void
     {
         $app = App::get();
-        $data = $app->data->getValue('bearcms/comments/thread/' . md5($threadID) . '.json');
+        $dataKey = 'bearcms/comments/thread/' . md5($threadID) . '.json';
+        $data = $app->data->getValue($dataKey);
         $data = $data !== null ? json_decode($data, true) : [];
         if (empty($data['id'])) {
             $data['id'] = $threadID;
@@ -39,7 +48,6 @@ class Comments
             'text' => $text,
             'createdTime' => time()
         ];
-        $dataKey = 'bearcms/comments/thread/' . md5($threadID) . '.json';
         $app->data->set($app->data->make($dataKey, json_encode($data)));
 
         if (Config::hasFeature('NOTIFICATIONS')) {
@@ -54,6 +62,13 @@ class Comments
         Internal\Data::setChanged($dataKey);
     }
 
+    /**
+     * 
+     * @param string $threadID
+     * @param string $commentID
+     * @param string $status
+     * @return void
+     */
     static function setStatus(string $threadID, string $commentID, string $status): void
     {
         $app = App::get();
@@ -82,6 +97,11 @@ class Comments
         }
     }
 
+    /**
+     * 
+     * @param string $threadID
+     * @param string $commentID
+     */
     static function deleteCommentForever(string $threadID, string $commentID)
     {
         $app = App::get();
@@ -107,6 +127,12 @@ class Comments
         }
     }
 
+    /**
+     * 
+     * @param array $rawCommentsData
+     * @param string $threadID
+     * @return \BearCMS\Internal\DataList
+     */
     static function createCommentsCollection(array $rawCommentsData, string $threadID): \BearCMS\Internal\DataList
     {
         $dataList = new \BearCMS\Internal\DataList();
@@ -124,9 +150,12 @@ class Comments
         return $dataList;
     }
 
+    /**
+     * 
+     * @return array
+     */
     static function getCommentsElementsLocations(): array
     {
-        // todo cache
         $app = App::get();
         $cacheKey = 'bearcms-comments-elements-locations';
         $result = $app->cache->getValue($cacheKey);
@@ -165,19 +194,6 @@ class Comments
                 $url = $app->urls->get(Config::$blogPagesPathPrefix . (strlen($blogPost->slug) === 0 ? 'draft-' . $blogPost->id : $blogPost->slug) . '/');
                 $threadID = 'bearcms-blogpost-' . $blogPost->id;
                 $result[$threadID] = $url;
-//            $containerElementIDs = Internal\ElementsHelper::getContainerElementsIDs('bearcms-blogpost-' . $blogPost->id);
-//            $elementsRawData = Internal\ElementsHelper::getElementsRawData($containerElementIDs);
-//            foreach ($elementsRawData as $elementRawData) {
-//                if ($elementRawData === null) {
-//                    continue;
-//                }
-//                $elementData = Internal\ElementsHelper::decodeElementRawData($elementRawData);
-//                if (is_array($elementData) && $elementData['type'] === 'comments') {
-//                    if (isset($elementData['data']['threadID'])) {
-//                        $result[$elementData['data']['threadID']] = $url;
-//                    }
-//                }
-//            }
             }
             $app->cache->set($app->cache->make($cacheKey, json_encode($result)));
         }

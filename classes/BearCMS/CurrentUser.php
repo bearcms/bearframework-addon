@@ -9,7 +9,6 @@
 
 namespace BearCMS;
 
-use BearFramework\App;
 use BearCMS\Internal;
 
 /**

@@ -15,23 +15,42 @@ namespace BearCMS\Themes;
 class OptionsSchema extends \BearCMS\Themes\OptionsGroupSchema
 {
 
+    /**
+     * 
+     */
     public function __construct()
     {
         parent::__construct('', '');
     }
 
+    /**
+     * 
+     * @return array
+     */
     public function toArray(): array
     {
         $result = parent::toArray();
         return isset($result['options']) ? $result['options'] : [];
     }
 
-    public function setDefaultValue(string $id, $value): void
+    /**
+     * 
+     * @param string $id
+     * @param mixed $value
+     * @return self
+     */
+    public function setDefaultValue(string $id, $value): self
     {
         $this->setDefaultValues([$id => $value]);
+        return $this;
     }
 
-    public function setDefaultValues(array $values): void
+    /**
+     * 
+     * @param array $values
+     * @return self
+     */
+    public function setDefaultValues(array $values): self
     {
         $valuesSetCount = 0;
         $valuesCount = sizeof($values);
@@ -55,6 +74,7 @@ class OptionsSchema extends \BearCMS\Themes\OptionsGroupSchema
             }
         };
         $walkOptions($this->options);
+        return $this;
     }
 
 }

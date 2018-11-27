@@ -19,6 +19,14 @@ use BearCMS\Internal\Config;
 class Server
 {
 
+    /**
+     * 
+     * @param string $name
+     * @param array $arguments
+     * @param bool $sendCookies
+     * @param string $cacheKey
+     * @return type
+     */
     static function call(string $name, array $arguments = [], bool $sendCookies = false, string $cacheKey = null)
     {
         $app = App::get();
@@ -57,6 +65,10 @@ class Server
         return $send()['value'];
     }
 
+    /**
+     * 
+     * @return string
+     */
     static function proxyAjax(): string
     {
         $app = App::get();
@@ -85,6 +97,12 @@ class Server
         return json_encode($response['value']);
     }
 
+    /**
+     * 
+     * @param array $response1
+     * @param array $response2
+     * @return array
+     */
     static function mergeAjaxResponses(array $response1, array $response2): array
     {
         foreach ($response2 as $key => $data) {
@@ -100,6 +118,11 @@ class Server
         return $response1;
     }
 
+    /**
+     * 
+     * @param array $response
+     * @return bool
+     */
     static function isRetryResponse(array $response): bool
     {
         $responseHeaders = $response['headers'];
@@ -109,6 +132,12 @@ class Server
                 strpos($responseHeaders, 'X-App-Sr: wpr') > 0;
     }
 
+    /**
+     * 
+     * @param mixed $content
+     * @param bool $ajaxMode
+     * @return mixed
+     */
     static function updateAssetsUrls($content, bool $ajaxMode)
     {
         $serverUrl = Config::$serverUrl;
@@ -283,7 +312,6 @@ class Server
     static function sendRequest(string $url, array $data = [], bool $sendCookies = false): array
     {
         $app = App::get();
-        $context = $app->context->get(__FILE__);
         if (!is_array($data)) {
             $data = [];
         }
@@ -295,7 +323,7 @@ class Server
 
         $cookies = $sendCookies ? Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER) : [];
 
-        $send = function($requestData = [], $counter = 1) use(&$send, $app, $url, $data, $cookies, $context) {
+        $send = function($requestData = [], $counter = 1) use(&$send, $app, $url, $data, $cookies) {
             if ($counter > 10) {
                 throw new \Exception('Too much requests');
             }

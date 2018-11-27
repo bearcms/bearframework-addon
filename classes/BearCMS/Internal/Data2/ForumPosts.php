@@ -9,7 +9,7 @@
 
 namespace BearCMS\Internal\Data2;
 
-use BearFramework\App;
+use BearCMS\Internal;
 
 /**
  * @internal
@@ -20,14 +20,14 @@ class ForumPosts
     private function makeForumPostFromRawData($rawData): \BearCMS\Internal\Data2\ForumPost
     {
         $rawData = json_decode($rawData, true);
-        $user = new \BearCMS\Internal\Data2\ForumPost();
+        $user = new Internal\Data2\ForumPost();
         $properties = ['id', 'status', 'author', 'title', 'text', 'categoryID', 'createdTime', 'replies'];
         foreach ($properties as $property) {
             if ($property === 'replies') {
-                $temp = new \BearCMS\Internal\DataList();
+                $temp = new Internal\DataList();
                 if (isset($rawData['replies'])) {
                     foreach ($rawData['replies'] as $replyData) {
-                        $reply = new \BearCMS\Internal\Data2\ForumPostReply();
+                        $reply = new Internal\Data2\ForumPostReply();
                         $reply->id = $replyData['id'];
                         $reply->status = $replyData['status'];
                         $reply->author = $replyData['author'];
@@ -53,7 +53,7 @@ class ForumPosts
      */
     public function get(string $id): ?\BearCMS\Internal\Data2\ForumPost
     {
-        $data = \BearCMS\Internal\Data::getValue('bearcms/forums/posts/post/' . md5($id) . '.json');
+        $data = Internal\Data::getValue('bearcms/forums/posts/post/' . md5($id) . '.json');
         if ($data !== null) {
             return $this->makeForumPostFromRawData($data);
         }
@@ -67,11 +67,11 @@ class ForumPosts
      */
     public function getList()
     {
-        $list = \BearCMS\Internal\Data::getList('bearcms/forums/posts/post/');
+        $list = Internal\Data::getList('bearcms/forums/posts/post/');
         array_walk($list, function(&$value) {
             $value = $this->makeForumPostFromRawData($value);
         });
-        return new \BearCMS\Internal\DataList($list);
+        return new Internal\DataList($list);
     }
 
 }

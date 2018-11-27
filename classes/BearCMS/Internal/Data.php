@@ -24,7 +24,12 @@ class Data
     static $loadedBundleHash = null;
     static $hasContentChange = false;
 
-    static function _getGroupValue($key)
+    /**
+     * 
+     * @param string $key
+     * @return string
+     */
+    static function _getGroupValue(string $key): string
     {
         $localCacheKey = 'group-' . $key;
         if (array_key_exists($localCacheKey, self::$cache)) {
@@ -41,7 +46,12 @@ class Data
         return self::_updateGroupValue($key);
     }
 
-    static function _updateGroupValue($key)
+    /**
+     * 
+     * @param string $key
+     * @return string
+     */
+    static function _updateGroupValue(string $key): string
     {
         $localCacheKey = 'group-' . $key;
         $app = App::get();
@@ -53,6 +63,13 @@ class Data
         return $data;
     }
 
+    /**
+     * 
+     * @param string $type
+     * @param string $key
+     * @param callable $callback
+     * @return mixed
+     */
     static function _get(string $type, string $key, callable $callback)
     {
         if (!Config::$useDataCache) {
@@ -79,7 +96,12 @@ class Data
         return $data;
     }
 
-    static function loadCacheBundle($requestPath)
+    /**
+     * 
+     * @param string $requestPath
+     * @return void
+     */
+    static function loadCacheBundle(string $requestPath): void
     {
         if (!Config::$useDataCache) {
             return;
@@ -96,7 +118,12 @@ class Data
         }
     }
 
-    static function saveCacheBundle($requestPath)
+    /**
+     * 
+     * @param string $requestPath
+     * @return void
+     */
+    static function saveCacheBundle(string $requestPath): void
     {
         if (!Config::$useDataCache) {
             return;
@@ -107,7 +134,7 @@ class Data
             if (strpos($requestData[2], '.temp/') !== 0) {
                 $keys[$requestData[1] . '-' . $requestData[2]] = [$requestData[1], $requestData[2]];
             }
-        };
+        }
         $keys = array_values($keys);
         $bundle = [];
         foreach ($keys as $keyData) {
@@ -128,7 +155,12 @@ class Data
         }
     }
 
-    static function getValue($key)
+    /**
+     * 
+     * @param string $key
+     * @return string|null
+     */
+    static function getValue(string $key): ?string
     {
         return self::_get('value', $key, function() use ($key) {
                     $app = App::get();
@@ -136,7 +168,12 @@ class Data
                 });
     }
 
-    static function getList($prefix)
+    /**
+     * 
+     * @param string $prefix
+     * @return array
+     */
+    static function getList(string $prefix): array
     {
         return self::_get('list', $prefix, function() use ($prefix) {
                     $found = false;
@@ -187,7 +224,12 @@ class Data
                 });
     }
 
-    static function setChanged($key)
+    /**
+     * 
+     * @param string $key
+     * @return void
+     */
+    static function setChanged(string $key): void
     {
         $app = App::get();
         if (strpos($key, '.temp/') !== 0) {
@@ -197,19 +239,28 @@ class Data
             self::$cache = [];
             self::_updateGroupValue('all');
         }
-        if (strpos($key, 'bearcms/elements/') === 0 || strpos($key, 'bearcms/pages/') === 0) {
+        if (strpos($key, 'bearcms/elements/') === 0 || strpos($key, 'bearcms/pages/') === 0 || strpos($key, 'bearcms/blog/') === 0) {
             $app->cache->delete('bearcms-comments-elements-locations');
         }
         if (strpos($key, 'bearcms/elements/element/') === 0 && $app->hooks->exists('bearCMSElementChanged')) {
             $rawElementData = Internal\Data::getValue($key);
-            $elementData = ElementsHelper::decodeElementRawData($rawElementData);
+            $elementData = Internal\ElementsHelper::decodeElementRawData($rawElementData);
             if (is_array($elementData)) {
                 $app->hooks->execute('bearCMSElementChanged', $elementData['id']);
             }
         }
     }
 
-    static function sendNotification($type, $status, $authorName, $message, $pendingApprovalCount)
+    /**
+     * 
+     * @param string $type
+     * @param string $status
+     * @param string $authorName
+     * @param string $message
+     * @param int $pendingApprovalCount
+     * @return void
+     */
+    static function sendNotification(string $type, string $status, string $authorName, string $message, int $pendingApprovalCount): void
     {
         $app = App::get();
         $host = $app->request->host;

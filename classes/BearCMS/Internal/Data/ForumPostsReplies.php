@@ -19,10 +19,19 @@ use BearCMS\Internal;
 class ForumPostsReplies
 {
 
+    /**
+     * 
+     * @param string $forumPostID
+     * @param array $author
+     * @param string $text
+     * @param string $status
+     * @return void
+     */
     static function add(string $forumPostID, array $author, string $text, string $status): void
     {
         $app = App::get();
-        $data = $app->data->getValue('bearcms/forums/posts/post/' . md5($forumPostID) . '.json');
+        $dataKey = 'bearcms/forums/posts/post/' . md5($forumPostID) . '.json';
+        $data = $app->data->getValue($dataKey);
         $data = $data !== null ? json_decode($data, true) : [];
         if (empty($data['id'])) {
             return;
@@ -38,7 +47,6 @@ class ForumPostsReplies
             'text' => $text,
             'createdTime' => time()
         ];
-        $dataKey = 'bearcms/forums/posts/post/' . md5($forumPostID) . '.json';
         $app->data->set($app->data->make($dataKey, json_encode($data)));
 
         if (Config::hasFeature('NOTIFICATIONS')) {
@@ -53,6 +61,13 @@ class ForumPostsReplies
         Internal\Data::setChanged($dataKey);
     }
 
+    /**
+     * 
+     * @param string $forumPostID
+     * @param string $replyID
+     * @param string $status
+     * @return void
+     */
     static function setStatus(string $forumPostID, string $replyID, string $status): void
     {
         $app = App::get();
@@ -81,7 +96,13 @@ class ForumPostsReplies
         }
     }
 
-    static function deleteReplyForever(string $forumPostID, string $replyID)
+    /**
+     * 
+     * @param string $forumPostID
+     * @param string $replyID
+     * @return void
+     */
+    static function deleteReplyForever(string $forumPostID, string $replyID): void
     {
         $app = App::get();
         $dataKey = 'bearcms/forums/posts/post/' . md5($forumPostID) . '.json';

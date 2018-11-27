@@ -25,6 +25,10 @@ class Themes
     static $announcements = [];
     static $cache = [];
 
+    /**
+     * 
+     * @return string
+     */
     static function getActiveThemeID(): string
     {
         $data = Internal\Data::getValue('bearcms/themes/active.json');
@@ -40,11 +44,20 @@ class Themes
         return 'none';
     }
 
+    /**
+     * 
+     * @return array
+     */
     static public function getIDs(): array
     {
         return array_keys(self::$announcements);
     }
 
+    /**
+     * 
+     * @param string $id
+     * @return \BearCMS\Themes\Theme|null
+     */
     static function get(string $id): ?\BearCMS\Themes\Theme
     {
         if (isset(self::$announcements[$id])) {
@@ -58,6 +71,11 @@ class Themes
         return null;
     }
 
+    /**
+     * 
+     * @param string $id
+     * @return string|null
+     */
     static function getVersion(string $id): ?string
     {
         $theme = self::get($id);
@@ -67,7 +85,14 @@ class Themes
         return $theme->version;
     }
 
-    static function getManifest(string $id, $updateMediaFilenames = true): array
+    /**
+     * 
+     * @param string $id
+     * @param bool $updateMediaFilenames
+     * @return array|null
+     * @throws \Exception
+     */
+    static function getManifest(string $id, bool $updateMediaFilenames = true): ?array
     {
         $theme = self::get($id);
         if ($theme === null) {
@@ -117,6 +142,12 @@ class Themes
 //        return $result;
 //    }
 
+    /**
+     * 
+     * @param string $id
+     * @return array|null
+     * @throws \Exception
+     */
     static function getOptionsSchema(string $id): ?array
     {
         $theme = self::get($id);
@@ -136,6 +167,13 @@ class Themes
         return [];
     }
 
+    /**
+     * 
+     * @param string $id
+     * @param type $updateMediaFilenames
+     * @return array|null
+     * @throws \Exception
+     */
     static function getStyles(string $id, $updateMediaFilenames = true): ?array
     {
         $theme = self::get($id);
@@ -206,7 +244,9 @@ class Themes
 
     /**
      * 
-     * @return \BearCMS\Themes\Options
+     * @param string $id
+     * @param string $userID
+     * @return \BearCMS\Themes\Options|null
      */
     static public function getOptions(string $id, string $userID = null): ?\BearCMS\Themes\Options
     {
@@ -547,8 +587,9 @@ class Themes
 
     /**
      * 
-     * @param string $id The theme ID
-     * @param string $userID The user ID
+     * @param string $id
+     * @param string $userID
+     * @return void
      */
     static public function applyUserValues(string $id, string $userID): void
     {
@@ -574,7 +615,13 @@ class Themes
         }
     }
 
-    static public function getCacheItemKey(string $id, $userID = null)
+    /**
+     * 
+     * @param string $id
+     * @param string $userID
+     * @return string|null
+     */
+    static public function getCacheItemKey(string $id, string $userID = null): ?string
     {
         $version = self::getVersion($id);
         if ($version === null) {
@@ -585,10 +632,10 @@ class Themes
 
     /**
      * 
-     * @param type $values
+     * @param array $values
      * @return array
      */
-    static public function getFilesInValues($values): array
+    static public function getFilesInValues(array $values): array
     {
         $result = [];
         foreach ($values as $value) {
@@ -610,11 +657,11 @@ class Themes
 
     /**
      * 
-     * @param type $values
-     * @param type $keysToUpdate
+     * @param array $values
+     * @param array $keysToUpdate
      * @return array
      */
-    static public function updateFilesInValues($values, $keysToUpdate): array
+    static public function updateFilesInValues(array $values, array $keysToUpdate): array
     {
         if (!empty($keysToUpdate)) {
             $search = [];

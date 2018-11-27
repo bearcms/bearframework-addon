@@ -24,6 +24,10 @@ class Theme
 
     use \IvoPetkov\DataObjectTrait;
 
+    /**
+     * 
+     * @param string $id
+     */
     public function __construct(string $id)
     {
         $this

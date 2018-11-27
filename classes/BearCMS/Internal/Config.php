@@ -142,11 +142,20 @@ class Config
         }
     }
 
+    /**
+     * 
+     * @return bool
+     */
     static function hasServer(): bool
     {
         return self::$serverUrl !== null;
     }
 
+    /**
+     * 
+     * @param string $name
+     * @return bool
+     */
     static function hasFeature(string $name): bool
     {
         if (substr($name, -1) === '*') {
@@ -160,6 +169,10 @@ class Config
         return array_search($name, self::$features) !== false || (sizeof(self::$features) === 1 && self::$features[0] === 'ALL');
     }
 
+    /**
+     * 
+     * @return object|null
+     */
     static function getAddonManager()
     {
         if (is_callable(self::$addonManager)) {

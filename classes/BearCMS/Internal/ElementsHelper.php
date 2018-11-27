@@ -26,9 +26,10 @@ class ElementsHelper
 
     /**
      * 
-     * @param type $component
+     * @param \IvoPetkov\HTMLServerComponent $component
+     * @return void
      */
-    static function updateComponentEditableAttribute($component)
+    static function updateComponentEditableAttribute(\IvoPetkov\HTMLServerComponent $component): void
     {
         $app = App::get();
         $editable = false;
@@ -42,9 +43,10 @@ class ElementsHelper
 
     /**
      * 
-     * @param type $component
+     * @param \IvoPetkov\HTMLServerComponent $component
+     * @return void
      */
-    static function updateComponentContextAttributes($component)
+    static function updateComponentContextAttributes(\IvoPetkov\HTMLServerComponent $component): void
     {
         $getUpdatedHTMLUnit = function($value) {
             if (strlen($value) > 0) {
@@ -111,10 +113,10 @@ class ElementsHelper
 
     /**
      * 
-     * @param type $component
-     * @return type
+     * @param \IvoPetkov\HTMLServerComponent $component
+     * @return array
      */
-    static function getComponentContextData($component)
+    static function getComponentContextData(\IvoPetkov\HTMLServerComponent $component): array
     {
         $result = [];
         $result['width'] = $component->width;
@@ -154,10 +156,11 @@ class ElementsHelper
 
     /**
      * 
-     * @param type $component
+     * @param \IvoPetkov\HTMLServerComponent $component
+     * @return void
      * @throws \Exception
      */
-    static function updateContainerComponent($component)
+    static function updateContainerComponent(\IvoPetkov\HTMLServerComponent $component): void
     {
         if (strlen($component->id) === 0) {
             throw new \Exception('');
@@ -171,10 +174,10 @@ class ElementsHelper
 
     /**
      * 
-     * @param type $component
-     * @throws \Exception
+     * @param \IvoPetkov\HTMLServerComponent $component
+     * @return void
      */
-    static function updateElementComponent($component)
+    static function updateElementComponent(\IvoPetkov\HTMLServerComponent $component): void
     {
         $rawData = $component->getAttribute('bearcms-internal-attribute-raw-data');
         $elementData = null;
@@ -211,13 +214,13 @@ class ElementsHelper
 
     /**
      * 
-     * @param type $rawData
-     * @param type $editable
-     * @param type $contextData
-     * @return type
+     * @param string $rawData
+     * @param bool $editable
+     * @param array $contextData
+     * @return string
      * @throws \Exception
      */
-    static function renderElement($rawData, $editable, $contextData)
+    static function renderElement(string $rawData, bool $editable, array $contextData): string
     {
         $elementData = self::decodeElementRawData($rawData);
         if (!is_array($elementData)) {
@@ -240,13 +243,13 @@ class ElementsHelper
 
     /**
      * 
-     * @param type $elementContainerData
-     * @param type $editable
-     * @param type $contextData
-     * @param type $inContainer
-     * @return type
+     * @param array $elementContainerData
+     * @param bool $editable
+     * @param array $contextData
+     * @param bool $inContainer
+     * @return string
      */
-    static function renderColumn($elementContainerData, $editable, $contextData, $inContainer)
+    static function renderColumn(array $elementContainerData, bool $editable, array $contextData, bool $inContainer): string
     {
         $app = App::get();
         $context = $app->context->get(__FILE__);
@@ -322,13 +325,13 @@ class ElementsHelper
 
     /**
      * 
-     * @param type $elementContainerData
-     * @param type $editable
-     * @param type $contextData
-     * @param type $inContainer
-     * @return type
+     * @param array $elementContainerData
+     * @param bool $editable
+     * @param array $contextData
+     * @param bool $inContainer
+     * @return string
      */
-    static function renderFloatingBox($elementContainerData, $editable, $contextData, $inContainer)
+    static function renderFloatingBox(array $elementContainerData, bool $editable, array $contextData, bool $inContainer): string
     {
         $app = App::get();
         $context = $app->context->get(__FILE__);
@@ -406,35 +409,27 @@ class ElementsHelper
 
     /**
      * 
-     * @param type $elementsIDs
-     * @return type
+     * @param array $elementsIDs
+     * @return array
      */
-    static function getElementsRawData($elementsIDs)
+    static function getElementsRawData(array $elementsIDs): array
     {
-        //$app = App::get();
         $result = [];
-        //$commands = [];
         $elementsIDs = array_values($elementsIDs);
         foreach ($elementsIDs as $elementID) {
-//            $commands[] = [
-//                'command' => 'get',
-//                'key' => 'bearcms/elements/element/' . md5($elementID) . '.json',
-//                'result' => ['body']
-//            ];
             $result[$elementID] = Internal\Data::getValue('bearcms/elements/element/' . md5($elementID) . '.json');
         }
-        //$data = $app->data->execute($commands);
-//        foreach ($elementsIDs as $index => $elementID) {
-//            if (isset($data[$index]['body'])) {
-//                $result[$elementID] = $data[$index]['body'];
-//            }
-//        }
         return $result;
     }
 
-    static function getContainerData($id)
+    /**
+     * 
+     * @param string $id
+     * @return array
+     * @throws Exception
+     */
+    static function getContainerData(string $id): array
     {
-        $app = App::get();
         $container = Internal\Data::getValue('bearcms/elements/container/' . md5($id) . '.json');
         $data = $container !== null ? json_decode($container, true) : [];
         if (!isset($data['elements'])) {
@@ -446,7 +441,12 @@ class ElementsHelper
         return $data;
     }
 
-    static function getContainerElementsIDs($id)
+    /**
+     * 
+     * @param string $id
+     * @return array
+     */
+    static function getContainerElementsIDs(string $id): array
     {
         $containerData = self::getContainerData($id);
         $result = [];
@@ -486,7 +486,11 @@ class ElementsHelper
         return $result;
     }
 
-    static function getEditableElementsHtml()
+    /**
+     * 
+     * @return string
+     */
+    static function getEditableElementsHtml(): string
     {
         $app = App::get();
         $html = '';

@@ -24,7 +24,6 @@ class Page extends \BearCMS\Internal\DataObject
         $this
                 ->defineProperty('children', [
                     'get' => function() {
-                        $app = App::get();
                         return Internal2::$data2->pages->getList()
                                 ->filterBy('parentID', $this->id);
                     }

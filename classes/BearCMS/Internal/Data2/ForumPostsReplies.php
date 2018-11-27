@@ -9,7 +9,7 @@
 
 namespace BearCMS\Internal\Data2;
 
-use BearFramework\App;
+use BearCMS\Internal;
 
 /**
  * @internal
@@ -24,14 +24,14 @@ class ForumPostsReplies
      */
     public function getList()
     {
-        $list = \BearCMS\Internal\Data::getList('bearcms/forums/posts/post/');
+        $list = Internal\Data::getList('bearcms/forums/posts/post/');
 
-        $result = new \BearCMS\Internal\DataList();
+        $result = new Internal\DataList();
         foreach ($list as $value) {
             $rawData = json_decode($value, true);
             if (isset($rawData['id'], $rawData['replies'])) {
                 foreach ($rawData['replies'] as $replyData) {
-                    $reply = new \BearCMS\Internal\Data2\ForumPostReply();
+                    $reply = new Internal\Data2\ForumPostReply();
                     $reply->id = $replyData['id'];
                     $reply->status = $replyData['status'];
                     $reply->author = $replyData['author'];

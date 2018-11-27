@@ -19,6 +19,15 @@ use BearCMS\Internal;
 class ForumPosts
 {
 
+    /**
+     * 
+     * @param string $categoryID
+     * @param array $author
+     * @param string $title
+     * @param string $text
+     * @param string $status
+     * @return string
+     */
     static function add(string $categoryID, array $author, string $title, string $text, string $status): string
     {
         $app = App::get();
@@ -49,6 +58,12 @@ class ForumPosts
         return $id;
     }
 
+    /**
+     * 
+     * @param string $forumPostID
+     * @param string $status
+     * @return void
+     */
     static function setStatus(string $forumPostID, string $status): void
     {
         $app = App::get();

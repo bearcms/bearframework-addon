@@ -21,28 +21,45 @@ class ElementsTypes
 
     static private $contextDir = null;
 
-    public static function add(string $typeCode, array $options = [])
+    /**
+     * 
+     * @param string $typeCode
+     * @param array $options
+     * @return void
+     */
+    public static function add(string $typeCode, array $options = []): void
     {
         $app = App::get();
-        if (self::$contextDir === null) {
-            $context = $app->context->get(__FILE__);
-            self::$contextDir = $context->dir;
-        }
-        $contextDir = self::$contextDir;
+        $contextDir = self::getContextDir();
         $app->components->addAlias($options['componentSrc'], 'file:' . $contextDir . '/components/bearcmsElement.php');
         Internal\ElementsHelper::$elementsTypesCodes[$options['componentSrc']] = $typeCode;
         Internal\ElementsHelper::$elementsTypesFilenames[$options['componentSrc']] = $options['componentFilename'];
         Internal\ElementsHelper::$elementsTypesOptions[$options['componentSrc']] = $options;
     }
 
-    public static function addDefault()
+    /**
+     * 
+     * @return string
+     */
+    public static function getContextDir(): string
     {
-        $app = App::get();
         if (self::$contextDir === null) {
+            $app = App::get();
             $context = $app->context->get(__FILE__);
             self::$contextDir = $context->dir;
         }
-        $contextDir = self::$contextDir;
+        return self::$contextDir;
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    public static function addDefault(): void
+    {
+        $app = App::get();
+
+        $contextDir = self::getContextDir();
         self::add('heading', [
             'componentSrc' => 'bearcms-heading-element',
             'componentFilename' => $contextDir . '/components/bearcmsHeadingElement.php',

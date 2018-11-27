@@ -10,6 +10,7 @@
 namespace BearCMS\Internal\Data2;
 
 use BearFramework\App;
+use BearCMS\Internal;
 
 /**
  * @internal
@@ -24,8 +25,7 @@ class Settings
      */
     public function get(): \BearCMS\Internal\DataObject
     {
-        $app = App::get();
-        $data = \BearCMS\Internal\Data::getValue('bearcms/settings.json');
+        $data = Internal\Data::getValue('bearcms/settings.json');
         if ($data !== null) {
             $data = json_decode($data, true);
         } else {
@@ -70,7 +70,7 @@ class Settings
         if (!isset($data['rssType'])) {
             $data['rssType'] = 'fullContent';
         }
-        return new \BearCMS\Internal\DataObject($data);
+        return new Internal\DataObject($data);
     }
 
 }

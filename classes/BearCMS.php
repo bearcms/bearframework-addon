@@ -15,9 +15,9 @@ use BearCMS\Internal2;
 
 /**
  * 
- * @property-read \BearCMS\CurrentUser $currentUser Information about the current loggedin user
- * @property-read \BearCMS\Themes $themes
- * @property-read \BearCMS\Addons $addons
+ * @property-read \BearCMS\CurrentUser $currentUser Information about the current CMS administrator.
+ * @property-read \BearCMS\Themes $themes Information about the enabled Bear CMS themes.
+ * @property-read \BearCMS\Addons $addons Information about the enabled Bear CMS addons.
  */
 class BearCMS
 {
@@ -25,7 +25,7 @@ class BearCMS
     use \IvoPetkov\DataObjectTrait;
 
     /**
-     * Addon version
+     * Bear CMS version.
      */
     const VERSION = '0.5.0';
 
@@ -42,7 +42,7 @@ class BearCMS
     private $context;
 
     /**
-     * The constructor
+     * Constructs a new Bear CMS instance.
      */
     function __construct()
     {
@@ -72,8 +72,9 @@ class BearCMS
     }
 
     /**
+     * Initializes the Bear CMS instance.
      * 
-     * @param array $config
+     * @param array $config A list of configuration variables.
      * @return void
      */
     public function initialize(array $config): void
@@ -1121,8 +1122,9 @@ class BearCMS
     }
 
     /**
+     * Applies all Bear CMS modifications (the default HTML, theme and admin UI) to the response.
      * 
-     * @param \BearFramework\App\Response $response
+     * @param \BearFramework\App\Response $response The response to modify.
      * @return void
      */
     public function apply(\BearFramework\App\Response $response): void
@@ -1133,8 +1135,9 @@ class BearCMS
     }
 
     /**
+     * Add the default Bear CMS HTML to the response.
      * 
-     * @param \BearFramework\App\Response $response
+     * @param \BearFramework\App\Response $response The response to modify.
      * @return void
      */
     public function applyDefaults(\BearFramework\App\Response $response): void
@@ -1301,8 +1304,9 @@ class BearCMS
     }
 
     /**
+     * Add the Bear CMS admin UI to the response, if an administrator is logged in.
      * 
-     * @param \BearFramework\App\Response $response
+     * @param \BearFramework\App\Response $response The response to modify.
      * @return void
      */
     public function applyAdminUI(\BearFramework\App\Response $response): void
@@ -1368,8 +1372,9 @@ class BearCMS
     }
 
     /**
+     * Applies the currently selected Bear CMS theme to the response provided.
      * 
-     * @param \BearFramework\App\Response $response
+     * @param \BearFramework\App\Response $response The response to modify.
      * @return void
      */
     public function applyTheme(\BearFramework\App\Response $response): void
@@ -1440,6 +1445,7 @@ class BearCMS
     }
 
     /**
+     * A middleware to be used in routes that returns a temporary unavailable response if an administrator has disabled the app.
      * 
      * @return \BearFramework\App\Response|null
      */

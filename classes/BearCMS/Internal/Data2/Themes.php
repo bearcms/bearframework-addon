@@ -27,7 +27,7 @@ class Themes
      */
     public function getOptions(string $id): array
     {
-        $data = \BearCMS\Internal\Data::getValue('bearcms/themes/theme/' . md5($id) . '.json');
+        $data = Internal\Data::getValue('bearcms/themes/theme/' . md5($id) . '.json');
         if ($data !== null) {
             $data = json_decode($data, true);
             if (isset($data['options'])) {
@@ -47,7 +47,7 @@ class Themes
      */
     public function getUserOptions(string $id, string $userID): ?array
     {
-        $data = \BearCMS\Internal\Data::getValue('.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json');
+        $data = Internal\Data::getValue('.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json');
         if ($data !== null) {
             $data = json_decode($data, true);
             if (isset($data['options'])) {
@@ -112,7 +112,7 @@ class Themes
             $dataToSet['options'] = $values;
             $app->data->setValue($dataKey, json_encode($dataToSet));
         }
-        \BearCMS\Internal\Data::setChanged($dataKey);
+        Internal\Data::setChanged($dataKey);
 
         $recycleBinPrefix = '.recyclebin/bearcms/theme-changes-' . str_replace('.', '-', microtime(true)) . '/';
         foreach ($dataKeysToDelete as $dataKeyToDelete) {

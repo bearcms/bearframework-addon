@@ -20,7 +20,11 @@ use BearCMS\Internal2;
 class ServerCommands
 {
 
-    static function about()
+    /**
+     * 
+     * @return array
+     */
+    static function about(): array
     {
         $result = [];
         if (strlen(Config::$appSecretKey) > 0) {
@@ -31,7 +35,12 @@ class ServerCommands
         return $result;
     }
 
-    static function addonAdd(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function addonAdd(array $data): array
     {
         try {
             Internal\Data\Addons::add($data['id']);
@@ -42,44 +51,60 @@ class ServerCommands
                     Internal\Data\Addons::disable($data['id']);
                 }
             }
+            return [];
         } catch (\Exception $e) {
             return ['error' => $e->getMessage()];
         }
-        return null;
     }
 
-    static function addonAssetUrl(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return string
+     */
+    static function addonAssetUrl(array $data): string
     {
         $app = App::get();
-        if (!isset($data['key'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['options'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['addonID'])) {
-            throw new Exception('');
-        }
         $addonDir = \BearFramework\Addons::get($data['addonID'])->dir;
-        return $app->assets->getUrl($addonDir . DIRECTORY_SEPARATOR . $data['key'], $data['options']);
+        return $app->assets->getUrl($addonDir . '/' . $data['key'], $data['options']);
     }
 
-    static function addonDelete(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function addonDelete(array $data): void
     {
         Internal\Data\Addons::delete($data['id']);
     }
 
-    static function addonDisable(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function addonDisable(array $data): void
     {
         Internal\Data\Addons::disable($data['id']);
     }
 
-    static function addonEnable(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function addonEnable(array $data): void
     {
         Internal\Data\Addons::enable($data['id']);
     }
 
-    static function addonGet(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function addonGet(array $data): ?array
     {
         $addon = Internal\Data\Addons::get($data['id']);
         if ($addon !== null) {
@@ -88,7 +113,12 @@ class ServerCommands
         return null;
     }
 
-    static function addonSetOptions(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function addonSetOptions(array $data): void
     {
         Internal\Data\Addons::setOptions($data['id'], $data['options']);
         if ($data['enabled'] !== null) {
@@ -100,36 +130,42 @@ class ServerCommands
         }
     }
 
-    static function addonsList()
+    /**
+     * 
+     * @return array
+     */
+    static function addonsList(): array
     {
         return Internal\Data\Addons::getList()->toArray();
     }
 
-    static function appAssetUrl(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return string
+     */
+    static function appAssetUrl(array $data): string
     {
         $app = App::get();
-        if (!isset($data['key'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['options'])) {
-            throw new Exception('');
-        }
         return $app->assets->getUrl($app->config->appDir . DIRECTORY_SEPARATOR . $data['key'], $data['options']);
     }
 
-    static function assetUrl(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return string
+     */
+    static function assetUrl(array $data): string
     {
         $app = App::get();
-        if (!isset($data['filename'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['options'])) {
-            throw new Exception('');
-        }
         return $app->assets->getUrl($data['filename'], $data['options']);
     }
 
-    static function blogCategories()
+    /**
+     * 
+     * @return array
+     */
+    static function blogCategories(): array
     {
         $list = Internal\Data::getList('bearcms/blog/categories/category/');
         $structure = Internal\Data::getValue('bearcms/blog/categories/structure.json');
@@ -142,50 +178,52 @@ class ServerCommands
         return $temp;
     }
 
-    static function blogPostsList()
+    /**
+     * 
+     * @return array
+     */
+    static function blogPostsList(): array
     {
-        $app = App::get();
         return Internal2::$data2->blogPosts->getList()->toArray();
     }
 
-    static function checkpoint(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function checkpoint(array $data): array
     {
         return $data;
     }
 
-    static function commentDelete(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function commentDelete(array $data): void
     {
-        if (!isset($data['threadID'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['commentID'])) {
-            throw new Exception('');
-        }
         Internal\Data\Comments::deleteCommentForever($data['threadID'], $data['commentID']);
-        return true;
     }
 
-    static function commentSetStatus(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function commentSetStatus(array $data): void
     {
-        if (!isset($data['threadID'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['commentID'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['status'])) {
-            throw new Exception('');
-        }
         Internal\Data\Comments::setStatus($data['threadID'], $data['commentID'], $data['status']);
-        return true;
     }
 
-    static function commentsCount(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return int
+     */
+    static function commentsCount(array $data): int
     {
-        $app = App::get();
-        if (!isset($data['type'])) {
-            throw new Exception('');
-        }
         $result = Internal2::$data2->comments->getList();
         if ($data['type'] !== 'all') {
             $result->filterBy('status', $data['type']);
@@ -193,18 +231,13 @@ class ServerCommands
         return $result->length;
     }
 
-    static function commentsList(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function commentsList(array $data): array
     {
-        $app = App::get();
-        if (!isset($data['type'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['page'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['limit'])) {
-            throw new Exception('');
-        }
         $result = Internal2::$data2->comments->getList();
         $result->sortBy('createdTime', 'desc');
         if ($data['type'] !== 'all') {
@@ -223,7 +256,12 @@ class ServerCommands
         return $result->toArray();
     }
 
-    static function data(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function data(array $data): array
     {
         $result = [];
         $app = App::get();
@@ -271,7 +309,12 @@ class ServerCommands
         return $result;
     }
 
-    static function dataFileSize(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return int
+     */
+    static function dataFileSize(array $data): int
     {
         $app = App::get();
         $filename = $app->data->getFilename($data['key']);
@@ -281,35 +324,38 @@ class ServerCommands
         return 0;
     }
 
-    static function dataSchema(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function dataSchema(array $data): array
     {
-        if (!isset($data['id'])) {
-            return [];
-        }
         $app = App::get();
         $dataSchema = new Internal\DataSchema($data['id']);
         $app->hooks->execute('bearCMSDataSchemaRequested', $dataSchema);
         return $dataSchema->fields;
     }
 
-    static function dataUrl(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return string
+     */
+    static function dataUrl(array $data): string
     {
         $app = App::get();
-        if (!isset($data['key'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['options'])) {
-            throw new Exception('');
-        }
         return $app->assets->getUrl($app->data->getFilename($data['key']), $data['options']);
     }
 
-    static function elementDelete(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementDelete(array $data): void
     {
         $app = App::get();
-        if (!isset($data['id'])) {
-            throw new Exception('');
-        }
         $elementID = $data['id'];
         $rawDataList = Internal\ElementsHelper::getElementsRawData([$elementID]);
         if ($rawDataList[$elementID] !== null) {
@@ -325,7 +371,14 @@ class ServerCommands
         }
     }
 
-    static function elementsEditor(array $data, $response)
+    /**
+     * 
+     * @param array $data
+     * @param \ArrayObject $response
+     * @return void
+     * @throws Exception
+     */
+    static function elementsEditor(array $data, \ArrayObject $response): void
     {
         if (!empty(Internal\ElementsHelper::$editorData)) {
             $requestArguments = [];
@@ -341,19 +394,27 @@ class ServerCommands
         }
     }
 
-    static function evalHTML(array $data, \ArrayObject $response)
+    /**
+     * 
+     * @param array $data
+     * @param \ArrayObject $response
+     * @return void
+     */
+    static function evalHTML(array $data, \ArrayObject $response): void
     {
         $response1 = $response['value'];
         $response2 = ['js' => 'var e=document.querySelector(\'#' . $data['elementID'] . '\');if(e){html5DOMDocument.evalElement(e);}'];
         $response['value'] = Internal\Server::mergeAjaxResponses($response1, $response2);
     }
 
-    static function file(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function file(array $data): ?array
     {
         $app = App::get();
-        if (!isset($data['filename'])) {
-            throw new Exception('');
-        }
         $item = $app->data->get('bearcms/files/custom/' . $data['filename']);
         if ($item !== null) {
             $key = $item->key;
@@ -370,15 +431,15 @@ class ServerCommands
         return null;
     }
 
-    static function fileSet(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     * @throws Exception
+     */
+    static function fileSet(array $data): void
     {
         $app = App::get();
-        if (!isset($data['filename'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['data'])) {
-            throw new Exception('');
-        }
         $fileData = $data['data'];
         $currentFileData = self::file(['filename' => $data['filename']]);
         if (isset($fileData['name']) && $currentFileData['name'] !== $fileData['name']) {
@@ -436,7 +497,11 @@ class ServerCommands
         }
     }
 
-    static function files()
+    /**
+     * 
+     * @return array
+     */
+    static function files(): array
     {
         $app = App::get();
         $result = $app->data->getList()
@@ -453,7 +518,11 @@ class ServerCommands
         return $temp;
     }
 
-    static function forumCategories()
+    /**
+     * 
+     * @return array
+     */
+    static function forumCategories(): array
     {
         $list = Internal\Data::getList('bearcms/forums/categories/category/');
         $structure = Internal\Data::getValue('bearcms/forums/categories/structure.json');
@@ -466,63 +535,56 @@ class ServerCommands
         return $temp;
     }
 
-    static function forumPostGet(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function forumPostGet(array $data): array
     {
-        $app = App::get();
-        if (!isset($data['forumPostID'])) {
-            throw new Exception('');
-        }
         $result = Internal2::$data2->forumPosts->get($data['forumPostID']);
         $result->author = Internal\PublicProfile::getFromAuthor($result->author)->toArray();
         $result->replies = new \BearCMS\Internal\DataList();
         return $result->toArray();
     }
 
-    static function forumPostReplyDelete(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function forumPostReplyDelete(array $data): void
     {
-        if (!isset($data['forumPostID'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['replyID'])) {
-            throw new Exception('');
-        }
         Internal\Data\ForumPostsReplies::deleteReplyForever($data['forumPostID'], $data['replyID']);
-        return true;
     }
 
-    static function forumPostReplySetStatus(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function forumPostReplySetStatus(array $data): void
     {
-        if (!isset($data['forumPostID'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['replyID'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['status'])) {
-            throw new Exception('');
-        }
         Internal\Data\ForumPostsReplies::setStatus($data['forumPostID'], $data['replyID'], $data['status']);
-        return true;
     }
 
-    static function forumPostSetStatus(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function forumPostSetStatus(array $data): void
     {
-        if (!isset($data['forumPostID'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['status'])) {
-            throw new Exception('');
-        }
         Internal\Data\ForumPosts::setStatus($data['forumPostID'], $data['status']);
-        return true;
     }
 
-    static function forumPostsCount(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return int
+     */
+    static function forumPostsCount(array $data): int
     {
-        $app = App::get();
-        if (!isset($data['type'])) {
-            throw new Exception('');
-        }
         $result = Internal2::$data2->forumPosts->getList();
         if ($data['type'] !== 'all') {
             $result->filterBy('status', $data['type']);
@@ -530,18 +592,13 @@ class ServerCommands
         return $result->length;
     }
 
-    static function forumPostsList(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function forumPostsList(array $data): array
     {
-        $app = App::get();
-        if (!isset($data['type'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['page'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['limit'])) {
-            throw new Exception('');
-        }
         $result = Internal2::$data2->forumPosts->getList();
         $result->sortBy('createdTime', 'desc');
         if ($data['type'] !== 'all') {
@@ -555,12 +612,14 @@ class ServerCommands
         return $result->toArray();
     }
 
-    static function forumPostsRepliesCount(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return int
+     * @throws Exception
+     */
+    static function forumPostsRepliesCount(array $data): int
     {
-        $app = App::get();
-        if (!isset($data['type'])) {
-            throw new Exception('');
-        }
         $result = Internal2::$data2->forumPostsReplies->getList();
         if (isset($data['forumPostID']) && strlen($data['forumPostID']) > 0) {
             $result->filterBy('forumPostID', $data['forumPostID']);
@@ -571,18 +630,14 @@ class ServerCommands
         return $result->length;
     }
 
-    static function forumPostsRepliesList(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array
+     * @throws Exception
+     */
+    static function forumPostsRepliesList(array $data): array
     {
-        $app = App::get();
-        if (!isset($data['type'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['page'])) {
-            throw new Exception('');
-        }
-        if (!isset($data['limit'])) {
-            throw new Exception('');
-        }
         $result = Internal2::$data2->forumPostsReplies->getList();
         $result->sortBy('createdTime', 'desc');
         if (isset($data['forumPostID']) && strlen($data['forumPostID']) > 0) {
@@ -599,30 +654,20 @@ class ServerCommands
         return $result->toArray();
     }
 
-    static function iconChanged()
+    /**
+     * 
+     * @return void
+     */
+    static function iconChanged(): void
     {
         Internal\Cookies::setList(Internal\Cookies::TYPE_CLIENT, [['name' => 'fc', 'value' => uniqid(), 'expire' => time() + 86400 + 1000]]);
     }
 
-    static function mail(array $data)
-    {
-        $app = App::get();
-
-        $defaultEmailSender = Config::$defaultEmailSender;
-        if (!is_array($defaultEmailSender)) {
-            throw new \Exception('The defaultEmailSender option is empty.');
-        }
-        $email = $app->emails->make();
-        $email->sender->email = $defaultEmailSender['email'];
-        $email->sender->name = $defaultEmailSender['name'];
-        $email->subject = $data['subject'];
-        $email->content->add($data['body']);
-        $email->recipients->add($data['recipient']);
-        $app->emails->send($email);
-        return 1;
-    }
-
-    static function pagesList()
+    /**
+     * 
+     * @return array
+     */
+    static function pagesList(): array
     {
         $list = Internal\Data::getList('bearcms/pages/page/');
         $structure = Internal\Data::getValue('bearcms/pages/structure.json');
@@ -635,7 +680,13 @@ class ServerCommands
         return $temp;
     }
 
-    static function replaceContent($data, $response)
+    /**
+     * 
+     * @param array $data
+     * @param \ArrayObject $response
+     * @return void
+     */
+    static function replaceContent(array $data, \ArrayObject $response): void
     {
         $app = App::get();
         $value = json_encode($response['value']);
@@ -670,18 +721,24 @@ class ServerCommands
         $response['value'] = Internal\Server::mergeAjaxResponses($response1, $response2);
     }
 
-    static function settingsGet()
+    /**
+     * 
+     * @return array
+     */
+    static function settingsGet(): array
     {
         $result = Internal2::$data2->settings->get();
         return $result->toArray();
     }
 
-    static function temporaryRedirect($data, $response)
+    /**
+     * 
+     * @param array $data
+     * @param \ArrayObject $response
+     */
+    static function temporaryRedirect(array $data, \ArrayObject $response)
     {
         $app = App::get();
-        if (!isset($data['url'])) {
-            throw new Exception('');
-        }
         Internal\Cookies::setList(Internal\Cookies::TYPE_SERVER, Internal\Cookies::parseServerCookies($response['headers']));
         $response = new App\Response\TemporaryRedirect($data['url']);
         Internal\Cookies::apply($response);
@@ -689,20 +746,24 @@ class ServerCommands
         exit;
     }
 
-    static function themeApplyUserValues(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function themeApplyUserValues(array $data): void
     {
         $themeID = $data['id'];
         $userID = $data['userID'];
         Internal\Themes::applyUserValues($themeID, $userID);
     }
 
-    static function themeDiscardOptions(array $data)
-    {
-        $themeID = $data['id'];
-        Internal2::$data2->themes->discardOptions($themeID);
-    }
-
-    static function themeDiscardUserOptions(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function themeDiscardUserOptions(array $data): void
     {
         $themeID = $data['id'];
         $userID = $data['userID'];
@@ -711,7 +772,12 @@ class ServerCommands
         }
     }
 
-    static function themeExport(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function themeExport(array $data): array
     {
         $app = App::get();
         $themeID = $data['id'];
@@ -720,14 +786,15 @@ class ServerCommands
         return ['downloadUrl' => $app->assets->getUrl($app->data->getFilename($dataKey), ['download' => true])];
     }
 
-    static function themeGet(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function themeGet(array $data): array
     {
         $app = App::get();
-        if (!isset($data['id'])) {
-            throw new Exception('');
-        }
         $themeID = $data['id'];
-
         $includeOptions = isset($data['includeOptions']) && !empty($data['includeOptions']);
         $themes = Internal\Themes::getIDs();
         foreach ($themes as $id) {
@@ -766,12 +833,21 @@ class ServerCommands
         return null;
     }
 
-    static function themeGetActive()
+    /**
+     * 
+     * @return string
+     */
+    static function themeGetActive(): string
     {
         return Internal\Themes::getActiveThemeID();
     }
 
-    static function themeImport(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function themeImport(array $data): array
     {
         $sourceDataKey = $data['sourceDataKey'];
         $themeID = $data['id'];
@@ -784,41 +860,35 @@ class ServerCommands
         }
     }
 
-    static function themeSetOptions(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function themeSetUserOptions(array $data): void
     {
-        $app = App::get();
-        $themeID = $data['id'];
-        $values = $data['values'];
-        Internal2::$data2->themes->setOptions($themeID, $values);
-    }
-
-    static function themeSetUserOptions(array $data)
-    {
-        $app = App::get();
         $themeID = $data['id'];
         $userID = $data['userID'];
         $values = $data['values'];
         Internal2::$data2->themes->setUserOptions($themeID, $userID, $values);
     }
 
-    static function themeStylesGet(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function themeStylesGet(array $data): ?array
     {
-        if (!isset($data['id'])) {
-            throw new Exception('');
-        }
         $themeID = $data['id'];
-
-        $themes = Internal\Themes::getIDs();
-        foreach ($themes as $id) {
-            if ($id === $themeID) {
-                $styles = Internal\Themes::getStyles($id, true);
-                return $styles;
-            }
-        }
-        return null;
+        return Internal\Themes::getStyles($themeID, true);
     }
 
-    static function themesList()
+    /**
+     * 
+     * @return array
+     */
+    static function themesList(): array
     {
         $themes = Internal\Themes::getIDs();
         $result = [];
@@ -832,23 +902,34 @@ class ServerCommands
         return $result;
     }
 
-    static function uploadsSizeAdd(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function uploadsSizeAdd(array $data): void
     {
-        Internal\Data\UploadsSize::add($data['key'], $data['size']);
+        Internal\Data\UploadsSize::add($data['key'], (int) $data['size']);
     }
 
-    static function uploadsSizeRemove(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function uploadsSizeRemove(array $data): void
     {
         Internal\Data\UploadsSize::remove($data['key']);
     }
 
-    static function userIDByEmail(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return string|null
+     */
+    static function userIDByEmail(array $data): ?string
     {
-        if (!isset($data['email'])) {
-            throw new Exception('');
-        }
         $email = (string) $data['email'];
-        $app = App::get();
         $users = Internal2::$data2->users->getList();
         foreach ($users as $user) {
             if (array_search($email, $user->emails) !== false) {
@@ -858,9 +939,12 @@ class ServerCommands
         return null;
     }
 
-    static function usersIDs()
+    /**
+     * 
+     * @return array
+     */
+    static function usersIDs(): array
     {
-        $app = App::get();
         $users = Internal2::$data2->users->getList();
         $result = [];
         foreach ($users as $user) {
@@ -869,9 +953,12 @@ class ServerCommands
         return $result;
     }
 
-    static function usersInvitations()
+    /**
+     * 
+     * @return array
+     */
+    static function usersInvitations(): array
     {
-        $app = App::get();
         $userInvitations = Internal2::$data2->usersInvitations->getList();
         $result = [];
         foreach ($userInvitations as $userInvitation) {

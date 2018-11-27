@@ -18,8 +18,16 @@ use BearCMS\Internal\Config;
 class Addons
 {
 
+    /**
+     *
+     * @var array 
+     */
     static public $announcements = [];
 
+    /**
+     * 
+     * @return \BearFramework\DataList
+     */
     static function getList(): \BearFramework\DataList
     {
         $app = App::get();
@@ -32,6 +40,11 @@ class Addons
         return $result;
     }
 
+    /**
+     * 
+     * @param string $addonID
+     * @return \BearCMS\Internal\DataObject|null
+     */
     static function get(string $addonID): ?\BearCMS\Internal\DataObject
     {
         $data = self::getData($addonID);
@@ -41,7 +54,12 @@ class Addons
         return null;
     }
 
-    static function makeFromRawData(string $raw)
+    /**
+     * 
+     * @param string $raw
+     * @return \BearCMS\Internal\DataObject
+     */
+    static function makeFromRawData(string $raw): \BearCMS\Internal\DataObject
     {
         $data = json_decode($raw, true);
         return new \BearCMS\Internal\DataObject([
@@ -73,7 +91,12 @@ class Addons
 //        }
     }
 
-    static function getData(string $addonID)
+    /**
+     * 
+     * @param string $addonID
+     * @return array|null
+     */
+    static function getData(string $addonID): ?array
     {
         $app = App::get();
         $dataKey = 'bearcms/addons/addon/' . md5($addonID) . '.json';
@@ -84,7 +107,13 @@ class Addons
         return null;
     }
 
-    static function setData(string $addonID, $data)
+    /**
+     * 
+     * @param string $addonID
+     * @param type $data
+     * @return void
+     */
+    static function setData(string $addonID, $data): void
     {
         $app = App::get();
         $dataKey = 'bearcms/addons/addon/' . md5($addonID) . '.json';
@@ -92,7 +121,12 @@ class Addons
         self::onChange();
     }
 
-    static function add(string $addonID)
+    /**
+     * 
+     * @param string $addonID
+     * @return void
+     */
+    static function add(string $addonID): void
     {
         $manager = Config::getAddonManager();
         $manager->addAddon($addonID);
@@ -103,7 +137,12 @@ class Addons
         }
     }
 
-    static function delete(string $addonID)
+    /**
+     * 
+     * @param string $addonID
+     * @return void
+     */
+    static function delete(string $addonID): void
     {
         $manager = Config::getAddonManager();
         $manager->removeAddon($addonID);
@@ -113,17 +152,33 @@ class Addons
         self::onChange();
     }
 
-    static function enable(string $addonID)
+    /**
+     * 
+     * @param string $addonID
+     * @return void
+     */
+    static function enable(string $addonID): void
     {
         self::enableOrDisable($addonID, true);
     }
 
-    static function disable(string $addonID)
+    /**
+     * 
+     * @param string $addonID
+     * @return void
+     */
+    static function disable(string $addonID): void
     {
         self::enableOrDisable($addonID, false);
     }
 
-    static function enableOrDisable(string $addonID, bool $enable)
+    /**
+     * 
+     * @param string $addonID
+     * @param bool $enable
+     * @return void
+     */
+    static function enableOrDisable(string $addonID, bool $enable): void
     {
         $data = self::getData($addonID);
         if ($data !== null) {
@@ -132,7 +187,13 @@ class Addons
         }
     }
 
-    static function setOptions(string $addonID, array $options)
+    /**
+     * 
+     * @param string $addonID
+     * @param array $options
+     * @return void
+     */
+    static function setOptions(string $addonID, array $options): void
     {
         $data = self::getData($addonID);
         if ($data !== null) {
@@ -147,15 +208,19 @@ class Addons
         }
     }
 
-    static function onChange()
+    /**
+     * 
+     * @return void
+     */
+    static function onChange(): void
     {
         $app = App::get();
         $cacheKey = 'bearcms-addons-to-add';
         $app->cache->delete($cacheKey);
     }
 
-    static function validateOptions($definition, $values)
-    {
+//    static function validateOptions($definition, $values)
+//    {
 //        foreach ($definition as $optionData) {
 //            if (isset($optionData['id'])) {
 //                $id = $optionData['id'];
@@ -180,9 +245,13 @@ class Addons
 //            }
 //        }
 //        return true;
-    }
+//    }
 
-    static function addToApp()
+    /**
+     * 
+     * @return void
+     */
+    static function addToApp(): void
     {
         $app = App::get();
         $cacheKey = 'bearcms-addons-to-add';

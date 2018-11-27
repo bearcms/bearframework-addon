@@ -9,7 +9,7 @@
 
 namespace BearCMS\Internal\Data2;
 
-use BearFramework\App;
+use BearCMS\Internal;
 
 /**
  * @internal
@@ -20,8 +20,8 @@ class CommentsThreads
     private function makeCommentsThreadPostFromRawData($rawData): \BearCMS\Internal\Data2\CommentsThread
     {
         $rawData = json_decode($rawData, true);
-        $object = new \BearCMS\Internal\Data2\CommentsThread($rawData);
-        $object->comments = \BearCMS\Internal\Data\Comments::createCommentsCollection($rawData['comments'], $rawData['id']);
+        $object = new Internal\Data2\CommentsThread($rawData);
+        $object->comments = Internal\Data\Comments::createCommentsCollection($rawData['comments'], $rawData['id']);
         return $object;
     }
 
@@ -34,7 +34,7 @@ class CommentsThreads
      */
     public function get(string $id): ?\BearCMS\Internal\Data2\CommentsThread
     {
-        $data = \BearCMS\Internal\Data::getValue('bearcms/comments/thread/' . md5($id) . '.json');
+        $data = Internal\Data::getValue('bearcms/comments/thread/' . md5($id) . '.json');
         if ($data !== null) {
             return $this->makeCommentsThreadPostFromRawData($data);
         }
@@ -48,11 +48,11 @@ class CommentsThreads
      */
     public function getList()
     {
-        $list = \BearCMS\Internal\Data::getList('bearcms/comments/thread/');
+        $list = Internal\Data::getList('bearcms/comments/thread/');
         array_walk($list, function(&$value) {
             $value = $this->makeCommentsThreadPostFromRawData($value);
         });
-        return new \BearCMS\Internal\DataList($list);
+        return new Internal\DataList($list);
     }
 
 }
