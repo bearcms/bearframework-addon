@@ -10,7 +10,7 @@
 /**
  * @runTestsInSeparateProcesses
  */
-class ThemesTest extends BearCMSTestCase
+class AddonsTest extends BearCMSTestCase
 {
 
     /**
@@ -19,7 +19,7 @@ class ThemesTest extends BearCMSTestCase
     public function testAnnounce()
     {
         $app = $this->getApp();
-        $app->bearCMS->themes->announce('verdor1/theme1', function(\BearCMS\Themes\Theme $theme) {
+        $app->bearCMS->addons->announce('verdor1/addon1', function(\BearCMS\Addons\Addon $addon) {
             
         });
     }
