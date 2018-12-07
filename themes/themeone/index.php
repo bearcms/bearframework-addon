@@ -28,7 +28,7 @@ $app->bearCMS->themes
 
             $theme->version = '1.3';
 
-            $theme->initialize = function() use ($app) {
+            $theme->initialize = function(\BearCMS\Themes\Options $options) use ($app) {
                 $app->hooks->add('componentCreated', function($component) {
                     if ($component->src === 'bearcms-elements') {
                         $component->spacing = '1.5rem';
