@@ -36,7 +36,7 @@ $app->bearCMS->themes
                 });
             };
 
-            $theme->get = function($options) use ($context) {
+            $theme->get = function(\BearCMS\Themes\Options $options) use ($context) {
                 $templateFilename = $context->dir . '/themes/themeone/components/defaultTemplate.php';
                 return (static function($__filename, $options) { // used inside
                             ob_start();

@@ -44,7 +44,7 @@ class Options
      * @param string $name
      * @return mixed|null
      */
-    public function get(string $name)
+    public function getValue(string $name)
     {
         return isset($this->data[$name]) ? $this->data[$name] : null;
     }

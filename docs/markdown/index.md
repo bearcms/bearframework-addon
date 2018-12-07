@@ -8,8 +8,6 @@
 
 ### [BearCMS\CurrentUser](bearcms.currentuser.class.md)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the current logged in user
-
 ### [BearCMS\Themes](bearcms.themes.class.md)
 
 ### [BearCMS\Themes\Options](bearcms.themes.options.class.md)

@@ -1,7 +1,5 @@
 # BearCMS\CurrentUser
 
-Information about the current logged in user
-
 ## Methods
 
 ##### public bool [exists](bearcms.currentuser.exists.method.md) ( void )
