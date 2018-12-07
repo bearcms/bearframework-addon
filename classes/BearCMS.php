@@ -1734,7 +1734,10 @@ class BearCMS
                 if ($response instanceof App\Response\HTML) {
                     $templateContent = call_user_func($theme->get, $currentThemeOptions);
                     $template = new \BearFramework\HTMLTemplate($templateContent);
-                    $template->insert($currentThemeOptions->toHTML());
+                    $html = $currentThemeOptions->toHTML();
+                    if (isset($html[0])) {
+                        $template->insert($html);
+                    }
                     $template->insert($response->content, 'body');
                     $response->content = $this->app->components->process($template->get());
                 }
