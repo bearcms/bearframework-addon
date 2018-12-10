@@ -145,10 +145,10 @@ class Themes
     /**
      * 
      * @param string $id
-     * @return \BearCMS\Themes\OptionsSchema|null
+     * @return \BearCMS\Themes\Options\Schema|null
      * @throws \Exception
      */
-    static function getOptionsSchema(string $id): ?\BearCMS\Themes\OptionsSchema
+    static function getOptionsSchema(string $id): ?\BearCMS\Themes\Options\Schema
     {
         $theme = self::get($id);
         if ($theme === null) {
@@ -156,12 +156,48 @@ class Themes
         }
         if (is_callable($theme->optionsSchema)) {
             $schema = call_user_func($theme->optionsSchema);
-            if (!($schema instanceof \BearCMS\Themes\OptionsSchema)) {
+            if ($schema !== null && !($schema instanceof \BearCMS\Themes\Options\Schema)) {
                 throw new \Exception('Invalid theme options value for theme ' . $id . '!');
             }
             return $schema;
         }
-        return [];
+        return null;
+    }
+
+    /**
+     * 
+     * @param string $id
+     * @return array
+     * @throws \Exception
+     */
+    static function getOptionsSchemaAsArray(string $id): array
+    {
+        $schema = self::getOptionsSchema($id);
+        if ($schema === null) {
+            return null;
+        }
+        $walkOptions = function(array $options) use (&$walkOptions) {
+            $result = [];
+            foreach ($options as $option) {
+                if ($option instanceof \BearCMS\Themes\Options\OptionSchema) {
+                    $item = array_merge($option->details, [
+                        "id" => $option->id,
+                        "type" => $option->type,
+                        "name" => $option->name
+                    ]);
+                } elseif ($option instanceof \BearCMS\Themes\Options\GroupSchema) {
+                    $item = [
+                        "type" => "group",
+                        "name" => $option->name,
+                        "description" => $option->description,
+                    ];
+                    $item['options'] = $walkOptions($option->getList());
+                }
+                $result[] = $item;
+            }
+            return $result;
+        };
+        return $walkOptions($schema->getList());
     }
 
     /**
@@ -214,6 +250,7 @@ class Themes
                     }
                 }
             }
+            return $result;
         }
         return [];
     }
@@ -277,54 +314,51 @@ class Themes
                 }
                 $themeOptions = Internal\Themes::getOptionsSchema($id);
                 if ($themeOptions !== null) {
-                    $walkOptions = function($options) use (&$walkOptions, $currentValues, &$values) {
+                    $walkOptions = function(array $options) use (&$walkOptions, $currentValues, &$values) {
                         foreach ($options as $option) {
-                            if (is_array($option) && isset($option['type'])) {
-                                $optionType = $option['type'];
-                                if (isset($option['id'])) {
-                                    $optionID = $option['id'];
-                                    $value = isset($currentValues[$optionID]) ? $currentValues[$optionID] : (isset($option['value']) ? (is_array($option['value']) ? json_encode($option['value']) : $option['value']) : null);
+                            if ($option instanceof \BearCMS\Themes\Options\OptionSchema) {
+                                $optionID = $option->id;
+                                $optionType = $option->type;
+                                $value = isset($currentValues[$optionID]) ? $currentValues[$optionID] : (isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value']) : $option->details['value']) : null);
+                                if (strlen($value) > 0) {
                                     if ($optionType === 'image') {
                                         $newValue = Internal2::$data2->getRealFilename($value);
                                         if ($newValue !== null) {
                                             $value = $newValue;
                                         }
                                     } elseif ($optionType === 'css' || $optionType === 'cssBackground') {
-                                        if (isset($value[0])) {
-                                            $temp = json_decode($value, true);
-                                            if (is_array($temp)) {
-                                                foreach ($temp as $key => $_value) {
-                                                    $matches = [];
-                                                    preg_match_all('/url\((.*?)\)/', $_value, $matches);
-                                                    if (!empty($matches[1])) {
-                                                        $matches[1] = array_unique($matches[1]);
-                                                        $search = [];
-                                                        $replace = [];
-                                                        foreach ($matches[1] as $filename) {
-                                                            $newFileName = Internal2::$data2->getRealFilename($filename);
-                                                            if ($newFileName !== null) {
-                                                                $search[] = $filename;
-                                                                $replace[] = $newFileName;
-                                                            }
+                                        $temp = json_decode($value, true);
+                                        if (is_array($temp)) {
+                                            foreach ($temp as $key => $_value) {
+                                                $matches = [];
+                                                preg_match_all('/url\((.*?)\)/', $_value, $matches);
+                                                if (!empty($matches[1])) {
+                                                    $matches[1] = array_unique($matches[1]);
+                                                    $search = [];
+                                                    $replace = [];
+                                                    foreach ($matches[1] as $filename) {
+                                                        $newFileName = Internal2::$data2->getRealFilename($filename);
+                                                        if ($newFileName !== null) {
+                                                            $search[] = $filename;
+                                                            $replace[] = $newFileName;
                                                         }
-                                                        $temp[$key] = str_replace($search, $replace, $_value);
                                                     }
+                                                    $temp[$key] = str_replace($search, $replace, $_value);
                                                 }
-                                                $value = json_encode($temp);
                                             }
+                                            $value = json_encode($temp);
                                         }
                                     }
-                                    $values[$optionID] = $value;
-                                } elseif (is_array($option) && isset($option['options'])) {
-                                    $walkOptions($option['options']);
                                 }
+                                $values[$optionID] = $value;
+                            } elseif ($option instanceof \BearCMS\Themes\Options\GroupSchema) {
+                                $walkOptions($option->getList());
                             }
                         }
                     };
-                    $themeOptionsAsArray = $themeOptions->toArray();
-                    $walkOptions($themeOptionsAsArray);
+                    $walkOptions($themeOptions->getList());
                     $themeOptions->setValues($values);
-                    $html = $themeOptions->toHTML();
+                    $html = $themeOptions->getHTML();
                 }
                 $resultData = [$values, $html];
                 if ($useCache) {
@@ -347,7 +381,6 @@ class Themes
                 }
                 return $text;
             };
-
             $resultData[1] = $applyImageUrls($resultData[1]);
             self::$cache[$localCacheKey] = new \BearCMS\Themes\Options($resultData[0], $resultData[1]);
         }
@@ -367,17 +400,14 @@ class Themes
         }
         $app = App::get();
         $optionsValues = self::getOptions($id);
-        $values = $optionsValues->toArray();
+        $values = $optionsValues->getValues();
         $filesToAttach = [];
         $filesInValues = Internal\Themes::getFilesInValues($values);
         $filesKeysToUpdate = [];
-        foreach ($filesInValues as $key) {
-            $filename = Internal2::$data2->getRealFilename($key);
-            if ($filename !== null) {
-                $attachmentName = 'files/' . (sizeof($filesToAttach) + 1) . '.' . pathinfo($key, PATHINFO_EXTENSION); // the slash helps in import (shows if the value is encoded)
-                $filesToAttach[$attachmentName] = $filename;
-                $filesKeysToUpdate[$key] = 'data:' . $attachmentName;
-            }
+        foreach ($filesInValues as $filename) {
+            $attachmentName = 'files/' . (sizeof($filesToAttach) + 1) . '.' . pathinfo($filename, PATHINFO_EXTENSION); // the slash helps in import (shows if the value is encoded)
+            $filesToAttach[$attachmentName] = $filename;
+            $filesKeysToUpdate[$filename] = 'data:' . $attachmentName;
         }
         $values = Internal\Themes::updateFilesInValues($values, $filesKeysToUpdate);
 

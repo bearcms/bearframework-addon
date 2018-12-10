@@ -4,9 +4,11 @@
 
 ##### public [__construct](bearcms.themes.options.__construct.method.md) ( array $data , string $html )
 
+##### public string [getHTML](bearcms.themes.options.gethtml.method.md) ( void )
+
 ##### public mixed|null [getValue](bearcms.themes.options.getvalue.method.md) ( string $name )
 
-##### public string [toHTML](bearcms.themes.options.tohtml.method.md) ( void )
+##### public array [getValues](bearcms.themes.options.getvalues.method.md) ( void )
 
 ## Details
 

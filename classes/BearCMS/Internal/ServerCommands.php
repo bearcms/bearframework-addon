@@ -799,12 +799,11 @@ class ServerCommands
         $themes = Internal\Themes::getIDs();
         foreach ($themes as $id) {
             if ($id === $themeID) {
-                $optionsSchema = Internal\Themes::getOptionsSchema($id);
-                $optionsSchemaAsArray = $optionsSchema === null ? [] : $optionsSchema->toArray();
+                $optionsSchemaAsArray = Internal\Themes::getOptionsSchemaAsArray($id);
                 $themeManifest = Internal\Themes::getManifest($id);
                 $themeData = $themeManifest;
                 $themeData['id'] = $id;
-                $themeData['hasOptions'] = sizeof($optionsSchemaAsArray) > 0;
+                $themeData['hasOptions'] = !empty($optionsSchemaAsArray);
                 $themeData['hasStyles'] = sizeof(Internal\Themes::getStyles($id)) > 0;
                 if ($includeOptions) {
                     $themeData['options'] = [

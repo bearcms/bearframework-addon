@@ -1,4 +1,4 @@
-# BearCMS\Themes\OptionsGroupSchema::addElements
+# BearCMS\Themes\Options\GroupSchema::addElements
 
 ```php
 public self addElements ( string $idPrefix , string $parentSelector )
@@ -12,9 +12,9 @@ public self addElements ( string $idPrefix , string $parentSelector )
 
 ## Details
 
-Class: [BearCMS\Themes\OptionsGroupSchema](bearcms.themes.optionsgroupschema.class.md)
+Class: [BearCMS\Themes\Options\GroupSchema](bearcms.themes.options.groupschema.class.md)
 
-File: /classes/BearCMS/Themes/OptionsGroupSchema.php
+File: /classes/BearCMS/Themes/Options/GroupSchema.php
 
 ---
 

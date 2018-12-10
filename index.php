@@ -24,8 +24,9 @@ $context->classes
         ->add('BearCMS\Data\Settings\Settings', 'classes/BearCMS/Data/Settings/Settings.php')
         ->add('BearCMS\Themes', 'classes/BearCMS/Themes.php')
         ->add('BearCMS\Themes\Options', 'classes/BearCMS/Themes/Options.php')
-        ->add('BearCMS\Themes\OptionsSchema', 'classes/BearCMS/Themes/OptionsSchema.php')
-        ->add('BearCMS\Themes\OptionsGroupSchema', 'classes/BearCMS/Themes/OptionsGroupSchema.php')
+        ->add('BearCMS\Themes\Options\GroupSchema', 'classes/BearCMS/Themes/Options/GroupSchema.php')
+        ->add('BearCMS\Themes\Options\OptionSchema', 'classes/BearCMS/Themes/Options/OptionSchema.php')
+        ->add('BearCMS\Themes\Options\Schema', 'classes/BearCMS/Themes/Options/Schema.php')
         ->add('BearCMS\Themes\Theme', 'classes/BearCMS/Themes/Theme.php')
         ->add('BearCMS\Internal\DataList', 'classes/BearCMS/Internal/DataList.php')
         ->add('BearCMS\Internal\DataObject', 'classes/BearCMS/Internal/DataObject.php')
@@ -76,6 +77,7 @@ $context->classes
         ->add('BearCMS\Internal\ServerCommands', 'classes/BearCMS/Internal/ServerCommands.php')
         ->add('BearCMS\Internal\TempClientData', 'classes/BearCMS/Internal/TempClientData.php')
         ->add('BearCMS\Internal\Themes', 'classes/BearCMS/Internal/Themes.php')
+        ->add('BearCMS\Internal\ThemesOptionsGroupSchemaTrait', 'classes/BearCMS/Internal/ThemesOptionsGroupSchemaTrait.php')
         ->add('BearCMS\Internal\UserProvider', 'classes/BearCMS/Internal/UserProvider.php');
 
 $app->addons

@@ -18,9 +18,11 @@
 
 ### [BearCMS\Themes\Options](bearcms.themes.options.class.md)
 
-### [BearCMS\Themes\OptionsGroupSchema](bearcms.themes.optionsgroupschema.class.md)
+### [BearCMS\Themes\Options\GroupSchema](bearcms.themes.options.groupschema.class.md)
 
-### [BearCMS\Themes\OptionsSchema](bearcms.themes.optionsschema.class.md)
+### [BearCMS\Themes\Options\OptionSchema](bearcms.themes.options.optionschema.class.md)
+
+### [BearCMS\Themes\Options\Schema](bearcms.themes.options.schema.class.md)
 
 ### [BearCMS\Themes\Theme](bearcms.themes.theme.class.md)
 

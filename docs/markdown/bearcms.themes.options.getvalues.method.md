@@ -1,7 +1,7 @@
-# BearCMS\Themes\Options::toHTML
+# BearCMS\Themes\Options::getValues
 
 ```php
-public string toHTML ( void )
+public array getValues ( void )
 ```
 
 ## Details

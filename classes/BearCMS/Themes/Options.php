@@ -51,9 +51,18 @@ class Options
 
     /**
      * 
+     * @return array
+     */
+    public function getValues(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * 
      * @return string
      */
-    function toHTML(): string
+    public function getHTML(): string
     {
         return $this->html;
     }

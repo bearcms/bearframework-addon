@@ -10,7 +10,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns: Returns a reference to itself.
 
-##### public [BearCMS\Themes\OptionsSchema](bearcms.themes.optionsschema.class.md) [makeOptionsSchema](bearcms.themes.makeoptionsschema.method.md) ( void )
+##### public [BearCMS\Themes\Options\Schema](bearcms.themes.options.schema.class.md) [makeOptionsSchema](bearcms.themes.makeoptionsschema.method.md) ( void )
 
 ## Details
 

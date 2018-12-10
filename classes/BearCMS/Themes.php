@@ -43,11 +43,11 @@ class Themes
 
     /**
      * 
-     * @return \BearCMS\Themes\OptionsSchema
+     * @return \BearCMS\Themes\Options\Schema
      */
-    public function makeOptionsSchema(): \BearCMS\Themes\OptionsSchema
+    public function makeOptionsSchema(): \BearCMS\Themes\Options\Schema
     {
-        return new \BearCMS\Themes\OptionsSchema();
+        return new \BearCMS\Themes\Options\Schema();
     }
 
 }

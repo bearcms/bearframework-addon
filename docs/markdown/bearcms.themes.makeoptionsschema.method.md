@@ -1,7 +1,7 @@
 # BearCMS\Themes::makeOptionsSchema
 
 ```php
-public BearCMS\Themes\OptionsSchema makeOptionsSchema ( void )
+public BearCMS\Themes\Options\Schema makeOptionsSchema ( void )
 ```
 
 ## Details

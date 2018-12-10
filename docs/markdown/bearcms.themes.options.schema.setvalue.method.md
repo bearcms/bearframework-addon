@@ -1,4 +1,4 @@
-# BearCMS\Themes\OptionsSchema::setValue
+# BearCMS\Themes\Options\Schema::setValue
 
 ```php
 public self setValue ( string $id , mixed $value )
@@ -12,9 +12,9 @@ public self setValue ( string $id , mixed $value )
 
 ## Details
 
-Class: [BearCMS\Themes\OptionsSchema](bearcms.themes.optionsschema.class.md)
+Class: [BearCMS\Themes\Options\Schema](bearcms.themes.options.schema.class.md)
 
-File: /classes/BearCMS/Themes/OptionsSchema.php
+File: /classes/BearCMS/Themes/Options/Schema.php
 
 ---
 

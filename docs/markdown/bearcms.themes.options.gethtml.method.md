@@ -1,7 +1,7 @@
-# BearCMS\Themes\Options::toArray
+# BearCMS\Themes\Options::getHTML
 
 ```php
-public array toArray ( void )
+public string getHTML ( void )
 ```
 
 ## Details

@@ -34,7 +34,7 @@ $hasFooter = $options->getValue('footerVisibility') === '1';
 $elementsDefaults = $app->bearCMS->themes->makeOptionsSchema();
 $elementsDefaults->addElements('container', '.template-container');
 $elementsDefaults->addPages();
-$html = $elementsDefaults->toHTML();
+$html = $elementsDefaults->getHTML();
 if ($html !== '') {
     echo '<component src="data:base64,' . base64_encode($html) . '"/>';
 }
