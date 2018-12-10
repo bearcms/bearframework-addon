@@ -727,8 +727,8 @@ class ServerCommands
      */
     static function settingsGet(): array
     {
-        $result = Internal2::$data2->settings->get();
-        return $result->toArray();
+        $app = App::get();
+        return $app->bearCMS->data->settings->get()->toArray();
     }
 
     /**

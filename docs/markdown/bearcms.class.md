@@ -10,6 +10,10 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the current CMS administrator.
 
+##### public readonly [BearCMS\Data](bearcms.data.class.md) $data
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Access to the CMS data.
+
 ##### public readonly [BearCMS\Themes](bearcms.themes.class.md) $themes
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information about the enabled Bear CMS themes.

@@ -18,6 +18,7 @@ use BearCMS\Internal2;
  * @property-read \BearCMS\CurrentUser $currentUser Information about the current CMS administrator.
  * @property-read \BearCMS\Themes $themes Information about the enabled Bear CMS themes.
  * @property-read \BearCMS\Addons $addons Information about the enabled Bear CMS addons.
+ * @property-read \BearCMS\Data $data Access to the CMS data.
  */
 class BearCMS
 {
@@ -62,6 +63,12 @@ class BearCMS
                 ->defineProperty('addons', [
                     'init' => function() {
                         return new \BearCMS\Addons();
+                    },
+                    'readonly' => true
+                ])
+                ->defineProperty('data', [
+                    'init' => function() {
+                        return new \BearCMS\Data();
                     },
                     'readonly' => true
                 ])
@@ -867,8 +874,8 @@ class BearCMS
                 ->add('/rss.xml', [
                     [$this, 'disabledCheck'],
                     function() {
-                        $settings = Internal2::$data2->settings->get();
-                        if ($settings['enableRSS']) {
+                        $settings = $this->app->bearCMS->data->settings->get();
+                        if ($settings->enableRSS) {
                             return Internal\Controller::handleRSS();
                         }
                     }
@@ -890,8 +897,8 @@ class BearCMS
                     function() {
                         $size = str_replace('/-link-rel-icon-', '', (string) $this->app->request->path);
                         if (is_numeric($size)) {
-                            $settings = Internal2::$data2->settings->get();
-                            $icon = $settings['icon'];
+                            $settings = $this->app->bearCMS->data->settings->get();
+                            $icon = $settings->icon;
                             if (isset($icon{0})) {
                                 $filename = Internal2::$data2->getRealFilename($icon);
                                 if ($filename !== null) {
@@ -1208,7 +1215,7 @@ class BearCMS
                                 }
                                 $found = false;
                                 if ($pageID === 'home') {
-                                    $settings = Internal2::$data2->settings->get();
+                                    $settings = $this->app->bearCMS->data->settings->get();
                                     $title = trim($settings->title);
                                     $description = trim($settings->description);
                                     $keywords = trim($settings->keywords);
@@ -1451,13 +1458,13 @@ class BearCMS
         }
 
         $currentUserExists = Config::hasServer() && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
-        $settings = Internal2::$data2->settings->get();
+        $settings = $this->app->bearCMS->data->settings->get();
 
         $document = new HTML5DOMDocument();
         $document->loadHTML($response->content);
 
-        if (isset($settings['language']) && strlen($settings['language']) > 0) {
-            $html = '<html lang="' . htmlentities($settings['language']) . '">';
+        if (strlen($settings->language) > 0) {
+            $html = '<html lang="' . htmlentities($settings->language) . '">';
         } else {
             $html = '<html>';
         }
@@ -1544,7 +1551,7 @@ class BearCMS
         if (!Config::$whitelabel) {
             $html .= '<meta name="generator" content="Bear CMS (powered by Bear Framework)"/>';
         }
-        $icon = $settings['icon'];
+        $icon = $settings->icon;
         if (isset($icon{0})) {
             $baseUrl = $this->app->urls->get();
             $html .= '<link rel="apple-touch-icon" sizes="57x57" href="' . htmlentities($baseUrl . '-link-rel-icon-57') . '">';
@@ -1575,17 +1582,17 @@ class BearCMS
             $html .= '<link rel="icon" sizes="96x96" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
             $html .= '<link rel="icon" sizes="16x16" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
         }
-        if (empty($settings['allowSearchEngines'])) {
+        if (empty($settings->allowSearchEngines)) {
             $html .= '<meta name="robots" content="noindex">';
         }
         $html .= '<link rel="canonical" href="' . htmlentities(rtrim($this->app->request->base . $this->app->request->path, '/') . '/') . '"/>';
-        if ($settings['enableRSS']) {
-            $html .= '<link rel="alternate" type="application/rss+xml" title="' . (isset($settings['title']) ? htmlentities(trim($settings['title'])) : '') . '" href="' . $this->app->request->base . '/rss.xml" />';
+        if ($settings->enableRSS) {
+            $html .= '<link rel="alternate" type="application/rss+xml" title="' . htmlentities(trim($settings->title)) . '" href="' . $this->app->request->base . '/rss.xml" />';
         }
         $html .= '</head><body>';
 
         if ($response instanceof App\Response\HTML) { // is not temporary disabled
-            $externalLinksAreEnabled = !empty($settings['externalLinks']);
+            $externalLinksAreEnabled = $settings->externalLinks;
             if ($externalLinksAreEnabled || $currentUserExists) {
                 $html .= '<script id="bearcms-bearframework-addon-script-10" src="' . htmlentities($this->context->assets->getUrl('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
             }
@@ -1620,7 +1627,7 @@ class BearCMS
             return;
         }
 
-        $settings = Internal2::$data2->settings->get();
+        $settings = $this->app->bearCMS->data->settings->get();
 
         $serverCookies = Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER);
         if (!empty($serverCookies['tmcs']) || !empty($serverCookies['tmpr'])) {
@@ -1759,7 +1766,7 @@ class BearCMS
     public function disabledCheck(): ?\BearFramework\App\Response
     {
         $currentUserExists = Config::hasServer() && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
-        $settings = Internal2::$data2->settings->get();
+        $settings = $this->app->bearCMS->data->settings->get();
         $isDisabled = !$currentUserExists && $settings->disabled;
         if ($isDisabled) {
             return new App\Response\TemporaryUnavailable(htmlspecialchars($settings->disabledText));

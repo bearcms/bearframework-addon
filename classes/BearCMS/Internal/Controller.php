@@ -180,19 +180,19 @@ class Controller
     static function handleRSS(): \BearFramework\App\Response
     {
         $app = App::get();
-        $settings = Internal2::$data2->settings->get();
+        $settings = $app->bearCMS->data->settings->get();
 
-        $data = '<title>' . (isset($settings['title']) ? htmlspecialchars($settings['title']) : '') . '</title>';
+        $data = '<title>' . htmlspecialchars($settings->title) . '</title>';
         $data .= '<link>' . $app->urls->get('/') . '</link>';
-        $data .= '<description>' . (isset($settings['description']) ? htmlspecialchars($settings['description']) : '') . '</description>';
-        $data .= '<language>' . (isset($settings['language']) ? htmlspecialchars($settings['language']) : '') . '</language>';
+        $data .= '<description>' . htmlspecialchars($settings->description) . '</description>';
+        $data .= '<language>' . htmlspecialchars($settings->language) . '</language>';
         $data .= '<atom:link href="' . $app->urls->get('/rss.xml') . '" rel="self" type="application/rss+xml">';
         $data .= '</atom:link>';
 
         $blogPosts = Internal2::$data2->blogPosts->getList()
                 ->filterBy('status', 'published')
                 ->sortBy('publishedTime', 'desc');
-        $contentType = $settings['rssType'];
+        $contentType = $settings->rssType;
         $counter = 0;
         foreach ($blogPosts as $blogPost) {
             $blogPostUrl = isset($blogPost['slug']) ? $app->urls->get(Config::$blogPagesPathPrefix . $blogPost['slug'] . '/') : '';

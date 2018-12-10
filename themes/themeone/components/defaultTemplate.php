@@ -7,11 +7,10 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal2;
 
 $app = App::get();
 
-$settings = Internal2::$data2->settings->get();
+$settings = $app->bearCMS->data->settings->get();
 $isHomePage = (string) $app->request->path === '/';
 
 $backgroundColor = $options->getValue('backgroundColor');
@@ -73,25 +72,25 @@ switch ((int) $contentWidthOptionValue) {
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,minimal-ui">
         <style>
             body{margin:0;}
-            <?= implode('', $cssStyles); ?>
+<?= implode('', $cssStyles); ?>
             .template-container *{margin:0;padding:0;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);}
             .template-container{min-height:100vh;font-family:<?= $fontFamily ?>;font-size:<?= $fontSize ?>;background-color:<?= $backgroundColor ?>;color:<?= $textColor ?>;display:flex;flex-direction:column;}
 
             .template-header{width:100%;max-width:<?= $contentWidth ?>;margin:0 auto;padding:0 1rem;}
-            <?php if ($hasHeaderLogo) { ?>
+<?php if ($hasHeaderLogo) { ?>
                 .template-header-logo-container{margin-top:3rem;}
                 .template-header-logo{max-width:<?= $headerLogoMaxWidth ?>px;margin:0 auto;}
             <?php } ?>
-            <?php if ($hasHeaderTitle) { ?>
+<?php if ($hasHeaderTitle) { ?>
                 .template-header-title-container{margin-top:<?= ($hasHeaderLogo ? '2rem' : '3rem') ?>;text-align:center;}
                 .template-header-title{text-decoration:none;color:<?= $accentColor ?>;font-size:<?= $isHomePage ? 1.6 : 1.3 ?>rem;}
-            <?php } ?>
+<?php } ?>
             .template-content{width:100%;min-height:40rem;max-width:<?= $contentWidth ?>;margin:0 auto;padding:3rem 1.2rem;flex:1 0 auto;}
 
             .template-footer{width:100%;background-color:#111;}
             .template-footer > div{max-width:<?= $contentWidth ?>;margin:0 auto;padding:3rem 1.2rem;}
 
-            <?php if ($hasNavigation) { ?>
+<?php if ($hasNavigation) { ?>
                 .template-navigation ul, .template-navigation li{
                     list-style-type: none;
                     list-style-position: outside;
@@ -244,7 +243,7 @@ switch ((int) $contentWidthOptionValue) {
                 echo '<div class="template-header-logo-container">' . $imageHTML . '</div>';
             }
             if ($hasHeaderTitle) {
-                echo '<div class="template-header-title-container"><' . ($isHomePage ? 'span' : 'a href="' . htmlentities($app->urls->get()) . '"') . ' class="template-header-title">' . htmlspecialchars($settings['title']) . '</' . ($isHomePage ? 'span' : 'a') . '></div>';
+                echo '<div class="template-header-title-container"><' . ($isHomePage ? 'span' : 'a href="' . htmlentities($app->urls->get()) . '"') . ' class="template-header-title">' . htmlspecialchars($settings->title) . '</' . ($isHomePage ? 'span' : 'a') . '></div>';
             }
 
             if ($hasNavigation) {
