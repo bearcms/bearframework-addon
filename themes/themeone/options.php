@@ -15,13 +15,13 @@ $schema = $app->bearCMS->themes->makeOptionsSchema();
 
 $schema
         ->addOption("textColor", "color", __("bearcms.themes.themeone.options.Text color"), [
-            "defaultValue" => '#000000'
+            "value" => '#000000'
         ])
         ->addOption("accentColor", "color", __("bearcms.themes.themeone.options.Accent color"), [
-            "defaultValue" => '#058cc4'
+            "value" => '#058cc4'
         ])
         ->addOption("backgroundColor", "color", __("bearcms.themes.themeone.options.Background color"), [
-            "defaultValue" => '#ffffff'
+            "value" => '#ffffff'
         ])
         ->addOption("textSize", "list", __("bearcms.themes.themeone.options.Text size"), [
             "values" => [
@@ -38,7 +38,7 @@ $schema
                     "name" => __("bearcms.themes.themeone.options.Text large")
                 ]
             ],
-            "defaultValue" => "2"
+            "value" => "2"
         ])
         ->addOption("contentWidth", "list", __("bearcms.themes.themeone.options.Content width"), [
             "values" => [
@@ -55,7 +55,7 @@ $schema
                     "name" => __("bearcms.themes.themeone.options.Content large")
                 ]
             ],
-            "defaultValue" => "2"
+            "value" => "2"
         ]);
 
 $group = $schema->addGroup(__("bearcms.themes.themeone.options.Header"));
@@ -74,7 +74,7 @@ $group->addGroup(__("bearcms.themes.themeone.options.Title"))
                     "name" => __("bearcms.themes.themeone.options.Hidden")
                 ]
             ],
-            "defaultValue" => "1"
+            "value" => "1"
         ]);
 
 $group->addGroup(__("bearcms.themes.themeone.options.Navigation"))
@@ -89,7 +89,7 @@ $group->addGroup(__("bearcms.themes.themeone.options.Navigation"))
                     "name" => __("bearcms.themes.themeone.options.Hidden")
                 ]
             ],
-            "defaultValue" => "1"
+            "value" => "1"
         ]);
 
 $schema->addGroup(__("bearcms.themes.themeone.options.Footer"))
@@ -104,7 +104,7 @@ $schema->addGroup(__("bearcms.themes.themeone.options.Footer"))
                     "name" => __("bearcms.themes.themeone.options.Hidden")
                 ]
             ],
-            "defaultValue" => "1"
+            "value" => "1"
         ]);
 
 return $schema;

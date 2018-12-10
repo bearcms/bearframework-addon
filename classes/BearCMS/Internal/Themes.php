@@ -145,24 +145,21 @@ class Themes
     /**
      * 
      * @param string $id
-     * @return array|null
+     * @return \BearCMS\Themes\OptionsSchema|null
      * @throws \Exception
      */
-    static function getOptionsSchema(string $id): ?array
+    static function getOptionsSchema(string $id): ?\BearCMS\Themes\OptionsSchema
     {
         $theme = self::get($id);
         if ($theme === null) {
             return null;
         }
         if (is_callable($theme->optionsSchema)) {
-            $result = call_user_func($theme->optionsSchema);
-            if ($result instanceof \BearCMS\Themes\OptionsSchema) {
-                $result = $result->toArray();
-            }
-            if (!is_array($result)) {
+            $schema = call_user_func($theme->optionsSchema);
+            if (!($schema instanceof \BearCMS\Themes\OptionsSchema)) {
                 throw new \Exception('Invalid theme options value for theme ' . $id . '!');
             }
-            return $result;
+            return $schema;
         }
         return [];
     }
@@ -279,21 +276,14 @@ class Themes
                     $currentValues = Internal2::$data2->themes->getOptions($id);
                 }
                 $themeOptions = Internal\Themes::getOptionsSchema($id);
-                if (!empty($themeOptions)) {
-                    $cssRules = [];
-                    $cssCode = '';
-                    $walkOptions = function($options) use (&$values, &$cssRules, &$cssCode, $currentValues, &$walkOptions) {
+                if ($themeOptions !== null) {
+                    $walkOptions = function($options) use (&$walkOptions, $currentValues, &$values) {
                         foreach ($options as $option) {
-                            if (isset($option['id'])) {
-                                $optionID = $option['id'];
-                                if (isset($currentValues[$optionID])) {
-                                    $value = $currentValues[$optionID];
-                                } else {
-                                    $value = isset($option['defaultValue']) ? (is_array($option['defaultValue']) ? json_encode($option['defaultValue']) : $option['defaultValue']) : null;
-                                }
-
-                                if (isset($option['type'])) {
-                                    $optionType = $option['type'];
+                            if (is_array($option) && isset($option['type'])) {
+                                $optionType = $option['type'];
+                                if (isset($option['id'])) {
+                                    $optionID = $option['id'];
+                                    $value = isset($currentValues[$optionID]) ? $currentValues[$optionID] : (isset($option['value']) ? (is_array($option['value']) ? json_encode($option['value']) : $option['value']) : null);
                                     if ($optionType === 'image') {
                                         $newValue = Internal2::$data2->getRealFilename($value);
                                         if ($newValue !== null) {
@@ -324,117 +314,17 @@ class Themes
                                             }
                                         }
                                     }
-                                    if ($optionType === 'cssCode') {
-                                        $cssCode .= $value;
-                                    } else {
-                                        if (isset($option['cssOutput'])) {
-                                            foreach ($option['cssOutput'] as $outputDefinition) {
-                                                if (is_array($outputDefinition)) {
-                                                    if (isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
-                                                        $selector = $outputDefinition[1];
-                                                        $selectorVariants = ['', '', ''];
-                                                        if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
-                                                            $temp = isset($value[0]) ? json_decode($value, true) : [];
-                                                            if (is_array($temp)) {
-                                                                foreach ($temp as $key => $_value) {
-                                                                    $pseudo = substr($key, -6);
-                                                                    if ($pseudo === ':hover') {
-                                                                        $selectorVariants[1] .= substr($key, 0, -6) . ':' . $_value . ';';
-                                                                    } else if ($pseudo === 'active') { // optimization
-                                                                        if (substr($key, -7) === ':active') {
-                                                                            $selectorVariants[2] .= substr($key, 0, -7) . ':' . $_value . ';';
-                                                                        } else {
-                                                                            $selectorVariants[0] .= $key . ':' . $_value . ';';
-                                                                        }
-                                                                    } else {
-                                                                        $selectorVariants[0] .= $key . ':' . $_value . ';';
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                        if ($selectorVariants[0] !== '') {
-                                                            if (!isset($cssRules[$selector])) {
-                                                                $cssRules[$selector] = '';
-                                                            }
-                                                            $cssRules[$selector] .= $selectorVariants[0];
-                                                        }
-                                                        if ($selectorVariants[1] !== '') {
-                                                            if (!isset($cssRules[$selector . ':hover'])) {
-                                                                $cssRules[$selector . ':hover'] = '';
-                                                            }
-                                                            $cssRules[$selector . ':hover'] .= $selectorVariants[1];
-                                                        }
-                                                        if ($selectorVariants[2] !== '') {
-                                                            if (!isset($cssRules[$selector . ':active'])) {
-                                                                $cssRules[$selector . ':active'] = '';
-                                                            }
-                                                            $cssRules[$selector . ':active'] .= $selectorVariants[2];
-                                                        }
-                                                    } elseif (isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'rule') {
-                                                        $selector = $outputDefinition[1];
-                                                        if (!isset($cssRules[$selector])) {
-                                                            $cssRules[$selector] = '';
-                                                        }
-                                                        $cssRules[$selector] .= $outputDefinition[2];
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                $values[$optionID] = $value;
-                            }
-                            if (isset($option['options'])) {
-                                $walkOptions($option['options']);
-                            }
-                        }
-                    };
-                    $walkOptions($themeOptions);
-                    $style = '';
-                    foreach ($cssRules as $key => $value) {
-                        $style .= $key . '{' . $value . '}';
-                    }
-                    $linkTags = [];
-                    $applyFontNames = function($text) use (&$linkTags) {
-                        $webSafeFonts = [
-                            'Arial' => 'Arial,Helvetica,sans-serif',
-                            'Arial Black' => '"Arial Black",Gadget,sans-serif',
-                            'Comic Sans' => '"Comic Sans MS",cursive,sans-serif',
-                            'Courier' => '"Courier New",Courier,monospace',
-                            'Georgia' => 'Georgia,serif',
-                            'Impact' => 'Impact,Charcoal,sans-serif',
-                            'Lucida' => '"Lucida Sans Unicode","Lucida Grande",sans-serif',
-                            'Lucida Console' => '"Lucida Console",Monaco,monospace',
-                            'Palatino' => '"Palatino Linotype","Book Antiqua",Palatino,serif',
-                            'Tahoma' => 'Tahoma,Geneva,sans-serif',
-                            'Times New Roman' => '"Times New Roman",Times,serif',
-                            'Trebuchet' => '"Trebuchet MS",Helvetica,sans-serif',
-                            'Verdana' => 'Verdana,Geneva,sans-serif'
-                        ];
-
-                        $matches = [];
-                        preg_match_all('/font\-family\:(.*?);/', $text, $matches);
-                        foreach ($matches[0] as $i => $match) {
-                            $fontName = $matches[1][$i];
-                            if (isset($webSafeFonts[$fontName])) {
-                                $text = str_replace($match, 'font-family:' . $webSafeFonts[$fontName] . ';', $text);
-                            } elseif (strpos($fontName, 'googlefonts:') === 0) {
-                                $googleFontName = substr($fontName, strlen('googlefonts:'));
-                                $text = str_replace($match, 'font-family:\'' . $googleFontName . '\';', $text);
-                                if (!isset($linkTags[$googleFontName])) {
-                                    $linkTags[$googleFontName] = '<link href="//fonts.googleapis.com/css?family=' . urlencode($googleFontName) . '" rel="stylesheet" type="text/css" />';
+                                    $values[$optionID] = $value;
+                                } elseif (is_array($option) && isset($option['options'])) {
+                                    $walkOptions($option['options']);
                                 }
                             }
                         }
-                        return $text;
                     };
-                    $style = $applyFontNames($style);
-                    $cssCode = trim($cssCode); // Positioned in different style tag just in case it's invalid
-                    if (!empty($linkTags) || $style !== '' || $cssCode !== '') {
-                        $html = '<html><head>' . implode('', $linkTags) . '<style>' . $style . '</style>' . ($cssCode !== '' ? '<style>' . $cssCode . '</style>' : '') . '</head></html>';
-                    } else {
-                        $html = '';
-                    }
+                    $themeOptionsAsArray = $themeOptions->toArray();
+                    $walkOptions($themeOptionsAsArray);
+                    $themeOptions->setValues($values);
+                    $html = $themeOptions->toHTML();
                 }
                 $resultData = [$values, $html];
                 if ($useCache) {

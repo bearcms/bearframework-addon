@@ -126,37 +126,4 @@ class OptionsGroupSchema
         return $result;
     }
 
-    /**
-     * 
-     * @return array
-     */
-    public function getCSSRules(): array
-    {
-        $cssRules = [];
-        $walkOptions = function($options) use (&$cssRules, &$walkOptions) {
-            foreach ($options as $option) {
-                if (isset($option['id'])) {
-                    if (isset($option['cssOutput'])) {
-                        foreach ($option['cssOutput'] as $outputDefinition) {
-                            if (is_array($outputDefinition)) {
-                                if (isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'rule') {
-                                    $selector = $outputDefinition[1];
-                                    if (!isset($cssRules[$selector])) {
-                                        $cssRules[$selector] = '';
-                                    }
-                                    $cssRules[$selector] .= $outputDefinition[2];
-                                }
-                            }
-                        }
-                    }
-                }
-                if (isset($option['options'])) {
-                    $walkOptions($option['options']);
-                }
-            }
-        };
-        $walkOptions($this->options);
-        return $cssRules;
-    }
-
 }

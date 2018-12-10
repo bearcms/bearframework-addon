@@ -22,8 +22,6 @@
 
 ##### public self [addPages](bearcms.themes.optionsgroupschema.addpages.method.md) ( void )
 
-##### public array [getCSSRules](bearcms.themes.optionsgroupschema.getcssrules.method.md) ( void )
-
 ##### public array [toArray](bearcms.themes.optionsgroupschema.toarray.method.md) ( void )
 
 ## Details

@@ -16,11 +16,13 @@ extends [BearCMS\Themes\OptionsGroupSchema](bearcms.themes.optionsgroupschema.cl
 
 ##### public [__construct](bearcms.themes.optionsschema.__construct.method.md) ( void )
 
-##### public self [setDefaultValue](bearcms.themes.optionsschema.setdefaultvalue.method.md) ( string $id , mixed $value )
+##### public self [setValue](bearcms.themes.optionsschema.setvalue.method.md) ( string $id , mixed $value )
 
-##### public self [setDefaultValues](bearcms.themes.optionsschema.setdefaultvalues.method.md) ( array $values )
+##### public self [setValues](bearcms.themes.optionsschema.setvalues.method.md) ( array $values )
 
 ##### public array [toArray](bearcms.themes.optionsschema.toarray.method.md) ( void )
+
+##### public string [toHTML](bearcms.themes.optionsschema.tohtml.method.md) ( void )
 
 ### Inherited from [BearCMS\Themes\OptionsGroupSchema](bearcms.themes.optionsgroupschema.class.md):
 
@@ -33,8 +35,6 @@ extends [BearCMS\Themes\OptionsGroupSchema](bearcms.themes.optionsgroupschema.cl
 ##### public self [addOption](bearcms.themes.optionsgroupschema.addoption.method.md) ( string $id , string $type , string $name [, array $options = [] ] )
 
 ##### public self [addPages](bearcms.themes.optionsgroupschema.addpages.method.md) ( void )
-
-##### public array [getCSSRules](bearcms.themes.optionsgroupschema.getcssrules.method.md) ( void )
 
 ## Details
 

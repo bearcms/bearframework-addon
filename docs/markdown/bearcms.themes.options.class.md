@@ -6,8 +6,6 @@
 
 ##### public mixed|null [getValue](bearcms.themes.options.getvalue.method.md) ( string $name )
 
-##### public array [toArray](bearcms.themes.options.toarray.method.md) ( void )
-
 ##### public string [toHTML](bearcms.themes.options.tohtml.method.md) ( void )
 
 ## Details

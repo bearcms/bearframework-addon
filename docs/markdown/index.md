@@ -8,6 +8,12 @@
 
 ### [BearCMS\CurrentUser](bearcms.currentuser.class.md)
 
+### [BearCMS\Data](bearcms.data.class.md)
+
+### [BearCMS\Data\Settings](bearcms.data.settings.class.md)
+
+### [BearCMS\Data\Settings\Settings](bearcms.data.settings.settings.class.md)
+
 ### [BearCMS\Themes](bearcms.themes.class.md)
 
 ### [BearCMS\Themes\Options](bearcms.themes.options.class.md)

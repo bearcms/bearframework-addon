@@ -799,15 +799,16 @@ class ServerCommands
         $themes = Internal\Themes::getIDs();
         foreach ($themes as $id) {
             if ($id === $themeID) {
-                $options = Internal\Themes::getOptionsSchema($id);
+                $optionsSchema = Internal\Themes::getOptionsSchema($id);
+                $optionsSchemaAsArray = $optionsSchema === null ? [] : $optionsSchema->toArray();
                 $themeManifest = Internal\Themes::getManifest($id);
                 $themeData = $themeManifest;
                 $themeData['id'] = $id;
-                $themeData['hasOptions'] = sizeof($options) > 0;
+                $themeData['hasOptions'] = sizeof($optionsSchemaAsArray) > 0;
                 $themeData['hasStyles'] = sizeof(Internal\Themes::getStyles($id)) > 0;
                 if ($includeOptions) {
                     $themeData['options'] = [
-                        'definition' => $options
+                        'definition' => $optionsSchemaAsArray
                     ];
                     $result = Internal\Data::getValue('bearcms/themes/theme/' . md5($id) . '.json');
                     if ($result !== null) {
@@ -896,7 +897,7 @@ class ServerCommands
             $themeManifest = Internal\Themes::getManifest($id);
             $themeData = $themeManifest;
             $themeData['id'] = $id;
-            $themeData['hasOptions'] = sizeof(Internal\Themes::getOptionsSchema($id)) > 0;
+            $themeData['hasOptions'] = Internal\Themes::getOptionsSchema($id) !== null;
             $result[] = $themeData;
         }
         return $result;

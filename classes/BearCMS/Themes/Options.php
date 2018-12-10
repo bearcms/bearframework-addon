@@ -51,15 +51,6 @@ class Options
 
     /**
      * 
-     * @return array
-     */
-    function toArray(): array
-    {
-        return $this->data;
-    }
-
-    /**
-     * 
      * @return string
      */
     function toHTML(): string
