@@ -12,7 +12,7 @@
 
 ##### public readonly string $id
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The id.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The theme id.
 
 ##### public callable|null $initialize
 

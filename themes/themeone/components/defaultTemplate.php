@@ -24,7 +24,7 @@ $headerLogoImage = $options->getValue('headerLogoImage');
 
 $hasHeaderLogo = strlen($headerLogoImage) > 0;
 if ($hasHeaderLogo) {
-    $headerLogoImageSize = $app->images->getSize(Internal2::$data2->getRealFilename($headerLogoImage));
+    $headerLogoImageSize = $app->images->getSize($headerLogoImage);
     $headerLogoMaxWidth = $headerLogoImageSize[0] * ($isHomePage ? 180 : 90) / $headerLogoImageSize[1];
 }
 

@@ -26,7 +26,7 @@ $app->bearCMS->themes
             $context->assets
             ->addDir('themes/themeone/assets');
 
-            $theme->version = '1.3';
+            $theme->version = '1.4';
 
             $theme->initialize = function(\BearCMS\Themes\Options $options) use ($app) {
                 $app->hooks->add('componentCreated', function($component) {

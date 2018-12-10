@@ -10,7 +10,7 @@
 namespace BearCMS\Themes;
 
 /**
- * @property-read string $id The id.
+ * @property-read string $id The theme id.
  * @property string|null $version The theme version.
  * @property callable|null $initialize A function to be called to initialize the theme.
  * @property callable|null $apply A function to be called to apply the theme. A \BearFramework\App\Response object and a options object are passed.

@@ -291,10 +291,39 @@ class Themes
                                 } else {
                                     $value = isset($option['defaultValue']) ? (is_array($option['defaultValue']) ? json_encode($option['defaultValue']) : $option['defaultValue']) : null;
                                 }
-                                $values[$optionID] = $value;
 
                                 if (isset($option['type'])) {
                                     $optionType = $option['type'];
+                                    if ($optionType === 'image') {
+                                        $newValue = Internal2::$data2->getRealFilename($value);
+                                        if ($newValue !== null) {
+                                            $value = $newValue;
+                                        }
+                                    } elseif ($optionType === 'css' || $optionType === 'cssBackground') {
+                                        if (isset($value[0])) {
+                                            $temp = json_decode($value, true);
+                                            if (is_array($temp)) {
+                                                foreach ($temp as $key => $_value) {
+                                                    $matches = [];
+                                                    preg_match_all('/url\((.*?)\)/', $_value, $matches);
+                                                    if (!empty($matches[1])) {
+                                                        $matches[1] = array_unique($matches[1]);
+                                                        $search = [];
+                                                        $replace = [];
+                                                        foreach ($matches[1] as $filename) {
+                                                            $newFileName = Internal2::$data2->getRealFilename($filename);
+                                                            if ($newFileName !== null) {
+                                                                $search[] = $filename;
+                                                                $replace[] = $newFileName;
+                                                            }
+                                                        }
+                                                        $temp[$key] = str_replace($search, $replace, $_value);
+                                                    }
+                                                }
+                                                $value = json_encode($temp);
+                                            }
+                                        }
+                                    }
                                     if ($optionType === 'cssCode') {
                                         $cssCode .= $value;
                                     } else {
@@ -307,18 +336,18 @@ class Themes
                                                         if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
                                                             $temp = isset($value[0]) ? json_decode($value, true) : [];
                                                             if (is_array($temp)) {
-                                                                foreach ($temp as $key => $value) {
+                                                                foreach ($temp as $key => $_value) {
                                                                     $pseudo = substr($key, -6);
                                                                     if ($pseudo === ':hover') {
-                                                                        $selectorVariants[1] .= substr($key, 0, -6) . ':' . $value . ';';
+                                                                        $selectorVariants[1] .= substr($key, 0, -6) . ':' . $_value . ';';
                                                                     } else if ($pseudo === 'active') { // optimization
                                                                         if (substr($key, -7) === ':active') {
-                                                                            $selectorVariants[2] .= substr($key, 0, -7) . ':' . $value . ';';
+                                                                            $selectorVariants[2] .= substr($key, 0, -7) . ':' . $_value . ';';
                                                                         } else {
-                                                                            $selectorVariants[0] .= $key . ':' . $value . ';';
+                                                                            $selectorVariants[0] .= $key . ':' . $_value . ';';
                                                                         }
                                                                     } else {
-                                                                        $selectorVariants[0] .= $key . ':' . $value . ';';
+                                                                        $selectorVariants[0] .= $key . ':' . $_value . ';';
                                                                     }
                                                                 }
                                                             }
@@ -353,6 +382,7 @@ class Themes
                                         }
                                     }
                                 }
+                                $values[$optionID] = $value;
                             }
                             if (isset($option['options'])) {
                                 $walkOptions($option['options']);
@@ -400,7 +430,7 @@ class Themes
                     };
                     $style = $applyFontNames($style);
                     $cssCode = trim($cssCode); // Positioned in different style tag just in case it's invalid
-                    if (!empty($linkTags) || $cssCode !== '') {
+                    if (!empty($linkTags) || $style !== '' || $cssCode !== '') {
                         $html = '<html><head>' . implode('', $linkTags) . '<style>' . $style . '</style>' . ($cssCode !== '' ? '<style>' . $cssCode . '</style>' : '') . '</head></html>';
                     } else {
                         $html = '';
@@ -419,12 +449,9 @@ class Themes
                     $matches[1] = array_unique($matches[1]);
                     $search = [];
                     $replace = [];
-                    foreach ($matches[1] as $key) {
-                        $filename = Internal2::$data2->getRealFilename($key);
-                        if ($filename !== null) {
-                            $search[] = $key;
-                            $replace[] = $app->assets->getUrl($filename, ['cacheMaxAge' => 999999999]);
-                        }
+                    foreach ($matches[1] as $filename) {
+                        $search[] = $filename;
+                        $replace[] = $app->assets->getUrl($filename, ['cacheMaxAge' => 999999999]);
                     }
                     $text = str_replace($search, $replace, $text);
                 }
