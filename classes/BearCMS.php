@@ -1517,7 +1517,7 @@ class BearCMS
         }
 
         if ($response instanceof App\Response\HTML) {
-            if (strpos($response->content, 'class="bearcms-blogpost-page-date-container"') !== false && $currentThemeOptions['blogPostPageDateVisibility'] === '0') {
+            if (strpos($response->content, 'class="bearcms-blogpost-page-date-container"') !== false && $currentThemeOptions->getValue('blogPostPageDateVisibility') === '0') {
                 $domDocument = new HTML5DOMDocument();
                 $domDocument->loadHTML($response->content);
                 $element = $domDocument->querySelector('div.bearcms-blogpost-page-date-container');
