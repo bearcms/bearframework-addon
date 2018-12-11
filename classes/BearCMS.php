@@ -651,6 +651,101 @@ class BearCMS
                         }
                     }
                 ]);
+                if ($hasThemes) {
+                    Internal\Themes::$elementsOptions[] = function($context, $idPrefix, $parentSelector) {
+                        $groupComments = $context->addGroup(__("bearcms.themes.options.Comments"));
+
+                        $groupComment = $groupComments->addGroup(__("bearcms.themes.options.comments.Comment"));
+                        $groupComment->addOption($idPrefix . "CommentsCommentCSS", "css", '', [
+                            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                            "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-comments-comment", "overflow:hidden;"],
+                                ["selector", $parentSelector . " .bearcms-comments-comment"]
+                            ]
+                        ]);
+
+                        $groupCommentAuthorName = $groupComment->addGroup(__("bearcms.themes.options.comments.Author name"));
+                        $groupCommentAuthorName->addOption($idPrefix . "CommentsAuthorNameCSS", "css", '', [
+                            "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-comments-comment-author-name", "display:inline-block;"],
+                                ["selector", $parentSelector . " .bearcms-comments-comment-author-name"]
+                            ]
+                        ]);
+
+                        $groupCommentAuthorImage = $groupComment->addGroup(__("bearcms.themes.options.comments.Author image"));
+                        $groupCommentAuthorImage->addOption($idPrefix . "CommentsAuthorImageCSS", "css", '', [
+                            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                            "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-comments-comment-author-image", "display:inline-block;float:left;"],
+                                ["selector", $parentSelector . " .bearcms-comments-comment-author-image"]
+                            ]
+                        ]);
+
+                        $groupCommentDate = $groupComment->addGroup(__("bearcms.themes.options.comments.Date"));
+                        $groupCommentDate->addOption($idPrefix . "CommentsDateCSS", "css", '', [
+                            "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-comments-comment-date", "display:inline-block;float:right;"],
+                                ["selector", $parentSelector . " .bearcms-comments-comment-date"]
+                            ]
+                        ]);
+
+                        $groupCommentText = $groupComment->addGroup(__("bearcms.themes.options.comments.Text"));
+                        $groupCommentText->addOption($idPrefix . "CommentsTextCSS", "css", '', [
+                            "cssOutput" => [
+                                ["selector", $parentSelector . " .bearcms-comments-comment-text"]
+                            ]
+                        ]);
+
+                        $groupCommentTextLinks = $groupComment->addGroup(__("bearcms.themes.options.comments.Text links"));
+                        $groupCommentTextLinks->addOption($idPrefix . "CommentsTextLinksCSS", "css", '', [
+                            "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-comments-comment-text a", "display:inline-block;"],
+                                ["selector", $parentSelector . " .bearcms-comments-comment-text a"]
+                            ]
+                        ]);
+
+                        $groupTextInput = $groupComments->addGroup(__("bearcms.themes.options.comments.Text input"));
+                        $groupTextInput->addOption($idPrefix . "CommentsTextInputCSS", "css", '', [
+                            "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                            "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-comments-element-text-input", "box-sizing:border-box;border:0;"],
+                                ["selector", $parentSelector . " .bearcms-comments-element-text-input"]
+                            ]
+                        ]);
+
+                        $groupSendButton = $groupComments->addGroup(__("bearcms.themes.options.comments.Send button"));
+                        $groupSendButton->addOption($idPrefix . "CommentsSendButtonCSS", "css", '', [
+                            "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-comments-element-send-button", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
+                                ["selector", $parentSelector . " .bearcms-comments-element-send-button"]
+                            ]
+                        ]);
+
+                        $groupSendButtonWaiting = $groupSendButton->addGroup(__("bearcms.themes.options.comments.Send button waiting"));
+                        $groupSendButtonWaiting->addOption($idPrefix . "CommentsSendButtonWaitingCSS", "css", '', [
+                            "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-comments-element-send-button-waiting", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
+                                ["selector", $parentSelector . " .bearcms-comments-element-send-button-waiting"]
+                            ]
+                        ]);
+
+                        $groupShowMoreButton = $groupComments->addGroup(__("bearcms.themes.options.comments.Show more button"));
+                        $groupShowMoreButton->addOption($idPrefix . "CommentsShowMoreButtonCSS", "css", '', [
+                            "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-comments-show-more-button", "display:inline-block;"],
+                                ["selector", $parentSelector . " .bearcms-comments-show-more-button"]
+                            ]
+                        ]);
+
+                        $groupShowMoreButtonContainer = $groupShowMoreButton->addGroup(__("bearcms.themes.options.comments.Container"));
+                        $groupShowMoreButtonContainer->addOption($idPrefix . "CommentsShowMoreButtonContainerCSS", "css", '', [
+                            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                            "cssOutput" => [
+                                ["selector", $parentSelector . " .bearcms-comments-show-more-button-container"]
+                            ]
+                        ]);
+                    };
+                }
             }
             if ($hasElements || Config::hasFeature('ELEMENTS_FORUM_POSTS')) {
                 Internal\ElementsTypes::add('forumPosts', [
