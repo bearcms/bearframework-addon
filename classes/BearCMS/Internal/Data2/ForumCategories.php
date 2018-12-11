@@ -36,7 +36,7 @@ class ForumCategories
      * Retrieves information about the page specified
      * 
      * @param string $id The page ID
-     * @return \BearCMS\Internal\DataObject|null The page data or null if page not found
+     * @return \IvoPetkov\DataObject|null The page data or null if page not found
      * @throws \InvalidArgumentException
      */
     public function get(string $id): ?\BearCMS\Internal\Data2\ForumCategory
@@ -51,9 +51,9 @@ class ForumCategories
     /**
      * Retrieves a list of all pages
      * 
-     * @return \BearCMS\Internal\DataList|\BearCMS\Internal\Data2\ForumCategory[] List containing all pages data
+     * @return \IvoPetkov\DataList|\BearCMS\Internal\Data2\ForumCategory[] List containing all pages data
      */
-    public function getList(): \BearCMS\Internal\DataList
+    public function getList(): \IvoPetkov\DataList
     {
         if (!isset(self::$cache['list'])) {
             $list = Internal\Data::getList('bearcms/forums/categories/category/');
@@ -75,7 +75,7 @@ class ForumCategories
             self::$cache['list'] = $list;
             unset($list);
         }
-        return new Internal\DataList(self::$cache['list']);
+        return new \IvoPetkov\DataList(self::$cache['list']);
     }
 
 }

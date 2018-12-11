@@ -24,7 +24,7 @@ class ForumPosts
         $properties = ['id', 'status', 'author', 'title', 'text', 'categoryID', 'createdTime', 'replies'];
         foreach ($properties as $property) {
             if ($property === 'replies') {
-                $temp = new Internal\DataList();
+                $temp = new \IvoPetkov\DataList();
                 if (isset($rawData['replies'])) {
                     foreach ($rawData['replies'] as $replyData) {
                         $reply = new Internal\Data2\ForumPostReply();
@@ -48,7 +48,7 @@ class ForumPosts
      * Retrieves information about the forum post specified
      * 
      * @param string $id The forum post ID
-     * @return \BearCMS\Internal\DataObject|null The forum post data or null if the thread not found
+     * @return \IvoPetkov\DataObject|null The forum post data or null if the thread not found
      * @throws \InvalidArgumentException
      */
     public function get(string $id): ?\BearCMS\Internal\Data2\ForumPost
@@ -63,7 +63,7 @@ class ForumPosts
     /**
      * Retrieves a list of all forum posts
      * 
-     * @return \BearCMS\Internal\DataList|\BearCMS\Internal\Data2\ForumPost[] List containing all forum posts data
+     * @return \IvoPetkov\DataList|\BearCMS\Internal\Data2\ForumPost[] List containing all forum posts data
      */
     public function getList()
     {
@@ -71,7 +71,7 @@ class ForumPosts
         array_walk($list, function(&$value) {
             $value = $this->makeForumPostFromRawData($value);
         });
-        return new Internal\DataList($list);
+        return new \IvoPetkov\DataList($list);
     }
 
 }

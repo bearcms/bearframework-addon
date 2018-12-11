@@ -1,36 +1,38 @@
-# BearCMS\Data\Settings\Settings
+# BearCMS\Data\BlogPosts\BlogPost
 
 extends BearFramework\Models\Model
 
 ## Properties
 
-##### public bool $allowSearchEngines
+##### public array $categoriesIDs
+
+##### public int|null $createdTime
 
 ##### public array $custom
 
-##### public string|null $description
+##### public string|null $descriptionTagContent
 
-##### public bool $disabled
+##### public string|null $id
 
-##### public string|null $disabledText
+##### public string|null $keywordsTagContent
 
-##### public bool $enableRSS
+##### public int|null $lastChangeTime
 
-##### public bool $externalLinks
+##### public string|null $publishedTime
 
-##### public string|null $icon
+##### public string|null $slug
 
-##### public string|null $keywords
-
-##### public string|null $language
-
-##### public string|null $rssType
+##### public string|null $status
 
 ##### public string|null $title
 
+##### public string|null $titleTagContent
+
+##### public string|null $trashedTime
+
 ## Methods
 
-##### public [__construct](bearcms.data.settings.settings.__construct.method.md) ( void )
+##### public [__construct](bearcms.data.blogposts.blogpost.__construct.method.md) ( void )
 
 ### Inherited from BearFramework\Models\Model:
 
@@ -46,7 +48,7 @@ extends BearFramework\Models\Model
 
 ## Details
 
-File: /classes/BearCMS/Data/Settings/Settings.php
+File: /classes/BearCMS/Data/BlogPosts/BlogPost.php
 
 ---
 

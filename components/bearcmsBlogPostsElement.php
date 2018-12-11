@@ -19,7 +19,7 @@ if (strlen($component->source) > 0 && array_search($component->source, ['allPost
     $source = $component->source;
 }
 
-$list = Internal2::$data2->blogPosts->getList()
+$list = $app->bearCMS->data->blogPosts->getList()
         ->filterBy('status', 'published')
         ->sortBy('publishedTime', 'desc');
 
@@ -64,9 +64,9 @@ if ($list->length > 0) {
     $counter = 0;
     foreach ($list as $blogPost) {
         $counter++;
-        $title = isset($blogPost['title']) ? $blogPost['title'] : 'Unknown';
-        $url = $app->request->base . Config::$blogPagesPathPrefix . (isset($blogPost['slug']) ? $blogPost['slug'] : 'unknown') . '/';
-        $publishedTime = isset($blogPost['publishedTime']) ? $blogPost['publishedTime'] : '';
+        $title = strlen($blogPost->title) > 0 ? $blogPost->title : 'Unknown';
+        $url = $app->request->base . Config::$blogPagesPathPrefix . $blogPost->slug . '/';
+        $publishedTime = $blogPost->publishedTime;
 
         $content .= '<div class="bearcms-blog-posts-element-post">';
 
@@ -81,7 +81,7 @@ if ($list->length > 0) {
             $content .= '</div>';
         }
         if ($type === 'summary' || $type === 'full') {
-            $containerID = 'bearcms-blogpost-' . $blogPost['id'];
+            $containerID = 'bearcms-blogpost-' . $blogPost->id;
             $content .= '<div class="bearcms-blog-posts-element-post-content">';
             if ($type === 'summary') {
                 $containerData = Internal\ElementsHelper::getContainerData($containerID);

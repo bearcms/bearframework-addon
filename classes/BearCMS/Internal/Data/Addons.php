@@ -43,9 +43,9 @@ class Addons
     /**
      * 
      * @param string $addonID
-     * @return \BearCMS\Internal\DataObject|null
+     * @return \IvoPetkov\DataObject|null
      */
-    static function get(string $addonID): ?\BearCMS\Internal\DataObject
+    static function get(string $addonID): ?\IvoPetkov\DataObject
     {
         $data = self::getData($addonID);
         if ($data !== null) {
@@ -57,12 +57,12 @@ class Addons
     /**
      * 
      * @param string $raw
-     * @return \BearCMS\Internal\DataObject
+     * @return \IvoPetkov\DataObject
      */
-    static function makeFromRawData(string $raw): \BearCMS\Internal\DataObject
+    static function makeFromRawData(string $raw): \IvoPetkov\DataObject
     {
         $data = json_decode($raw, true);
-        return new \BearCMS\Internal\DataObject([
+        return new \IvoPetkov\DataObject([
             'id' => $data['id'],
             'enabled' => (isset($data['enabled']) ? (int) $data['enabled'] > 0 : false),
             'exists' => \BearFramework\Addons::exists($data['id']),

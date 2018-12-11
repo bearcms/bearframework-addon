@@ -1,36 +1,24 @@
-# BearCMS\Data\Settings\Settings
+# BearCMS\Data\Users\User
 
 extends BearFramework\Models\Model
 
 ## Properties
 
-##### public bool $allowSearchEngines
+##### public array $emails
 
-##### public array $custom
+##### public ?string $hashedPassword
 
-##### public string|null $description
+##### public string $id
 
-##### public bool $disabled
+##### public ?int $lastLoginTime
 
-##### public string|null $disabledText
+##### public array $permissions
 
-##### public bool $enableRSS
-
-##### public bool $externalLinks
-
-##### public string|null $icon
-
-##### public string|null $keywords
-
-##### public string|null $language
-
-##### public string|null $rssType
-
-##### public string|null $title
+##### public ?int $registerTime
 
 ## Methods
 
-##### public [__construct](bearcms.data.settings.settings.__construct.method.md) ( void )
+##### public [__construct](bearcms.data.users.user.__construct.method.md) ( void )
 
 ### Inherited from BearFramework\Models\Model:
 
@@ -46,7 +34,7 @@ extends BearFramework\Models\Model
 
 ## Details
 
-File: /classes/BearCMS/Data/Settings/Settings.php
+File: /classes/BearCMS/Data/Users/User.php
 
 ---
 

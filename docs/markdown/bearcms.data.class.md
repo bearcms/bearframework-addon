@@ -2,7 +2,13 @@
 
 ## Properties
 
-##### public [BearCMS\Data\Settings](bearcms.data.settings.class.md) $settings
+##### public readonly [BearCMS\Data\BlogPosts](bearcms.data.blogposts.class.md) $blogPosts
+
+##### public readonly [BearCMS\Data\Pages](bearcms.data.pages.class.md) $pages
+
+##### public readonly [BearCMS\Data\Settings](bearcms.data.settings.class.md) $settings
+
+##### public readonly [BearCMS\Data\Users](bearcms.data.users.class.md) $users
 
 ## Methods
 

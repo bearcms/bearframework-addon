@@ -16,16 +16,12 @@ use BearCMS\Internal;
  * Contains reference to the different data types
  * 
  * @property \BearCMS\Internal\Data2\BlogCategories $blogCategories Information about the blog categories
- * @property \BearCMS\Internal\Data2\BlogPosts $blogPosts Information about the blog posts
  * @property \BearCMS\Internal\Data2\Comments $comments Information about the comments
  * @property \BearCMS\Internal\Data2\CommentsThreads $commentsThreads Information about the comments threads
  * @property \BearCMS\Internal\Data2\ForumCategories $forumCategories Information about the forum categories
  * @property \BearCMS\Internal\Data2\ForumPosts $forumPosts Information about the forum posts
  * @property \BearCMS\Internal\Data2\ForumPostsReplies $forumPostsReplies Information about the forum replies
- * @property \BearCMS\Internal\Data2\Pages $pages Information about the site pages
- * @property \BearCMS\Internal\Data2\Settings $settings Information about the site settings
  * @property \BearCMS\Internal\Data2\Themes $themes Information about the site themes
- * @property \BearCMS\Internal\Data2\Users $users Information about the CMS users (administrators)
  * @property \BearCMS\Internal\Data2\UsersInvitations $usersInvitations Information about the invited CMS users (administrators)
  * @internal
  */
@@ -45,12 +41,6 @@ class Data2
         $this->defineProperty('blogCategories', [
             'init' => function() {
                 return new \BearCMS\Internal\Data2\BlogCategories();
-            },
-            'readonly' => true
-        ]);
-        $this->defineProperty('blogPosts', [
-            'init' => function() {
-                return new \BearCMS\Internal\Data2\BlogPosts();
             },
             'readonly' => true
         ]);
@@ -84,27 +74,9 @@ class Data2
             },
             'readonly' => true
         ]);
-        $this->defineProperty('pages', [
-            'init' => function() {
-                return new \BearCMS\Internal\Data2\Pages();
-            },
-            'readonly' => true
-        ]);
-        $this->defineProperty('settings', [
-            'init' => function() {
-                return new \BearCMS\Internal\Data2\Settings();
-            },
-            'readonly' => true
-        ]);
         $this->defineProperty('themes', [
             'init' => function() {
                 return new \BearCMS\Internal\Data2\Themes();
-            },
-            'readonly' => true
-        ]);
-        $this->defineProperty('users', [
-            'init' => function() {
-                return new \BearCMS\Internal\Data2\Users();
             },
             'readonly' => true
         ]);

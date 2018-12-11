@@ -29,11 +29,11 @@ class Controller
         $app = App::get();
         $path = (string) $app->request->path;
         if ($path === Config::$adminPagesPathPrefix) {
-            if (!Internal2::$data2->users->hasUsers()) {
+            if (!$app->bearCMS->data->users->hasUsers()) {
                 return new App\Response\TemporaryRedirect($app->request->base . Config::$adminPagesPathPrefix . 'firstrun/');
             }
         } elseif ($path === Config::$adminPagesPathPrefix . 'firstrun/') {
-            if (Internal2::$data2->users->hasUsers()) {
+            if ($app->bearCMS->data->users->hasUsers()) {
                 return new App\Response\TemporaryRedirect($app->request->base . Config::$adminPagesPathPrefix);
             }
         }
@@ -189,14 +189,14 @@ class Controller
         $data .= '<atom:link href="' . $app->urls->get('/rss.xml') . '" rel="self" type="application/rss+xml">';
         $data .= '</atom:link>';
 
-        $blogPosts = Internal2::$data2->blogPosts->getList()
+        $blogPosts = $app->bearCMS->data->blogPosts->getList()
                 ->filterBy('status', 'published')
                 ->sortBy('publishedTime', 'desc');
         $contentType = $settings->rssType;
         $counter = 0;
         foreach ($blogPosts as $blogPost) {
-            $blogPostUrl = isset($blogPost['slug']) ? $app->urls->get(Config::$blogPagesPathPrefix . $blogPost['slug'] . '/') : '';
-            $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPost['id'] . '"/>');
+            $blogPostUrl = $app->urls->get(Config::$blogPagesPathPrefix . $blogPost->slug . '/');
+            $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPost->id . '"/>');
             $domDocument = new \IvoPetkov\HTML5DOMDocument();
             $domDocument->loadHTML($blogPostContent);
             $contentElementsContainer = $domDocument->querySelector('body')->firstChild;
@@ -214,10 +214,10 @@ class Controller
                 $content .= sprintf(__('bearcms.rss.Read the post at %s'), '<a href="' . $blogPostUrl . '">' . $blogPostUrl . '</a>');
             }
             $data .= '<item>';
-            $data .= '<title>' . (isset($blogPost['title']) ? htmlspecialchars($blogPost['title']) : '') . '</title>';
+            $data .= '<title>' . htmlspecialchars($blogPost->title) . '</title>';
             $data .= '<link>' . $blogPostUrl . '</link>';
             $data .= '<description><![CDATA[' . $content . ']]></description>';
-            $data .= '<pubDate>' . (isset($blogPost['publishedTime']) ? date('r', $blogPost['publishedTime']) : '') . '</pubDate>';
+            $data .= '<pubDate>' . date('r', $blogPost->publishedTime) . '</pubDate>';
             $data .= '<guid isPermaLink="false">' . $blogPostUrl . '</guid>';
             $data .= '</item>';
             $counter++;

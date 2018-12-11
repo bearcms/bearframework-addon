@@ -12,7 +12,7 @@ namespace BearCMS\Internal\Data2;
 /**
  * @internal
  */
-class CommentsThread extends \BearCMS\Internal\DataObject
+class CommentsThread extends \IvoPetkov\DataObject
 {
     
 }

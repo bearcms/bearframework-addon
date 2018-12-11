@@ -184,7 +184,8 @@ class ServerCommands
      */
     static function blogPostsList(): array
     {
-        return Internal2::$data2->blogPosts->getList()->toArray();
+        $app = App::get();
+        return $app->bearCMS->data->blogPosts->getList()->toArray();
     }
 
     /**
@@ -544,7 +545,7 @@ class ServerCommands
     {
         $result = Internal2::$data2->forumPosts->get($data['forumPostID']);
         $result->author = Internal\PublicProfile::getFromAuthor($result->author)->toArray();
-        $result->replies = new \BearCMS\Internal\DataList();
+        $result->replies = new \IvoPetkov\DataList();
         return $result->toArray();
     }
 
@@ -929,8 +930,9 @@ class ServerCommands
      */
     static function userIDByEmail(array $data): ?string
     {
+        $app = App::get();
         $email = (string) $data['email'];
-        $users = Internal2::$data2->users->getList();
+        $users = $app->bearCMS->data->users->getList();
         foreach ($users as $user) {
             if (array_search($email, $user->emails) !== false) {
                 return $user->id;
@@ -945,7 +947,8 @@ class ServerCommands
      */
     static function usersIDs(): array
     {
-        $users = Internal2::$data2->users->getList();
+        $app = App::get();
+        $users = $app->bearCMS->data->users->getList();
         $result = [];
         foreach ($users as $user) {
             $result[] = $user->id;

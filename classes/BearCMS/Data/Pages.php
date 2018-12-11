@@ -7,12 +7,12 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Internal\Data2;
+namespace BearCMS\Data;
 
 use BearCMS\Internal;
 
 /**
- * @internal
+ * 
  */
 class Pages
 {
@@ -24,48 +24,36 @@ class Pages
 //
 //    function __construct()
 //    {
-//        $this->setModel(\BearCMS\Internal\Data2\Page::class, 'id');
+//        $this->setModel(\BearCMS\Data\Pages\Page::class, 'id');
 //        $this->useAppDataDriver('bearcms/pages/page/');
 //    }
 
     static private $cache = [];
 
-    private function makePageFromRawData($rawData): \BearCMS\Internal\Data2\Page
-    {
-        $data = json_decode($rawData, true);
-        if (isset($data['parentID']) && strlen($data['parentID']) === 0) {
-            $data['parentID'] = null;
-        }
-        return new Internal\Data2\Page($data);
-    }
-
     /**
-     * Retrieves information about the page specified
      * 
-     * @param string $id The page ID
-     * @return \BearCMS\Internal\DataObject|null The page data or null if page not found
-     * @throws \InvalidArgumentException
+     * @param string $id
+     * @return \BearCMS\Data\Pages\Page|null
      */
-    public function get(string $id): ?\BearCMS\Internal\Data2\Page
+    public function get(string $id): ?\BearCMS\Data\Pages\Page
     {
         $data = Internal\Data::getValue('bearcms/pages/page/' . md5($id) . '.json');
         if ($data !== null) {
-            return $this->makePageFromRawData($data);
+            return \BearCMS\Data\Pages\Page::fromJSON($data);
         }
         return null;
     }
 
     /**
-     * Retrieves a list of all pages
      * 
-     * @return \BearCMS\Internal\DataList List containing all pages data
+     * @return \BearFramework\Models\ModelsList
      */
-    public function getList(): \BearCMS\Internal\DataList
+    public function getList(): \BearFramework\Models\ModelsList
     {
         if (!isset(self::$cache['list'])) {
             $list = Internal\Data::getList('bearcms/pages/page/');
             array_walk($list, function(&$value) {
-                $value = $this->makePageFromRawData($value);
+                $value = \BearCMS\Data\Pages\Page::fromJSON($value);
             });
             $structureData = Internal\Data::getValue('bearcms/pages/structure.json');
             $structureData = $structureData === null ? [] : json_decode($structureData, true);
@@ -89,7 +77,7 @@ class Pages
             self::$cache['list'] = $list;
             unset($list);
         }
-        return new Internal\DataList(self::$cache['list']);
+        return new \BearFramework\Models\ModelsList(self::$cache['list']);
     }
 
 }

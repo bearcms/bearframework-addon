@@ -20,13 +20,13 @@ class ForumPostsReplies
     /**
      * Retrieves a list of all forum replies
      * 
-     * @return \BearCMS\Internal\DataList List containing all forum replies data
+     * @return \IvoPetkov\DataList List containing all forum replies data
      */
     public function getList()
     {
         $list = Internal\Data::getList('bearcms/forums/posts/post/');
 
-        $result = new Internal\DataList();
+        $result = new \IvoPetkov\DataList();
         foreach ($list as $value) {
             $rawData = json_decode($value, true);
             if (isset($rawData['id'], $rawData['replies'])) {

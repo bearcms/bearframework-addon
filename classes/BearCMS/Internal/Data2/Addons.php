@@ -27,7 +27,7 @@ class Addons
      * Retrieves information about the addon specified
      * 
      * @param string $id The addon ID
-     * @return \BearCMS\Internal\DataObject|null The addon data or null if addon not found
+     * @return \IvoPetkov\DataObject|null The addon data or null if addon not found
      * @throws \InvalidArgumentException
      */
     public function get(string $id)
@@ -43,7 +43,7 @@ class Addons
     /**
      * Retrieves a list of all addons
      * 
-     * @return \BearCMS\Internal\DataList List containing all addons data
+     * @return \IvoPetkov\DataList List containing all addons data
      */
     public function getList()
     {
@@ -54,7 +54,7 @@ class Addons
         foreach ($list as $item) {
             $result[] = $this->makeAddonFromRawData($item->value);
         }
-        return new Internal\DataList($result);
+        return new \IvoPetkov\DataList($result);
     }
 
 }

@@ -21,9 +21,9 @@ class PublicProfile
     /**
      * 
      * @param array $author
-     * @return \BearCMS\Internal\DataObject
+     * @return \IvoPetkov\DataObject
      */
-    static function getFromAuthor(array $author): \BearCMS\Internal\DataObject
+    static function getFromAuthor(array $author): \IvoPetkov\DataObject
     {
         $data = [];
         if (isset($author['type']) && $author['type'] === 'user') {
@@ -46,7 +46,7 @@ class PublicProfile
         if (!isset($data['imageLarge']) || strlen($data['imageLarge']) === 0) {
             $data['imageLarge'] = '';
         }
-        return new Internal\DataObject($data);
+        return new \IvoPetkov\DataObject($data);
     }
 
 }

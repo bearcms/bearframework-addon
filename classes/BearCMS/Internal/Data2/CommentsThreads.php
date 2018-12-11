@@ -29,7 +29,7 @@ class CommentsThreads
      * Retrieves information about the comments thread specified
      * 
      * @param string $id The comments thread ID
-     * @return \BearCMS\Internal\DataObject|null The comments thread data or null if the thread not found
+     * @return \IvoPetkov\DataObject|null The comments thread data or null if the thread not found
      * @throws \InvalidArgumentException
      */
     public function get(string $id): ?\BearCMS\Internal\Data2\CommentsThread
@@ -44,7 +44,7 @@ class CommentsThreads
     /**
      * Retrieves a list of all comments threads
      * 
-     * @return \BearCMS\Internal\DataList List containing all comments threads data
+     * @return \IvoPetkov\DataList List containing all comments threads data
      */
     public function getList()
     {
@@ -52,7 +52,7 @@ class CommentsThreads
         array_walk($list, function(&$value) {
             $value = $this->makeCommentsThreadPostFromRawData($value);
         });
-        return new Internal\DataList($list);
+        return new \IvoPetkov\DataList($list);
     }
 
 }

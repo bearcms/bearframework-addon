@@ -17,7 +17,7 @@ namespace BearCMS\Internal\Data2;
  * @property ?string $text
  * @property string $categoryID
  * @property ?int $createdTime
- * @property \BearCMS\Internal\DataList|\BearCMS\Internal\Data2\ForumPostReply[] $replies
+ * @property \IvoPetkov\DataList|\BearCMS\Internal\Data2\ForumPostReply[] $replies
  * @internal
  */
 class ForumPost
@@ -50,9 +50,9 @@ class ForumPost
             'type' => '?int'
         ]);
         $this->defineProperty('replies', [
-            'type' => '\BearCMS\Internal\DataList',
+            'type' => '\IvoPetkov\DataList',
             'init' => function() {
-                return new \BearCMS\Internal\DataList();
+                return new \IvoPetkov\DataList();
             }
         ]);
     }

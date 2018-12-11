@@ -46,7 +46,7 @@ class UsersInvitations
     /**
      * Retrieves a list of all users invitations
      * 
-     * @return \BearCMS\Internal\DataList|\BearCMS\Internal\Data2\UserInvitation[] List containing all users invitations data
+     * @return \IvoPetkov\DataList|\BearCMS\Internal\Data2\UserInvitation[] List containing all users invitations data
      */
     public function getList()
     {
@@ -54,7 +54,7 @@ class UsersInvitations
         array_walk($list, function(&$value) {
             $value = $this->makeUserFromRawData($value);
         });
-        return new \BearCMS\Internal\DataList($list);
+        return new \IvoPetkov\DataList($list);
     }
 
 }

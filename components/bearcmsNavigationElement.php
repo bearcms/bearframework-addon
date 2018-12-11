@@ -83,11 +83,11 @@ if (strlen($component->menuType) > 0) {
 
 $pages = null;
 if ($source === 'topPages' || $source === 'allPages') {
-    $pages = Internal2::$data2->pages->getList()
+    $pages = $app->bearCMS->data->pages->getList()
             ->filterBy('parentID', null)
             ->filterBy('status', 'published');
 } elseif ($source === 'pageChildren') {
-    $pages = Internal2::$data2->pages->getList()
+    $pages = $app->bearCMS->data->pages->getList()
             ->filterBy('parentID', $sourceParentPageID)
             ->filterBy('status', 'published');
 }
@@ -105,7 +105,7 @@ if (strlen($dataResponsiveAttributes) > 0) {
 }
 
 if ($pages !== null && $showHomeLink) {
-    $pages->unshift(new \BearCMS\Internal\DataObject(['id' => '_home', 'path' => '/', 'name' => $homeLinkText, 'parentID' => '', 'status' => 'published']));
+    $pages->unshift(\BearCMS\Data\Pages\Page::fromArray(['id' => '_home', 'path' => '/', 'name' => $homeLinkText, 'parentID' => null, 'status' => 'published']));
 }
 
 $itemsHtml = (string) $component->innerHTML;

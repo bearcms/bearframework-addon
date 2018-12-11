@@ -131,11 +131,11 @@ class Comments
      * 
      * @param array $rawCommentsData
      * @param string $threadID
-     * @return \BearCMS\Internal\DataList
+     * @return \IvoPetkov\DataList
      */
-    static function createCommentsCollection(array $rawCommentsData, string $threadID): \BearCMS\Internal\DataList
+    static function createCommentsCollection(array $rawCommentsData, string $threadID): \IvoPetkov\DataList
     {
-        $dataList = new \BearCMS\Internal\DataList();
+        $dataList = new \IvoPetkov\DataList();
         foreach ($rawCommentsData as $rawCommentData) {
             $comment = new \BearCMS\Internal\Data2\Comment();
             $properties = ['id', 'status', 'author', 'text', 'createdTime'];
@@ -165,7 +165,7 @@ class Comments
         if (!is_array($result)) {
             $result = [];
 
-            $pages = Internal2::$data2->pages->getList();
+            $pages = $app->bearCMS->data->pages->getList();
             $walkPageElements = function($pageID, $path) use ($app, &$result) {
                 $url = null;
                 $containerElementIDs = Internal\ElementsHelper::getContainerElementsIDs('bearcms-page-' . $pageID);
@@ -189,7 +189,7 @@ class Comments
             foreach ($pages as $page) {
                 $walkPageElements($page->id, $page->path);
             }
-            $blogPosts = Internal2::$data2->blogPosts->getList();
+            $blogPosts = $app->bearCMS->data->blogPosts->getList();
             foreach ($blogPosts as $blogPost) {
                 $url = $app->urls->get(Config::$blogPagesPathPrefix . (strlen($blogPost->slug) === 0 ? 'draft-' . $blogPost->id : $blogPost->slug) . '/');
                 $threadID = 'bearcms-blogpost-' . $blogPost->id;

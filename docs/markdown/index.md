@@ -10,9 +10,21 @@
 
 ### [BearCMS\Data](bearcms.data.class.md)
 
+### [BearCMS\Data\BlogPosts](bearcms.data.blogposts.class.md)
+
+### [BearCMS\Data\BlogPosts\BlogPost](bearcms.data.blogposts.blogpost.class.md)
+
+### [BearCMS\Data\Pages](bearcms.data.pages.class.md)
+
+### [BearCMS\Data\Pages\Page](bearcms.data.pages.page.class.md)
+
 ### [BearCMS\Data\Settings](bearcms.data.settings.class.md)
 
 ### [BearCMS\Data\Settings\Settings](bearcms.data.settings.settings.class.md)
+
+### [BearCMS\Data\Users](bearcms.data.users.class.md)
+
+### [BearCMS\Data\Users\User](bearcms.data.users.user.class.md)
 
 ### [BearCMS\Themes](bearcms.themes.class.md)
 

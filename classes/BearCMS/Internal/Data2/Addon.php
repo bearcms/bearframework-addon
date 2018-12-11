@@ -12,7 +12,7 @@ namespace BearCMS\Internal\Data2;
 /**
  * @internal
  */
-class Addon extends \BearCMS\Internal\DataObject
+class Addon extends \IvoPetkov\DataObject
 {
     
 }
