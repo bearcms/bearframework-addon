@@ -113,13 +113,4 @@ class Data2
         return null;
     }
 
-    /**
-     * 
-     * @return int
-     */
-    public function getUploadsSize(): int
-    {
-        return Internal\Data\UploadsSize::getSize();
-    }
-
 }

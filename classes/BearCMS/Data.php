@@ -51,4 +51,13 @@ class Data
         ;
     }
 
+    /**
+     * 
+     * @return int
+     */
+    public function getUploadsSize(): int
+    {
+        return Internal\Data\UploadsSize::getSize();
+    }
+
 }

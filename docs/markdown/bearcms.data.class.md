@@ -14,6 +14,8 @@
 
 ##### public [__construct](bearcms.data.__construct.method.md) ( void )
 
+##### public int [getUploadsSize](bearcms.data.getuploadssize.method.md) ( void )
+
 ##### protected object [defineProperty](bearcms.data.defineproperty.method.md) ( string $name [, array $options = [] ] )
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defines a new property.
