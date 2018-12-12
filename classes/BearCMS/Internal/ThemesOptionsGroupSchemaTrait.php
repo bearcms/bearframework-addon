@@ -25,6 +25,17 @@ trait ThemesOptionsGroupSchemaTrait
 
     /**
      * 
+     * @param \BearCMS\Themes\Options\OptionSchema|\BearCMS\Themes\Options\GroupSchema $optionOrGroup
+     * @return self
+     */
+    public function add($optionOrGroup): self
+    {
+        $this->options[] = $optionOrGroup;
+        return $this;
+    }
+
+    /**
+     * 
      * @param string $id
      * @param string $type
      * @param string $name
@@ -100,7 +111,7 @@ trait ThemesOptionsGroupSchemaTrait
      */
     public function getList(): array
     {
-        return $this->options;
+        return $this->options; // todo clone
     }
 
 }
