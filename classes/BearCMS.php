@@ -1501,12 +1501,6 @@ class BearCMS
             $this->themes->addDefault();
         }
 
-        if (Config::hasFeature('THEMES')) {
-            // Initialize to add asset dirs
-            $currentThemeID = Internal\CurrentTheme::getID();
-            Internal\Themes::get($currentThemeID);
-        }
-
         if ($hasServer && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*'))) {
             if (Config::$useDefaultUserProfile) {
                 $this->app->users

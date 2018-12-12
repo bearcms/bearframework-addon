@@ -28,6 +28,13 @@ class Themes
     public function announce(string $id, callable $callback): self
     {
         Internal\Themes::$announcements[$id] = $callback;
+
+        // Initialize to add asset dirs
+        $currentThemeID = Internal\CurrentTheme::getID();
+        if ($currentThemeID === $id) {
+            Internal\Themes::get($currentThemeID);
+        }
+
         return $this;
     }
 
