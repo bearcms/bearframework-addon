@@ -9,6 +9,8 @@
 
 namespace BearCMS\Data\Settings;
 
+use BearCMS\Internal2;
+
 /**
  * 
  * @property string|null $title
@@ -82,6 +84,17 @@ class Settings extends \BearFramework\Models\Model
                     'type' => 'array'
                 ])
         ;
+    }
+
+    static function fromArray(array $data)
+    {
+        if (isset($data['icon']) && strlen($data['icon']) > 0) {
+            $icon = Internal2::$data2->getRealFilename($data['icon']);
+            if ($icon !== null) {
+                $data['icon'] = $icon;
+            }
+        }
+        return parent::fromArray($data);
     }
 
 }

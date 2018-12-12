@@ -904,11 +904,8 @@ class BearCMS
                             $settings = $this->app->bearCMS->data->settings->get();
                             $icon = $settings->icon;
                             if (isset($icon{0})) {
-                                $filename = Internal2::$data2->getRealFilename($icon);
-                                if ($filename !== null) {
-                                    $url = $this->app->assets->getUrl($filename, ['cacheMaxAge' => 999999999, 'width' => (int) $size, 'height' => (int) $size]);
-                                    return new App\Response\TemporaryRedirect($url);
-                                }
+                                $url = $this->app->assets->getUrl($icon, ['cacheMaxAge' => 999999999, 'width' => (int) $size, 'height' => (int) $size]);
+                                return new App\Response\TemporaryRedirect($url);
                             }
                         }
                     }
