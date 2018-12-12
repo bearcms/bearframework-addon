@@ -2,6 +2,8 @@
 
 ## Methods
 
+##### public self [add](bearcms.themes.options.schema.add.method.md) ( [BearCMS\Themes\Options\OptionSchema](bearcms.themes.options.optionschema.class.md)|[BearCMS\Themes\Options\GroupSchema](bearcms.themes.options.groupschema.class.md) $optionOrGroup )
+
 ##### public self [addCustomCSS](bearcms.themes.options.schema.addcustomcss.method.md) ( [ string $id = 'customCSS' ] )
 
 ##### public self [addElements](bearcms.themes.options.schema.addelements.method.md) ( string $idPrefix , string $parentSelector )
