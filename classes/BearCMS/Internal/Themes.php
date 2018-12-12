@@ -62,8 +62,10 @@ class Themes
     {
         if (isset(self::$announcements[$id])) {
             if (is_callable(self::$announcements[$id])) {
+                $app = App::get();
                 $theme = new \BearCMS\Themes\Theme($id);
                 call_user_func(self::$announcements[$id], $theme);
+                $app->hooks->execute('bearCMSThemeRequested', $theme);
                 self::$announcements[$id] = $theme;
             }
             return self::$announcements[$id];
