@@ -262,21 +262,21 @@ class Themes
      * @param string $id
      * @return ?array
      */
-//    public function getStyleValues(string $id, string $styleID): ?array
-//    {
-//        if (!isset(self::$announcements[$id])) {
-//            return null;
-//        }
-//        $styles = Internal\Themes::getStyles($id);
-//        foreach ($styles as $style) {
-//            if ($style['id'] === $styleID) {
-//                if (isset($style['values'])) {
-//                    return $style['values'];
-//                }
-//            }
-//        }
-//        return [];
-//    }
+    static public function getStyleValues(string $id, string $styleID): ?array
+    {
+        if (!isset(self::$announcements[$id])) {
+            return null;
+        }
+        $styles = Internal\Themes::getStyles($id);
+        foreach ($styles as $style) {
+            if ($style['id'] === $styleID) {
+                if (isset($style['values'])) {
+                    return $style['values'];
+                }
+            }
+        }
+        return [];
+    }
 
     /**
      * 
