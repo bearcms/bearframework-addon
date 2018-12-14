@@ -1847,9 +1847,6 @@ class BearCMS
 
         if (isset(Internal\Themes::$announcements[$currentThemeID])) {
             $theme = Internal\Themes::get($currentThemeID);
-            if (is_callable($theme->initialize)) {
-                call_user_func($theme->initialize, $currentThemeOptions);
-            }
             if (is_callable($theme->get)) {
                 if ($response instanceof App\Response\HTML) {
                     $templateContent = call_user_func($theme->get, $currentThemeOptions);

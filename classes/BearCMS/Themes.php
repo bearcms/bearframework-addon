@@ -32,7 +32,13 @@ class Themes
         // Initialize to add asset dirs
         $currentThemeID = Internal\CurrentTheme::getID();
         if ($currentThemeID === $id) {
-            Internal\Themes::get($currentThemeID);
+            $theme = Internal\Themes::get($currentThemeID);
+            if (is_callable($theme->initialize)) {
+                $app = App::get();
+                $currentUserID = $app->bearCMS->currentUser->exists() ? $app->bearCMS->currentUser->getID() : null;
+                $currentThemeOptions = Internal\Themes::getOptions($currentThemeID, $currentUserID);
+                call_user_func($theme->initialize, $currentThemeOptions);
+            }
         }
 
         return $this;

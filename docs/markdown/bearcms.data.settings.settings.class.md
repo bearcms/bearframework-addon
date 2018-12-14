@@ -32,9 +32,9 @@ extends BearFramework\Models\Model
 
 ##### public [__construct](bearcms.data.settings.settings.__construct.method.md) ( void )
 
-### Inherited from BearFramework\Models\Model:
+##### public static void [fromArray](bearcms.data.settings.settings.fromarray.method.md) ( array $data )
 
-##### public static object [fromArray](bearframework.models.model.fromarray.method.md) ( array $data )
+### Inherited from BearFramework\Models\Model:
 
 ##### public static object [fromJSON](bearframework.models.model.fromjson.method.md) ( string $data )
 
