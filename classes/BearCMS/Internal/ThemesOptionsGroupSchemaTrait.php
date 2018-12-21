@@ -72,6 +72,19 @@ trait ThemesOptionsGroupSchemaTrait
      * 
      * @param string $idPrefix
      * @param string $parentSelector
+     * @return \BearCMS\Themes\Options\GroupSchema
+     */
+    public function addElementsGroup(string $idPrefix, string $parentSelector): \BearCMS\Themes\Options\GroupSchema
+    {
+        $group = $this->addGroup(__('bearcms.themes.options.Elements'));
+        $group->addElements($idPrefix, $parentSelector);
+        return $group;
+    }
+
+    /**
+     * 
+     * @param string $idPrefix
+     * @param string $parentSelector
      * @return self
      */
     public function addElements(string $idPrefix, string $parentSelector): self
@@ -80,6 +93,17 @@ trait ThemesOptionsGroupSchemaTrait
             call_user_func($callable, $this, $idPrefix, $parentSelector);
         }
         return $this;
+    }
+
+    /**
+     * 
+     * @return \BearCMS\Themes\Options\GroupSchema
+     */
+    public function addPagesGroup(): \BearCMS\Themes\Options\GroupSchema
+    {
+        $group = $this->addGroup(__('bearcms.themes.options.Pages'));
+        $group->addPages();
+        return $group;
     }
 
     /**

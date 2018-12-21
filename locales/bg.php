@@ -80,6 +80,8 @@ return [
 //    'bearcms.themes.options.Window' => 'Прозорец',
     'bearcms.themes.options.Blog post page' => 'Статия от блога',
     'bearcms.themes.options.Custom CSS' => 'Допълнителен CSS код',
+    'bearcms.themes.options.Pages' => 'Страници',
+    'bearcms.themes.options.Elements' => 'Елементи',
 //    'bearcms.themes.options.Position' => 'Позиция',
 //    'bearcms.themes.options.Top' => 'Горе',
 //    'bearcms.themes.options.Bottom' => 'Долу',

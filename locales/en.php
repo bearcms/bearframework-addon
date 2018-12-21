@@ -80,6 +80,8 @@ return [
 //    'bearcms.themes.options.Window' => 'Window',
     'bearcms.themes.options.Blog post page' => 'Blog post',
     'bearcms.themes.options.Custom CSS' => 'Custom CSS',
+    'bearcms.themes.options.Pages' => 'Pages',
+    'bearcms.themes.options.Elements' => 'Elements',
 //    'bearcms.themes.options.Position' => 'Position',
 //    'bearcms.themes.options.Top' => 'Top',
 //    'bearcms.themes.options.Bottom' => 'Bottom',
