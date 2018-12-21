@@ -11,6 +11,7 @@ namespace BearCMS;
 
 use BearFramework\App;
 use BearCMS\Internal;
+use BearCMS\Internal\Config;
 
 /**
  * 
@@ -29,15 +30,10 @@ class Themes
     {
         Internal\Themes::$announcements[$id] = $callback;
 
-        // Initialize to add asset dirs
-        $currentThemeID = Internal\CurrentTheme::getID();
-        if ($currentThemeID === $id) {
-            $theme = Internal\Themes::get($currentThemeID);
-            if (is_callable($theme->initialize)) {
-                $app = App::get();
-                $currentUserID = $app->bearCMS->currentUser->exists() ? $app->bearCMS->currentUser->getID() : null;
-                $currentThemeOptions = Internal\Themes::getOptions($currentThemeID, $currentUserID);
-                call_user_func($theme->initialize, $currentThemeOptions);
+        if (Config::$initialized) { // Initialize to add asset dirs
+            $currentThemeID = Internal\CurrentTheme::getID();
+            if ($currentThemeID === $id) {
+                Internal\Themes::initialize($currentThemeID);
             }
         }
 

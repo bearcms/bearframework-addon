@@ -17,6 +17,7 @@ use BearFramework\App;
 class Config
 {
 
+    static $initialized = false;
     static $serverUrl = null;
     static $appSecretKey = null;
     static $language = 'en';

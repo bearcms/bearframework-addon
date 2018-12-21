@@ -1566,6 +1566,12 @@ class BearCMS
                         }
                     });
         }
+
+        // Initialize to add asset dirs
+        $currentThemeID = Internal\CurrentTheme::getID();
+        Internal\Themes::initialize($currentThemeID);
+
+        Config::$initialized = true;
     }
 
     /**

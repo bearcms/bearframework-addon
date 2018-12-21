@@ -76,6 +76,22 @@ class Themes
     /**
      * 
      * @param string $id
+     * @return void
+     */
+    static function initialize(string $id): void
+    {
+        $theme = Internal\Themes::get($id);
+        if ($theme instanceof \BearCMS\Themes\Theme && is_callable($theme->initialize)) {
+            $app = App::get();
+            $currentUserID = $app->bearCMS->currentUser->exists() ? $app->bearCMS->currentUser->getID() : null;
+            $currentThemeOptions = Internal\Themes::getOptions($id, $currentUserID);
+            call_user_func($theme->initialize, $currentThemeOptions);
+        }
+    }
+
+    /**
+     * 
+     * @param string $id
      * @return string|null
      */
     static function getVersion(string $id): ?string
