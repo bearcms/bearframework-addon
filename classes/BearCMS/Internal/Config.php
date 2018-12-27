@@ -38,6 +38,7 @@ class Config
     static $whitelabel = false;
     static $addonManager = null;
     static $addDefaultThemes = true;
+    static $appSpecificServerData = [];
 
     /**
      * 
@@ -122,6 +123,12 @@ class Config
         }
         if (isset($data['addDefaultThemes'])) {
             self::$addDefaultThemes = (int) $data['addDefaultThemes'];
+        }
+        if (isset($data['appSpecificServerData'])) {
+            if (!is_array($data['appSpecificServerData'])) {
+                throw new \Exception('The appSpecificServerData value must be of type array!');
+            }
+            self::$appSpecificServerData = $data['appSpecificServerData'];
         }
     }
 

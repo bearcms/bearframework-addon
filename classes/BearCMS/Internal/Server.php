@@ -236,6 +236,7 @@ class Server
             $clientData['maxUploadsSize'] = Config::$maxUploadsSize;
             $clientData['uploadsSize'] = Internal\Data\UploadsSize::getSize();
         }
+        $clientData['appSpecific'] = Config::$appSpecificServerData;
         $data['clientData'] = json_encode($clientData, JSON_UNESCAPED_UNICODE);
 
         $ch = curl_init();
