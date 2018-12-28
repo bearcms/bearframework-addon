@@ -232,6 +232,7 @@ class Server
         $clientData['uiTextColor'] = Config::$uiTextColor;
         $clientData['adminPagesPathPrefix'] = Config::$adminPagesPathPrefix;
         $clientData['blogPagesPathPrefix'] = Config::$blogPagesPathPrefix;
+        $clientData['elementsTypes'] = array_values(Internal\ElementsHelper::$elementsTypesCodes);
         if (Config::$maxUploadsSize !== null) {
             $clientData['maxUploadsSize'] = Config::$maxUploadsSize;
             $clientData['uploadsSize'] = Internal\Data\UploadsSize::getSize();
