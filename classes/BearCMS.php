@@ -107,7 +107,8 @@ class BearCMS
         // Enable elements
         if ($hasElements || Config::hasFeature('ELEMENTS_*')) {
             $this->app->components
-                    ->addAlias('bearcms-elements', 'file:' . $this->context->dir . '/components/bearcmsElements.php');
+                    ->addAlias('bearcms-elements', 'file:' . $this->context->dir . '/components/bearcmsElements.php')
+                    ->addAlias('bearcms-missing-element', 'file:' . $this->context->dir . '/components/bearcmsElement.php');
 
             $this->app->hooks
                     ->add('componentCreated', function($component) {
@@ -117,6 +118,9 @@ class BearCMS
                         } elseif (isset(Internal\ElementsHelper::$elementsTypesFilenames[$component->src])) {
                             $component->setAttribute('bearcms-internal-attribute-type', Internal\ElementsHelper::$elementsTypesCodes[$component->src]);
                             $component->setAttribute('bearcms-internal-attribute-filename', Internal\ElementsHelper::$elementsTypesFilenames[$component->src]);
+                            Internal\ElementsHelper::updateElementComponent($component);
+                        } else if ($component->src === 'bearcms-missing-element') {
+                            $component->setAttribute('bearcms-internal-attribute-type', 'missing');
                             Internal\ElementsHelper::updateElementComponent($component);
                         }
                     });

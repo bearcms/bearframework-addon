@@ -364,9 +364,11 @@ class ServerCommands
             $app->data->delete('bearcms/elements/element/' . md5($elementID) . '.json');
             if (isset($elementData['type'])) {
                 $componentName = array_search($elementData['type'], Internal\ElementsHelper::$elementsTypesCodes);
-                $options = Internal\ElementsHelper::$elementsTypesOptions[$componentName];
-                if (isset($options['onDelete']) && is_callable($options['onDelete'])) {
-                    call_user_func($options['onDelete'], isset($elementData['data']) ? $elementData['data'] : []);
+                if ($componentName !== false) {
+                    $options = Internal\ElementsHelper::$elementsTypesOptions[$componentName];
+                    if (isset($options['onDelete']) && is_callable($options['onDelete'])) {
+                        call_user_func($options['onDelete'], isset($elementData['data']) ? $elementData['data'] : []);
+                    }
                 }
             }
         }
@@ -792,7 +794,7 @@ class ServerCommands
      * @param array $data
      * @return array
      */
-    static function themeGet(array $data): array
+    static function themeGet(array $data): ?array
     {
         $app = App::get();
         $themeID = $data['id'];

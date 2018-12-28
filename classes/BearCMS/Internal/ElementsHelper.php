@@ -227,18 +227,15 @@ class ElementsHelper
             return '';
         }
         $componentName = array_search($elementData['type'], self::$elementsTypesCodes);
-        if ($componentName === false) {
-            throw new \Exception('Invalid element type');
-        }
         return '<component'
-                . ' src="' . $componentName . '"'
+                . ' src="' . ($componentName === false ? 'bearcms-missing-element' : $componentName) . '"'
                 . ' editable="' . ($editable ? 'true' : 'false') . '"'
                 . ' bearcms-internal-attribute-raw-data="' . htmlentities($rawData) . '"'
                 . ' bearcms-internal-attribute-in-elements-container="' . ((int) $contextData['inElementsContainer'] === 1 ? 'true' : 'false') . '"'
                 . ' width="' . $contextData['width'] . '"'
                 . ' spacing="' . $contextData['spacing'] . '"'
                 . ' color="' . $contextData['color'] . '"'
-                . '/>'; // canEdit="' . ($contextData['canEdit'] ? 'true' : 'false') . '" canMove="' . ($contextData['canMove'] ? 'true' : 'false') . '" canDelete="' . ($contextData['canDelete'] ? 'true' : 'false') . '"
+                . '/>';
     }
 
     /**
