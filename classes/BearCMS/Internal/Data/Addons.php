@@ -266,16 +266,7 @@ class Addons
             $app->cache->set($app->cache->make($cacheKey, $addonIDsToAdd));
         }
         foreach ($addonIDsToAdd as $addonID) {
-            if (\BearFramework\Addons::exists($addonID)) {
-                $app->addons->add($addonID);
-                if (isset(self::$announcements[$addonID])) {
-                    $addon = new \BearCMS\Addons\Addon($addonID);
-                    call_user_func(self::$announcements[$addonID], $addon);
-                    if (is_callable($addon->initialize)) {
-                        call_user_func($addon->initialize);
-                    }
-                }
-            }
+            $app->bearCMS->addons->add($addonID);
         }
     }
 

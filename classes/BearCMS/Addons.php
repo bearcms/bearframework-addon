@@ -9,6 +9,7 @@
 
 namespace BearCMS;
 
+use BearFramework\App;
 use BearCMS\Internal;
 
 /**
@@ -27,6 +28,28 @@ class Addons
     public function announce(string $id, callable $callback): self
     {
         Internal\Data\Addons::$announcements[$id] = $callback;
+        return $this;
+    }
+
+    /**
+     * Adds an addon.
+     * 
+     * @param string $id
+     * @return self
+     */
+    public function add(string $id): self
+    {
+        $app = App::get();
+        if (\BearFramework\Addons::exists($id)) {
+            $app->addons->add($id);
+            if (isset(Internal\Data\Addons::$announcements[$id])) {
+                $addon = new \BearCMS\Addons\Addon($id);
+                call_user_func(Internal\Data\Addons::$announcements[$id], $addon);
+                if (is_callable($addon->initialize)) {
+                    call_user_func($addon->initialize);
+                }
+            }
+        }
         return $this;
     }
 
