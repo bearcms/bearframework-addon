@@ -14,11 +14,15 @@
 
 ##### public self [addElements](bearcms.themes.options.groupschema.addelements.method.md) ( string $idPrefix , string $parentSelector )
 
+##### public [BearCMS\Themes\Options\GroupSchema](bearcms.themes.options.groupschema.class.md) [addElementsGroup](bearcms.themes.options.groupschema.addelementsgroup.method.md) ( string $idPrefix , string $parentSelector )
+
 ##### public [BearCMS\Themes\Options\GroupSchema](bearcms.themes.options.groupschema.class.md) [addGroup](bearcms.themes.options.groupschema.addgroup.method.md) ( string $name [, string $description = '' ] )
 
 ##### public self [addOption](bearcms.themes.options.groupschema.addoption.method.md) ( string $id , string $type , string $name [, array $details = [] ] )
 
 ##### public self [addPages](bearcms.themes.options.groupschema.addpages.method.md) ( void )
+
+##### public [BearCMS\Themes\Options\GroupSchema](bearcms.themes.options.groupschema.class.md) [addPagesGroup](bearcms.themes.options.groupschema.addpagesgroup.method.md) ( void )
 
 ##### public array [getList](bearcms.themes.options.groupschema.getlist.method.md) ( void )
 

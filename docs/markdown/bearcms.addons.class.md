@@ -2,6 +2,10 @@
 
 ## Methods
 
+##### public self [add](bearcms.addons.add.method.md) ( string $id )
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds an addon.
+
 ##### public self [announce](bearcms.addons.announce.method.md) ( string $id , callable $callback )
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Announces a new addon.
