@@ -181,7 +181,7 @@ class BearCMS
                     ]
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions[] = function($context, $idPrefix, $parentSelector) {
+                    Internal\Themes::$elementsOptions['heading'] = function($context, $idPrefix, $parentSelector) {
                         $group = $context->addGroup(__("bearcms.themes.options.Heading"));
 
                         $groupLarge = $group->addGroup(__("bearcms.themes.options.Large"));
@@ -222,7 +222,7 @@ class BearCMS
                     ]
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions[] = function($context, $idPrefix, $parentSelector) {
+                    Internal\Themes::$elementsOptions['text'] = function($context, $idPrefix, $parentSelector) {
                         $groupText = $context->addGroup(__("bearcms.themes.options.Text"));
                         $groupText->addOption($idPrefix . "TextCSS", "css", '', [
                             "cssOutput" => [
@@ -260,7 +260,7 @@ class BearCMS
                     ]
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions[] = function($context, $idPrefix, $parentSelector) {
+                    Internal\Themes::$elementsOptions['link'] = function($context, $idPrefix, $parentSelector) {
                         $group = $context->addGroup(__("bearcms.themes.options.Link"));
                         $group->addOption($idPrefix . "LinkCSS", "css", '', [
                             "cssOutput" => [
@@ -315,7 +315,7 @@ class BearCMS
                     ]
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions[] = function($context, $idPrefix, $parentSelector) {
+                    Internal\Themes::$elementsOptions['image'] = function($context, $idPrefix, $parentSelector) {
                         $group = $context->addGroup(__("bearcms.themes.options.Image"));
                         $group->addOption($idPrefix . "ImageCSS", "css", '', [
                             "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
@@ -375,7 +375,7 @@ class BearCMS
                     }
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions[] = function($context, $idPrefix, $parentSelector) {
+                    Internal\Themes::$elementsOptions['imageGallery'] = function($context, $idPrefix, $parentSelector) {
                         $groupImageGallery = $context->addGroup(__("bearcms.themes.options.Image gallery"));
                         $groupImageGallery->addOption($idPrefix . "ImageGalleryCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
@@ -432,7 +432,7 @@ class BearCMS
                     ]
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions[] = function($context, $idPrefix, $parentSelector) {
+                    Internal\Themes::$elementsOptions['video'] = function($context, $idPrefix, $parentSelector) {
                         $group = $context->addGroup(__("bearcms.themes.options.Video"));
                         $group->addOption($idPrefix . "VideoCSS", "css", '', [
                             "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
@@ -476,7 +476,7 @@ class BearCMS
                     ]
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions[] = function($context, $idPrefix, $parentSelector) {
+                    Internal\Themes::$elementsOptions['navigation'] = function($context, $idPrefix, $parentSelector) {
                         $groupNavigation = $context->addGroup(__("bearcms.themes.options.Navigation"));
                         $groupNavigation->addOption($idPrefix . "NavigationCSS", "css", '', [
                             "cssTypes" => ["cssBorder", "cssBackground"],
@@ -515,7 +515,7 @@ class BearCMS
                     ]
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions[] = function($context, $idPrefix, $parentSelector) {
+                    Internal\Themes::$elementsOptions['html'] = function($context, $idPrefix, $parentSelector) {
                         $groupHTMLCode = $context->addGroup(__("bearcms.themes.options.HTML code"));
                         $groupHTMLCode->addOption($idPrefix . "HtmlCSS", "css", '', [
                             "cssOutput" => [
@@ -562,7 +562,7 @@ class BearCMS
                     ]
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions[] = function($context, $idPrefix, $parentSelector) {
+                    Internal\Themes::$elementsOptions['blogPosts'] = function($context, $idPrefix, $parentSelector) {
                         $groupBlogPosts = $context->addGroup(__("bearcms.themes.options.Blog posts"));
                         $groupBlogPosts->addOption($idPrefix . "BlogPostsCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
@@ -656,7 +656,7 @@ class BearCMS
                     }
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions[] = function($context, $idPrefix, $parentSelector) {
+                    Internal\Themes::$elementsOptions['comments'] = function($context, $idPrefix, $parentSelector) {
                         $groupComments = $context->addGroup(__("bearcms.themes.options.Comments"));
 
                         $groupComment = $groupComments->addGroup(__("bearcms.themes.options.comments.Comment"));
@@ -751,7 +751,7 @@ class BearCMS
                     };
                 }
             }
-            if ($hasElements || Config::hasFeature('ELEMENTS_FORUM_POSTS')) {
+            if (Config::hasFeature('FORUMS') && ($hasElements || Config::hasFeature('ELEMENTS_FORUM_POSTS'))) {
                 Internal\ElementsTypes::add('forumPosts', [
                     'componentSrc' => 'bearcms-forum-posts-element',
                     'componentFilename' => $this->context->dir . '/components/bearcmsForumPostsElement.php',
@@ -767,7 +767,7 @@ class BearCMS
                     ]
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions[] = function($context, $idPrefix, $parentSelector) {
+                    Internal\Themes::$elementsOptions['forumPosts'] = function($context, $idPrefix, $parentSelector) {
                         $groupForumPosts = $context->addGroup(__("bearcms.themes.options.Forum posts"));
 
                         $groupForumPostsPost = $groupForumPosts->addGroup(__("bearcms.themes.options.forumPosts.Post"));
@@ -1020,7 +1020,7 @@ class BearCMS
                     });
 
             if (Config::hasFeature('THEMES')) {
-                Internal\Themes::$pagesOptions[] = function($context) {
+                Internal\Themes::$pagesOptions['forums'] = function($context) {
                     $groupNewForumPostPage = $context->addGroup(__("bearcms.themes.options.New forum post page"));
 
                     $groupNewForumPostPageTitleLabel = $groupNewForumPostPage->addGroup(__("bearcms.themes.options.newForumPostPage.Title label"));
@@ -1263,7 +1263,7 @@ class BearCMS
                     });
 
             if (Config::hasFeature('THEMES')) {
-                Internal\Themes::$pagesOptions[] = function($context) {
+                Internal\Themes::$pagesOptions['blog'] = function($context) {
                     $group = $context->addGroup(__("bearcms.themes.options.Blog post page"));
 
                     $groupTitle = $group->addGroup(__("bearcms.themes.options.Title"));

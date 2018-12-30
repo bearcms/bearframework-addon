@@ -309,6 +309,7 @@ class Themes
         if (!isset(self::$cache[$localCacheKey])) {
             $app = App::get();
             $cacheKey = Internal\Themes::getCacheItemKey($id, $userID);
+            $envKey = md5(serialize(array_keys(self::$elementsOptions)) . serialize(array_keys(self::$pagesOptions)));
             $useCache = $cacheKey !== null;
             $resultData = null;
             if ($useCache) {
@@ -317,7 +318,7 @@ class Themes
                     $resultData = json_decode($resultData, true);
                 }
             }
-            if ($resultData === null) {
+            if ($resultData === null || $resultData[2] !== $envKey) {
                 $values = [];
                 $html = '';
                 $currentValues = null;
@@ -378,7 +379,7 @@ class Themes
                     $themeOptions->setValues($values);
                     $html = $themeOptions->getHTML();
                 }
-                $resultData = [$values, $html];
+                $resultData = [$values, $html, $envKey];
                 if ($useCache) {
                     $app->cache->set($app->cache->make($cacheKey, json_encode($resultData)));
                 }
@@ -592,7 +593,7 @@ class Themes
         if ($version === null) {
             return null;
         }
-        return 'bearcms-theme-options-' . Config::$dataCachePrefix . '-' . md5($id) . '-' . md5($version) . '-' . md5($userID) . '-3';
+        return 'bearcms-theme-options-' . Config::$dataCachePrefix . '-' . md5($id) . '-' . md5($version) . '-' . md5($userID) . '-4';
     }
 
     /**

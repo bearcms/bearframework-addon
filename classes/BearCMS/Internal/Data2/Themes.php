@@ -40,8 +40,8 @@ class Themes
     /**
      * Returns a list containing the theme options a specific user has made
      * 
-     * @param array $id The id of the theme
-     * @param array $userID The id of the user
+     * @param string $id The id of the theme
+     * @param string $userID The id of the user
      * @return array A list containing the theme options
      * @throws \InvalidArgumentException
      */
@@ -110,9 +110,12 @@ class Themes
                 $dataToSet['userID'] = $userID;
             }
             $dataToSet['options'] = $values;
-            $app->data->setValue($dataKey, json_encode($dataToSet));
+            if (!$hasUser && empty($values)) {
+                $app->data->delete($dataKey);
+            } else {
+                $app->data->setValue($dataKey, json_encode($dataToSet));
+            }
         }
-        Internal\Data::setChanged($dataKey);
 
         $recycleBinPrefix = '.recyclebin/bearcms/theme-changes-' . str_replace('.', '-', microtime(true)) . '/';
         foreach ($dataKeysToDelete as $dataKeyToDelete) {
@@ -120,6 +123,8 @@ class Themes
                 $app->data->rename($dataKeyToDelete, $recycleBinPrefix . $dataKeyToDelete);
             }
         }
+
+        Internal\Data::setChanged($dataKey);
 
         $cacheItemKey = $hasUser ? Internal\Themes::getCacheItemKey($id, $userID) : Internal\Themes::getCacheItemKey($id);
         if ($cacheItemKey !== null) {

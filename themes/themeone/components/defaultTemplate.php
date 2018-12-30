@@ -69,8 +69,15 @@ switch ((int) $contentWidthOptionValue) {
     <head>
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,minimal-ui">
         <style>
-            body{margin:0;}
-            .template-container *{margin:0;padding:0;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+            html, body{
+                padding: 0;
+                margin: 0;
+                min-height: 100%;
+            }
+            *{outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+            ul,ol,li{list-style-position:inside;}
+            img{border:0;}
+            a{text-decoration:none;}
             .template-container{min-height:100vh;font-family:<?= $fontFamily ?>;font-size:<?= $fontSize ?>;background-color:<?= $backgroundColor ?>;color:<?= $textColor ?>;display:flex;flex-direction:column;}
 
             .template-header{width:100%;max-width:<?= $contentWidth ?>;margin:0 auto;padding:0 1rem;}

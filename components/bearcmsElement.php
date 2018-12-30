@@ -88,7 +88,7 @@ if (!$isMissing) {
     $componentHTML = '';
     $app = App::get();
     if ($app->bearCMS->currentUser->exists()) {
-        $componentHTML .= '<div style="background-color:red;color:#fff;padding:10px 15px 9px 15px;border-radius:4px;line-height:25px;font-size:14px;">';
+        $componentHTML .= '<div style="background-color:red;color:#fff;padding:10px 15px 9px 15px;border-radius:4px;line-height:25px;font-size:14px;font-family:Arial,sans-serif;">';
         $componentHTML .= 'Unsupported element!<div style="font-size:11px;">This message is visible to administrators only.</div>';
         $componentHTML .= '</div>';
     }

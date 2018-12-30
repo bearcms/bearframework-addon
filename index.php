@@ -138,22 +138,22 @@ $app->hooks
             }
         });
 
-$app->hooks
-        ->add('dataItemChanged', function($key) use ($app) { // has theme change
-            if (strpos($key, '.temp/bearcms/userthemeoptions/') === 0 || strpos($key, 'bearcms/themes/theme/') === 0) {
-                $currentThemeID = Internal\CurrentTheme::getID();
-                if ($app->bearCMS->currentUser->exists()) {
-                    $cacheItemKey = Internal\Themes::getCacheItemKey($currentThemeID, $app->bearCMS->currentUser->getID());
-                    if ($cacheItemKey !== null) {
-                        $app->cache->delete($cacheItemKey);
-                    }
-                }
-                $cacheItemKey = Internal\Themes::getCacheItemKey($currentThemeID);
-                if ($cacheItemKey !== null) {
-                    $app->cache->delete($cacheItemKey);
-                }
-            }
-        });
+//$app->hooks
+//        ->add('dataItemChanged', function($key) use ($app) { // has theme change
+//            if (strpos($key, '.temp/bearcms/userthemeoptions/') === 0 || strpos($key, 'bearcms/themes/theme/') === 0) {
+//                $currentThemeID = Internal\CurrentTheme::getID();
+//                if ($app->bearCMS->currentUser->exists()) {
+//                    $cacheItemKey = Internal\Themes::getCacheItemKey($currentThemeID, $app->bearCMS->currentUser->getID());
+//                    if ($cacheItemKey !== null) {
+//                        $app->cache->delete($cacheItemKey);
+//                    }
+//                }
+//                $cacheItemKey = Internal\Themes::getCacheItemKey($currentThemeID);
+//                if ($cacheItemKey !== null) {
+//                    $app->cache->delete($cacheItemKey);
+//                }
+//            }
+//        });
 
 $app->hooks
         ->add('responseCreated', function() use ($app) {
