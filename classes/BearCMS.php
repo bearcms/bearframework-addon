@@ -28,7 +28,7 @@ class BearCMS
     /**
      * Bear CMS version.
      */
-    const VERSION = '0.6.3';
+    const VERSION = '0.6.6';
 
     /**
      *
