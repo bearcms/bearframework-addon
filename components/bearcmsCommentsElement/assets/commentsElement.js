@@ -9,14 +9,21 @@ var bearCMS = bearCMS || {};
 
 bearCMS.commentsElement = (function () {
 
-    var onBeforeSubmitForm = function (event) {
+    var showUserLoginIfNeeded = function (event) {
         if (typeof ivoPetkov.bearFrameworkAddons !== 'undefined' && typeof ivoPetkov.bearFrameworkAddons.users !== 'undefined') {
             var users = ivoPetkov.bearFrameworkAddons.users;
             if (!users.currentUser.exists()) {
                 users.showLogin();
                 event.preventDefault();
-                return;
+                return true;
             }
+        }
+        return false;
+    };
+
+    var onBeforeSubmitForm = function (event) {
+        if (showUserLoginIfNeeded(event)) {
+            return;
         }
         var listElementID = event.target.previousSibling.id;
         var listCommentsCount = event.target.previousSibling.getAttribute('data-count');
@@ -72,6 +79,7 @@ bearCMS.commentsElement = (function () {
     };
 
     var onFocusTextarea = function (event) {
+        showUserLoginIfNeeded(event);
         var form = event.target.parentNode;
         if (form.querySelector('.bearcms-comments-element-send-button-waiting').style.display === 'none') {
             form.querySelector('.bearcms-comments-element-send-button').style.display = 'inline-block';
