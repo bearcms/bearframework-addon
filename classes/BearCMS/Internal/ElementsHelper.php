@@ -251,11 +251,13 @@ class ElementsHelper
         $app = App::get();
         $context = $app->context->get(__FILE__);
         $columnsSizes = explode(':', $elementContainerData['data']['mode']);
+        $responsive = isset($elementContainerData['data']['responsive']) ? (int) $elementContainerData['data']['responsive'] > 0 : false;
         $columnsCount = sizeof($columnsSizes);
         $totalSize = array_sum($columnsSizes);
         $spacing = $contextData['spacing'];
 
         $content = '';
+        $columnStyles = [];
         for ($i = 0; $i < $columnsCount; $i++) {
             $columnContent = '';
             if (isset($elementContainerData['data']['elements'], $elementContainerData['data']['elements'][$i])) {
@@ -282,42 +284,56 @@ class ElementsHelper
             if ($columnsCount > $i + 1) {
                 $columnStyle .= 'margin-right:' . $spacing . ';';
             }
-            $content .= '<div class="bearcms-elements-columns-column" style="' . $columnStyle . '">' . $columnContent . '</div>';
+            $columnStyles[$i] = $columnStyle;
+            $content .= '<div class="bearcms-elements-columns-column">' . $columnContent . '</div>';
         }
 
-        if ($inContainer) {
-            $className = 'bre' . md5($spacing);
-            $attributes = '';
+        $className = 'bre' . md5('column$' . (isset($elementContainerData['id']) ? $elementContainerData['id'] : uniqid()));
 
+        $styles = '';
+        $styles .= '.' . $className . '[data-srvri~="t2"]{display:flex;}';
+        foreach ($columnStyles as $index => $columnStyle) {
+            $styles .= '.' . $className . '>div:nth-child(' . ($index + 1) . '){' . $columnStyle . '}';
+        }
+        if ($responsive) {
+            $styles .= '.' . $className . '[data-srvri-rows="1"]{flex-direction:column;}';
+            foreach ($columnStyles as $index => $columnStyle) {
+                $styles .= '.' . $className . '[data-srvri-rows="1"]>div:nth-child(' . ($index + 1) . '){width:100%;max-width:100%;margin-right:0;}';
+            }
+            $styles .= '.' . $className . '[data-srvri-rows="1"]>div:not(:empty):not(:last-child){margin-bottom:' . $spacing . ';}';
+            $styles .= '.' . $className . '[data-rvr-editable][data-srvri-rows="1"]>div:not(:last-child){margin-bottom:' . $spacing . ';}';
+        } else {
+            $styles .= '.' . $className . '[data-srvri-rows="1"]{flex-direction:row;}';
+            foreach ($columnStyles as $index => $columnStyle) {
+                $styles .= '.' . $className . '[data-srvri-rows="1"]>div:nth-child(' . ($index + 1) . '){' . $columnStyle . '}';
+            }
+            $styles .= '.' . $className . '[data-srvri-rows="1"]>div:not(:empty):not(:last-child){margin-bottom:0;}';
+            $styles .= '.' . $className . '[data-rvr-editable][data-srvri-rows="1"]>div:not(:last-child){margin-bottom:0;}';
+        }
+
+        $attributes = '';
+        if ($inContainer) {
             if ($editable) {
                 $htmlElementID = 'brelb' . md5($elementContainerData['id']);
                 $attributes .= ' id="' . $htmlElementID . '"';
                 ElementsHelper::$editorData[] = ['columns', $elementContainerData['id'], $contextData];
             }
             $attributes .= ' class="bearcms-elements-element-container bearcms-elements-columns ' . $className . '"';
-
-            $attributes .= ' data-srvri="t2 s' . $spacing . '"'; // data-responsive-attributes="w<=500=>data-srvri-vertical=1"
-
-            $styles = '';
-            $styles .= '.' . $className . '[data-srvri~="t2"]{display:flex !important;}';
-            $styles .= '.' . $className . '[data-srvri-vertical="1"]>div{display:block !important;width:100% !important;margin-right:0 !important;}';
-            $styles .= '.' . $className . '[data-srvri-vertical="1"]>div:not(:empty):not(:last-child){margin-bottom:' . $spacing . ' !important;}';
-            $styles .= '.' . $className . '[data-rvr-editable][data-srvri-vertical="1"]>div:not(:last-child){margin-bottom:' . $spacing . ' !important;}';
-
-            $content = '<html>'
-                    . '<head>'
-                    . '<script id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>'
-                    . '<style>' . $styles . '</style>'
-                    . '</head>'
-                    . '<body>'
-                    . '<div' . $attributes . '>' . $content . '</div>'
-                    //. '<script>responsiveAttributes.run();</script>'
-                    . '</body>'
-                    . '</html>';
-            return '<component src="data:base64,' . base64_encode($content) . '" />';
-        } else {
-            return $content;
+            $attributes .= ' data-srvri="t2 s' . $spacing . '"';
+            if ($responsive || $editable) {
+                $attributes .= ' data-responsive-attributes="w<=500=>data-srvri-rows=1"';
+            }
         }
+        $content = '<html>'
+                . '<head>'
+                . ($inContainer && ($responsive || $editable) ? '<script onload="responsiveAttributes.run();" id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>' : '')
+                . '<style>' . $styles . '</style>'
+                . '</head>'
+                . '<body>'
+                . ($inContainer ? '<div' . $attributes . '>' . $content . '</div>' : $content)
+                . '</body>'
+                . '</html>';
+        return '<component src="data:base64,' . base64_encode($content) . '" />';
     }
 
     /**
@@ -337,6 +353,7 @@ class ElementsHelper
         if (strlen($width) === 0 || $width === 'auto') {
             $width = '100%';
         }
+        $responsive = isset($elementContainerData['data']['responsive']) ? (int) $elementContainerData['data']['responsive'] > 0 : false;
         $spacing = $contextData['spacing'];
 
         $content = '';
@@ -362,46 +379,47 @@ class ElementsHelper
             return $content;
         };
 
-        $content .= '<div class="bearcms-elements-floating-box-inside" style="margin-' . ($position === 'left' ? 'right' : 'left') . ':' . $spacing . ';float:' . $position . ';width:calc(' . $width . ' - ' . $spacing . '/2);">' . $getElementsContent('inside') . '</div>';
-        $content .= '<div class="bearcms-elements-floating-box-outside" style="display:block;">' . $getElementsContent('outside') . '</div>';
+        $content .= '<div class="bearcms-elements-floating-box-inside">' . $getElementsContent('inside') . '</div>';
+        $content .= '<div class="bearcms-elements-floating-box-outside">' . $getElementsContent('outside') . '</div>';
+
+        $className = 'bre' . md5('floatingbox$' . (isset($elementContainerData['id']) ? $elementContainerData['id'] : uniqid()));
+
+        $styles = '';
+        $styles .= '.' . $className . '>div:empty{display:none;}';
+        $styles .= '.' . $className . '>div:first-child{max-width:100%;margin-' . ($position === 'left' ? 'right' : 'left') . ':' . $spacing . ';float:' . $position . ';width:calc(' . $width . ' - ' . $spacing . '/2);}';
+        $styles .= '.' . $className . '>div:last-child{display:block;}';
+        $styles .= '.' . $className . '[data-rvr-editable]>div:empty{display:block;}';
+        $styles .= '.' . $className . '[data-rvr-editable]>div:first-child{min-width:24px;}';
+        if ($responsive) {
+            $styles .= '.' . $className . '[data-srvri-rows="1"]>div{display:block;max-width:100%;width:100%;margin-' . ($position === 'left' ? 'right' : 'left') . ':0;float:none;}';
+            $styles .= '.' . $className . '[data-srvri-rows="1"]>div:not(:empty):not(:last-child){margin-bottom:' . $spacing . ';}';
+            $styles .= '.' . $className . '[data-rvr-editable][data-srvri-rows="1"]>div:not(:last-child){margin-bottom:' . $spacing . ';}';
+        }
+        $styles .= '.' . $className . ':after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
 
         if ($inContainer) {
-            $className = 'bre' . md5($spacing);
             $attributes = '';
-
             if ($editable) {
                 $htmlElementID = 'brelb' . md5($elementContainerData['id']);
                 $attributes .= ' id="' . $htmlElementID . '"';
                 ElementsHelper::$editorData[] = ['floatingBox', $elementContainerData['id'], $contextData];
             }
             $attributes .= ' class="bearcms-elements-element-container bearcms-elements-floating-box ' . $className . '"';
-
-            $attributes .= ' data-srvri="t3 s' . $spacing . '"'; // data-responsive-attributes="w<=500=>data-srvri-vertical=1"
-
-            $styles = '';
-            $styles .= '.' . $className . '>div:empty{display:none;}';
-            $styles .= '.' . $className . '>div:first-child{max-width:100%;}';
-            $styles .= '.' . $className . '[data-rvr-editable]>div:empty{display:block;}';
-            $styles .= '.' . $className . '[data-rvr-editable]>div:first-child{min-width:24px;}';
-            //$styles .= '.' . $className . '[data-srvri-vertical="1"]>div{display:block !important;max-width:100% !important;width:100% !important;margin-right:0 !important;float:none !important;}';
-            //$styles .= '.' . $className . '[data-srvri-vertical="1"]>div:not(:empty):not(:last-child){margin-bottom:' . $spacing . ' !important;}';
-            //$styles .= '.' . $className . '[data-rvr-editable][data-srvri-vertical="1"]>div:not(:last-child){margin-bottom:' . $spacing . ' !important;}';
-            $styles .= '.' . $className . ':after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
-            //$styles .= '.' . $className . ' >div:last-child{margin-top:15px;}';
-
-            $content = '<html>'
-                    . '<head>'
-                    . '<script id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>'
-                    . '<style>' . $styles . '</style>'
-                    . '</head>'
-                    . '<body>'
-                    . '<div' . $attributes . '>' . $content . '</div>'
-                    . '</body>'
-                    . '</html>';
-            return '<component src="data:base64,' . base64_encode($content) . '" />';
-        } else {
-            return $content;
+            $attributes .= ' data-srvri="t3 s' . $spacing . '"';
+            if ($responsive || $editable) {
+                $attributes .= ' data-responsive-attributes="w<=500=>data-srvri-rows=1"';
+            }
         }
+        $content = '<html>'
+                . '<head>'
+                . ($inContainer && ($responsive || $editable) ? '<script onload="responsiveAttributes.run();" id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>' : '')
+                . '<style>' . $styles . '</style>'
+                . '</head>'
+                . '<body>'
+                . ($inContainer ? '<div' . $attributes . '>' . $content . '</div>' : $content)
+                . '</body>'
+                . '</html>';
+        return '<component src="data:base64,' . base64_encode($content) . '" />';
     }
 
     /**
