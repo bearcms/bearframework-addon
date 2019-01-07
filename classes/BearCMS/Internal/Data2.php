@@ -18,9 +18,6 @@ use BearCMS\Internal;
  * @property \BearCMS\Internal\Data2\BlogCategories $blogCategories Information about the blog categories
  * @property \BearCMS\Internal\Data2\Comments $comments Information about the comments
  * @property \BearCMS\Internal\Data2\CommentsThreads $commentsThreads Information about the comments threads
- * @property \BearCMS\Internal\Data2\ForumCategories $forumCategories Information about the forum categories
- * @property \BearCMS\Internal\Data2\ForumPosts $forumPosts Information about the forum posts
- * @property \BearCMS\Internal\Data2\ForumPostsReplies $forumPostsReplies Information about the forum replies
  * @property \BearCMS\Internal\Data2\Themes $themes Information about the site themes
  * @property \BearCMS\Internal\Data2\UsersInvitations $usersInvitations Information about the invited CMS users (administrators)
  * @internal
@@ -56,24 +53,24 @@ class Data2
             },
             'readonly' => true
         ]);
-        $this->defineProperty('forumCategories', [
-            'init' => function() {
-                return new \BearCMS\Internal\Data2\ForumCategories();
-            },
-            'readonly' => true
-        ]);
-        $this->defineProperty('forumPosts', [
-            'init' => function() {
-                return new \BearCMS\Internal\Data2\ForumPosts();
-            },
-            'readonly' => true
-        ]);
-        $this->defineProperty('forumPostsReplies', [
-            'init' => function() {
-                return new \BearCMS\Internal\Data2\ForumPostsReplies();
-            },
-            'readonly' => true
-        ]);
+//        $this->defineProperty('forumCategories', [
+//            'init' => function() {
+//                return new \BearCMS\Internal\Data2\ForumCategories();
+//            },
+//            'readonly' => true
+//        ]);
+//        $this->defineProperty('forumPosts', [
+//            'init' => function() {
+//                return new \BearCMS\Internal\Data2\ForumPosts();
+//            },
+//            'readonly' => true
+//        ]);
+//        $this->defineProperty('forumPostsReplies', [
+//            'init' => function() {
+//                return new \BearCMS\Internal\Data2\ForumPostsReplies();
+//            },
+//            'readonly' => true
+//        ]);
         $this->defineProperty('themes', [
             'init' => function() {
                 return new \BearCMS\Internal\Data2\Themes();

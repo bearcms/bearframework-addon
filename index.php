@@ -44,12 +44,12 @@ $context->classes
         ->add('BearCMS\Internal\Data2\Comments', 'classes/BearCMS/Internal/Data2/Comments.php')
         ->add('BearCMS\Internal\Data2\CommentsThread', 'classes/BearCMS/Internal/Data2/CommentsThread.php')
         ->add('BearCMS\Internal\Data2\CommentsThreads', 'classes/BearCMS/Internal/Data2/CommentsThreads.php')
-        ->add('BearCMS\Internal\Data2\ForumCategories', 'classes/BearCMS/Internal/Data2/ForumCategories.php')
-        ->add('BearCMS\Internal\Data2\ForumCategory', 'classes/BearCMS/Internal/Data2/ForumCategory.php')
-        ->add('BearCMS\Internal\Data2\ForumPost', 'classes/BearCMS/Internal/Data2/ForumPost.php')
-        ->add('BearCMS\Internal\Data2\ForumPosts', 'classes/BearCMS/Internal/Data2/ForumPosts.php')
-        ->add('BearCMS\Internal\Data2\ForumPostReply', 'classes/BearCMS/Internal/Data2/ForumPostReply.php')
-        ->add('BearCMS\Internal\Data2\ForumPostsReplies', 'classes/BearCMS/Internal/Data2/ForumPostsReplies.php')
+//        ->add('BearCMS\Internal\Data2\ForumCategories', 'classes/BearCMS/Internal/Data2/ForumCategories.php')
+//        ->add('BearCMS\Internal\Data2\ForumCategory', 'classes/BearCMS/Internal/Data2/ForumCategory.php')
+//        ->add('BearCMS\Internal\Data2\ForumPost', 'classes/BearCMS/Internal/Data2/ForumPost.php')
+//        ->add('BearCMS\Internal\Data2\ForumPosts', 'classes/BearCMS/Internal/Data2/ForumPosts.php')
+//        ->add('BearCMS\Internal\Data2\ForumPostReply', 'classes/BearCMS/Internal/Data2/ForumPostReply.php')
+//        ->add('BearCMS\Internal\Data2\ForumPostsReplies', 'classes/BearCMS/Internal/Data2/ForumPostsReplies.php')
         ->add('BearCMS\Internal\Data2\Settings', 'classes/BearCMS/Internal/Data2/Settings.php')
         ->add('BearCMS\Internal\Data2\Themes', 'classes/BearCMS/Internal/Data2/Themes.php')
         ->add('BearCMS\Internal\Data2\UserInvitation', 'classes/BearCMS/Internal/Data2/UserInvitation.php')
@@ -59,8 +59,8 @@ $context->classes
         ->add('BearCMS\Internal\Data\BlogPosts', 'classes/BearCMS/Internal/Data/BlogPosts.php')
         ->add('BearCMS\Internal\Data\Comments', 'classes/BearCMS/Internal/Data/Comments.php')
         ->add('BearCMS\Internal\Data\Files', 'classes/BearCMS/Internal/Data/Files.php')
-        ->add('BearCMS\Internal\Data\ForumPosts', 'classes/BearCMS/Internal/Data/ForumPosts.php')
-        ->add('BearCMS\Internal\Data\ForumPostsReplies', 'classes/BearCMS/Internal/Data/ForumPostsReplies.php')
+//        ->add('BearCMS\Internal\Data\ForumPosts', 'classes/BearCMS/Internal/Data/ForumPosts.php')
+//        ->add('BearCMS\Internal\Data\ForumPostsReplies', 'classes/BearCMS/Internal/Data/ForumPostsReplies.php')
         ->add('BearCMS\Internal\Data\Pages', 'classes/BearCMS/Internal/Data/Pages.php')
         ->add('BearCMS\Internal\Data\UploadsSize', 'classes/BearCMS/Internal/Data/UploadsSize.php')
         ->add('BearCMS\Internal\DataSchema', 'classes/BearCMS/Internal/DataSchema.php')
@@ -86,8 +86,7 @@ $app->addons
 $context->assets
         ->addDir('assets')
         ->addDir('components/bearcmsBlogPostsElement/assets')
-        ->addDir('components/bearcmsCommentsElement/assets')
-        ->addDir('components/bearcmsForumPostsElement/assets');
+        ->addDir('components/bearcmsCommentsElement/assets');
 
 $app->localization
         ->addDictionary('en', function() use ($context) {
