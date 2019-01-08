@@ -79,7 +79,9 @@ bearCMS.commentsElement = (function () {
     };
 
     var onFocusTextarea = function (event) {
-        showUserLoginIfNeeded(event);
+        if (showUserLoginIfNeeded(event)) {
+            event.target.blur();
+        }
         var form = event.target.parentNode;
         if (form.querySelector('.bearcms-comments-element-send-button-waiting').style.display === 'none') {
             form.querySelector('.bearcms-comments-element-send-button').style.display = 'inline-block';

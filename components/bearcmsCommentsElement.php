@@ -22,7 +22,7 @@ if (strlen($threadID) > 0) {
     $content .= '<div class="bearcms-comments-element">';
     $content .= '<component src="file:' . $context->dir . '/components/bearcmsCommentsElement/commentsList.php" count="' . htmlentities($count) . '" threadID="' . htmlentities($threadID) . '" />';
     $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsCommentsElement/commentsForm.php" count="' . htmlentities($count) . '" threadID="' . htmlentities($threadID) . '" />';
-    $content .= '<script id="bearcms-bearframework-addon-script-5" src="' . htmlentities($context->assets->getUrl('components/bearcmsCommentsElement/assets/commentsElement.min.js', ['cacheMaxAge' => 999999999, 'version' => 3])) . '" async></script>';
+    $content .= '<script id="bearcms-bearframework-addon-script-5" src="' . htmlentities($context->assets->getUrl('components/bearcmsCommentsElement/assets/commentsElement.min.js', ['cacheMaxAge' => 999999999, 'version' => 4])) . '" async></script>';
     $content .= '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
     $content .= '</div>';
 }
