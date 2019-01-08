@@ -371,6 +371,11 @@ class Server
                         $callable = ['\BearCMS\Internal\ServerCommands', $commmandName];
                         if (is_callable($callable)) {
                             $commandResult = call_user_func($callable, $commandData['data'], $response);
+                        } else if (isset(\BearCMS\Internal\ServerCommands::$external[$commmandName])) {
+                            $callable = \BearCMS\Internal\ServerCommands::$external[$commmandName];
+                            if (is_callable($callable)) {
+                                $commandResult = call_user_func($callable, $commandData['data'], $response);
+                            }
                         }
                         if (isset($commandData['key'])) {
                             $commandsResults[$commandData['key']] = $commandResult;

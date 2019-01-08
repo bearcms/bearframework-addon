@@ -20,6 +20,19 @@ use BearCMS\Internal2;
 class ServerCommands
 {
 
+    static $external = [];
+
+    /**
+     * 
+     * @param string $name
+     * @param callable $callable
+     * @return void
+     */
+    static function add(string $name, callable $callable): void
+    {
+        self::$external[$name] = $callable;
+    }
+
     /**
      * 
      * @return array
