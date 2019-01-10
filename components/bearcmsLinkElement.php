@@ -9,8 +9,8 @@
 $url = $component->url;
 $text = $component->text;
 $title = $component->title;
-$content = '<a title="' . htmlentities($title) . '" class="bearcms-link-element" href="' . htmlentities($url) . '">' . htmlspecialchars(isset($text{0}) ? $text : $url) . '</a>';
-
+$content = '<div class="bearcms-link-element"><a title="' . htmlentities($title) . '" href="' . htmlentities($url) . '">' . htmlspecialchars(isset($text{0}) ? $text : $url) . '</a></div>';
 ?><html>
+    <head><style>.bearcms-link-element{word-wrap:break-word;}</style></head>
     <body><?= $content ?></body>
 </html>

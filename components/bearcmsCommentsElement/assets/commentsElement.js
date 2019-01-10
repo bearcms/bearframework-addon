@@ -40,7 +40,7 @@ bearCMS.commentsElement = (function () {
         listElement.innerHTML = document.body.lastChild.innerHTML;
         listElement.setAttribute('data-count', document.body.lastChild.getAttribute('data-count'));
         document.body.lastChild.parentNode.removeChild(document.body.lastChild);
-    }
+    };
 
     var loadMore = function (event, data) {
         var listElementID = event.target.parentNode.parentNode.id;
@@ -67,13 +67,13 @@ bearCMS.commentsElement = (function () {
     var onFormRequestSent = function (event) {
         var form = event.target;
         form.querySelector('.bearcms-comments-element-send-button').style.display = 'none';
-        form.querySelector('.bearcms-comments-element-send-button-waiting').style.display = 'inline-block';
+        form.querySelector('.bearcms-comments-element-send-button-waiting').style.removeProperty('display');
         form.querySelector('.bearcms-comments-element-text-input').setAttribute('readonly', 'readonly');
     };
 
     var onFormResponseReceived = function (event) {
         var form = event.target;
-        form.querySelector('.bearcms-comments-element-send-button').style.display = 'inline-block';
+        form.querySelector('.bearcms-comments-element-send-button').style.removeProperty('display');
         form.querySelector('.bearcms-comments-element-send-button-waiting').style.display = 'none';
         form.querySelector('.bearcms-comments-element-text-input').removeAttribute('readonly');
     };
@@ -84,7 +84,7 @@ bearCMS.commentsElement = (function () {
         }
         var form = event.target.parentNode;
         if (form.querySelector('.bearcms-comments-element-send-button-waiting').style.display === 'none') {
-            form.querySelector('.bearcms-comments-element-send-button').style.display = 'inline-block';
+            form.querySelector('.bearcms-comments-element-send-button').style.removeProperty('display');
         }
     };
 
@@ -94,7 +94,7 @@ bearCMS.commentsElement = (function () {
         'onSubmitFormDone': onSubmitFormDone,
         'onFormRequestSent': onFormRequestSent,
         'onFormResponseReceived': onFormResponseReceived,
-        'onFocusTextarea': onFocusTextarea,
+        'onFocusTextarea': onFocusTextarea
     };
 
 }());

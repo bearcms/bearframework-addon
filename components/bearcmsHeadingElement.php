@@ -27,5 +27,6 @@ if ($size === 'large') {
 
 $content = '<' . $tagName . ' class="' . $className . '">' . htmlspecialchars($text) . '</' . $tagName . '>';
 ?><html>
+    <head><style>.<?= $className ?>{word-wrap:break-word;}</style></head>
     <body><?= $content ?></body>
 </html>

@@ -187,7 +187,7 @@ class BearCMS
                         $groupLarge = $group->addGroup(__("bearcms.themes.options.Large"));
                         $groupLarge->addOption($idPrefix . "HeadingLargeCSS", "css", '', [
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-heading-element-large", "font-weight:normal;"],
+                                ["rule", $parentSelector . " .bearcms-heading-element-large", "box-sizing:border-box;font-weight:normal;"],
                                 ["selector", $parentSelector . " .bearcms-heading-element-large"]
                             ]
                         ]);
@@ -195,7 +195,7 @@ class BearCMS
                         $groupMedium = $group->addGroup(__("bearcms.themes.options.Medium"));
                         $groupMedium->addOption($idPrefix . "HeadingMediumCSS", "css", '', [
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-heading-element-medium", "font-weight:normal;"],
+                                ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;box-sizing:border-box;font-weight:normal;"],
                                 ["selector", $parentSelector . " .bearcms-heading-element-medium"]
                             ]
                         ]);
@@ -203,7 +203,7 @@ class BearCMS
                         $groupSmall = $group->addGroup(__("bearcms.themes.options.Small"));
                         $groupSmall->addOption($idPrefix . "HeadingSmallCSS", "css", '', [
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-heading-element-small", "font-weight:normal;"],
+                                ["rule", $parentSelector . " .bearcms-heading-element-small", "box-sizing:border-box;box-sizing:border-box;font-weight:normal;"],
                                 ["selector", $parentSelector . " .bearcms-heading-element-small"]
                             ]
                         ]);
@@ -226,14 +226,17 @@ class BearCMS
                         $groupText = $context->addGroup(__("bearcms.themes.options.Text"));
                         $groupText->addOption($idPrefix . "TextCSS", "css", '', [
                             "cssOutput" => [
-                                ["selector", $parentSelector . " .bearcms-text-element"],
-                                ["rule", $parentSelector . " .bearcms-text-element ul,ol,li", "list-style-position:inside;"]
+                                ["rule", $parentSelector . " .bearcms-text-element", "box-sizing:border-box;"],
+                                ["rule", $parentSelector . " .bearcms-text-element ul,ol,li", "list-style-position:inside;margin:0;padding:0;"],
+                                ["selector", $parentSelector . " .bearcms-text-element"]
                             ]
                         ]);
 
                         $groupLinks = $groupText->addGroup(__("bearcms.themes.options.Links"));
                         $groupLinks->addOption($idPrefix . "TextLinkCSS", "css", '', [
+                            "cssTypes" => ["cssText", "cssTextShadow"],
                             "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-text-element a", "text-decoration:none;"],
                                 ["selector", $parentSelector . " .bearcms-text-element a"]
                             ]
                         ]);
@@ -263,8 +266,18 @@ class BearCMS
                     Internal\Themes::$elementsOptions['link'] = function($context, $idPrefix, $parentSelector) {
                         $group = $context->addGroup(__("bearcms.themes.options.Link"));
                         $group->addOption($idPrefix . "LinkCSS", "css", '', [
+                            "cssTypes" => ["cssText", "cssTextShadow"],
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-link-element", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
+                                ["rule", $parentSelector . " .bearcms-link-element a", "text-decoration:none;"],
+                                ["selector", $parentSelector . " .bearcms-link-element a"]
+                            ]
+                        ]);
+                        
+                        $groupContainer = $group->addGroup(__("bearcms.themes.options.Container"));
+                        $groupContainer->addOption($idPrefix . "LinkContainerCSS", "css", '', [
+                            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                            "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-link-element", "box-sizing:border-box;"],
                                 ["selector", $parentSelector . " .bearcms-link-element"]
                             ]
                         ]);
@@ -487,9 +500,19 @@ class BearCMS
 
                         $groupElements = $groupNavigation->addGroup(__("bearcms.themes.options.Elements"));
                         $groupElements->addOption($idPrefix . "NavigationItemLinkCSS", "css", '', [
+                            "cssTypes" => ["cssText", "cssTextShadow"],
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-navigation-element-item a", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
+                                ["rule", $parentSelector . " .bearcms-navigation-element-item a", "text-decoration:none;"],
                                 ["selector", $parentSelector . " .bearcms-navigation-element-item a"]
+                            ]
+                        ]);
+
+                        $groupElementsContainer = $groupElements->addGroup(__("bearcms.themes.options.Container"));
+                        $groupElementsContainer->addOption($idPrefix . "NavigationItemLinkContainerCSS", "css", '', [
+                            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                            "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-navigation-element-item", "box-sizing:border-box;"],
+                                ["selector", $parentSelector . " .bearcms-navigation-element-item"]
                             ]
                         ]);
                     };
@@ -519,15 +542,17 @@ class BearCMS
                         $groupHTMLCode = $context->addGroup(__("bearcms.themes.options.HTML code"));
                         $groupHTMLCode->addOption($idPrefix . "HtmlCSS", "css", '', [
                             "cssOutput" => [
-                                ["selector", $parentSelector . " .bearcms-html-element"],
-                                ["rule", $parentSelector . " .bearcms-html-element ul,ol,li", "list-style-position:inside;"]
+                                ["rule", $parentSelector . " .bearcms-html-element", "box-sizing:border-box;"],
+                                ["rule", $parentSelector . " .bearcms-html-element ul,ol,li", "list-style-position:inside;margin:0;padding:0;"],
+                                ["selector", $parentSelector . " .bearcms-html-element"]
                             ]
                         ]);
 
                         $groupLinks = $groupHTMLCode->addGroup(__("bearcms.themes.options.Links"));
                         $groupLinks->addOption($idPrefix . "HtmlLinkCSS", "css", '', [
+                            "cssTypes" => ["cssText", "cssTextShadow"],
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-html-element a", "display:inline-block;"],
+                                ["rule", $parentSelector . " .bearcms-html-element a", "text-decoration:none;"],
                                 ["selector", $parentSelector . " .bearcms-html-element a"]
                             ]
                         ]);
@@ -581,7 +606,9 @@ class BearCMS
 
                         $groupPostTitle = $groupPost->addGroup(__("bearcms.themes.options.Title"));
                         $groupPostTitle->addOption($idPrefix . "BlogPostsPostTitleCSS", "css", '', [
+                            "cssTypes" => ["cssText", "cssTextShadow"],
                             "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-blog-posts-element-post-title a", "text-decoration:none;"],
                                 ["selector", $parentSelector . " .bearcms-blog-posts-element-post-title"]
                             ]
                         ]);
@@ -590,12 +617,14 @@ class BearCMS
                         $groupPostTitleContainer->addOption($idPrefix . "BlogPostsPostTitleContainerCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-blog-posts-element-post-title-container", "box-sizing:border-box;"],
                                 ["selector", $parentSelector . " .bearcms-blog-posts-element-post-title-container"]
                             ]
                         ]);
 
                         $groupPostDate = $groupPost->addGroup(__("bearcms.themes.options.Date"));
                         $groupPostDate->addOption($idPrefix . "BlogPostsPostDateCSS", "css", '', [
+                            "cssTypes" => ["cssText", "cssTextShadow"],
                             "cssOutput" => [
                                 ["selector", $parentSelector . " .bearcms-blog-posts-element-post-date"]
                             ]
@@ -605,6 +634,7 @@ class BearCMS
                         $groupPostDateContainer->addOption($idPrefix . "BlogPostsPostDateContainerCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-blog-posts-element-post-date-container", "box-sizing:border-box;"],
                                 ["selector", $parentSelector . " .bearcms-blog-posts-element-post-date-container"]
                             ]
                         ]);
@@ -613,6 +643,7 @@ class BearCMS
                         $groupPostContent->addOption($idPrefix . "BlogPostsPostContentCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-blog-posts-element-post-content", "box-sizing:border-box;"],
                                 ["selector", $parentSelector . " .bearcms-blog-posts-element-post-content"]
                             ]
                         ]);
@@ -620,7 +651,7 @@ class BearCMS
                         $groupShowMoreButton = $groupBlogPosts->addGroup(__('bearcms.themes.options.blogPosts.Show more button'));
                         $groupShowMoreButton->addOption($idPrefix . "BlogPostsShowMoreButtonCSS", "css", '', [
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-blog-posts-element-show-more-button", "display:inline-block;"],
+                                ["rule", $parentSelector . " .bearcms-blog-posts-element-show-more-button", "box-sizing:border-box;display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                                 ["selector", $parentSelector . " .bearcms-blog-posts-element-show-more-button"]
                             ]
                         ]);
@@ -629,6 +660,7 @@ class BearCMS
                         $groupShowMoreButtonContainer->addOption($idPrefix . "BlogPostsShowMoreButtonContainerCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-blog-posts-element-show-more-button-container", "box-sizing:border-box;"],
                                 ["selector", $parentSelector . " .bearcms-blog-posts-element-show-more-button-container"]
                             ]
                         ]);
@@ -663,15 +695,15 @@ class BearCMS
                         $groupComment->addOption($idPrefix . "CommentsCommentCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-comments-comment", "overflow:hidden;"],
+                                ["rule", $parentSelector . " .bearcms-comments-comment", "box-sizing:border-box;"],
                                 ["selector", $parentSelector . " .bearcms-comments-comment"]
                             ]
                         ]);
 
                         $groupCommentAuthorName = $groupComment->addGroup(__("bearcms.themes.options.comments.Author name"));
                         $groupCommentAuthorName->addOption($idPrefix . "CommentsAuthorNameCSS", "css", '', [
+                            "cssTypes" => ["cssText", "cssTextShadow"],
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-comments-comment-author-name", "display:inline-block;"],
                                 ["selector", $parentSelector . " .bearcms-comments-comment-author-name"]
                             ]
                         ]);
@@ -680,21 +712,22 @@ class BearCMS
                         $groupCommentAuthorImage->addOption($idPrefix . "CommentsAuthorImageCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-comments-comment-author-image", "display:inline-block;float:left;"],
+                                ["rule", $parentSelector . " .bearcms-comments-comment-author-image", "box-sizing:border-box;"],
                                 ["selector", $parentSelector . " .bearcms-comments-comment-author-image"]
                             ]
                         ]);
 
                         $groupCommentDate = $groupComment->addGroup(__("bearcms.themes.options.comments.Date"));
                         $groupCommentDate->addOption($idPrefix . "CommentsDateCSS", "css", '', [
+                            "cssTypes" => ["cssText", "cssTextShadow"],
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-comments-comment-date", "display:inline-block;float:right;"],
                                 ["selector", $parentSelector . " .bearcms-comments-comment-date"]
                             ]
                         ]);
 
                         $groupCommentText = $groupComment->addGroup(__("bearcms.themes.options.comments.Text"));
                         $groupCommentText->addOption($idPrefix . "CommentsTextCSS", "css", '', [
+                            "cssTypes" => ["cssText", "cssTextShadow"],
                             "cssOutput" => [
                                 ["selector", $parentSelector . " .bearcms-comments-comment-text"]
                             ]
@@ -702,8 +735,8 @@ class BearCMS
 
                         $groupCommentTextLinks = $groupComment->addGroup(__("bearcms.themes.options.comments.Text links"));
                         $groupCommentTextLinks->addOption($idPrefix . "CommentsTextLinksCSS", "css", '', [
+                            "cssTypes" => ["cssText", "cssTextShadow"],
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-comments-comment-text a", "display:inline-block;"],
                                 ["selector", $parentSelector . " .bearcms-comments-comment-text a"]
                             ]
                         ]);
@@ -720,7 +753,7 @@ class BearCMS
                         $groupSendButton = $groupComments->addGroup(__("bearcms.themes.options.comments.Send button"));
                         $groupSendButton->addOption($idPrefix . "CommentsSendButtonCSS", "css", '', [
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-comments-element-send-button", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
+                                ["rule", $parentSelector . " .bearcms-comments-element-send-button", "box-sizing:border-box;display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                                 ["selector", $parentSelector . " .bearcms-comments-element-send-button"]
                             ]
                         ]);
@@ -728,7 +761,7 @@ class BearCMS
                         $groupSendButtonWaiting = $groupSendButton->addGroup(__("bearcms.themes.options.comments.Send button waiting"));
                         $groupSendButtonWaiting->addOption($idPrefix . "CommentsSendButtonWaitingCSS", "css", '', [
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-comments-element-send-button-waiting", "display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
+                                ["rule", $parentSelector . " .bearcms-comments-element-send-button-waiting", "box-sizing:border-box;display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                                 ["selector", $parentSelector . " .bearcms-comments-element-send-button-waiting"]
                             ]
                         ]);
@@ -736,7 +769,7 @@ class BearCMS
                         $groupShowMoreButton = $groupComments->addGroup(__("bearcms.themes.options.comments.Show more button"));
                         $groupShowMoreButton->addOption($idPrefix . "CommentsShowMoreButtonCSS", "css", '', [
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-comments-show-more-button", "display:inline-block;"],
+                                ["rule", $parentSelector . " .bearcms-comments-show-more-button", "box-sizing:border-box;display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                                 ["selector", $parentSelector . " .bearcms-comments-show-more-button"]
                             ]
                         ]);
@@ -745,13 +778,13 @@ class BearCMS
                         $groupShowMoreButtonContainer->addOption($idPrefix . "CommentsShowMoreButtonContainerCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-comments-show-more-button-container", "box-sizing:border-box;"],
                                 ["selector", $parentSelector . " .bearcms-comments-show-more-button-container"]
                             ]
                         ]);
                     };
                 }
             }
-            
         }
 
         // Load the CMS managed addons
@@ -900,6 +933,10 @@ class BearCMS
                                     if (isset($keywords{0})) {
                                         $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
                                     }
+                                    $content .= '<style>'
+                                            . '.bearcms-blogpost-page-title-container{word-break:break-word;}'
+                                            . '.bearcms-blogpost-page-content{word-break:break-word;}'
+                                            . '</style>';
                                     $content .= '</head><body>';
                                     $content .= '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost->title) . '</h1></div>';
                                     $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost->status === 'published' ? $this->app->localization->formatDate($blogPost->publishedTime, ['date']) : __('bearcms.blogPost.draft')) . '</div></div>';
@@ -937,7 +974,7 @@ class BearCMS
                     $groupTitle = $group->addGroup(__("bearcms.themes.options.Title"));
                     $groupTitle->addOption("blogPostPageTitleCSS", "css", '', [
                         "cssOutput" => [
-                            ["rule", ".bearcms-blogpost-page-title", "font-weight:normal;"],
+                            ["rule", ".bearcms-blogpost-page-title", "box-sizing:border-box;font-weight:normal;"],
                             ["selector", ".bearcms-blogpost-page-title"]
                         ]
                     ]);
@@ -946,6 +983,7 @@ class BearCMS
                     $groupTitleContainer->addOption("blogPostPageTitleContainerCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                         "cssOutput" => [
+                            ["rule", ".bearcms-blogpost-page-title-container", "box-sizing:border-box;"],
                             ["selector", ".bearcms-blogpost-page-title-container"]
                         ]
                     ]);
@@ -965,6 +1003,7 @@ class BearCMS
                         "value" => "1"
                     ]);
                     $groupDate->addOption("blogPostPageDateCSS", "css", '', [
+                        "cssTypes" => ["cssText", "cssTextShadow"],
                         "cssOutput" => [
                             ["selector", ".bearcms-blogpost-page-date"]
                         ]
@@ -975,6 +1014,7 @@ class BearCMS
                     $groupDateContainer->addOption("blogPostPageDateContainerCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                         "cssOutput" => [
+                            ["rule", ".bearcms-blogpost-page-date-container", "box-sizing:border-box;"],
                             ["selector", ".bearcms-blogpost-page-date-container"]
                         ]
                     ]);
@@ -983,6 +1023,7 @@ class BearCMS
                     $groupContent->addOption("blogPostPageContentCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                         "cssOutput" => [
+                            ["rule", ".bearcms-blogpost-page-content", "box-sizing:border-box;"],
                             ["selector", ".bearcms-blogpost-page-content"]
                         ]
                     ]);

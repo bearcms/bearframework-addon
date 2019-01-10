@@ -61,7 +61,7 @@ if (strlen($width) === 0) {
     }
 }
 
-$content = '<div class="bearcms-image-element' . $classAttributeValue . '" style="font-size:0;">';
+$content = '<div class="bearcms-image-element' . $classAttributeValue . '">';
 if (isset($innerContainerStyle{0})) {
     $content .= '<div style="' . $innerContainerStyle . '">';
 }
@@ -79,5 +79,6 @@ if (isset($innerContainerStyle{0})) {
 }
 $content .= '</div>';
 ?><html>
+    <head><style>.bearcms-image-element{font-size:0;}</style></head>
     <body><?= $content ?></body>
 </html>

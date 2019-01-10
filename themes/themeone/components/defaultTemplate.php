@@ -75,9 +75,6 @@ switch ((int) $contentWidthOptionValue) {
                 min-height: 100%;
             }
             *{outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);}
-            ul,ol,li{list-style-position:inside;}
-            img{border:0;}
-            a{text-decoration:none;}
             .template-container{min-height:100vh;font-family:<?= $fontFamily ?>;font-size:<?= $fontSize ?>;background-color:<?= $backgroundColor ?>;color:<?= $textColor ?>;display:flex;flex-direction:column;}
 
             .template-header{width:100%;max-width:<?= $contentWidth ?>;margin:0 auto;padding:0 1rem;}
@@ -108,7 +105,7 @@ switch ((int) $contentWidthOptionValue) {
                 .template-navigation .template-navigation-content{font-size:0;}
                 .template-navigation .template-navigation-content > .bearcms-navigation-element-item{font-size:0;border-radius:2px;border:1px solid transparent;margin-left:0.5rem;}
                 .template-navigation .template-navigation-content > .bearcms-navigation-element-item:first-child{margin-left:0;}
-                .template-navigation .bearcms-navigation-element-item a{color:<?= $textColor ?>;padding:0.7rem 0.8rem;font-size:<?= $fontSize ?>;text-decoration:none;}
+                .template-navigation .bearcms-navigation-element-item a{color:<?= $textColor ?>;padding:0.7rem 0.8rem;font-size:<?= $fontSize ?>;text-decoration:none;display:inline-block;}
                 .template-navigation .template-navigation-content > .bearcms-navigation-element-item:hover{border:1px solid <?= $textColor ?>;}
                 .template-navigation .template-navigation-content > .bearcms-navigation-element-item:active{border:1px solid <?= $textColor ?>;}
                 .template-navigation .template-navigation-content > .bearcms-navigation-element-item-selected{border:1px solid <?= $textColor ?>;}
@@ -178,63 +175,107 @@ switch ((int) $contentWidthOptionValue) {
                 $containerClassName = $i === 0 ? '.template-content' : '.template-footer';
                 $elementsAccentColor = $i === 0 ? $accentColor : '#aaa';
                 $elementsTextColor = $i === 0 ? $textColor : '#fff';
-                echo '' . $containerClassName . ' .bearcms-heading-element-large{color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 1.6);line-height:180%;padding-top:1rem;}
+
+                $h1 = 'color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 1.6);line-height:180%;';
+                $h2 = 'color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 1.3);line-height:180%;';
+                $h3 = 'color:' . $elementsAccentColor . ';font-size:' . $fontSize . ';line-height:180%;';
+                $input = 'border:1px solid ' . $elementsTextColor . ';color:' . $elementsTextColor . ';margin-bottom:10px;font-family:' . $fontFamily . ';font-size:' . $fontSize . ';line-height:180%;padding:calc(' . $fontSize . ' * 0.5) ' . $fontSize . ';width:100%;background-color:transparent;border-radius:2px;';
+                $text = 'line-height:180%;color:' . $elementsTextColor . ';';
+                $link = 'text-decoration:underline;color:' . $elementsTextColor . ';';
+                $button = 'color:' . $elementsTextColor . ';text-decoration:underline;';
+                $buttonWaiting = 'color:' . $elementsTextColor . ';text-decoration:none;';
+                $userImage = 'width:50px;height:50px;margin-right:0.8rem;border-radius:2px;';
+
+                echo '' . $containerClassName . ' .bearcms-heading-element-large{' . $h1 . 'padding-top:1rem;}
             ' . $containerClassName . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-large{padding-top:0;}
-            ' . $containerClassName . ' .bearcms-heading-element-medium{color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 1.3);line-height:180%;padding-top:1rem;}
+            ' . $containerClassName . ' .bearcms-heading-element-medium{' . $h2 . 'padding-top:1rem;}
             ' . $containerClassName . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-medium{padding-top:0;}
-            ' . $containerClassName . ' .bearcms-heading-element-small{color:' . $elementsAccentColor . ';font-size:' . $fontSize . ';line-height:180%;padding-top:1rem;}
+            ' . $containerClassName . ' .bearcms-heading-element-small{' . $h3 . 'padding-top:1rem;}
             ' . $containerClassName . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-small{padding-top:0;}
-            ' . $containerClassName . ' .bearcms-text-element{line-height:180%;color:' . $elementsTextColor . ';margin:-0.3rem 0;}
-            ' . $containerClassName . ' .bearcms-text-element a{text-decoration:underline;color:' . $elementsTextColor . ';}
-            ' . $containerClassName . ' .bearcms-html-element{line-height:180%;color:' . $elementsTextColor . ';margin:-0.3rem 0;}
-            ' . $containerClassName . ' .bearcms-html-element a{text-decoration:underline;color:' . $elementsTextColor . ';}
-            ' . $containerClassName . ' .bearcms-link-element{line-height:180%;text-decoration:underline;color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-text-element{' . $text . 'margin:-0.3rem 0;}
+            ' . $containerClassName . ' .bearcms-text-element a{' . $link . '}
+            ' . $containerClassName . ' .bearcms-html-element{' . $text . 'margin:-0.3rem 0;}
+            ' . $containerClassName . ' .bearcms-html-element a{' . $link . '}
+            ' . $containerClassName . ' .bearcms-link-element a{line-height:180%;' . $link . '}
             ' . $containerClassName . ' .bearcms-image-element-image{border-radius:2px;}
             ' . $containerClassName . ' .bearcms-image-gallery-element-image{border-radius:2px;}
             ' . $containerClassName . ' .bearcms-video-element{border-radius:2px;}
-            ' . $containerClassName . ' .bearcms-blog-posts-element{}
-            ' . $containerClassName . ' .bearcms-comments-element{}
-            ' . $containerClassName . ' .bearcms-navigation-element-item a{line-height:180%;text-decoration:underline;color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-navigation-element-item a{line-height:180%;' . $link . '}
             
             ' . $containerClassName . ' .bearcms-comments-comment{margin-bottom:1rem;}
             ' . $containerClassName . ' .bearcms-comments-show-more-button-container{padding-bottom:1rem;}
-            ' . $containerClassName . ' .bearcms-comments-show-more-button{text-decoration:underline;color:' . $elementsTextColor . ';}
-            ' . $containerClassName . ' .bearcms-comments-comment-author-image{width:50px;height:50px;margin-right:0.8rem;border-radius:2px;}
-            ' . $containerClassName . ' .bearcms-comments-comment-author-name{text-decoration:underline;color:' . $elementsTextColor . ';}
-            ' . $containerClassName . ' .bearcms-comments-comment-text{line-height:180%;color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-comments-show-more-button{' . $button . '}
+            ' . $containerClassName . ' .bearcms-comments-comment-author-image{' . $userImage . '}
+            ' . $containerClassName . ' .bearcms-comments-comment-author-name{' . $link . '}
+            ' . $containerClassName . ' .bearcms-comments-comment-text{' . $text . '}
             ' . $containerClassName . ' .bearcms-comments-comment-date{font-size:calc(' . $fontSize . ' * 0.8);color:' . $elementsTextColor . ';}
-            ' . $containerClassName . ' .bearcms-comments-element-text-input{border:1px solid ' . $elementsTextColor . ';color:' . $elementsTextColor . ';margin-bottom:10px;font-family:' . $fontFamily . ';font-size:' . $fontSize . ';line-height:180%;height:calc(' . $fontSize . ' * 8);padding:calc(' . $fontSize . ' * 0.5) ' . $fontSize . ';width:100%;background-color:transparent;border-radius:2px;}
-            ' . $containerClassName . ' .bearcms-comments-element-send-button{color:' . $elementsTextColor . ';text-decoration:underline;}
-            ' . $containerClassName . ' .bearcms-comments-element-send-button-waiting{color:' . $elementsTextColor . ';text-decoration:none;}
+            ' . $containerClassName . ' .bearcms-comments-element-text-input{' . $input . 'height:calc(' . $fontSize . ' * 8);}
+            ' . $containerClassName . ' .bearcms-comments-element-send-button{' . $button . '}
+            ' . $containerClassName . ' .bearcms-comments-element-send-button-waiting{' . $buttonWaiting . '}
             
             ' . $containerClassName . ' .bearcms-blog-posts-element-post:not(:first-child){margin-top:' . $spacing . ';}
             ' . $containerClassName . ' .bearcms-blog-posts-element-show-more-button-container{margin-top:' . $spacing . ';}
-            ' . $containerClassName . ' .bearcms-blog-posts-element-show-more-button{text-decoration:underline;color:' . $elementsTextColor . ';}
-            ' . $containerClassName . ' .bearcms-blog-posts-element-post-title{font-size:calc(' . $fontSize . ' * 1.3);text-decoration:underline;color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-blog-posts-element-show-more-button{' . $button . '}
+            ' . $containerClassName . ' .bearcms-blog-posts-element-post-title{line-height:180%;font-size:calc(' . $fontSize . ' * 1.3);text-decoration:underline;color:' . $elementsTextColor . ';}
             ' . $containerClassName . ' .bearcms-blog-posts-element-post-date-container{padding-top:' . $fontSize . ';}
             ' . $containerClassName . ' .bearcms-blog-posts-element-post-date{font-size:calc(' . $fontSize . ' * 0.8);color:' . $elementsTextColor . ';}
             ' . $containerClassName . ' .bearcms-blog-posts-element-post-content{padding-top:calc(1.5rem);}
+            
+            ' . $containerClassName . ' .bearcms-forum-posts-post:not(:first-child){margin-top:calc(' . $fontSize . ' * 0.5);}
+            ' . $containerClassName . ' .bearcms-forum-posts-post-title{line-height:180%;text-decoration:underline;color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-forum-posts-post-replies-count{font-size:calc(' . $fontSize . ' * 0.8);color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-forum-posts-show-more-button-container{margin-top:calc(' . $fontSize . ' * 0.5);}
+            ' . $containerClassName . ' .bearcms-forum-posts-show-more-button{' . $button . '}
+            ' . $containerClassName . ' .bearcms-forum-posts-new-post-button-container{margin-top:calc(' . $fontSize . ' * 0.5);}
+            ' . $containerClassName . ' .bearcms-forum-posts-new-post-button{' . $button . '}
                                                                                     
-            ' . $containerClassName . ' .bearcms-blogpost-page-title{color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 1.6);line-height:180%;}
+            ' . $containerClassName . ' .bearcms-blogpost-page-title{' . $h1 . '}
             ' . $containerClassName . ' .bearcms-blogpost-page-date-container{padding-top:' . $fontSize . ';}
             ' . $containerClassName . ' .bearcms-blogpost-page-date{font-size:calc(' . $fontSize . ' * 0.8);line-height:180%;}
             ' . $containerClassName . ' .bearcms-blogpost-page-content{padding-top:calc(' . $fontSize . ' * 1.6);}
             
-            @media(min-width: 40rem) {
-                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-large{margin-left: ' . $spacing . ';margin-right: ' . $spacing . ';}
-                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-medium{margin-left: ' . $spacing . ';margin-right: ' . $spacing . ';}
-                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-small{margin-left: ' . $spacing . ';margin-right: ' . $spacing . ';}
-                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-text-element{margin-left: ' . $spacing . ';margin-right: ' . $spacing . ';}
-                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-html-element{margin-left: ' . $spacing . ';margin-right: ' . $spacing . ';}
-                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-link-element{margin-left: ' . $spacing . ';margin-right: ' . $spacing . ';}
-                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-blog-posts-element{margin-left: ' . $spacing . ';margin-right: ' . $spacing . ';}
-                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-comments-element{margin-left: ' . $spacing . ';margin-right: ' . $spacing . ';}
-                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-navigation-element{margin:0 ' . $spacing . ' !important;}
-                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-columns{margin-left: ' . $spacing . ';margin-right: ' . $spacing . ';}
-                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-floating-box{margin-left: ' . $spacing . ';margin-right: ' . $spacing . ';}
+            ' . $containerClassName . ' .bearcms-new-forum-post-page-title{' . $h1 . 'padding-bottom:' . $fontSize . ';}
+            ' . $containerClassName . ' .bearcms-new-forum-post-page-title-label{' . $text . '}
+            ' . $containerClassName . ' .bearcms-new-forum-post-page-title-input{' . $input . '}
+            ' . $containerClassName . ' .bearcms-new-forum-post-page-text-label{' . $text . '}
+            ' . $containerClassName . ' .bearcms-new-forum-post-page-text-input{' . $input . 'height:calc(' . $fontSize . ' * 14);}
+            ' . $containerClassName . ' .bearcms-new-forum-post-page-send-button{' . $button . '}
+            ' . $containerClassName . ' .bearcms-new-forum-post-page-send-button-waiting{' . $buttonWaiting . '}
                 
-                ' . $containerClassName . ' .bearcms-blogpost-page-title{margin-left: ' . $spacing . ';margin-right: ' . $spacing . ';}
-                ' . $containerClassName . ' .bearcms-blogpost-page-date-container{margin-left: ' . $spacing . ';margin-right: ' . $spacing . ';}
+            ' . $containerClassName . ' .bearcms-forum-post-page-title{' . $h1 . 'padding-bottom:' . $fontSize . ';}
+            ' . $containerClassName . ' .bearcms-forum-post-page-reply{margin-bottom:1rem;}
+            ' . $containerClassName . ' .bearcms-forum-post-page-reply-author-image{' . $userImage . '}
+            ' . $containerClassName . ' .bearcms-forum-post-page-reply-author-name{' . $link . '}
+            ' . $containerClassName . ' .bearcms-forum-post-page-reply-text{' . $text . '}
+            ' . $containerClassName . ' .bearcms-forum-post-page-reply-date{font-size:calc(' . $fontSize . ' * 0.8);color:' . $elementsTextColor . ';}
+            ' . $containerClassName . ' .bearcms-forum-post-page-text-input{' . $input . 'height:calc(' . $fontSize . ' * 14);}
+            ' . $containerClassName . ' .bearcms-forum-post-page-send-button{' . $button . '}
+            ' . $containerClassName . ' .bearcms-forum-post-page-send-button-waiting{' . $buttonWaiting . '}
+            
+            @media(min-width: 40rem) {
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-large{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-medium{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-small{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-text-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-html-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-link-element{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-blog-posts-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-comments-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-navigation-element{margin:0 ' . $spacing . ' !important;}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-share-button-element{padding:0 ' . $spacing . ' !important;}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-forum-posts-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-columns{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}
+                ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-floating-box{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}
+                
+                ' . $containerClassName . ' .bearcms-blogpost-page-title-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}
+                ' . $containerClassName . ' .bearcms-blogpost-page-date-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}
+                
+                ' . $containerClassName . ' .bearcms-new-forum-post-page-title-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}
+                ' . $containerClassName . ' .bearcms-new-forum-post-page-content{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}
+                
+                ' . $containerClassName . ' .bearcms-forum-post-page-title-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}
+                ' . $containerClassName . ' .bearcms-forum-post-page-content{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}
+                    
             }';
             }
             ?></style>
@@ -263,6 +304,7 @@ switch ((int) $contentWidthOptionValue) {
 
             echo '<section class="template-content">';
             echo '{{body}}';
+            //echo '<component src="bearcms-elements" id="test1" editable="true"/>';
             echo '</section>';
 
             if ($hasFooter) {

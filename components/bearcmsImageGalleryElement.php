@@ -21,7 +21,7 @@ if (strlen($component->innerHTML) > 0) {
 
 $spacing = $component->spacing;
 
-$content = '<div class="bearcms-image-gallery-element" style="font-size:0;">';
+$content = '<div class="bearcms-image-gallery-element">';
 
 $attributes = '';
 if (strlen($component->type) > 0) {
@@ -59,5 +59,6 @@ if ($files !== null) {
 $content .= '</component>';
 $content .= '</div>';
 ?><html>
+    <head><style>.bearcms-image-gallery-element{font-size:0;}</style></head>
     <body><?= $content ?></body>
 </html>

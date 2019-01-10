@@ -146,5 +146,6 @@ if (isset($itemsHtml{0})) {
     $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';
 }
 ?><html>
+    <head><style>.bearcms-navigation-element-item{word-wrap:break-word;}</style></head>
     <body><?= $content ?></body>
 </html>

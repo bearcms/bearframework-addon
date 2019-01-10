@@ -212,7 +212,7 @@ if ($list->length > 0) {
 $content .= '</div>';
 $content .= '</div>';
 ?><html>
-    <head><?php
+    <head><style>.bearcms-blog-posts-element-post-title{word-wrap:break-word;}</style><?php
         if ($list->length > $limit) {
             echo '<script id="bearcms-bearframework-addon-script-2" src="' . htmlentities($context->assets->getUrl('components/bearcmsBlogPostsElement/assets/blogPostsElement.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
             echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
