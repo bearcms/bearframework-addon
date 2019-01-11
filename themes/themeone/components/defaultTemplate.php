@@ -77,19 +77,19 @@ switch ((int) $contentWidthOptionValue) {
             *{outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);}
             .template-container{min-height:100vh;font-family:<?= $fontFamily ?>;font-size:<?= $fontSize ?>;background-color:<?= $backgroundColor ?>;color:<?= $textColor ?>;display:flex;flex-direction:column;}
 
-            .template-header{width:100%;max-width:<?= $contentWidth ?>;margin:0 auto;padding:0 1rem;}
+            .template-header{box-sizing:border-box;width:100%;max-width:<?= $contentWidth ?>;margin:0 auto;padding:0 1rem;}
             <?php if ($hasHeaderLogo) { ?>
                 .template-header-logo-container{margin-top:3rem;}
-                .template-header-logo{max-width:<?= $headerLogoMaxWidth ?>px;margin:0 auto;}
+                .template-header-logo{box-sizing:border-box;max-width:<?= $headerLogoMaxWidth ?>px;margin:0 auto;}
             <?php } ?>
             <?php if ($hasHeaderTitle) { ?>
                 .template-header-title-container{margin-top:<?= ($hasHeaderLogo ? '2rem' : '3rem') ?>;text-align:center;}
                 .template-header-title{text-decoration:none;color:<?= $accentColor ?>;font-size:<?= $isHomePage ? 1.6 : 1.3 ?>rem;}
             <?php } ?>
-            .template-content{width:100%;min-height:40rem;max-width:<?= $contentWidth ?>;margin:0 auto;padding:3rem 1.2rem;flex:1 0 auto;}
+            .template-content{box-sizing:border-box;width:100%;min-height:40rem;max-width:<?= $contentWidth ?>;margin:0 auto;padding:3rem 1.2rem;flex:1 0 auto;}
 
-            .template-footer{width:100%;background-color:#111;}
-            .template-footer > div{max-width:<?= $contentWidth ?>;margin:0 auto;padding:3rem 1.2rem;}
+            .template-footer{box-sizing:border-box;width:100%;background-color:#111;}
+            .template-footer > div{box-sizing:border-box;max-width:<?= $contentWidth ?>;margin:0 auto;padding:3rem 1.2rem;}
 
             <?php if ($hasNavigation) { ?>
                 .template-navigation ul, .template-navigation li{
@@ -130,6 +130,7 @@ switch ((int) $contentWidthOptionValue) {
                     display: none;
                 }
                 #template-navigation-toggle-button + label{
+                    box-sizing:border-box;
                     display: none;
                     height:2.55rem;
                     width:3.1rem;
@@ -159,6 +160,7 @@ switch ((int) $contentWidthOptionValue) {
                         display: none;
                     }
                     #template-navigation-toggle-button:checked + label + div{
+                        box-sizing:border-box;
                         display: block;
                         width: 100%;
                         box-sizing: border-box;
@@ -179,12 +181,12 @@ switch ((int) $contentWidthOptionValue) {
                 $h1 = 'color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 1.6);line-height:180%;';
                 $h2 = 'color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 1.3);line-height:180%;';
                 $h3 = 'color:' . $elementsAccentColor . ';font-size:' . $fontSize . ';line-height:180%;';
-                $input = 'border:1px solid ' . $elementsTextColor . ';color:' . $elementsTextColor . ';margin-bottom:10px;font-family:' . $fontFamily . ';font-size:' . $fontSize . ';line-height:180%;padding:calc(' . $fontSize . ' * 0.5) ' . $fontSize . ';width:100%;background-color:transparent;border-radius:2px;';
+                $input = 'box-sizing:border-box;border:1px solid ' . $elementsTextColor . ';color:' . $elementsTextColor . ';margin-bottom:10px;font-family:' . $fontFamily . ';font-size:' . $fontSize . ';line-height:180%;padding:calc(' . $fontSize . ' * 0.5) ' . $fontSize . ';width:100%;background-color:transparent;border-radius:2px;';
                 $text = 'line-height:180%;color:' . $elementsTextColor . ';';
                 $link = 'text-decoration:underline;color:' . $elementsTextColor . ';';
                 $button = 'color:' . $elementsTextColor . ';text-decoration:underline;';
                 $buttonWaiting = 'color:' . $elementsTextColor . ';text-decoration:none;';
-                $userImage = 'width:50px;height:50px;margin-right:0.8rem;border-radius:2px;';
+                $userImage = 'box-sizing:border-box;width:50px;height:50px;margin-right:0.8rem;border-radius:2px;';
 
                 echo '' . $containerClassName . ' .bearcms-heading-element-large{' . $h1 . 'padding-top:1rem;}
             ' . $containerClassName . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-large{padding-top:0;}
