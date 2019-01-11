@@ -974,7 +974,7 @@ class BearCMS
                     $groupTitle = $group->addGroup(__("bearcms.themes.options.Title"));
                     $groupTitle->addOption("blogPostPageTitleCSS", "css", '', [
                         "cssOutput" => [
-                            ["rule", ".bearcms-blogpost-page-title", "box-sizing:border-box;font-weight:normal;"],
+                            ["rule", ".bearcms-blogpost-page-title", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                             ["selector", ".bearcms-blogpost-page-title"]
                         ]
                     ]);
