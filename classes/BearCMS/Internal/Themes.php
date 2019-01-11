@@ -593,7 +593,7 @@ class Themes
         if ($version === null) {
             return null;
         }
-        return 'bearcms-theme-options-' . Config::$dataCachePrefix . '-' . md5($id) . '-' . md5($version) . '-' . md5($userID) . '-5';
+        return 'bearcms-theme-options-' . Config::$dataCachePrefix . '-' . md5($id) . '-' . md5($version) . '-' . md5($userID) . '-6';
     }
 
     /**

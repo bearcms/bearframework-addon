@@ -227,7 +227,8 @@ class BearCMS
                         $groupText->addOption($idPrefix . "TextCSS", "css", '', [
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-text-element", "box-sizing:border-box;"],
-                                ["rule", $parentSelector . " .bearcms-text-element ul,ol,li", "list-style-position:inside;margin:0;padding:0;"],
+                                ["rule", $parentSelector . " .bearcms-text-element ul,ol,li", "list-style-position:inside;"],
+                                ["rule", $parentSelector . " .bearcms-text-element ul,ol,li,p,input", "margin:0;padding:0;"],
                                 ["selector", $parentSelector . " .bearcms-text-element"]
                             ]
                         ]);
@@ -542,8 +543,8 @@ class BearCMS
                         $groupHTMLCode = $context->addGroup(__("bearcms.themes.options.HTML code"));
                         $groupHTMLCode->addOption($idPrefix . "HtmlCSS", "css", '', [
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-html-element", "box-sizing:border-box;"],
-                                ["rule", $parentSelector . " .bearcms-html-element ul,ol,li", "list-style-position:inside;margin:0;padding:0;"],
+                                ["rule", $parentSelector . " .bearcms-html-element ul,ol,li", "list-style-position:inside;"],
+                                ["rule", $parentSelector . " .bearcms-html-element ul,ol,li,p,input", "margin:0;padding:0;"],
                                 ["selector", $parentSelector . " .bearcms-html-element"]
                             ]
                         ]);
@@ -745,7 +746,7 @@ class BearCMS
                         $groupTextInput->addOption($idPrefix . "CommentsTextInputCSS", "css", '', [
                             "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-comments-element-text-input", "box-sizing:border-box;border:0;"],
+                                ["rule", $parentSelector . " .bearcms-comments-element-text-input", "box-sizing:border-box;border:0;margin:0;padding:0;"],
                                 ["selector", $parentSelector . " .bearcms-comments-element-text-input"]
                             ]
                         ]);
