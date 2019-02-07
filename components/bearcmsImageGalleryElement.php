@@ -9,13 +9,14 @@
 use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal2;
+use IvoPetkov\HTML5DOMDocument;
 
 $app = App::get();
 
 $files = null;
 if (strlen($component->innerHTML) > 0) {
-    $domDocument = new IvoPetkov\HTML5DOMDocument();
-    $domDocument->loadHTML($component->innerHTML);
+    $domDocument = new HTML5DOMDocument();
+    $domDocument->loadHTML($component->innerHTML, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
     $files = $domDocument->querySelectorAll('file');
 }
 

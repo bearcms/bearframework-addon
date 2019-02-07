@@ -65,7 +65,6 @@ class Themes
                 $app = App::get();
                 $theme = new \BearCMS\Themes\Theme($id);
                 call_user_func(self::$announcements[$id], $theme);
-                $app->hooks->execute('bearCMSThemeRequested', $theme);
                 self::$announcements[$id] = $theme;
             }
             return self::$announcements[$id];
@@ -118,7 +117,7 @@ class Themes
         }
         if (is_callable($theme->manifest)) {
             $app = App::get();
-            $context = $app->context->get(__FILE__);
+            $context = $app->contexts->get(__FILE__);
             $result = call_user_func($theme->manifest);
             if (!is_array($result)) {
                 throw new \Exception('Invalid theme manifest value for theme ' . $id . '!');
@@ -257,7 +256,7 @@ class Themes
             }
             if ($updateMediaFilenames) {
                 $app = App::get();
-                $context = $app->context->get(__FILE__);
+                $context = $app->contexts->get(__FILE__);
                 foreach ($result as $j => $style) {
                     if (isset($style['media']) && is_array($style['media'])) {
                         foreach ($style['media'] as $i => $mediaItem) {
@@ -394,7 +393,7 @@ class Themes
                     $replace = [];
                     foreach ($matches[1] as $filename) {
                         $search[] = $filename;
-                        $replace[] = $app->assets->getUrl($filename, ['cacheMaxAge' => 999999999]);
+                        $replace[] = $app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
                     }
                     $text = str_replace($search, $replace, $text);
                 }
@@ -435,7 +434,7 @@ class Themes
             'exportDate' => date('c')
         ];
 
-        $archiveFileDataKey = '.temp/bearcms/theme-export-' . md5(uniqid()) . '.zip';
+        $archiveFileDataKey = '.temp/bearcms/themeexport/theme-export-' . md5(uniqid()) . '.zip';
         $archiveFilename = $app->data->getFilename($archiveFileDataKey);
         $app->data->setValue($archiveFileDataKey . '_', 'temp'); // needed to make the dir for the archive file
         $zip = new \ZipArchive();
@@ -533,7 +532,7 @@ class Themes
                         }
                         throw new \Exception('Invalid file (' . $key . ')!', 7);
                     }
-                    $app->data->makePublic($dataKey);
+                    //$app->data->makePublic($dataKey);
                 }
             }
 
@@ -614,7 +613,7 @@ class Themes
                     $result[] = $jsJsonEncoded ? json_decode('"' . $key . '"') : $key;
                 }
             }
-            if (strpos($value, 'data:') === 0 || strpos($value, 'app:') === 0 || strpos($value, 'addon:') === 0) {
+            if (strpos($value, 'data:') === 0 || strpos($value, 'addon:') === 0) { //strpos($value, 'app:') === 0 || 
                 $result[] = $value;
             }
         }

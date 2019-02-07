@@ -46,7 +46,7 @@ class Themes
     public function addDefault()
     {
         $app = App::get();
-        $context = $app->context->get(__FILE__);
+        $context = $app->contexts->get(__FILE__);
         require_once $context->dir . '/themes/themeone/index.php';
     }
 

@@ -9,6 +9,7 @@
 use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal2;
+use IvoPetkov\HTML5DOMDocument;
 
 $app = App::get();
 
@@ -110,8 +111,8 @@ if ($pages !== null && $showHomeLink) {
 
 $itemsHtml = (string) $component->innerHTML;
 if (isset($itemsHtml{0})) {
-    $domDocument = new IvoPetkov\HTML5DOMDocument();
-    $domDocument->loadHTML($itemsHtml);
+    $domDocument = new HTML5DOMDocument();
+    $domDocument->loadHTML($itemsHtml, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
     $ulElements = $domDocument->querySelectorAll('ul');
     foreach ($ulElements as $index => $ulElement) {
         $ulElement->setAttribute('class', trim($ulElement->getAttribute('class') . ' ' . ($index === 0 ? 'bearcms-navigation-element' : 'bearcms-navigation-element-item-children')));
@@ -134,7 +135,7 @@ if (isset($itemsHtml{0})) {
         $itemsHtml = $rootULElement->outerHTML;
     }
 } else {
-    if ($pages === null || $pages->length === 0) {
+    if ($pages === null || $pages->count() === 0) {
         $itemsHtml = '';
     } else {
         $itemsHtml = $buildTree($pages, $source === 'allPages');

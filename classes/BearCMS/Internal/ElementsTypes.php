@@ -31,13 +31,15 @@ class ElementsTypes
     {
         $app = App::get();
         if (self::$contextDir === null) {
-            $context = $app->context->get(__FILE__);
+            $context = $app->contexts->get(__FILE__);
             self::$contextDir = $context->dir;
         }
-        $app->components->addAlias($options['componentSrc'], 'file:' . self::$contextDir . '/components/bearcmsElement.php');
-        Internal\ElementsHelper::$elementsTypesCodes[$options['componentSrc']] = $typeCode;
-        Internal\ElementsHelper::$elementsTypesFilenames[$options['componentSrc']] = $options['componentFilename'];
-        Internal\ElementsHelper::$elementsTypesOptions[$options['componentSrc']] = $options;
+        $name = $options['componentSrc'];
+        $app->components->addAlias($name, 'file:' . self::$contextDir . '/components/bearcmsElement.php');
+        $app->components->addTag($name, 'file:' . self::$contextDir . '/components/bearcmsElement.php');
+        Internal\ElementsHelper::$elementsTypesCodes[$name] = $typeCode;
+        Internal\ElementsHelper::$elementsTypesFilenames[$name] = $options['componentFilename'];
+        Internal\ElementsHelper::$elementsTypesOptions[$name] = $options;
     }
 
 }

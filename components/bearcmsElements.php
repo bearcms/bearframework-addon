@@ -9,7 +9,7 @@
 use BearCMS\Internal;
 
 $app = BearFramework\App::get();
-$context = $app->context->get(__FILE__);
+$context = $app->contexts->get(__FILE__);
 
 $lazyLimit = 70;
 $contextData = Internal\ElementsHelper::getComponentContextData($component);
@@ -138,8 +138,8 @@ if ($renderElementsContainer) {
             if ($hasLazyLoading) {
                 $lazyLoadInitializeData = [];
                 $lazyLoadInitializeData[] = __('bearcms.elements.LoadingMore');
-                echo '<script id="bearcms-bearframework-addon-script-3" src="' . htmlentities($context->assets->getUrl('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async onload="' . htmlentities('bearCMS.elementsLazyLoad.initialize(' . json_encode($lazyLoadInitializeData) . ');') . '"></script>';
-                echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
+                echo '<script id="bearcms-bearframework-addon-script-3" src="' . htmlentities($context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async onload="' . htmlentities('bearCMS.elementsLazyLoad.initialize(' . json_encode($lazyLoadInitializeData) . ');') . '"></script>';
+                echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getURL('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
             }
         }
         ?></head>

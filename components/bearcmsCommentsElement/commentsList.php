@@ -31,7 +31,7 @@ if ($thread !== null) {
         }
         return false;
     })->sortBy('createdTime', 'asc');
-    $startIndex = $thread->comments->length - $count;
+    $startIndex = $thread->comments->count() - $count;
     if ($startIndex < 0) {
         $startIndex = 0;
     }

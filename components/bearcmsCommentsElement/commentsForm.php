@@ -10,7 +10,7 @@ use BearFramework\App;
 use BearCMS\Internal;
 
 $app = App::get();
-$context = $app->context->get(__FILE__);
+$context = $app->contexts->get(__FILE__);
 
 $form->constraints->setRequired('cfcomment', __('bearcms.comments.Your comment cannot be empty!'));
 
@@ -37,7 +37,12 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
     $cancel = false;
     $cancelMessage = '';
 
-    $app->hooks->execute('bearCMSCommentAdd', $author, $text, $status, $cancel, $cancelMessage);
+    if ($app->bearCMS->hasEventListeners('internalBeforeAddComment')) {
+        $eventDetails = new \BearCMS\Internal\BeforeAddCommentEventDetails($author, $text, $status);
+        $app->bearCMS->dispatchEvent('internalBeforeAddComment');
+        $cancel = $eventDetails->cancel;
+        $cancelMessage = $eventDetails->cancelMessage;
+    }
     if ($cancel) {
         $this->throwError($cancelMessage);
     }

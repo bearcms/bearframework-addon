@@ -13,7 +13,7 @@ $app = App::get();
 
 $app->bearCMS->themes
         ->announce('bearcms/themeone', function(\BearCMS\Themes\Theme $theme) use ($app) {
-            $context = $app->context->get(__FILE__);
+            $context = $app->contexts->get(__FILE__);
 
             $app->localization
             ->addDictionary('en', function() use ($context) {
@@ -28,8 +28,10 @@ $app->bearCMS->themes
 
             $theme->version = '1.6';
 
-            $theme->initialize = function(\BearCMS\Themes\Options $options) use ($app) {
-                $app->hooks->add('componentCreated', function($component) {
+            $theme->initialize = function() use ($app) {
+                $app->components
+                ->addEventListener('makeComponent', function($details) {
+                    $component = $details->component;
                     if ($component->src === 'bearcms-elements') {
                         $component->spacing = '1.5rem';
                     }

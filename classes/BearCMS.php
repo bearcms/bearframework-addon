@@ -24,6 +24,7 @@ class BearCMS
 {
 
     use \IvoPetkov\DataObjectTrait;
+    use \BearFramework\App\EventsTrait;
 
     /**
      * Bear CMS version.
@@ -75,7 +76,7 @@ class BearCMS
         ;
 
         $this->app = App::get();
-        $this->context = $this->app->context->get(__FILE__);
+        $this->context = $this->app->contexts->get(__FILE__);
     }
 
     /**
@@ -108,22 +109,26 @@ class BearCMS
         if ($hasElements || Config::hasFeature('ELEMENTS_*')) {
             $this->app->components
                     ->addAlias('bearcms-elements', 'file:' . $this->context->dir . '/components/bearcmsElements.php')
-                    ->addAlias('bearcms-missing-element', 'file:' . $this->context->dir . '/components/bearcmsElement.php');
-
-            $this->app->hooks
-                    ->add('componentCreated', function($component) {
+                    ->addTag('bearcms-elements', 'file:' . $this->context->dir . '/components/bearcmsElements.php')
+                    ->addAlias('bearcms-missing-element', 'file:' . $this->context->dir . '/components/bearcmsElement.php')
+                    ->addEventListener('makeComponent', function($details) {
                         // Updates the BearCMS components when created
-                        if ($component->src === 'bearcms-elements') {
-                            Internal\ElementsHelper::updateContainerComponent($component);
-                        } elseif (isset(Internal\ElementsHelper::$elementsTypesFilenames[$component->src])) {
-                            $component->setAttribute('bearcms-internal-attribute-type', Internal\ElementsHelper::$elementsTypesCodes[$component->src]);
-                            $component->setAttribute('bearcms-internal-attribute-filename', Internal\ElementsHelper::$elementsTypesFilenames[$component->src]);
-                            Internal\ElementsHelper::updateElementComponent($component);
-                        } else if ($component->src === 'bearcms-missing-element') {
-                            $component->setAttribute('bearcms-internal-attribute-type', 'missing');
-                            Internal\ElementsHelper::updateElementComponent($component);
+                        $component = $details->component;
+                        $name = strlen($component->src) > 0 ? $component->src : ($component->tagName !== 'component' ? $component->tagName : null);
+                        if ($name !== null) {
+                            if ($name === 'bearcms-elements') {
+                                Internal\ElementsHelper::updateContainerComponent($component);
+                            } elseif (isset(Internal\ElementsHelper::$elementsTypesFilenames[$name])) {
+                                $component->setAttribute('bearcms-internal-attribute-type', Internal\ElementsHelper::$elementsTypesCodes[$name]);
+                                $component->setAttribute('bearcms-internal-attribute-filename', Internal\ElementsHelper::$elementsTypesFilenames[$name]);
+                                Internal\ElementsHelper::updateElementComponent($component);
+                            } else if ($name === 'bearcms-missing-element') {
+                                $component->setAttribute('bearcms-internal-attribute-type', 'missing');
+                                Internal\ElementsHelper::updateElementComponent($component);
+                            }
                         }
                     });
+
             $this->app->serverRequests
                     ->add('bearcms-elements-load-more', function($data) {
                         if (isset($data['serverData'])) {
@@ -139,19 +144,6 @@ class BearCMS
                             }
                         }
                     });
-
-            $this->app->tasks
-                    ->define('bearcms-send-contact-form-email', function($data) {
-                        $email = $this->app->emails->make();
-                        $email->sender->email = $data['senderEmail'];
-                        $email->sender->name = $data['senderName'];
-                        $email->subject = $data['subject'];
-                        $email->content->add($data['content']);
-                        $email->recipients->add($data['recipientEmail']);
-                        $email->replyToRecipients->add($data['replyToEmail']);
-                        $this->app->emails->send($email);
-                    });
-
 
             if ($hasElements || Config::hasFeature('ELEMENTS_HEADING')) {
                 Internal\ElementsTypes::add('heading', [
@@ -273,7 +265,7 @@ class BearCMS
                                 ["selector", $parentSelector . " .bearcms-link-element a"]
                             ]
                         ]);
-                        
+
                         $groupContainer = $group->addGroup(__("bearcms.themes.options.Container"));
                         $groupContainer->addOption($idPrefix . "LinkContainerCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
@@ -378,7 +370,7 @@ class BearCMS
                     },
                     'updateDataFromComponent' => function($component, $data) {
                         $domDocument = new HTML5DOMDocument();
-                        $domDocument->loadHTML($component->innerHTML);
+                        $domDocument->loadHTML($component->innerHTML, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
                         $files = [];
                         $filesElements = $domDocument->querySelectorAll('file');
                         foreach ($filesElements as $fileElement) {
@@ -795,7 +787,6 @@ class BearCMS
 
         $onResponseCreated = function($response) {
             $this->applyDefaults($response);
-            $this->app->hooks->execute('bearCMSResponseCreated', $response);
             $this->applyTheme($response);
             $this->applyAdminUI($response);
         };
@@ -816,12 +807,12 @@ class BearCMS
             }
             if (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) {
                 $this->app->routes
-                        ->add('/-aj/', function() {
+                        ->add('POST /-aj/', function() {
                             return Internal\Controller::handleAjax();
-                        }, ['POST'])
-                        ->add('/-au/', function() {
+                        })
+                        ->add('POST /-au/', function() {
                             return Internal\Controller::handleFileUpload();
-                        }, ['POST']);
+                        });
             }
         }
 
@@ -867,7 +858,7 @@ class BearCMS
                             $settings = $this->app->bearCMS->data->settings->get();
                             $icon = $settings->icon;
                             if (isset($icon{0})) {
-                                $url = $this->app->assets->getUrl($icon, ['cacheMaxAge' => 999999999, 'width' => (int) $size, 'height' => (int) $size]);
+                                $url = $this->app->assets->getURL($icon, ['cacheMaxAge' => 999999999, 'width' => (int) $size, 'height' => (int) $size]);
                                 return new App\Response\TemporaryRedirect($url);
                             }
                         }
@@ -944,11 +935,12 @@ class BearCMS
                                     $content .= '<div class="bearcms-blogpost-page-content"><component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/></div>';
                                     $content .= '</body></html>';
 
-                                    $this->app->hooks->execute('bearCMSBlogPostPageContentCreated', $content, $blogPostID);
-
-                                    $content = $this->app->components->process($content);
-
                                     $response = new App\Response\HTML($content);
+                                    if ($this->hasEventListeners('internalMakeBlogPostPageResponse')) {
+                                        $eventDetails = new \BearCMS\Internal\MakeBlogPostPageResponseEventDetails($response, $blogPostID);
+                                        $this->dispatchEvent('internalMakeBlogPostPageResponse', $eventDetails);
+                                    }
+                                    $response->content = $this->app->components->process($response->content);
                                     $onResponseCreated($response);
                                     return $response;
                                 }
@@ -1097,11 +1089,12 @@ class BearCMS
                                     $content .= '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
                                     $content .= '</body></html>';
 
-                                    $this->app->hooks->execute('bearCMSPageContentCreated', $content, $pageID);
-
-                                    $content = $this->app->components->process($content);
-
                                     $response = new App\Response\HTML($content);
+                                    if ($this->hasEventListeners('internalMakePageResponse')) {
+                                        $eventDetails = new \BearCMS\Internal\MakePageResponseEventDetails($response, $pageID);
+                                        $this->dispatchEvent('internalMakePageResponse', $eventDetails);
+                                    }
+                                    $response->content = $this->app->components->process($response->content);
                                     $onResponseCreated($response);
                                     return $response;
                                 }
@@ -1110,20 +1103,10 @@ class BearCMS
             ]);
         }
 
-        $this->app->hooks
-                ->add('responseCreated', function($response) {
-                    if (strpos((string) $this->app->request->path, $this->app->config->assetsPathPrefix) !== 0) {
-                        if ($response instanceof App\Response\NotFound) {
-                            $response->headers->set($response->headers->make('Content-Type', 'text/html'));
-                            $this->apply($response);
-                        } elseif ($response instanceof App\Response\TemporaryUnavailable) {
-                            $response->headers->set($response->headers->make('Content-Type', 'text/html'));
-                            $this->apply($response);
-                        }
-                    }
-                })
-                ->add('assetPrepare', function(&$filename) {
-                    $addonAssetsDir = $this->context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR;
+        $this->app->assets
+                ->addEventListener('prepare', function(\BearFramework\App\Assets\PrepareEventDetails $details) {
+                    $filename = $details->filename;
+                    $addonAssetsDir = $this->context->dir . '/assets/';
                     if (strpos($filename, $addonAssetsDir) === 0) {
 
                         $downloadUrl = function($url) {
@@ -1149,44 +1132,47 @@ class BearCMS
                         };
 
                         // Proxy
-                        $matchingDir = $addonAssetsDir . 'p' . DIRECTORY_SEPARATOR;
+                        $matchingDir = $addonAssetsDir . 'p/';
                         if (strpos($filename, $matchingDir) === 0) {
-                            $pathParts = explode(DIRECTORY_SEPARATOR, substr($filename, strlen($matchingDir)), 3);
+                            $details->returnValue = null;
+                            $pathParts = explode('/', substr($filename, strlen($matchingDir)), 3);
                             if (isset($pathParts[0], $pathParts[1], $pathParts[2])) {
                                 $url = $pathParts[0] . '://' . $pathParts[1] . '/' . str_replace('\\', '/', $pathParts[2]);
-                                $filename = null;
-                                $filename = $downloadUrl($url);
+                                $details->returnValue = $downloadUrl($url);
                             }
-                        } else { // Theme media file
-                            $matchingDir = $addonAssetsDir . 'tm' . DIRECTORY_SEPARATOR;
-                            if (strpos($filename, $matchingDir) === 0) {
-                                $pathParts = explode(DIRECTORY_SEPARATOR, substr($filename, strlen($matchingDir)), 2);
-                                if (isset($pathParts[0], $pathParts[1])) {
-                                    $themeIDMD5 = $pathParts[0];
-                                    $mediaFilenameMD5 = $pathParts[1];
-                                    $themes = Internal\Themes::getIDs();
-                                    foreach ($themes as $id) {
-                                        if ($themeIDMD5 === md5($id)) {
-                                            $themeManifest = Internal\Themes::getManifest($id, false);
-                                            if (isset($themeManifest['media'])) {
-                                                foreach ($themeManifest['media'] as $i => $mediaItem) {
-                                                    if (isset($mediaItem['filename'])) {
-                                                        if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
-                                                            $filename = $mediaItem['filename'];
-                                                            return;
-                                                        }
+                            return;
+                        }
+
+                        // Theme media file
+                        $matchingDir = $addonAssetsDir . 'tm/';
+                        if (strpos($filename, $matchingDir) === 0) {
+                            $details->returnValue = null;
+                            $pathParts = explode('/', substr($filename, strlen($matchingDir)), 2);
+                            if (isset($pathParts[0], $pathParts[1])) {
+                                $themeIDMD5 = $pathParts[0];
+                                $mediaFilenameMD5 = $pathParts[1];
+                                $themes = Internal\Themes::getIDs();
+                                foreach ($themes as $id) {
+                                    if ($themeIDMD5 === md5($id)) {
+                                        $themeManifest = Internal\Themes::getManifest($id, false);
+                                        if (isset($themeManifest['media'])) {
+                                            foreach ($themeManifest['media'] as $i => $mediaItem) {
+                                                if (isset($mediaItem['filename'])) {
+                                                    if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
+                                                        $details->returnValue = $mediaItem['filename'];
+                                                        return;
                                                     }
                                                 }
                                             }
-                                            $themeStyles = Internal\Themes::getStyles($id, false);
-                                            foreach ($themeStyles as $themeStyle) {
-                                                if (isset($themeStyle['media'])) {
-                                                    foreach ($themeStyle['media'] as $i => $mediaItem) {
-                                                        if (isset($mediaItem['filename'])) {
-                                                            if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
-                                                                $filename = $mediaItem['filename'];
-                                                                return;
-                                                            }
+                                        }
+                                        $themeStyles = Internal\Themes::getStyles($id, false);
+                                        foreach ($themeStyles as $themeStyle) {
+                                            if (isset($themeStyle['media'])) {
+                                                foreach ($themeStyle['media'] as $i => $mediaItem) {
+                                                    if (isset($mediaItem['filename'])) {
+                                                        if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
+                                                            $details->returnValue = $mediaItem['filename'];
+                                                            return;
                                                         }
                                                     }
                                                 }
@@ -1194,16 +1180,30 @@ class BearCMS
                                         }
                                     }
                                 }
-                                $filename = null;
-                            } else {
-                                // Download the server files
-                                $matchingDir = $addonAssetsDir . 's' . DIRECTORY_SEPARATOR;
-                                if (strpos($filename, $matchingDir) === 0) {
-                                    $url = Config::$serverUrl . str_replace('\\', '/', substr($filename, strlen($matchingDir)));
-                                    $filename = null;
-                                    $filename = $downloadUrl($url);
-                                }
                             }
+                            return;
+                        }
+
+                        // Download the server files
+                        $matchingDir = $addonAssetsDir . 's/';
+                        if (strpos($filename, $matchingDir) === 0) {
+                            $details->returnValue = null;
+                            $url = Config::$serverUrl . str_replace('\\', '/', substr($filename, strlen($matchingDir)));
+                            $details->returnValue = $downloadUrl($url);
+                        }
+                    }
+                });
+
+        $this->app
+                ->addEventListener('beforeSendResponse', function(\BearFramework\App\BeforeSendResponseEventDetails $details) {
+                    if (strpos((string) $this->app->request->path, $this->app->assets->pathPrefix) !== 0) {
+                        $response = $details->response;
+                        if ($response instanceof App\Response\NotFound) {
+                            $response->headers->set($response->headers->make('Content-Type', 'text/html'));
+                            $this->apply($response);
+                        } elseif ($response instanceof App\Response\TemporaryUnavailable) {
+                            $response->headers->set($response->headers->make('Content-Type', 'text/html'));
+                            $this->apply($response);
                         }
                     }
                 });
@@ -1229,9 +1229,9 @@ class BearCMS
                     }
                 }
             }
-            $this->app->hooks
-                    ->add('responseCreated', function($response) {
-                        Internal\Cookies::apply($response);
+            $this->app
+                    ->addEventListener('beforeSendResponse', function(\BearFramework\App\BeforeSendResponseEventDetails $details) {
+                        Internal\Cookies::apply($details->response);
                     });
         }
 
@@ -1248,7 +1248,7 @@ class BearCMS
                             $comment = $comments[0];
                             $comments = Internal2::$data2->comments->getList()
                                     ->filterBy('status', 'pendingApproval');
-                            $pendingApprovalCount = $comments->length;
+                            $pendingApprovalCount = $comments->count();
                             $profile = Internal\PublicProfile::getFromAuthor($comment->author);
                             Internal\Data::sendNotification('comments', $comment->status, $profile->name, $comment->text, $pendingApprovalCount);
                         }
@@ -1291,7 +1291,7 @@ class BearCMS
         $settings = $this->app->bearCMS->data->settings->get();
 
         $document = new HTML5DOMDocument();
-        $document->loadHTML($response->content);
+        $document->loadHTML($response->content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
 
         if (strlen($settings->language) > 0) {
             $html = '<html lang="' . htmlentities($settings->language) . '">';
@@ -1424,7 +1424,7 @@ class BearCMS
         if ($response instanceof App\Response\HTML) { // is not temporary disabled
             $externalLinksAreEnabled = $settings->externalLinks;
             if ($externalLinksAreEnabled || $currentUserExists) {
-                $html .= '<script id="bearcms-bearframework-addon-script-10" src="' . htmlentities($this->context->assets->getUrl('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
+                $html .= '<script id="bearcms-bearframework-addon-script-10" src="' . htmlentities($this->context->assets->getURL('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
             }
         }
         $html .= '</body></html>';
@@ -1500,12 +1500,12 @@ class BearCMS
                 } elseif (strpos($content, '{jsonEncodedBody}')) {
                     $content = str_replace('{jsonEncodedBody}', json_encode($this->app->components->process($response->content)), $content);
                 }
-                $document->loadHTML($content);
+                $document->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
                 $elementsHtml = Internal\ElementsHelper::getEditableElementsHtml();
                 if (isset($elementsHtml[0])) {
                     $htmlToInsert[] = ['source' => $elementsHtml];
                 }
-                $htmlToInsert[] = ['source' => '<html><body><script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($this->context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script></body></html>'];
+                $htmlToInsert[] = ['source' => '<html><body><script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($this->context->assets->getURL('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script></body></html>'];
                 $document->insertHTMLMulti($htmlToInsert);
                 $response->content = $document->saveHTML();
             }
@@ -1523,14 +1523,11 @@ class BearCMS
         $currentThemeID = Internal\CurrentTheme::getID();
         $currentUserID = $this->currentUser->exists() ? $this->currentUser->getID() : null;
         $currentThemeOptions = Internal\Themes::getOptions($currentThemeID, $currentUserID);
-        if ($this->app->hooks->exists('bearCMSThemeApply')) {
-            $this->app->hooks->execute('bearCMSThemeApply', $currentThemeID, $response, $currentThemeOptions);
-        }
 
         if ($response instanceof App\Response\HTML) {
             if (strpos($response->content, 'class="bearcms-blogpost-page-date-container"') !== false && ($currentThemeOptions !== null && $currentThemeOptions->getValue('blogPostPageDateVisibility') === '0')) {
                 $domDocument = new HTML5DOMDocument();
-                $domDocument->loadHTML($response->content);
+                $domDocument->loadHTML($response->content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
                 $element = $domDocument->querySelector('div.bearcms-blogpost-page-date-container');
                 if ($element) {
                     $element->parentNode->removeChild($element);
@@ -1561,16 +1558,12 @@ class BearCMS
 
         if (!Config::$whitelabel && $response instanceof App\Response\HTML) {
             $domDocument = new HTML5DOMDocument();
-            $domDocument->loadHTML($response->content);
+            $domDocument->loadHTML($response->content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
             $logoSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="75.93" height="45.65" viewBox="0 0 75.929546 45.649438"><path fill="#666" d="M62.2 0c1.04-.02 2.13.8 2.55 2.14.15.56.1 1.3.43 1.6 2.02 1.88 5.34 1.64 6.04 4.9.12.75 2 2.3 2.92 3.2.8.77 2 2.13 1.76 2.86-.5 1.66-1.16 3.65-3.65 3.6-3.64-.06-7.3-.04-10.94 0-4.66.04-7.44 2.82-7.5 7.53-.05 3.8.07 7.63-.03 11.46-.08 3 1.25 4.67 4.18 5.35.93.24 1.5 1.1.84 1.9-.8 1-4.3 1-4.4 1-2.8.33-6.5-.7-8.78-6.4-1.3 1.7-2.2 2.56-3.4 2.94-.7.22-4.17 1.1-4.3.3-.25-1.44 3.9-5.03 4.07-6.5.3-2.84-2.18-3.9-5.05-4.6-2.9-.74-6 .57-7.3 1.95-1.8 1.9-1.7 7.77-.76 8.26.5.26 1.46.8 1.5 1.6 0 .6-.76 1.5-1.2 1.5-2.5.17-5.03.26-7.48-.05-.65-.08-1.6-1.66-1.6-2.54.04-2.87-5.5-7.9-6.4-6.6-1.52 2.16-6.04 3.23-5.5 6.04.34 1.8 3.9.6 4.25 2 .76 3.2-6.8 2.1-9.87 1.7-2.58-.33-3.63-1.83-1.32-6.9 2.8-5.1 3.23-10.4 2.75-16.17C3.08 9.6 11.53.97 24.08 1.3c10.9.24 21.9-.2 32.7 1.3 6.1.82 2.72.1 3.77-1.6.42-.67 1.03-1 1.65-1z"/></svg>';
             $codeToInsert = '<div style="background-color:#000;padding:15px;text-align:center;"><a href="https://bearcms.com/" target="_blank" rel="nofollow noopener" title="This website is powered by Bear CMS" style="width:40px;height:40px;display:inline-block;background-size:80%;background-repeat:no-repeat;background-position:center center;background-image:url(data:image/svg+xml;base64,' . base64_encode($logoSvg) . ');"></a></div>';
             //$html = '<body><script>document.body.insertAdjacentHTML("beforeend",' . json_encode($codeToInsert) . ');</script></body>';
             $domDocument->insertHTML($codeToInsert);
             $response->content = $domDocument->saveHTML();
-        }
-
-        if ($this->app->hooks->exists('bearCMSThemeApplied')) {
-            $this->app->hooks->execute('bearCMSThemeApplied', $currentThemeID, $response, $currentThemeOptions);
         }
     }
 

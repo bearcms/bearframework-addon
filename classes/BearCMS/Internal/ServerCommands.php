@@ -13,6 +13,7 @@ use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use BearCMS\Internal2;
+use IvoPetkov\HTML5DOMDocument;
 
 /**
  * @internal
@@ -79,7 +80,7 @@ class ServerCommands
     {
         $app = App::get();
         $addonDir = \BearFramework\Addons::get($data['addonID'])->dir;
-        return $app->assets->getUrl($addonDir . '/' . $data['key'], $data['options']);
+        return $app->assets->getURL($addonDir . '/' . $data['key'], $data['options']);
     }
 
     /**
@@ -157,11 +158,11 @@ class ServerCommands
      * @param array $data
      * @return string
      */
-    static function appAssetUrl(array $data): string
-    {
-        $app = App::get();
-        return $app->assets->getUrl($app->config->appDir . DIRECTORY_SEPARATOR . $data['key'], $data['options']);
-    }
+//    static function appAssetUrl(array $data): string
+//    {
+//        $app = App::get();
+//        return $app->assets->getURL($app->config->appDir . '/' . $data['key'], $data['options']);
+//    }
 
     /**
      * 
@@ -171,7 +172,7 @@ class ServerCommands
     static function assetUrl(array $data): string
     {
         $app = App::get();
-        return $app->assets->getUrl($data['filename'], $data['options']);
+        return $app->assets->getURL($data['filename'], $data['options']);
     }
 
     /**
@@ -242,7 +243,7 @@ class ServerCommands
         if ($data['type'] !== 'all') {
             $result->filterBy('status', $data['type']);
         }
-        return $result->length;
+        return $result->count();
     }
 
     /**
@@ -312,11 +313,11 @@ class ServerCommands
                 $validateKey($commandData['targetKey']);
                 $app->data->rename($commandData['sourceKey'], $commandData['targetKey']);
             } elseif ($command === 'makePublic') {
-                $validateKey($commandData['key']);
-                $app->data->makePublic($commandData['key']);
+                //$validateKey($commandData['key']);
+                //$app->data->makePublic($commandData['key']);
             } elseif ($command === 'makePrivate') {
-                $validateKey($commandData['key']);
-                $app->data->makePrivate($commandData['key']);
+                //$validateKey($commandData['key']);
+                //$app->data->makePrivate($commandData['key']);
             }
             $result[] = $commandResult;
         }
@@ -347,7 +348,8 @@ class ServerCommands
     {
         $app = App::get();
         $dataSchema = new Internal\DataSchema($data['id']);
-        $app->hooks->execute('bearCMSDataSchemaRequested', $dataSchema);
+        // TODO FB1
+        //$app->hooks->execute('bearCMSDataSchemaRequested', $dataSchema);
         return $dataSchema->fields;
     }
 
@@ -359,7 +361,7 @@ class ServerCommands
     static function dataUrl(array $data): string
     {
         $app = App::get();
-        return $app->assets->getUrl($app->data->getFilename($data['key']), $data['options']);
+        return $app->assets->getURL($app->data->getFilename($data['key']), $data['options']);
     }
 
     /**
@@ -571,8 +573,8 @@ class ServerCommands
         $app = App::get();
         $value = json_encode($response['value']);
         $content = $app->components->process($data['content']);
-        $domDocument = new \IvoPetkov\HTML5DOMDocument();
-        $domDocument->loadHTML($content);
+        $domDocument = new HTML5DOMDocument();
+        $domDocument->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
         $bodyElement = $domDocument->querySelector('body');
         $content = $bodyElement->innerHTML;
         $bodyElement->parentNode->removeChild($bodyElement);
@@ -662,8 +664,8 @@ class ServerCommands
         $app = App::get();
         $themeID = $data['id'];
         $dataKey = Internal\Themes::export($themeID);
-        $app->data->makePublic($dataKey);
-        return ['downloadUrl' => $app->assets->getUrl($app->data->getFilename($dataKey), ['download' => true])];
+        //$app->data->makePublic($dataKey);
+        return ['downloadUrl' => $app->assets->getURL($app->data->getFilename($dataKey), ['download' => true])];
     }
 
     /**

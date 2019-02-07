@@ -12,7 +12,7 @@ use BearCMS\Internal;
 use BearCMS\Internal\Config;
 
 $app = App::get();
-$context = $app->context->get(__FILE__);
+$context = $app->contexts->get(__FILE__);
 
 $context->classes
         ->add('BearCMS', 'classes/BearCMS.php')
@@ -34,6 +34,9 @@ $context->classes
         ->add('BearCMS\Themes\Options\OptionSchema', 'classes/BearCMS/Themes/Options/OptionSchema.php')
         ->add('BearCMS\Themes\Options\Schema', 'classes/BearCMS/Themes/Options/Schema.php')
         ->add('BearCMS\Themes\Theme', 'classes/BearCMS/Themes/Theme.php')
+        ->add('BearCMS\Internal\BeforeAddCommentEventDetails', 'classes/BearCMS/Internal/BeforeAddCommentEventDetails.php')
+        ->add('BearCMS\Internal\MakeBlogPostPageResponseEventDetails', 'classes/BearCMS/Internal/MakeBlogPostPageResponseEventDetails.php')
+        ->add('BearCMS\Internal\MakePageResponseEventDetails', 'classes/BearCMS/Internal/MakePageResponseEventDetails.php')
         ->add('BearCMS\Internal2', 'classes/BearCMS/Internal2.php')
         ->add('BearCMS\Internal\Data2', 'classes/BearCMS/Internal/Data2.php')
         ->add('BearCMS\Internal\Data2\Addon', 'classes/BearCMS/Internal/Data2/Addon.php')
@@ -79,6 +82,15 @@ $context->assets
         ->addDir('assets')
         ->addDir('components/bearcmsBlogPostsElement/assets')
         ->addDir('components/bearcmsCommentsElement/assets');
+$app->assets
+        ->addDir('appdata://bearcms/files/themeimage/')
+        ->addDir('appdata://bearcms/files/blog/')
+        ->addDir('appdata://bearcms/files/video/')
+        ->addDir('appdata://bearcms/files/image/')
+        ->addDir('appdata://bearcms/files/imagegallery/')
+        ->addDir('appdata://bearcms/files/icon/')
+        ->addDir('appdata://.temp/bearcms/files/themeimage/')
+        ->addDir('appdata://.temp/bearcms/themeexport/');
 
 $app->localization
         ->addDictionary('en', function() use ($context) {
@@ -99,19 +111,19 @@ $app->shortcuts
 BearCMS\Internal2::initialize();
 
 if ($app->request->method === 'GET') {
-    if (strlen($app->config->assetsPathPrefix) > 0 && strpos($app->request->path, $app->config->assetsPathPrefix) === 0) {
-        // skip
-    } else {
+    if (strpos($app->request->path, $app->assets->pathPrefix) !== 0) {
         $cacheBundlePath = $app->request->path->get();
         Internal\Data::loadCacheBundle($cacheBundlePath);
-        $app->hooks->add('responseSent', function() use ($cacheBundlePath) {
-            Internal\Data::saveCacheBundle($cacheBundlePath);
-        });
+        $app
+                ->addEventListener('sendResponse', function() use ($cacheBundlePath) {
+                    Internal\Data::saveCacheBundle($cacheBundlePath);
+                });
     }
 }
 
-$app->hooks
-        ->add('dataItemChanged', function($key) use (&$app) {
+$app->data
+        ->addEventListener('itemChange', function(\BearFramework\App\Data\ItemChangeEventDetails $details) use (&$app) {
+            $key = $details->key;
             $prefixes = [
                 'bearcms/pages/page/',
                 'bearcms/blog/post/'
@@ -127,28 +139,24 @@ $app->hooks
                     break;
                 }
             }
+            if (strpos($key, '.temp/bearcms/userthemeoptions/') === 0 || strpos($key, 'bearcms/themes/theme/') === 0) {
+                $currentThemeID = Internal\CurrentTheme::getID();
+                if ($app->bearCMS->currentUser->exists()) {
+                    $cacheItemKey = Internal\Themes::getCacheItemKey($currentThemeID, $app->bearCMS->currentUser->getID());
+                    if ($cacheItemKey !== null) {
+                        $app->cache->delete($cacheItemKey);
+                    }
+                }
+                $cacheItemKey = Internal\Themes::getCacheItemKey($currentThemeID);
+                if ($cacheItemKey !== null) {
+                    $app->cache->delete($cacheItemKey);
+                }
+            }
         });
 
-//$app->hooks
-//        ->add('dataItemChanged', function($key) use ($app) { // has theme change
-//            if (strpos($key, '.temp/bearcms/userthemeoptions/') === 0 || strpos($key, 'bearcms/themes/theme/') === 0) {
-//                $currentThemeID = Internal\CurrentTheme::getID();
-//                if ($app->bearCMS->currentUser->exists()) {
-//                    $cacheItemKey = Internal\Themes::getCacheItemKey($currentThemeID, $app->bearCMS->currentUser->getID());
-//                    if ($cacheItemKey !== null) {
-//                        $app->cache->delete($cacheItemKey);
-//                    }
-//                }
-//                $cacheItemKey = Internal\Themes::getCacheItemKey($currentThemeID);
-//                if ($cacheItemKey !== null) {
-//                    $app->cache->delete($cacheItemKey);
-//                }
-//            }
-//        });
-
-$app->hooks
-        ->add('responseCreated', function() use ($app) {
+$app
+        ->addEventListener('sendResponse', function() use ($app) {
             if (Internal\Data::$hasContentChange) {
-                $app->hooks->execute('bearCMSContentChanged');
+                $app->bearCMS->dispatchEvent('internalChangeData');
             }
         });

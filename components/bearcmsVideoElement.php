@@ -11,7 +11,7 @@ use BearCMS\Internal;
 use BearCMS\Internal2;
 
 $app = App::get();
-$context = $app->context->get(__FILE__);
+$context = $app->contexts->get(__FILE__);
 
 $width = (string) $component->width;
 $align = (string) $component->align;
@@ -95,13 +95,13 @@ if (strlen($component->url) > 0) {
         $filename = $newFilename;
     }
     $content = '<div class="bearcms-video-element" style="font-size:0;">' . $innerContainerStartTag . '<video style="width:100%" controls>';
-    $content .= '<source src="' . $app->assets->getUrl($filename) . '" type="video/mp4">';
+    $content .= '<source src="' . $app->assets->getURL($filename) . '" type="video/mp4">';
     $content .= '</video>' . $innerContainerEndTag . '</div>';
 }
 ?><html>
     <head>
         <style id="responsively-lazy-style">.responsively-lazy:not(img){position:relative;height:0;}.responsively-lazy:not(img)>img{position:absolute;top:0;left:0;width:100%;height:100%}img.responsively-lazy{width:100%;}</style>
-        <script id="responsively-lazy-script" src="<?= $context->assets->getUrl('assets/responsivelyLazy.min.js', ['cacheMaxAge' => 999999999, 'version' => 2]) ?>" async/>
+        <script id="responsively-lazy-script" src="<?= $context->assets->getURL('assets/responsivelyLazy.min.js', ['cacheMaxAge' => 999999999, 'version' => 2]) ?>" async/>
     </head>
     <body><?= $content ?></body>
 </html>

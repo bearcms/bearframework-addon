@@ -19,14 +19,15 @@ if ($editable) {
     $componentContextData = Internal\ElementsHelper::getComponentContextData($component);
 }
 
-$isMissing = $component->src === 'bearcms-missing-element';
+$componentName = strlen($component->src) > 0 ? $component->src : ($component->tagName !== 'component' ? $component->tagName : null);
+$isMissing = $componentName === 'bearcms-missing-element';
 
 if (!$isMissing) {
     $rawData = $component->getAttribute('bearcms-internal-attribute-raw-data');
     if ($rawData !== null && strlen($rawData) > 0) {
         $rawData = json_decode($rawData, true);
         $data = $rawData['data'];
-        $options = Internal\ElementsHelper::$elementsTypesOptions[$component->src];
+        $options = Internal\ElementsHelper::$elementsTypesOptions[$componentName];
         if (isset($options['fields'])) {
             foreach ($options['fields'] as $field) {
                 $fieldID = $field['id'];
@@ -50,7 +51,8 @@ if (!$isMissing) {
     } else {
         if (strlen($component->id) > 0 && $component->editable === 'true') {
             $getRawDataFromComponent = function($component) {
-                $options = Internal\ElementsHelper::$elementsTypesOptions[$component->src];
+                $componentName = strlen($component->src) > 0 ? $component->src : ($component->tagName !== 'component' ? $component->tagName : null);
+                $options = Internal\ElementsHelper::$elementsTypesOptions[$componentName];
                 $data = [];
                 if (isset($options['fields'])) {
                     foreach ($options['fields'] as $field) {
@@ -68,7 +70,7 @@ if (!$isMissing) {
                 if (isset($options['updateDataFromComponent'])) {
                     $data = call_user_func($options['updateDataFromComponent'], clone($component), $data);
                 }
-                return json_encode(['id' => $component->id, 'type' => Internal\ElementsHelper::$elementsTypesCodes[$component->src], 'data' => $data]);
+                return json_encode(['id' => $component->id, 'type' => Internal\ElementsHelper::$elementsTypesCodes[$componentName], 'data' => $data]);
             };
             if ($editable) {
                 $componentContextData['rawData'] = $getRawDataFromComponent($component);

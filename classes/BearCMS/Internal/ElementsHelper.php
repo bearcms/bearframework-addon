@@ -128,7 +128,8 @@ class ElementsHelper
 
         $otherAttributes = [];
         $attributesToSkip = ['src', 'id', 'editable', 'width', 'spacing', 'color', 'group'];
-        foreach ($component->attributes as $key => $value) {
+        $attributes = $component->getAttributes();
+        foreach ($attributes as $key => $value) {
             $add = true;
             if (array_search($key, $attributesToSkip) !== false || strpos($key, 'bearcms-internal-attribute-') === 0) {
                 $add = false;
@@ -249,7 +250,7 @@ class ElementsHelper
     static function renderColumn(array $elementContainerData, bool $editable, array $contextData, bool $inContainer): string
     {
         $app = App::get();
-        $context = $app->context->get(__FILE__);
+        $context = $app->contexts->get(__FILE__);
         $columnsSizes = explode(':', $elementContainerData['data']['mode']);
         $responsive = isset($elementContainerData['data']['responsive']) ? (int) $elementContainerData['data']['responsive'] > 0 : false;
         $columnsCount = sizeof($columnsSizes);
@@ -326,7 +327,7 @@ class ElementsHelper
         }
         $content = '<html>'
                 . '<head>'
-                . ($inContainer && ($responsive || $editable) ? '<script onload="responsiveAttributes.run();" id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>' : '')
+                . ($inContainer && ($responsive || $editable) ? '<script onload="responsiveAttributes.run();" id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getURL('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>' : '')
                 . '<style>' . $styles . '</style>'
                 . '</head>'
                 . '<body>'
@@ -347,7 +348,7 @@ class ElementsHelper
     static function renderFloatingBox(array $elementContainerData, bool $editable, array $contextData, bool $inContainer): string
     {
         $app = App::get();
-        $context = $app->context->get(__FILE__);
+        $context = $app->contexts->get(__FILE__);
         $position = $elementContainerData['data']['position'];
         $width = $elementContainerData['data']['width'];
         if (strlen($width) === 0 || $width === 'auto') {
@@ -412,7 +413,7 @@ class ElementsHelper
         }
         $content = '<html>'
                 . '<head>'
-                . ($inContainer && ($responsive || $editable) ? '<script onload="responsiveAttributes.run();" id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getUrl('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>' : '')
+                . ($inContainer && ($responsive || $editable) ? '<script onload="responsiveAttributes.run();" id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getURL('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>' : '')
                 . '<style>' . $styles . '</style>'
                 . '</head>'
                 . '<body>'

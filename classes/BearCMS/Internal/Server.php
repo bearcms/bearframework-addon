@@ -12,6 +12,7 @@ namespace BearCMS\Internal;
 use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
+use IvoPetkov\HTML5DOMDocument;
 
 /**
  * @internal
@@ -142,12 +143,12 @@ class Server
     {
         $serverUrl = Config::$serverUrl;
         $app = App::get();
-        $context = $app->context->get(__FILE__);
-        $updateUrl = function($url) use ($app, $context, $serverUrl) {
+        $context = $app->contexts->get(__FILE__);
+        $updateUrl = function($url) use ($context, $serverUrl) {
             if (strpos($url, '?') !== false) {
                 $url = explode('?', $url)[0];
             }
-            return $app->assets->getUrl($context->dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 's' . DIRECTORY_SEPARATOR . str_replace($serverUrl, '', $url), ['cacheMaxAge' => 999999999, 'version' => 1]);
+            return $context->assets->getURL('assets/s/' . str_replace($serverUrl, '', $url), ['cacheMaxAge' => 999999999, 'version' => 1]);
         };
 
         if ($ajaxMode) {
@@ -166,8 +167,8 @@ class Server
             }
         } else {
             $hasChange = false;
-            $dom = new \IvoPetkov\HTML5DOMDocument();
-            $dom->loadHTML($content);
+            $dom = new HTML5DOMDocument();
+            $dom->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
             $scripts = $dom->querySelectorAll('script');
             foreach ($scripts as $script) {
                 $src = (string) $script->getAttribute('src');

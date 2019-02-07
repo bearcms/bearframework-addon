@@ -12,7 +12,7 @@ use BearCMS\Internal\Config;
 use BearCMS\Internal2;
 
 $app = App::get();
-$context = $app->context->get(__FILE__);
+$context = $app->contexts->get(__FILE__);
 
 $source = 'allPosts';
 if (strlen($component->source) > 0 && array_search($component->source, ['allPosts', 'postsInCategories']) !== false) {
@@ -60,7 +60,7 @@ if ($limit < 1) {
 
 $content = '<div class="bearcms-blog-posts-element">';
 $content .= '<div class="bearcms-blog-posts-element-posts">';
-if ($list->length > 0) {
+if ($list->count() > 0) {
     $counter = 0;
     foreach ($list as $blogPost) {
         $counter++;
@@ -198,7 +198,7 @@ if ($list->length > 0) {
             break;
         }
     }
-    if ($list->length > $limit) {
+    if ($list->count() > $limit) {
         $content .= '<div class="bearcms-blog-posts-element-show-more-button-container">';
         $component->limit = (string) ($limit + 10);
         $loadMoreData = [
@@ -213,9 +213,9 @@ $content .= '</div>';
 $content .= '</div>';
 ?><html>
     <head><style>.bearcms-blog-posts-element-post-title{word-wrap:break-word;}</style><?php
-        if ($list->length > $limit) {
-            echo '<script id="bearcms-bearframework-addon-script-2" src="' . htmlentities($context->assets->getUrl('components/bearcmsBlogPostsElement/assets/blogPostsElement.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
-            echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getUrl('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
+        if ($list->count() > $limit) {
+            echo '<script id="bearcms-bearframework-addon-script-2" src="' . htmlentities($context->assets->getURL('components/bearcmsBlogPostsElement/assets/blogPostsElement.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
+            echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getURL('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
         }
         ?></head>
     <body><?= $content ?></body>

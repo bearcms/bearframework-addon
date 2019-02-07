@@ -13,6 +13,7 @@ use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use BearCMS\Internal2;
+use IvoPetkov\HTML5DOMDocument;
 
 /**
  * @internal
@@ -197,8 +198,8 @@ class Controller
         foreach ($blogPosts as $blogPost) {
             $blogPostUrl = $app->urls->get(Config::$blogPagesPathPrefix . $blogPost->slug . '/');
             $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPost->id . '"/>');
-            $domDocument = new \IvoPetkov\HTML5DOMDocument();
-            $domDocument->loadHTML($blogPostContent);
+            $domDocument = new HTML5DOMDocument();
+            $domDocument->loadHTML($blogPostContent, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
             $contentElementsContainer = $domDocument->querySelector('body')->firstChild;
             $content = '';
             if ($contentType === 'fullContent') {

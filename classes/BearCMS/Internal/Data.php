@@ -181,7 +181,8 @@ class Data
                         $dataBundleID = 'bearcmsdataprefix-' . $prefix;
                         $app = App::get();
                         if (!$app->dataBundle->exists($dataBundleID)) {
-                            $dir = $app->config->dataDir . '/objects/' . $prefix;
+                            //$dir = $app->config->dataDir . '/objects/' . $prefix;
+                            $dir = 'appdata://' . $prefix;
                             $itemKeys = [];
                             if (is_dir($dir)) {
                                 $keys = scandir($dir);
@@ -203,7 +204,8 @@ class Data
                     }
                     if (!$found) {
                         $app = App::get();
-                        $dir = $app->config->dataDir . '/objects/' . $prefix;
+                        //$dir = $app->config->dataDir . '/objects/' . $prefix;
+                        $dir = 'appdata://' . $prefix;
                         $data = [];
                         if (is_dir($dir)) {
                             $keys = scandir($dir);
@@ -241,13 +243,6 @@ class Data
         }
         if (strpos($key, 'bearcms/elements/') === 0 || strpos($key, 'bearcms/pages/') === 0 || strpos($key, 'bearcms/blog/') === 0) {
             $app->cache->delete('bearcms-comments-elements-locations');
-        }
-        if (strpos($key, 'bearcms/elements/element/') === 0 && $app->hooks->exists('bearCMSElementChanged')) {
-            $rawElementData = Internal\Data::getValue($key);
-            $elementData = Internal\ElementsHelper::decodeElementRawData($rawElementData);
-            if (is_array($elementData)) {
-                $app->hooks->execute('bearCMSElementChanged', $elementData['id']);
-            }
         }
     }
 
