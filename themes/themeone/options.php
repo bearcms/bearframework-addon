@@ -9,8 +9,6 @@
 
 use BearFramework\App;
 
-$options = $theme->makeOptions();
-
 $options
         ->addOption("textColor", "color", __("bearcms.themes.themeone.options.Text color"), [
             "value" => '#000000'

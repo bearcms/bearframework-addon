@@ -67,6 +67,7 @@ $app->bearCMS->themes
             };
 
             $theme->options = function() use ($context, $theme) {
+                $options = $theme->makeOptions(); // used inside
                 return include $context->dir . '/themes/themeone/options.php';
             };
         });
