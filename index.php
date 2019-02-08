@@ -9,7 +9,6 @@
 
 use BearFramework\App;
 use BearCMS\Internal;
-use BearCMS\Internal\Config;
 
 $app = App::get();
 $context = $app->contexts->get(__FILE__);
@@ -17,11 +16,6 @@ $context = $app->contexts->get(__FILE__);
 $context->classes
         ->add('BearCMS', 'classes/BearCMS.php')
         ->add('BearCMS\*', 'classes/BearCMS/*.php');
-
-$app->addons
-        ->add('ivopetkov/users-bearframework-addon', [
-            'useDataCache' => Config::$useDataCache
-        ]);
 
 $context->assets
         ->addDir('assets')
