@@ -50,13 +50,4 @@ class Themes
         require_once $context->dir . '/themes/themeone/index.php';
     }
 
-    /**
-     * 
-     * @return \BearCMS\Themes\Options\Schema
-     */
-    public function makeOptionsSchema(): \BearCMS\Themes\Options\Schema
-    {
-        return new \BearCMS\Themes\Options\Schema();
-    }
-
 }

@@ -25,7 +25,7 @@ class Themes
      * @return array A list containing the theme options
      * @throws \InvalidArgumentException
      */
-    public function getOptions(string $id): array
+    public function getValues(string $id): array
     {
         $data = Internal\Data::getValue('bearcms/themes/theme/' . md5($id) . '.json');
         if ($data !== null) {
@@ -78,7 +78,7 @@ class Themes
                 $currentValues = [];
             }
         } else {
-            $currentValues = $this->getOptions($id);
+            $currentValues = $this->getValues($id);
         }
         $filesInCurrentValues = Internal\Themes::getFilesInValues($currentValues);
         foreach ($filesInCurrentValues as $key) {

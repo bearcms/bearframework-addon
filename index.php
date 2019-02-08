@@ -21,6 +21,7 @@ $context->assets
         ->addDir('assets')
         ->addDir('components/bearcmsBlogPostsElement/assets')
         ->addDir('components/bearcmsCommentsElement/assets');
+
 $app->assets
         ->addDir('appdata://bearcms/files/themeimage/')
         ->addDir('appdata://bearcms/files/blog/')

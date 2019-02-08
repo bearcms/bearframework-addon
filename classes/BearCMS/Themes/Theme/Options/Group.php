@@ -7,15 +7,15 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Themes\Options;
+namespace BearCMS\Themes\Theme\Options;
 
 /**
  * 
  */
-class GroupSchema
+class Group
 {
 
-    use \BearCMS\Internal\ThemesOptionsGroupSchemaTrait;
+    use \BearCMS\Internal\ThemeOptionsGroupTrait;
 
     /**
      *

@@ -38,13 +38,13 @@ $app->bearCMS->themes
                 });
             };
 
-            $theme->get = function(\BearCMS\Themes\Options $options) use ($context) {
+            $theme->get = function(\BearCMS\Themes\Theme\Customizations $customizations) use ($context) {
                 $templateFilename = $context->dir . '/themes/themeone/components/defaultTemplate.php';
-                return (static function($__filename, $options) { // used inside
+                return (static function($__filename, $customizations) { // used inside
                             ob_start();
                             include $__filename;
                             return ob_get_clean();
-                        })($templateFilename, $options);
+                        })($templateFilename, $customizations);
             };
 
             $theme->manifest = function() use ($context) {
@@ -66,7 +66,7 @@ $app->bearCMS->themes
                 ];
             };
 
-            $theme->optionsSchema = function() use ($context) {
+            $theme->options = function() use ($context, $theme) {
                 return include $context->dir . '/themes/themeone/options.php';
             };
         });

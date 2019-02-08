@@ -16,7 +16,7 @@ namespace BearCMS\Themes;
  * @property callable|null $apply A function to be called to apply the theme. A \BearFramework\App\Response object and a options object are passed.
  * @property callable|null $get A function to be called to retrieve the theme template.
  * @property callable|null $manifest A function to be called to retrieve the theme manifest (name, description, etc.).
- * @property callable|null $optionsSchema A function to be called to retrieve the theme optionsSchema.
+ * @property callable|null $options A function to be called to retrieve the theme options.
  * @property callable|null $styles A function to be called to retrieve the theme styles.
  */
 class Theme
@@ -53,13 +53,22 @@ class Theme
                 ->defineProperty('manifest', [
                     'type' => '?callable'
                 ])
-                ->defineProperty('optionsSchema', [
+                ->defineProperty('options', [
                     'type' => '?callable'
                 ])
                 ->defineProperty('styles', [
                     'type' => '?callable'
                 ])
         ;
+    }
+
+    /**
+     * 
+     * @return \BearCMS\Themes\Theme\Options
+     */
+    public function makeOptions(): \BearCMS\Themes\Theme\Options
+    {
+        return new \BearCMS\Themes\Theme\Options();
     }
 
 }

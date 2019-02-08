@@ -9,11 +9,9 @@
 
 use BearFramework\App;
 
-$app = App::get();
+$options = $theme->makeOptions();
 
-$schema = $app->bearCMS->themes->makeOptionsSchema();
-
-$schema
+$options
         ->addOption("textColor", "color", __("bearcms.themes.themeone.options.Text color"), [
             "value" => '#000000'
         ])
@@ -58,7 +56,7 @@ $schema
             "value" => "2"
         ]);
 
-$group = $schema->addGroup(__("bearcms.themes.themeone.options.Header"));
+$group = $options->addGroup(__("bearcms.themes.themeone.options.Header"));
 
 $group->addOption("headerLogoImage", "image", __("bearcms.themes.themeone.options.Logo"));
 
@@ -92,7 +90,7 @@ $group->addGroup(__("bearcms.themes.themeone.options.Navigation"))
             "value" => "1"
         ]);
 
-$schema->addGroup(__("bearcms.themes.themeone.options.Footer"))
+$options->addGroup(__("bearcms.themes.themeone.options.Footer"))
         ->addOption("footerVisibility", "list", __("bearcms.themes.themeone.options.Visibility"), [
             "values" => [
                 [
@@ -107,4 +105,4 @@ $schema->addGroup(__("bearcms.themes.themeone.options.Footer"))
             "value" => "1"
         ]);
 
-return $schema;
+return $options;

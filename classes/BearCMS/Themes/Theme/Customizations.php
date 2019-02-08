@@ -7,12 +7,12 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Themes;
+namespace BearCMS\Themes\Theme;
 
 /**
  * 
  */
-class Options
+class Customizations
 {
 
     /**

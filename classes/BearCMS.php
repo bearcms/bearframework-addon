@@ -1522,7 +1522,7 @@ class BearCMS
     {
         $currentThemeID = Internal\CurrentTheme::getID();
         $currentUserID = $this->currentUser->exists() ? $this->currentUser->getID() : null;
-        $currentThemeOptions = Internal\Themes::getOptions($currentThemeID, $currentUserID);
+        $currentThemeOptions = Internal\Themes::getValues($currentThemeID, $currentUserID);
 
         if ($response instanceof App\Response\HTML) {
             if (strpos($response->content, 'class="bearcms-blogpost-page-date-container"') !== false && ($currentThemeOptions !== null && $currentThemeOptions->getValue('blogPostPageDateVisibility') === '0')) {

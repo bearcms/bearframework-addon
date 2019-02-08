@@ -14,7 +14,7 @@ use BearCMS\Internal;
 /**
  * @internal
  */
-trait ThemesOptionsGroupSchemaTrait
+trait ThemeOptionsGroupTrait
 {
 
     /**
@@ -25,7 +25,7 @@ trait ThemesOptionsGroupSchemaTrait
 
     /**
      * 
-     * @param \BearCMS\Themes\Options\OptionSchema|\BearCMS\Themes\Options\GroupSchema $optionOrGroup
+     * @param \BearCMS\Themes\Theme\Options\Option|\BearCMS\Themes\Theme\Options\Group $optionOrGroup
      * @return self
      */
     public function add($optionOrGroup): self
@@ -44,7 +44,7 @@ trait ThemesOptionsGroupSchemaTrait
      */
     public function addOption(string $id, string $type, string $name, array $details = []): self
     {
-        $option = new \BearCMS\Themes\Options\OptionSchema();
+        $option = new \BearCMS\Themes\Theme\Options\Option();
         $option->id = $id;
         $option->type = $type;
         $option->name = $name;
@@ -57,11 +57,11 @@ trait ThemesOptionsGroupSchemaTrait
      * 
      * @param string $name
      * @param string $description
-     * @return \BearCMS\Themes\Options\GroupSchema
+     * @return \BearCMS\Themes\Theme\Options\Group
      */
-    public function addGroup(string $name, string $description = ''): \BearCMS\Themes\Options\GroupSchema
+    public function addGroup(string $name, string $description = ''): \BearCMS\Themes\Theme\Options\Group
     {
-        $group = new \BearCMS\Themes\Options\GroupSchema();
+        $group = new \BearCMS\Themes\Theme\Options\Group();
         $group->name = $name;
         $group->description = $description;
         $this->options[] = $group;
@@ -72,9 +72,9 @@ trait ThemesOptionsGroupSchemaTrait
      * 
      * @param string $idPrefix
      * @param string $parentSelector
-     * @return \BearCMS\Themes\Options\GroupSchema
+     * @return \BearCMS\Themes\Theme\Options\Group
      */
-    public function addElementsGroup(string $idPrefix, string $parentSelector): \BearCMS\Themes\Options\GroupSchema
+    public function addElementsGroup(string $idPrefix, string $parentSelector): \BearCMS\Themes\Theme\Options\Group
     {
         $group = $this->addGroup(__('bearcms.themes.options.Elements'));
         $group->addElements($idPrefix, $parentSelector);
@@ -97,9 +97,9 @@ trait ThemesOptionsGroupSchemaTrait
 
     /**
      * 
-     * @return \BearCMS\Themes\Options\GroupSchema
+     * @return \BearCMS\Themes\Theme\Options\Group
      */
-    public function addPagesGroup(): \BearCMS\Themes\Options\GroupSchema
+    public function addPagesGroup(): \BearCMS\Themes\Theme\Options\Group
     {
         $group = $this->addGroup(__('bearcms.themes.options.Pages'));
         $group->addPages();

@@ -7,15 +7,15 @@
  * Free to use under the MIT license.
  */
 
-namespace BearCMS\Themes\Options;
+namespace BearCMS\Themes\Theme;
 
 /**
  * 
  */
-class Schema
+class Options
 {
 
-    use \BearCMS\Internal\ThemesOptionsGroupSchemaTrait;
+    use \BearCMS\Internal\ThemeOptionsGroupTrait;
 
     /**
      * 
@@ -40,7 +40,7 @@ class Schema
         $valuesCount = sizeof($values);
         $walkOptions = function($options) use (&$walkOptions, &$valuesSetCount, $valuesCount, $values) {
             foreach ($options as $option) {
-                if ($option instanceof \BearCMS\Themes\Options\OptionSchema) {
+                if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                     if (isset($values[$option->id])) {
                         $option->details['value'] = $values[$option->id];
                         $valuesSetCount++;
@@ -48,7 +48,7 @@ class Schema
                             return true;
                         }
                     }
-                } elseif ($option instanceof \BearCMS\Themes\Options\GroupSchema) {
+                } elseif ($option instanceof \BearCMS\Themes\Theme\Options\Group) {
                     if ($walkOptions($option->getList())) {
                         return;
                     }
@@ -69,7 +69,7 @@ class Schema
         $cssCode = '';
         $walkOptions = function($options) use (&$cssRules, &$cssCode, &$walkOptions) {
             foreach ($options as $option) {
-                if ($option instanceof \BearCMS\Themes\Options\OptionSchema) {
+                if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                     $value = isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value']) : $option->details['value']) : null;
                     $optionType = $option->type;
                     if ($optionType === 'cssCode') {
@@ -129,7 +129,7 @@ class Schema
                             }
                         }
                     }
-                } elseif ($option instanceof \BearCMS\Themes\Options\GroupSchema) {
+                } elseif ($option instanceof \BearCMS\Themes\Theme\Options\Group) {
                     $walkOptions($option->getList());
                 }
             }

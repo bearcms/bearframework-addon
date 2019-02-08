@@ -83,7 +83,7 @@ class Themes
         if ($theme instanceof \BearCMS\Themes\Theme && is_callable($theme->initialize)) {
             $app = App::get();
             $currentUserID = $app->bearCMS->currentUser->exists() ? $app->bearCMS->currentUser->getID() : null;
-            $currentThemeOptions = Internal\Themes::getOptions($id, $currentUserID);
+            $currentThemeOptions = Internal\Themes::getValues($id, $currentUserID);
             call_user_func($theme->initialize, $currentThemeOptions);
         }
     }
@@ -162,21 +162,21 @@ class Themes
     /**
      * 
      * @param string $id
-     * @return \BearCMS\Themes\Options\Schema|null
+     * @return \BearCMS\Themes\Theme\Options|null
      * @throws \Exception
      */
-    static function getOptionsSchema(string $id): ?\BearCMS\Themes\Options\Schema
+    static function getOptions(string $id): ?\BearCMS\Themes\Theme\Options
     {
         $theme = self::get($id);
         if ($theme === null) {
             return null;
         }
-        if (is_callable($theme->optionsSchema)) {
-            $schema = call_user_func($theme->optionsSchema);
-            if ($schema !== null && !($schema instanceof \BearCMS\Themes\Options\Schema)) {
+        if (is_callable($theme->options)) {
+            $options = call_user_func($theme->options);
+            if ($options !== null && !($options instanceof \BearCMS\Themes\Theme\Options)) {
                 throw new \Exception('Invalid theme options value for theme ' . $id . '!');
             }
-            return $schema;
+            return $options;
         }
         return null;
     }
@@ -187,22 +187,22 @@ class Themes
      * @return array
      * @throws \Exception
      */
-    static function getOptionsSchemaAsArray(string $id): array
+    static function getOptionsAsArray(string $id): array
     {
-        $schema = self::getOptionsSchema($id);
-        if ($schema === null) {
+        $options = self::getOptions($id);
+        if ($options === null) {
             return null;
         }
         $walkOptions = function(array $options) use (&$walkOptions) {
             $result = [];
             foreach ($options as $option) {
-                if ($option instanceof \BearCMS\Themes\Options\OptionSchema) {
+                if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                     $item = array_merge($option->details, [
                         "id" => $option->id,
                         "type" => $option->type,
                         "name" => $option->name
                     ]);
-                } elseif ($option instanceof \BearCMS\Themes\Options\GroupSchema) {
+                } elseif ($option instanceof \BearCMS\Themes\Theme\Options\Group) {
                     $item = [
                         "type" => "group",
                         "name" => $option->name,
@@ -214,7 +214,7 @@ class Themes
             }
             return $result;
         };
-        return $walkOptions($schema->getList());
+        return $walkOptions($options->getList());
     }
 
     /**
@@ -297,9 +297,9 @@ class Themes
      * 
      * @param string $id
      * @param string $userID
-     * @return \BearCMS\Themes\Options|null
+     * @return \BearCMS\Themes\Theme\Customizations|null
      */
-    static public function getOptions(string $id, string $userID = null): ?\BearCMS\Themes\Options
+    static public function getValues(string $id, string $userID = null): ?\BearCMS\Themes\Theme\Customizations
     {
         if (!isset(self::$announcements[$id])) {
             return null;
@@ -328,13 +328,13 @@ class Themes
                     }
                 }
                 if ($currentValues === null) {
-                    $currentValues = Internal2::$data2->themes->getOptions($id);
+                    $currentValues = Internal2::$data2->themes->getValues($id);
                 }
-                $themeOptions = Internal\Themes::getOptionsSchema($id);
+                $themeOptions = Internal\Themes::getOptions($id);
                 if ($themeOptions !== null) {
                     $walkOptions = function(array $options) use (&$walkOptions, $currentValues, &$values) {
                         foreach ($options as $option) {
-                            if ($option instanceof \BearCMS\Themes\Options\OptionSchema) {
+                            if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                                 $optionID = $option->id;
                                 $optionType = $option->type;
                                 $value = isset($currentValues[$optionID]) ? $currentValues[$optionID] : (isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value']) : $option->details['value']) : null);
@@ -369,7 +369,7 @@ class Themes
                                     }
                                 }
                                 $values[$optionID] = $value;
-                            } elseif ($option instanceof \BearCMS\Themes\Options\GroupSchema) {
+                            } elseif ($option instanceof \BearCMS\Themes\Theme\Options\Group) {
                                 $walkOptions($option->getList());
                             }
                         }
@@ -400,7 +400,7 @@ class Themes
                 return $text;
             };
             $resultData[1] = $applyImageUrls($resultData[1]);
-            self::$cache[$localCacheKey] = new \BearCMS\Themes\Options($resultData[0], $resultData[1]);
+            self::$cache[$localCacheKey] = new \BearCMS\Themes\Theme\Customizations($resultData[0], $resultData[1]);
         }
         return self::$cache[$localCacheKey];
     }
@@ -417,7 +417,7 @@ class Themes
             throw new \Exception('Theme does not exists!');
         }
         $app = App::get();
-        $optionsValues = self::getOptions($id);
+        $optionsValues = self::getValues($id);
         $values = $optionsValues->getValues();
         $filesToAttach = [];
         $filesInValues = Internal\Themes::getFilesInValues($values);
