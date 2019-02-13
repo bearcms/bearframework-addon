@@ -1,5 +1,25 @@
 # BearCMS\Themes\Theme
 
+```php
+BearCMS\Themes\Theme {
+
+	/* Properties */
+	public callable|null $apply
+	public callable|null $get
+	public readonly string $id
+	public callable|null $initialize
+	public callable|null $manifest
+	public callable|null $options
+	public callable|null $styles
+	public string|null $version
+
+	/* Methods */
+	public __construct ( string $id )
+	public BearCMS\Themes\Theme\Options makeOptions ( void )
+
+}
+```
+
 ## Properties
 
 ##### public callable|null $apply
@@ -22,9 +42,9 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A function to be called to retrieve the theme manifest (name, description, etc.).
 
-##### public callable|null $optionsSchema
+##### public callable|null $options
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A function to be called to retrieve the theme optionsSchema.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A function to be called to retrieve the theme options.
 
 ##### public callable|null $styles
 
@@ -38,15 +58,11 @@
 
 ##### public [__construct](bearcms.themes.theme.__construct.method.md) ( string $id )
 
-##### protected object [defineProperty](bearcms.themes.theme.defineproperty.method.md) ( string $name [, array $options = [] ] )
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defines a new property.
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns: Returns a reference to the object.
+##### public [BearCMS\Themes\Theme\Options](bearcms.themes.theme.options.class.md) [makeOptions](bearcms.themes.theme.makeoptions.method.md) ( void )
 
 ## Details
 
-File: /classes/BearCMS/Themes/Theme.php
+Location: ~/classes/BearCMS/Themes/Theme.php
 
 ---
 

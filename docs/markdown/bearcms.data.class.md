@@ -1,5 +1,21 @@
 # BearCMS\Data
 
+```php
+BearCMS\Data {
+
+	/* Properties */
+	public readonly BearCMS\Data\BlogPosts $blogPosts
+	public readonly BearCMS\Data\Pages $pages
+	public readonly BearCMS\Data\Settings $settings
+	public readonly BearCMS\Data\Users $users
+
+	/* Methods */
+	public __construct ( void )
+	public int getUploadsSize ( void )
+
+}
+```
+
 ## Properties
 
 ##### public readonly [BearCMS\Data\BlogPosts](bearcms.data.blogposts.class.md) $blogPosts
@@ -16,15 +32,9 @@
 
 ##### public int [getUploadsSize](bearcms.data.getuploadssize.method.md) ( void )
 
-##### protected object [defineProperty](bearcms.data.defineproperty.method.md) ( string $name [, array $options = [] ] )
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defines a new property.
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns: Returns a reference to the object.
-
 ## Details
 
-File: /classes/BearCMS/Data.php
+Location: ~/classes/BearCMS/Data.php
 
 ---
 

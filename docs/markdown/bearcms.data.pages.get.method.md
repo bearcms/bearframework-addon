@@ -6,13 +6,13 @@ public BearCMS\Data\Pages\Page|null get ( string $id )
 
 ## Parameters
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$id`
+##### id
 
 ## Details
 
 Class: [BearCMS\Data\Pages](bearcms.data.pages.class.md)
 
-File: /classes/BearCMS/Data/Pages.php
+Location: ~/classes/BearCMS/Data/Pages.php
 
 ---
 

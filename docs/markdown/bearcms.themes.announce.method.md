@@ -8,13 +8,13 @@ public self announce ( string $id , callable $callback )
 
 ## Parameters
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$id`
+##### id
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The theme ID.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The theme ID.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$callback`
+##### callback
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A function to define theme parameters.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A function to define theme parameters.
 
 ## Returns
 
@@ -24,7 +24,7 @@ public self announce ( string $id , callable $callback )
 
 Class: [BearCMS\Themes](bearcms.themes.class.md)
 
-File: /classes/BearCMS/Themes.php
+Location: ~/classes/BearCMS/Themes.php
 
 ---
 

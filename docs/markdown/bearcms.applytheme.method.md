@@ -8,15 +8,15 @@ public void applyTheme ( BearFramework\App\Response $response )
 
 ## Parameters
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$response`
+##### response
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The response to modify.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The response to modify.
 
 ## Details
 
 Class: [BearCMS](bearcms.class.md)
 
-File: /classes/BearCMS.php
+Location: ~/classes/BearCMS.php
 
 ---
 

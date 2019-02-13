@@ -8,7 +8,7 @@ public BearCMS\Data\Settings\Settings get ( void )
 
 Class: [BearCMS\Data\Settings](bearcms.data.settings.class.md)
 
-File: /classes/BearCMS/Data/Settings.php
+Location: ~/classes/BearCMS/Data/Settings.php
 
 ---
 

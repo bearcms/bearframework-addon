@@ -6,13 +6,13 @@ public BearCMS\Data\BlogPosts\BlogPost|null get ( string $id )
 
 ## Parameters
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$id`
+##### id
 
 ## Details
 
 Class: [BearCMS\Data\BlogPosts](bearcms.data.blogposts.class.md)
 
-File: /classes/BearCMS/Data/BlogPosts.php
+Location: ~/classes/BearCMS/Data/BlogPosts.php
 
 ---
 

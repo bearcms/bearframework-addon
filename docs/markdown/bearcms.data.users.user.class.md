@@ -1,40 +1,61 @@
 # BearCMS\Data\Users\User
 
-extends BearFramework\Models\Model
+```php
+BearCMS\Data\Users\User extends BearFramework\Models\Model {
+
+	/* Properties */
+	public array $emails
+	public string|null $hashedPassword
+	public string $id
+	public int|null $lastLoginTime
+	public array $permissions
+	public int|null $registerTime
+
+	/* Methods */
+	public __construct ( void )
+
+}
+```
+
+## Extends
+
+##### BearFramework\Models\Model
 
 ## Properties
 
 ##### public array $emails
 
-##### public ?string $hashedPassword
+##### public string|null $hashedPassword
 
 ##### public string $id
 
-##### public ?int $lastLoginTime
+##### public int|null $lastLoginTime
 
 ##### public array $permissions
 
-##### public ?int $registerTime
+##### public int|null $registerTime
 
 ## Methods
 
 ##### public [__construct](bearcms.data.users.user.__construct.method.md) ( void )
 
-### Inherited from BearFramework\Models\Model:
+### Inherited from BearFramework\Models\Model
 
-##### public static object [fromArray](bearframework.models.model.fromarray.method.md) ( array $data )
+##### public static void fromArray ( array $data )
 
-##### public static object [fromJSON](bearframework.models.model.fromjson.method.md) ( string $data )
+##### public static void fromJSON ( string $data )
 
-##### public array [toArray](bearframework.models.model.toarray.method.md) ( void )
+##### public array toArray ( void )
 
-##### public string [toJSON](bearframework.models.model.tojson.method.md) ( void )
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the object data converted as an array.
 
-##### protected object [defineProperty](bearframework.models.model.defineproperty.method.md) ( string $name [, array $options = [] ] )
+##### public string toJSON ( void )
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the object data converted as JSON.
 
 ## Details
 
-File: /classes/BearCMS/Data/Users/User.php
+Location: ~/classes/BearCMS/Data/Users/User.php
 
 ---
 

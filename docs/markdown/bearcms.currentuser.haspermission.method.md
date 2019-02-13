@@ -8,9 +8,9 @@ public bool hasPermission ( string $name )
 
 ## Parameters
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$name`
+##### name
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of the permission
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of the permission
 
 ## Returns
 
@@ -20,7 +20,7 @@ public bool hasPermission ( string $name )
 
 Class: [BearCMS\CurrentUser](bearcms.currentuser.class.md)
 
-File: /classes/BearCMS/CurrentUser.php
+Location: ~/classes/BearCMS/CurrentUser.php
 
 ---
 

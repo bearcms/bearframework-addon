@@ -26,15 +26,21 @@
 
 ### [BearCMS\Data\Users\User](bearcms.data.users.user.class.md)
 
+### [BearCMS\Internal\BeforeAddCommentEventDetails](bearcms.internal.beforeaddcommenteventdetails.class.md)
+
+### [BearCMS\Internal\MakeBlogPostPageResponseEventDetails](bearcms.internal.makeblogpostpageresponseeventdetails.class.md)
+
+### [BearCMS\Internal\MakePageResponseEventDetails](bearcms.internal.makepageresponseeventdetails.class.md)
+
 ### [BearCMS\Themes](bearcms.themes.class.md)
 
-### [BearCMS\Themes\Options](bearcms.themes.options.class.md)
-
-### [BearCMS\Themes\Options\GroupSchema](bearcms.themes.options.groupschema.class.md)
-
-### [BearCMS\Themes\Options\OptionSchema](bearcms.themes.options.optionschema.class.md)
-
-### [BearCMS\Themes\Options\Schema](bearcms.themes.options.schema.class.md)
-
 ### [BearCMS\Themes\Theme](bearcms.themes.theme.class.md)
+
+### [BearCMS\Themes\Theme\Customizations](bearcms.themes.theme.customizations.class.md)
+
+### [BearCMS\Themes\Theme\Options](bearcms.themes.theme.options.class.md)
+
+### [BearCMS\Themes\Theme\Options\Group](bearcms.themes.theme.options.group.class.md)
+
+### [BearCMS\Themes\Theme\Options\Option](bearcms.themes.theme.options.option.class.md)
 

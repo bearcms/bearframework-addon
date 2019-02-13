@@ -8,7 +8,7 @@ public int getUploadsSize ( void )
 
 Class: [BearCMS\Data](bearcms.data.class.md)
 
-File: /classes/BearCMS/Data.php
+Location: ~/classes/BearCMS/Data.php
 
 ---
 

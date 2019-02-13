@@ -8,7 +8,7 @@ public __construct ( void )
 
 Class: [BearCMS\Data\BlogPosts\BlogPost](bearcms.data.blogposts.blogpost.class.md)
 
-File: /classes/BearCMS/Data/BlogPosts/BlogPost.php
+Location: ~/classes/BearCMS/Data/BlogPosts/BlogPost.php
 
 ---
 

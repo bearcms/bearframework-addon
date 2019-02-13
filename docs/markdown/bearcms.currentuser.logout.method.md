@@ -10,7 +10,7 @@ public void logout ( void )
 
 Class: [BearCMS\CurrentUser](bearcms.currentuser.class.md)
 
-File: /classes/BearCMS/CurrentUser.php
+Location: ~/classes/BearCMS/CurrentUser.php
 
 ---
 

@@ -12,5 +12,10 @@ require __DIR__ . '/vendor/autoload.php';
 $app = new BearFramework\App();
 $app->addons->add('bearcms/bearframework-addon');
 
-$docsGenerator = new IvoPetkov\DocsGenerator(__DIR__, ['/classes']);
-$docsGenerator->generateMarkdown(__DIR__ . '/docs/markdown');
+$docsGenerator = new IvoPetkov\DocsGenerator(__DIR__);
+$docsGenerator->addSourceDir('/classes');
+$options = [
+    'showProtected' => false,
+    'showPrivate' => false
+];
+$docsGenerator->generateMarkdown(__DIR__ . '/docs/markdown', $options);

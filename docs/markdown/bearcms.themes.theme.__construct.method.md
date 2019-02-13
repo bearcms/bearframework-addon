@@ -6,13 +6,13 @@ public __construct ( string $id )
 
 ## Parameters
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$id`
+##### id
 
 ## Details
 
 Class: [BearCMS\Themes\Theme](bearcms.themes.theme.class.md)
 
-File: /classes/BearCMS/Themes/Theme.php
+Location: ~/classes/BearCMS/Themes/Theme.php
 
 ---
 

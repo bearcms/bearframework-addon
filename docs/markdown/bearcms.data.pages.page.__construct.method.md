@@ -8,7 +8,7 @@ public __construct ( void )
 
 Class: [BearCMS\Data\Pages\Page](bearcms.data.pages.page.class.md)
 
-File: /classes/BearCMS/Data/Pages/Page.php
+Location: ~/classes/BearCMS/Data/Pages/Page.php
 
 ---
 

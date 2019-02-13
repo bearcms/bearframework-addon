@@ -8,7 +8,7 @@ public void addDefault ( void )
 
 Class: [BearCMS\Themes](bearcms.themes.class.md)
 
-File: /classes/BearCMS/Themes.php
+Location: ~/classes/BearCMS/Themes.php
 
 ---
 

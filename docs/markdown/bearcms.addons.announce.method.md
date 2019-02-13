@@ -8,13 +8,13 @@ public self announce ( string $id , callable $callback )
 
 ## Parameters
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$id`
+##### id
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The addon ID.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The addon ID.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$callback`
+##### callback
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A function to define addon parameters.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A function to define addon parameters.
 
 ## Returns
 
@@ -24,7 +24,7 @@ public self announce ( string $id , callable $callback )
 
 Class: [BearCMS\Addons](bearcms.addons.class.md)
 
-File: /classes/BearCMS/Addons.php
+Location: ~/classes/BearCMS/Addons.php
 
 ---
 

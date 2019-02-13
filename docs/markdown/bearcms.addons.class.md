@@ -1,5 +1,15 @@
 # BearCMS\Addons
 
+```php
+BearCMS\Addons {
+
+	/* Methods */
+	public self add ( string $id )
+	public self announce ( string $id , callable $callback )
+
+}
+```
+
 ## Methods
 
 ##### public self [add](bearcms.addons.add.method.md) ( string $id )
@@ -10,11 +20,9 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Announces a new addon.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns: Returns a reference to itself.
-
 ## Details
 
-File: /classes/BearCMS/Addons.php
+Location: ~/classes/BearCMS/Addons.php
 
 ---
 

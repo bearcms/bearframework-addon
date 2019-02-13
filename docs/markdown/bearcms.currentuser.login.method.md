@@ -8,7 +8,7 @@ public bool login ( string $userID )
 
 ## Parameters
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$userID`
+##### userID
 
 ## Returns
 
@@ -18,7 +18,7 @@ public bool login ( string $userID )
 
 Class: [BearCMS\CurrentUser](bearcms.currentuser.class.md)
 
-File: /classes/BearCMS/CurrentUser.php
+Location: ~/classes/BearCMS/CurrentUser.php
 
 ---
 

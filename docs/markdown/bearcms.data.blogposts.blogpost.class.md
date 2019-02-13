@@ -1,6 +1,32 @@
 # BearCMS\Data\BlogPosts\BlogPost
 
-extends BearFramework\Models\Model
+```php
+BearCMS\Data\BlogPosts\BlogPost extends BearFramework\Models\Model {
+
+	/* Properties */
+	public array $categoriesIDs
+	public int|null $createdTime
+	public array $custom
+	public string|null $descriptionTagContent
+	public string|null $id
+	public string|null $keywordsTagContent
+	public int|null $lastChangeTime
+	public string|null $publishedTime
+	public string|null $slug
+	public string|null $status
+	public string|null $title
+	public string|null $titleTagContent
+	public string|null $trashedTime
+
+	/* Methods */
+	public __construct ( void )
+
+}
+```
+
+## Extends
+
+##### BearFramework\Models\Model
 
 ## Properties
 
@@ -34,21 +60,23 @@ extends BearFramework\Models\Model
 
 ##### public [__construct](bearcms.data.blogposts.blogpost.__construct.method.md) ( void )
 
-### Inherited from BearFramework\Models\Model:
+### Inherited from BearFramework\Models\Model
 
-##### public static object [fromArray](bearframework.models.model.fromarray.method.md) ( array $data )
+##### public static void fromArray ( array $data )
 
-##### public static object [fromJSON](bearframework.models.model.fromjson.method.md) ( string $data )
+##### public static void fromJSON ( string $data )
 
-##### public array [toArray](bearframework.models.model.toarray.method.md) ( void )
+##### public array toArray ( void )
 
-##### public string [toJSON](bearframework.models.model.tojson.method.md) ( void )
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the object data converted as an array.
 
-##### protected object [defineProperty](bearframework.models.model.defineproperty.method.md) ( string $name [, array $options = [] ] )
+##### public string toJSON ( void )
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the object data converted as JSON.
 
 ## Details
 
-File: /classes/BearCMS/Data/BlogPosts/BlogPost.php
+Location: ~/classes/BearCMS/Data/BlogPosts/BlogPost.php
 
 ---
 

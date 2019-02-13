@@ -8,13 +8,13 @@ public self add ( string $id )
 
 ## Parameters
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$id`
+##### id
 
 ## Details
 
 Class: [BearCMS\Addons](bearcms.addons.class.md)
 
-File: /classes/BearCMS/Addons.php
+Location: ~/classes/BearCMS/Addons.php
 
 ---
 

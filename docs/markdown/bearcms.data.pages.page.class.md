@@ -1,10 +1,34 @@
 # BearCMS\Data\Pages\Page
 
-extends BearFramework\Models\Model
+```php
+BearCMS\Data\Pages\Page extends BearFramework\Models\Model {
+
+	/* Properties */
+	public readonly BearFramework\Models\ModelsList|BearCMS\Data\Pages\Page[] $children
+	public string|null $descriptionTagContent
+	public string|null $id
+	public string|null $keywordsTagContent
+	public string|null $name
+	public string|null $parentID
+	public string|null $path
+	public string|null $slug
+	public string|null $status
+	public string|null $titleTagContent
+
+	/* Methods */
+	public __construct ( void )
+	public static void fromJSON ( string $data )
+
+}
+```
+
+## Extends
+
+##### BearFramework\Models\Model
 
 ## Properties
 
-##### public readonly \BearFramework\Models\ModelsList|[BearCMS\Data\Pages\Page[]](bearcms.data.pages.page.class.md) $children
+##### public readonly BearFramework\Models\ModelsList|[BearCMS\Data\Pages\Page[]](bearcms.data.pages.page.class.md) $children
 
 ##### public string|null $descriptionTagContent
 
@@ -30,19 +54,21 @@ extends BearFramework\Models\Model
 
 ##### public static void [fromJSON](bearcms.data.pages.page.fromjson.method.md) ( string $data )
 
-### Inherited from BearFramework\Models\Model:
+### Inherited from BearFramework\Models\Model
 
-##### public static object [fromArray](bearframework.models.model.fromarray.method.md) ( array $data )
+##### public static void fromArray ( array $data )
 
-##### public array [toArray](bearframework.models.model.toarray.method.md) ( void )
+##### public array toArray ( void )
 
-##### public string [toJSON](bearframework.models.model.tojson.method.md) ( void )
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the object data converted as an array.
 
-##### protected object [defineProperty](bearframework.models.model.defineproperty.method.md) ( string $name [, array $options = [] ] )
+##### public string toJSON ( void )
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the object data converted as JSON.
 
 ## Details
 
-File: /classes/BearCMS/Data/Pages/Page.php
+Location: ~/classes/BearCMS/Data/Pages/Page.php
 
 ---
 

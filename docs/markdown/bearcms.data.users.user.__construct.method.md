@@ -8,7 +8,7 @@ public __construct ( void )
 
 Class: [BearCMS\Data\Users\User](bearcms.data.users.user.class.md)
 
-File: /classes/BearCMS/Data/Users/User.php
+Location: ~/classes/BearCMS/Data/Users/User.php
 
 ---
 

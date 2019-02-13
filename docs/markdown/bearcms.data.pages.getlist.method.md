@@ -8,7 +8,7 @@ public BearFramework\Models\ModelsList getList ( void )
 
 Class: [BearCMS\Data\Pages](bearcms.data.pages.class.md)
 
-File: /classes/BearCMS/Data/Pages.php
+Location: ~/classes/BearCMS/Data/Pages.php
 
 ---
 

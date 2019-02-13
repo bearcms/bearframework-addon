@@ -10,7 +10,7 @@ public __construct ( void )
 
 Class: [BearCMS](bearcms.class.md)
 
-File: /classes/BearCMS.php
+Location: ~/classes/BearCMS.php
 
 ---
 

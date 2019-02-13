@@ -1,5 +1,18 @@
 # BearCMS\Addons\Addon
 
+```php
+BearCMS\Addons\Addon {
+
+	/* Properties */
+	public readonly string $id
+	public callable|null $initialize
+
+	/* Methods */
+	public __construct ( string $id )
+
+}
+```
+
 ## Properties
 
 ##### public readonly string $id
@@ -14,15 +27,9 @@
 
 ##### public [__construct](bearcms.addons.addon.__construct.method.md) ( string $id )
 
-##### protected object [defineProperty](bearcms.addons.addon.defineproperty.method.md) ( string $name [, array $options = [] ] )
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defines a new property.
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns: Returns a reference to the object.
-
 ## Details
 
-File: /classes/BearCMS/Addons/Addon.php
+Location: ~/classes/BearCMS/Addons/Addon.php
 
 ---
 

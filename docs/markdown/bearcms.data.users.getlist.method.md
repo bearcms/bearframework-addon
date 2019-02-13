@@ -8,7 +8,7 @@ public BearFramework\Models\ModelsList getList ( void )
 
 Class: [BearCMS\Data\Users](bearcms.data.users.class.md)
 
-File: /classes/BearCMS/Data/Users.php
+Location: ~/classes/BearCMS/Data/Users.php
 
 ---
 

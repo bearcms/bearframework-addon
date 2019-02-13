@@ -6,13 +6,13 @@ public static void fromArray ( array $data )
 
 ## Parameters
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$data`
+##### data
 
 ## Details
 
 Class: [BearCMS\Data\Settings\Settings](bearcms.data.settings.settings.class.md)
 
-File: /classes/BearCMS/Data/Settings/Settings.php
+Location: ~/classes/BearCMS/Data/Settings/Settings.php
 
 ---
 

@@ -1,6 +1,32 @@
 # BearCMS\Data\Settings\Settings
 
-extends BearFramework\Models\Model
+```php
+BearCMS\Data\Settings\Settings extends BearFramework\Models\Model {
+
+	/* Properties */
+	public bool $allowSearchEngines
+	public array $custom
+	public string|null $description
+	public bool $disabled
+	public string|null $disabledText
+	public bool $enableRSS
+	public bool $externalLinks
+	public string|null $icon
+	public string|null $keywords
+	public string|null $language
+	public string|null $rssType
+	public string|null $title
+
+	/* Methods */
+	public __construct ( void )
+	public static void fromArray ( array $data )
+
+}
+```
+
+## Extends
+
+##### BearFramework\Models\Model
 
 ## Properties
 
@@ -34,19 +60,21 @@ extends BearFramework\Models\Model
 
 ##### public static void [fromArray](bearcms.data.settings.settings.fromarray.method.md) ( array $data )
 
-### Inherited from BearFramework\Models\Model:
+### Inherited from BearFramework\Models\Model
 
-##### public static object [fromJSON](bearframework.models.model.fromjson.method.md) ( string $data )
+##### public static void fromJSON ( string $data )
 
-##### public array [toArray](bearframework.models.model.toarray.method.md) ( void )
+##### public array toArray ( void )
 
-##### public string [toJSON](bearframework.models.model.tojson.method.md) ( void )
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the object data converted as an array.
 
-##### protected object [defineProperty](bearframework.models.model.defineproperty.method.md) ( string $name [, array $options = [] ] )
+##### public string toJSON ( void )
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the object data converted as JSON.
 
 ## Details
 
-File: /classes/BearCMS/Data/Settings/Settings.php
+Location: ~/classes/BearCMS/Data/Settings/Settings.php
 
 ---
 

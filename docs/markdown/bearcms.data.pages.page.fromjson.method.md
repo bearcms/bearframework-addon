@@ -6,13 +6,13 @@ public static void fromJSON ( string $data )
 
 ## Parameters
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$data`
+##### data
 
 ## Details
 
 Class: [BearCMS\Data\Pages\Page](bearcms.data.pages.page.class.md)
 
-File: /classes/BearCMS/Data/Pages/Page.php
+Location: ~/classes/BearCMS/Data/Pages/Page.php
 
 ---
 
