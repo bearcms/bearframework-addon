@@ -15,6 +15,7 @@ namespace BearCMS\Internal;
  * @property string $status
  * @property bool $cancel
  * @property string $cancelMessage
+ * @internal
  */
 class BeforeAddCommentEventDetails
 {

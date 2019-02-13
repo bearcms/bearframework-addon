@@ -26,12 +26,6 @@
 
 ### [BearCMS\Data\Users\User](bearcms.data.users.user.class.md)
 
-### [BearCMS\Internal\BeforeAddCommentEventDetails](bearcms.internal.beforeaddcommenteventdetails.class.md)
-
-### [BearCMS\Internal\MakeBlogPostPageResponseEventDetails](bearcms.internal.makeblogpostpageresponseeventdetails.class.md)
-
-### [BearCMS\Internal\MakePageResponseEventDetails](bearcms.internal.makepageresponseeventdetails.class.md)
-
 ### [BearCMS\Themes](bearcms.themes.class.md)
 
 ### [BearCMS\Themes\Theme](bearcms.themes.theme.class.md)

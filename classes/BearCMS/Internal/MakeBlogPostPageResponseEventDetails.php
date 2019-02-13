@@ -12,6 +12,7 @@ namespace BearCMS\Internal;
 /**
  * @property \BearFramework\App\Response $response
  * @property string $blogPostID
+ * @internal
  */
 class MakeBlogPostPageResponseEventDetails
 {
