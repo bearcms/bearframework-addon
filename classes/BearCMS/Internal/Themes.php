@@ -118,10 +118,17 @@ class Themes
         if (is_callable($theme->manifest)) {
             $app = App::get();
             $context = $app->contexts->get(__FILE__);
-            $result = call_user_func($theme->manifest);
-            if (!is_array($result)) {
+            $manifest = call_user_func($theme->manifest);
+            if ((!$manifest instanceof \BearCMS\Themes\Theme\Manifest)) {
                 throw new \Exception('Invalid theme manifest value for theme ' . $id . '!');
             }
+            if ($manifest->name === null) {
+                $manifest->name = '';
+            }
+            if ($manifest->description === null) {
+                $manifest->description = '';
+            }
+            $result = $manifest->toArray();
             if ($updateMediaFilenames) {
                 if (isset($result['media']) && is_array($result['media'])) {
                     foreach ($result['media'] as $i => $mediaItem) {
@@ -231,28 +238,22 @@ class Themes
             return null;
         }
         if (is_callable($theme->styles)) {
-            $result = call_user_func($theme->styles);
-            if (!is_array($result)) {
+            $styles = call_user_func($theme->styles);
+            if (!is_array($styles)) {
                 throw new \Exception('Invalid theme styles value for theme ' . $id . '!');
             }
-            foreach ($result as $j => $style) {
-                if (isset($result[$j]['id'])) {
-                    $result[$j]['id'] = (string) $result[$j]['id'];
-                } else {
-                    $result[$j]['id'] = 'style' . $j;
+            $result = [];
+            foreach ($styles as $j => $style) {
+                if (!($style instanceof \BearCMS\Themes\Theme\Style)) {
+                    throw new \Exception('Invalid theme style at index ' . $j . '!');
                 }
-                if (isset($result[$j]['name'])) {
-                    $result[$j]['name'] = (string) $result[$j]['name'];
-                } else {
-                    $result[$j]['name'] = '';
+                if (strlen($style->id) === 0) {
+                    $style->id = 'style' . $j;
                 }
-                if (isset($result[$j]['media'])) {
-                    if (!is_array($result[$j]['media'])) {
-                        throw new \Exception('');
-                    }
-                } else {
-                    $result[$j]['media'] = [];
+                if ($style->name == null) {
+                    $style->name = '';
                 }
+                $result[] = $style->toArray();
             }
             if ($updateMediaFilenames) {
                 $app = App::get();

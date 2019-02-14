@@ -32,9 +32,13 @@
 
 ### [BearCMS\Themes\Theme\Customizations](bearcms.themes.theme.customizations.class.md)
 
+### [BearCMS\Themes\Theme\Manifest](bearcms.themes.theme.manifest.class.md)
+
 ### [BearCMS\Themes\Theme\Options](bearcms.themes.theme.options.class.md)
 
 ### [BearCMS\Themes\Theme\Options\Group](bearcms.themes.theme.options.group.class.md)
 
 ### [BearCMS\Themes\Theme\Options\Option](bearcms.themes.theme.options.option.class.md)
+
+### [BearCMS\Themes\Theme\Style](bearcms.themes.theme.style.class.md)
 

@@ -4,7 +4,7 @@
 BearCMS\Themes\Theme\Customizations {
 
 	/* Methods */
-	public __construct ( array $data , string $html )
+	public __construct ( array $values , string $html )
 	public string getHTML ( void )
 	public mixed|null getValue ( string $name )
 	public array getValues ( void )
@@ -14,7 +14,7 @@ BearCMS\Themes\Theme\Customizations {
 
 ## Methods
 
-##### public [__construct](bearcms.themes.theme.customizations.__construct.method.md) ( array $data , string $html )
+##### public [__construct](bearcms.themes.theme.customizations.__construct.method.md) ( array $values , string $html )
 
 ##### public string [getHTML](bearcms.themes.theme.customizations.gethtml.method.md) ( void )
 

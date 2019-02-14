@@ -1,12 +1,12 @@
 # BearCMS\Themes\Theme\Customizations::__construct
 
 ```php
-public __construct ( array $data , string $html )
+public __construct ( array $values , string $html )
 ```
 
 ## Parameters
 
-##### data
+##### values
 
 ##### html
 

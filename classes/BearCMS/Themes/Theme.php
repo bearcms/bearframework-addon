@@ -71,4 +71,22 @@ class Theme
         return new \BearCMS\Themes\Theme\Options();
     }
 
+    /**
+     * 
+     * @return \BearCMS\Themes\Theme\Style
+     */
+    public function makeStyle(): \BearCMS\Themes\Theme\Style
+    {
+        return new \BearCMS\Themes\Theme\Style();
+    }
+    
+    /**
+     * 
+     * @return \BearCMS\Themes\Theme\Manifest
+     */
+    public function makeManifest(): \BearCMS\Themes\Theme\Manifest
+    {
+        return new \BearCMS\Themes\Theme\Manifest();
+    }
+
 }

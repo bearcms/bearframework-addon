@@ -7,8 +7,6 @@
  * Free to use under the MIT license.
  */
 
-use BearFramework\App;
-
 $options
         ->addOption("textColor", "color", __("bearcms.themes.themeone.options.Text color"), [
             "value" => '#000000'
@@ -102,5 +100,3 @@ $options->addGroup(__("bearcms.themes.themeone.options.Footer"))
             ],
             "value" => "1"
         ]);
-
-return $options;

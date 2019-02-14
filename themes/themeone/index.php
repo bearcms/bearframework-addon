@@ -47,27 +47,28 @@ $app->bearCMS->themes
                         })($templateFilename, $customizations);
             };
 
-            $theme->manifest = function() use ($context) {
-                return [
-                    'name' => __('bearcms.themes.themeone.name'),
-                    'description' => __('bearcms.themes.themeone.description'),
-                    'author' => [
-                        'name' => 'Bear CMS Team',
-                        'url' => 'https://bearcms.com/addons/',
-                        'email' => 'addons@bearcms.com',
-                    ],
-                    'media' => [
-                        [
-                            'filename' => $context->dir . '/themes/themeone/assets/one.png',
-                            'width' => 1442,
-                            'height' => 1062,
-                        ]
+            $theme->manifest = function() use ($context, $theme) {
+                $manifest = $theme->makeManifest();
+                $manifest->name = __('bearcms.themes.themeone.name');
+                $manifest->description = __('bearcms.themes.themeone.description');
+                $manifest->author = [
+                    'name' => 'Bear CMS Team',
+                    'url' => 'https://bearcms.com/addons/',
+                    'email' => 'addons@bearcms.com',
+                ];
+                $manifest->media = [
+                    [
+                        'filename' => $context->dir . '/themes/themeone/assets/one.png',
+                        'width' => 1442,
+                        'height' => 1062,
                     ]
                 ];
+                return $manifest;
             };
 
             $theme->options = function() use ($context, $theme) {
                 $options = $theme->makeOptions(); // used inside
-                return include $context->dir . '/themes/themeone/options.php';
+                require $context->dir . '/themes/themeone/options.php';
+                return $options;
             };
         });

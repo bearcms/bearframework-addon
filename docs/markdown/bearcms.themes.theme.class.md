@@ -15,7 +15,9 @@ BearCMS\Themes\Theme {
 
 	/* Methods */
 	public __construct ( string $id )
+	public BearCMS\Themes\Theme\Manifest makeManifest ( void )
 	public BearCMS\Themes\Theme\Options makeOptions ( void )
+	public BearCMS\Themes\Theme\Style makeStyle ( void )
 
 }
 ```
@@ -58,7 +60,11 @@ BearCMS\Themes\Theme {
 
 ##### public [__construct](bearcms.themes.theme.__construct.method.md) ( string $id )
 
+##### public [BearCMS\Themes\Theme\Manifest](bearcms.themes.theme.manifest.class.md) [makeManifest](bearcms.themes.theme.makemanifest.method.md) ( void )
+
 ##### public [BearCMS\Themes\Theme\Options](bearcms.themes.theme.options.class.md) [makeOptions](bearcms.themes.theme.makeoptions.method.md) ( void )
+
+##### public [BearCMS\Themes\Theme\Style](bearcms.themes.theme.style.class.md) [makeStyle](bearcms.themes.theme.makestyle.method.md) ( void )
 
 ## Details
 

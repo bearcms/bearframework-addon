@@ -16,11 +16,11 @@ class Customizations
 {
 
     /**
-     * Options data
+     * Options values
      * 
      * @var array 
      */
-    private $data = [];
+    private $values = [];
 
     /**
      *
@@ -30,12 +30,12 @@ class Customizations
 
     /**
      * 
-     * @param array $data
+     * @param array $values
      * @param string $html
      */
-    public function __construct(array $data, string $html)
+    public function __construct(array $values, string $html)
     {
-        $this->data = $data;
+        $this->values = $values;
         $this->html = $html;
     }
 
@@ -46,7 +46,7 @@ class Customizations
      */
     public function getValue(string $name)
     {
-        return isset($this->data[$name]) ? $this->data[$name] : null;
+        return isset($this->values[$name]) ? $this->values[$name] : null;
     }
 
     /**
@@ -55,7 +55,7 @@ class Customizations
      */
     public function getValues(): array
     {
-        return $this->data;
+        return $this->values;
     }
 
     /**
