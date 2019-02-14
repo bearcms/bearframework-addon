@@ -785,12 +785,6 @@ class BearCMS
             Internal\Data\Addons::addToApp();
         }
 
-        $onResponseCreated = function($response) {
-            $this->applyDefaults($response);
-            $this->applyTheme($response);
-            $this->applyAdminUI($response);
-        };
-
         // Register the system pages
         if ($hasServer) {
             if (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_DEFAULT')) {
@@ -888,7 +882,7 @@ class BearCMS
             $this->app->routes
                     ->add([Config::$blogPagesPathPrefix . '?', Config::$blogPagesPathPrefix . '?/'], [
                         [$this, 'disabledCheck'],
-                        function() use ($onResponseCreated) {
+                        function() {
                             $slug = (string) $this->app->request->path->getSegment(1);
                             $slugsList = Internal\Data\BlogPosts::getSlugsList('published');
                             $blogPostID = array_search($slug, $slugsList);
@@ -941,7 +935,7 @@ class BearCMS
                                         $this->dispatchEvent('internalMakeBlogPostPageResponse', $eventDetails);
                                     }
                                     $response->content = $this->app->components->process($response->content);
-                                    $onResponseCreated($response);
+                                    $this->apply($response);
                                     return $response;
                                 }
                             }
@@ -1029,7 +1023,7 @@ class BearCMS
             $this->app->routes
                     ->add('*', [
                         [$this, 'disabledCheck'],
-                        function() use ($onResponseCreated) {
+                        function() {
                             $path = $this->app->request->path->get();
                             $path = implode('/', array_map('urldecode', explode('/', $path))); // waiting for next bearframework version
                             if ($path === '/') {
@@ -1095,7 +1089,7 @@ class BearCMS
                                         $this->dispatchEvent('internalMakePageResponse', $eventDetails);
                                     }
                                     $response->content = $this->app->components->process($response->content);
-                                    $onResponseCreated($response);
+                                    $this->apply($response);
                                     return $response;
                                 }
                             }
@@ -1522,10 +1516,10 @@ class BearCMS
     {
         $currentThemeID = Internal\CurrentTheme::getID();
         $currentUserID = $this->currentUser->exists() ? $this->currentUser->getID() : null;
-        $currentThemeOptions = Internal\Themes::getValues($currentThemeID, $currentUserID);
+        $currentCustomizations = Internal\Themes::getValues($currentThemeID, $currentUserID);
 
         if ($response instanceof App\Response\HTML) {
-            if (strpos($response->content, 'class="bearcms-blogpost-page-date-container"') !== false && ($currentThemeOptions !== null && $currentThemeOptions->getValue('blogPostPageDateVisibility') === '0')) {
+            if (strpos($response->content, 'class="bearcms-blogpost-page-date-container"') !== false && ($currentCustomizations !== null && $currentCustomizations->getValue('blogPostPageDateVisibility') === '0')) {
                 $domDocument = new HTML5DOMDocument();
                 $domDocument->loadHTML($response->content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
                 $element = $domDocument->querySelector('div.bearcms-blogpost-page-date-container');
@@ -1540,10 +1534,10 @@ class BearCMS
             $theme = Internal\Themes::get($currentThemeID);
             if (is_callable($theme->get)) {
                 if ($response instanceof App\Response\HTML) {
-                    $templateContent = call_user_func($theme->get, $currentThemeOptions);
+                    $templateContent = call_user_func($theme->get, $currentCustomizations);
                     $template = new \BearFramework\HTMLTemplate($templateContent);
-                    if ($currentThemeOptions !== null) {
-                        $html = $currentThemeOptions->getHTML();
+                    if ($currentCustomizations !== null) {
+                        $html = $currentCustomizations->getHTML();
                         if (isset($html[0])) {
                             $template->insert($html);
                         }
@@ -1552,7 +1546,7 @@ class BearCMS
                     $response->content = $this->app->components->process($template->get());
                 }
             } elseif (is_callable($theme->apply)) {
-                call_user_func($theme->apply, $response, $currentThemeOptions);
+                call_user_func($theme->apply, $response, $currentCustomizations);
             }
         }
 
