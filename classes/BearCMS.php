@@ -1542,7 +1542,7 @@ class BearCMS
 
         if (isset(Internal\Themes::$registrations[$currentThemeID])) {
             $theme = Internal\Themes::get($currentThemeID);
-            if (is_callable($theme->get)) {
+            if ($theme->get !== null) {
                 if ($response instanceof App\Response\HTML) {
                     $templateContent = call_user_func($theme->get, $currentCustomizations);
                     $template = new \BearFramework\HTMLTemplate($templateContent);
@@ -1553,9 +1553,10 @@ class BearCMS
                         }
                     }
                     $template->insert($response->content, 'body');
-                    $response->content = $this->app->components->process($template->get());
+                    $response->content = $template->get();
                 }
-            } elseif (is_callable($theme->apply)) {
+            }
+            if ($theme->apply !== null) {
                 call_user_func($theme->apply, $response, $currentCustomizations);
             }
         }
