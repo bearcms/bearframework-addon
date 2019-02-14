@@ -8,6 +8,7 @@
  */
 
 use BearFramework\App;
+use IvoPetkov\HTML5DOMDocument;
 
 $app = App::get();
 
@@ -26,17 +27,7 @@ $app->bearCMS->themes
             $context->assets
             ->addDir('themes/themeone/assets');
 
-            $theme->version = '1.6';
-
-            $theme->initialize = function() use ($app) {
-                $app->components
-                ->addEventListener('makeComponent', function($details) {
-                    $component = $details->component;
-                    if ($component->src === 'bearcms-elements') {
-                        $component->spacing = '1.5rem';
-                    }
-                });
-            };
+            $theme->version = '1.7';
 
             $theme->get = function(\BearCMS\Themes\Theme\Customizations $customizations) use ($context) {
                 $templateFilename = $context->dir . '/themes/themeone/components/defaultTemplate.php';
@@ -45,6 +36,18 @@ $app->bearCMS->themes
                             include $__filename;
                             return ob_get_clean();
                         })($templateFilename, $customizations);
+            };
+
+            $theme->apply = function(\BearFramework\App\Response $response, \BearCMS\Themes\Theme\Customizations $customizations) use ($context) {
+                $domDocument = new HTML5DOMDocument();
+                $domDocument->loadHTML($response->content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
+                $elements = $domDocument->querySelectorAll('bearcms-elements');
+                if ($elements->length > 0) {
+                    foreach ($elements as $element) {
+                        $element->setAttribute('spacing', '1.5rem');
+                    }
+                    $response->content = $domDocument->saveHTML();
+                }
             };
 
             $theme->manifest = function() use ($context, $theme) {
