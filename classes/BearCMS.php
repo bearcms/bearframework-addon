@@ -926,7 +926,7 @@ class BearCMS
                                     $content .= '</head><body>';
                                     $content .= '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost->title) . '</h1></div>';
                                     $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost->status === 'published' ? $this->app->localization->formatDate($blogPost->publishedTime, ['date']) : __('bearcms.blogPost.draft')) . '</div></div>';
-                                    $content .= '<div class="bearcms-blogpost-page-content"><component src="bearcms-elements" id="bearcms-blogpost-' . $blogPostID . '"/></div>';
+                                    $content .= '<div class="bearcms-blogpost-page-content"><bearcms-elements id="bearcms-blogpost-' . $blogPostID . '"/></div>';
                                     $content .= '</body></html>';
 
                                     $response = new App\Response\HTML($content);
@@ -934,7 +934,6 @@ class BearCMS
                                         $eventDetails = new \BearCMS\Internal\MakeBlogPostPageResponseEventDetails($response, $blogPostID);
                                         $this->dispatchEvent('internalMakeBlogPostPageResponse', $eventDetails);
                                     }
-                                    $response->content = $this->app->components->process($response->content);
                                     $this->apply($response);
                                     return $response;
                                 }
@@ -1080,7 +1079,7 @@ class BearCMS
                                         $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
                                     }
                                     $content .= '</head><body>';
-                                    $content .= '<component src="bearcms-elements" id="bearcms-page-' . $pageID . '" editable="true"/>';
+                                    $content .= '<bearcms-elements id="bearcms-page-' . $pageID . '" editable="true"/>';
                                     $content .= '</body></html>';
 
                                     $response = new App\Response\HTML($content);
@@ -1088,7 +1087,6 @@ class BearCMS
                                         $eventDetails = new \BearCMS\Internal\MakePageResponseEventDetails($response, $pageID);
                                         $this->dispatchEvent('internalMakePageResponse', $eventDetails);
                                     }
-                                    $response->content = $this->app->components->process($response->content);
                                     $this->apply($response);
                                     return $response;
                                 }
@@ -1264,9 +1262,21 @@ class BearCMS
      */
     public function apply(\BearFramework\App\Response $response): void
     {
-        $this->applyDefaults($response);
         $this->applyTheme($response);
+        $this->process($response);
+        $this->applyDefaults($response);
         $this->applyAdminUI($response);
+    }
+
+    /**
+     * Converts custom tags (if any) into valid HTML code.
+     * 
+     * @param \BearFramework\App\Response $response
+     * @return void
+     */
+    public function process(\BearFramework\App\Response $response): void
+    {
+        $response->content = $this->app->components->process($response->content);
     }
 
     /**
