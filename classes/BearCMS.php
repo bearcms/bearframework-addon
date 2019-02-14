@@ -1536,7 +1536,7 @@ class BearCMS
             }
         }
 
-        if (isset(Internal\Themes::$announcements[$currentThemeID])) {
+        if (isset(Internal\Themes::$registrations[$currentThemeID])) {
             $theme = Internal\Themes::get($currentThemeID);
             if (is_callable($theme->get)) {
                 if ($response instanceof App\Response\HTML) {

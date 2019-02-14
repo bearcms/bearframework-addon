@@ -1,9 +1,9 @@
-# BearCMS\Themes::announce
+# BearCMS\Themes::register
 
-Announces a new theme.
+Register a new theme.
 
 ```php
-public self announce ( string $id , callable $callback )
+public self register ( string $id , callable $callback )
 ```
 
 ## Parameters

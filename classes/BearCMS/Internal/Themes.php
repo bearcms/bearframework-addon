@@ -22,7 +22,7 @@ class Themes
 
     static $elementsOptions = [];
     static $pagesOptions = [];
-    static $announcements = [];
+    static $registrations = [];
     static $cache = [];
 
     /**
@@ -50,7 +50,7 @@ class Themes
      */
     static public function getIDs(): array
     {
-        return array_keys(self::$announcements);
+        return array_keys(self::$registrations);
     }
 
     /**
@@ -60,14 +60,14 @@ class Themes
      */
     static function get(string $id): ?\BearCMS\Themes\Theme
     {
-        if (isset(self::$announcements[$id])) {
-            if (is_callable(self::$announcements[$id])) {
+        if (isset(self::$registrations[$id])) {
+            if (is_callable(self::$registrations[$id])) {
                 $app = App::get();
                 $theme = new \BearCMS\Themes\Theme($id);
-                call_user_func(self::$announcements[$id], $theme);
-                self::$announcements[$id] = $theme;
+                call_user_func(self::$registrations[$id], $theme);
+                self::$registrations[$id] = $theme;
             }
-            return self::$announcements[$id];
+            return self::$registrations[$id];
         }
         return null;
     }
@@ -150,7 +150,7 @@ class Themes
      */
 //    public function getManifest2(string $id): ?array
 //    {
-//        if (!isset(self::$announcements[$id])) {
+//        if (!isset(self::$registrations[$id])) {
 //            return null;
 //        }
 //        $result = Internal\Themes::getManifest($id);
@@ -280,7 +280,7 @@ class Themes
      */
     static public function getStyleValues(string $id, string $styleID): ?array
     {
-        if (!isset(self::$announcements[$id])) {
+        if (!isset(self::$registrations[$id])) {
             return null;
         }
         $styles = Internal\Themes::getStyles($id);
@@ -302,7 +302,7 @@ class Themes
      */
     static public function getValues(string $id, string $userID = null): ?\BearCMS\Themes\Theme\Customizations
     {
-        if (!isset(self::$announcements[$id])) {
+        if (!isset(self::$registrations[$id])) {
             return null;
         }
         $localCacheKey = 'options-' . $id . '-' . $userID;
@@ -414,7 +414,7 @@ class Themes
      */
     static public function export(string $id): string
     {
-        if (!isset(self::$announcements[$id])) {
+        if (!isset(self::$registrations[$id])) {
             throw new \Exception('Theme does not exists!');
         }
         $app = App::get();
@@ -462,7 +462,7 @@ class Themes
      */
     static public function import(string $fileDataKey, string $id, string $userID = null): void
     {
-        if (!isset(self::$announcements[$id])) {
+        if (!isset(self::$registrations[$id])) {
             throw new \Exception('Theme does not exists!', 1);
         }
         $app = App::get();

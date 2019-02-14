@@ -19,15 +19,15 @@ class Addons
 {
 
     /**
-     * Announces a new addon.
+     * Register a new addon.
      * 
      * @param string $id The addon ID.
      * @param callable $callback A function to define addon parameters.
      * @return self Returns a reference to itself.
      */
-    public function announce(string $id, callable $callback): self
+    public function register(string $id, callable $callback): self
     {
-        Internal\Data\Addons::$announcements[$id] = $callback;
+        Internal\Data\Addons::$registrations[$id] = $callback;
         return $this;
     }
 
@@ -42,9 +42,9 @@ class Addons
         $app = App::get();
         if (\BearFramework\Addons::exists($id)) {
             $app->addons->add($id);
-            if (isset(Internal\Data\Addons::$announcements[$id])) {
+            if (isset(Internal\Data\Addons::$registrations[$id])) {
                 $addon = new \BearCMS\Addons\Addon($id);
-                call_user_func(Internal\Data\Addons::$announcements[$id], $addon);
+                call_user_func(Internal\Data\Addons::$registrations[$id], $addon);
                 if (is_callable($addon->initialize)) {
                     call_user_func($addon->initialize);
                 }

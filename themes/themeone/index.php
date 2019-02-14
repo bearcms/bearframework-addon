@@ -12,7 +12,7 @@ use BearFramework\App;
 $app = App::get();
 
 $app->bearCMS->themes
-        ->announce('bearcms/themeone', function(\BearCMS\Themes\Theme $theme) use ($app) {
+        ->register('bearcms/themeone', function(\BearCMS\Themes\Theme $theme) use ($app) {
             $context = $app->contexts->get(__FILE__);
 
             $app->localization

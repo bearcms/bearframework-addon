@@ -1,9 +1,9 @@
-# BearCMS\Addons::announce
+# BearCMS\Addons::register
 
-Announces a new addon.
+Register a new addon.
 
 ```php
-public self announce ( string $id , callable $callback )
+public self register ( string $id , callable $callback )
 ```
 
 ## Parameters

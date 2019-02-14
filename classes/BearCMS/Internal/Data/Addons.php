@@ -22,7 +22,7 @@ class Addons
      *
      * @var array 
      */
-    static public $announcements = [];
+    static public $registrations = [];
 
     /**
      * 

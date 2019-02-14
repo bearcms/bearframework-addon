@@ -20,15 +20,15 @@ class Themes
 {
 
     /**
-     * Announces a new theme.
+     * Register a new theme.
      * 
      * @param string $id The theme ID.
      * @param callable $callback A function to define theme parameters.
      * @return self Returns a reference to itself.
      */
-    public function announce(string $id, callable $callback): self
+    public function register(string $id, callable $callback): self
     {
-        Internal\Themes::$announcements[$id] = $callback;
+        Internal\Themes::$registrations[$id] = $callback;
 
         if (Config::$initialized) { // Initialize to add asset dirs
             $currentThemeID = Internal\CurrentTheme::getID();
