@@ -1343,11 +1343,15 @@ class BearCMS
         }
 
         if ($generateDescriptionMetaTag || $generateKeywordsMetaTag) {
-            $bodyElement = $document->querySelector('body');
-            if ($bodyElement !== null) {
-                $textContent = $bodyElement->innerHTML;
+            $elements = $document->querySelectorAll('.bearcms-heading-element-large,.bearcms-heading-element-medium,.bearcms-heading-element-small,.bearcms-text-element');
+            if ($elements->length > 0) {
 
-                $textContent = preg_replace('/<script.*?<\/script>/', '', $textContent);
+                $textContent = '';
+                foreach ($elements as $element) {
+                    $textContent .= ' ' . $element->innerHTML;
+                }
+
+                $textContent = preg_replace('/<script.*?<\/script>/s', '', $textContent);
                 $textContent = preg_replace('/<.*?>/', ' $0 ', $textContent);
                 $textContent = preg_replace('/\s/', ' ', $textContent);
                 $textContent = strip_tags($textContent);
