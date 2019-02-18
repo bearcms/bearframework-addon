@@ -23,6 +23,7 @@ BearCMS {
 	public self dispatchEvent ( string $name [, mixed $details ] )
 	public bool hasEventListeners ( string $name )
 	public void initialize ( array $config )
+	public void process ( BearFramework\App\Response $response )
 	public self removeEventListener ( string $name , callable $listener )
 
 }
@@ -87,6 +88,10 @@ BearCMS {
 ##### public void [initialize](bearcms.initialize.method.md) ( array $config )
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes the Bear CMS instance.
+
+##### public void [process](bearcms.process.method.md) ( BearFramework\App\Response $response )
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts custom tags (if any) into valid HTML code.
 
 ##### public self [removeEventListener](bearcms.removeeventlistener.method.md) ( string $name , callable $listener )
 
