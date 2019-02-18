@@ -1024,7 +1024,6 @@ class BearCMS
                         [$this, 'disabledCheck'],
                         function() {
                             $path = $this->app->request->path->get();
-                            $path = implode('/', array_map('urldecode', explode('/', $path))); // waiting for next bearframework version
                             if ($path === '/') {
                                 if (Config::$autoCreateHomePage) {
                                     $pageID = 'home';
