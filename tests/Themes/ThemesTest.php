@@ -16,10 +16,10 @@ class ThemesTest extends BearCMSTestCase
     /**
      * 
      */
-    public function testAnnounce()
+    public function testRegister()
     {
         $app = $this->getApp();
-        $app->bearCMS->themes->announce('verdor1/theme1', function(\BearCMS\Themes\Theme $theme) {
+        $app->bearCMS->themes->register('verdor1/theme1', function(\BearCMS\Themes\Theme $theme) {
             
         });
     }

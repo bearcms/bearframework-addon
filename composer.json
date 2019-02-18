@@ -30,7 +30,7 @@
         "ivopetkov/notifications-bearframework-addon": "0.2.*"
     },
     "require-dev": {
-        "bearframework/addon-tests": "0.2.*",
+        "bearframework/addon-tests": "0.3.*",
         "phpunit/phpunit": "7.*",
         "ivopetkov/docs-generator": "0.2.*"
     },

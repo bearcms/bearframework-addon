@@ -10,14 +10,14 @@
 class BearCMSTestCase extends BearFramework\AddonTests\PHPUnitTestCase
 {
 
-    protected function initializeApp(array $config = []): void
+    protected function initializeApp(bool $setLogger = true, bool $setDataDriver = true, bool $setCacheDriver = true, bool $addAddon = true): \BearFramework\App
     {
-        parent::initializeApp($config);
-        $app = $this->getApp();
+        $app = parent::initializeApp($setLogger, $setDataDriver, $setCacheDriver, $addAddon);
         $app->bearCMS->initialize([
             'serverUrl' => 'https://dummy.bearcms.com/',
             'appSecretKey' => 'dummy1'
         ]);
+        return $app;
     }
 
     /**

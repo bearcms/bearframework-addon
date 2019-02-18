@@ -16,10 +16,10 @@ class AddonsTest extends BearCMSTestCase
     /**
      * 
      */
-    public function testAnnounce()
+    public function testRegister()
     {
         $app = $this->getApp();
-        $app->bearCMS->addons->announce('verdor1/addon1', function(\BearCMS\Addons\Addon $addon) {
+        $app->bearCMS->addons->register('verdor1/addon1', function(\BearCMS\Addons\Addon $addon) {
             
         });
     }
