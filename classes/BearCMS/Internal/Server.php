@@ -357,7 +357,7 @@ class Server
                     'cache' => $response['cache'],
                     'cacheTTL' => $response['cacheTTL']
                 ];
-                $app->logger->log('bearcms-server-requests', print_r($logData, true));
+                $app->logs->log('bearcms-server-requests', print_r($logData, true));
             }
 
             $resend = isset($requestResponseMeta['resend']) && (int) $requestResponseMeta['resend'] > 0;

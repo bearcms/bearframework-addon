@@ -348,9 +348,9 @@ class ServerCommands
     {
         $app = App::get();
         $dataSchema = new Internal\DataSchema($data['id']);
-        // TODO FB1
-        //$app->hooks->execute('bearCMSDataSchemaRequested', $dataSchema);
-        return $dataSchema->fields;
+        $eventDetails = new \BearCMS\Internal\PrepareDataSchemaEventDetails($dataSchema);
+        $app->bearCMS->dispatchEvent('internalPrepareDataSchema', $eventDetails);
+        return $eventDetails->dataSchema->fields;
     }
 
     /**
