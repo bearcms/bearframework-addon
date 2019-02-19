@@ -23,8 +23,8 @@ $headerLogoImage = $customizations->getValue('headerLogoImage');
 
 $hasHeaderLogo = strlen($headerLogoImage) > 0;
 if ($hasHeaderLogo) {
-    $headerLogoImageSize = $app->images->getSize($headerLogoImage);
-    $headerLogoMaxWidth = $headerLogoImageSize[0] * ($isHomePage ? 180 : 90) / $headerLogoImageSize[1];
+    $headerLogoImageSize = $app->assets->getDetails($headerLogoImage, ['width', 'height']);
+    $headerLogoMaxWidth = $headerLogoImageSize['width'] * ($isHomePage ? 180 : 90) / $headerLogoImageSize['height'];
 }
 
 $hasHeaderTitle = $customizations->getValue('headerTitleVisibility') === '1';
