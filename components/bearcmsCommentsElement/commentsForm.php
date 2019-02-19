@@ -40,6 +40,9 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
     if ($app->bearCMS->hasEventListeners('internalBeforeAddComment')) {
         $eventDetails = new \BearCMS\Internal\BeforeAddCommentEventDetails($author, $text, $status);
         $app->bearCMS->dispatchEvent('internalBeforeAddComment', $eventDetails);
+        $author = $eventDetails->author;
+        $text = $eventDetails->text;
+        $status = $eventDetails->status;
         $cancel = $eventDetails->cancel;
         $cancelMessage = $eventDetails->cancelMessage;
     }
