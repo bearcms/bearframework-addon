@@ -437,19 +437,20 @@ class Themes
 
         $archiveFileDataKey = '.temp/bearcms/themeexport/theme-export-' . md5(uniqid()) . '.zip';
         $archiveFilename = $app->data->getFilename($archiveFileDataKey);
-        $app->data->setValue($archiveFileDataKey . '_', 'temp'); // needed to make the dir for the archive file
+        $tempArchiveFilename = sys_get_temp_dir() . '/bearcms-theme-export-' . uniqid() . '.zip';
         $zip = new \ZipArchive();
-        if ($zip->open($archiveFilename, \ZipArchive::CREATE) === true) {
+        if ($zip->open($tempArchiveFilename, \ZipArchive::CREATE) === true) {
             $zip->addFromString('manifest.json', json_encode($manifest));
             $zip->addFromString('values.json', json_encode($values));
             foreach ($filesToAttach as $attachmentName => $filename) {
-                $zip->addFile($filename, $attachmentName);
+                $zip->addFromString($attachmentName, file_get_contents($filename));
             }
             $zip->close();
         } else {
-            throw new \Exception('Cannot open zip archive (' . $archiveFilename . ')');
+            throw new \Exception('Cannot open zip archive (' . $tempArchiveFilename . ')');
         }
-        $app->data->delete($archiveFileDataKey . '_'); // remove the temp file
+        copy($tempArchiveFilename, $archiveFilename);
+        unlink($tempArchiveFilename);
         return $archiveFileDataKey;
     }
 
@@ -471,8 +472,10 @@ class Themes
         }
         $hasUser = strlen($userID) > 0;
         $archiveFilename = $app->data->getFilename($fileDataKey);
+        $tempArchiveFilename = sys_get_temp_dir() . '/bearcms-theme-import-' . uniqid() . '.zip';
+        copy($archiveFilename, $tempArchiveFilename);
         $zip = new \ZipArchive();
-        if ($zip->open($archiveFilename) === true) {
+        if ($zip->open($tempArchiveFilename) === true) {
 
             $getManifest = function() use ($zip) {
                 $data = $zip->getFromName('manifest.json');
@@ -520,13 +523,15 @@ class Themes
                     $filesKeysToUpdate[$key] = 'data:' . $dataKey;
                     $isInvalid = false;
                     try {
-                        $size = $app->images->getSize($app->data->getFilename($dataKey));
+                        $details = $app->assets->getDetails($app->data->getFilename($dataKey), ['width', 'height']);
+                        $size = [$details['width'], $details['height']];
                         if ($size[0] <= 0 || $size[1] <= 0) {
                             $isInvalid = true;
                         }
                     } catch (\Exception $e) {
                         $isInvalid = true;
                     }
+                    
                     if ($isInvalid) {
                         foreach ($filesKeysToUpdate as $dataKeyWithPrefix) { // remove previously added files
                             $app->data->delete(substr($dataKeyWithPrefix, 5));
@@ -536,7 +541,7 @@ class Themes
                     //$app->data->makePublic($dataKey);
                 }
             }
-
+            
             $values = Internal\Themes::updateFilesInValues($values, $filesKeysToUpdate);
             if ($hasUser) {
                 Internal2::$data2->themes->setUserOptions($id, $userID, $values);
@@ -546,8 +551,10 @@ class Themes
             self::$cache = [];
 
             $zip->close();
+            unlink($tempArchiveFilename);
         } else {
-            throw new \Exception('Cannot open zip archive (' . $archiveFilename . ')', 8);
+            unlink($tempArchiveFilename);
+            throw new \Exception('Cannot open zip archive (' . $tempArchiveFilename . ')', 8);
         }
     }
 
