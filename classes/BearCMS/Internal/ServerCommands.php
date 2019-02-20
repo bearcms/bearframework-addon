@@ -624,7 +624,7 @@ class ServerCommands
         Internal\Cookies::setList(Internal\Cookies::TYPE_SERVER, Internal\Cookies::parseServerCookies($response['headers']));
         $response = new App\Response\TemporaryRedirect($data['url']);
         Internal\Cookies::apply($response);
-        $app->respond($response);
+        $app->send($response);
         exit;
     }
 
