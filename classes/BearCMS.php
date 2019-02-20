@@ -1346,27 +1346,44 @@ class BearCMS
             $elements = $document->querySelectorAll('.bearcms-heading-element-large,.bearcms-heading-element-medium,.bearcms-heading-element-small,.bearcms-text-element');
             if ($elements->length > 0) {
 
-                $textContent = '';
+                if ($generateDescriptionMetaTag) {
+                    $descriptionContent = '';
+                }
+                if ($generateKeywordsMetaTag) {
+                    $keywordsContent = '';
+                }
                 foreach ($elements as $element) {
-                    $textContent .= ' ' . $element->innerHTML;
-                }
-
-                $textContent = preg_replace('/<script.*?<\/script>/s', '', $textContent);
-                $textContent = preg_replace('/<.*?>/', ' $0 ', $textContent);
-                $textContent = preg_replace('/\s/', ' ', $textContent);
-                $textContent = strip_tags($textContent);
-                while (strpos($textContent, '  ') !== false) {
-                    $textContent = str_replace('  ', ' ', $textContent);
-                }
-
-                $textContent = html_entity_decode(trim($textContent));
-
-                if (isset($textContent{0})) {
+                    $class = $element->getAttribute('class');
+                    $content = $element->innerHTML;
                     if ($generateDescriptionMetaTag) {
-                        $description = $substr($textContent, 0, 150);
-                        $html .= '<meta name="description" content="' . htmlentities($description . ' ...') . '"/>';
+                        if (strpos($class, 'bearcms-text-element') !== false) {
+                            $descriptionContent .= ' ' . $content;
+                        }
                     }
-                    $wordsText = str_replace(['.', ',', '/', '\\'], '', $strtolower($textContent));
+                    if ($generateKeywordsMetaTag) {
+                        $keywordsContent .= ' ' . $content;
+                    }
+                }
+
+                $prepare = function($content) {
+                    $content = preg_replace('/<script.*?<\/script>/s', '', $content);
+                    $content = preg_replace('/<.*?>/', ' $0 ', $content);
+                    $content = preg_replace('/\s/u', ' ', $content);
+                    $content = strip_tags($content);
+                    while (strpos($content, '  ') !== false) {
+                        $content = str_replace('  ', ' ', $content);
+                    }
+                    $content = html_entity_decode(trim($content));
+                    return $content;
+                };
+
+                if ($generateDescriptionMetaTag) {
+                    $descriptionContent = $prepare($descriptionContent);
+                    $html .= '<meta name="description" content="' . htmlentities($substr($descriptionContent, 0, 200) . ' ...') . '"/>';
+                }
+                if ($generateKeywordsMetaTag) {
+                    $keywordsContent = $prepare($keywordsContent);
+                    $wordsText = str_replace(['.', ',', '/', '\\'], '', $strtolower($keywordsContent));
                     $words = explode(' ', $wordsText);
                     $wordsCount = array_count_values($words);
                     arsort($wordsCount);
