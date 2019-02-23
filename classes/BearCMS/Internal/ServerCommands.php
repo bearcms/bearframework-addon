@@ -311,7 +311,14 @@ class ServerCommands
             } elseif ($command === 'rename') {
                 $validateKey($commandData['sourceKey']);
                 $validateKey($commandData['targetKey']);
-                $app->data->rename($commandData['sourceKey'], $commandData['targetKey']);
+                $silent = isset($commandData['silent']) ? (int) $commandData['silent'] > 0 : false;
+                try {
+                    $app->data->rename($commandData['sourceKey'], $commandData['targetKey']);
+                } catch (\Exception $e) {
+                    if (!$silent) {
+                        throw $e;
+                    }
+                }
             } elseif ($command === 'makePublic') {
                 //$validateKey($commandData['key']);
                 //$app->data->makePublic($commandData['key']);
