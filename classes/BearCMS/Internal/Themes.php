@@ -198,7 +198,7 @@ class Themes
     {
         $options = self::getOptions($id);
         if ($options === null) {
-            return null;
+            return [];
         }
         $walkOptions = function(array $options) use (&$walkOptions) {
             $result = [];
