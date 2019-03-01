@@ -109,8 +109,8 @@ class Config
         if (isset($data['whitelabel'])) {
             self::$whitelabel = (int) $data['whitelabel'] > 0;
         }
-        if (isset($data['addonManager'])) {
-            self::$addonManager = $data['addonManager'];
+        if (isset($data['internalAddonManager'])) {
+            self::$addonManager = $data['internalAddonManager'];
         } else {
             $index = array_search('ADDONS', self::$features);
             if ($index !== false) {
@@ -120,11 +120,11 @@ class Config
         if (isset($data['addDefaultThemes'])) {
             self::$addDefaultThemes = (int) $data['addDefaultThemes'];
         }
-        if (isset($data['appSpecificServerData'])) {
-            if (!is_array($data['appSpecificServerData'])) {
-                throw new \Exception('The appSpecificServerData value must be of type array!');
+        if (isset($data['internalAppSpecificServerData'])) {
+            if (!is_array($data['internalAppSpecificServerData'])) {
+                throw new \Exception('The internalAppSpecificServerData value must be of type array!');
             }
-            self::$appSpecificServerData = $data['appSpecificServerData'];
+            self::$appSpecificServerData = $data['internalAppSpecificServerData'];
         }
     }
 
