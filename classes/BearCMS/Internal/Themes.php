@@ -531,7 +531,7 @@ class Themes
                     } catch (\Exception $e) {
                         $isInvalid = true;
                     }
-                    
+
                     if ($isInvalid) {
                         foreach ($filesKeysToUpdate as $dataKeyWithPrefix) { // remove previously added files
                             $app->data->delete(substr($dataKeyWithPrefix, 5));
@@ -541,7 +541,7 @@ class Themes
                     //$app->data->makePublic($dataKey);
                 }
             }
-            
+
             $values = Internal\Themes::updateFilesInValues($values, $filesKeysToUpdate);
             if ($hasUser) {
                 Internal2::$data2->themes->setUserOptions($id, $userID, $values);
@@ -600,7 +600,7 @@ class Themes
         if ($version === null) {
             return null;
         }
-        return 'bearcms-theme-options-' . Config::$dataCachePrefix . '-' . md5($id) . '-' . md5($version) . '-' . md5($userID) . '-6';
+        return 'bearcms-theme-options-' . md5($id) . '-' . md5($version) . '-' . md5($userID) . '-6';
     }
 
     /**

@@ -30,7 +30,6 @@ class Config
     static $blogPagesPathPrefix = '/b/';
     static $autoCreateHomePage = true;
     static $maxUploadsSize = null;
-    static $dataCachePrefix = null;
     static $defaultThemeID = null;
     static $htmlSandboxUrl = '';
     static $useDefaultUserProfile = true;
@@ -93,9 +92,6 @@ class Config
 
         if (isset($data['maxUploadsSize'])) {
             self::$maxUploadsSize = (int) $data['maxUploadsSize'];
-        }
-        if (isset($data['dataCachePrefix'])) {
-            self::$dataCachePrefix = (string) $data['dataCachePrefix'];
         }
         if (isset($data['defaultThemeID'])) {
             self::$defaultThemeID = $data['defaultThemeID'];

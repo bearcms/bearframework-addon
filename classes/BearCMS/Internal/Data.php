@@ -36,7 +36,7 @@ class Data
             return self::$cache[$localCacheKey];
         }
         $app = App::get();
-        $cacheKey = 'bearcms-group-' . Config::$dataCachePrefix . '-' . $key;
+        $cacheKey = 'bearcms-group-' . $key;
         $data = $app->cache->getValue($cacheKey);
         self::$cacheRequests[] = ['get', 'group', $key];
         if ($data !== null) {
@@ -55,7 +55,7 @@ class Data
     {
         $localCacheKey = 'group-' . $key;
         $app = App::get();
-        $cacheKey = 'bearcms-group-' . Config::$dataCachePrefix . '-' . $key;
+        $cacheKey = 'bearcms-group-' . $key;
         $data = md5(uniqid());
         $app->cache->set($app->cache->make($cacheKey, $data));
         self::$cacheRequests[] = ['set', 'group', $key];
@@ -77,7 +77,7 @@ class Data
             return self::$cache[$localCacheKey];
         }
         $app = App::get();
-        $cacheKey = 'bearcms-data-' . Config::$dataCachePrefix . '-' . $key . '-' . self::_getGroupValue('all');
+        $cacheKey = 'bearcms-data-' . $key . '-' . self::_getGroupValue('all');
         $cachedValue = $app->cache->getValue($cacheKey);
         self::$cacheRequests[] = ['get', $type, $key];
         if ($cachedValue !== null && is_array($cachedValue) && isset($cachedValue[0]) && $cachedValue[0] === 'bd') {
@@ -101,7 +101,7 @@ class Data
     static function loadCacheBundle(string $requestPath): void
     {
         $app = App::get();
-        $cacheKey = 'bearcms-bundle-' . Config::$dataCachePrefix . '-' . $requestPath . '-' . self::_getGroupValue('all');
+        $cacheKey = 'bearcms-bundle-' . $requestPath . '-' . self::_getGroupValue('all');
         $bundle = $app->cache->getValue($cacheKey);
         if ($bundle !== null) {
             foreach ($bundle[1] as $data) {
@@ -137,7 +137,7 @@ class Data
         }
         $hash = md5(serialize($bundle));
         if (self::$loadedBundleHash !== $hash) {
-            $cacheKey = 'bearcms-bundle-' . Config::$dataCachePrefix . '-' . $requestPath . '-' . self::_getGroupValue('all');
+            $cacheKey = 'bearcms-bundle-' . $requestPath . '-' . self::_getGroupValue('all');
             try {
                 $app->cache->set($app->cache->make($cacheKey, [$hash, $bundle]));
             } catch (\Exception $e) {
