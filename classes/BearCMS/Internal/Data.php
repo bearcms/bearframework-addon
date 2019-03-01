@@ -72,9 +72,6 @@ class Data
      */
     static function _get(string $type, string $key, callable $callback)
     {
-        if (!Config::$useDataCache) {
-            return $callback();
-        }
         $localCacheKey = $type . '-' . $key;
         if (array_key_exists($localCacheKey, self::$cache)) {
             return self::$cache[$localCacheKey];
@@ -103,9 +100,6 @@ class Data
      */
     static function loadCacheBundle(string $requestPath): void
     {
-        if (!Config::$useDataCache) {
-            return;
-        }
         $app = App::get();
         $cacheKey = 'bearcms-bundle-' . Config::$dataCachePrefix . '-' . $requestPath . '-' . self::_getGroupValue('all');
         $bundle = $app->cache->getValue($cacheKey);
@@ -125,9 +119,6 @@ class Data
      */
     static function saveCacheBundle(string $requestPath): void
     {
-        if (!Config::$useDataCache) {
-            return;
-        }
         $app = App::get();
         $keys = [];
         foreach (self::$cacheRequests as $requestData) {
@@ -237,10 +228,8 @@ class Data
         if (strpos($key, '.temp/') !== 0) {
             self::$hasContentChange = true;
         }
-        if (Config::$useDataCache) {
-            self::$cache = [];
-            self::_updateGroupValue('all');
-        }
+        self::$cache = [];
+        self::_updateGroupValue('all');
         if (strpos($key, 'bearcms/elements/') === 0 || strpos($key, 'bearcms/pages/') === 0 || strpos($key, 'bearcms/blog/') === 0) {
             $app->cache->delete('bearcms-comments-elements-locations');
         }
