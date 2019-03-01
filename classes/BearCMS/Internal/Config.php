@@ -67,7 +67,7 @@ class Config
             self::$features = $data['features'];
         }
 
-        self::$cookiePrefix = isset($data['cookiePrefix']) ? $data['cookiePrefix'] : substr(md5(md5($app->request->base) . md5(self::$serverUrl)), 0, 14) . '_bearcms_';
+        self::$cookiePrefix = substr(md5(md5($app->request->base) . md5(self::$serverUrl)), 0, 14) . '_bearcms_';
 
         self::$logServerRequests = isset($data['logServerRequests']) && $data['logServerRequests'] === true;
 
