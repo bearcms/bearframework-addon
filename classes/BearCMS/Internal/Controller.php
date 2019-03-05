@@ -239,12 +239,11 @@ class Controller
     {
         $app = App::get();
         $urls = [];
-        $baseUrl = $app->request->base;
 
-        $addUrl = function($path) use (&$urls, $baseUrl) {
-            $encodedPath = implode('/', array_map('urlencode', explode('/', $path)));
-            $urls[] = '<url><loc>' . $baseUrl . $encodedPath . '</loc></url>';
+        $addUrl = function($path) use (&$urls, $app) {
+            $urls[] = '<url><loc>' . $app->urls->get($path) . '</loc></url>';
         };
+        
         $addUrl('/');
 
         $list = Internal\Data\Pages::getPathsList('published');
