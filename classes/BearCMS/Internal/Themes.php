@@ -318,9 +318,10 @@ class Themes
                     $resultData = json_decode($resultData, true);
                 }
             }
-            if ($resultData === null || $resultData[2] !== $envKey) {
+            if ($resultData === null || !isset($resultData[3]) || $resultData[3] !== $envKey) {
                 $values = [];
                 $html = '';
+                $assetsToUpdate = [];
                 $currentValues = null;
                 if ($userID !== null) {
                     $userOptions = Internal2::$data2->themes->getUserOptions($id, $userID);
@@ -333,7 +334,7 @@ class Themes
                 }
                 $themeOptions = Internal\Themes::getOptions($id);
                 if ($themeOptions !== null) {
-                    $walkOptions = function(array $options) use (&$walkOptions, $currentValues, &$values) {
+                    $walkOptions = function(array $options) use (&$walkOptions, $currentValues, &$values, &$assetsToUpdate) {
                         foreach ($options as $option) {
                             if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                                 $optionID = $option->id;
@@ -341,31 +342,19 @@ class Themes
                                 $value = isset($currentValues[$optionID]) ? $currentValues[$optionID] : (isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value']) : $option->details['value']) : null);
                                 if (strlen($value) > 0) {
                                     if ($optionType === 'image') {
-                                        $newValue = Internal2::$data2->getRealFilename($value);
-                                        if ($newValue !== null) {
-                                            $value = $newValue;
-                                        }
+                                        $assetsToUpdate[] = $value;
                                     } elseif ($optionType === 'css' || $optionType === 'cssBackground') {
-                                        $temp = json_decode($value, true);
-                                        if (is_array($temp)) {
-                                            foreach ($temp as $key => $_value) {
-                                                $matches = [];
-                                                preg_match_all('/url\((.*?)\)/', $_value, $matches);
-                                                if (!empty($matches[1])) {
-                                                    $matches[1] = array_unique($matches[1]);
-                                                    $search = [];
-                                                    $replace = [];
-                                                    foreach ($matches[1] as $filename) {
-                                                        $newFileName = Internal2::$data2->getRealFilename($filename);
-                                                        if ($newFileName !== null) {
-                                                            $search[] = $filename;
-                                                            $replace[] = $newFileName;
-                                                        }
+                                        if (strpos($value, 'url') !== false) {
+                                            $temp = json_decode($value, true);
+                                            if (is_array($temp)) {
+                                                foreach ($temp as $_value) {
+                                                    $matches = [];
+                                                    preg_match_all('/url\((.*?)\)/', $_value, $matches);
+                                                    if (!empty($matches[1])) {
+                                                        $assetsToUpdate = array_merge($assetsToUpdate, array_unique($matches[1]));
                                                     }
-                                                    $temp[$key] = str_replace($search, $replace, $_value);
                                                 }
                                             }
-                                            $value = json_encode($temp);
                                         }
                                     }
                                 }
@@ -379,29 +368,31 @@ class Themes
                     $themeOptions->setValues($values);
                     $html = $themeOptions->getHTML();
                 }
-                $resultData = [$values, $html, $envKey];
+                $assetsToUpdate = array_unique($assetsToUpdate);
                 if ($useCache) {
-                    $app->cache->set($app->cache->make($cacheKey, json_encode($resultData)));
+                    $app->cache->set($app->cache->make($cacheKey, json_encode([$values, $html, $assetsToUpdate, $envKey])));
                 }
+            } else {
+                $values = $resultData[0];
+                $html = $resultData[1];
+                $assetsToUpdate = $resultData[2];
             }
-
-            $applyImageUrls = function($text) use ($app) {
-                $matches = [];
-                preg_match_all('/url\((.*?)\)/', $text, $matches);
-                if (!empty($matches[1])) {
-                    $matches[1] = array_unique($matches[1]);
-                    $search = [];
-                    $replace = [];
-                    foreach ($matches[1] as $filename) {
+            if (!empty($assetsToUpdate)) {
+                $search = [];
+                $replace = [];
+                foreach ($assetsToUpdate as $filename) {
+                    $newFileName = Internal2::$data2->getRealFilename($filename);
+                    if ($newFileName !== null) {
+                        $url = $app->assets->getURL($newFileName, ['cacheMaxAge' => 999999999]);
                         $search[] = $filename;
-                        $replace[] = $app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
+                        $replace[] = $url;
+                        $search[] = trim(json_encode($filename), '"');
+                        $replace[] = trim(json_encode($url), '"');
                     }
-                    $text = str_replace($search, $replace, $text);
                 }
-                return $text;
-            };
-            $resultData[1] = $applyImageUrls($resultData[1]);
-            self::$cache[$localCacheKey] = new \BearCMS\Themes\Theme\Customizations($resultData[0], $resultData[1]);
+                $html = str_replace($search, $replace, $html);
+            }
+            self::$cache[$localCacheKey] = new \BearCMS\Themes\Theme\Customizations($values, $html);
         }
         return self::$cache[$localCacheKey];
     }
