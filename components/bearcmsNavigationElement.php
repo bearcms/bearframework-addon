@@ -50,14 +50,14 @@ $buildTree = function($pages, $recursive = false, $level = 0) use ($app, $select
         if ($itemsType === 'onlySelected' && array_search($pageID, $items) === false) {
             continue;
         }
-        $encodedPagePath = implode('/', array_map('urlencode', explode('/', $page->path)));
+        $pagePath = $page->path;
         $classNames = 'bearcms-navigation-element-item';
-        if ($encodedPagePath === $selectedPath) {
+        if ($pagePath === $selectedPath) {
             $classNames .= ' bearcms-navigation-element-item-selected';
-        } elseif ($pageID !== '_home' && strpos($selectedPath, $encodedPagePath) === 0) {
+        } elseif ($pageID !== '_home' && strpos($selectedPath, $pagePath) === 0) {
             $classNames .= ' bearcms-navigation-element-item-in-path';
         }
-        $itemsHtml[] = '<li class="' . $classNames . '"><a href="' . $app->request->base . $encodedPagePath . '">' . htmlspecialchars($page->name) . '</a>';
+        $itemsHtml[] = '<li class="' . $classNames . '"><a href="' . htmlentities($app->urls->get($pagePath)) . '">' . htmlspecialchars($page->name) . '</a>';
         if ($recursive && isset($page->children)) {
             $itemsHtml[] = $buildTree($page->children, true, $level + 1);
         }
