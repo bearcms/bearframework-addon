@@ -35,6 +35,7 @@ class Config
     static $useDefaultUserProfile = true;
     static $whitelabel = false;
     static $addonManager = null;
+    static $configManager = null;
     static $addDefaultThemes = true;
     static $appSpecificServerData = [];
 
@@ -113,6 +114,9 @@ class Config
                 unset(self::$features[$index]);
             }
         }
+        if (isset($data['internalConfigManager'])) {
+            self::$configManager = $data['internalConfigManager'];
+        }
         if (isset($data['addDefaultThemes'])) {
             self::$addDefaultThemes = (int) $data['addDefaultThemes'];
         }
@@ -160,6 +164,21 @@ class Config
         if (is_callable(self::$addonManager)) {
             $object = call_user_func(self::$addonManager);
             if (method_exists($object, 'addAddon') && method_exists($object, 'removeAddon')) {
+                return $object;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @return object|null
+     */
+    static function getConfigManager()
+    {
+        if (is_callable(self::$configManager)) {
+            $object = call_user_func(self::$configManager);
+            if (method_exists($object, 'setConfigValue')) {
                 return $object;
             }
         }

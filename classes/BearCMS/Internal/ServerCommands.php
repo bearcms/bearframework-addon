@@ -858,4 +858,19 @@ class ServerCommands
         return $result;
     }
 
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function updateConfig(array $data): void
+    {
+        $manager = Config::getConfigManager();
+        foreach ($data as $name => $value) {
+            if (array_search($name, ['whitelabel']) !== false) {
+                $manager->setConfigValue($name, $value);
+            }
+        }
+    }
+
 }
