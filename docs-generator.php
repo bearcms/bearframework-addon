@@ -10,6 +10,9 @@
 require __DIR__ . '/vendor/autoload.php';
 
 $app = new BearFramework\App();
+$app->data->useNullDriver();
+$app->cache->useNullDriver();
+$app->logs->useNullLogger();
 $app->addons->add('bearcms/bearframework-addon');
 
 $docsGenerator = new IvoPetkov\DocsGenerator(__DIR__);
