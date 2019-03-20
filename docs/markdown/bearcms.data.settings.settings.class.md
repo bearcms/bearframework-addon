@@ -5,7 +5,6 @@ BearCMS\Data\Settings\Settings extends BearFramework\Models\Model {
 
 	/* Properties */
 	public bool $allowSearchEngines
-	public array $custom
 	public string|null $description
 	public bool $disabled
 	public string|null $disabledText
@@ -31,8 +30,6 @@ BearCMS\Data\Settings\Settings extends BearFramework\Models\Model {
 ## Properties
 
 ##### public bool $allowSearchEngines
-
-##### public array $custom
 
 ##### public string|null $description
 

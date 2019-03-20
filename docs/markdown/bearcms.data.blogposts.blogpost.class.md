@@ -6,7 +6,6 @@ BearCMS\Data\BlogPosts\BlogPost extends BearFramework\Models\Model {
 	/* Properties */
 	public array $categoriesIDs
 	public int|null $createdTime
-	public array $custom
 	public string|null $descriptionTagContent
 	public string|null $id
 	public string|null $keywordsTagContent
@@ -33,8 +32,6 @@ BearCMS\Data\BlogPosts\BlogPost extends BearFramework\Models\Model {
 ##### public array $categoriesIDs
 
 ##### public int|null $createdTime
-
-##### public array $custom
 
 ##### public string|null $descriptionTagContent
 
