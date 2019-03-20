@@ -17,6 +17,7 @@ use IvoPetkov\HTML5DOMDocument;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class Controller
 {

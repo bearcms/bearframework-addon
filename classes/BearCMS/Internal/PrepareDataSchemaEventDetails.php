@@ -12,6 +12,7 @@ namespace BearCMS\Internal;
 /**
  * @property \BearCMS\Internal\DataSchema $dataSchema
  * @internal
+ * @codeCoverageIgnore
  */
 class PrepareDataSchemaEventDetails
 {

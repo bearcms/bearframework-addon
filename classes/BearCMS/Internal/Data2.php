@@ -10,7 +10,6 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
-use BearCMS\Internal;
 
 /**
  * Contains reference to the different data types
@@ -21,6 +20,7 @@ use BearCMS\Internal;
  * @property \BearCMS\Internal\Data2\Themes $themes Information about the site themes
  * @property \BearCMS\Internal\Data2\UsersInvitations $usersInvitations Information about the invited CMS users (administrators)
  * @internal
+ * @codeCoverageIgnore
  */
 class Data2
 {

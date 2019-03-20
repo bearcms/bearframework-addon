@@ -10,10 +10,10 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
-use BearCMS\Internal;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class PublicProfile
 {

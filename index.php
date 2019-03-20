@@ -64,6 +64,9 @@ if ($app->request->method === 'GET') {
 $app->data
         ->addEventListener('itemChange', function(\BearFramework\App\Data\ItemChangeEventDetails $details) use (&$app) {
             $key = $details->key;
+
+            Internal\Data::setChanged($key);
+
             $prefixes = [
                 'bearcms/pages/page/',
                 'bearcms/blog/post/'
@@ -79,6 +82,7 @@ $app->data
                     break;
                 }
             }
+
             if (strpos($key, '.temp/bearcms/userthemeoptions/') === 0 || strpos($key, 'bearcms/themes/theme/') === 0) {
                 $currentThemeID = Internal\CurrentTheme::getID();
                 if ($app->bearCMS->currentUser->exists()) {

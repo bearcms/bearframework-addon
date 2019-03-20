@@ -14,6 +14,7 @@ use BearCMS\Internal\Config;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class Addons
 {

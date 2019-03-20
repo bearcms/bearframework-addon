@@ -13,6 +13,7 @@ use BearCMS\Internal;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class BlogCategories
 {
@@ -55,7 +56,8 @@ class BlogCategories
      */
     public function getList(): \IvoPetkov\DataList
     {
-        if (!isset(self::$cache['list'])) {
+        $cacheKey = 'blog_categories_list';
+        if (!isset(Internal\Data::$cache[$cacheKey])) {
             $list = Internal\Data::getList('bearcms/blog/categories/category/');
             array_walk($list, function(&$value) {
                 $value = $this->makeBlogCategoryFromRawData($value);
@@ -72,10 +74,10 @@ class BlogCategories
                 return $flattenStructureData[$object1->id] - $flattenStructureData[$object2->id];
             });
             unset($flattenStructureData);
-            self::$cache['list'] = $list;
+            Internal\Data::$cache[$cacheKey] = $list;
             unset($list);
         }
-        return new \IvoPetkov\DataList(self::$cache['list']);
+        return new \IvoPetkov\DataList(Internal\Data::$cache[$cacheKey]);
     }
 
 }

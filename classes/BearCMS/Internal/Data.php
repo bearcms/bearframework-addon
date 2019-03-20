@@ -10,11 +10,10 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
-use BearCMS\Internal\Config;
-use BearCMS\Internal;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class Data
 {
@@ -224,10 +223,11 @@ class Data
      */
     static function setChanged(string $key): void
     {
-        $app = App::get();
-        if (strpos($key, '.temp/') !== 0) {
-            self::$hasContentChange = true;
+        if (strpos($key, '.temp/bearcms/') !== 0 && strpos($key, 'bearcms/') !== 0) {
+            return;
         }
+        $app = App::get();
+        self::$hasContentChange = true;
         self::$cache = [];
         self::_updateGroupValue('all');
         if (strpos($key, 'bearcms/elements/') === 0 || strpos($key, 'bearcms/pages/') === 0 || strpos($key, 'bearcms/blog/') === 0) {

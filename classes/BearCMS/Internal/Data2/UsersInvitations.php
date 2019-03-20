@@ -11,6 +11,7 @@ namespace BearCMS\Internal\Data2;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class UsersInvitations
 {

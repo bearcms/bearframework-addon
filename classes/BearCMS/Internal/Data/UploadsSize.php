@@ -14,6 +14,7 @@ use BearCMS\Internal;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class UploadsSize
 {
@@ -76,7 +77,6 @@ class UploadsSize
         $app = App::get();
         $dataKey = 'bearcms/uploadssize.json';
         $app->data->set($app->data->make($dataKey, json_encode($data)));
-        Internal\Data::setChanged($dataKey);
         $app->bearCMS->dispatchEvent('internalChangeUploadsSize');
     }
 

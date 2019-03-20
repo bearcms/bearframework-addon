@@ -16,6 +16,7 @@ use BearCMS\Internal2;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class Themes
 {

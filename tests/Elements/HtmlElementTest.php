@@ -21,7 +21,11 @@ class HTMLElementTest extends BearCMSTestCase
         $app = $this->getApp();
 
         $code = 'This is a <a href="#">some html code</a>.';
+        
         $result = $app->components->process('<component src="bearcms-html-element" code="' . htmlentities($code) . '"/>');
+        $this->assertTrue(strpos($result, $code) !== false);
+        
+        $result = $app->components->process('<bearcms-html-element code="' . htmlentities($code) . '"/>');
         $this->assertTrue(strpos($result, $code) !== false);
     }
 

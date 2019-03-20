@@ -19,7 +19,11 @@ class BlogPostsElementTest extends BearCMSTestCase
     public function testOutput()
     {
         $app = $this->getApp();
+        
         $result = $app->components->process('<component src="bearcms-blog-posts-element"/>');
+        $this->assertTrue(strpos($result, 'class="bearcms-blog-posts-element"') !== false);
+        
+        $result = $app->components->process('<bearcms-blog-posts-element/>');
         $this->assertTrue(strpos($result, 'class="bearcms-blog-posts-element"') !== false);
     }
 

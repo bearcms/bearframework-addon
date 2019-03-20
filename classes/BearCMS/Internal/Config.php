@@ -13,6 +13,7 @@ use BearFramework\App;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class Config
 {

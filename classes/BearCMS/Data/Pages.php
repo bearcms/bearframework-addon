@@ -16,7 +16,6 @@ use BearCMS\Internal;
  */
 class Pages
 {
-
 //    use \BearFramework\Models\ModelsRepositoryTrait;
 //    use \BearFramework\Models\ModelsRepositoryRequestTrait;
 //    use \BearFramework\Models\ModelsRepositoryToArrayTrait;
@@ -27,8 +26,6 @@ class Pages
 //        $this->setModel(\BearCMS\Data\Pages\Page::class, 'id');
 //        $this->useAppDataDriver('bearcms/pages/page/');
 //    }
-
-    static private $cache = [];
 
     /**
      * 
@@ -50,7 +47,8 @@ class Pages
      */
     public function getList(): \BearFramework\Models\ModelsList
     {
-        if (!isset(self::$cache['list'])) {
+        $cacheKey = 'pages_list';
+        if (!isset(Internal\Data::$cache[$cacheKey])) {
             $list = Internal\Data::getList('bearcms/pages/page/');
             array_walk($list, function(&$value) {
                 $value = \BearCMS\Data\Pages\Page::fromJSON($value);
@@ -74,10 +72,10 @@ class Pages
                 return $flattenStructureData[$object1->id] - $flattenStructureData[$object2->id];
             });
             unset($flattenStructureData);
-            self::$cache['list'] = $list;
+            Internal\Data::$cache[$cacheKey] = $list;
             unset($list);
         }
-        return new \BearFramework\Models\ModelsList(self::$cache['list']);
+        return new \BearFramework\Models\ModelsList(Internal\Data::$cache[$cacheKey]);
     }
 
 }

@@ -16,6 +16,7 @@ namespace BearCMS\Internal\Data2;
  * @property ?string $text
  * @property ?int $createdTime
  * @internal
+ * @codeCoverageIgnore
  */
 class Comment
 {

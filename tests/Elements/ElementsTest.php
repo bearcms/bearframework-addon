@@ -19,7 +19,11 @@ class ElementsTest extends BearCMSTestCase
     public function testElementsComponent()
     {
         $app = $this->getApp();
+        
         $result = $app->components->process('<component src="bearcms-elements" id="dummy" />');
+        $this->assertTrue(strpos($result, '<div class="bearcms-elements') !== false);
+        
+        $result = $app->components->process('<bearcms-elements id="dummy" />');
         $this->assertTrue(strpos($result, '<div class="bearcms-elements') !== false);
     }
 

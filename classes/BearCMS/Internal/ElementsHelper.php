@@ -14,6 +14,7 @@ use BearCMS\Internal;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class ElementsHelper
 {

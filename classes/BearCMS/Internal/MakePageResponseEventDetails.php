@@ -13,6 +13,7 @@ namespace BearCMS\Internal;
  * @property \BearFramework\App\Response $response
  * @property string $pageID
  * @internal
+ * @codeCoverageIgnore
  */
 class MakePageResponseEventDetails
 {

@@ -12,10 +12,10 @@ namespace BearCMS\Internal\Data;
 use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
-use BearCMS\Internal2;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class Comments
 {
@@ -58,8 +58,6 @@ class Comments
                         ], ['id' => 'bearcms-send-new-comment-notification']);
             }
         }
-
-        Internal\Data::setChanged($dataKey);
     }
 
     /**
@@ -93,7 +91,6 @@ class Comments
         }
         if ($hasChange) {
             $app->data->set($app->data->make($dataKey, json_encode($threadData)));
-            Internal\Data::setChanged($dataKey);
         }
     }
 
@@ -123,7 +120,6 @@ class Comments
         if ($hasChange) {
             $threadData['comments'] = array_values($threadData['comments']);
             $app->data->set($app->data->make($dataKey, json_encode($threadData)));
-            Internal\Data::setChanged($dataKey);
         }
     }
 

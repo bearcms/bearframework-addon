@@ -16,6 +16,7 @@ namespace BearCMS\Internal;
  * @property bool $cancel
  * @property string $cancelMessage
  * @internal
+ * @codeCoverageIgnore
  */
 class BeforeAddCommentEventDetails
 {

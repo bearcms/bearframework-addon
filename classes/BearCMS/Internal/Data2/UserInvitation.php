@@ -14,6 +14,7 @@ namespace BearCMS\Internal\Data2;
  * @property string $email
  * @property array $permissions
  * @internal
+ * @codeCoverageIgnore
  */
 class UserInvitation
 {

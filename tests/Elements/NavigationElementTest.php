@@ -22,6 +22,9 @@ class NavigationElementTest extends BearCMSTestCase
 
         $result = $app->components->process('<component src="bearcms-navigation-element"><ul><li><a href="#">Link 1</a></li></ul></component>');
         $this->assertTrue(strpos($result, '<a href="#">Link 1</a>') !== false);
+        
+        $result = $app->components->process('<bearcms-navigation-element><ul><li><a href="#">Link 1</a></li></ul></bearcms-navigation-element>');
+        $this->assertTrue(strpos($result, '<a href="#">Link 1</a>') !== false);
     }
 
 }

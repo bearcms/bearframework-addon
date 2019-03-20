@@ -16,6 +16,7 @@ use IvoPetkov\HTML5DOMDocument;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class Server
 {
@@ -399,7 +400,6 @@ class Server
                         $currentUserData = $requestResponseMeta['currentUser'];
                         $dataKey = '.temp/bearcms/userkeys/' . md5($currentUserData['key']);
                         $app->data->set($app->data->make($dataKey, $currentUserData['id']));
-                        Internal\Data::setChanged($dataKey);
                         break;
                     } catch (\BearFramework\App\Data\DataLockedException $e) {
                         

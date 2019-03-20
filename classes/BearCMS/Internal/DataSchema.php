@@ -11,6 +11,7 @@ namespace BearCMS\Internal;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class DataSchema
 {

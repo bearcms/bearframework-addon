@@ -17,6 +17,7 @@ use IvoPetkov\HTML5DOMDocument;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class ServerCommands
 {
@@ -302,7 +303,6 @@ class ServerCommands
             } elseif ($command === 'set') {
                 $validateKey($commandData['key']);
                 $app->data->set($app->data->make($commandData['key'], $commandData['body']));
-                Internal\Data::setChanged($commandData['key']);
             } elseif ($command === 'delete') {
                 $validateKey($commandData['key']);
                 if ($app->data->exists($commandData['key'])) {

@@ -13,6 +13,7 @@ use BearCMS\Internal;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class BlogPosts
 {

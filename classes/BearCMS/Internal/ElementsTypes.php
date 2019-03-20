@@ -11,10 +11,10 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 use BearCMS\Internal;
-use IvoPetkov\HTML5DOMDocument;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class ElementsTypes
 {

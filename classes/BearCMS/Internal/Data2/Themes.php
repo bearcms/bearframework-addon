@@ -14,6 +14,7 @@ use BearCMS\Internal;
 
 /**
  * @internal
+ * @codeCoverageIgnore
  */
 class Themes
 {
@@ -123,8 +124,6 @@ class Themes
                 $app->data->rename($dataKeyToDelete, $recycleBinPrefix . $dataKeyToDelete);
             }
         }
-
-        Internal\Data::setChanged($dataKey);
 
         $cacheItemKey = $hasUser ? Internal\Themes::getCacheItemKey($id, $userID) : Internal\Themes::getCacheItemKey($id);
         if ($cacheItemKey !== null) {

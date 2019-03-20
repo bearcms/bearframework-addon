@@ -32,7 +32,7 @@ class SettingsTest extends BearCMSTestCase
         $this->assertEquals($settings->allowSearchEngines, false);
         $this->assertEquals($settings->disabled, false);
         $this->assertEquals($settings->disabledText, null);
-        $this->assertEquals($settings->enableRSS, null);
+        $this->assertEquals($settings->enableRSS, true);
         $this->assertEquals($settings->rssType, 'contentSummary');
     }
 

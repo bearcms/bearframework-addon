@@ -24,11 +24,20 @@ class HeadingElementTest extends BearCMSTestCase
 
         $result = $app->components->process('<component src="bearcms-heading-element" text="' . htmlentities($text) . '" size="large"/>');
         $this->assertTrue(strpos($result, '>' . $text . '</h1>') !== false);
+        
+        $result = $app->components->process('<bearcms-heading-element text="' . htmlentities($text) . '" size="large"/>');
+        $this->assertTrue(strpos($result, '>' . $text . '</h1>') !== false);
 
         $result = $app->components->process('<component src="bearcms-heading-element" text="' . htmlentities($text) . '" size="medium"/>');
         $this->assertTrue(strpos($result, '>' . $text . '</h2>') !== false);
+        
+        $result = $app->components->process('<bearcms-heading-element text="' . htmlentities($text) . '" size="medium"/>');
+        $this->assertTrue(strpos($result, '>' . $text . '</h2>') !== false);
 
         $result = $app->components->process('<component src="bearcms-heading-element" text="' . htmlentities($text) . '" size="small"/>');
+        $this->assertTrue(strpos($result, '>' . $text . '</h3>') !== false);
+        
+        $result = $app->components->process('<bearcms-heading-element text="' . htmlentities($text) . '" size="small"/>');
         $this->assertTrue(strpos($result, '>' . $text . '</h3>') !== false);
     }
 
