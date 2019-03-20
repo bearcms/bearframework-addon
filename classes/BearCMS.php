@@ -24,7 +24,7 @@ class BearCMS
 {
 
     use \IvoPetkov\DataObjectTrait;
-    use \BearFramework\App\EventsTrait;
+    use \BearFramework\EventsTrait;
 
     /**
      * Bear CMS version.
