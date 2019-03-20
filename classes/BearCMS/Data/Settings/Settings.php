@@ -24,7 +24,6 @@ use BearCMS\Internal2;
  * @property string|null $disabledText
  * @property boolean $enableRSS
  * @property string|null $rssType
- * @property array $custom
  */
 class Settings extends \BearFramework\Models\Model
 {
@@ -78,10 +77,10 @@ class Settings extends \BearFramework\Models\Model
                     }
                 ])
                 ->defineProperty('rssType', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('custom', [
-                    'type' => 'array'
+                    'type' => '?string',
+                    'init' => function() {
+                        return 'contentSummary';
+                    }
                 ])
         ;
     }
