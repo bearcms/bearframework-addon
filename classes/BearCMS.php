@@ -27,11 +27,6 @@ class BearCMS
     use \BearFramework\EventsTrait;
 
     /**
-     * Bear CMS version.
-     */
-    const VERSION = '0.6.7';
-
-    /**
      *
      * @var \BearFramework\App 
      */

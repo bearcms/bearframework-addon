@@ -3,9 +3,6 @@
 ```php
 BearCMS {
 
-	/* Constants */
-	const string VERSION
-
 	/* Properties */
 	public readonly BearCMS\Addons $addons
 	public readonly BearCMS\CurrentUser $currentUser
@@ -28,12 +25,6 @@ BearCMS {
 
 }
 ```
-
-## Constants
-
-##### const string VERSION
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bear CMS version.
 
 ## Properties
 

@@ -200,11 +200,6 @@ class Server
         $app = App::get();
 
         $clientData = [];
-        $clientData['about'] = [
-            'type' => 'bearframework-addon',
-            'bearFrameworkVersion' => defined('\BearFramework\App::VERSION') ? $app::VERSION : (defined('\BearFramework::VERSION') ? \BearFramework::VERSION : ''),
-            'bearCMSAddonVersion' => \BearCMS::VERSION
-        ];
         if (Config::$appSecretKey !== null) {
             $getHashedAppSecretKey = function() {
                 $parts = explode('-', Config::$appSecretKey, 2);
@@ -250,7 +245,7 @@ class Server
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
         curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'BearCMS Bear Framework Addon ' . \BearCMS::VERSION);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Bear CMS Bear Framework Addon');
         if (!empty($cookies)) {
             $cookiesValues = [];
             foreach ($cookies as $key => $value) {
