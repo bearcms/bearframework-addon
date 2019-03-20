@@ -52,6 +52,8 @@ BearCMS {
 
 ##### public self [addEventListener](bearcms.addeventlistener.method.md) ( string $name , callable $listener )
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Registers a new event listener.
+
 ##### public void [apply](bearcms.apply.method.md) ( BearFramework\App\Response $response )
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Applies all Bear CMS modifications (the default HTML, theme and admin UI) to the response.
@@ -74,7 +76,11 @@ BearCMS {
 
 ##### public self [dispatchEvent](bearcms.dispatchevent.method.md) ( string $name [, mixed $details ] )
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calls the registered listeners (in order) for the event name specified.
+
 ##### public bool [hasEventListeners](bearcms.haseventlisteners.method.md) ( string $name )
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns TRUE if there are registered event listeners for the name specified, FALSE otherwise.
 
 ##### public void [initialize](bearcms.initialize.method.md) ( array $config )
 
@@ -85,6 +91,8 @@ BearCMS {
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts custom tags (if any) into valid HTML code.
 
 ##### public self [removeEventListener](bearcms.removeeventlistener.method.md) ( string $name , callable $listener )
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes a registered event listener.
 
 ## Details
 
