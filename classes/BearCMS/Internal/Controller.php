@@ -52,6 +52,7 @@ class Controller
                 $content = $data['result']['content'];
                 $content = Internal\Server::updateAssetsUrls($content, false);
                 $response = new App\Response\HTML($content);
+                $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
                 $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
                 return $response;
             }
@@ -67,6 +68,7 @@ class Controller
     {
         $data = Internal\Server::proxyAjax();
         $response = new App\Response\JSON($data);
+        $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
         $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
         return $response;
     }
@@ -135,6 +137,7 @@ class Controller
                 $download = true;
             } else {
                 if ($app->bearCMS->currentUser->exists() && $app->bearCMS->currentUser->hasPermission('manageFiles')) {
+                    // add no cache header
                     $download = true;
                 }
             }
@@ -242,7 +245,7 @@ class Controller
         $addUrl = function($path) use (&$urls, $app) {
             $urls[] = '<url><loc>' . $app->urls->get($path) . '</loc></url>';
         };
-        
+
         $addUrl('/');
 
         $list = Internal\Data\Pages::getPathsList('published');

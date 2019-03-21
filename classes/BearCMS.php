@@ -1284,6 +1284,10 @@ class BearCMS
         $currentUserExists = Config::hasServer() && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
         $settings = $this->app->bearCMS->data->settings->get();
 
+        if ($currentUserExists) {
+            $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
+        }
+
         $document = new HTML5DOMDocument();
         $document->loadHTML($response->content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
 
@@ -1472,6 +1476,8 @@ class BearCMS
             return;
         }
 
+        $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
+
         $settings = $this->app->bearCMS->data->settings->get();
 
         $serverCookies = Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER);
@@ -1535,9 +1541,13 @@ class BearCMS
      */
     public function applyTheme(\BearFramework\App\Response $response): void
     {
+        $currentUserExists = $this->currentUser->exists();
         $currentThemeID = Internal\CurrentTheme::getID();
-        $currentUserID = $this->currentUser->exists() ? $this->currentUser->getID() : null;
-        $currentCustomizations = Internal\Themes::getValues($currentThemeID, $currentUserID);
+        $currentCustomizations = Internal\Themes::getValues($currentThemeID, $currentUserExists ? $this->currentUser->getID() : null);
+
+        if ($currentUserExists) {
+            $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
+        }
 
         if ($response instanceof App\Response\HTML) {
             if (strpos($response->content, 'class="bearcms-blogpost-page-date-container"') !== false && ($currentCustomizations !== null && $currentCustomizations->getValue('blogPostPageDateVisibility') === '0')) {
