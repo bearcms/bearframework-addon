@@ -1281,10 +1281,6 @@ class BearCMS
      */
     public function applyDefaults(\BearFramework\App\Response $response): void
     {
-        if (!$response->headers->exists('Cache-Control')) {
-            $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0, no-cache, no-store'));
-        }
-
         $currentUserExists = Config::hasServer() && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
         $settings = $this->app->bearCMS->data->settings->get();
 

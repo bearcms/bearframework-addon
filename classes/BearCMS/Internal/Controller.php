@@ -52,7 +52,6 @@ class Controller
                 $content = $data['result']['content'];
                 $content = Internal\Server::updateAssetsUrls($content, false);
                 $response = new App\Response\HTML($content);
-                $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0, no-cache, no-store'));
                 $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
                 return $response;
             }
@@ -68,7 +67,6 @@ class Controller
     {
         $data = Internal\Server::proxyAjax();
         $response = new App\Response\JSON($data);
-        $response->headers->set($response->headers->make('Cache-Control', 'private, max-age=0, no-cache, no-store'));
         $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
         return $response;
     }
