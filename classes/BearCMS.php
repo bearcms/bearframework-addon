@@ -1543,7 +1543,7 @@ class BearCMS
     {
         $currentUserExists = $this->currentUser->exists();
         $currentThemeID = Internal\CurrentTheme::getID();
-        $currentCustomizations = Internal\Themes::getValues($currentThemeID, $currentUserExists ? $this->currentUser->getID() : null);
+        $currentCustomizations = Internal\Themes::getCustomizations($currentThemeID, $currentUserExists ? $this->currentUser->getID() : null);
 
         if ($currentUserExists) {
             $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));

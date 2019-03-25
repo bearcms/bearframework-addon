@@ -94,10 +94,10 @@ class Data2
     public function getRealFilename(string $filename): ?string
     {
         $app = App::get();
-        if (substr($filename, 0, 5) === 'data:') {
-            return $app->data->getFilename(substr($filename, 5));
-            //} elseif (substr($filename, 0, 4) === 'app:') {
-            //    return $app->config->appDir . '/' . substr($filename, 4);
+        if (substr($filename, 0, 10) === 'appdata://') {
+            return $filename;
+        } elseif (substr($filename, 0, 5) === 'data:') {
+            return 'appdata://' . substr($filename, 5);
         } elseif (substr($filename, 0, 6) === 'addon:') {
             $temp = explode(':', $filename, 3);
             if (sizeof($temp) === 3) {

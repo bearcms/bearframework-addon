@@ -84,8 +84,8 @@ class Themes
         if ($theme instanceof \BearCMS\Themes\Theme && is_callable($theme->initialize)) {
             $app = App::get();
             $currentUserID = $app->bearCMS->currentUser->exists() ? $app->bearCMS->currentUser->getID() : null;
-            $currentThemeOptions = Internal\Themes::getValues($id, $currentUserID);
-            call_user_func($theme->initialize, $currentThemeOptions);
+            $currentCustomizations = Internal\Themes::getCustomizations($id, $currentUserID);
+            call_user_func($theme->initialize, $currentCustomizations);
         }
     }
 
@@ -301,7 +301,7 @@ class Themes
      * @param string $userID
      * @return \BearCMS\Themes\Theme\Customizations|null
      */
-    static public function getValues(string $id, string $userID = null): ?\BearCMS\Themes\Theme\Customizations
+    static public function getCustomizations(string $id, string $userID = null): ?\BearCMS\Themes\Theme\Customizations
     {
         if (!isset(self::$registrations[$id])) {
             return null;
@@ -310,7 +310,7 @@ class Themes
         if (!isset(self::$cache[$localCacheKey])) {
             $app = App::get();
             $cacheKey = Internal\Themes::getCacheItemKey($id, $userID);
-            $envKey = md5(serialize(array_keys(self::$elementsOptions)) . serialize(array_keys(self::$pagesOptions)));
+            $envKey = md5(serialize(array_keys(self::$elementsOptions)) . serialize(array_keys(self::$pagesOptions)) . '-v2');
             $useCache = $cacheKey !== null;
             $resultData = null;
             if ($useCache) {
@@ -335,7 +335,13 @@ class Themes
                 }
                 $themeOptions = Internal\Themes::getOptions($id);
                 if ($themeOptions !== null) {
-                    $walkOptions = function(array $options) use (&$walkOptions, $currentValues, &$values, &$assetsToUpdate) {
+                    $updateAppDataKey = function($filename) {
+                        if (substr($filename, 0, 5) === 'data:') {
+                            return 'appdata://' . substr($filename, 5);
+                        }
+                        return $filename;
+                    };
+                    $walkOptions = function(array $options) use (&$walkOptions, $currentValues, &$values, &$assetsToUpdate, $updateAppDataKey) {
                         foreach ($options as $option) {
                             if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                                 $optionID = $option->id;
@@ -343,17 +349,28 @@ class Themes
                                 $value = isset($currentValues[$optionID]) ? $currentValues[$optionID] : (isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value']) : $option->details['value']) : null);
                                 if (strlen($value) > 0) {
                                     if ($optionType === 'image') {
+                                        $value = $updateAppDataKey($value);
                                         $assetsToUpdate[] = $value;
                                     } elseif ($optionType === 'css' || $optionType === 'cssBackground') {
                                         if (strpos($value, 'url') !== false) {
                                             $temp = json_decode($value, true);
                                             if (is_array($temp)) {
-                                                foreach ($temp as $_value) {
+                                                $hasChange = false;
+                                                foreach ($temp as $_key => $_value) {
                                                     $matches = [];
                                                     preg_match_all('/url\((.*?)\)/', $_value, $matches);
                                                     if (!empty($matches[1])) {
-                                                        $assetsToUpdate = array_merge($assetsToUpdate, array_unique($matches[1]));
+                                                        $temp2 = array_unique($matches[1]);
+                                                        foreach ($temp2 as $_value2) {
+                                                            $updatedValue2 = $updateAppDataKey($_value2);
+                                                            $temp[$_key] = str_replace($_value2, $updatedValue2, $temp[$_key]);
+                                                            $assetsToUpdate[] = $updatedValue2;
+                                                        }
+                                                        $hasChange = true;
                                                     }
+                                                }
+                                                if ($hasChange) {
+                                                    $value = json_encode($temp);
                                                 }
                                             }
                                         }
@@ -378,6 +395,7 @@ class Themes
                 $html = $resultData[1];
                 $assetsToUpdate = $resultData[2];
             }
+
             if (!empty($assetsToUpdate)) {
                 $search = [];
                 $replace = [];
@@ -410,8 +428,8 @@ class Themes
             throw new \Exception('Theme does not exists!');
         }
         $app = App::get();
-        $optionsValues = self::getValues($id);
-        $values = $optionsValues->getValues();
+        $customizations = self::getCustomizations($id);
+        $values = $customizations->getValues();
         $filesToAttach = [];
         $filesInValues = Internal\Themes::getFilesInValues($values);
         $filesKeysToUpdate = [];
@@ -435,6 +453,10 @@ class Themes
             $zip->addFromString('manifest.json', json_encode($manifest));
             $zip->addFromString('values.json', json_encode($values));
             foreach ($filesToAttach as $attachmentName => $filename) {
+                $newFileName = Internal2::$data2->getRealFilename($filename);
+                if ($newFileName !== null) {
+                    $filename = $newFileName;
+                }
                 $zip->addFromString($attachmentName, file_get_contents($filename));
             }
             $zip->close();
@@ -613,7 +635,7 @@ class Themes
                     $result[] = $jsJsonEncoded ? json_decode('"' . $key . '"') : $key;
                 }
             }
-            if (strpos($value, 'data:') === 0 || strpos($value, 'addon:') === 0) { //strpos($value, 'app:') === 0 || 
+            if (strpos($value, 'appdata://') === 0 || strpos($value, 'data:') === 0 || strpos($value, 'addon:') === 0) { //strpos($value, 'app:') === 0 || 
                 $result[] = $value;
             }
         }
