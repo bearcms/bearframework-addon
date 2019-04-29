@@ -1443,7 +1443,7 @@ class BearCMS
         if ($response instanceof App\Response\HTML) { // is not temporary disabled
             $externalLinksAreEnabled = $settings->externalLinks;
             if ($externalLinksAreEnabled || $currentUserExists) {
-                $html .= '<script id="bearcms-bearframework-addon-script-10" src="' . htmlentities($this->context->assets->getURL('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
+                $html .= '<script id="bearcms-bearframework-addon-script-10" src="' . htmlentities($this->context->assets->getURL('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 2])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
             }
         }
         $html .= '</body></html>';
