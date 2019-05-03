@@ -214,8 +214,7 @@ $content .= '</div>';
 ?><html>
     <head><style>.bearcms-blog-posts-element-post-title{word-wrap:break-word;}</style><?php
         if ($list->count() > $limit) {
-            echo '<script id="bearcms-bearframework-addon-script-2" src="' . htmlentities($context->assets->getURL('components/bearcmsBlogPostsElement/assets/blogPostsElement.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
-            echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getURL('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
+            echo '<link rel="client-shortcuts-embed" name="-bearcms-blog-posts-element">';
         }
         ?></head>
     <body><?= $content ?></body>

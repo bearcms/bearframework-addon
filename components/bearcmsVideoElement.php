@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Bear CMS addon for Bear Framework
  * https://bearcms.com/
@@ -7,7 +8,6 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal;
 use BearCMS\Internal2;
 
 $app = App::get();
@@ -42,6 +42,7 @@ if (isset($innerContainerStyle{0})) {
     $innerContainerEndTag = '</div>';
 }
 
+$addResponsivelyLazy = false;
 $content = '';
 if (strlen($component->url) > 0) {
     $html = '';
@@ -82,6 +83,7 @@ if (strlen($component->url) > 0) {
         $app->cache->set($cacheItem);
     }
     if ($html !== '') {
+        $addResponsivelyLazy = true;
         $content = '<div style="position:absolute;top:0;left:0;width:100%;height:100%;">' . $html . '</div>';
         $content = '<div class="responsively-lazy" style="padding-bottom:' . (1 / $aspectRatio * 100) . '%;" data-lazycontent="' . htmlentities($content) . '"></div>';
         $content = '<div class="bearcms-video-element" style="font-size:0;">' . $innerContainerStartTag . $content . $innerContainerEndTag . '</div>';
@@ -98,10 +100,9 @@ if (strlen($component->url) > 0) {
     $content .= '<source src="' . $app->assets->getURL($filename) . '" type="video/mp4">';
     $content .= '</video>' . $innerContainerEndTag . '</div>';
 }
-?><html>
-    <head>
-        <style id="responsively-lazy-style">.responsively-lazy:not(img){position:relative;height:0;}.responsively-lazy:not(img)>img{position:absolute;top:0;left:0;width:100%;height:100%}img.responsively-lazy{width:100%;}</style>
-        <script id="responsively-lazy-script" src="<?= $context->assets->getURL('assets/responsivelyLazy.min.js', ['cacheMaxAge' => 999999999, 'version' => 2]) ?>" async/>
-    </head>
-    <body><?= $content ?></body>
-</html>
+echo '<html>';
+if ($addResponsivelyLazy) {
+    echo '<head><link rel="client-shortcuts-embed" name="-bearcms-responsively-lazy"></head>';
+}
+echo '<body>' . $content . '</body>';
+echo '</html>';

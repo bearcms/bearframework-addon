@@ -29,12 +29,12 @@ $app->bearCMS->themes
 
             $theme->version = '1.7';
 
-            $theme->get = function(\BearCMS\Themes\Theme\Customizations $customizations) use ($context) {
+            $theme->get = function(\BearCMS\Themes\Theme\Customizations $customizations) use ($app, $context) {
                 $templateFilename = $context->dir . '/themes/themeone/components/defaultTemplate.php';
-                return (static function($__filename, $customizations) { // used inside
+                return (static function($__filename, $customizations) use ($app) { // used inside
                             ob_start();
                             include $__filename;
-                            return ob_get_clean();
+                            return $app->components->process(ob_get_clean());
                         })($templateFilename, $customizations);
             };
 

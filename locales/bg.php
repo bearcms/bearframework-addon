@@ -75,4 +75,10 @@ return [
     'bearcms.themes.options.Pages' => 'Страници',
     'bearcms.themes.options.blogPosts.Show more button' => 'Бутон за още',
     'bearcms.themes.options.blogPosts.Container' => 'Контейнер',
+    'bearcms.users.Administrator' => 'Администратор',
+    'bearcms.users.settings.name' => 'Име',
+    'bearcms.users.settings.description' => 'Описание',
+    'bearcms.users.settings.save' => 'Запази промените',
+    'bearcms.users.settings.saving' => 'Запазване ...',
+    'bearcms.users.settings.image' => 'Снимка',
 ];

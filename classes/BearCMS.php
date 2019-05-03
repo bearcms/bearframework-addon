@@ -773,6 +773,18 @@ class BearCMS
                     };
                 }
             }
+
+            $this->app->clientShortcuts
+                    ->add('-bearcms-elements-lazy-load', function(IvoPetkov\BearFrameworkAddons\ClientShortcut $shortcut) {
+                        $shortcut->requirements[] = [
+                            'type' => 'file',
+                            'url' => $this->context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 3]),
+                            'mimeType' => 'text/javascript'
+                        ];
+                        $lazyLoadInitializeData = [];
+                        $lazyLoadInitializeData[] = __('bearcms.elements.LoadingMore');
+                        $shortcut->init = 'bearCMS.elementsLazyLoad.initialize(' . json_encode($lazyLoadInitializeData) . ');';
+                    });
         }
 
         // Load the CMS managed addons
@@ -870,6 +882,14 @@ class BearCMS
                                 ]);
                             }
                         }
+                    });
+            $this->app->clientShortcuts
+                    ->add('-bearcms-comments-element', function(IvoPetkov\BearFrameworkAddons\ClientShortcut $shortcut) {
+                        $shortcut->requirements[] = [// taken from dev/commentsElement.js // file_get_contents(__DIR__ . '/../dev/commentsElement.js')
+                            'type' => 'text',
+                            'value' => 'var bearCMS=bearCMS||{};bearCMS.commentsElement=bearCMS.commentsElement||function(){var g=function(a){clientShortcuts.get("users").then(function(a){a.currentUser.exists()||a.openLogin()});return!1},f=function(a,d){clientShortcuts.get("-bearcms-html5domdocument").then(function(b){var c=document.getElementById(a.listElementID);b.insert(a.listContent,[c,"outerHTML"]);d()})},h=function(a){var d=a.target,b=a.result;"undefined"!==typeof b.noUser?(c(a),g()):"undefined"!==typeof b.success&&f(b,function(){c(a);d.reset()})},k=function(a){c(a)},l=function(a){a=a.target;a.querySelector(".bearcms-comments-element-send-button").style.display="none";a.querySelector(".bearcms-comments-element-send-button-waiting").style.removeProperty("display");a.querySelector(".bearcms-comments-element-text-input").setAttribute("readonly","readonly")},c=function(a){a=a.target;a.querySelector(".bearcms-comments-element-send-button").style.removeProperty("display");a.querySelector(".bearcms-comments-element-send-button-waiting").style.display="none";a.querySelector(".bearcms-comments-element-text-input").removeAttribute("readonly")};return{loadMore:function(a,d){a.target.innerHTML+=" ...";var b=a.target.parentNode.parentNode.id,c=parseInt(a.target.parentNode.parentNode.getAttribute("data-count"),10)+10,e=[];e.serverData=d.serverData;e.listElementID=b;e.listCommentsCount=c;clientShortcuts.get("serverRequests").then(function(a){a.send("bearcms-comments-load-more",e).then(function(a){a=JSON.parse(a);f(a,function(){})})})},onBeforeSubmitForm:function(a){var c=a.previousSibling.id,b=a.previousSibling.getAttribute("data-count");a.querySelector(\'input[type="hidden"]\').value=JSON.stringify({listElementID:c,listCommentsCount:b});"undefined"===typeof a.bearCMSCommentsEventsAttached&&(a.bearCMSCommentsEventsAttached=!0,a.addEventListener("submitstart",l),a.addEventListener("submitsuccess",h),a.addEventListener("submiterror",k))},onFocusTextarea:function(a){a=a.target.parentNode;"none"===a.querySelector(".bearcms-comments-element-send-button-waiting").style.display&&a.querySelector(".bearcms-comments-element-send-button").style.removeProperty("display")}}}();',
+                            'mimeType' => 'text/javascript'
+                        ];
                     });
         }
 
@@ -1010,6 +1030,14 @@ class BearCMS
                     ]);
                 };
             }
+            $this->app->clientShortcuts
+                    ->add('-bearcms-blog-posts-element', function(IvoPetkov\BearFrameworkAddons\ClientShortcut $shortcut) {
+                        $shortcut->requirements[] = [// taken from dev/blogPostsElement.js // file_get_contents(__DIR__ . '/../dev/blogPostsElement.js')
+                            'type' => 'text',
+                            'value' => 'var bearCMS=bearCMS||{};bearCMS.blogPostsElement=bearCMS.blogPostsElement||function(){var e=function(a,b){clientShortcuts.get("-bearcms-html5domdocument").then(function(c){c.insert(a,[b,"outerHTML"])})};return{loadMore:function(a,b){a.target.innerHTML+=" ...";var c=a.target.parentNode.parentNode.parentNode,d=[];d.serverData=b.serverData;clientShortcuts.get("serverRequests").then(function(a){a.send("bearcms-blogposts-load-more",d).then(function(a){a=JSON.parse(a);e(a.content,c)})})}}}();',
+                            'mimeType' => 'text/javascript'
+                        ];
+                    });
         }
 
         // Register a home page and the dynamic pages handler
@@ -1443,7 +1471,7 @@ class BearCMS
         if ($response instanceof App\Response\HTML) { // is not temporary disabled
             $externalLinksAreEnabled = $settings->externalLinks;
             if ($externalLinksAreEnabled || $currentUserExists) {
-                $html .= '<script id="bearcms-bearframework-addon-script-10" src="' . htmlentities($this->context->assets->getURL('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 2])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
+                $html .= '<script src="' . htmlentities($this->context->assets->getURL('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 3])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
             }
         }
         $html .= '</body></html>';
@@ -1526,7 +1554,7 @@ class BearCMS
                 if (isset($elementsHtml[0])) {
                     $htmlToInsert[] = ['source' => $elementsHtml];
                 }
-                $htmlToInsert[] = ['source' => '<html><body><script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($this->context->assets->getURL('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script></body></html>'];
+                $htmlToInsert[] = ['source' => '<html><head><link rel="client-shortcuts"></head></html>']; // used by ServerCommands to update content
                 $document->insertHTMLMulti($htmlToInsert);
                 $response->content = $document->saveHTML();
             }

@@ -51,19 +51,14 @@ if ($thread !== null) {
         if ($comment->status === 'pendingApproval') {
             $statusText = __('bearcms.comments.pending approval') . ', ';
         }
-        $profile = Internal\PublicProfile::getFromAuthor($comment->author);
-        $linkAttributes = '';
-        if (strlen($profile->url) > 0) {
-            $tagName = 'a';
-            $linkAttributes .= ' href="' . htmlentities($profile->url) . '" target="_blank" rel="nofollow noopener"';
-        } else {
-            $tagName = 'span';
-            $linkAttributes .= ' href="javascript:void(0);"';
-        }
-        $linkAttributes .= ' title="' . htmlentities($profile->name) . '"';
+        $author = $comment->author;
+        $profile = Internal\PublicProfile::getFromAuthor($author);
+
+        $onClick = 'clientShortcuts.get("users").then(function(users){users.openPreview("' . $author['provider'] . '","' . $author['id'] . '");});';
+        $linkAttributes = ' title="' . htmlentities($profile->name) . '" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '"';
         echo '<div class="bearcms-comments-comment">';
-        echo '<' . $tagName . ' class="bearcms-comments-comment-author-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></' . $tagName . '>';
-        echo '<' . $tagName . ' class="bearcms-comments-comment-author-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</' . $tagName . '> <span class="bearcms-comments-comment-date">' . $statusText . $app->localization->formatDate($comment->createdTime, ['timeAgo']) . '</span>';
+        echo '<a class="bearcms-comments-comment-author-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></a>';
+        echo '<a class="bearcms-comments-comment-author-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</a> <span class="bearcms-comments-comment-date">' . $statusText . $app->localization->formatDate($comment->createdTime, ['timeAgo']) . '</span>';
         echo '<div class="bearcms-comments-comment-text">' . nl2br(htmlspecialchars($comment->text)) . '</div>';
         echo '</div>';
     }

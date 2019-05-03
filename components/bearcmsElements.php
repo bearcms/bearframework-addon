@@ -136,10 +136,8 @@ if ($renderElementsContainer) {
         if ($renderElementsContainer) {
             echo '<style>' . $styles . '</style>';
             if ($hasLazyLoading) {
-                $lazyLoadInitializeData = [];
-                $lazyLoadInitializeData[] = __('bearcms.elements.LoadingMore');
-                echo '<script id="bearcms-bearframework-addon-script-3" src="' . htmlentities($context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async onload="' . htmlentities('bearCMS.elementsLazyLoad.initialize(' . json_encode($lazyLoadInitializeData) . ');') . '"></script>';
-                echo '<script id="bearcms-bearframework-addon-script-4" src="' . htmlentities($context->assets->getURL('assets/HTML5DOMDocument.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>';
+                echo '<link rel="client-shortcuts">';
+                echo '<script>clientShortcuts.get(\'-bearcms-elements-lazy-load\')</script>';
             }
         }
         ?></head>

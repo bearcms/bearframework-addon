@@ -75,4 +75,10 @@ return [
     'bearcms.themes.options.Pages' => 'Pages',
     'bearcms.themes.options.blogPosts.Show more button' => 'Show more button',
     'bearcms.themes.options.blogPosts.Container' => 'Container',
+    'bearcms.users.Administrator' => 'Administrator',
+    'bearcms.users.settings.name' => 'Name',
+    'bearcms.users.settings.description' => 'Description',
+    'bearcms.users.settings.save' => 'Save changes',
+    'bearcms.users.settings.saving' => 'Saving ...',
+    'bearcms.users.settings.image' => 'Image',
 ];

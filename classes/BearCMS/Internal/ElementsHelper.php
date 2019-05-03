@@ -328,7 +328,7 @@ class ElementsHelper
         }
         $content = '<html>'
                 . '<head>'
-                . ($inContainer && ($responsive || $editable) ? '<script onload="responsiveAttributes.run();" id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getURL('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>' : '')
+                . ($inContainer && ($responsive || $editable) ? '<link rel="client-shortcuts-embed" name="-bearcms-responsive-attributes">' : '')
                 . '<style>' . $styles . '</style>'
                 . '</head>'
                 . '<body>'
@@ -414,7 +414,7 @@ class ElementsHelper
         }
         $content = '<html>'
                 . '<head>'
-                . ($inContainer && ($responsive || $editable) ? '<script onload="responsiveAttributes.run();" id="bearcms-bearframework-addon-script-1" src="' . htmlentities($context->assets->getURL('assets/responsiveAttributes.min.js', ['cacheMaxAge' => 999999999, 'version' => 1])) . '" async></script>' : '')
+                . ($inContainer && ($responsive || $editable) ? '<link rel="client-shortcuts-embed" name="-bearcms-responsive-attributes">' : '')
                 . '<style>' . $styles . '</style>'
                 . '</head>'
                 . '<body>'

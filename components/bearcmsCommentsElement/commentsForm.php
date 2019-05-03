@@ -23,7 +23,9 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         $this->throwError();
     }
     if (!$app->currentUser->exists()) {
-        $this->throwError();
+        return [
+            'noUser' => 1
+        ];
     }
 
     $threadID = $component->threadID;
@@ -66,12 +68,7 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         </style>
     </head>
     <body><?php
-        echo '<form'
-        . ' onbeforesubmit="bearCMS.commentsElement.onBeforeSubmitForm(event);"'
-        . ' onsubmitdone="bearCMS.commentsElement.onSubmitFormDone(event);"'
-        . ' onrequestsent="bearCMS.commentsElement.onFormRequestSent(event);"'
-        . ' onresponsereceived="bearCMS.commentsElement.onFormResponseReceived(event);"'
-        . '>';
+        echo '<form onbeforesubmit="bearCMS.commentsElement.onBeforeSubmitForm(this);">';
         echo '<input type="hidden" name="cfcontext"/>';
         echo '<textarea placeholder="' . __('bearcms.comments.Your comment') . '" name="cfcomment" class="bearcms-comments-element-text-input" onfocus="bearCMS.commentsElement.onFocusTextarea(event);"></textarea>';
         echo '<span onclick="this.parentNode.submit();" class="bearcms-comments-element-send-button" style="display:none;">' . __('bearcms.comments.Send') . '</span>';

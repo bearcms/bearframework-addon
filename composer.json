@@ -19,15 +19,16 @@
         "ivopetkov/html-server-components-bearframework-addon": "0.7.*",
         "ivopetkov/image-gallery-bearframework-addon": "0.1.*",
         "ivopetkov/navigation-menu-bearframework-addon": "0.1.*",
-        "ivopetkov/users-bearframework-addon": "0.3.*",
-        "ivopetkov/server-requests-bearframework-addon": "0.3.*",
+        "ivopetkov/users-bearframework-addon": "0.4.*",
+        "ivopetkov/server-requests-bearframework-addon": "0.4.*",
         "ivopetkov/video-embed": "0.2.*",
         "ivopetkov/html5-dom-document-php": "2.*",
         "ivopetkov/data-object": "0.7.*",
-        "ivopetkov/form-bearframework-addon": "0.2.*",
+        "ivopetkov/form-bearframework-addon": "0.3.*",
         "ivopetkov/data-bundle-bearframework-addon": "0.2.*",
         "ivopetkov/encryption-bearframework-addon": "0.1.*",
-        "ivopetkov/notifications-bearframework-addon": "0.2.*"
+        "ivopetkov/notifications-bearframework-addon": "0.2.*",
+        "ivopetkov/client-shortcuts-bearframework-addon": "0.1.*"
     },
     "require-dev": {
         "bearframework/addon-tests": "0.3.*",

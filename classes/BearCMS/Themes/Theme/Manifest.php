@@ -13,7 +13,7 @@ namespace BearCMS\Themes\Theme;
  * @property string|null $name
  * @property string|null $description
  * @property array $author
- * @property array $array
+ * @property array $media
  */
 class Manifest
 {

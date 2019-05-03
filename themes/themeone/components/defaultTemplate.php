@@ -35,8 +35,9 @@ $elementsDefaults = new \BearCMS\Themes\Theme\Options();
 $elementsDefaults->addElements('container', '.template-container');
 $elementsDefaults->addPages();
 $html = $elementsDefaults->getHTML();
+$elementsDefaultsHTML = '';
 if ($html !== '') {
-    echo '<component src="data:base64,' . base64_encode($html) . '"/>';
+    $elementsDefaultsHTML = str_replace(['<html><head>', '</head></html>'], '', $html);
 }
 
 $fontFamily = 'Helvetica,Arial,sans-serif';
@@ -68,6 +69,7 @@ switch ((int) $contentWidthOptionValue) {
 ?><html>
     <head>
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,minimal-ui">
+        <?= $elementsDefaultsHTML; ?>
         <style>
             html, body{
                 padding: 0;
@@ -280,8 +282,11 @@ switch ((int) $contentWidthOptionValue) {
                     
             }';
             }
-            ?></style>
-    </head>
+            ?></style><?php
+        if ($hasNavigation) {
+            echo '<link rel="client-shortcuts-embed" name="-bearcms-responsive-attributes">';
+        }
+        ?></head>
     <body><div class="template-container"><?php
             echo '<header class="template-header">';
 

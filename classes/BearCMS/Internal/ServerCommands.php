@@ -428,7 +428,7 @@ class ServerCommands
     static function evalHTML(array $data, \ArrayObject $response): void
     {
         $response1 = $response['value'];
-        $response2 = ['js' => 'var e=document.querySelector(\'#' . $data['elementID'] . '\');if(e){html5DOMDocument.evalElement(e);}'];
+        $response2 = ['js' => 'var e=document.querySelector(\'#' . $data['elementID'] . '\');if(e){clientShortcuts.get(\'-bearcms-html5domdocument\').then(function(html5DOMDocument){html5DOMDocument.evalElement(e);});}'];
         $response['value'] = Internal\Server::mergeAjaxResponses($response1, $response2);
     }
 
@@ -605,7 +605,7 @@ class ServerCommands
         }
         $value = str_replace(substr($value, $startPosition, $endPosition - $startPosition + 1), $content, $value);
         //todo optimize
-        $response1 = ['js' => 'html5DOMDocument.insert(' . json_encode($allButBody, true) . ');'];
+        $response1 = ['js' => 'clientShortcuts.get(\'-bearcms-html5domdocument\').then(function(html5DOMDocument){html5DOMDocument.insert(' . json_encode($allButBody, true) . ');});'];
         $response2 = json_decode($value, true);
         $response['value'] = Internal\Server::mergeAjaxResponses($response1, $response2);
     }

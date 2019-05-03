@@ -7,7 +7,6 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal;
 use BearCMS\Internal2;
 
 $app = App::get();

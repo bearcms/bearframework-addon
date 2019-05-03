@@ -13,5 +13,6 @@ return [
     'bearcms.rss.Read the full post at %s' => 'Читайте полный текст статьи на %s',
     'bearcms.rss.Read the post at %s' => 'Прочитать статью на %s',
     'bearcms.navigation.home' => 'Начало',
-    'bearcms.elements.LoadingMore' => 'Загрузка контента. Пожалуйста, подождите.'
+    'bearcms.elements.LoadingMore' => 'Загрузка контента. Пожалуйста, подождите.',
+    'bearcms.users.Administrator' => 'Администратор',
 ];
