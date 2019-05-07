@@ -23,9 +23,7 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         $this->throwError();
     }
     if (!$app->currentUser->exists()) {
-        return [
-            'noUser' => 1
-        ];
+        $this->throwError();
     }
 
     $threadID = $component->threadID;
@@ -68,11 +66,12 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         </style>
     </head>
     <body><?php
-        echo '<form onbeforesubmit="bearCMS.commentsElement.onBeforeSubmitForm(this);">';
-        echo '<input type="hidden" name="cfcontext"/>';
-        echo '<textarea placeholder="' . __('bearcms.comments.Your comment') . '" name="cfcomment" class="bearcms-comments-element-text-input" onfocus="bearCMS.commentsElement.onFocusTextarea(event);"></textarea>';
-        echo '<span onclick="this.parentNode.submit();" class="bearcms-comments-element-send-button" style="display:none;">' . __('bearcms.comments.Send') . '</span>';
-        echo '<span class="bearcms-comments-element-send-button bearcms-comments-element-send-button-waiting" style="display:none;">' . __('bearcms.comments.Sending ...') . '</span>';
+        $formID = 'cmntfrm' . uniqid();
+        echo '<form id="' . $formID . '">';
+        echo '<form-element-hidden name="cfcontext" />';
+        echo '<form-element-textarea name="cfcomment" readonly="true" placeholder="' . __('bearcms.comments.Your comment') . '" class="bearcms-comments-element-text-input"/>';
+        echo '<form-element-submit-button text="'.__('bearcms.comments.Send').'" waitingText="'.__('bearcms.comments.Sending ...').'" style="display:none;" class="bearcms-comments-element-send-button" waitingClass="bearcms-comments-element-send-button bearcms-comments-element-send-button-waiting"/>';
         echo '</form>';
+        echo '<script>bearCMS.commentsElement.initialize("' . $formID . '");</script>';
         ?></body>
 </html>

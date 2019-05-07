@@ -21,6 +21,7 @@ BearFramework\Addons::register('bearcms/bearframework-addon', __DIR__, [
         'ivopetkov/data-bundle-bearframework-addon',
         'ivopetkov/encryption-bearframework-addon',
         'ivopetkov/notifications-bearframework-addon',
-        'ivopetkov/client-shortcuts-bearframework-addon'
+        'ivopetkov/client-shortcuts-bearframework-addon',
+        'ivopetkov/form-elements-bearframework-addon'
     ]
 ]);
