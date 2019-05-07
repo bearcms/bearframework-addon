@@ -70,8 +70,8 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         echo '<form id="' . $formID . '">';
         echo '<form-element-hidden name="cfcontext" />';
         echo '<form-element-textarea name="cfcomment" readonly="true" placeholder="' . __('bearcms.comments.Your comment') . '" class="bearcms-comments-element-text-input"/>';
-        echo '<form-element-submit-button text="'.__('bearcms.comments.Send').'" waitingText="'.__('bearcms.comments.Sending ...').'" style="display:none;" class="bearcms-comments-element-send-button" waitingClass="bearcms-comments-element-send-button bearcms-comments-element-send-button-waiting"/>';
+        echo '<form-element-submit-button text="' . __('bearcms.comments.Send') . '" waitingText="' . __('bearcms.comments.Sending ...') . '" style="display:none;" class="bearcms-comments-element-send-button" waitingClass="bearcms-comments-element-send-button bearcms-comments-element-send-button-waiting"/>';
         echo '</form>';
-        echo '<script>bearCMS.commentsElement.initialize("' . $formID . '");</script>';
+        echo '<script>bearCMS.commentsElement.initializeForm("' . $formID . '",' . (int) $app->currentUser->exists() . ');</script>';
         ?></body>
 </html>

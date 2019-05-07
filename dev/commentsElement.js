@@ -10,22 +10,36 @@
 var bearCMS = bearCMS || {};
 bearCMS.commentsElement = bearCMS.commentsElement || (function () {
 
-    var initialize = function (formID) {
+    var temp = [];
+
+    var prepareForUserAction = function (formID) {
+        var checkKey = 'ur' + formID;
+        if (typeof temp[checkKey] !== 'undefined') {
+            return;
+        }
+        temp[checkKey] = 1;
         var form = document.getElementById(formID);
         clientShortcuts.get('users').then(function (users) {
             users.currentUser.addEventListener('change', function () {
-                updateState(form);
+                updateState(formID, null);
             });
         });
         form.addEventListener('beforesubmit', onBeforeSubmit);
         form.addEventListener('submitsuccess', onSubmitSuccess);
-        updateState(form);
     };
 
-    var updateState = function (form) {
-        clientShortcuts.get('users').then(function (users) {
+    var initializeForm = function (formID, hasUser) {
+        updateState(formID, hasUser);
+        if (hasUser) {
+            return prepareForUserAction(formID); // return is neededed because of bug in closure compiler
+        }
+    };
+
+    var updateState = function (formID, hasUser) {
+        var update = function (hasCurrentUser) {
+            var form = document.getElementById(formID);
             var textarea = form.querySelector('textarea');
-            if (users.currentUser.exists()) {
+            if (hasCurrentUser) {
                 textarea.removeAttribute('readonly');
                 textarea.style.cursor = "auto";
                 textarea.removeEventListener('click', openLogin);
@@ -36,11 +50,20 @@ bearCMS.commentsElement = bearCMS.commentsElement || (function () {
                 textarea.addEventListener('click', openLogin);
                 form.querySelector('.bearcms-comments-element-send-button').style.display = 'none';
             }
-        });
+        };
+        if (hasUser !== null) {
+            update(hasUser);
+        } else {
+            clientShortcuts.get('users').then(function (users) {
+                update(users.currentUser.exists());
+            });
+        }
     };
 
-    var openLogin = function () {
+    var openLogin = function (event) {
+        var formID = event.target.parentNode.parentNode.id;
         clientShortcuts.get('users').then(function (users) {
+            prepareForUserAction(formID);
             users.openLogin();
         });
     };
@@ -87,7 +110,7 @@ bearCMS.commentsElement = bearCMS.commentsElement || (function () {
     };
 
     return {
-        'initialize': initialize,
+        'initializeForm': initializeForm,
         'loadMore': loadMore
     };
 
