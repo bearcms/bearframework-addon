@@ -25,7 +25,6 @@ if (strlen($threadID) > 0) {
 }
 ?><html>
     <head>
-        <link rel="client-shortcuts">
         <link rel="client-shortcuts-embed" name="-bearcms-comments-element">
         <style>
             .bearcms-comments-comment{display:block;clear:both;zoom:1;word-wrap:break-word;}
