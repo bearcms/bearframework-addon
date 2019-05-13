@@ -284,7 +284,7 @@ switch ((int) $contentWidthOptionValue) {
             }
             ?></style><?php
         if ($hasNavigation) {
-            echo '<link rel="client-shortcuts-embed" name="-bearcms-responsive-attributes">';
+            echo '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">';
         }
         ?></head>
     <body><div class="template-container"><?php

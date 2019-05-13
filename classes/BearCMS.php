@@ -774,16 +774,15 @@ class BearCMS
                 }
             }
 
-            $this->app->clientShortcuts
-                    ->add('-bearcms-elements-lazy-load', function(IvoPetkov\BearFrameworkAddons\ClientShortcut $shortcut) {
-                        $shortcut->requirements[] = [
-                            'type' => 'file',
-                            'url' => $this->context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 3]),
-                            'mimeType' => 'text/javascript'
+            $this->app->clientPackages
+                    ->add('-bearcms-elements-lazy-load', 1, function(IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                        $package->addJSFile($this->context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 4]));
+                        $package->preparePackage('serverRequests');
+                        $package->preparePackage('-bearcms-html5domdocument');
+                        $data = [
+                            __('bearcms.elements.LoadingMore')
                         ];
-                        $lazyLoadInitializeData = [];
-                        $lazyLoadInitializeData[] = __('bearcms.elements.LoadingMore');
-                        $shortcut->init = 'bearCMS.elementsLazyLoad.initialize(' . json_encode($lazyLoadInitializeData) . ');';
+                        $package->init = 'bearCMS.elementsLazyLoad.initialize(' . json_encode($data) . ');';
                     });
         }
 
@@ -869,27 +868,34 @@ class BearCMS
         if (Config::hasFeature('COMMENTS')) {
             $this->app->serverRequests
                     ->add('bearcms-comments-load-more', function($data) {
-                        if (isset($data['serverData'], $data['listElementID'], $data['listCommentsCount'])) {
-                            $listElementID = (string) $data['listElementID'];
-                            $listCommentsCount = (int) $data['listCommentsCount'];
+                        if (isset($data['serverData'], $data['count'])) {
+                            $count = (int) $data['count'];
                             $serverData = Internal\TempClientData::get($data['serverData']);
                             if (is_array($serverData) && isset($serverData['threadID'])) {
                                 $threadID = $serverData['threadID'];
-                                $listContent = $this->app->components->process('<component src="file:' . $this->context->dir . '/components/bearcmsCommentsElement/commentsList.php" count="' . htmlentities($listCommentsCount) . '" threadID="' . htmlentities($threadID) . '" />');
+                                $html = $this->app->components->process('<component src="file:' . $this->context->dir . '/components/bearcmsCommentsElement/commentsList.php" count="' . htmlentities($count) . '" threadID="' . htmlentities($threadID) . '" />');
                                 return json_encode([
-                                    'listElementID' => $listElementID,
-                                    'listContent' => $listContent
+                                    'html' => $html
                                 ]);
                             }
                         }
                     });
-            $this->app->clientShortcuts
-                    ->add('-bearcms-comments-element', function(IvoPetkov\BearFrameworkAddons\ClientShortcut $shortcut) {
-                        $shortcut->requirements[] = [// taken from dev/commentsElement.js // file_get_contents(__DIR__ . '/../dev/commentsElement.js')
-                            'type' => 'text',
-                            'value' => 'var bearCMS=bearCMS||{};bearCMS.commentsElement=bearCMS.commentsElement||function(){var e=[],g=function(a){var b="ur"+a;"undefined"===typeof e[b]&&(e[b]=1,b=document.getElementById(a),clientShortcuts.get("users").then(function(b){b.currentUser.addEventListener("change",function(){f(a,null)})}),b.addEventListener("beforesubmit",l),b.addEventListener("submitsuccess",m))},f=function(a,b){var c=function(b){var c=document.getElementById(a),d=c.querySelector("textarea");b?(d.removeAttribute("readonly"),d.style.cursor="auto",d.removeEventListener("click",h),c.querySelector(".bearcms-comments-element-send-button").style.removeProperty("display")):(d.setAttribute("readonly",!0),d.style.cursor="pointer",d.addEventListener("click",h),c.querySelector(".bearcms-comments-element-send-button").style.display="none")};null!==b?c(b):clientShortcuts.get("users").then(function(a){c(a.currentUser.exists())})},h=function(a){var b=a.target.parentNode.parentNode.id;clientShortcuts.get("users").then(function(a){g(b);a.openLogin()})},k=function(a){clientShortcuts.get("-bearcms-html5domdocument").then(function(b){var c=document.getElementById(a.listElementID);b.insert(a.listContent,[c,"outerHTML"])})},l=function(a){a=a.target;var b=a.previousSibling;a.querySelector(\'[name="cfcontext"]\').value=JSON.stringify({listElementID:b.id,listCommentsCount:b.getAttribute("data-count")})},m=function(a){var b=a.target;a=a.result;"undefined"!==typeof a.success&&(b.querySelector(\'[name="cfcomment"]\').value="",k(a))};return{initializeForm:function(a,b){f(a,b);if(b)return g(a)},loadMore:function(a,b){a.innerHTML+=" ...";var c=a.parentNode.parentNode,e={serverData:b.serverData,listElementID:c.id,listCommentsCount:parseInt(c.getAttribute("data-count"),10)+10};clientShortcuts.get("serverRequests").then(function(a){a.send("bearcms-comments-load-more",e).then(function(a){a=JSON.parse(a);k(a)})})}}}();',
-                            'mimeType' => 'text/javascript'
-                        ];
+            $this->app->clientPackages
+                    ->add('-bearcms-comments-element-form', 1, function(IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                        $package->addJSCode(include $this->context->dir . '/components/bearcmsCommentsElement/commentsElementForm.min.js.php');
+                        //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/commentsElementForm.js'));
+                        $package->preparePackage('users');
+                        $package->preparePackage('-bearcms-html5domdocument');
+                        $package->preparePackage('serverRequests');
+                        $package->embedPackage('lightbox');
+                    })
+                    ->add('-bearcms-comments-element-list', 1, function(IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                        $package->addJSCode(include $this->context->dir . '/components/bearcmsCommentsElement/commentsElementList.min.js.php');
+                        //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/commentsElementList.js'));
+                        $package->preparePackage('-bearcms-html5domdocument');
+                        $package->preparePackage('serverRequests');
+                        $package->preparePackage('users'); // for the preview
+                        $package->embedPackage('lightbox'); // for the preview
                     });
         }
 
@@ -1030,13 +1036,12 @@ class BearCMS
                     ]);
                 };
             }
-            $this->app->clientShortcuts
-                    ->add('-bearcms-blog-posts-element', function(IvoPetkov\BearFrameworkAddons\ClientShortcut $shortcut) {
-                        $shortcut->requirements[] = [// taken from dev/blogPostsElement.js // file_get_contents(__DIR__ . '/../dev/blogPostsElement.js')
-                            'type' => 'text',
-                            'value' => 'var bearCMS=bearCMS||{};bearCMS.blogPostsElement=bearCMS.blogPostsElement||function(){var e=function(a,b){clientShortcuts.get("-bearcms-html5domdocument").then(function(c){c.insert(a,[b,"outerHTML"])})};return{loadMore:function(a,b){a.target.innerHTML+=" ...";var c=a.target.parentNode.parentNode.parentNode,d=[];d.serverData=b.serverData;clientShortcuts.get("serverRequests").then(function(a){a.send("bearcms-blogposts-load-more",d).then(function(a){a=JSON.parse(a);e(a.content,c)})})}}}();',
-                            'mimeType' => 'text/javascript'
-                        ];
+            $this->app->clientPackages
+                    ->add('-bearcms-blog-posts-element', 1, function(IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                        $package->addJSCode(include $this->context->dir . '/components/bearcmsBlogPostsElement/blogPostsElement.min.js.php');
+                        //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/blogPostsElement.js'));
+                        $package->preparePackage('-bearcms-html5domdocument');
+                        $package->preparePackage('serverRequests');
                     });
         }
 
@@ -1471,7 +1476,7 @@ class BearCMS
         if ($response instanceof App\Response\HTML) { // is not temporary disabled
             $externalLinksAreEnabled = $settings->externalLinks;
             if ($externalLinksAreEnabled || $currentUserExists) {
-                $html .= '<script src="' . htmlentities($this->context->assets->getURL('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 4])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
+                $html .= '<script src="' . htmlentities($this->context->assets->getURL('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 5])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
             }
         }
         $html .= '</body></html>';
@@ -1554,7 +1559,7 @@ class BearCMS
                 if (isset($elementsHtml[0])) {
                     $htmlToInsert[] = ['source' => $elementsHtml];
                 }
-                $htmlToInsert[] = ['source' => '<html><head><link rel="client-shortcuts"></head></html>']; // used by ServerCommands to update content
+                $htmlToInsert[] = ['source' => '<html><head><link rel="client-packages"></head></html>']; // used by ServerCommands to update content
                 $document->insertHTMLMulti($htmlToInsert);
                 $response->content = $document->saveHTML();
             }

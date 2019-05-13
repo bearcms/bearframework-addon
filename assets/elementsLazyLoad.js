@@ -5,6 +5,8 @@
  * Free to use under the MIT license.
  */
 
+/* global clientPackages */
+
 var bearCMS = bearCMS || {};
 bearCMS.elementsLazyLoad = bearCMS.elementsLazyLoad || (function () {
 
@@ -23,9 +25,9 @@ bearCMS.elementsLazyLoad = bearCMS.elementsLazyLoad || (function () {
         loadingElement.className = 'bearcms-text-element';
         loadingElement.innerHTML = loadingText;
         container.appendChild(loadingElement);
-        clientShortcuts.get('serverRequests').then(function (serverRequests) {
+        clientPackages.get('serverRequests').then(function (serverRequests) {
             serverRequests.send('bearcms-elements-load-more', requestData).then(function (response) {
-                clientShortcuts.get('-bearcms-html5domdocument').then(function (html5DOMDocument) {
+                clientPackages.get('-bearcms-html5domdocument').then(function (html5DOMDocument) {
                     loadingElement.parentNode.removeChild(loadingElement);
                     var result = JSON.parse(response);
                     html5DOMDocument.insert(result.content, [container, 'beforeEnd']);

@@ -28,8 +28,8 @@
         "ivopetkov/data-bundle-bearframework-addon": "0.2.*",
         "ivopetkov/encryption-bearframework-addon": "0.1.*",
         "ivopetkov/notifications-bearframework-addon": "0.2.*",
-        "ivopetkov/client-shortcuts-bearframework-addon": "0.1.*",
-        "ivopetkov/form-elements-bearframework-addon": "0.1.*"
+        "ivopetkov/client-packages-bearframework-addon": "0.1.*",
+        "ivopetkov/form-elements-bearframework-addon": "0.2.*"
     },
     "require-dev": {
         "bearframework/addon-tests": "0.3.*",

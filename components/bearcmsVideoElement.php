@@ -102,7 +102,7 @@ if (strlen($component->url) > 0) {
 }
 echo '<html>';
 if ($addResponsivelyLazy) {
-    echo '<head><link rel="client-shortcuts-embed" name="-bearcms-responsively-lazy"></head>';
+    echo '<head><link rel="client-packages-embed" name="-bearcms-responsively-lazy"></head>';
 }
 echo '<body>' . $content . '</body>';
 echo '</html>';

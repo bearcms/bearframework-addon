@@ -60,6 +60,7 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
 };
 ?><html>
     <head>
+        <link rel="client-packages-embed" name="-bearcms-comments-element-form">
         <style>
             .bearcms-comments-element-text-input{display:block;resize:none;}
             .bearcms-comments-element-send-button{cursor:pointer;}
@@ -72,6 +73,6 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         echo '<form-element-textarea name="cfcomment" readonly="true" placeholder="' . __('bearcms.comments.Your comment') . '" class="bearcms-comments-element-text-input"/>';
         echo '<form-element-submit-button text="' . __('bearcms.comments.Send') . '" waitingText="' . __('bearcms.comments.Sending ...') . '" style="display:none;" class="bearcms-comments-element-send-button" waitingClass="bearcms-comments-element-send-button bearcms-comments-element-send-button-waiting"/>';
         echo '</form>';
-        echo '<script>bearCMS.commentsElement.initializeForm("' . $formID . '",' . (int) $app->currentUser->exists() . ');</script>';
+        echo '<script>bearCMS.commentsElementForm.initialize("' . $formID . '",' . (int) $app->currentUser->exists() . ');</script>';
         ?></body>
 </html>

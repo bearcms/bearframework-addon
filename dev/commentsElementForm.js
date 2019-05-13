@@ -5,10 +5,10 @@
  * Free to use under the MIT license.
  */
 
-/* global clientShortcuts */
+/* global clientPackages */
 
 var bearCMS = bearCMS || {};
-bearCMS.commentsElement = bearCMS.commentsElement || (function () {
+bearCMS.commentsElementForm = bearCMS.commentsElementForm || (function () {
 
     var temp = [];
 
@@ -19,20 +19,13 @@ bearCMS.commentsElement = bearCMS.commentsElement || (function () {
         }
         temp[checkKey] = 1;
         var form = document.getElementById(formID);
-        clientShortcuts.get('users').then(function (users) {
+        clientPackages.get('users').then(function (users) {
             users.currentUser.addEventListener('change', function () {
                 updateState(formID, null);
             });
         });
         form.addEventListener('beforesubmit', onBeforeSubmit);
         form.addEventListener('submitsuccess', onSubmitSuccess);
-    };
-
-    var initializeForm = function (formID, hasUser) {
-        updateState(formID, hasUser);
-        if (hasUser) {
-            return prepareForUserAction(formID); // return is neededed because of bug in closure compiler
-        }
     };
 
     var updateState = function (formID, hasUser) {
@@ -54,39 +47,19 @@ bearCMS.commentsElement = bearCMS.commentsElement || (function () {
         if (hasUser !== null) {
             update(hasUser);
         } else {
-            clientShortcuts.get('users').then(function (users) {
+            clientPackages.get('users').then(function (users) {
                 update(users.currentUser.exists());
             });
         }
     };
 
     var openLogin = function (event) {
-        var formID = event.target.parentNode.parentNode.id;
-        clientShortcuts.get('users').then(function (users) {
-            prepareForUserAction(formID);
-            users.openLogin();
-        });
-    };
-
-    var updateCommentsList = function (result) {
-        clientShortcuts.get('-bearcms-html5domdocument').then(function (html5DOMDocument) {
-            var listElement = document.getElementById(result.listElementID);
-            html5DOMDocument.insert(result.listContent, [listElement, 'outerHTML']);
-        });
-    };
-
-    var loadMore = function (button, data) {
-        button.innerHTML += " ...";
-        var elementContainer = button.parentNode.parentNode;
-        var requestData = {
-            'serverData': data['serverData'],
-            'listElementID': elementContainer.id,
-            'listCommentsCount': parseInt(elementContainer.getAttribute('data-count'), 10) + 10
-        };
-        clientShortcuts.get('serverRequests').then(function (serverRequests) {
-            serverRequests.send('bearcms-comments-load-more', requestData).then(function (response) {
-                var result = JSON.parse(response);
-                updateCommentsList(result);
+        clientPackages.get('lightbox').then(function (lightbox) {
+            lightbox.make();
+            var formID = event.target.parentNode.parentNode.id;
+            clientPackages.get('users').then(function (users) {
+                prepareForUserAction(formID);
+                users.openLogin();
             });
         });
     };
@@ -105,13 +78,22 @@ bearCMS.commentsElement = bearCMS.commentsElement || (function () {
         var result = event.result;
         if (typeof result.success !== 'undefined') {
             form.querySelector('[name="cfcomment"]').value = '';
-            updateCommentsList(result);
+            clientPackages.get('-bearcms-html5domdocument').then(function (html5DOMDocument) {
+                var listElement = document.getElementById(result.listElementID);
+                html5DOMDocument.insert(result.listContent, [listElement, 'outerHTML']);
+            });
+        }
+    };
+
+    var initialize = function (formID, hasUser) {
+        updateState(formID, hasUser);
+        if (hasUser) {
+            prepareForUserAction(formID);
         }
     };
 
     return {
-        'initializeForm': initializeForm,
-        'loadMore': loadMore
+        'initialize': initialize
     };
 
 }());

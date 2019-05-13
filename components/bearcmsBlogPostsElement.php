@@ -214,7 +214,7 @@ $content .= '</div>';
 ?><html>
     <head><style>.bearcms-blog-posts-element-post-title{word-wrap:break-word;}</style><?php
         if ($list->count() > $limit) {
-            echo '<link rel="client-shortcuts-embed" name="-bearcms-blog-posts-element">';
+            echo '<link rel="client-packages-embed" name="-bearcms-blog-posts-element">';
         }
         ?></head>
     <body><?= $content ?></body>

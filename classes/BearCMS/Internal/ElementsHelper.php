@@ -328,7 +328,7 @@ class ElementsHelper
         }
         $content = '<html>'
                 . '<head>'
-                . ($inContainer && ($responsive || $editable) ? '<link rel="client-shortcuts-embed" name="-bearcms-responsive-attributes">' : '')
+                . ($inContainer && ($responsive || $editable) ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
                 . '<style>' . $styles . '</style>'
                 . '</head>'
                 . '<body>'
@@ -414,7 +414,7 @@ class ElementsHelper
         }
         $content = '<html>'
                 . '<head>'
-                . ($inContainer && ($responsive || $editable) ? '<link rel="client-shortcuts-embed" name="-bearcms-responsive-attributes">' : '')
+                . ($inContainer && ($responsive || $editable) ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
                 . '<style>' . $styles . '</style>'
                 . '</head>'
                 . '<body>'

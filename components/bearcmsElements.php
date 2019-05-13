@@ -136,8 +136,8 @@ if ($renderElementsContainer) {
         if ($renderElementsContainer) {
             echo '<style>' . $styles . '</style>';
             if ($hasLazyLoading) {
-                echo '<link rel="client-shortcuts">';
-                echo '<script>clientShortcuts.get(\'-bearcms-elements-lazy-load\')</script>';
+                echo '<link rel="client-packages-prepare" name="-bearcms-elements-lazy-load">';
+                echo '<script>clientPackages.get(\'-bearcms-elements-lazy-load\')</script>';
             }
         }
         ?></head>

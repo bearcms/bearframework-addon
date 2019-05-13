@@ -17,6 +17,9 @@ $count = (int) $component->count;
 $threadID = $component->threadID;
 $elementID = 'cml' . md5($threadID);
 
+echo '<html>';
+echo '<head><link rel="client-packages-embed" name="-bearcms-comments-element-list"></head>';
+echo '<body>';
 echo '<div id="' . $elementID . '" data-count="' . $count . '">';
 $thread = Internal2::$data2->commentsThreads->get($threadID);
 if ($thread !== null) {
@@ -40,7 +43,7 @@ if ($thread !== null) {
         $loadMoreData = [
             'serverData' => \BearCMS\Internal\TempClientData::set(['threadID' => $threadID])
         ];
-        $onClick = 'bearCMS.commentsElement.loadMore(this,' . json_encode($loadMoreData) . ');';
+        $onClick = 'bearCMS.commentsElementList.loadMore(this,' . json_encode($loadMoreData) . ');';
         echo '<a class="bearcms-comments-show-more-button" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">' . __('bearcms.comments.Show more') . '</a>';
         echo '</div>';
     }
@@ -54,7 +57,7 @@ if ($thread !== null) {
         $author = $comment->author;
         $profile = Internal\PublicProfile::getFromAuthor($author);
 
-        $onClick = 'clientShortcuts.get("users").then(function(users){users.openPreview("' . $author['provider'] . '","' . $author['id'] . '");});';
+        $onClick = 'bearCMS.commentsElementList.previewUser("' . $author['provider'] . '","' . $author['id'] . '");';
         $linkAttributes = ' title="' . htmlentities($profile->name) . '" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '"';
         echo '<div class="bearcms-comments-comment">';
         echo '<a class="bearcms-comments-comment-author-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></a>';
@@ -64,3 +67,5 @@ if ($thread !== null) {
     }
 }
 echo '</div>';
+echo '</body>';
+echo '</html>';
