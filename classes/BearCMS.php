@@ -1561,7 +1561,7 @@ class BearCMS
                     $content = str_replace('{body}', (string) $document->createInsertTarget('body'), $content);
                     $htmlToInsert[] = ['source' => $response->content, 'target' => 'body'];
                 } elseif (strpos($content, '{jsonEncodedBody}')) {
-                    $content = str_replace('{jsonEncodedBody}', json_encode($this->app->components->process($response->content)), $content);
+                    $content = str_replace('{jsonEncodedBody}', json_encode($this->app->clientPackages->process($this->app->components->process($response->content))), $content);
                 }
                 $document->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
                 $elementsHtml = Internal\ElementsHelper::getEditableElementsHtml();
