@@ -35,9 +35,10 @@ class Addons
      * Adds an addon.
      * 
      * @param string $id
+     * @param array $options
      * @return self
      */
-    public function add(string $id): self
+    public function add(string $id, array $options = []): self
     {
         $app = App::get();
         if (\BearFramework\Addons::exists($id)) {
@@ -46,7 +47,7 @@ class Addons
                 $addon = new \BearCMS\Addons\Addon($id);
                 call_user_func(Internal\Data\Addons::$registrations[$id], $addon);
                 if (is_callable($addon->initialize)) {
-                    call_user_func($addon->initialize);
+                    call_user_func($addon->initialize, $options);
                 }
             }
         }

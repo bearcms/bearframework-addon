@@ -4,7 +4,7 @@
 BearCMS\Addons {
 
 	/* Methods */
-	public self add ( string $id )
+	public self add ( string $id [, array $options = [] ] )
 	public self register ( string $id , callable $callback )
 
 }
@@ -12,7 +12,7 @@ BearCMS\Addons {
 
 ## Methods
 
-##### public self [add](bearcms.addons.add.method.md) ( string $id )
+##### public self [add](bearcms.addons.add.method.md) ( string $id [, array $options = [] ] )
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds an addon.
 

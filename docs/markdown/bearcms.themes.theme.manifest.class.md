@@ -4,9 +4,9 @@
 BearCMS\Themes\Theme\Manifest {
 
 	/* Properties */
-	public array $array
 	public array $author
 	public string|null $description
+	public array $media
 	public string|null $name
 
 	/* Methods */
@@ -19,11 +19,11 @@ BearCMS\Themes\Theme\Manifest {
 
 ## Properties
 
-##### public array $array
-
 ##### public array $author
 
 ##### public string|null $description
+
+##### public array $media
 
 ##### public string|null $name
 

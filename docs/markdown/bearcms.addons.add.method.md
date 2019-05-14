@@ -3,12 +3,14 @@
 Adds an addon.
 
 ```php
-public self add ( string $id )
+public self add ( string $id [, array $options = [] ] )
 ```
 
 ## Parameters
 
 ##### id
+
+##### options
 
 ## Details
 
