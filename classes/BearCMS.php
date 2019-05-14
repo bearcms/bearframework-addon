@@ -948,6 +948,11 @@ class BearCMS
                                     $content .= '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost->title) . '</h1></div>';
                                     $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost->status === 'published' ? $this->app->localization->formatDate($blogPost->publishedTime, ['date']) : __('bearcms.blogPost.draft')) . '</div></div>';
                                     $content .= '<div class="bearcms-blogpost-page-content"><bearcms-elements id="bearcms-blogpost-' . $blogPostID . '"/></div>';
+                                    $settings = $this->app->bearCMS->data->settings->get();
+                                    if ($settings->allowCommentsInBlogPosts) {
+                                        $content .= '<div class="bearcms-blogpost-page-cpmments-title-container"><component src="bearcms-heading-element" text="' . 'Comments' . '" size="small"/></div>';
+                                        $content .= '<div class="bearcms-blogpost-page-comments-container"><component src="bearcms-comments-element" threadID="bearcms-blogpost-' . $blogPost->id . '"/></div>';
+                                    }
                                     $content .= '</body></html>';
 
                                     $response = new App\Response\HTML($content);

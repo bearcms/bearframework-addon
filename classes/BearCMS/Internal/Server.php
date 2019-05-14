@@ -235,6 +235,9 @@ class Server
             $clientData['uploadsSize'] = Internal\Data\UploadsSize::getSize();
         }
         $clientData['appSpecific'] = Config::$appSpecificServerData;
+        $clientData['flags'] = json_encode([
+            'sbpc' // allow comments in blog posts
+        ]);
         $data['clientData'] = json_encode($clientData, JSON_UNESCAPED_UNICODE);
 
         $ch = curl_init();

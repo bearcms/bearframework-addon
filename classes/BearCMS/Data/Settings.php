@@ -32,7 +32,8 @@ class Settings
                 'description' => 'The slogan of my company',
                 'language' => 'en',
                 'allowSearchEngines' => true,
-                'externalLinks' => true,
+                'allowCommentsInBlogPosts' => true,
+                'externalLinks' => true
             ];
         }
         return \BearCMS\Data\Settings\Settings::fromArray($data);
