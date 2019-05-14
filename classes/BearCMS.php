@@ -1493,7 +1493,16 @@ class BearCMS
 
         $response->content = $document->saveHTML();
 
-        $this->app->users->applyUI($response);
+        if ($this->app->currentUser->exists()) {
+            $addUserBadge = true;
+            $serverCookies = Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER);
+            if (!empty($serverCookies['tmcs']) || !empty($serverCookies['tmpr'])) {
+                $addUserBadge = false;
+            }
+            if ($addUserBadge) {
+                $this->app->users->applyUI($response);
+            }
+        }
     }
 
     /**
