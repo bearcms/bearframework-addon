@@ -775,14 +775,12 @@ class BearCMS
             }
 
             $this->app->clientPackages
-                    ->add('-bearcms-elements-lazy-load', 1, function(IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                    ->add('-bearcms-elements-lazy-load', function(IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
                         $package->addJSFile($this->context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 4]));
-                        $package->preparePackage('serverRequests');
-                        $package->preparePackage('-bearcms-html5domdocument');
                         $data = [
                             __('bearcms.elements.LoadingMore')
                         ];
-                        $package->init = 'bearCMS.elementsLazyLoad.initialize(' . json_encode($data) . ');';
+                        $package->get = 'bearCMS.elementsLazyLoad.initialize(' . json_encode($data) . ');';
                     });
         }
 
@@ -881,20 +879,14 @@ class BearCMS
                         }
                     });
             $this->app->clientPackages
-                    ->add('-bearcms-comments-element-form', 1, function(IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                    ->add('-bearcms-comments-element-form', function(IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
                         $package->addJSCode(include $this->context->dir . '/components/bearcmsCommentsElement/commentsElementForm.min.js.php');
                         //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/commentsElementForm.js'));
-                        $package->preparePackage('users');
-                        $package->preparePackage('-bearcms-html5domdocument');
-                        $package->preparePackage('serverRequests');
                         $package->embedPackage('lightbox');
                     })
-                    ->add('-bearcms-comments-element-list', 1, function(IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                    ->add('-bearcms-comments-element-list', function(IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
                         $package->addJSCode(include $this->context->dir . '/components/bearcmsCommentsElement/commentsElementList.min.js.php');
                         //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/commentsElementList.js'));
-                        $package->preparePackage('-bearcms-html5domdocument');
-                        $package->preparePackage('serverRequests');
-                        $package->preparePackage('users'); // for the preview
                         $package->embedPackage('lightbox'); // for the preview
                     });
         }
@@ -1042,11 +1034,9 @@ class BearCMS
                 };
             }
             $this->app->clientPackages
-                    ->add('-bearcms-blog-posts-element', 1, function(IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                    ->add('-bearcms-blog-posts-element', function(IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
                         $package->addJSCode(include $this->context->dir . '/components/bearcmsBlogPostsElement/blogPostsElement.min.js.php');
                         //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/blogPostsElement.js'));
-                        $package->preparePackage('-bearcms-html5domdocument');
-                        $package->preparePackage('serverRequests');
                     });
         }
 
