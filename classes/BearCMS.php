@@ -942,7 +942,7 @@ class BearCMS
                                     $content .= '<div class="bearcms-blogpost-page-content"><bearcms-elements id="bearcms-blogpost-' . $blogPostID . '"/></div>';
                                     $settings = $this->app->bearCMS->data->settings->get();
                                     if ($settings->allowCommentsInBlogPosts) {
-                                        $content .= '<div class="bearcms-blogpost-page-cpmments-title-container"><component src="bearcms-heading-element" text="' . 'Comments' . '" size="small"/></div>';
+                                        $content .= '<div class="bearcms-blogpost-page-comments-title-container"><component src="bearcms-heading-element" text="' . 'Comments' . '" size="small"/></div>';
                                         $content .= '<div class="bearcms-blogpost-page-comments-container"><component src="bearcms-comments-element" threadID="bearcms-blogpost-' . $blogPost->id . '"/></div>';
                                     }
                                     $content .= '</body></html>';
