@@ -1478,7 +1478,12 @@ class BearCMS
         if ($response instanceof App\Response\HTML) { // is not temporary disabled
             $externalLinksAreEnabled = $settings->externalLinks;
             if ($externalLinksAreEnabled || $currentUserExists) {
-                $html .= '<script src="' . htmlentities($this->context->assets->getURL('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 5])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
+                if ($currentUserExists) {
+                    $html .= '<script src="' . htmlentities($this->context->assets->getURL('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 5])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
+                } else {
+                    // taken from dev/externalLinksNoUser.min.js
+                    $html .= '<script>for(var links=document.getElementsByTagName("a"),host=location.host,i=0;i<links.length;i++){var link=links[i],href=link.getAttribute("href");null!==href&&-1!==href.indexOf("//")&&-1===href.indexOf("//"+host)&&0!==href.indexOf("#")&&0!==href.indexOf("javascript:")&&"_blank"!==link.target&&(link.target="_blank")};</script>';
+                }
             }
         }
         $html .= '</body></html>';
