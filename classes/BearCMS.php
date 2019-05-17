@@ -851,14 +851,21 @@ class BearCMS
                 ->add('/-link-rel-icon-*', [
                     [$this, 'disabledCheck'],
                     function() {
-                        $size = str_replace('/-link-rel-icon-', '', (string) $this->app->request->path);
-                        if (is_numeric($size)) {
+                        $size = (int) str_replace('/-link-rel-icon-', '', (string) $this->app->request->path);
+                        if ($size >= 16 && $size <= 512) {
                             $settings = $this->app->bearCMS->data->settings->get();
                             $icon = $settings->icon;
                             if (isset($icon{0})) {
-                                $url = $this->app->assets->getURL($icon, ['cacheMaxAge' => 999999999, 'width' => (int) $size, 'height' => (int) $size]);
-                                return new App\Response\TemporaryRedirect($url);
+                                $content = $this->app->assets->getContent($icon, ['width' => $size, 'height' => $size]);
+                                $response = new App\Response($content);
+                                $extension = pathinfo($icon, PATHINFO_EXTENSION);
+                                if ($extension !== '') {
+                                    $response->headers->set($response->headers->make('Content-Type', 'image/' . $extension));
+                                }
+                                $response->headers->set($response->headers->make('Cache-Control', 'public, max-age=3600'));
+                                return $response;
                             }
+                            return new App\Response\NotFound();
                         }
                     }
         ]);
