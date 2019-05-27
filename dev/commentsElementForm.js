@@ -48,7 +48,9 @@ bearCMS.commentsElementForm = bearCMS.commentsElementForm || (function () {
             update(hasUser);
         } else {
             clientPackages.get('users').then(function (users) {
-                update(users.currentUser.exists());
+                users.currentUser.exists().then(function (exists) {
+                    update(exists);
+                });
             });
         }
     };
