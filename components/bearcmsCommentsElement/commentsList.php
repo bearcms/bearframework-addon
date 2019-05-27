@@ -48,6 +48,35 @@ if ($thread !== null) {
         echo '</div>';
     }
 
+    $urlsToHTML = function($text) {
+        $letters = 'абвгдежзийклмнопрстуфхчцшщьъюяАБВГДЕЖЗИЙКЛМНОПРСТУФХЧЦШЩЬЪЮЯ';
+        $exp = '/(http|https|ftp|ftps)\:\/\/[' . $letters . 'a-zA-Z0-9\-\.]+\.[' . $letters . 'a-zA-Z]+[^\s]*/';
+        $matches = null;
+        preg_match_all($exp, $text, $matches);
+        if (empty($matches[0])) {
+            return $text;
+        }
+        $parts = [];
+        foreach ($matches[0] as $i => $url) {
+            $matches[0][$i] = rtrim($url, '.,?!');
+        }
+        $tempText = $text;
+        foreach ($matches[0] as $url) {
+            $temp = explode($url, $tempText, 2);
+            $parts[] = $temp[0];
+            $tempText = $temp[1];
+        }
+        $parts[] = $temp[1];
+        $newTextParts = [];
+        foreach ($parts as $i => $part) {
+            $newTextParts[] = $part;
+            if (isset($matches[0][$i])) {
+                $newTextParts[] = '<a href="' . htmlentities($matches[0][$i]) . '" rel="nofollow noreferrer noopener">' . $matches[0][$i] . '</a>';
+            }
+        }
+        return implode('', $newTextParts);
+    };
+
     $result = $thread->comments->slice($startIndex);
     foreach ($result as $comment) {
         $statusText = '';
@@ -62,7 +91,7 @@ if ($thread !== null) {
         echo '<div class="bearcms-comments-comment">';
         echo '<a class="bearcms-comments-comment-author-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></a>';
         echo '<a class="bearcms-comments-comment-author-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</a> <span class="bearcms-comments-comment-date">' . $statusText . $app->localization->formatDate($comment->createdTime, ['timeAgo']) . '</span>';
-        echo '<div class="bearcms-comments-comment-text">' . nl2br(htmlspecialchars($comment->text)) . '</div>';
+        echo '<div class="bearcms-comments-comment-text">' . nl2br($urlsToHTML(htmlspecialchars($comment->text))) . '</div>';
         echo '</div>';
     }
 }
