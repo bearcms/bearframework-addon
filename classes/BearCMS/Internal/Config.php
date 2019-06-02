@@ -31,6 +31,7 @@ class Config
     static $blogPagesPathPrefix = '/b/';
     static $autoCreateHomePage = true;
     static $maxUploadsSize = null;
+    static $maxUploadSize = null;
     static $defaultThemeID = null;
     static $htmlSandboxUrl = '';
     static $useDefaultUserProfile = true;
@@ -94,6 +95,43 @@ class Config
 
         if (isset($data['maxUploadsSize'])) {
             self::$maxUploadsSize = (int) $data['maxUploadsSize'];
+        }
+        self::$maxUploadsSize = 10 * 1024 * 1024;
+        if (isset($data['maxUploadSize'])) {
+            self::$maxUploadSize = (int) $data['maxUploadSize'];
+        } else {
+            self::$maxUploadSize = function() {
+                $sizeToBytes = function($size) {
+                    $suffix = strtolower(substr($size, -1));
+                    if (!in_array($suffix, ['t', 'g', 'm', 'k'])) {
+                        return (int) $size;
+                    }
+                    $value = (int) substr($size, 0, -1);
+                    switch ($suffix) {
+                        case 't':
+                            return $value * 1024 * 1024 * 1024 * 1024;
+                        case 'g':
+                            return $value * 1024 * 1024 * 1024;
+                        case 'm':
+                            return $value * 1024 * 1024;
+                        case 'k':
+                            return $value * 1024;
+                    }
+                };
+                $values = [];
+                $value = $sizeToBytes(ini_get('post_max_size'));
+                if ($value > 0) {
+                    $values[] = $value;
+                }
+                $value = $sizeToBytes(ini_get('upload_max_filesize'));
+                if ($value > 0) {
+                    $values[] = $value;
+                }
+                if (!empty($values)) {
+                    return min($values);
+                }
+                return null;
+            };
         }
         if (isset($data['defaultThemeID'])) {
             self::$defaultThemeID = $data['defaultThemeID'];

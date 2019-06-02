@@ -123,35 +123,41 @@ class Controller
 
     /**
      * 
+     * @param \BearFramework\App\Request $request
      * @param bool $preview
      * @return \BearFramework\App\Response
      */
-    static function handleFileRequest(bool $preview): \BearFramework\App\Response
+    static function handleFileRequest(App\Request $request, bool $preview): \BearFramework\App\Response
     {
         $app = App::get();
-        $filename = (string) $app->request->path->getSegment(2);
+        $filename = (string) $request->path->getSegment(2);
         $fileData = Internal\Data\Files::getFileData($filename);
-        $download = false;
+        $hasAccess = false;
+        $noCache = false;
         if (is_array($fileData)) {
             if ($fileData['published'] === 1) {
-                $download = true;
+                $hasAccess = true;
             } else {
                 if ($app->bearCMS->currentUser->exists() && $app->bearCMS->currentUser->hasPermission('manageFiles')) {
-                    // add no cache header
-                    $download = true;
+                    $hasAccess = true;
+                    $noCache = true;
                 }
             }
         }
-        if ($download) {
+        if ($hasAccess) {
             $fullFilename = $app->data->getFilename('bearcms/files/custom/' . $filename);
             $response = new App\Response\FileReader($fullFilename);
-            $mimeType = $app->assets->getMimeType($fullFilename);
-            if ($mimeType !== null) {
-                $response->headers->set($response->headers->make('Content-Type', $mimeType));
+            $details = $app->assets->getDetails($fileData['name'], ['mimeType']);
+            if (strlen($details['mimeType']) > 0) {
+                $response->headers->set($response->headers->make('Content-Type', $details['mimeType']));
             }
             if (!$preview) {
                 $response->headers->set($response->headers->make('Content-Disposition', 'attachment; filename=' . $fileData['name'])); // rawurlencode
                 $response->headers->set($response->headers->make('Content-Length', (string) filesize($fullFilename)));
+            }
+            if ($noCache) {
+                $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
+                $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
             }
             return $response;
         }
@@ -160,20 +166,22 @@ class Controller
 
     /**
      * 
+     * @param \BearFramework\App\Request $request
      * @return \BearFramework\App\Response
      */
-    static function handleFilePreview(): \BearFramework\App\Response
+    static function handleFilePreview(App\Request $request): \BearFramework\App\Response
     {
-        return self::handleFileRequest(true);
+        return self::handleFileRequest($request, true);
     }
 
     /**
      * 
+     * @param \BearFramework\App\Request $request
      * @return \BearFramework\App\Response
      */
-    static function handleFileDownload(): \BearFramework\App\Response
+    static function handleFileDownload(App\Request $request): \BearFramework\App\Response
     {
-        return self::handleFileRequest(false);
+        return self::handleFileRequest($request, false);
     }
 
     /**

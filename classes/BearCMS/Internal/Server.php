@@ -234,9 +234,13 @@ class Server
             $clientData['maxUploadsSize'] = Config::$maxUploadsSize;
             $clientData['uploadsSize'] = Internal\Data\UploadsSize::getSize();
         }
+        if (Config::$maxUploadSize !== null) {
+            $clientData['maxUploadSize'] = is_callable(Config::$maxUploadSize) ? call_user_func(Config::$maxUploadSize) : Config::$maxUploadSize;
+        }
         $clientData['appSpecific'] = Config::$appSpecificServerData;
         $clientData['flags'] = json_encode([
-            'sbpc' // allow comments in blog posts
+            'sbpc', // allow comments in blog posts
+            'gl3a', // has files support
         ]);
         $data['clientData'] = json_encode($clientData, JSON_UNESCAPED_UNICODE);
 

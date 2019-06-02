@@ -440,16 +440,17 @@ class ServerCommands
     static function file(array $data): ?array
     {
         $app = App::get();
-        $item = $app->data->get('bearcms/files/custom/' . $data['filename']);
+        $prefix = 'bearcms/files/custom/';
+        $item = $app->data->get($prefix . $data['filename']);
         if ($item !== null) {
             $key = $item->key;
             $fullFilename = $app->data->getFilename($key);
             $result = [
-                'filename' => str_replace('bearcms/files/custom/', '', $key),
-                'name' => (isset($item->metadata->name) ? $item->metadata->name : str_replace('bearcms/files/custom/', '', $key)),
-                'published' => (isset($item->metadata->published) ? (int) $item->metadata->published : 0),
+                'filename' => str_replace($prefix, '', $key),
+                'name' => (isset($item->metadata['name']) ? $item->metadata['name'] : str_replace($prefix, '', $key)),
+                'published' => (isset($item->metadata['published']) ? (int) $item->metadata['published'] : 0),
                 'size' => filesize($fullFilename),
-                'dateUploaded' => filemtime($fullFilename)
+                'dateCreated' => (isset($item->metadata['dateCreated']) ? (string) $item->metadata['dateCreated'] : ''),
             ];
             return $result;
         }
@@ -466,59 +467,15 @@ class ServerCommands
     {
         $app = App::get();
         $fileData = $data['data'];
-        $currentFileData = self::file(['filename' => $data['filename']]);
-        if (isset($fileData['name']) && $currentFileData['name'] !== $fileData['name']) {
-            $updateKey = function($key) {
-                $originalKey = $key;
-                $key = preg_replace('/[^a-z0-9\.\-\_]+/u', '-', strtolower($key));
-                while (strpos($key, '--') !== false) {
-                    $key = str_replace('--', '-', $key);
-                }
-                $key = trim($key, '-');
-                $info = pathinfo($key);
-                $info['filename'] = trim($info['filename'], '-');
-                if (strlen($info['filename']) === 0) {
-                    $info['filename'] = md5($originalKey);
-                }
-                if (strlen($key) > 80) {
-                    $info['filename'] = substr($info['filename'], 0, 80);
-                }
-                $key = $info['filename'] . (isset($info['extension']) ? '.' . $info['extension'] : '');
-                return $key;
-            };
-            $sourceKey = 'bearcms/files/custom/' . $updateKey($data['filename']);
-            $targetKey = 'bearcms/files/custom/' . $updateKey($fileData['name']);
-            if ($sourceKey !== $targetKey && is_file($app->data->getFilename($sourceKey))) {
-                if (is_file($app->data->getFilename($targetKey))) {
-                    $info = pathinfo($targetKey);
-                    if (isset($info['extension'])) {
-                        $targetKeyPrefix = substr($targetKey, 0, strlen($targetKey) - strlen($info['extension']) - 1);
-                    } else {
-                        $targetKeyPrefix = $targetKey;
-                    }
-                    $done = false;
-                    for ($i = 1; $i < 9999999; $i++) {
-                        $tempTargetKey = $targetKeyPrefix . '_' . $i . (isset($info['extension']) ? '.' . $info['extension'] : '');
-                        if (!is_file($app->data->getFilename($tempTargetKey))) {
-                            $targetKey = $tempTargetKey;
-                            $done = true;
-                            break;
-                        }
-                    }
-                    if (!$done) {
-                        throw new Exception('Cannot find available filename for ' . $targetKey);
-                    }
-                }
-                $app->data->rename($sourceKey, $targetKey);
-                $data['filename'] = str_replace('bearcms/files/custom/', '', $targetKey);
-            }
-        }
         $key = 'bearcms/files/custom/' . $data['filename'];
         if (isset($fileData['name'])) {
             $app->data->setMetadata($key, 'name', (string) $fileData['name']);
         }
         if (isset($fileData['published'])) {
             $app->data->setMetadata($key, 'published', (string) $fileData['published']);
+        }
+        if (isset($fileData['dateCreated'])) {
+            $app->data->setMetadata($key, 'dateCreated', (string) $fileData['dateCreated']);
         }
     }
 
@@ -529,15 +486,16 @@ class ServerCommands
     static function files(): array
     {
         $app = App::get();
+        $prefix = 'bearcms/files/custom/';
         $result = $app->data->getList()
-                ->filterBy('key', 'bearcms/files/custom/', 'startWith');
+                ->filterBy('key', $prefix, 'startWith');
         $temp = [];
         foreach ($result as $item) {
             $key = $item->key;
             $temp[] = [
-                'filename' => str_replace('bearcms/files/custom/', '', $key),
-                'name' => (isset($item->metadata->name) ? $item->metadata->name : str_replace('bearcms/files/custom/', '', $key)),
-                'published' => (isset($item->metadata->published) ? (int) $item->metadata->published : 0)
+                'filename' => str_replace($prefix, '', $key),
+                'name' => (isset($item->metadata['name']) ? $item->metadata['name'] : str_replace($prefix, '', $key)),
+                'published' => (isset($item->metadata['published']) ? (int) $item->metadata['published'] : 0)
             ];
         }
         return $temp;

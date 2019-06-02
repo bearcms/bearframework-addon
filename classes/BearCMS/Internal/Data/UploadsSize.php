@@ -10,7 +10,6 @@
 namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
-use BearCMS\Internal;
 
 /**
  * @internal

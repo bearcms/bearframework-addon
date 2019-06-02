@@ -30,8 +30,8 @@ class Files
         if ($item !== null) {
             $result = [
                 'filename' => $filename,
-                'published' => (isset($item->metadata->published) ? (int) $item->metadata->published : 0),
-                'name' => (isset($item->metadata->name) && strlen($item->metadata->name) > 0 ? $item->metadata->name : $filename)
+                'published' => (isset($item->metadata['published']) ? (int) $item->metadata['published'] : 0),
+                'name' => (isset($item->metadata['name']) && strlen($item->metadata['name']) > 0 ? $item->metadata['name'] : $filename)
             ];
             return $result;
         }
