@@ -96,7 +96,7 @@ class Config
         if (isset($data['maxUploadsSize'])) {
             self::$maxUploadsSize = (int) $data['maxUploadsSize'];
         }
-        self::$maxUploadsSize = 10 * 1024 * 1024;
+        
         if (isset($data['maxUploadSize'])) {
             self::$maxUploadSize = (int) $data['maxUploadSize'];
         } else {
