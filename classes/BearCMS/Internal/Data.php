@@ -268,7 +268,7 @@ class Data
             }
         }
         $notification = $app->notifications->make($title, $text);
-        $notification->clickUrl = $app->urls->get() . '#admin-open-' . $type;
+        $notification->clickURL = $app->urls->get() . '#admin-open-' . $type;
         $notification->type = 'bearcms-' . $type . '-new';
         $app->notifications->send('bearcms-user-administrator', $notification);
     }

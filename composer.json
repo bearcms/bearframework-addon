@@ -27,7 +27,7 @@
         "ivopetkov/form-bearframework-addon": "0.3.*",
         "ivopetkov/data-bundle-bearframework-addon": "0.2.*",
         "ivopetkov/encryption-bearframework-addon": "0.1.*",
-        "ivopetkov/notifications-bearframework-addon": "0.2.*",
+        "ivopetkov/notifications-bearframework-addon": "0.3.*",
         "ivopetkov/client-packages-bearframework-addon": "0.2.*",
         "ivopetkov/form-elements-bearframework-addon": "0.2.*"
     },
