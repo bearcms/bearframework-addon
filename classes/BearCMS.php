@@ -853,12 +853,11 @@ class BearCMS
                     function() {
                         $size = (int) str_replace('/-link-rel-icon-', '', (string) $this->app->request->path);
                         if ($size >= 16 && $size <= 512) {
-                            $settings = $this->app->bearCMS->data->settings->get();
-                            $icon = $settings->icon;
-                            if (isset($icon{0})) {
-                                $content = $this->app->assets->getContent($icon, ['width' => $size, 'height' => $size]);
+                            $filename = \BearCMS\Internal\Data\Settings::getIconForSize($size);
+                            if ($filename !== null) {
+                                $content = $this->app->assets->getContent($filename, ['width' => $size, 'height' => $size]);
                                 $response = new App\Response($content);
-                                $extension = pathinfo($icon, PATHINFO_EXTENSION);
+                                $extension = pathinfo($filename, PATHINFO_EXTENSION);
                                 if ($extension !== '') {
                                     $response->headers->set($response->headers->make('Content-Type', 'image/' . $extension));
                                 }
@@ -876,9 +875,21 @@ class BearCMS
                         if (strpos($path, '-meta-og-image') !== false) {
                             $path = substr($path, 0, -strlen('-meta-og-image'));
                         }
+
+                        $iconCache = null;
+                        $getIconFilename = function() use (&$iconCache) {
+                                    if ($iconCache === null) {
+                                        $iconCache = [\BearCMS\Internal\Data\Settings::getIconForSize(2000)];
+                                    }
+                                    return $iconCache[0];
+                                };
+
                         $containerID = null;
                         if ($path === '/') {
-                            $containerID = 'bearcms-page-home';
+                            $iconFilename = $getIconFilename();
+                            if ($iconFilename === null) {
+                                $containerID = 'bearcms-page-home';
+                            }
                         } elseif (strpos($path, Config::$blogPagesPathPrefix) === 0) {
                             $slug = rtrim(substr($path, strlen(Config::$blogPagesPathPrefix)), '/');
                             $blogPosts = $this->data->blogPosts->getList();
@@ -912,9 +923,9 @@ class BearCMS
                         }
 
                         if ($imageUrl === null) { // use the website icon if no image found on page
-                            $settings = $this->data->settings->get();
-                            if (strlen($settings->icon) > 0) {
-                                $imageUrl = $this->app->assets->getURL($settings->icon, ['cacheMaxAge' => 999999999]);
+                            $filename = $getIconFilename();
+                            if ($filename !== null) {
+                                $imageUrl = $this->app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
                             }
                         }
 

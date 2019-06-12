@@ -17,7 +17,8 @@ use BearCMS\Internal2;
  * @property string|null $description
  * @property string|null $keywords
  * @property string|null $language
- * @property string|null $icon
+ * @property string|null $icon Will be removed in v2
+ * @property array $icons
  * @property boolean $externalLinks
  * @property boolean $allowSearchEngines
  * @property boolean $allowCommentsInBlogPosts
@@ -49,6 +50,9 @@ class Settings extends \BearFramework\Models\Model
                 ])
                 ->defineProperty('icon', [
                     'type' => '?string'
+                ])
+                ->defineProperty('icons', [
+                    'type' => 'array'
                 ])
                 ->defineProperty('externalLinks', [
                     'type' => 'bool',
@@ -99,6 +103,12 @@ class Settings extends \BearFramework\Models\Model
             if ($icon !== null) {
                 $data['icon'] = $icon;
             }
+        }
+        if (!isset($data['icons'])) {
+            $data['icons'] = [];
+        }
+        if (strlen($data['icon']) > 0 && empty($data['icons'])) {
+            $data['icons'][] = ['filename' => $data['icon']];
         }
         return parent::fromArray($data);
     }
