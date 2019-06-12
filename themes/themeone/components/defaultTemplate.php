@@ -212,6 +212,7 @@ switch ((int) $contentWidthOptionValue) {
             ' . $containerClassName . ' .bearcms-comments-comment-author-image{' . $userImage . '}
             ' . $containerClassName . ' .bearcms-comments-comment-author-name{' . $link . '}
             ' . $containerClassName . ' .bearcms-comments-comment-text{' . $text . '}
+            ' . $containerClassName . ' .bearcms-comments-comment-text a{' . $link . '}
             ' . $containerClassName . ' .bearcms-comments-comment-date{font-size:calc(' . $fontSize . ' * 0.8);color:' . $elementsTextColor . ';}
             ' . $containerClassName . ' .bearcms-comments-element-text-input{' . $input . 'height:calc(' . $fontSize . ' * 8);}
             ' . $containerClassName . ' .bearcms-comments-element-send-button{' . $button . '}
@@ -253,6 +254,7 @@ switch ((int) $contentWidthOptionValue) {
             ' . $containerClassName . ' .bearcms-forum-post-page-reply-author-image{' . $userImage . '}
             ' . $containerClassName . ' .bearcms-forum-post-page-reply-author-name{' . $link . '}
             ' . $containerClassName . ' .bearcms-forum-post-page-reply-text{' . $text . '}
+            ' . $containerClassName . ' .bearcms-forum-post-page-reply-text a{' . $link . '}
             ' . $containerClassName . ' .bearcms-forum-post-page-reply-date{font-size:calc(' . $fontSize . ' * 0.8);color:' . $elementsTextColor . ';}
             ' . $containerClassName . ' .bearcms-forum-post-page-text-input{' . $input . 'height:calc(' . $fontSize . ' * 14);}
             ' . $containerClassName . ' .bearcms-forum-post-page-send-button{' . $button . '}
