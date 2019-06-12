@@ -868,7 +868,63 @@ class BearCMS
                             return new App\Response\NotFound();
                         }
                     }
-        ]);
+                ])
+                ->add(['/-meta-og-image', '*/-meta-og-image'], [
+                    [$this, 'disabledCheck'],
+                    function(App\Request $request) {
+                        $path = (string) $request->path;
+                        if (strpos($path, '-meta-og-image') !== false) {
+                            $path = substr($path, 0, -strlen('-meta-og-image'));
+                        }
+                        $containerID = null;
+                        if ($path === '/') {
+                            $containerID = 'bearcms-page-home';
+                        } elseif (strpos($path, Config::$blogPagesPathPrefix) === 0) {
+                            $slug = rtrim(substr($path, strlen(Config::$blogPagesPathPrefix)), '/');
+                            $blogPosts = $this->data->blogPosts->getList();
+                            foreach ($blogPosts as $blogPost) {
+                                if ($blogPost->status === 'published' && $blogPost->slug === $slug) {
+                                    $containerID = 'bearcms-blogpost-' . $blogPost->id;
+                                    break;
+                                }
+                            }
+                        } else {
+                            $pages = $this->data->pages->getList();
+                            foreach ($pages as $page) {
+                                if ($page->status === 'published' && $page->path === $path) {
+                                    $containerID = 'bearcms-page-' . $page->id;
+                                    break;
+                                }
+                            }
+                        }
+
+                        $imageUrl = null;
+                        if ($containerID !== null) {
+                            $content = $this->app->components->process('<component src="bearcms-elements" id="' . htmlentities($containerID) . '"/>');
+                            if (strpos($content, '<img') !== false) {
+                                $html5Document = new HTML5DOMDocument();
+                                $html5Document->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
+                                $imageElement = $html5Document->querySelector('img');
+                                if ($imageElement !== null) {
+                                    $imageUrl = $imageElement->getAttribute('src');
+                                }
+                            }
+                        }
+
+                        if ($imageUrl === null) { // use the website icon if no image found on page
+                            $settings = $this->data->settings->get();
+                            if (strlen($settings->icon) > 0) {
+                                $imageUrl = $this->app->assets->getURL($settings->icon, ['cacheMaxAge' => 999999999]);
+                            }
+                        }
+
+                        if ($imageUrl !== null) {
+                            $response = new App\Response\TemporaryRedirect($imageUrl);
+                            $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
+                            $response->headers->set($response->headers->make('Cache-Control', 'public, max-age=3600'));
+                            return $response;
+                        }
+                    }]);
 
         if (Config::hasFeature('COMMENTS')) {
             $this->app->serverRequests
@@ -1438,41 +1494,25 @@ class BearCMS
         $icon = $settings->icon;
         if (isset($icon{0})) {
             $baseUrl = $this->app->urls->get();
-            $html .= '<link rel="apple-touch-icon" sizes="57x57" href="' . htmlentities($baseUrl . '-link-rel-icon-57') . '">';
-            $html .= '<link rel="apple-touch-icon" sizes="60x60" href="' . htmlentities($baseUrl . '-link-rel-icon-60') . '">';
-            $html .= '<link rel="apple-touch-icon" sizes="72x72" href="' . htmlentities($baseUrl . '-link-rel-icon-72') . '">';
-            $html .= '<link rel="apple-touch-icon" sizes="76x76" href="' . htmlentities($baseUrl . '-link-rel-icon-76') . '">';
-            $html .= '<link rel="apple-touch-icon" sizes="114x114" href="' . htmlentities($baseUrl . '-link-rel-icon-114') . '">';
-            $html .= '<link rel="apple-touch-icon" sizes="120x120" href="' . htmlentities($baseUrl . '-link-rel-icon-120') . '">';
-            $html .= '<link rel="apple-touch-icon" sizes="144x144" href="' . htmlentities($baseUrl . '-link-rel-icon-144') . '">';
-            $html .= '<link rel="apple-touch-icon" sizes="152x152" href="' . htmlentities($baseUrl . '-link-rel-icon-152') . '">';
-            $html .= '<link rel="apple-touch-icon" sizes="180x180" href="' . htmlentities($baseUrl . '-link-rel-icon-180') . '">';
-            $html .= '<link rel="icon" sizes="32x32" href="' . htmlentities($baseUrl . '-link-rel-icon-32') . '">';
+            $html .= '<link rel="apple-touch-icon-precomposed" href="' . htmlentities($baseUrl . '-link-rel-icon-180') . '">';
             $html .= '<link rel="icon" sizes="192x192" href="' . htmlentities($baseUrl . '-link-rel-icon-192') . '">';
-            $html .= '<link rel="icon" sizes="96x96" href="' . htmlentities($baseUrl . '-link-rel-icon-96') . '">';
-            $html .= '<link rel="icon" sizes="16x16" href="' . htmlentities($baseUrl . '-link-rel-icon-16') . '">';
+            $html .= '<link rel="icon" sizes="64x64" href="' . htmlentities($baseUrl . '-link-rel-icon-64') . '">';
+            $html .= '<link rel="icon" sizes="32x32" href="' . htmlentities($baseUrl . '-link-rel-icon-32') . '">';
         } else if ($currentUserExists) {
-            $html .= '<link rel="apple-touch-icon" sizes="57x57" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            $html .= '<link rel="apple-touch-icon" sizes="60x60" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            $html .= '<link rel="apple-touch-icon" sizes="72x72" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            $html .= '<link rel="apple-touch-icon" sizes="76x76" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            $html .= '<link rel="apple-touch-icon" sizes="114x114" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            $html .= '<link rel="apple-touch-icon" sizes="120x120" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            $html .= '<link rel="apple-touch-icon" sizes="144x144" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            $html .= '<link rel="apple-touch-icon" sizes="152x152" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            $html .= '<link rel="apple-touch-icon" sizes="180x180" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            $html .= '<link rel="icon" sizes="32x32" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            $html .= '<link rel="icon" sizes="192x192" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            $html .= '<link rel="icon" sizes="96x96" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            $html .= '<link rel="icon" sizes="16x16" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="apple-touch-icon-precomposed" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="icon" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
         }
         if (empty($settings->allowSearchEngines)) {
             $html .= '<meta name="robots" content="noindex">';
         }
-        $html .= '<link rel="canonical" href="' . htmlentities(rtrim($this->app->request->base . $this->app->request->path, '/') . '/') . '"/>';
+        $url = $this->app->request->base . $this->app->request->path;
+        $html .= '<link rel="canonical" href="' . htmlentities(rtrim($url, '/') . '/') . '"/>';
         if ($settings->enableRSS) {
             $html .= '<link rel="alternate" type="application/rss+xml" title="' . htmlentities(trim($settings->title)) . '" href="' . $this->app->request->base . '/rss.xml" />';
         }
+        $html .= '<meta property="og:image" content="' . htmlentities(rtrim($url, '/') . '/') . '-meta-og-image' . '?' . time() . '">';
+        $html .= '<meta property="og:type" content="website">';
+        $html .= '<meta property="og:url" content="' . htmlentities($url) . '">';
         $html .= '</head><body>';
 
         if ($response instanceof App\Response\HTML) { // is not temporary disabled
