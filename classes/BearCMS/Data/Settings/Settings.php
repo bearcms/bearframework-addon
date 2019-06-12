@@ -98,17 +98,17 @@ class Settings extends \BearFramework\Models\Model
 
     static function fromArray(array $data)
     {
+        if (!isset($data['icons'])) {
+            $data['icons'] = [];
+        }
         if (isset($data['icon']) && strlen($data['icon']) > 0) {
             $icon = Internal2::$data2->getRealFilename($data['icon']);
             if ($icon !== null) {
                 $data['icon'] = $icon;
             }
-        }
-        if (!isset($data['icons'])) {
-            $data['icons'] = [];
-        }
-        if (strlen($data['icon']) > 0 && empty($data['icons'])) {
-            $data['icons'][] = ['filename' => $data['icon']];
+            if (empty($data['icons'])) {
+                $data['icons'][] = ['filename' => $data['icon']];
+            }
         }
         return parent::fromArray($data);
     }
