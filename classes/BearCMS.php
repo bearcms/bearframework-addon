@@ -931,7 +931,6 @@ class BearCMS
 
                         if ($imageUrl !== null) {
                             $response = new App\Response\TemporaryRedirect($imageUrl);
-                            $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
                             $response->headers->set($response->headers->make('Cache-Control', 'public, max-age=3600'));
                             return $response;
                         }
