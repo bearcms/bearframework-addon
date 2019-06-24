@@ -78,6 +78,6 @@ if (isset($innerContainerStyle{0})) {
 }
 $content .= '</div>';
 ?><html>
-    <head><style>.bearcms-image-element{font-size:0;}</style></head>
+    <head><style>.bearcms-image-element, .bearcms-image-element *{font-size:0;line-height:0;}</style></head>
     <body><?= $content ?></body>
 </html>

@@ -59,6 +59,6 @@ if ($files !== null) {
 $content .= '</component>';
 $content .= '</div>';
 ?><html>
-    <head><style>.bearcms-image-gallery-element{font-size:0;}</style></head>
+    <head><style>.bearcms-image-gallery-element, .bearcms-image-gallery-element *{font-size:0;line-height:0;}</style></head>
     <body><?= $content ?></body>
 </html>

@@ -388,7 +388,7 @@ class ElementsHelper
 
         $styles = '';
         $styles .= '.' . $className . '>div:empty{display:none;}';
-        $styles .= '.' . $className . '>div:first-child{max-width:100%;margin-' . ($position === 'left' ? 'right' : 'left') . ':' . $spacing . ';float:' . $position . ';width:calc(' . $width . ' - ' . $spacing . '/2);}';
+        $styles .= '.' . $className . '>div:first-child{max-width:100%;' . ($position === 'left' ? 'margin-right:' . $spacing . ';margin-left:0;' : 'margin-left:' . $spacing . ';margin-right:0;') . 'float:' . $position . ';width:calc(' . $width . ' - ' . $spacing . '/2);}';
         $styles .= '.' . $className . '>div:last-child{display:block;}';
         $styles .= '.' . $className . '[data-rvr-editable]>div:empty{display:block;}';
         $styles .= '.' . $className . '[data-rvr-editable]>div:first-child{min-width:24px;}';
