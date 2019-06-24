@@ -1031,6 +1031,12 @@ class BearCMS
                             }
                         }
             ]);
+            \BearCMS\Internal\Sitemap::register(function(\BearCMS\Internal\Sitemap\Sitemap $sitemap) {
+                $list = Internal\Data\BlogPosts::getSlugsList('published');
+                foreach ($list as $slug) {
+                    $sitemap->addURL($this->app->urls->get(Config::$blogPagesPathPrefix . $slug . '/'));
+                }
+            });
             $this->app->serverRequests
                     ->add('bearcms-blogposts-load-more', function($data) {
                         if (isset($data['serverData'], $data['serverData'])) {
@@ -1188,6 +1194,15 @@ class BearCMS
                             }
                         }
             ]);
+            \BearCMS\Internal\Sitemap::register(function(\BearCMS\Internal\Sitemap\Sitemap $sitemap) {
+                if (Config::$autoCreateHomePage) {
+                    $sitemap->addURL($this->app->urls->get('/'));
+                }
+                $list = Internal\Data\Pages::getPathsList('published');
+                foreach ($list as $path) {
+                    $sitemap->addURL($this->app->urls->get($path));
+                }
+            });
         }
 
         $this->app->assets

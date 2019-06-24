@@ -247,26 +247,8 @@ class Controller
      */
     static function handleSitemap(): \BearFramework\App\Response
     {
-        $app = App::get();
-        $urls = [];
-
-        $addUrl = function($path) use (&$urls, $app) {
-            $urls[] = '<url><loc>' . $app->urls->get($path) . '</loc></url>';
-        };
-
-        $addUrl('/');
-
-        $list = Internal\Data\Pages::getPathsList('published');
-        foreach ($list as $path) {
-            $addUrl($path);
-        }
-
-        $list = Internal\Data\BlogPosts::getSlugsList('published');
-        foreach ($list as $slug) {
-            $addUrl(Config::$blogPagesPathPrefix . $slug . '/');
-        }
-
-        $response = new App\Response('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">' . implode('', $urls) . '</urlset>');
+        $xml = Internal\Sitemap::getXML();
+        $response = new App\Response($xml);
         $response->headers->set($response->headers->make('Content-Type', 'text/xml'));
         return $response;
     }
