@@ -24,7 +24,7 @@ bearCMS.externalLinks = bearCMS.externalLinks || (function () {
             var href = link.getAttribute("href");
             if (href !== null && href.indexOf('//') !== -1 && href.indexOf('//' + host) === -1 && href.indexOf("#") !== 0 && href.indexOf("javascript:") !== 0) {
                 if (enabled) {
-                    if (link.target !== "_blank") {
+                    if (link.target === null || link.target === '') {
                         link.setAttribute('data-external-link-updated', link.target);
                         link.target = "_blank";
                     }
