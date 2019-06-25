@@ -282,10 +282,7 @@ class ElementsHelper
             }
 
             $columnWidth = rtrim(rtrim(number_format($columnsSizes[$i] / $totalSize * 100, 3, '.', ''), 0), '.') . '%';
-            $columnStyle = 'flex:' . $columnsSizes[$i] . ' 0 auto;max-width:calc(' . $columnWidth . ' - (' . $spacing . '*' . ($columnsCount - 1) . '/' . $columnsCount . '));';
-            if ($columnsCount > $i + 1) {
-                $columnStyle .= 'margin-right:' . $spacing . ';';
-            }
+            $columnStyle = 'flex:' . $columnsSizes[$i] . ' 0 auto;max-width:calc(' . $columnWidth . ' - (' . $spacing . '*' . ($columnsCount - 1) . '/' . $columnsCount . '));margin-right:' . ($columnsCount > $i + 1 ? $spacing : '0') . ';';
             $columnStyles[$i] = $columnStyle;
             $content .= '<div class="bearcms-elements-columns-column">' . $columnContent . '</div>';
         }
