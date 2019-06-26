@@ -32,7 +32,7 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         'provider' => $app->currentUser->provider,
         'id' => $app->currentUser->id
     ];
-    $text = $values['cfcomment'];
+    $text = trim($values['cfcomment']);
     $status = 'approved';
     $cancel = false;
     $cancelMessage = '';
