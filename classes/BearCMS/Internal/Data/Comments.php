@@ -58,6 +58,8 @@ class Comments
                         ], ['id' => 'bearcms-send-new-comment-notification']);
             }
         }
+        $eventDetails = new \BearCMS\Internal\AddCommentEventDetails($threadID, $commentID);
+        $app->bearCMS->dispatchEvent('internalAddComment', $eventDetails);
     }
 
     /**
