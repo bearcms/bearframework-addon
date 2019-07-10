@@ -9,9 +9,9 @@
 
 namespace BearCMS\Internal;
 
-use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
+use BearFramework\App;
 use IvoPetkov\HTML5DOMDocument;
 
 /**
@@ -22,17 +22,17 @@ class Server
 {
 
     /**
-     * 
+     *
      * @param string $name
      * @param array $arguments
      * @param bool $sendCookies
      * @param string $cacheKey
      * @return type
      */
-    static function call(string $name, array $arguments = [], bool $sendCookies = false, string $cacheKey = null)
+    public static function call(string $name, array $arguments = [], bool $sendCookies = false, string $cacheKey = null)
     {
         $app = App::get();
-        $send = function() use($name, $arguments, $sendCookies) {
+        $send = function () use ($name, $arguments, $sendCookies) {
             $url = Config::$serverUrl . '?name=' . $name;
             $response = self::sendRequest($url, $arguments, $sendCookies);
             if ($sendCookies && self::isRetryResponse($response)) {
@@ -68,10 +68,10 @@ class Server
     }
 
     /**
-     * 
+     *
      * @return string
      */
-    static function proxyAjax(): string
+    public static function proxyAjax(): string
     {
         $app = App::get();
         $formDataList = $app->request->formData->getList();
@@ -100,12 +100,12 @@ class Server
     }
 
     /**
-     * 
+     *
      * @param array $response1
      * @param array $response2
      * @return array
      */
-    static function mergeAjaxResponses(array $response1, array $response2): array
+    public static function mergeAjaxResponses(array $response1, array $response2): array
     {
         foreach ($response2 as $key => $data) {
             if (!isset($response1[$key])) {
@@ -121,31 +121,31 @@ class Server
     }
 
     /**
-     * 
+     *
      * @param array $response
      * @return bool
      */
-    static function isRetryResponse(array $response): bool
+    public static function isRetryResponse(array $response): bool
     {
         $responseHeaders = $response['headers'];
         return strpos($responseHeaders, 'X-App-Sr: qyi') > 0 ||
-                strpos($responseHeaders, 'X-App-Sr: pkr') > 0 ||
-                strpos($responseHeaders, 'X-App-Sr: jke') > 0 ||
-                strpos($responseHeaders, 'X-App-Sr: wpr') > 0;
+            strpos($responseHeaders, 'X-App-Sr: pkr') > 0 ||
+            strpos($responseHeaders, 'X-App-Sr: jke') > 0 ||
+            strpos($responseHeaders, 'X-App-Sr: wpr') > 0;
     }
 
     /**
-     * 
+     *
      * @param mixed $content
      * @param bool $ajaxMode
      * @return mixed
      */
-    static function updateAssetsUrls($content, bool $ajaxMode)
+    public static function updateAssetsUrls($content, bool $ajaxMode)
     {
         $serverUrl = Config::$serverUrl;
         $app = App::get();
         $context = $app->contexts->get(__FILE__);
-        $updateUrl = function($url) use ($context, $serverUrl) {
+        $updateUrl = function ($url) use ($context, $serverUrl) {
             if (strpos($url, '?') !== false) {
                 $url = explode('?', $url)[0];
             }
@@ -157,7 +157,7 @@ class Server
             $contentData = $content;
             if (isset($contentData['jsFiles'])) {
                 foreach ($contentData['jsFiles'] as $i => $src) {
-                    if (isset($src{0}) && strpos($src, $serverUrl) === 0) {
+                    if (isset($src[0]) && strpos($src, $serverUrl) === 0) {
                         $contentData['jsFiles'][$i] = $updateUrl($src);
                         $hasChange = true;
                     }
@@ -173,7 +173,7 @@ class Server
             $scripts = $dom->querySelectorAll('script');
             foreach ($scripts as $script) {
                 $src = (string) $script->getAttribute('src');
-                if (isset($src{0}) && strpos($src, $serverUrl) === 0) {
+                if (isset($src[0]) && strpos($src, $serverUrl) === 0) {
                     $script->setAttribute('src', $updateUrl($src));
                     $script->setAttribute('id', md5($src));
                     $hasChange = true;
@@ -187,7 +187,7 @@ class Server
     }
 
     /**
-     * 
+     *
      * @param string $url
      * @param array $data
      * @param array $cookies
@@ -195,13 +195,13 @@ class Server
      * @return array Returns an array in the following format: ['headers' => ..., 'body' => ..., 'logData' => ...]
      * @throws \Exception
      */
-    static function makeRequest(string $url, array $data, array $cookies, bool $includeLogData = false): array
+    public static function makeRequest(string $url, array $data, array $cookies, bool $includeLogData = false): array
     {
         $app = App::get();
 
         $clientData = [];
         if (Config::$appSecretKey !== null) {
-            $getHashedAppSecretKey = function() {
+            $getHashedAppSecretKey = function () {
                 $parts = explode('-', Config::$appSecretKey, 2);
                 if (sizeof($parts) === 2) {
                     return strtoupper('sha256-' . $parts[0] . '-' . hash('sha256', $parts[1]));
@@ -282,25 +282,25 @@ class Server
                 'total' => curl_getinfo($ch, CURLINFO_TOTAL_TIME),
                 'dns' => curl_getinfo($ch, CURLINFO_NAMELOOKUP_TIME),
                 'connect' => curl_getinfo($ch, CURLINFO_CONNECT_TIME),
-                'waiting' => curl_getinfo($ch, CURLINFO_STARTTRANSFER_TIME)
+                'waiting' => curl_getinfo($ch, CURLINFO_STARTTRANSFER_TIME),
             ];
             $logData['request'] = [
                 'url' => $url,
                 'headers' => trim(curl_getinfo($ch, CURLINFO_HEADER_OUT)),
-                'data' => $data
+                'data' => $data,
             ];
             $logData['response'] = [
                 'headers' => $responseHeaders,
-                'body' => $responseBody
+                'body' => $responseBody,
             ];
         }
         curl_close($ch);
-        if (isset($error{0})) {
+        if (isset($error[0])) {
             throw new \Exception('Request curl error: ' . $error . ' (1027)');
         }
         $result = [
             'headers' => $responseHeaders,
-            'body' => $responseBody
+            'body' => $responseBody,
         ];
         if ($logData !== null) {
             $result['logData'] = $logData;
@@ -309,13 +309,13 @@ class Server
     }
 
     /**
-     * 
+     *
      * @param string $url
      * @param array $data
      * @param bool $sendCookies
      * @return array Returns an array in the following format: ['headers' => ..., 'value' => ..., 'cache' => ..., 'cacheTTL' => ...]
      */
-    static function sendRequest(string $url, array $data = [], bool $sendCookies = false): array
+    public static function sendRequest(string $url, array $data = [], bool $sendCookies = false): array
     {
         $app = App::get();
         if (!is_array($data)) {
@@ -329,7 +329,7 @@ class Server
 
         $cookies = $sendCookies ? Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER) : [];
 
-        $send = function($requestData = [], $counter = 1) use(&$send, $app, $url, $data, $cookies) {
+        $send = function ($requestData = [], $counter = 1) use (&$send, $app, $url, $data, $cookies) {
             if ($counter > 10) {
                 throw new \Exception('Too much requests');
             }
@@ -343,7 +343,7 @@ class Server
             }
             $requestResponseData = $requestResponseBody['response'];
 
-            $response = new \ArrayObject([// Must be ArrayObject so it can be passed by reference to the internal commands
+            $response = new \ArrayObject([ // Must be ArrayObject so it can be passed by reference to the internal commands
                 'headers' => $requestResponse['headers'],
                 'value' => isset($requestResponseData['value']) ? $requestResponseData['value'] : '',
                 'cache' => isset($requestResponseData['cache']) ? (int) $requestResponseData['cache'] > 0 : false,
@@ -358,7 +358,7 @@ class Server
                     'value' => $response['value'],
                     'meta' => $requestResponseMeta,
                     'cache' => $response['cache'],
-                    'cacheTTL' => $response['cacheTTL']
+                    'cacheTTL' => $response['cacheTTL'],
                 ];
                 $app->logs->log('bearcms-server-requests', print_r($logData, true));
             }
@@ -388,6 +388,9 @@ class Server
                 }
                 if ($resend) {
                     $resendData['commandsResults'] = json_encode($commandsResults, JSON_UNESCAPED_UNICODE);
+                    if ($resendData['commandsResults'] === false) {
+                        throw new \Exception('Cannot JSON encode server commands results: error code:' . json_last_error() . ', ' . print_r($commandsResults, true));
+                    }
                 }
             }
 
@@ -403,9 +406,7 @@ class Server
                         $dataKey = '.temp/bearcms/userkeys/' . md5($currentUserData['key']);
                         $app->data->set($app->data->make($dataKey, $currentUserData['id']));
                         break;
-                    } catch (\BearFramework\App\Data\DataLockedException $e) {
-                        
-                    }
+                    } catch (\BearFramework\App\Data\DataLockedException $e) { }
                     if ($i === 3) {
                         throw $e;
                     } else {
@@ -432,5 +433,4 @@ class Server
         }
         return (array) $response;
     }
-
 }
