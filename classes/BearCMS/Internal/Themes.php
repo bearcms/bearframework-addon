@@ -331,9 +331,14 @@ class Themes
                     $currentValues = Internal2::$data2->themes->getValues($id);
                 }
                 $themeOptions = Internal\Themes::getOptions($id);
-                $themeOptions->setValues($currentValues);
-                $values = $themeOptions->getValues(); // "data: -> appdata://" is updated inside
-                $htmlData = self::getOptionsHTMLData($themeOptions->getList());
+                if ($themeOptions === null) {
+                    $values = [];
+                    $htmlData = [];
+                } else {
+                    $themeOptions->setValues($currentValues);
+                    $values = $themeOptions->getValues(); // "data: -> appdata://" is updated inside
+                    $htmlData = self::getOptionsHTMLData($themeOptions->getList());
+                }
                 if ($useCache) {
                     $app->cache->set($app->cache->make($cacheKey, json_encode([$values, $htmlData, $envKey])));
                 }
@@ -776,8 +781,11 @@ class Themes
      */
     static public function processOptionsHTMLData(array $data): string
     {
+        if (!isset($data['html'])) {
+            return '';
+        }
         $html = $data['html'];
-        $updates = $data['updates'];
+        $updates = isset($data['updates']) ? $data['updates'] : [];
         if (!empty($updates)) {
             $app = App::get();
             $search = [];
