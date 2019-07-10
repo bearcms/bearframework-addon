@@ -96,12 +96,12 @@ class Config
         if (isset($data['maxUploadsSize'])) {
             self::$maxUploadsSize = (int) $data['maxUploadsSize'];
         }
-        
+
         if (isset($data['maxUploadSize'])) {
             self::$maxUploadSize = (int) $data['maxUploadSize'];
         } else {
-            self::$maxUploadSize = function() {
-                $sizeToBytes = function($size) {
+            self::$maxUploadSize = function () {
+                $sizeToBytes = function ($size) {
                     $suffix = strtolower(substr($size, -1));
                     if (!in_array($suffix, ['t', 'g', 'm', 'k'])) {
                         return (int) $size;
@@ -223,5 +223,4 @@ class Config
         }
         return null;
     }
-
 }
