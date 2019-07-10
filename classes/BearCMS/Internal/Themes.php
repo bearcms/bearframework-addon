@@ -149,23 +149,23 @@ class Themes
      * @param string $id
      * @return ?array
      */
-//    public function getManifest2(string $id): ?array
-//    {
-//        if (!isset(self::$registrations[$id])) {
-//            return null;
-//        }
-//        $result = Internal\Themes::getManifest($id);
-//        $styles = Internal\Themes::getStyles($id);
-//        $result['styles'] = [];
-//        foreach ($styles as $style) {
-//            $result['styles'][] = [
-//                'id' => $style['id'],
-//                'name' => $style['name'],
-//                'media' => $style['media']
-//            ];
-//        }
-//        return $result;
-//    }
+    //    public function getManifest2(string $id): ?array
+    //    {
+    //        if (!isset(self::$registrations[$id])) {
+    //            return null;
+    //        }
+    //        $result = Internal\Themes::getManifest($id);
+    //        $styles = Internal\Themes::getStyles($id);
+    //        $result['styles'] = [];
+    //        foreach ($styles as $style) {
+    //            $result['styles'][] = [
+    //                'id' => $style['id'],
+    //                'name' => $style['name'],
+    //                'media' => $style['media']
+    //            ];
+    //        }
+    //        return $result;
+    //    }
 
     /**
      * 
@@ -201,7 +201,7 @@ class Themes
         if ($options === null) {
             return [];
         }
-        $walkOptions = function(array $options) use (&$walkOptions) {
+        $walkOptions = function (array $options) use (&$walkOptions) {
             $result = [];
             foreach ($options as $option) {
                 if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
@@ -310,7 +310,7 @@ class Themes
         if (!isset(self::$cache[$localCacheKey])) {
             $app = App::get();
             $cacheKey = Internal\Themes::getCacheItemKey($id, $userID);
-            $envKey = md5(serialize(array_keys(self::$elementsOptions)) . serialize(array_keys(self::$pagesOptions)) . '-v2');
+            $envKey = md5(serialize(array_keys(self::$elementsOptions)) . serialize(array_keys(self::$pagesOptions)) . '-v3');
             $useCache = $cacheKey !== null;
             $resultData = null;
             if ($useCache) {
@@ -319,10 +319,7 @@ class Themes
                     $resultData = json_decode($resultData, true);
                 }
             }
-            if ($resultData === null || !isset($resultData[3]) || $resultData[3] !== $envKey) {
-                $values = [];
-                $html = '';
-                $assetsToUpdate = [];
+            if ($resultData === null || !isset($resultData[2]) || $resultData[2] !== $envKey) {
                 $currentValues = null;
                 if ($userID !== null) {
                     $userOptions = Internal2::$data2->themes->getUserOptions($id, $userID);
@@ -334,83 +331,17 @@ class Themes
                     $currentValues = Internal2::$data2->themes->getValues($id);
                 }
                 $themeOptions = Internal\Themes::getOptions($id);
-                if ($themeOptions !== null) {
-                    $updateAppDataKey = function($filename) {
-                        if (substr($filename, 0, 5) === 'data:') {
-                            return 'appdata://' . substr($filename, 5);
-                        }
-                        return $filename;
-                    };
-                    $walkOptions = function(array $options) use (&$walkOptions, $currentValues, &$values, &$assetsToUpdate, $updateAppDataKey) {
-                        foreach ($options as $option) {
-                            if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
-                                $optionID = $option->id;
-                                $optionType = $option->type;
-                                $value = isset($currentValues[$optionID]) ? $currentValues[$optionID] : (isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value']) : $option->details['value']) : null);
-                                if (strlen($value) > 0) {
-                                    if ($optionType === 'image') {
-                                        $value = $updateAppDataKey($value);
-                                        $assetsToUpdate[] = $value;
-                                    } elseif ($optionType === 'css' || $optionType === 'cssBackground') {
-                                        if (strpos($value, 'url') !== false) {
-                                            $temp = json_decode($value, true);
-                                            if (is_array($temp)) {
-                                                $hasChange = false;
-                                                foreach ($temp as $_key => $_value) {
-                                                    $matches = [];
-                                                    preg_match_all('/url\((.*?)\)/', $_value, $matches);
-                                                    if (!empty($matches[1])) {
-                                                        $temp2 = array_unique($matches[1]);
-                                                        foreach ($temp2 as $_value2) {
-                                                            $updatedValue2 = $updateAppDataKey($_value2);
-                                                            $temp[$_key] = str_replace($_value2, $updatedValue2, $temp[$_key]);
-                                                            $assetsToUpdate[] = $updatedValue2;
-                                                        }
-                                                        $hasChange = true;
-                                                    }
-                                                }
-                                                if ($hasChange) {
-                                                    $value = json_encode($temp);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                $values[$optionID] = $value;
-                            } elseif ($option instanceof \BearCMS\Themes\Theme\Options\Group) {
-                                $walkOptions($option->getList());
-                            }
-                        }
-                    };
-                    $walkOptions($themeOptions->getList());
-                    $themeOptions->setValues($values);
-                    $html = $themeOptions->getHTML();
-                }
-                $assetsToUpdate = array_unique($assetsToUpdate);
+                $themeOptions->setValues($currentValues);
+                $values = $themeOptions->getValues(); // "data: -> appdata://" is updated inside
+                $htmlData = self::getOptionsHTMLData($themeOptions->getList());
                 if ($useCache) {
-                    $app->cache->set($app->cache->make($cacheKey, json_encode([$values, $html, $assetsToUpdate, $envKey])));
+                    $app->cache->set($app->cache->make($cacheKey, json_encode([$values, $htmlData, $envKey])));
                 }
             } else {
                 $values = $resultData[0];
-                $html = $resultData[1];
-                $assetsToUpdate = $resultData[2];
+                $htmlData = $resultData[1];
             }
-
-            if (!empty($assetsToUpdate)) {
-                $search = [];
-                $replace = [];
-                foreach ($assetsToUpdate as $filename) {
-                    $newFileName = Internal2::$data2->getRealFilename($filename);
-                    if ($newFileName !== null) {
-                        $url = $app->assets->getURL($newFileName, ['cacheMaxAge' => 999999999]);
-                        $search[] = $filename;
-                        $replace[] = $url;
-                        $search[] = trim(json_encode($filename), '"');
-                        $replace[] = trim(json_encode($url), '"');
-                    }
-                }
-                $html = str_replace($search, $replace, $html);
-            }
+            $html = self::processOptionsHTMLData($htmlData);
             self::$cache[$localCacheKey] = new \BearCMS\Themes\Theme\Customizations($values, $html);
         }
         return self::$cache[$localCacheKey];
@@ -491,7 +422,7 @@ class Themes
         $zip = new \ZipArchive();
         if ($zip->open($tempArchiveFilename) === true) {
 
-            $getManifest = function() use ($zip) {
+            $getManifest = function () use ($zip) {
                 $data = $zip->getFromName('manifest.json');
                 if (strlen($data) > 0) {
                     $data = json_decode($data, true);
@@ -507,7 +438,7 @@ class Themes
                 throw new \Exception('The import file is for different theme (' . $manifest['themeID'] . ')', 4);
             }
 
-            $getValues = function() use ($zip) {
+            $getValues = function () use ($zip) {
                 $data = $zip->getFromName('values.json');
                 if (strlen($data) > 0) {
                     $data = json_decode($data, true);
@@ -671,4 +602,202 @@ class Themes
         return $values;
     }
 
+    /**
+     * 
+     *
+     * @param array $options
+     * @return array
+     */
+    static public function getOptionsHTMLData(array $options): array
+    {
+        $cssRules = [];
+        $cssCode = '';
+        $updates = [];
+
+        $walkOptions = function ($options) use (&$cssRules, &$cssCode, &$updates, &$walkOptions) {
+            foreach ($options as $option) {
+                if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
+                    $value = isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value']) : $option->details['value']) : null;
+                    $optionType = $option->type;
+                    if ($optionType === 'cssCode') {
+                        $cssCode .= $value;
+                    } else {
+                        if (strlen($value) > 0) {
+                            if ($optionType === 'image') {
+                                $updateKey = md5('asset') . md5($value);
+                                $updates[$updateKey] = ['asset', $value];
+                                $value = $updateKey;
+                            } elseif ($optionType === 'css' || $optionType === 'cssBackground') {
+                                if (strpos($value, 'url') !== false) {
+                                    $temp = json_decode($value, true);
+                                    if (is_array($temp)) {
+                                        $hasChange = false;
+                                        foreach ($temp as $_key => $_value) {
+                                            $matches = [];
+                                            preg_match_all('/url\((.*?)\)/', $_value, $matches);
+                                            if (!empty($matches[1])) {
+                                                $temp2 = array_unique($matches[1]);
+                                                foreach ($temp2 as $_value2) {
+                                                    $updateKey = md5('asset') .  md5($_value2);
+                                                    $temp[$_key] = str_replace($_value2, $updateKey, $temp[$_key]);
+                                                    $updates[$updateKey] = ['asset', $_value2];
+                                                }
+                                                $hasChange = true;
+                                            }
+                                        }
+                                        if ($hasChange) {
+                                            $value = json_encode($temp);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (isset($option->details['cssOutput'])) {
+                            foreach ($option->details['cssOutput'] as $outputDefinition) {
+                                if (is_array($outputDefinition)) {
+                                    if (isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
+                                        $selector = $outputDefinition[1];
+                                        $selectorVariants = ['', '', ''];
+                                        if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
+                                            $temp = isset($value[0]) ? json_decode($value, true) : [];
+                                            if (is_array($temp)) {
+                                                foreach ($temp as $key => $_value) {
+                                                    $pseudo = substr($key, -6);
+                                                    if ($pseudo === ':hover') {
+                                                        $selectorVariants[1] .= substr($key, 0, -6) . ':' . $_value . ';';
+                                                    } else if ($pseudo === 'active') { // optimization
+                                                        if (substr($key, -7) === ':active') {
+                                                            $selectorVariants[2] .= substr($key, 0, -7) . ':' . $_value . ';';
+                                                        } else {
+                                                            $selectorVariants[0] .= $key . ':' . $_value . ';';
+                                                        }
+                                                    } else {
+                                                        $selectorVariants[0] .= $key . ':' . $_value . ';';
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if ($selectorVariants[0] !== '') {
+                                            if (!isset($cssRules[$selector])) {
+                                                $cssRules[$selector] = '';
+                                            }
+                                            $cssRules[$selector] .= $selectorVariants[0];
+                                        }
+                                        if ($selectorVariants[1] !== '') {
+                                            if (!isset($cssRules[$selector . ':hover'])) {
+                                                $cssRules[$selector . ':hover'] = '';
+                                            }
+                                            $cssRules[$selector . ':hover'] .= $selectorVariants[1];
+                                        }
+                                        if ($selectorVariants[2] !== '') {
+                                            if (!isset($cssRules[$selector . ':active'])) {
+                                                $cssRules[$selector . ':active'] = '';
+                                            }
+                                            $cssRules[$selector . ':active'] .= $selectorVariants[2];
+                                        }
+                                    } elseif (isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'rule') {
+                                        $selector = $outputDefinition[1];
+                                        if (!isset($cssRules[$selector])) {
+                                            $cssRules[$selector] = '';
+                                        }
+                                        $cssRules[$selector] .= $outputDefinition[2];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } elseif ($option instanceof \BearCMS\Themes\Theme\Options\Group) {
+                    $walkOptions($option->getList());
+                }
+            }
+        };
+        $walkOptions($options);
+
+        $style = '';
+        foreach ($cssRules as $key => $value) {
+            $style .= $key . '{' . $value . '}';
+        }
+        $linkTags = [];
+        $applyFontNames = function ($text) use (&$updates, &$linkTags) {
+            $webSafeFonts = [
+                'Arial' => 'Arial,Helvetica,sans-serif',
+                'Arial Black' => '"Arial Black",Gadget,sans-serif',
+                'Comic Sans' => '"Comic Sans MS",cursive,sans-serif',
+                'Courier' => '"Courier New",Courier,monospace',
+                'Georgia' => 'Georgia,serif',
+                'Impact' => 'Impact,Charcoal,sans-serif',
+                'Lucida' => '"Lucida Sans Unicode","Lucida Grande",sans-serif',
+                'Lucida Console' => '"Lucida Console",Monaco,monospace',
+                'Palatino' => '"Palatino Linotype","Book Antiqua",Palatino,serif',
+                'Tahoma' => 'Tahoma,Geneva,sans-serif',
+                'Times New Roman' => '"Times New Roman",Times,serif',
+                'Trebuchet' => '"Trebuchet MS",Helvetica,sans-serif',
+                'Verdana' => 'Verdana,Geneva,sans-serif'
+            ];
+
+            $matches = [];
+            preg_match_all('/font\-family\:(.*?);/', $text, $matches);
+            foreach ($matches[0] as $i => $match) {
+                $fontName = $matches[1][$i];
+                if (isset($webSafeFonts[$fontName])) {
+                    $text = str_replace($match, 'font-family:' . $webSafeFonts[$fontName] . ';', $text);
+                } elseif (strpos($fontName, 'googlefonts:') === 0) {
+                    $googleFontName = substr($fontName, strlen('googlefonts:'));
+                    $text = str_replace($match, 'font-family:\'' . $googleFontName . '\';', $text);
+                    $updateKey = md5('googlefont') . md5($googleFontName);
+                    if (!isset($updates[$updateKey])) {
+                        $updates[$updateKey] = ['googlefont', $googleFontName];
+                        $linkTags[] = '<link href="' . htmlentities($updateKey) . '" rel="stylesheet" type="text/css">';
+                    }
+                }
+            }
+            return $text;
+        };
+        $style = $applyFontNames($style);
+
+        $cssCode = trim($cssCode); // Positioned in different style tag just in case it's invalid
+
+        if (!empty($linkTags) || $style !== '' || $cssCode !== '') {
+            $html = '<html><head>' . implode('', $linkTags) . '<style>' . $style . '</style>' . ($cssCode !== '' ? '<style>' . $cssCode . '</style>' : '') . '</head></html>';
+        } else {
+            $html = '';
+        }
+        return [
+            'html' => $html,
+            'updates' => $updates
+        ];
+    }
+
+    /**
+     * 
+     *
+     * @param array $data
+     * @return string
+     */
+    static public function processOptionsHTMLData(array $data): string
+    {
+        $html = $data['html'];
+        $updates = $data['updates'];
+        if (!empty($updates)) {
+            $app = App::get();
+            $search = [];
+            $replace = [];
+            foreach ($updates as $updateKey => $updateData) {
+                if ($updateData[0] === 'asset') {
+                    $filename = Internal2::$data2->getRealFilename($updateData[1]);
+                    if ($filename !== null) {
+                        $url = $app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
+                        $search[] = $updateKey;
+                        $replace[] = $url;
+                    }
+                } elseif ($updateData[0] === 'googlefont') {
+                    $url = $app->googleFontsEmbed->getURL($updateData[1]);
+                    $search[] = $updateKey;
+                    $replace[] = htmlentities($url);
+                }
+            }
+            $html = str_replace($search, $replace, $html);
+        }
+        return $html;
+    }
 }

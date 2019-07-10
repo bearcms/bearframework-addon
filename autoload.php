@@ -22,6 +22,7 @@ BearFramework\Addons::register('bearcms/bearframework-addon', __DIR__, [
         'ivopetkov/encryption-bearframework-addon',
         'ivopetkov/notifications-bearframework-addon',
         'ivopetkov/client-packages-bearframework-addon',
-        'ivopetkov/form-elements-bearframework-addon'
+        'ivopetkov/form-elements-bearframework-addon',
+        'ivopetkov/google-fonts-embed-bearframework-addon'
     ]
 ]);

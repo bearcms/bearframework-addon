@@ -1,7 +1,10 @@
 {
     "name": "bearcms/bearframework-addon",
     "description": "Bear CMS addon for Bear Framework",
-    "keywords": ["Bear CMS", "Bear Framework addon"],
+    "keywords": [
+        "Bear CMS",
+        "Bear Framework addon"
+    ],
     "homepage": "https://bearcms.com/",
     "license": "MIT",
     "support": {
@@ -29,7 +32,8 @@
         "ivopetkov/encryption-bearframework-addon": "0.1.*",
         "ivopetkov/notifications-bearframework-addon": "0.3.*",
         "ivopetkov/client-packages-bearframework-addon": "0.2.*",
-        "ivopetkov/form-elements-bearframework-addon": "0.2.*"
+        "ivopetkov/form-elements-bearframework-addon": "0.2.*",
+        "ivopetkov/google-fonts-embed-bearframework-addon": "0.1.*"
     },
     "require-dev": {
         "bearframework/addon-tests": "0.3.*",
@@ -37,7 +41,9 @@
         "ivopetkov/docs-generator": "0.2.*"
     },
     "autoload": {
-        "files": ["autoload.php"]
+        "files": [
+            "autoload.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
