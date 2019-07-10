@@ -65,7 +65,7 @@ if ($list->count() > 0) {
     foreach ($list as $blogPost) {
         $counter++;
         $title = strlen($blogPost->title) > 0 ? $blogPost->title : 'Unknown';
-        $url = $app->request->base . Config::$blogPagesPathPrefix . $blogPost->slug . '/';
+        $url = $app->urls->get(Config::$blogPagesPathPrefix . $blogPost->slug . '/');
         $publishedTime = $blogPost->publishedTime;
 
         $content .= '<div class="bearcms-blog-posts-element-post">';
