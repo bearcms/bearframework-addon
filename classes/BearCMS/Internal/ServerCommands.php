@@ -159,11 +159,11 @@ class ServerCommands
      * @param array $data
      * @return string
      */
-//    static function appAssetUrl(array $data): string
-//    {
-//        $app = App::get();
-//        return $app->assets->getURL($app->config->appDir . '/' . $data['key'], $data['options']);
-//    }
+    //    static function appAssetUrl(array $data): string
+    //    {
+    //        $app = App::get();
+    //        return $app->assets->getURL($app->config->appDir . '/' . $data['key'], $data['options']);
+    //    }
 
     /**
      * 
@@ -282,7 +282,7 @@ class ServerCommands
         $result = [];
         $app = App::get();
 
-        $validateKey = function($key) {
+        $validateKey = function ($key) {
             if (strpos($key, 'bearcms/') !== 0 && strpos($key, '.temp/bearcms/') !== 0 && strpos($key, '.recyclebin/bearcms/') !== 0) {
                 throw new \Exception('The key ' . $key . ' is forbidden!');
             }
@@ -488,7 +488,7 @@ class ServerCommands
         $app = App::get();
         $prefix = 'bearcms/files/custom/';
         $result = $app->data->getList()
-                ->filterBy('key', $prefix, 'startWith');
+            ->filterBy('key', $prefix, 'startWith');
         $temp = [];
         foreach ($result as $item) {
             $key = $item->key;
@@ -831,4 +831,14 @@ class ServerCommands
         }
     }
 
+    /**
+     * 
+     * @param array $data
+     * @return string
+     */
+    static function getGoogleFontURL(array $data): string
+    {
+        $app = App::get();
+        return $app->googleFontsEmbed->getURL($data['name']);
+    }
 }

@@ -241,6 +241,7 @@ class Server
         $clientData['flags'] = json_encode([
             'sbpc', // allow comments in blog posts
             'gl3a', // has files support
+            'jzk3ns', // has google fonts embed support
         ]);
         $data['clientData'] = json_encode($clientData, JSON_UNESCAPED_UNICODE);
 
