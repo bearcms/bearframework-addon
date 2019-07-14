@@ -49,7 +49,7 @@ class ElementsHelper
      */
     static function updateComponentContextAttributes(\IvoPetkov\HTMLServerComponent $component): void
     {
-        $getUpdatedHTMLUnit = function($value) {
+        $getUpdatedHTMLUnit = function ($value) {
             if (strlen($value) > 0) {
                 if (is_numeric($value)) {
                     $value .= 'px';
@@ -84,32 +84,32 @@ class ElementsHelper
         }
 
         // Update canEdit
-//        if (strlen($component->canEdit) > 0) {
-//            if ($component->canEdit !== 'true') {
-//                $component->canEdit = '';
-//            }
-//        }
-//        if ((string) $component->canEdit === '') {
-//            $component->canEdit = 'true';
-//        }
+        //        if (strlen($component->canEdit) > 0) {
+        //            if ($component->canEdit !== 'true') {
+        //                $component->canEdit = '';
+        //            }
+        //        }
+        //        if ((string) $component->canEdit === '') {
+        //            $component->canEdit = 'true';
+        //        }
         // Update canMove
-//        if (strlen($component->canMove) > 0) {
-//            if ($component->canMove !== 'true') {
-//                $component->canMove = '';
-//            }
-//        }
-//        if ((string) $component->canMove === '') {
-//            $component->canMove = 'true';
-//        }
+        //        if (strlen($component->canMove) > 0) {
+        //            if ($component->canMove !== 'true') {
+        //                $component->canMove = '';
+        //            }
+        //        }
+        //        if ((string) $component->canMove === '') {
+        //            $component->canMove = 'true';
+        //        }
         // Update canDelete
-//        if (strlen($component->canDelete) > 0) {
-//            if ($component->canDelete !== 'true') {
-//                $component->canDelete = '';
-//            }
-//        }
-//        if ((string) $component->canDelete === '') {
-//            $component->canDelete = 'true';
-//        }
+        //        if (strlen($component->canDelete) > 0) {
+        //            if ($component->canDelete !== 'true') {
+        //                $component->canDelete = '';
+        //            }
+        //        }
+        //        if ((string) $component->canDelete === '') {
+        //            $component->canDelete = 'true';
+        //        }
     }
 
     /**
@@ -123,9 +123,9 @@ class ElementsHelper
         $result['width'] = $component->width;
         $result['spacing'] = $component->spacing;
         $result['color'] = $component->color;
-//        $result['canEdit'] = $component->canEdit === 'true';
-//        $result['canMove'] = $component->canMove === 'true';
-//        $result['canDelete'] = $component->canDelete === 'true';
+        //        $result['canEdit'] = $component->canEdit === 'true';
+        //        $result['canMove'] = $component->canMove === 'true';
+        //        $result['canDelete'] = $component->canDelete === 'true';
 
         $otherAttributes = [];
         $attributesToSkip = ['src', 'id', 'editable', 'width', 'spacing', 'color', 'group'];
@@ -204,10 +204,11 @@ class ElementsHelper
     static function decodeElementRawData(string $data): ?array
     {
         $data = json_decode($data, true);
-        if (is_array($data) &&
-                isset($data['id']) && is_string($data['id']) && strlen($data['id']) > 0 &&
-                isset($data['type']) && is_string($data['type']) && strlen($data['type']) > 0 &&
-                isset($data['data']) && is_array($data['data'])
+        if (
+            is_array($data) &&
+            isset($data['id']) && is_string($data['id']) && strlen($data['id']) > 0 &&
+            isset($data['type']) && is_string($data['type']) && strlen($data['type']) > 0 &&
+            isset($data['data']) && is_array($data['data'])
         ) {
             return $data;
         }
@@ -230,14 +231,14 @@ class ElementsHelper
         }
         $componentName = array_search($elementData['type'], self::$elementsTypesCodes);
         return '<component'
-                . ' src="' . ($componentName === false ? 'bearcms-missing-element' : $componentName) . '"'
-                . ' editable="' . ($editable ? 'true' : 'false') . '"'
-                . ' bearcms-internal-attribute-raw-data="' . htmlentities($rawData) . '"'
-                . ' bearcms-internal-attribute-in-elements-container="' . ((int) $contextData['inElementsContainer'] === 1 ? 'true' : 'false') . '"'
-                . ' width="' . $contextData['width'] . '"'
-                . ' spacing="' . $contextData['spacing'] . '"'
-                . ' color="' . $contextData['color'] . '"'
-                . '/>';
+            . ' src="' . ($componentName === false ? 'bearcms-missing-element' : $componentName) . '"'
+            . ' editable="' . ($editable ? 'true' : 'false') . '"'
+            . ' bearcms-internal-attribute-raw-data="' . htmlentities($rawData) . '"'
+            . ' bearcms-internal-attribute-in-elements-container="' . ((int) $contextData['inElementsContainer'] === 1 ? 'true' : 'false') . '"'
+            . ' width="' . $contextData['width'] . '"'
+            . ' spacing="' . $contextData['spacing'] . '"'
+            . ' color="' . $contextData['color'] . '"'
+            . '/>';
     }
 
     /**
@@ -324,14 +325,14 @@ class ElementsHelper
             }
         }
         $content = '<html>'
-                . '<head>'
-                . ($inContainer && ($responsive || $editable) ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
-                . '<style>' . $styles . '</style>'
-                . '</head>'
-                . '<body>'
-                . ($inContainer ? '<div' . $attributes . '>' . $content . '</div>' : $content)
-                . '</body>'
-                . '</html>';
+            . '<head>'
+            . ($inContainer && ($responsive || $editable) ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
+            . '<style>' . $styles . '</style>'
+            . '</head>'
+            . '<body>'
+            . ($inContainer ? '<div' . $attributes . '>' . $content . '</div>' : $content)
+            . '</body>'
+            . '</html>';
         return '<component src="data:base64,' . base64_encode($content) . '" />';
     }
 
@@ -357,7 +358,7 @@ class ElementsHelper
 
         $content = '';
 
-        $getElementsContent = function($location) use ($elementContainerData, $contextData, $editable) {
+        $getElementsContent = function ($location) use ($elementContainerData, $contextData, $editable) {
             $content = '';
             $elements = $elementContainerData['data']['elements'][$location];
             if (!empty($elements)) {
@@ -410,14 +411,14 @@ class ElementsHelper
             }
         }
         $content = '<html>'
-                . '<head>'
-                . ($inContainer && ($responsive || $editable) ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
-                . '<style>' . $styles . '</style>'
-                . '</head>'
-                . '<body>'
-                . ($inContainer ? '<div' . $attributes . '>' . $content . '</div>' : $content)
-                . '</body>'
-                . '</html>';
+            . '<head>'
+            . ($inContainer && ($responsive || $editable) ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
+            . '<style>' . $styles . '</style>'
+            . '</head>'
+            . '<body>'
+            . ($inContainer ? '<div' . $attributes . '>' . $content . '</div>' : $content)
+            . '</body>'
+            . '</html>';
         return '<component src="data:base64,' . base64_encode($content) . '" />';
     }
 
@@ -527,5 +528,4 @@ class ElementsHelper
         }
         return $html;
     }
-
 }
