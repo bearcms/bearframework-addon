@@ -356,6 +356,10 @@ class ElementsHelper
         $responsive = isset($elementContainerData['data']['responsive']) ? (int) $elementContainerData['data']['responsive'] > 0 : false;
         $spacing = $contextData['spacing'];
 
+        if (substr($width, -1) === '%' && $width !== '100%') {
+            $width = 'calc(' . $width . ' - ' . $spacing . '/2)';
+        }
+
         $content = '';
 
         $getElementsContent = function ($location) use ($elementContainerData, $contextData, $editable) {
@@ -386,15 +390,13 @@ class ElementsHelper
 
         $styles = '';
         $styles .= '.' . $className . '>div:empty{display:none;}';
-        $styles .= '.' . $className . '>div:first-child{max-width:100%;' . ($position === 'left' ? 'margin-right:' . $spacing . ';margin-left:0;' : 'margin-left:' . $spacing . ';margin-right:0;') . 'float:' . $position . ';width:calc(' . $width . ' - ' . $spacing . '/2);}';
+        $styles .= '.' . $className . '>div:first-child{max-width:100%;' . ($position === 'left' ? 'margin-right:' . $spacing . ';margin-left:0;' : 'margin-left:' . $spacing . ';margin-right:0;') . 'float:' . $position . ';width:' . $width . ';}';
         $styles .= '.' . $className . '>div:last-child{display:block;}';
         $styles .= '.' . $className . '[data-rvr-editable]>div:empty{display:block;}';
         $styles .= '.' . $className . '[data-rvr-editable]>div:first-child{min-width:24px;}';
-        if ($responsive) {
-            $styles .= '.' . $className . '[data-srvri-rows="1"]>div{display:block;max-width:100%;width:100%;margin-' . ($position === 'left' ? 'right' : 'left') . ':0;float:none;}';
-            $styles .= '.' . $className . '[data-srvri-rows="1"]>div:not(:empty):not(:last-child){margin-bottom:' . $spacing . ';}';
-            $styles .= '.' . $className . '[data-rvr-editable][data-srvri-rows="1"]>div:not(:last-child){margin-bottom:' . $spacing . ';}';
-        }
+        $styles .= '.' . $className . '[data-srvri-rows="1"]>div{display:block;max-width:100%;width:100%;margin-' . ($position === 'left' ? 'right' : 'left') . ':0;float:none;}';
+        $styles .= '.' . $className . '[data-srvri-rows="1"]>div:not(:empty):not(:last-child){margin-bottom:' . $spacing . ';}';
+        $styles .= '.' . $className . '[data-rvr-editable][data-srvri-rows="1"]>div:not(:last-child){margin-bottom:' . $spacing . ';}';
         $styles .= '.' . $className . ':after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
 
         if ($inContainer) {
@@ -406,14 +408,20 @@ class ElementsHelper
             }
             $attributes .= ' class="bearcms-elements-element-container bearcms-elements-floating-box ' . $className . '"';
             $attributes .= ' data-srvri="t3 s' . $spacing . '"';
-            if ($responsive || $editable) {
-                $attributes .= ' data-responsive-attributes="w<=500=>data-srvri-rows=1"';
-            }
+            $attributes .= ' data-responsive-attributes="f(cmsefbr' . $className . ')=>data-srvri-rows=1"';
         }
         $content = '<html>'
             . '<head>'
-            . ($inContainer && ($responsive || $editable) ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
             . '<style>' . $styles . '</style>'
+            . '<script>cmsefbr' . $className . '=function(e,d){' // element, details
+            . ($responsive ? 'if(d.width<=500){return true}' : '')
+            . 'e.firstChild.style.setProperty("width","' . $width . '");'
+            . 'var w=e.firstChild.getBoundingClientRect().width;'
+            . 'e.firstChild.style.removeProperty("width");'
+            . 'if(w===d.width){return true}' // if first children width is equal to containwe width then make vertical
+            . 'return false'
+            . '};</script>'
+            . ($inContainer ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
             . '</head>'
             . '<body>'
             . ($inContainer ? '<div' . $attributes . '>' . $content . '</div>' : $content)
