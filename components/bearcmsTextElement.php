@@ -7,7 +7,13 @@
  */
 
 $content = '<div class="bearcms-text-element">' . $component->text . '</div>';
-?><html>
-    <head><style>.bearcms-text-element{word-wrap:break-word;}</style></head>
-    <body><?= $content ?></body>
-</html>
+
+echo '<html>';
+echo '<head><style>';
+echo '.bearcms-text-element{word-wrap:break-word;}';
+echo '.bearcms-text-element:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
+echo '</style></head>';
+echo '<body>';
+echo $content;
+echo '</body>';
+echo '</html>';
