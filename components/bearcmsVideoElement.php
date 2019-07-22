@@ -134,7 +134,7 @@ if (strlen($component->url) > 0) {
                 '<div style="padding:20px;box-sizing:border-box;background-color:' . ($hasImage ? 'rgba(0,0,0,0.7)' : '#111') . ';width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;">' .
                 '<div style="text-align:center;color:#fff;font-size:16px;line-height:150%;font-family:Arial,Helvetica,sans-serif;">' . htmlspecialchars($videoTitle) . '</div>' .
                 '<div style="text-align:center;color:#fff;font-size:13px;line-height:150%;font-family:Arial,Helvetica,sans-serif;padding-top:15px;">' . htmlspecialchars(sprintf(__('bearcms.elements.video.by %s'), $videoAuthor)) . '</div>' .
-                '<a href="' . htmlentities($videoUrl) . '" rel="nofollow noopener" target="_blank" style="text-decoration:none;margin-top:25px;font-size:14px;font-family:Arial,Helvetica,sans-serif;display:inline-block;border-radius:2px;background-color:#fff;color:#111;padding:15px 20px;">' . htmlspecialchars(sprintf(__('bearcms.elements.video.Play on %s'), $videoProvider)) . '</a>' .
+                '<a href="' . htmlentities($videoUrl) . '" rel="nofollow noopener" target="_blank" style="text-decoration:none;margin-top:25px;font-size:14px;line-height:120%;font-family:Arial,Helvetica,sans-serif;display:inline-block;border-radius:2px;background-color:#fff;color:#111;padding:15px 20px;">' . htmlspecialchars(sprintf(__('bearcms.elements.video.Play on %s'), $videoProvider)) . '</a>' .
                 '</div>' .
                 '</div>';
         } else {
