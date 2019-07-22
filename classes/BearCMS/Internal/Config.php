@@ -40,6 +40,7 @@ class Config
     static $configManager = null;
     static $addDefaultThemes = true;
     static $appSpecificServerData = [];
+    static $videoPrivateEmbed = false;
 
     /**
      * 
@@ -164,6 +165,9 @@ class Config
                 throw new \Exception('The internalAppSpecificServerData value must be of type array!');
             }
             self::$appSpecificServerData = $data['internalAppSpecificServerData'];
+        }
+        if (isset($data['internalVideoPrivateEmbed'])) {
+            self::$videoPrivateEmbed = (int) $data['internalVideoPrivateEmbed'];
         }
     }
 

@@ -15,4 +15,6 @@ return [
     'bearcms.navigation.home' => 'Начало',
     'bearcms.elements.LoadingMore' => 'Загрузка контента. Пожалуйста, подождите.',
     'bearcms.users.Administrator' => 'Администратор',
+    'bearcms.elements.video.by %s' => 'от %s',
+    'bearcms.elements.video.Play on %s' => 'Play on %s',
 ];
