@@ -480,7 +480,7 @@ class BearCMS
                     Internal\Themes::$elementsOptions['navigation'] = function($context, $idPrefix, $parentSelector) {
                         $groupNavigation = $context->addGroup(__("bearcms.themes.options.Navigation"));
                         $groupNavigation->addOption($idPrefix . "NavigationCSS", "css", '', [
-                            "cssTypes" => ["cssBorder", "cssBackground"],
+                            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBorder", "cssBackground"],
                             "cssOutput" => [
                                 ["selector", $parentSelector . " .bearcms-navigation-element"]
                             ]
