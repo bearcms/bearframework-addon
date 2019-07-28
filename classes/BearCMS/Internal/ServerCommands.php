@@ -543,7 +543,7 @@ class ServerCommands
         $bodyElement = $domDocument->querySelector('body');
         $content = $bodyElement->innerHTML;
         $bodyElement->parentNode->removeChild($bodyElement);
-        $allButBody = $domDocument->saveHTML();
+        $allButBody = $app->clientPackages->process($domDocument->saveHTML());
         $startPosition = strpos($value, '{bearcms-replace-content-' . $data['id'] . '-');
         if ($startPosition === false) {
             return;
