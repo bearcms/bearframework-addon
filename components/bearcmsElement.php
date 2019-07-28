@@ -15,6 +15,12 @@ $typeCode = $component->getAttribute('bearcms-internal-attribute-type');
 $containerType = $component->getAttribute('bearcms-internal-attribute-container');
 $inElementsContainer = $component->getAttribute('bearcms-internal-attribute-in-elements-container') === 'true';
 
+$outputType = (string) $component->getAttribute('output-type');
+$outputType = isset($outputType[0]) ? $outputType : 'full-html';
+if ($outputType !== 'full-html') {
+    $editable = false;
+}
+
 if ($editable) {
     $componentContextData = Internal\ElementsHelper::getComponentContextData($component);
 }
@@ -42,7 +48,7 @@ if (!$isMissing) {
             }
         }
         if (isset($options['updateComponentFromData'])) {
-            $component = call_user_func($options['updateComponentFromData'], clone($component), $data);
+            $component = call_user_func($options['updateComponentFromData'], clone ($component), $data);
         }
 
         unset($rawData);
@@ -50,7 +56,7 @@ if (!$isMissing) {
         unset($options);
     } else {
         if (strlen($component->id) > 0 && $component->editable === 'true') {
-            $getRawDataFromComponent = function($component) {
+            $getRawDataFromComponent = function ($component) {
                 $componentName = strlen($component->src) > 0 ? $component->src : ($component->tagName !== 'component' ? $component->tagName : null);
                 $options = Internal\ElementsHelper::$elementsTypesOptions[$componentName];
                 $data = [];
@@ -68,7 +74,7 @@ if (!$isMissing) {
                     }
                 }
                 if (isset($options['updateDataFromComponent'])) {
-                    $data = call_user_func($options['updateDataFromComponent'], clone($component), $data);
+                    $data = call_user_func($options['updateDataFromComponent'], clone ($component), $data);
                 }
                 return json_encode(['id' => $component->id, 'type' => Internal\ElementsHelper::$elementsTypesCodes[$componentName], 'data' => $data]);
             };
@@ -105,7 +111,9 @@ if ($containerType === 'none') {
         $htmlElementID = 'brelc' . md5($component->id);
         $attributes .= ' id="' . $htmlElementID . '"';
     }
-    $attributes .= ' class="bearcms-elements-element-container"';
+    if ($outputType === 'full-html') {
+        $attributes .= ' class="bearcms-elements-element-container"';
+    }
     if ($editable && !$inElementsContainer) {
         echo '<div>';
     }

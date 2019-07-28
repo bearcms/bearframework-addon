@@ -86,7 +86,7 @@ class Controller
             $originalFilename = strtolower($file->value);
             $pathinfo = pathinfo($originalFilename);
             $fileExtension = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
-            $tempFilename = md5('fileupload' . uniqid()) . (isset($fileExtension{0}) ? '.' . $fileExtension : '');
+            $tempFilename = md5('fileupload' . uniqid()) . (isset($fileExtension[0]) ? '.' . $fileExtension : '');
             $filename = $app->data->getFilename('.temp/bearcms/files/' . $tempFilename);
             $pathinfo = pathinfo($filename);
             if (isset($pathinfo['dirname'])) {
@@ -207,7 +207,7 @@ class Controller
         $counter = 0;
         foreach ($blogPosts as $blogPost) {
             $blogPostUrl = $app->urls->get(Config::$blogPagesPathPrefix . $blogPost->slug . '/');
-            $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPost->id . '"/>');
+            $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPost->id . '" output-type="simple-html"/>');
             $domDocument = new HTML5DOMDocument();
             $domDocument->loadHTML($blogPostContent, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
             $contentElementsContainer = $domDocument->querySelector('body')->firstChild;

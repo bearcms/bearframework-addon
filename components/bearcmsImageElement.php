@@ -11,6 +11,9 @@ use BearCMS\Internal2;
 
 $app = App::get();
 
+$outputType = (string) $component->getAttribute('output-type');
+$outputType = isset($outputType[0]) ? $outputType : 'full-html';
+
 $onClick = 'none';
 if ($component->onClick === 'fullscreen') {
     $onClick = 'fullscreen';
@@ -34,7 +37,7 @@ $attributes = '';
 $attributes .= ' onClick="' . $onClick . '"';
 
 $class = (string) $component->class;
-$classAttributeValue = isset($class{0}) ? ' ' . htmlentities($class) : '';
+$classAttributeValue = isset($class[0]) ? ' ' . htmlentities($class) : '';
 
 if (strlen($component->loadingBackground) > 0) {
     $attributes .= ' imageLoadingBackground="' . $component->loadingBackground . '"';
@@ -60,24 +63,44 @@ if (strlen($width) === 0) {
     }
 }
 
-$content = '<div class="bearcms-image-element' . $classAttributeValue . '">';
-if (isset($innerContainerStyle{0})) {
-    $content .= '<div style="' . $innerContainerStyle . '">';
-}
-if (isset($filename{0})) {
-    $newFilename = Internal2::$data2->getRealFilename($filename);
-    if ($newFilename !== null) {
-        $filename = $newFilename;
+$fixFilename = function ($filename): ?string {
+    if (isset($filename[0])) {
+        $newFilename = Internal2::$data2->getRealFilename($filename);
+        if ($newFilename !== null) {
+            $filename = $newFilename;
+        }
+        return $filename;
     }
-    $content .= '<component src="image-gallery" columnsCount="1"' . $attributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
-    $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' ? ' url="' . htmlentities($component->url) . '"' : '') . ' title="' . htmlentities($component->title) . '" filename="' . $filename . '"/>';
-    $content .= '</component>';
-}
-if (isset($innerContainerStyle{0})) {
+    return null;
+};
+
+$content = '';
+if ($outputType === 'full-html') {
+    $content = '<div class="bearcms-image-element' . $classAttributeValue . '">';
+    if (isset($innerContainerStyle[0])) {
+        $content .= '<div style="' . $innerContainerStyle . '">';
+    }
+    $fixedFilename = $fixFilename($filename);
+    if ($fixedFilename !== null) {
+        $content .= '<component src="image-gallery" columnsCount="1"' . $attributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
+        $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' ? ' url="' . htmlentities($component->url) . '"' : '') . ' title="' . htmlentities($component->title) . '" filename="' . $fixedFilename . '"/>';
+        $content .= '</component>';
+    }
+    if (isset($innerContainerStyle[0])) {
+        $content .= '</div>';
+    }
     $content .= '</div>';
+} elseif ($outputType === 'simple-html') {
+    $fixedFilename = $fixFilename($filename);
+    if ($fixedFilename !== null) {
+        $content = '<img src="' . htmlentities($app->assets->getURL($fixedFilename, ['cacheMaxAge' => 999999999])) . '">';
+    }
 }
-$content .= '</div>';
-?><html>
-    <head><style>.bearcms-image-element, .bearcms-image-element *{font-size:0;line-height:0;}</style></head>
-    <body><?= $content ?></body>
-</html>
+echo '<html>';
+if ($outputType === 'full-html') {
+    echo '<head><style>.bearcms-image-element, .bearcms-image-element *{font-size:0;line-height:0;}</style></head>';
+}
+echo '<body>';
+echo $content;
+echo '</body>';
+echo '</html>';

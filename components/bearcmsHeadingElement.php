@@ -14,6 +14,9 @@ if (strlen($component->size) > 0) {
     }
 }
 
+$outputType = (string) $component->getAttribute('output-type');
+$outputType = isset($outputType[0]) ? $outputType : 'full-html';
+
 if ($size === 'large') {
     $tagName = 'h1';
     $className = 'bearcms-heading-element-large';
@@ -25,8 +28,14 @@ if ($size === 'large') {
     $className = 'bearcms-heading-element-small';
 }
 
-$content = '<' . $tagName . ' class="' . $className . '">' . htmlspecialchars($text) . '</' . $tagName . '>';
-?><html>
-    <head><style>.<?= $className ?>{word-wrap:break-word;}</style></head>
-    <body><?= $content ?></body>
-</html>
+$attributes = $outputType === 'full-html' ? ' class="' . $className . '"' : '';
+
+$content = '<' . $tagName . $attributes . '>' . htmlspecialchars($text) . '</' . $tagName . '>';
+echo '<html>';
+if ($outputType === 'full-html') {
+    echo '<head><style>.' . $className . '{word-wrap:break-word;}</style></head>';
+}
+echo '<body>';
+echo $content;
+echo '</body>';
+echo '</html>';

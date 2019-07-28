@@ -14,6 +14,9 @@ use BearCMS\Internal\Config;
 $app = App::get();
 $context = $app->contexts->get(__FILE__);
 
+$outputType = (string) $component->getAttribute('output-type');
+$outputType = isset($outputType[0]) ? $outputType : 'full-html';
+
 $width = (string) $component->width;
 $align = (string) $component->align;
 if ($align !== 'left' && $align !== 'center' && $align !== 'right') {
@@ -128,22 +131,27 @@ if (strlen($component->url) > 0) {
     }
 
     if ($videoExists) {
-        if (Config::$videoPrivateEmbed) {
-            $hasImage = strlen($videoImage) > 0;
-            $html = '<div style="width:100%;height:100%;' . ($hasImage ? 'background-image:url(' . $context->assets->getURL('assets/p/' . str_replace('://', '/', $videoImage), ['cacheMaxAge' => 86400 * 30]) . ');background-size:cover;background-position:center center;' : '') . '">' .
-                '<div style="padding:20px;box-sizing:border-box;background-color:' . ($hasImage ? 'rgba(0,0,0,0.7)' : '#111') . ';width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;">' .
-                '<div style="text-align:center;color:#fff;font-size:16px;line-height:150%;font-family:Arial,Helvetica,sans-serif;">' . htmlspecialchars($videoTitle) . '</div>' .
-                '<div style="text-align:center;color:#fff;font-size:13px;line-height:150%;font-family:Arial,Helvetica,sans-serif;padding-top:15px;">' . htmlspecialchars(sprintf(__('bearcms.elements.video.by %s'), $videoAuthor)) . '</div>' .
-                '<a href="' . htmlentities($videoUrl) . '" rel="nofollow noopener" target="_blank" style="text-decoration:none;margin-top:25px;font-size:14px;line-height:120%;font-family:Arial,Helvetica,sans-serif;display:inline-block;border-radius:2px;background-color:#fff;color:#111;padding:15px 20px;">' . htmlspecialchars(sprintf(__('bearcms.elements.video.Play on %s'), $videoProvider)) . '</a>' .
-                '</div>' .
-                '</div>';
+        if ($outputType === 'full-html') {
+            if (Config::$videoPrivateEmbed) {
+                $hasImage = strlen($videoImage) > 0;
+                $html = '<div style="width:100%;height:100%;' . ($hasImage ? 'background-image:url(' . $context->assets->getURL('assets/p/' . str_replace('://', '/', $videoImage), ['cacheMaxAge' => 86400 * 30]) . ');background-size:cover;background-position:center center;' : '') . '">' .
+                    '<div style="padding:20px;box-sizing:border-box;background-color:' . ($hasImage ? 'rgba(0,0,0,0.7)' : '#111') . ';width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;">' .
+                    '<div style="text-align:center;color:#fff;font-size:16px;line-height:150%;font-family:Arial,Helvetica,sans-serif;">' . htmlspecialchars($videoTitle) . '</div>' .
+                    '<div style="text-align:center;color:#fff;font-size:13px;line-height:150%;font-family:Arial,Helvetica,sans-serif;padding-top:15px;">' . htmlspecialchars(sprintf(__('bearcms.elements.video.by %s'), $videoAuthor)) . '</div>' .
+                    '<a href="' . htmlentities($videoUrl) . '" rel="nofollow noopener" target="_blank" style="text-decoration:none;margin-top:25px;font-size:14px;line-height:120%;font-family:Arial,Helvetica,sans-serif;display:inline-block;border-radius:2px;background-color:#fff;color:#111;padding:15px 20px;">' . htmlspecialchars(sprintf(__('bearcms.elements.video.Play on %s'), $videoProvider)) . '</a>' .
+                    '</div>' .
+                    '</div>';
+            } else {
+                $html = $videoHTML;
+            }
+            $addResponsivelyLazy = true;
+            $content = '<div style="position:absolute;top:0;left:0;width:100%;height:100%;">' . $html . '</div>';
+            $content = '<div class="responsively-lazy" style="padding-bottom:' . (1 / $videoAspectRatio * 100) . '%;" data-lazycontent="' . htmlentities($content) . '"></div>';
+            $content = '<div class="bearcms-video-element" style="font-size:0;">' . $innerContainerStartTag . $content . $innerContainerEndTag . '</div>';
         } else {
-            $html = $videoHTML;
+            // todo update video width
+            $content .= $videoHTML;
         }
-        $addResponsivelyLazy = true;
-        $content = '<div style="position:absolute;top:0;left:0;width:100%;height:100%;">' . $html . '</div>';
-        $content = '<div class="responsively-lazy" style="padding-bottom:' . (1 / $videoAspectRatio * 100) . '%;" data-lazycontent="' . htmlentities($content) . '"></div>';
-        $content = '<div class="bearcms-video-element" style="font-size:0;">' . $innerContainerStartTag . $content . $innerContainerEndTag . '</div>';
     } else {
         $content = '';
     }
@@ -153,12 +161,18 @@ if (strlen($component->url) > 0) {
     if ($newFilename !== null) {
         $filename = $newFilename;
     }
-    $content = '<div class="bearcms-video-element" style="font-size:0;">' . $innerContainerStartTag . '<video style="width:100%" controls>';
+    if ($outputType === 'full-html') {
+        $content = '<div class="bearcms-video-element" style="font-size:0;">' . $innerContainerStartTag;
+    }
+    $content .= '<video style="width:100%" controls>';
     $content .= '<source src="' . $app->assets->getURL($filename) . '" type="video/mp4">';
-    $content .= '</video>' . $innerContainerEndTag . '</div>';
+    $content .= '</video>';
+    if ($outputType === 'full-html') {
+        $content .= $innerContainerEndTag . '</div>';
+    }
 }
 echo '<html>';
-if ($addResponsivelyLazy) {
+if ($outputType === 'full-html' && $addResponsivelyLazy) {
     echo '<head><link rel="client-packages-embed" name="-bearcms-responsively-lazy"></head>';
 }
 echo '<body>' . $content . '</body>';

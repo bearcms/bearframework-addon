@@ -108,7 +108,7 @@ if ($pages !== null && $showHomeLink) {
 }
 
 $itemsHtml = (string) $component->innerHTML;
-if (isset($itemsHtml{0})) {
+if (isset($itemsHtml[0])) {
     $domDocument = new HTML5DOMDocument();
     $domDocument->loadHTML($itemsHtml, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
     $ulElements = $domDocument->querySelectorAll('ul');
@@ -141,7 +141,7 @@ if (isset($itemsHtml{0})) {
 }
 
 $content = '';
-if (isset($itemsHtml{0})) {
+if (isset($itemsHtml[0])) {
     $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';
 }
 ?><html>

@@ -991,18 +991,18 @@ class BearCMS
                                     }
                                     $content = '<html><head>';
                                     $title = isset($blogPost->titleTagContent) ? trim($blogPost->titleTagContent) : '';
-                                    if (!isset($title{0})) {
+                                    if (!isset($title[0])) {
                                         $title = isset($blogPost->title) ? trim($blogPost->title) : '';
                                     }
                                     $description = isset($blogPost->descriptionTagContent) ? trim($blogPost->descriptionTagContent) : '';
                                     $keywords = isset($blogPost->keywordsTagContent) ? trim($blogPost->keywordsTagContent) : '';
-                                    if (isset($title{0})) {
+                                    if (isset($title[0])) {
                                         $content .= '<title>' . htmlspecialchars($title) . '</title>';
                                     }
-                                    if (isset($description{0})) {
+                                    if (isset($description[0])) {
                                         $content .= '<meta name="description" content="' . htmlentities($description) . '"/>';
                                     }
-                                    if (isset($keywords{0})) {
+                                    if (isset($keywords[0])) {
                                         $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
                                     }
                                     $content .= '<style>'
@@ -1160,7 +1160,7 @@ class BearCMS
                                     $page = $this->app->bearCMS->data->pages->get($pageID);
                                     if ($page !== null) {
                                         $title = isset($page->titleTagContent) ? trim($page->titleTagContent) : '';
-                                        if (!isset($title{0})) {
+                                        if (!isset($title[0])) {
                                             $title = isset($page->name) ? trim($page->name) : '';
                                         }
                                         $description = isset($page->descriptionTagContent) ? trim($page->descriptionTagContent) : '';
@@ -1170,13 +1170,13 @@ class BearCMS
                                 }
                                 if ($found) {
                                     $content = '<html><head>';
-                                    if (isset($title{0})) {
+                                    if (isset($title[0])) {
                                         $content .= '<title>' . htmlspecialchars($title) . '</title>';
                                     }
-                                    if (isset($description{0})) {
+                                    if (isset($description[0])) {
                                         $content .= '<meta name="description" content="' . htmlentities($description) . '"/>';
                                     }
-                                    if (isset($keywords{0})) {
+                                    if (isset($keywords[0])) {
                                         $content .= '<meta name="keywords" content="' . htmlentities($keywords) . '"/>';
                                     }
                                     $content .= '</head><body>';
@@ -1422,7 +1422,7 @@ class BearCMS
             $h1Element = $document->querySelector('h1');
             if ($h1Element !== null) {
                 $innerHTML = $h1Element->innerHTML;
-                if (isset($innerHTML{0})) {
+                if (isset($innerHTML[0])) {
                     $title = $innerHTML;
                     $html .= '<title>' . $innerHTML . '</title>';
                 }
@@ -1517,7 +1517,7 @@ class BearCMS
             $html .= '<meta name="generator" content="Bear CMS (powered by Bear Framework)"/>';
         }
         $icon = $settings->icon;
-        if (isset($icon{0})) {
+        if (isset($icon[0])) {
             $baseUrl = $this->app->urls->get();
             $html .= '<link rel="apple-touch-icon-precomposed" sizes="180x180" href="' . htmlentities($baseUrl . '-link-rel-icon-180') . '">';
             $html .= '<link rel="apple-touch-icon-precomposed" sizes="64x64" href="' . htmlentities($baseUrl . '-link-rel-icon-64') . '">';

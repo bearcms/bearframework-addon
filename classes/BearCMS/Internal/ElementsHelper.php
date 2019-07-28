@@ -220,10 +220,11 @@ class ElementsHelper
      * @param string $rawData
      * @param bool $editable
      * @param array $contextData
+     * @param string $outputType
      * @return string
      * @throws \Exception
      */
-    static function renderElement(string $rawData, bool $editable, array $contextData): string
+    static function renderElement(string $rawData, bool $editable, array $contextData, string $outputType = 'full-html'): string
     {
         $elementData = self::decodeElementRawData($rawData);
         if (!is_array($elementData)) {
@@ -238,6 +239,7 @@ class ElementsHelper
             . ' width="' . $contextData['width'] . '"'
             . ' spacing="' . $contextData['spacing'] . '"'
             . ' color="' . $contextData['color'] . '"'
+            . ' output-type="' . $outputType . '"'
             . '/>';
     }
 
@@ -247,9 +249,10 @@ class ElementsHelper
      * @param bool $editable
      * @param array $contextData
      * @param bool $inContainer
+     * @param string $outputType
      * @return string
      */
-    static function renderColumn(array $elementContainerData, bool $editable, array $contextData, bool $inContainer): string
+    static function renderColumn(array $elementContainerData, bool $editable, array $contextData, bool $inContainer, string $outputType = 'full-html'): string
     {
         $app = App::get();
         $context = $app->contexts->get(__FILE__);
@@ -259,7 +262,7 @@ class ElementsHelper
         $totalSize = array_sum($columnsSizes);
         $spacing = $contextData['spacing'];
 
-        $content = '';
+        $innerContent = '';
         $columnStyles = [];
         for ($i = 0; $i < $columnsCount; $i++) {
             $columnContent = '';
@@ -276,7 +279,7 @@ class ElementsHelper
                     foreach ($elementsInColumn as $elementInColumnContainerData) {
                         $elementInColumnRawData = $elementsInColumnRawData[$elementInColumnContainerData['id']];
                         if ($elementInColumnRawData !== null) {
-                            $columnContent .= self::renderElement($elementInColumnRawData, $editable, $elementsInColumnContextData);
+                            $columnContent .= self::renderElement($elementInColumnRawData, $editable, $elementsInColumnContextData, $outputType);
                         }
                     }
                 }
@@ -285,7 +288,11 @@ class ElementsHelper
             $columnWidth = rtrim(rtrim(number_format($columnsSizes[$i] / $totalSize * 100, 3, '.', ''), 0), '.') . '%';
             $columnStyle = 'flex:' . $columnsSizes[$i] . ' 0 auto;max-width:calc(' . $columnWidth . ' - (' . $spacing . '*' . ($columnsCount - 1) . '/' . $columnsCount . '));margin-right:' . ($columnsCount > $i + 1 ? $spacing : '0') . ';';
             $columnStyles[$i] = $columnStyle;
-            $content .= '<div class="bearcms-elements-columns-column">' . $columnContent . '</div>';
+            if ($outputType === 'full-html') {
+                $innerContent .= '<div class="bearcms-elements-columns-column">' . $columnContent . '</div>';
+            } elseif ($outputType === 'simple-html') {
+                $innerContent .= '<div>' . $columnContent . '</div>';
+            }
         }
 
         $className = 'bre' . md5('column$' . (isset($elementContainerData['id']) ? $elementContainerData['id'] : uniqid()));
@@ -318,19 +325,23 @@ class ElementsHelper
                 $attributes .= ' id="' . $htmlElementID . '"';
                 ElementsHelper::$editorData[] = ['columns', $elementContainerData['id'], $contextData];
             }
-            $attributes .= ' class="bearcms-elements-element-container bearcms-elements-columns ' . $className . '"';
-            $attributes .= ' data-srvri="t2 s' . $spacing . '"';
-            if ($responsive || $editable) {
-                $attributes .= ' data-responsive-attributes="w<=500=>data-srvri-rows=1"';
+            if ($outputType === 'full-html') {
+                $attributes .= ' class="bearcms-elements-element-container bearcms-elements-columns ' . $className . '"';
+                $attributes .= ' data-srvri="t2 s' . $spacing . '"';
+                if ($responsive || $editable) {
+                    $attributes .= ' data-responsive-attributes="w<=500=>data-srvri-rows=1"';
+                }
             }
         }
-        $content = '<html>'
-            . '<head>'
-            . ($inContainer && ($responsive || $editable) ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
-            . '<style>' . $styles . '</style>'
-            . '</head>'
-            . '<body>'
-            . ($inContainer ? '<div' . $attributes . '>' . $content . '</div>' : $content)
+        $content = '<html>';
+        if ($outputType === 'full-html') {
+            $content .= '<head>'
+                . ($inContainer && ($responsive || $editable) ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
+                . '<style>' . $styles . '</style>'
+                . '</head>';
+        }
+        $content .= '<body>'
+            . ($inContainer ? '<div' . $attributes . '>' . $innerContent . '</div>' : $innerContent)
             . '</body>'
             . '</html>';
         return '<component src="data:base64,' . base64_encode($content) . '" />';
@@ -342,9 +353,10 @@ class ElementsHelper
      * @param bool $editable
      * @param array $contextData
      * @param bool $inContainer
+     * @param string $outputType
      * @return string
      */
-    static function renderFloatingBox(array $elementContainerData, bool $editable, array $contextData, bool $inContainer): string
+    static function renderFloatingBox(array $elementContainerData, bool $editable, array $contextData, bool $inContainer, string $outputType = 'full-html'): string
     {
         $app = App::get();
         $context = $app->contexts->get(__FILE__);
@@ -360,9 +372,7 @@ class ElementsHelper
             $width = 'calc(' . $width . ' - ' . $spacing . '/2)';
         }
 
-        $content = '';
-
-        $getElementsContent = function ($location) use ($elementContainerData, $contextData, $editable) {
+        $getElementsContent = function ($location) use ($elementContainerData, $contextData, $editable, $outputType) {
             $content = '';
             $elements = $elementContainerData['data']['elements'][$location];
             if (!empty($elements)) {
@@ -376,15 +386,21 @@ class ElementsHelper
                 foreach ($elements as $elementData) {
                     $elementRawData = $elementsRawData[$elementData['id']];
                     if ($elementRawData !== null) {
-                        $content .= self::renderElement($elementRawData, $editable, $elementsContextData);
+                        $content .= self::renderElement($elementRawData, $editable, $elementsContextData, $outputType);
                     }
                 }
             }
             return $content;
         };
 
-        $content .= '<div class="bearcms-elements-floating-box-inside">' . $getElementsContent('inside') . '</div>';
-        $content .= '<div class="bearcms-elements-floating-box-outside">' . $getElementsContent('outside') . '</div>';
+        $innerContent = '';
+        if ($outputType === 'full-html') {
+            $innerContent .= '<div class="bearcms-elements-floating-box-inside">' . $getElementsContent('inside') . '</div>';
+            $innerContent .= '<div class="bearcms-elements-floating-box-outside">' . $getElementsContent('outside') . '</div>';
+        } elseif ($outputType === 'simple-html') {
+            $innerContent .= '<div>' . $getElementsContent('inside') . '</div>';
+            $innerContent .= '<div>' . $getElementsContent('outside') . '</div>';
+        }
 
         $className = 'bre' . md5('floatingbox$' . (isset($elementContainerData['id']) ? $elementContainerData['id'] : uniqid()));
 
@@ -406,25 +422,29 @@ class ElementsHelper
                 $attributes .= ' id="' . $htmlElementID . '"';
                 ElementsHelper::$editorData[] = ['floatingBox', $elementContainerData['id'], $contextData];
             }
-            $attributes .= ' class="bearcms-elements-element-container bearcms-elements-floating-box ' . $className . '"';
-            $attributes .= ' data-srvri="t3 s' . $spacing . '"';
-            $attributes .= ' data-responsive-attributes="f(cmsefbr' . $className . ')=>data-srvri-rows=1"';
+            if ($outputType === 'full-html') {
+                $attributes .= ' class="bearcms-elements-element-container bearcms-elements-floating-box ' . $className . '"';
+                $attributes .= ' data-srvri="t3 s' . $spacing . '"';
+                $attributes .= ' data-responsive-attributes="f(cmsefbr' . $className . ')=>data-srvri-rows=1"';
+            }
         }
-        $content = '<html>'
-            . '<head>'
-            . '<style>' . $styles . '</style>'
-            . '<script>cmsefbr' . $className . '=function(e,d){' // element, details
-            . ($responsive ? 'if(d.width<=500){return true}' : '')
-            . 'e.firstChild.style.setProperty("width","' . $width . '");'
-            . 'var w=e.firstChild.getBoundingClientRect().width;'
-            . 'e.firstChild.style.removeProperty("width");'
-            . 'if(w===d.width){return true}' // if first children width is equal to containwe width then make vertical
-            . 'return false'
-            . '};</script>'
-            . ($inContainer ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
-            . '</head>'
-            . '<body>'
-            . ($inContainer ? '<div' . $attributes . '>' . $content . '</div>' : $content)
+        $content = '<html>';
+        if ($outputType === 'full-html') {
+            $content .= '<head>'
+                . '<style>' . $styles . '</style>'
+                . '<script>cmsefbr' . $className . '=function(e,d){' // element, details
+                . ($responsive ? 'if(d.width<=500){return true}' : '')
+                . 'e.firstChild.style.setProperty("width","' . $width . '");'
+                . 'var w=e.firstChild.getBoundingClientRect().width;'
+                . 'e.firstChild.style.removeProperty("width");'
+                . 'if(w===d.width){return true}' // if first children width is equal to containwe width then make vertical
+                . 'return false'
+                . '};</script>'
+                . ($inContainer ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
+                . '</head>';
+        }
+        $content .= '<body>'
+            . ($inContainer ? '<div' . $attributes . '>' . $innerContent . '</div>' : $innerContent)
             . '</body>'
             . '</html>';
         return '<component src="data:base64,' . base64_encode($content) . '" />';
