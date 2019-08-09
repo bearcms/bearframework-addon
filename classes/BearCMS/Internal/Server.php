@@ -200,16 +200,7 @@ class Server
         $app = App::get();
 
         $clientData = [];
-        if (Config::$appSecretKey !== null) {
-            $getHashedAppSecretKey = function () {
-                $parts = explode('-', Config::$appSecretKey, 2);
-                if (sizeof($parts) === 2) {
-                    return strtoupper('sha256-' . $parts[0] . '-' . hash('sha256', $parts[1]));
-                }
-                return '';
-            };
-            $clientData['appSecretKey'] = $getHashedAppSecretKey();
-        }
+        $clientData['appSecretKey'] = Config::getHashedAppSecretKey();
         $clientData['whitelabel'] = (int) Config::$whitelabel;
         $clientData['requestBase'] = $app->request->base;
         $clientData['cookiePrefix'] = Config::$cookiePrefix;
