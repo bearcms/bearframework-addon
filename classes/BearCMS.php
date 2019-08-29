@@ -1357,6 +1357,28 @@ class BearCMS
                 });
         }
 
+        $this->app->tasks
+            ->define('bearcms-notify-search-engines', function () {
+                $settings = $this->app->bearCMS->data->settings->get();
+                if (empty($settings->allowSearchEngines)) {
+                    return;
+                }
+                $ping = function (string $url) {
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+                    $response = curl_exec($ch);
+                    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    curl_close($ch);
+                    $this->app->data->append('.temp/bearcms/sitemapping.log', date('c') . "\n" . $url . "\n" . $status . "\n" . $response . "\n\n");
+                };
+                $sitemapURL = $this->app->urls->get('/sitemap.xml');
+                $ping('https://www.google.com/webmasters/tools/ping?sitemap=' . $sitemapURL);
+                $ping('https://www.bing.com/webmaster/ping.aspx?siteMap=' . $sitemapURL);
+            });
+
         // Initialize to add asset dirs
         $currentThemeID = Internal\CurrentTheme::getID();
         Internal\Themes::initialize($currentThemeID);

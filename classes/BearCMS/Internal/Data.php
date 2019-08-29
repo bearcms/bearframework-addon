@@ -233,6 +233,14 @@ class Data
         if (strpos($key, 'bearcms/elements/') === 0 || strpos($key, 'bearcms/pages/') === 0 || strpos($key, 'bearcms/blog/') === 0) {
             $app->cache->delete('bearcms-comments-elements-locations');
         }
+        if (strpos($key, '.temp/') !== 0) {
+            if (!$app->tasks->exists('bearcms-notify-search-engines')) {
+                $app->tasks->add('bearcms-notify-search-engines', [], [
+                    'id' => 'bearcms-notify-search-engines',
+                    'startTime' => time() + 8 * 60 * 60
+                ]);
+            }
+        }
     }
 
     /**
