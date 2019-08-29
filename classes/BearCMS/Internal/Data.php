@@ -152,10 +152,10 @@ class Data
      */
     static function getValue(string $key): ?string
     {
-        return self::_get('value', $key, function() use ($key) {
-                    $app = App::get();
-                    return $app->data->getValue($key);
-                });
+        return self::_get('value', $key, function () use ($key) {
+            $app = App::get();
+            return $app->data->getValue($key);
+        });
     }
 
     /**
@@ -165,55 +165,55 @@ class Data
      */
     static function getList(string $prefix): array
     {
-        return self::_get('list', $prefix, function() use ($prefix) {
-                    $found = false;
-                    if ($prefix === 'bearcms/pages/page/' || $prefix === 'bearcms/blog/post/') {
-                        $dataBundleID = 'bearcmsdataprefix-' . $prefix;
-                        $app = App::get();
-                        if (!$app->dataBundle->exists($dataBundleID)) {
-                            //$dir = $app->config->dataDir . '/objects/' . $prefix;
-                            $dir = 'appdata://' . $prefix;
-                            $itemKeys = [];
-                            if (is_dir($dir)) {
-                                $keys = scandir($dir);
-                                foreach ($keys as $key) {
-                                    if ($key !== '.' && $key !== '..') {
-                                        $itemKeys[] = $prefix . $key;
-                                    }
-                                }
-                            }
-                            $app->dataBundle->create($dataBundleID, $itemKeys);
-                        }
-                        $app->dataBundle->prepare($dataBundleID);
-                        $list = $app->dataBundle->getItemsList($dataBundleID);
-                        $data = [];
-                        foreach ($list as $item) {
-                            $data[$item->key] = $item->value;
-                        }
-                        $found = true;
-                    }
-                    if (!$found) {
-                        $app = App::get();
-                        //$dir = $app->config->dataDir . '/objects/' . $prefix;
-                        $dir = 'appdata://' . $prefix;
-                        $data = [];
-                        if (is_dir($dir)) {
-                            $keys = scandir($dir);
-                            foreach ($keys as $key) {
-                                if ($key !== '.' && $key !== '..') {
-                                    $data[$prefix . $key] = file_get_contents($dir . $key);
-                                }
+        return self::_get('list', $prefix, function () use ($prefix) {
+            $found = false;
+            if ($prefix === 'bearcms/pages/page/' || $prefix === 'bearcms/blog/post/') {
+                $dataBundleID = 'bearcmsdataprefix-' . $prefix;
+                $app = App::get();
+                if (!$app->dataBundle->exists($dataBundleID)) {
+                    //$dir = $app->config->dataDir . '/objects/' . $prefix;
+                    $dir = 'appdata://' . $prefix;
+                    $itemKeys = [];
+                    if (is_dir($dir)) {
+                        $keys = scandir($dir);
+                        foreach ($keys as $key) {
+                            if ($key !== '.' && $key !== '..') {
+                                $itemKeys[] = $prefix . $key;
                             }
                         }
                     }
-//                    $list = $app->data->getList()
-//                            ->filterBy('key', $prefix, 'startWith');
-//                    $data = [];
-//                    foreach ($list as $item) {
-//                        $data[] = $item->value;
-//                    }
-                    return $data;
-                });
+                    $app->dataBundle->create($dataBundleID, $itemKeys);
+                }
+                $app->dataBundle->prepare($dataBundleID);
+                $list = $app->dataBundle->getItemsList($dataBundleID);
+                $data = [];
+                foreach ($list as $item) {
+                    $data[$item->key] = $item->value;
+                }
+                $found = true;
+            }
+            if (!$found) {
+                $app = App::get();
+                //$dir = $app->config->dataDir . '/objects/' . $prefix;
+                $dir = 'appdata://' . $prefix;
+                $data = [];
+                if (is_dir($dir)) {
+                    $keys = scandir($dir);
+                    foreach ($keys as $key) {
+                        if ($key !== '.' && $key !== '..') {
+                            $data[$prefix . $key] = file_get_contents($dir . $key);
+                        }
+                    }
+                }
+            }
+            //                    $list = $app->data->getList()
+            //                            ->filterBy('key', $prefix, 'startWith');
+            //                    $data = [];
+            //                    foreach ($list as $item) {
+            //                        $data[] = $item->value;
+            //                    }
+            return $data;
+        });
     }
 
     /**
@@ -272,5 +272,4 @@ class Data
         $notification->type = 'bearcms-' . $type . '-new';
         $app->notifications->send('bearcms-user-administrator', $notification);
     }
-
 }
