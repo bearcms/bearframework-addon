@@ -259,6 +259,13 @@ switch ((int) $contentWidthOptionValue) {
             ' . $containerClassName . ' .bearcms-forum-post-page-text-input{' . $input . 'height:calc(' . $fontSize . ' * 14);}
             ' . $containerClassName . ' .bearcms-forum-post-page-send-button{' . $button . '}
             ' . $containerClassName . ' .bearcms-forum-post-page-send-button-waiting{' . $buttonWaiting . '}
+
+            ' . $containerClassName . ' .bearcms-code-element{' . $text . 'font-family:Courier,monospace;border-radius:2px;background-color:#333;padding:' . $fontSize . ';color:#fff;}
+            ' . $containerClassName . ' .bearcms-code-element .bearcms-code-element-entity-keyword{color:#4dc16c;}
+            ' . $containerClassName . ' .bearcms-code-element .bearcms-code-element-entity-variable{color:#00b5c3;}
+            ' . $containerClassName . ' .bearcms-code-element .bearcms-code-element-entity-value{color:#ff770a;}
+            ' . $containerClassName . ' .bearcms-code-element .bearcms-code-element-entity-comment{color:#929292;}
+            
             
             @media(min-width: 40rem) {
                 ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-large{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}
