@@ -1507,12 +1507,12 @@ class BearCMS
                         $content = str_replace('  ', ' ', $content);
                     }
                     $content = html_entity_decode(trim($content));
-                    return $content;
+                    return trim($content);
                 };
 
                 if ($generateDescriptionMetaTag) {
                     $descriptionContent = $prepare($descriptionContent);
-                    $html .= '<meta name="description" content="' . htmlentities($substr($descriptionContent, 0, 200) . ' ...') . '"/>';
+                    $html .= '<meta name="description" content="' . htmlentities($substr($descriptionContent, 0, 200) . (strlen($descriptionContent) > 200 ? ' ...' : '')) . '"/>';
                 }
                 if ($generateKeywordsMetaTag) {
                     $keywordsContent = $prepare($keywordsContent);
