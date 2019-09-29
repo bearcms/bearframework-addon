@@ -33,67 +33,66 @@ class Settings extends \BearFramework\Models\Model
     function __construct()
     {
         $this
-                ->defineProperty('title', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('description', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('keywords', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('language', [
-                    'type' => '?string',
-                    'init' => function() {
-                        return 'en';
-                    }
-                ])
-                ->defineProperty('icon', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('icons', [
-                    'type' => 'array'
-                ])
-                ->defineProperty('externalLinks', [
-                    'type' => 'bool',
-                    'init' => function() {
-                        return false;
-                    }
-                ])
-                ->defineProperty('allowSearchEngines', [
-                    'type' => 'bool',
-                    'init' => function() {
-                        return false;
-                    }
-                ])
-                ->defineProperty('allowCommentsInBlogPosts', [
-                    'type' => 'bool',
-                    'init' => function() {
-                        return false;
-                    }
-                ])
-                ->defineProperty('disabled', [
-                    'type' => 'bool',
-                    'init' => function() {
-                        return false;
-                    }
-                ])
-                ->defineProperty('disabledText', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('enableRSS', [
-                    'type' => 'bool',
-                    'init' => function() {
-                        return true;
-                    }
-                ])
-                ->defineProperty('rssType', [
-                    'type' => '?string',
-                    'init' => function() {
-                        return 'contentSummary';
-                    }
-                ])
-        ;
+            ->defineProperty('title', [
+                'type' => '?string'
+            ])
+            ->defineProperty('description', [
+                'type' => '?string'
+            ])
+            ->defineProperty('keywords', [
+                'type' => '?string'
+            ])
+            ->defineProperty('language', [
+                'type' => '?string',
+                'init' => function () {
+                    return 'en';
+                }
+            ])
+            ->defineProperty('icon', [
+                'type' => '?string'
+            ])
+            ->defineProperty('icons', [
+                'type' => 'array'
+            ])
+            ->defineProperty('externalLinks', [
+                'type' => 'bool',
+                'init' => function () {
+                    return false;
+                }
+            ])
+            ->defineProperty('allowSearchEngines', [
+                'type' => 'bool',
+                'init' => function () {
+                    return false;
+                }
+            ])
+            ->defineProperty('allowCommentsInBlogPosts', [
+                'type' => 'bool',
+                'init' => function () {
+                    return false;
+                }
+            ])
+            ->defineProperty('disabled', [
+                'type' => 'bool',
+                'init' => function () {
+                    return false;
+                }
+            ])
+            ->defineProperty('disabledText', [
+                'type' => '?string'
+            ])
+            ->defineProperty('enableRSS', [
+                'type' => 'bool',
+                'init' => function () {
+                    return true;
+                }
+            ])
+            ->defineProperty('rssType', [
+                'type' => '?string',
+                'init' => function () {
+                    return 'contentSummary';
+                }
+            ]);
     }
 
     static function fromArray(array $data)
@@ -112,5 +111,4 @@ class Settings extends \BearFramework\Models\Model
         }
         return parent::fromArray($data);
     }
-
 }
