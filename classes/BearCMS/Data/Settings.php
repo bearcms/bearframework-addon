@@ -38,5 +38,4 @@ class Settings
         }
         return \BearCMS\Data\Settings\Settings::fromArray($data);
     }
-
 }
