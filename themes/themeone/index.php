@@ -27,7 +27,7 @@ $app->bearCMS->themes
         $context->assets
             ->addDir('themes/themeone/assets');
 
-        $theme->version = '1.7';
+        $theme->version = '1.8';
 
         $theme->get = function (\BearCMS\Themes\Theme\Customizations $customizations) use ($app, $context) {
             $templateFilename = $context->dir . '/themes/themeone/components/defaultTemplate.php';

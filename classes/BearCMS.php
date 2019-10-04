@@ -772,6 +772,62 @@ class BearCMS
                     };
                 }
             }
+            if ($hasElements || Config::hasFeature('ELEMENTS_SEPARATOR')) {
+                Internal\ElementsTypes::add('separator', [
+                    'componentSrc' => 'bearcms-separator-element',
+                    'componentFilename' => $this->context->dir . '/components/bearcmsSeparatorElement.php',
+                    'fields' => [
+                        [
+                            'id' => 'size',
+                            'type' => 'list',
+                            'defaultValue' => 'large',
+                            'options' => [
+                                [
+                                    'value' => 'large'
+                                ],
+                                [
+                                    'value' => 'medium'
+                                ],
+                                [
+                                    'value' => 'small'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]);
+                if ($hasThemes) {
+                    Internal\Themes::$elementsOptions['separator'] = function ($context, $idPrefix, $parentSelector) {
+                        $group = $context->addGroup(__("bearcms.themes.options.Separator"));
+
+                        $groupLarge = $group->addGroup(__("bearcms.themes.options.Separator.Large"));
+                        $groupLarge->addOption($idPrefix . "SeparatorLargeCSS", "css", '', [
+                            "cssTypes" => ["cssBackground", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssSize"],
+                            "cssOutput" => [
+                                ["selector", $parentSelector . " .bearcms-separator-element-large"]
+                            ],
+                            "value" => '{"background-color":"#555","height":"1px","margin-left":"auto","margin-right":"auto","margin-top":"2rem","margin-bottom":"2rem","width":"90%"}'
+                        ]);
+
+                        $groupMedium = $group->addGroup(__("bearcms.themes.options.Separator.Medium"));
+                        $groupMedium->addOption($idPrefix . "SeparatorMediumCSS", "css", '', [
+                            "cssTypes" => ["cssBackground", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssSize"],
+                            "cssOutput" => [
+                                ["selector", $parentSelector . " .bearcms-separator-element-medium"]
+                            ],
+                            "value" => '{"background-color":"#555","height":"1px","margin-left":"auto","margin-right":"auto","margin-top":"2rem","margin-bottom":"2rem","width":"60%"}'
+                        ]);
+
+                        $groupSmall = $group->addGroup(__("bearcms.themes.options.Separator.Small"));
+                        $groupSmall->addOption($idPrefix . "SeparatorSmallCSS", "css", '', [
+                            "cssTypes" => ["cssBackground", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssSize"],
+                            "cssOutput" => [
+                                ["selector", $parentSelector . " .bearcms-separator-element-small"]
+                            ],
+                            "value" => '{"background-color":"#555","height":"1px","margin-left":"auto","margin-right":"auto","margin-top":"2rem","margin-bottom":"2rem","width":"30%"}'
+                        ]);
+                    };
+                }
+            }
 
             $this->app->clientPackages
                 ->add('-bearcms-elements-lazy-load', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {

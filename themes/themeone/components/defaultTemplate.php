@@ -179,6 +179,7 @@ switch ((int) $contentWidthOptionValue) {
                 $containerClassName = $i === 0 ? '.template-content' : '.template-footer';
                 $elementsAccentColor = $i === 0 ? $accentColor : '#aaa';
                 $elementsTextColor = $i === 0 ? $textColor : '#fff';
+                $separatorColor = $i === 0 ? '#ddd' : '#333';
 
                 $h1 = 'color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 1.6);line-height:180%;';
                 $h2 = 'color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 1.3);line-height:180%;';
@@ -189,6 +190,7 @@ switch ((int) $contentWidthOptionValue) {
                 $button = 'color:' . $elementsTextColor . ';text-decoration:underline;';
                 $buttonWaiting = 'color:' . $elementsTextColor . ';text-decoration:none;';
                 $userImage = 'box-sizing:border-box;width:50px;height:50px;margin-right:0.8rem;border-radius:2px;';
+                $separator = 'background-color:' . $separatorColor . ';height:2px;margin-top:60px;margin-bottom:60px;margin-left:auto;margin-right:auto;';
 
                 echo '' . $containerClassName . ' .bearcms-heading-element-large{' . $h1 . 'padding-top:1rem;}
             ' . $containerClassName . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-large{padding-top:0;}
@@ -266,6 +268,9 @@ switch ((int) $contentWidthOptionValue) {
             ' . $containerClassName . ' .bearcms-code-element .bearcms-code-element-entity-value{color:#ff770a;}
             ' . $containerClassName . ' .bearcms-code-element .bearcms-code-element-entity-comment{color:#929292;}
             
+            ' . $containerClassName . ' .bearcms-separator-element-large{' . $separator . 'width:70%;}
+            ' . $containerClassName . ' .bearcms-separator-element-medium{' . $separator . 'width:50%;}
+            ' . $containerClassName . ' .bearcms-separator-element-small{' . $separator . 'width:30%;}
             
             @media(min-width: 40rem) {
                 ' . $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-large{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}
