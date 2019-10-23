@@ -232,8 +232,7 @@ class Server
         $clientData['flags'] = json_encode([
             'sbpc', // allow comments in blog posts
             'gl3a', // has files support
-            'jzk3ns', // has google fonts embed support
-            'g9aj3', // has separator element
+            'jzk3ns' // has google fonts embed support
         ]);
         $data['clientData'] = json_encode($clientData, JSON_UNESCAPED_UNICODE);
 
@@ -397,7 +396,10 @@ class Server
                     try {
                         $currentUserData = $requestResponseMeta['currentUser'];
                         $dataKey = '.temp/bearcms/userkeys/' . md5($currentUserData['key']);
-                        $app->data->set($app->data->make($dataKey, $currentUserData['id']));
+                        $userID = (string) $currentUserData['id'];
+                        if ($app->data->getValue($dataKey) !== $userID) {
+                            $app->data->set($app->data->make($dataKey, $userID));
+                        }
                         break;
                     } catch (\BearFramework\App\Data\DataLockedException $e) { }
                     if ($i === 3) {
