@@ -31,6 +31,7 @@ class UploadsSize
         self::setData($data);
     }
 
+
     /**
      * 
      * @param string $key
@@ -43,6 +44,18 @@ class UploadsSize
             unset($data[$key]);
             self::setData($data);
         }
+    }
+
+
+    /**
+     * 
+     * @param string $key
+     * @return integer|null
+     */
+    static function getItemSize(string $key): ?int
+    {
+        $data = self::getData();
+        return isset($data[$key]) ? $data[$key] : null;
     }
 
     /**
@@ -78,5 +91,4 @@ class UploadsSize
         $app->data->set($app->data->make($dataKey, json_encode($data)));
         $app->bearCMS->dispatchEvent('internalChangeUploadsSize');
     }
-
 }

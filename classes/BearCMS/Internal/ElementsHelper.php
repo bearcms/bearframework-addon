@@ -467,6 +467,17 @@ class ElementsHelper
 
     /**
      * 
+     * @param string $elementID
+     * @return array|null
+     */
+    static function getElementData(string $elementID): ?array
+    {
+        $data = self::getElementsRawData([$elementID]);
+        return $data[$elementID] !== null ? json_decode($data[$elementID], true) : null;
+    }
+
+    /**
+     * 
      * @param string $id
      * @return array
      * @throws Exception

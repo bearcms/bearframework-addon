@@ -280,4 +280,25 @@ class Data
         $notification->type = 'bearcms-' . $type . '-new';
         $app->notifications->send('bearcms-user-administrator', $notification);
     }
+
+    static function generateNewFilename(string $filename): string
+    {
+        $path = pathinfo($filename, PATHINFO_DIRNAME);
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        for ($i = 0; $i < 100; $i++) {
+            $newFilename = $path . '/' . md5(uniqid()) . (strlen($extension) > 0 ? '.' . $extension : '');
+            if (!is_file($newFilename)) {
+                return $newFilename;
+            }
+        }
+        throw new \Exception('Too many reties');
+    }
+
+    static function filenameToDataKey(string $filename)
+    {
+        if (strpos($filename, 'appdata://') === 0) {
+            return substr($filename, 10);
+        }
+        throw new \Exception('The filename provided (' . $filename . ') is not a valid data key');
+    }
 }

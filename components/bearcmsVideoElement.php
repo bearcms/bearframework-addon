@@ -156,11 +156,7 @@ if (strlen($component->url) > 0) {
         $content = '';
     }
 } elseif (strlen($component->filename) > 0) {
-    $filename = $component->filename;
-    $newFilename = Internal2::$data2->getRealFilename($filename);
-    if ($newFilename !== null) {
-        $filename = $newFilename;
-    }
+    $filename = Internal2::$data2->fixFilename($component->filename);
     if ($outputType === 'full-html') {
         $content = '<div class="bearcms-video-element" style="font-size:0;">' . $innerContainerStartTag;
     }

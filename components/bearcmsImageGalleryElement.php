@@ -26,11 +26,7 @@ $spacing = $component->spacing;
 
 $fixFilename = function ($filename): ?string {
     if (isset($filename[0])) {
-        $newFilename = Internal2::$data2->getRealFilename($filename);
-        if ($newFilename !== null) {
-            $filename = $newFilename;
-        }
-        return $filename;
+        return Internal2::$data2->fixFilename($filename);
     }
     return null;
 };

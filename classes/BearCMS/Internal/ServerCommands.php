@@ -13,6 +13,7 @@ use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use BearCMS\Internal2;
+use BearCMS\Internal\Data\Elements;
 use IvoPetkov\HTML5DOMDocument;
 
 /**
@@ -394,6 +395,48 @@ class ServerCommands
                 }
             }
         }
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function elementsUploadsSize(array $data): array
+    {
+        $result = [];
+        $result['size'] = 0;
+        $elementsIDs = $data['ids'];
+        foreach ($elementsIDs as $elementID) {
+            $result['size'] += Elements::getElementUploadsSize($elementID);
+        }
+        return $result;
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function elementsContainersUploadsSize(array $data): array
+    {
+        $result = [];
+        $result['size'] = 0;
+        $containersIDs = $data['ids'];
+        foreach ($containersIDs as $containerID) {
+            $result['size'] += Elements::getContainerUploadsSize($containerID);
+        }
+        return $result;
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementsContainerCopy(array $data): void
+    {
+        Elements::copyContainer($data['sourceID'], $data['targetID']);
     }
 
     /**

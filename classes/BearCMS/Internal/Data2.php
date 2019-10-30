@@ -29,56 +29,56 @@ class Data2
 
     function __construct()
     {
-//        $this->defineProperty('addons', [
-//            'init' => function() {
-//                return new \BearCMS\Internal\Data2\Addons();
-//            },
-//            'readonly' => true
-//        ]);
+        //        $this->defineProperty('addons', [
+        //            'init' => function() {
+        //                return new \BearCMS\Internal\Data2\Addons();
+        //            },
+        //            'readonly' => true
+        //        ]);
         $this->defineProperty('blogCategories', [
-            'init' => function() {
+            'init' => function () {
                 return new \BearCMS\Internal\Data2\BlogCategories();
             },
             'readonly' => true
         ]);
         $this->defineProperty('comments', [
-            'init' => function() {
+            'init' => function () {
                 return new \BearCMS\Internal\Data2\Comments();
             },
             'readonly' => true
         ]);
         $this->defineProperty('commentsThreads', [
-            'init' => function() {
+            'init' => function () {
                 return new \BearCMS\Internal\Data2\CommentsThreads();
             },
             'readonly' => true
         ]);
-//        $this->defineProperty('forumCategories', [
-//            'init' => function() {
-//                return new \BearCMS\Internal\Data2\ForumCategories();
-//            },
-//            'readonly' => true
-//        ]);
-//        $this->defineProperty('forumPosts', [
-//            'init' => function() {
-//                return new \BearCMS\Internal\Data2\ForumPosts();
-//            },
-//            'readonly' => true
-//        ]);
-//        $this->defineProperty('forumPostsReplies', [
-//            'init' => function() {
-//                return new \BearCMS\Internal\Data2\ForumPostsReplies();
-//            },
-//            'readonly' => true
-//        ]);
+        //        $this->defineProperty('forumCategories', [
+        //            'init' => function() {
+        //                return new \BearCMS\Internal\Data2\ForumCategories();
+        //            },
+        //            'readonly' => true
+        //        ]);
+        //        $this->defineProperty('forumPosts', [
+        //            'init' => function() {
+        //                return new \BearCMS\Internal\Data2\ForumPosts();
+        //            },
+        //            'readonly' => true
+        //        ]);
+        //        $this->defineProperty('forumPostsReplies', [
+        //            'init' => function() {
+        //                return new \BearCMS\Internal\Data2\ForumPostsReplies();
+        //            },
+        //            'readonly' => true
+        //        ]);
         $this->defineProperty('themes', [
-            'init' => function() {
+            'init' => function () {
                 return new \BearCMS\Internal\Data2\Themes();
             },
             'readonly' => true
         ]);
         $this->defineProperty('usersInvitations', [
-            'init' => function() {
+            'init' => function () {
                 return new \BearCMS\Internal\Data2\UsersInvitations();
             },
             'readonly' => true
@@ -110,4 +110,12 @@ class Data2
         return null;
     }
 
+    public function fixFilename(string $filename): ?string
+    {
+        $newFilename = $this->getRealFilename($filename);
+        if ($newFilename !== null) {
+            return $newFilename;
+        }
+        return $filename;
+    }
 }

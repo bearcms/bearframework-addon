@@ -12,6 +12,7 @@ use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use IvoPetkov\HTML5DOMDocument;
 use BearCMS\Internal2;
+use BearCMS\Internal\Data\UploadsSize;
 
 /**
  * 
@@ -312,7 +313,26 @@ class BearCMS
                                 ]
                             ]
                         ],
-                    ]
+                    ],
+                    'onDuplicate' => function ($data) {
+                        $filename = isset($data['filename']) ? $data['filename'] : '';
+                        if (strlen($filename) > 0) {
+                            $filename = Internal2::$data2->fixFilename($filename);
+                            $newFilename = Internal\Data::generateNewFilename($filename);
+                            copy($filename, $newFilename);
+                            UploadsSize::add(Internal\Data::filenameToDataKey($newFilename), filesize($newFilename));
+                            $data['filename'] = $newFilename;
+                        }
+                        return $data;
+                    },
+                    'getUploadsSize' => function ($data) {
+                        $filename = isset($data['filename']) ? $data['filename'] : '';
+                        if (strlen($filename) > 0) {
+                            $filename = Internal2::$data2->fixFilename($filename);
+                            return (int) UploadsSize::getItemSize(Internal\Data::filenameToDataKey($filename));
+                        }
+                        return 0;
+                    }
                 ]);
                 if ($hasThemes) {
                     Internal\Themes::$elementsOptions['image'] = function ($context, $idPrefix, $parentSelector) {
@@ -372,6 +392,38 @@ class BearCMS
                         }
                         $data['files'] = $files;
                         return $data;
+                    },
+                    'onDuplicate' => function ($data) {
+                        if (isset($data['files']) && is_array($data['files'])) {
+                            foreach ($data['files'] as $index => $file) {
+                                if (isset($file['filename'])) {
+                                    $filename = $file['filename'];
+                                    if (strlen($filename) > 0) {
+                                        $filename = Internal2::$data2->fixFilename($filename);
+                                        $newFilename = Internal\Data::generateNewFilename($filename);
+                                        copy($filename, $newFilename);
+                                        UploadsSize::add(Internal\Data::filenameToDataKey($newFilename), filesize($newFilename));
+                                        $data['files'][$index]['filename'] = $newFilename;
+                                    }
+                                }
+                            }
+                        }
+                        return $data;
+                    },
+                    'getUploadsSize' => function ($data) {
+                        $size = 0;
+                        if (isset($data['files']) && is_array($data['files'])) {
+                            foreach ($data['files'] as $index => $file) {
+                                if (isset($file['filename'])) {
+                                    $filename = $file['filename'];
+                                    if (strlen($filename) > 0) {
+                                        $filename = Internal2::$data2->fixFilename($filename);
+                                        $size += (int) UploadsSize::getItemSize(Internal\Data::filenameToDataKey($filename));
+                                    }
+                                }
+                            }
+                        }
+                        return $size;
                     }
                 ]);
                 if ($hasThemes) {
@@ -429,7 +481,26 @@ class BearCMS
                                 ]
                             ]
                         ],
-                    ]
+                    ],
+                    'onDuplicate' => function ($data) {
+                        $filename = isset($data['filename']) ? $data['filename'] : '';
+                        if (strlen($filename) > 0) {
+                            $filename = Internal2::$data2->fixFilename($filename);
+                            $newFilename = Internal\Data::generateNewFilename($filename);
+                            copy($filename, $newFilename);
+                            UploadsSize::add(Internal\Data::filenameToDataKey($newFilename), filesize($newFilename));
+                            $data['filename'] = $newFilename;
+                        }
+                        return $data;
+                    },
+                    'getUploadsSize' => function ($data) {
+                        $filename = isset($data['filename']) ? $data['filename'] : '';
+                        if (strlen($filename) > 0) {
+                            $filename = Internal2::$data2->fixFilename($filename);
+                            return (int) UploadsSize::getItemSize(Internal\Data::filenameToDataKey($filename));
+                        }
+                        return 0;
+                    }
                 ]);
                 if ($hasThemes) {
                     Internal\Themes::$elementsOptions['video'] = function ($context, $idPrefix, $parentSelector) {
@@ -672,6 +743,14 @@ class BearCMS
                         if (isset($data['threadID'])) {
                             $this->app->data->delete('bearcms/comments/thread/' . md5($data['threadID']) . '.json');
                         }
+                    },
+                    'onDuplicate' => function ($data) {
+                        if (isset($data['threadID'])) {
+                            $newThreadID = Internal\Data\Comments::generateNewThreadID();
+                            Internal\Data\Comments::copyThread($data['threadID'], $newThreadID);
+                            $data['threadID'] = $newThreadID;
+                        }
+                        return $data;
                     }
                 ]);
                 if ($hasThemes) {

@@ -55,7 +55,7 @@ class Comments
                 $app->tasks->add('bearcms-send-new-comment-notification', [
                     'threadID' => $threadID,
                     'commentID' => $commentID
-                        ], ['id' => 'bearcms-send-new-comment-notification']);
+                ], ['id' => 'bearcms-send-new-comment-notification']);
             }
         }
         $eventDetails = new \BearCMS\Internal\AddCommentEventDetails($threadID, $commentID);
@@ -164,7 +164,7 @@ class Comments
             $result = [];
 
             $pages = $app->bearCMS->data->pages->getList();
-            $walkPageElements = function($pageID, $path) use ($app, &$result) {
+            $walkPageElements = function ($pageID, $path) use ($app, &$result) {
                 $url = null;
                 $containerElementIDs = Internal\ElementsHelper::getContainerElementsIDs('bearcms-page-' . $pageID);
                 $elementsRawData = Internal\ElementsHelper::getElementsRawData($containerElementIDs);
@@ -198,4 +198,34 @@ class Comments
         return $result;
     }
 
+    static function generateNewThreadID()
+    {
+        $app = App::get();
+        for ($i = 0; $i < 100; $i++) {
+            $threadID = base_convert(md5(uniqid()), 16, 36);
+            $dataKey = 'bearcms/comments/thread/' . md5($threadID) . '.json';
+            if (!$app->data->exists($dataKey)) {
+                return $threadID;
+            }
+        }
+        throw new \Exception('Too many retries');
+    }
+
+    static function copyThread(string $sourceThreadID, string $targetThreadID)
+    {
+        $app = App::get();
+        $dataKey = 'bearcms/comments/thread/' . md5($sourceThreadID) . '.json';
+        $newDataKey = 'bearcms/comments/thread/' . md5($targetThreadID) . '.json';
+        $data = $app->data->getValue($dataKey);
+        $data = $data !== null ? json_decode($data, true) : [];
+        $newData = $data;
+        $newData['id'] = $targetThreadID;
+        if (empty($newData['comments'])) {
+            $newData['comments'] = [];
+        }
+        foreach ($newData['comments'] as $index => $comment) {
+            $newData['comments'][$index]['id'] = base_convert(md5(uniqid()), 16, 36) . 'cc';
+        }
+        $app->data->setValue($newDataKey, json_encode($newData));
+    }
 }

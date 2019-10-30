@@ -389,10 +389,7 @@ class Themes
             $zip->addFromString('manifest.json', json_encode($manifest));
             $zip->addFromString('values.json', json_encode($values));
             foreach ($filesToAttach as $attachmentName => $filename) {
-                $newFileName = Internal2::$data2->getRealFilename($filename);
-                if ($newFileName !== null) {
-                    $filename = $newFileName;
-                }
+                $filename = Internal2::$data2->fixFilename($filename);
                 $zip->addFromString($attachmentName, file_get_contents($filename));
             }
             $zip->close();
