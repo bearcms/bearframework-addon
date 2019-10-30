@@ -1571,8 +1571,7 @@ class BearCMS
                     $html .= '<meta name="description" content="' . htmlentities($substr($descriptionContent, 0, 200) . (strlen($descriptionContent) > 200 ? ' ...' : '')) . '"/>';
                 }
                 if ($generateKeywordsMetaTag) {
-                    $keywordsContent = $prepare($keywordsContent);
-                    $wordsText = str_replace(['.', ',', '/', '\\'], '', $strtolower($keywordsContent));
+                    $wordsText = preg_replace("/[^[:alnum:][:space:]]/u", '', $strtolower($prepare($keywordsContent)));
                     $words = explode(' ', $wordsText);
                     $wordsCount = array_count_values($words);
                     arsort($wordsCount);
@@ -1581,7 +1580,7 @@ class BearCMS
                         $wordLength = $strlen($word);
                         if ($wordLength >= 3 && !is_numeric($word)) {
                             $selectedWords[] = $word;
-                            if (sizeof($selectedWords) === 7) {
+                            if (sizeof($selectedWords) === 10) {
                                 break;
                             }
                         }
