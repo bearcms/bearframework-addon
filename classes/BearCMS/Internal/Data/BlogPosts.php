@@ -10,6 +10,9 @@
 namespace BearCMS\Internal\Data;
 
 use BearCMS\Internal;
+use BearCMS\Internal\Config;
+use BearCMS\Internal\ElementsHelper;
+use BearFramework\App;
 
 /**
  * @internal
@@ -30,13 +33,13 @@ class BlogPosts
         foreach ($list as $value) {
             $blogPostData = json_decode($value, true);
             if (
-                    is_array($blogPostData) &&
-                    isset($blogPostData['id']) &&
-                    isset($blogPostData['slug']) &&
-                    isset($blogPostData['status']) &&
-                    is_string($blogPostData['id']) &&
-                    is_string($blogPostData['slug']) &&
-                    is_string($blogPostData['status'])
+                is_array($blogPostData) &&
+                isset($blogPostData['id']) &&
+                isset($blogPostData['slug']) &&
+                isset($blogPostData['status']) &&
+                is_string($blogPostData['id']) &&
+                is_string($blogPostData['slug']) &&
+                is_string($blogPostData['status'])
             ) {
                 if ($status !== 'all' && $status !== $blogPostData['status']) {
                     continue;
@@ -47,4 +50,20 @@ class BlogPosts
         return $result;
     }
 
+    static function getDataKey(string $id)
+    {
+        return 'bearcms/blog/post/' . md5($id) . '.json';
+    }
+
+    static function getLastModifiedDetails(string $blogPostID)
+    {
+        $app = App::get();
+        $details = ElementsHelper::getLastModifiedDetails('bearcms-blogpost-' . $blogPostID);
+        $details['dataKeys'][] = self::getDataKey($blogPostID);
+        $blogPost = $app->bearCMS->data->blogPosts->get($blogPostID);
+        if ($blogPost !== null) {
+            $details['dates'][] = $blogPost->lastChangeTime;
+        }
+        return $details;
+    }
 }

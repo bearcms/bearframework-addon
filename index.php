@@ -59,11 +59,14 @@ if ($app->request->method === 'GET') {
     }
 }
 
+$changedDataKeys = [];
 $app->data
-    ->addEventListener('itemChange', function (\BearFramework\App\Data\ItemChangeEventDetails $details) use (&$app) {
+    ->addEventListener('itemChange', function (\BearFramework\App\Data\ItemChangeEventDetails $details) use (&$app, &$changedDataKeys) {
         $key = $details->key;
 
-        Internal\Data::setChanged($key);
+        Internal\Data::onDataChanged($key);
+
+        $changedDataKeys[] = $key;
 
         $prefixes = [
             'bearcms/pages/page/',
@@ -97,9 +100,13 @@ $app->data
     });
 
 $app
-    ->addEventListener('sendResponse', function () use ($app) {
+    ->addEventListener('sendResponse', function () use ($app, &$changedDataKeys) {
         if (Internal\Data::$hasContentChange) {
             $app->bearCMS->dispatchEvent('internalChangeData');
+            \BearCMS\Internal\Sitemap::addCheckSitemapForChangesTask();
+        }
+        if (!empty($changedDataKeys)) {
+            Internal\Sitemap::onDataChanged($changedDataKeys);
         }
     });
 

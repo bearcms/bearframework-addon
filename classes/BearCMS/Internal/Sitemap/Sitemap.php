@@ -20,12 +20,12 @@ class Sitemap
     /**
      * 
      * @param string $location
-     * @param string $lastModified
+     * @param string|callable $lastModified
      * @param string $changeFrequency
      * @param float $priority
      * @return self Returns a reference to itself.
      */
-    public function addURL(string $location, string $lastModified = null, string $changeFrequency = null, float $priority = null): self
+    public function addURL(string $location, $lastModified = null, string $changeFrequency = null, float $priority = null): self
     {
         $this->data[] = [
             'location' => $location,
@@ -44,5 +44,4 @@ class Sitemap
     {
         return new \BearFramework\DataList($this->data);
     }
-
 }

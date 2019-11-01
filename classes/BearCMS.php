@@ -1168,8 +1168,13 @@ class BearCMS
                 ]);
             \BearCMS\Internal\Sitemap::register(function (\BearCMS\Internal\Sitemap\Sitemap $sitemap) {
                 $list = Internal\Data\BlogPosts::getSlugsList('published');
-                foreach ($list as $slug) {
-                    $sitemap->addURL($this->app->urls->get(Config::$blogPagesPathPrefix . $slug . '/'));
+                foreach ($list as $blogPostID => $slug) {
+                    $url = $this->app->urls->get(Config::$blogPagesPathPrefix . $slug . '/');
+                    $sitemap->addURL($url, function () use ($blogPostID, $url) {
+                        $details = Internal\Data\BlogPosts::getLastModifiedDetails($blogPostID);
+                        Internal\Sitemap::addLastModifiedDetails($url, $details);
+                        return Internal\Sitemap::getDateFromLastModifiedDetails($details);
+                    });
                 }
             });
             $this->app->serverRequests
@@ -1330,12 +1335,17 @@ class BearCMS
                     }
                 ]);
             \BearCMS\Internal\Sitemap::register(function (\BearCMS\Internal\Sitemap\Sitemap $sitemap) {
-                if (Config::$autoCreateHomePage) {
-                    $sitemap->addURL($this->app->urls->get('/'));
-                }
                 $list = Internal\Data\Pages::getPathsList('published');
-                foreach ($list as $path) {
-                    $sitemap->addURL($this->app->urls->get($path));
+                if (Config::$autoCreateHomePage) {
+                    $list['home'] = '/';
+                }
+                foreach ($list as $pageID => $path) {
+                    $url = $this->app->urls->get($path);
+                    $sitemap->addURL($url, function () use ($pageID, $url) {
+                        $details = Internal\Data\Pages::getLastModifiedDetails($pageID);
+                        Internal\Sitemap::addLastModifiedDetails($url, $details);
+                        return Internal\Sitemap::getDateFromLastModifiedDetails($details);
+                    });
                 }
             });
         }
@@ -1493,26 +1503,20 @@ class BearCMS
         }
 
         $this->app->tasks
-            ->define('bearcms-notify-search-engines', function () {
-                $settings = $this->app->bearCMS->data->settings->get();
-                if (empty($settings->allowSearchEngines)) {
-                    return;
+            ->define('bearcms-sitemap-process-changes', function () {
+                Internal\Sitemap::processChangedDataKeys();
+            })
+            ->define('bearcms-sitemap-update-cached-dates', function ($urls) {
+                foreach ($urls as $url) {
+                    Internal\Sitemap::addUpdateCachedDateTasks($url);
                 }
-                $ping = function (string $url) {
-                    $ch = curl_init();
-                    curl_setopt($ch, CURLOPT_URL, $url);
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-                    $response = curl_exec($ch);
-                    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                    curl_close($ch);
-                    $this->app->data->append('.temp/bearcms/sitemapping.log', date('c') . "\n" . $url . "\n" . $status . "\n" . $response . "\n\n");
-                };
-                $sitemapURL = $this->app->urls->get('/sitemap.xml');
-                $ping('https://www.google.com/webmasters/tools/ping?sitemap=' . $sitemapURL);
-                $ping('https://www.bing.com/webmaster/ping.aspx?siteMap=' . $sitemapURL);
-            });
+            })
+            ->define('bearcms-sitemap-update-cached-date', function ($url) {
+                Internal\Sitemap::updateCachedDate($url);
+            })
+            ->define('bearcms-sitemap-check-for-changes', function () {
+                Internal\Sitemap::checkSitemapForChanges();
+            });;
 
         // Initialize to add asset dirs
         $currentThemeID = Internal\CurrentTheme::getID();

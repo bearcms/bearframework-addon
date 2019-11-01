@@ -460,7 +460,7 @@ class ElementsHelper
         $result = [];
         $elementsIDs = array_values($elementsIDs);
         foreach ($elementsIDs as $elementID) {
-            $result[$elementID] = Internal\Data::getValue('bearcms/elements/element/' . md5($elementID) . '.json');
+            $result[$elementID] = Internal\Data::getValue(self::getElementDataKey($elementID));
         }
         return $result;
     }
@@ -478,13 +478,23 @@ class ElementsHelper
 
     /**
      * 
+     * @param string $elementID
+     * @return string
+     */
+    static function getElementDataKey(string $elementID): string
+    {
+        return 'bearcms/elements/element/' . md5($elementID) . '.json';
+    }
+
+    /**
+     * 
      * @param string $id
      * @return array
      * @throws Exception
      */
     static function getContainerData(string $id): array
     {
-        $container = Internal\Data::getValue('bearcms/elements/container/' . md5($id) . '.json');
+        $container = Internal\Data::getValue(self::getContainerDataKey($id));
         $data = $container !== null ? json_decode($container, true) : [];
         if (!isset($data['elements'])) {
             $data['elements'] = [];
@@ -493,6 +503,16 @@ class ElementsHelper
             throw new Exception('');
         }
         return $data;
+    }
+
+    /**
+     * 
+     * @param string $id
+     * @return string
+     */
+    static function getContainerDataKey(string $id): string
+    {
+        return 'bearcms/elements/container/' . md5($id) . '.json';
     }
 
     /**
@@ -566,5 +586,29 @@ class ElementsHelper
             }
         }
         return $html;
+    }
+
+    static function getLastModifiedDetails(string $elementsContainerID): array
+    {
+        $dates = [];
+        $dataKeys = [];
+        $dataKeys[] = ElementsHelper::getContainerDataKey($elementsContainerID);
+        $containerData = ElementsHelper::getContainerData($elementsContainerID);
+        if (is_array($containerData)) {
+            if (isset($containerData['lastChangeTime'])) {
+                $dates[] = $containerData['lastChangeTime'];
+            }
+            $elementsIDs = ElementsHelper::getContainerElementsIDs($elementsContainerID);
+            foreach ($elementsIDs as $elementID) {
+                $dataKeys[] = ElementsHelper::getElementDataKey($elementID);
+                $elementData = ElementsHelper::getElementData($elementID);
+                if (is_array($elementData)) {
+                    if (isset($elementData['lastChangeTime'])) {
+                        $dates[] = $elementData['lastChangeTime'];
+                    }
+                }
+            }
+        }
+        return ['dates' => $dates, 'dataKeys' => $dataKeys];
     }
 }
