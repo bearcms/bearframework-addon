@@ -29,43 +29,41 @@ class BlogPost extends \BearFramework\Models\Model
     function __construct()
     {
         $this
-                ->defineProperty('id', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('title', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('slug', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('createdTime', [
-                    'type' => '?int'
-                ])
-                ->defineProperty('status', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('publishedTime', [
-                    'type' => '?int'
-                ])
-                ->defineProperty('trashedTime', [
-                    'type' => '?int'
-                ])
-                ->defineProperty('categoriesIDs', [
-                    'type' => 'array'
-                ])
-                ->defineProperty('titleTagContent', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('descriptionTagContent', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('keywordsTagContent', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('lastChangeTime', [
-                    'type' => '?int'
-                ])
-        ;
+            ->defineProperty('id', [
+                'type' => '?string'
+            ])
+            ->defineProperty('title', [
+                'type' => '?string'
+            ])
+            ->defineProperty('slug', [
+                'type' => '?string'
+            ])
+            ->defineProperty('createdTime', [
+                'type' => '?int'
+            ])
+            ->defineProperty('status', [
+                'type' => '?string'
+            ])
+            ->defineProperty('publishedTime', [
+                'type' => '?int'
+            ])
+            ->defineProperty('trashedTime', [
+                'type' => '?int'
+            ])
+            ->defineProperty('categoriesIDs', [
+                'type' => 'array'
+            ])
+            ->defineProperty('titleTagContent', [
+                'type' => '?string'
+            ])
+            ->defineProperty('descriptionTagContent', [
+                'type' => '?string'
+            ])
+            ->defineProperty('keywordsTagContent', [
+                'type' => '?string'
+            ])
+            ->defineProperty('lastChangeTime', [
+                'type' => '?int'
+            ]);
     }
-
 }
