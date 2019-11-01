@@ -276,7 +276,7 @@ class Sitemap
         $app->data->append(self::getChangedDataKeysListDataKey(), substr(json_encode($dataKeys), 1, -1) . ',');
         $app->tasks->add('bearcms-sitemap-process-changes', null, [
             'id' => 'bearcms-sitemap-process-changes',
-            //'startTime' => (ceil(time() / 300) * 300),
+            'startTime' => (ceil(time() / 300) * 300),
             'priority' => 5,
             'ignoreIfExists' => true
         ]);
