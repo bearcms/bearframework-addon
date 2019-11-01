@@ -201,8 +201,8 @@ class Controller
         $data .= '</atom:link>';
 
         $blogPosts = $app->bearCMS->data->blogPosts->getList()
-                ->filterBy('status', 'published')
-                ->sortBy('publishedTime', 'desc');
+            ->filterBy('status', 'published')
+            ->sortBy('publishedTime', 'desc');
         $contentType = $settings->rssType;
         $counter = 0;
         foreach ($blogPosts as $blogPost) {
@@ -267,5 +267,4 @@ Sitemap: ' . $app->request->base . '/sitemap.xml');
         $response->headers->set($response->headers->make('Content-Type', 'text/plain'));
         return $response;
     }
-
 }
