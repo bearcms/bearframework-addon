@@ -272,8 +272,17 @@ class Sitemap
         if (empty($dataKeys)) {
             return;
         }
+        $validDataKeys = [];
+        foreach ($dataKeys as $dataKey) {
+            if (strpos($dataKey, 'bearcms/') === 0) {
+                $validDataKeys[] = $dataKey;
+            }
+        }
+        if (empty($validDataKeys)) {
+            return;
+        }
         $app = App::get();
-        $app->data->append(self::getChangedDataKeysListDataKey(), substr(json_encode($dataKeys), 1, -1) . ',');
+        $app->data->append(self::getChangedDataKeysListDataKey(), substr(json_encode($validDataKeys), 1, -1) . ',');
         $app->tasks->add('bearcms-sitemap-process-changes', null, [
             'id' => 'bearcms-sitemap-process-changes',
             'startTime' => (ceil(time() / 300) * 300),
