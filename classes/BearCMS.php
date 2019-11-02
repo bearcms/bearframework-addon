@@ -1506,13 +1506,13 @@ class BearCMS
             ->define('bearcms-sitemap-process-changes', function () {
                 Internal\Sitemap::processChangedDataKeys();
             })
-            ->define('bearcms-sitemap-update-cached-dates', function ($urls) {
-                foreach ($urls as $url) {
-                    Internal\Sitemap::addUpdateCachedDateTasks($url);
+            ->define('bearcms-sitemap-update-cached-dates', function ($paths) {
+                foreach ($paths as $path) {
+                    Internal\Sitemap::addUpdateCachedDateTasks($path);
                 }
             })
-            ->define('bearcms-sitemap-update-cached-date', function ($url) {
-                Internal\Sitemap::updateCachedDate($url);
+            ->define('bearcms-sitemap-update-cached-date', function ($path) {
+                Internal\Sitemap::updateCachedDate($path);
             })
             ->define('bearcms-sitemap-check-for-changes', function () {
                 Internal\Sitemap::checkSitemapForChanges();

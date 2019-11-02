@@ -10,6 +10,7 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
+use DateTime;
 
 /**
  * 
@@ -44,7 +45,8 @@ class Sitemap
      */
     static public function getXML(): string
     {
-        $urlsToUpdate = [];
+        $app = App::get();
+        $pathsToUpdate = [];
         $sitemap = self::getSitemap();
         $list = $sitemap->getList()->sortBy('location');
         $code = [];
@@ -57,11 +59,12 @@ class Sitemap
             if ($item->lastModified !== null) {
                 $lastModified = null;
                 if (is_callable($item->lastModified)) {
-                    $date = self::getCachedDate($item->location);
+                    $locationPath = str_replace($app->request->base, '', $item->location);
+                    $date = self::getCachedDate($locationPath);
                     if ($date !== null) {
                         $lastModified = $date;
                     } else {
-                        $urlsToUpdate[] = $item->location;
+                        $pathsToUpdate[] = $locationPath;
                     }
                 } else {
                     $lastModified = $item->lastModified;
@@ -75,8 +78,8 @@ class Sitemap
             }
             $code[] =  '</url>';
         }
-        if (!empty($urlsToUpdate)) {
-            self::addUpdateCachedDatesTasks($urlsToUpdate);
+        if (!empty($pathsToUpdate)) {
+            self::addUpdateCachedDatesTasks($pathsToUpdate);
         }
         return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">' . implode('', $code) . '</urlset>';
     }
@@ -96,22 +99,30 @@ class Sitemap
 
     /**
      * 
-     * @param string $url
+     * @param string $path
      * @return void
      */
-    static function updateCachedDate(string $url): void
+    static function updateCachedDate(string $path): void
     {
+        $app = App::get();
         $sitemap = self::getSitemap();
-        $list = $sitemap->getList()->filterBy('location', $url);
+        $list = $sitemap->getList()->filterBy('location', $app->request->base . $path);
         if (isset($list[0])) {
             $item = $list[0];
             if ($item->lastModified !== null) {
                 if (is_callable($item->lastModified)) {
                     $date = call_user_func($item->lastModified);
-                    if (strlen($date) === 0) {
-                        $date = date('c', 1572633993); // the date this feature is added
+                    $minAllowedDate = 1572633993; // the date this feature is added
+                    if (strlen($date) > 0) {
+                        $dateTime = new DateTime($date);
+                        if ($dateTime->getTimestamp() < $minAllowedDate) {
+                            $date = '';
+                        }
                     }
-                    self::setCachedDate($item->location, $date);
+                    if (strlen($date) === 0) {
+                        $date = date('c', $minAllowedDate);
+                    }
+                    self::setCachedDate(str_replace($app->request->base, '', $item->location), $date);
                 }
             }
         }
@@ -119,27 +130,27 @@ class Sitemap
 
     /**
      * 
-     * @param string $url
+     * @param string $path
      * @param string $date
      * @return void
      */
-    static private function setCachedDate(string $url, string $date)
+    static private function setCachedDate(string $path, string $date)
     {
         $data = self::getCachedDatesData();
-        $data[$url] = $date;
+        $data[$path] = $date;
         self::setCachedDatesData($data);
     }
 
     /**
      * 
-     * @param string $url
+     * @param string $path
      * @return string|null
      */
-    static private function getCachedDate(string $url): ?string
+    static private function getCachedDate(string $path): ?string
     {
         $data = self::getCachedDatesData();
-        if (isset($data[$url])) {
-            return (string) $data[$url];
+        if (isset($data[$path])) {
+            return (string) $data[$path];
         }
         return null;
     }
@@ -192,8 +203,10 @@ class Sitemap
      */
     static function addLastModifiedDetails(string $url, array $details): void
     {
+        $app = App::get();
+        $path = str_replace($app->request->base, '', $url);
         $data = self::getLastModifiedDetailsData();
-        $data[$url] = $details;
+        $data[$path] = $details;
         self::setLastModifiedDetailsData($data);
     }
 
@@ -314,28 +327,28 @@ class Sitemap
             return;
         }
         $dataKeys = array_unique($dataKeys);
-        $urlsToUpdate = [];
-        foreach ($allDetailsData as $url => $detailsData) {
+        $pathsToUpdate = [];
+        foreach ($allDetailsData as $path => $detailsData) {
             if (!empty(array_intersect($detailsData['dataKeys'], $dataKeys))) {
-                $urlsToUpdate[] = $url;
+                $pathsToUpdate[] = $path;
             }
         }
-        $urlsToUpdate = array_unique($urlsToUpdate);
-        if (!empty($urlsToUpdate)) {
-            self::addUpdateCachedDatesTasks($urlsToUpdate);
+        $pathsToUpdate = array_unique($pathsToUpdate);
+        if (!empty($pathsToUpdate)) {
+            self::addUpdateCachedDatesTasks($pathsToUpdate);
         }
     }
 
     /**
      * 
-     * @param array $urls
+     * @param array $paths
      * @return void
      */
-    static function addUpdateCachedDatesTasks(array $urls): void
+    static function addUpdateCachedDatesTasks(array $paths): void
     {
         $app = App::get();
-        $app->tasks->add('bearcms-sitemap-update-cached-dates', $urls, [
-            'id' => 'bearcms-sitemap-update-cached-dates-' . md5(json_encode($urls)),
+        $app->tasks->add('bearcms-sitemap-update-cached-dates', $paths, [
+            'id' => 'bearcms-sitemap-update-cached-dates-' . md5(json_encode($paths)),
             'priority' => 5,
             'ignoreIfExists' => true
         ]);
@@ -343,14 +356,14 @@ class Sitemap
 
     /**
      * 
-     * @param string $url
+     * @param string $path
      * @return void
      */
-    static function addUpdateCachedDateTasks(string $url): void
+    static function addUpdateCachedDateTasks(string $path): void
     {
         $app = App::get();
-        $app->tasks->add('bearcms-sitemap-update-cached-date', $url, [
-            'id' => 'bearcms-sitemap-update-cached-date-' . md5($url),
+        $app->tasks->add('bearcms-sitemap-update-cached-date', $path, [
+            'id' => 'bearcms-sitemap-update-cached-date-' . md5($path),
             'priority' => 4,
             'ignoreIfExists' => true
         ]);
