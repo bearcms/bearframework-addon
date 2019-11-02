@@ -1516,7 +1516,10 @@ class BearCMS
             })
             ->define('bearcms-sitemap-check-for-changes', function () {
                 Internal\Sitemap::checkSitemapForChanges();
-            });;
+            })
+            ->define('bearcms-sitemap-notify-search-engines', function () {
+                Internal\Sitemap::notifySearchEngines();
+            });
 
         // Initialize to add asset dirs
         $currentThemeID = Internal\CurrentTheme::getID();
