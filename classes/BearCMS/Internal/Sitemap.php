@@ -429,6 +429,7 @@ class Sitemap
      */
     static function notifySearchEngines(): void
     {
+        $app = App::get();
         $ping = function (string $url) use ($app) {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
