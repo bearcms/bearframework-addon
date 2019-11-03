@@ -379,6 +379,7 @@ class Sitemap
         $app->tasks->add('bearcms-sitemap-check-for-changes', [], [
             'id' => 'bearcms-sitemap-check-for-changes',
             'startTime' => time() + 5 * 60,
+            'priority' => 4,
             'ignoreIfExists' => true
         ]);
     }
