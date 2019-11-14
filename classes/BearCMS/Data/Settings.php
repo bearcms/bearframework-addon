@@ -30,7 +30,7 @@ class Settings
             $data = [
                 'title' => 'MY COMPANY',
                 'description' => 'The slogan of my company',
-                'language' => 'en',
+                'languages' => ['en'],
                 'allowSearchEngines' => true,
                 'allowCommentsInBlogPosts' => true,
                 'externalLinks' => true

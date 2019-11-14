@@ -17,12 +17,12 @@ if (strlen($component->selectedPath) > 0) {
 }
 
 $source = 'topPages';
-if (strlen($component->source) > 0 && array_search($component->source, ['allPages', 'pageChildren', 'topPages']) !== false) {
+if (strlen($component->source) > 0 && array_search($component->source, ['allPages', 'pageChildren', 'topPages', 'pageAllChildren']) !== false) {
     $source = $component->source;
 }
 
 $showHomeLink = false;
-if ($source === 'pageChildren') {
+if ($source === 'pageChildren' || $source === 'pageAllChildren') {
     $sourceParentPageID = (string) $component->sourceParentPageID;
 } elseif ($source === 'allPages' || $source === 'topPages') {
     $showHomeLink = $component->showHomeLink === 'true';
@@ -35,7 +35,7 @@ if ($itemsType === 'onlySelected' && $showHomeLink) {
     $items[] = '_home';
 }
 
-$buildTree = function($pages, $recursive = false, $level = 0) use ($app, $selectedPath, &$buildTree, $itemsType, $items) {
+$buildTree = function ($pages, $recursive = false, $level = 0) use ($app, $selectedPath, &$buildTree, $itemsType, $items) {
     $itemsHtml = [];
     foreach ($pages as $page) {
         if ($page->status !== 'published') { //needed for the children
@@ -83,12 +83,25 @@ if (strlen($component->menuType) > 0) {
 $pages = null;
 if ($source === 'topPages' || $source === 'allPages') {
     $pages = $app->bearCMS->data->pages->getList()
-            ->filterBy('parentID', null)
-            ->filterBy('status', 'published');
+        ->filterBy('parentID', null)
+        ->filterBy('status', 'published');
 } elseif ($source === 'pageChildren') {
     $pages = $app->bearCMS->data->pages->getList()
-            ->filterBy('parentID', $sourceParentPageID)
-            ->filterBy('status', 'published');
+        ->filterBy('parentID', $sourceParentPageID)
+        ->filterBy('status', 'published');
+} elseif ($source === 'pageAllChildren') {
+    $pages = $app->bearCMS->data->pages->getList()
+        ->filterBy('status', 'published');
+    $pagesToRemove = [];
+    foreach ($pages as $i => $page) {
+        if ($page->parentID !== $sourceParentPageID) {
+            $pagesToRemove[] = $i;
+        }
+    }
+    $pagesToRemove = array_reverse($pagesToRemove);
+    foreach ($pagesToRemove as $pageToRemove) {
+        unset($pages[$pageToRemove]);
+    }
 }
 
 $attributes = '';
@@ -136,7 +149,7 @@ if (isset($itemsHtml[0])) {
     if ($pages === null || $pages->count() === 0) {
         $itemsHtml = '';
     } else {
-        $itemsHtml = $buildTree($pages, $source === 'allPages');
+        $itemsHtml = $buildTree($pages, $source === 'allPages' || $source === 'pageAllChildren');
     }
 }
 
@@ -144,7 +157,16 @@ $content = '';
 if (isset($itemsHtml[0])) {
     $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';
 }
-?><html>
-    <head><style>.bearcms-navigation-element-item{word-wrap:break-word;}</style></head>
-    <body><?= $content ?></body>
-</html>
+echo '<html>';
+
+echo '<head>';
+echo '<style>';
+echo '.bearcms-navigation-element-item{word-wrap: break-word;}';
+echo '</style>';
+echo '</head>';
+
+echo '<body>';
+echo $content;
+echo '</body>';
+
+echo '</html>';

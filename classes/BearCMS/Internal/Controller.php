@@ -186,18 +186,24 @@ class Controller
 
     /**
      * 
+     * @param string $language
      * @return \BearFramework\App\Response
      */
-    static function handleRSS(): \BearFramework\App\Response
+    static function handleRSS(string $language): \BearFramework\App\Response
     {
         $app = App::get();
         $settings = $app->bearCMS->data->settings->get();
+        if (strlen($language) === 0 && isset($settings->languages[0])) {
+            $language = $settings->languages[0];
+        }
 
-        $data = '<title>' . htmlspecialchars($settings->title) . '</title>';
+        $data = '<title>' . htmlspecialchars($settings->getTitle($language)) . '</title>';
         $data .= '<link>' . $app->urls->get('/') . '</link>';
-        $data .= '<description>' . htmlspecialchars($settings->description) . '</description>';
-        $data .= '<language>' . htmlspecialchars($settings->language) . '</language>';
-        $data .= '<atom:link href="' . $app->urls->get('/rss.xml') . '" rel="self" type="application/rss+xml">';
+        $data .= '<description>' . htmlspecialchars($settings->getDescription($language)) . '</description>';
+        if (strlen($language) > 0) {
+            $data .= '<language>' . htmlspecialchars($language) . '</language>';
+        }
+        $data .= '<atom:link href="' . $app->urls->get('/rss' . ($settings->languages[0] === $language ? '' : '.' . $language) . '.xml') . '" rel="self" type="application/rss+xml">';
         $data .= '</atom:link>';
 
         $blogPosts = $app->bearCMS->data->blogPosts->getList()
@@ -206,6 +212,19 @@ class Controller
         $contentType = $settings->rssType;
         $counter = 0;
         foreach ($blogPosts as $blogPost) {
+            $add = false;
+            if ($settings->languages[0] === $language) {
+                if (strlen($blogPost->language) === 0 || $blogPost->language === $language) {
+                    $add = true;
+                }
+            } else {
+                if ($blogPost->language === $language) {
+                    $add = true;
+                }
+            }
+            if (!$add) {
+                continue;
+            }
             $blogPostUrl = $app->urls->get(Config::$blogPagesPathPrefix . $blogPost->slug . '/');
             $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPost->id . '" output-type="simple-html"/>');
             $domDocument = new HTML5DOMDocument();

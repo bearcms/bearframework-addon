@@ -7,6 +7,7 @@
  * Free to use under the MIT license.
  */
 
+use BearCMS\ApplyContext;
 use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
@@ -961,12 +962,14 @@ class BearCMS
 
         // Register some other pages
         $this->app->routes
-            ->add('/rss.xml', [
+            ->add(['/rss.xml', '/rss.*.xml'], [
                 [$this, 'disabledCheck'],
-                function () {
+                function (App\Request $request) {
                     $settings = $this->app->bearCMS->data->settings->get();
                     if ($settings->enableRSS) {
-                        return Internal\Controller::handleRSS();
+                        $segmentParts = explode('.', $request->path->getSegment(0));
+                        $language = sizeof($segmentParts) === 3 ? $segmentParts[1] : '';
+                        return Internal\Controller::handleRSS($language);
                     }
                 }
             ])
@@ -1160,7 +1163,11 @@ class BearCMS
                                     $eventDetails = new \BearCMS\Internal\MakeBlogPostPageResponseEventDetails($response, $blogPostID);
                                     $this->dispatchEvent('internalMakeBlogPostPageResponse', $eventDetails);
                                 }
-                                $this->apply($response);
+                                $applyContext = $this->makeApplyContext();
+                                if (strlen($blogPost->language) > 0) {
+                                    $applyContext->language = $blogPost->language;
+                                }
+                                $this->apply($response, $applyContext);
                                 return $response;
                             }
                         }
@@ -1290,8 +1297,8 @@ class BearCMS
                                 return $response;
                             }
                             $found = false;
+                            $settings = $this->app->bearCMS->data->settings->get();
                             if ($pageID === 'home') {
-                                $settings = $this->app->bearCMS->data->settings->get();
                                 $title = trim($settings->title);
                                 $description = trim($settings->description);
                                 $keywords = trim($settings->keywords);
@@ -1328,7 +1335,13 @@ class BearCMS
                                     $eventDetails = new \BearCMS\Internal\MakePageResponseEventDetails($response, $pageID);
                                     $this->dispatchEvent('internalMakePageResponse', $eventDetails);
                                 }
-                                $this->apply($response);
+
+                                $applyContext = $this->makeApplyContext();
+                                $potentialLanguage = $this->app->request->path->getSegment(0);
+                                if (strlen($potentialLanguage) > 0 && array_search($potentialLanguage, $settings->languages) !== false) {
+                                    $applyContext->language = $potentialLanguage;
+                                }
+                                $this->apply($response, $applyContext);
                                 return $response;
                             }
                         }
@@ -1532,14 +1545,26 @@ class BearCMS
      * Applies all Bear CMS modifications (the default HTML, theme and admin UI) to the response.
      * 
      * @param \BearFramework\App\Response $response The response to modify.
+     * @param \BearCMS\ApplyContext|null $applyContext
      * @return void
      */
-    public function apply(\BearFramework\App\Response $response): void
+    public function apply(\BearFramework\App\Response $response, \BearCMS\ApplyContext $applyContext = null): void
     {
-        $this->applyTheme($response);
-        $this->process($response);
-        $this->applyDefaults($response);
-        $this->applyAdminUI($response);
+        $language = null;
+        if ($applyContext !== null) {
+            $language = $applyContext->language;
+        }
+        if ($language !== null) {
+            $previousLocale = $this->app->localization->getLocale();
+            $this->app->localization->setLocale($language);
+        }
+        $this->applyTheme($response, $applyContext);
+        $this->process($response, $applyContext);
+        $this->applyDefaults($response, $applyContext);
+        $this->applyAdminUI($response, $applyContext);
+        if ($language !== null) {
+            $this->app->localization->setLocale($previousLocale);
+        }
     }
 
     /**
@@ -1557,9 +1582,10 @@ class BearCMS
      * Add the default Bear CMS HTML to the response.
      * 
      * @param \BearFramework\App\Response $response The response to modify.
+     * @param \BearCMS\ApplyContext|null $applyContext
      * @return void
      */
-    public function applyDefaults(\BearFramework\App\Response $response): void
+    public function applyDefaults(\BearFramework\App\Response $response, \BearCMS\ApplyContext $applyContext = null): void
     {
         $currentUserExists = Config::hasServer() && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
         $settings = $this->app->bearCMS->data->settings->get();
@@ -1571,8 +1597,16 @@ class BearCMS
         $document = new HTML5DOMDocument();
         $document->loadHTML($response->content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
 
-        if (strlen($settings->language) > 0) {
-            $html = '<html lang="' . htmlentities($settings->language) . '">';
+        $language = null;
+        if ($applyContext !== null) {
+            $language = $applyContext->language;
+        }
+        if (strlen($language) === 0 && isset($settings->languages[0])) {
+            $language = $settings->languages[0];
+        }
+
+        if (strlen($language) > 0) {
+            $html = '<html lang="' . htmlentities($language) . '">';
         } else {
             $html = '<html>';
         }
@@ -1695,12 +1729,27 @@ class BearCMS
         if (empty($settings->allowSearchEngines)) {
             $html .= '<meta name="robots" content="noindex">';
         }
-        $url = $this->app->request->base . $this->app->request->path;
-        $html .= '<link rel="canonical" href="' . htmlentities(rtrim($url, '/') . '/') . '"/>';
+        $url = rtrim($this->app->request->getURL(), '/') . '/';
+        $html .= '<link rel="canonical" href="' . htmlentities($url) . '"/>';
         if ($settings->enableRSS) {
-            $html .= '<link rel="alternate" type="application/rss+xml" title="' . htmlentities(trim($settings->title)) . '" href="' . $this->app->request->base . '/rss.xml" />';
+            $languages = $settings->languages;
+            if (empty($languages)) {
+                $languages = [''];
+            } else {
+                $languages[0] = '';
+            }
+            foreach ($languages as $language) {
+                if ($language === '') {
+                    $rssTitle = $settings->title;
+                    $rssURL = $this->app->urls->get('/rss.xml');
+                } else {
+                    $rssTitle = $settings->getTitle($language);
+                    $rssURL = $this->app->urls->get('/rss.' . $language . '.xml');
+                }
+                $html .= '<link rel="alternate" type="application/rss+xml" title="' . htmlentities(trim($rssTitle)) . '" href="' . htmlentities($rssURL) . '" />';
+            }
         }
-        $html .= '<meta property="og:image" content="' . htmlentities(rtrim($url, '/') . '/') . '-meta-og-image' . '?' . time() . '">';
+        $html .= '<meta property="og:image" content="' . htmlentities($url) . '-meta-og-image' . '?' . time() . '">';
         $html .= '<meta property="og:type" content="website">';
         $html .= '<meta property="og:url" content="' . htmlentities($url) . '">';
         $html .= '</head><body>';
@@ -1746,9 +1795,10 @@ class BearCMS
      * Add the Bear CMS admin UI to the response, if an administrator is logged in.
      * 
      * @param \BearFramework\App\Response $response The response to modify.
+     * @param \BearCMS\ApplyContext|null $applyContext
      * @return void
      */
-    public function applyAdminUI(\BearFramework\App\Response $response): void
+    public function applyAdminUI(\BearFramework\App\Response $response, \BearCMS\ApplyContext $applyContext = null): void
     {
         $currentUserExists = Config::hasServer() && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
         if (!$currentUserExists) {
@@ -1816,13 +1866,26 @@ class BearCMS
      * Applies the currently selected Bear CMS theme to the response provided.
      * 
      * @param \BearFramework\App\Response $response The response to modify.
+     * @param \BearCMS\ApplyContext|null $applyContext
      * @return void
      */
-    public function applyTheme(\BearFramework\App\Response $response): void
+    public function applyTheme(\BearFramework\App\Response $response, \BearCMS\ApplyContext $applyContext = null): void
     {
         $currentUserExists = $this->currentUser->exists();
         $currentThemeID = Internal\CurrentTheme::getID();
         $currentCustomizations = Internal\Themes::getCustomizations($currentThemeID, $currentUserExists ? $this->currentUser->getID() : null);
+
+        $settings = $this->app->bearCMS->data->settings->get();
+        $languages = $settings->languages;
+        $language = null;
+        if ($applyContext !== null) {
+            $language = $applyContext->language;
+        }
+        if (strlen($language) === 0) {
+            if (isset($languages[0])) {
+                $language = $languages[0];
+            }
+        }
 
         if ($currentUserExists) {
             $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
@@ -1842,9 +1905,13 @@ class BearCMS
 
         if (isset(Internal\Themes::$registrations[$currentThemeID])) {
             $theme = Internal\Themes::get($currentThemeID);
+            $callContext = [
+                'language' => $language,
+                'languages' => $languages
+            ];
             if ($theme->get !== null) {
                 if ($response instanceof App\Response\HTML) {
-                    $templateContent = call_user_func($theme->get, $currentCustomizations);
+                    $templateContent = call_user_func($theme->get, $currentCustomizations, $callContext);
                     $template = new \BearFramework\HTMLTemplate($templateContent);
                     if ($currentCustomizations !== null) {
                         $html = $currentCustomizations->getHTML();
@@ -1857,7 +1924,7 @@ class BearCMS
                 }
             }
             if ($theme->apply !== null) {
-                call_user_func($theme->apply, $response, $currentCustomizations);
+                call_user_func($theme->apply, $response, $currentCustomizations, $callContext);
             }
         }
 
@@ -1886,5 +1953,14 @@ class BearCMS
             return new App\Response\TemporaryUnavailable(htmlspecialchars($settings->disabledText));
         }
         return null;
+    }
+
+    /**
+     * 
+     * @return \BearCMS\ApplyContext
+     */
+    public function makeApplyContext(): \BearCMS\ApplyContext
+    {
+        return new ApplyContext();
     }
 }
