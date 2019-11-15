@@ -233,7 +233,8 @@ class Server
             'sbpc', // allow comments in blog posts
             'gl3a', // has files support
             'jzk3ns', // has google fonts embed support,
-            'lan3k' // has page duplicate support
+            'lan3k', // has page duplicate support,
+            'kan4' // has multilanguage support
         ]);
         $data['clientData'] = json_encode($clientData, JSON_UNESCAPED_UNICODE);
 
