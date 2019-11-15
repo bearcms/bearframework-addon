@@ -236,6 +236,8 @@ class Server
             'lan3k', // has page duplicate support,
             'kan4' // has multilanguage support
         ]);
+        $settings = $app->bearCMS->data->settings->get();
+        $clientData['contentLanguages'] = $settings->languages;
         $data['clientData'] = json_encode($clientData, JSON_UNESCAPED_UNICODE);
 
         $ch = curl_init();
