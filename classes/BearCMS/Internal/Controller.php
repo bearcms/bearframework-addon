@@ -193,8 +193,9 @@ class Controller
     {
         $app = App::get();
         $settings = $app->bearCMS->data->settings->get();
-        if (strlen($language) === 0 && isset($settings->languages[0])) {
-            $language = $settings->languages[0];
+        $primaryLanguage = isset($settings->languages[0]) ? $settings->languages[0] : null;
+        if (strlen($language) === 0) {
+            $language = $primaryLanguage;
         }
 
         $data = '<title>' . htmlspecialchars($settings->getTitle($language)) . '</title>';
@@ -203,7 +204,7 @@ class Controller
         if (strlen($language) > 0) {
             $data .= '<language>' . htmlspecialchars($language) . '</language>';
         }
-        $data .= '<atom:link href="' . $app->urls->get('/rss' . ($settings->languages[0] === $language ? '' : '.' . $language) . '.xml') . '" rel="self" type="application/rss+xml">';
+        $data .= '<atom:link href="' . $app->urls->get('/rss' . ($primaryLanguage === $language ? '' : '.' . $language) . '.xml') . '" rel="self" type="application/rss+xml">';
         $data .= '</atom:link>';
 
         $blogPosts = $app->bearCMS->data->blogPosts->getList()
@@ -213,12 +214,13 @@ class Controller
         $counter = 0;
         foreach ($blogPosts as $blogPost) {
             $add = false;
-            if ($settings->languages[0] === $language) {
-                if (strlen($blogPost->language) === 0 || $blogPost->language === $language) {
+            $blogPostLanguage = $blogPost->language;
+            if ($primaryLanguage === $language) {
+                if (strlen($blogPostLanguage) === 0 || (string) $blogPostLanguage === (string) $language) {
                     $add = true;
                 }
             } else {
-                if ($blogPost->language === $language) {
+                if ($blogPostLanguage === $language) {
                     $add = true;
                 }
             }

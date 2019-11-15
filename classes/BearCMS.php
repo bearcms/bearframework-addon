@@ -1739,13 +1739,8 @@ class BearCMS
                 $languages[0] = '';
             }
             foreach ($languages as $language) {
-                if ($language === '') {
-                    $rssTitle = $settings->title;
-                    $rssURL = $this->app->urls->get('/rss.xml');
-                } else {
-                    $rssTitle = $settings->getTitle($language);
-                    $rssURL = $this->app->urls->get('/rss.' . $language . '.xml');
-                }
+                $rssTitle = $settings->getTitle($language);
+                $rssURL = $this->app->urls->get('/rss' . ($language === '' ? '' : '.' . $language) . '.xml');
                 $html .= '<link rel="alternate" type="application/rss+xml" title="' . htmlentities(trim($rssTitle)) . '" href="' . htmlentities($rssURL) . '" />';
             }
         }

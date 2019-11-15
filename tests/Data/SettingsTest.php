@@ -27,6 +27,7 @@ class SettingsTest extends BearCMSTestCase
         $this->assertEquals($settings->description, null);
         $this->assertEquals($settings->keywords, null);
         $this->assertEquals($settings->language, 'en');
+        $this->assertEquals($settings->languages, ['en']);
         $this->assertEquals($settings->icon, null);
         $this->assertEquals($settings->icons, []);
         $this->assertEquals($settings->externalLinks, false);
@@ -37,5 +38,4 @@ class SettingsTest extends BearCMSTestCase
         $this->assertEquals($settings->enableRSS, true);
         $this->assertEquals($settings->rssType, 'contentSummary');
     }
-
 }
