@@ -10,8 +10,17 @@ use BearFramework\App;
 
 $app = App::get();
 
+$elementsLanguageSuffix = '';
+$homePath = '/';
+if (isset($languages[0]) && $languages[0] !== $language) {
+    $elementsLanguageSuffix = '-' . $language;
+    $homePath = '/' . $language . '/';
+}
+
 $settings = $app->bearCMS->data->settings->get();
-$isHomePage = (string) $app->request->path === '/';
+$isHomePage = (string) $app->request->path === $homePath;
+
+$hasLanguagesPicker = sizeof($languages) > 1;
 
 $backgroundColor = $customizations->getValue('backgroundColor');
 $textColor = $customizations->getValue('textColor');
@@ -75,6 +84,14 @@ echo 'html,body{padding:0;margin:0;min-height:100%;}';
 echo '*{outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);}';
 echo '.template-container{min-height:100vh;font-family:' . $fontFamily . ';font-size:' . $fontSize . ';background-color:' . $backgroundColor . ';color:' . $textColor . ';display:flex;flex-direction:column;}';
 echo '.template-header{box-sizing:border-box;width:100%;max-width:' . $contentWidth . ';margin:0 auto;padding:0 1rem;}';
+echo '.template-header-languages-container{position:absolute;top:0;right:' . ($app->currentUser->exists() ? '74px' : '10px') . ';}';
+echo '.template-header-languages-container *{display:inline-block;box-sizing:border-box;text-align:center;font-size:calc(' . $fontSize . ' * 0.8);text-decoration:none;color:' . $textColor . ';line-height:36px;padding:0 10px;height:36px;background-color:rgba(0,0,0,0.05);}';
+echo '.template-header-languages-container :first-child{border-bottom-left-radius:2px;}';
+echo '.template-header-languages-container :last-child{border-bottom-right-radius:2px;}';
+echo '.template-header-languages-container span{cursor:default;}';
+echo '.template-header-languages-container a{opacity:0.5;}';
+echo '.template-header-languages-container a:hover{opacity:1;}';
+
 if ($hasHeaderLogo) {
     echo '.template-header-logo-container{margin-top:3rem;}';
     echo '.template-header-logo{box-sizing:border-box;max-width:' . $headerLogoMaxWidth . 'px;margin:0 auto;}';
@@ -298,19 +315,31 @@ echo '</head>';
 echo '<body><div class="template-container">';
 echo '<header class="template-header">';
 
+if ($hasLanguagesPicker) {
+    echo '<div class="template-header-languages-container">';
+    foreach ($languages as $_language) {
+        if ($_language === $language) {
+            echo '<span>' . strtoupper($_language) . '</span>';
+        } else {
+            echo '<a href="' . htmlentities($app->urls->get(($languages[0] === $_language ? '/' : '/' . $_language . '/'))) . '">' . strtoupper($_language) . '</a>';
+        }
+    }
+    echo '</div>';
+}
+
 if ($hasHeaderLogo) {
     $imageHTML = '<component src="bearcms-image-element" class="template-header-logo"' . ($isHomePage ? '' : ' onClick="openUrl" url="' . htmlentities($app->urls->get()) . '"') . ' filename="' . htmlentities($headerLogoImage) . '"/>';
     echo '<div class="template-header-logo-container">' . $imageHTML . '</div>';
 }
 if ($hasHeaderTitle) {
-    echo '<div class="template-header-title-container"><' . ($isHomePage ? 'span' : 'a href="' . htmlentities($app->urls->get()) . '"') . ' class="template-header-title">' . htmlspecialchars($settings->title) . '</' . ($isHomePage ? 'span' : 'a') . '></div>';
+    echo '<div class="template-header-title-container"><' . ($isHomePage ? 'span' : 'a href="' . htmlentities($app->urls->get()) . '"') . ' class="template-header-title">' . htmlspecialchars($settings->getTitle((string) $language)) . '</' . ($isHomePage ? 'span' : 'a') . '></div>';
 }
 
 if ($hasNavigation) {
     echo '<nav class="template-navigation">';
     echo '<div>';
     echo '<input id="template-navigation-toggle-button" type="checkbox"/><label for="template-navigation-toggle-button"></label>';
-    echo '<div><component src="bearcms-navigation-element" editable="true" id="main-navigation" source="allPages" showHomeLink="true" menuType="horizontal-down" class="template-navigation-content" selectedPath="' . (string) $app->request->path . '" data-responsive-attributes="w<650=>menuType=none,w>=650=>menuType=horizontal-down" /></div>';
+    echo '<div><component src="bearcms-navigation-element" editable="true" id="main-navigation' . $elementsLanguageSuffix . '" source="allPages" showHomeLink="true" menuType="horizontal-down" class="template-navigation-content" selectedPath="' . (string) $app->request->path . '" data-responsive-attributes="w<650=>menuType=none,w>=650=>menuType=horizontal-down" /></div>';
     echo '</div>';
     echo '</nav>';
 }
@@ -324,7 +353,7 @@ echo '</section>';
 
 if ($hasFooter) {
     echo '<footer class="template-footer"><div>';
-    echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer"/>';
+    echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer' . $elementsLanguageSuffix . '"/>';
     echo '</div></footer>';
 }
 echo '</div></body>';
