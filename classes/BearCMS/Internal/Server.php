@@ -127,11 +127,11 @@ class Server
      */
     public static function isRetryResponse(array $response): bool
     {
-        $responseHeaders = $response['headers'];
-        return strpos($responseHeaders, 'X-App-Sr: qyi') > 0 ||
-            strpos($responseHeaders, 'X-App-Sr: pkr') > 0 ||
-            strpos($responseHeaders, 'X-App-Sr: jke') > 0 ||
-            strpos($responseHeaders, 'X-App-Sr: wpr') > 0;
+        $responseHeaders = strtolower($response['headers']);
+        return strpos($responseHeaders, 'x-app-sr: qyi') > 0 ||
+            strpos($responseHeaders, 'x-app-sr: pkr') > 0 ||
+            strpos($responseHeaders, 'x-app-sr: jke') > 0 ||
+            strpos($responseHeaders, 'x-app-sr: wpr') > 0;
     }
 
     /**
@@ -262,7 +262,7 @@ class Server
         $responseHeadersSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $responseHeaders = trim(substr($response, 0, $responseHeadersSize));
         $responseBody = substr($response, $responseHeadersSize);
-        if (strpos($responseHeaders, 'X-App-Bg: 1') !== false) {
+        if (strpos(strtolower($responseHeaders), 'x-app-bg: 1') !== false) {
             try {
                 $responseBody = gzuncompress($responseBody);
             } catch (\Exception $e) {
