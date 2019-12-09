@@ -193,7 +193,7 @@ class Controller
     {
         $app = App::get();
         $settings = $app->bearCMS->data->settings->get();
-        $primaryLanguage = isset($settings->languages[0]) ? $settings->languages[0] : null;
+        $primaryLanguage = isset($settings->languages[0]) ? $settings->languages[0] : '';
         if (strlen($language) === 0) {
             $language = $primaryLanguage;
         }
