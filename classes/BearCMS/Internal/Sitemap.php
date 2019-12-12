@@ -376,10 +376,9 @@ class Sitemap
     static function addCheckSitemapForChangesTask(): void
     {
         $app = App::get();
-        $app->tasks->add('bearcms-sitemap-check-for-changes', [], [
+        $app->tasks->add('bearcms-sitemap-check-for-changes', null, [
             'id' => 'bearcms-sitemap-check-for-changes',
             'startTime' => time() + 5 * 60,
-            'priority' => 4,
             'ignoreIfExists' => true
         ]);
     }
@@ -391,36 +390,21 @@ class Sitemap
     static function checkSitemapForChanges(): void
     {
         $app = App::get();
-        $settings = $app->bearCMS->data->settings->get();
-        if (empty($settings->allowSearchEngines)) {
-            return;
-        }
         $xml = self::getXML();
-
         $xmlMD5 = md5($xml);
         $dataKey = '.temp/bearcms/last-checked-sitemap-xml-md5';
         if ($app->data->getValue($dataKey) !== $xmlMD5) {
             $app->data->setValue($dataKey, $xmlMD5);
-            $app->tasks->add('bearcms-sitemap-notify-search-engines', null, [
-                'id' => 'bearcms-sitemap-notify-search-engines-1',
-                'startTime' => (time() + 5 * 60),
-                'priority' => 4,
-                'ignoreIfExists' => true
-            ]);
-        }
-
-        $matches = null;
-        preg_match_all('/\<loc\>(.*?)\<\/loc\>/', $xml, $matches);
-        $urlsMD5 = md5(isset($matches[1]) ? json_encode($matches[1]) : '');
-        $dataKey = '.temp/bearcms/last-checked-sitemap-urls-md5';
-        if ($app->data->getValue($dataKey) !== $urlsMD5) {
-            $app->data->setValue($dataKey, $urlsMD5);
-            $app->tasks->add('bearcms-sitemap-notify-search-engines', null, [
-                'id' => 'bearcms-sitemap-notify-search-engines-2',
-                'startTime' => (time() + 6 * 60 * 60),
-                'priority' => 4,
-                'ignoreIfExists' => true
-            ]);
+            $app->bearCMS->dispatchEvent('internalSitemapChange');
+            $settings = $app->bearCMS->data->settings->get();
+            if (!empty($settings->allowSearchEngines)) {
+                $app->tasks->add('bearcms-sitemap-notify-search-engines', null, [
+                    'id' => 'bearcms-sitemap-notify-search-engines',
+                    'startTime' => (time() + 5 * 60),
+                    'priority' => 4,
+                    'ignoreIfExists' => true
+                ]);
+            }
         }
     }
 
