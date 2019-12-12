@@ -27,7 +27,7 @@ $app->bearCMS->themes
         $context->assets
             ->addDir('themes/themeone/assets');
 
-        $theme->version = '1.8';
+        $theme->version = '1.9';
 
         $theme->get = function (\BearCMS\Themes\Theme\Customizations $customizations, array $cntx) use ($app, $context) {
             $language = isset($cntx['language']) ? $cntx['language'] : null;

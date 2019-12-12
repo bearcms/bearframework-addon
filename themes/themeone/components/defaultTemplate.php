@@ -283,6 +283,9 @@ for ($i = 0; $i < ($hasFooter ? 2 : 1); $i++) {
     echo $containerClassName . ' .bearcms-separator-element-medium{' . $separator . 'width:50%;}';
     echo $containerClassName . ' .bearcms-separator-element-small{' . $separator . 'width:30%;}';
 
+    echo $containerClassName . ' .bearcms-search-box-element-input{' . $input . '}';
+    echo $containerClassName . ' .bearcms-search-box-element-button{' . $button . '}';
+
     echo '@media(min-width: 40rem) {';
     echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-large{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
     echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-medium{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
@@ -292,6 +295,7 @@ for ($i = 0; $i < ($hasFooter ? 2 : 1); $i++) {
     echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-link-element{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
     echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-blog-posts-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
     echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-comments-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
+    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-search-box-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
     echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-navigation-element{margin:0 ' . $spacing . ' !important;}';
     echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-share-button-element{padding:0 ' . $spacing . ' !important;}';
     echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-forum-posts-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
