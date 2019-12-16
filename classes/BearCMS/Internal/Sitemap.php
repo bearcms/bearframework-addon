@@ -137,8 +137,10 @@ class Sitemap
     static private function setCachedDate(string $path, string $date)
     {
         $data = self::getCachedDatesData();
-        $data[$path] = $date;
-        self::setCachedDatesData($data);
+        if (!isset($data[$path]) || $data[$path] !== $date) {
+            $data[$path] = $date;
+            self::setCachedDatesData($data);
+        }
     }
 
     /**
@@ -165,6 +167,7 @@ class Sitemap
         $app = App::get();
         $app->data->setValue(self::getCachedDatesDataKey(), json_encode($data));
         self::$cache['cached-dates'] = $data;
+        self::addCheckSitemapForChangesTask();
     }
 
     /**
@@ -299,7 +302,7 @@ class Sitemap
         $app->tasks->add('bearcms-sitemap-process-changes', null, [
             'id' => 'bearcms-sitemap-process-changes',
             'startTime' => (ceil(time() / 300) * 300),
-            'priority' => 5,
+            //'priority' => 5,
             'ignoreIfExists' => true
         ]);
     }
@@ -348,8 +351,8 @@ class Sitemap
     {
         $app = App::get();
         $app->tasks->add('bearcms-sitemap-update-cached-dates', $paths, [
-            'id' => 'bearcms-sitemap-update-cached-dates-' . md5(json_encode($paths)),
-            'priority' => 5,
+            'id' => 'bearcms-sitemap-update-cached-dates-' . md5(json_encode($paths)) . '-' . sizeof($paths), // for debugging purposes
+            //'priority' => 5,
             'ignoreIfExists' => true
         ]);
     }
