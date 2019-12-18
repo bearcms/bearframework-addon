@@ -1160,17 +1160,17 @@ class BearCMS
                                 $categoriesIDs = $blogPost->categoriesIDs;
                                 if ($settings->showRelatedBlogPosts && !empty($categoriesIDs)) {
                                     $links = [];
-                                    $relatedBlogPosts = $this->app->bearCMS->data->blogPosts->getList();
+                                    $relatedBlogPosts = $this->app->bearCMS->data->blogPosts->getList()
+                                        ->filterBy('status', 'published')
+                                        ->sortBy('publishedTime', 'desc');
                                     foreach ($relatedBlogPosts as $relatedBlogPost) {
                                         if ($blogPost->id === $relatedBlogPost->id || sizeof(array_intersect($categoriesIDs, $relatedBlogPost->categoriesIDs)) === 0) {
                                             continue;
                                         }
-                                        if ($relatedBlogPost->status !== 'published') {
-                                            continue;
-                                        }
                                         $relatedBlogTitle = strlen($relatedBlogPost->title) > 0 ? $relatedBlogPost->title : 'Unknown';
                                         $relatedBlogURL = $this->app->urls->get(Config::$blogPagesPathPrefix . $relatedBlogPost->slug . '/');
-                                        $links[] = '<component src="bearcms-link-element" url="' . htmlentities($relatedBlogURL) . '" text="' . htmlentities($relatedBlogTitle) . '" title="' . htmlentities($relatedBlogTitle) . '" size="small"/>';
+                                        //$links[] = '<component src="bearcms-link-element" url="' . htmlentities($relatedBlogURL) . '" text="' . htmlentities($relatedBlogTitle) . '" title="' . htmlentities($relatedBlogTitle) . '" size="small"/>';
+                                        $links[] = '<a href="' . htmlentities($relatedBlogURL) . '" title="' . htmlentities($relatedBlogTitle) . '">' . htmlspecialchars($relatedBlogTitle) . '</a>';
                                         if (sizeof($links) >= 5) {
                                             break;
                                         }
@@ -1178,7 +1178,7 @@ class BearCMS
                                     if (!empty($links)) {
                                         $content .= '<div class="bearcms-blogpost-page-related-block-separator"><component src="bearcms-separator-element" size="large"/></div>';
                                         $content .= '<div class="bearcms-blogpost-page-related-title-container"><component src="bearcms-heading-element" text="' . __('bearcms.pages.blogPost.Continue reading') . '" size="small"/></div>';
-                                        $content .= '<div class="bearcms-blogpost-page-related-container">' . implode('', $links) . '</div>';
+                                        $content .= '<div class="bearcms-blogpost-page-related-container"><component src="bearcms-text-element" text="' . htmlentities(implode('<br>', $links)) . '"/></div>';
                                     }
                                 }
                                 $content .= '</body></html>';
