@@ -23,6 +23,7 @@ use BearCMS\Internal2;
  * @property boolean $externalLinks
  * @property boolean $allowSearchEngines
  * @property boolean $allowCommentsInBlogPosts
+ * @property boolean $showRelatedBlogPosts
  * @property boolean $disabled
  * @property string|null $disabledText
  * @property boolean $enableRSS
@@ -72,6 +73,12 @@ class Settings extends \BearFramework\Models\Model
                 }
             ])
             ->defineProperty('allowCommentsInBlogPosts', [
+                'type' => 'bool',
+                'init' => function () {
+                    return false;
+                }
+            ])
+            ->defineProperty('showRelatedBlogPosts', [
                 'type' => 'bool',
                 'init' => function () {
                     return false;

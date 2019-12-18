@@ -33,6 +33,7 @@ class Settings
                 'languages' => ['en'],
                 'allowSearchEngines' => true,
                 'allowCommentsInBlogPosts' => true,
+                'showRelatedBlogPosts' => true,
                 'externalLinks' => true
             ];
         }

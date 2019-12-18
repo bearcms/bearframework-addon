@@ -352,7 +352,6 @@ class Sitemap
         $app = App::get();
         $app->tasks->add('bearcms-sitemap-update-cached-dates', $paths, [
             'id' => 'bearcms-sitemap-update-cached-dates-' . md5(json_encode($paths)) . '-' . sizeof($paths), // for debugging purposes
-            //'priority' => 5,
             'ignoreIfExists' => true
         ]);
     }

@@ -1153,8 +1153,33 @@ class BearCMS
                                 $content .= '<div class="bearcms-blogpost-page-content"><bearcms-elements id="bearcms-blogpost-' . $blogPostID . '"/></div>';
                                 $settings = $this->app->bearCMS->data->settings->get();
                                 if ($settings->allowCommentsInBlogPosts) {
-                                    $content .= '<div class="bearcms-blogpost-page-comments-title-container"><component src="bearcms-heading-element" text="' . 'Comments' . '" size="small"/></div>';
+                                    $content .= '<div class="bearcms-blogpost-page-comments-block-separator"><component src="bearcms-separator-element" size="large"/></div>';
+                                    $content .= '<div class="bearcms-blogpost-page-comments-title-container"><component src="bearcms-heading-element" text="' . __('bearcms.pages.blogPost.Comments') . '" size="small"/></div>';
                                     $content .= '<div class="bearcms-blogpost-page-comments-container"><component src="bearcms-comments-element" threadID="bearcms-blogpost-' . $blogPost->id . '"/></div>';
+                                }
+                                $categoriesIDs = $blogPost->categoriesIDs;
+                                if ($settings->showRelatedBlogPosts && !empty($categoriesIDs)) {
+                                    $links = [];
+                                    $relatedBlogPosts = $this->app->bearCMS->data->blogPosts->getList();
+                                    foreach ($relatedBlogPosts as $relatedBlogPost) {
+                                        if ($blogPost->id === $relatedBlogPost->id || sizeof(array_intersect($categoriesIDs, $relatedBlogPost->categoriesIDs)) === 0) {
+                                            continue;
+                                        }
+                                        if ($relatedBlogPost->status !== 'published') {
+                                            continue;
+                                        }
+                                        $relatedBlogTitle = strlen($relatedBlogPost->title) > 0 ? $relatedBlogPost->title : 'Unknown';
+                                        $relatedBlogURL = $this->app->urls->get(Config::$blogPagesPathPrefix . $relatedBlogPost->slug . '/');
+                                        $links[] = '<component src="bearcms-link-element" url="' . htmlentities($relatedBlogURL) . '" text="' . htmlentities($relatedBlogTitle) . '" title="' . htmlentities($relatedBlogTitle) . '" size="small"/>';
+                                        if (sizeof($links) >= 5) {
+                                            break;
+                                        }
+                                    }
+                                    if (!empty($links)) {
+                                        $content .= '<div class="bearcms-blogpost-page-related-block-separator"><component src="bearcms-separator-element" size="large"/></div>';
+                                        $content .= '<div class="bearcms-blogpost-page-related-title-container"><component src="bearcms-heading-element" text="' . __('bearcms.pages.blogPost.Continue reading') . '" size="small"/></div>';
+                                        $content .= '<div class="bearcms-blogpost-page-related-container">' . implode('', $links) . '</div>';
+                                    }
                                 }
                                 $content .= '</body></html>';
 

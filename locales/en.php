@@ -87,4 +87,6 @@ return [
     'bearcms.users.settings.image' => 'Image',
     'bearcms.elements.video.by %s' => 'by %s',
     'bearcms.elements.video.Play on %s' => 'Play on %s',
+    'bearcms.pages.blogPost.Comments' => 'Comments',
+    'bearcms.pages.blogPost.Continue reading' => 'Continue reading',
 ];

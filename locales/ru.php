@@ -17,4 +17,6 @@ return [
     'bearcms.users.Administrator' => 'Администратор',
     'bearcms.elements.video.by %s' => 'от %s',
     'bearcms.elements.video.Play on %s' => 'Play on %s',
+    'bearcms.pages.blogPost.Comments' => 'Комментарии',
+    'bearcms.pages.blogPost.Continue reading' => 'Продолжить чтение',
 ];

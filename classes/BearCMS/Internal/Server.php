@@ -234,7 +234,8 @@ class Server
             'gl3a', // has files support
             'jzk3ns', // has google fonts embed support,
             'lan3k', // has page duplicate support,
-            'kan4' // has multilanguage support
+            'kan4', // has multilanguage support,
+            'j93a' // has related posts support
         ]);
         $settings = $app->bearCMS->data->settings->get();
         $clientData['contentLanguages'] = $settings->languages;
@@ -405,7 +406,8 @@ class Server
                             $app->data->set($app->data->make($dataKey, $userID));
                         }
                         break;
-                    } catch (\BearFramework\App\Data\DataLockedException $e) { }
+                    } catch (\BearFramework\App\Data\DataLockedException $e) {
+                    }
                     if ($i === 3) {
                         throw $e;
                     } else {

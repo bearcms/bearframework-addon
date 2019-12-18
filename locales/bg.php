@@ -87,4 +87,6 @@ return [
     'bearcms.users.settings.image' => 'Снимка',
     'bearcms.elements.video.by %s' => 'от %s',
     'bearcms.elements.video.Play on %s' => 'Пусни в %s',
+    'bearcms.pages.blogPost.Comments' => 'Коментари',
+    'bearcms.pages.blogPost.Continue reading' => 'Още статии',
 ];

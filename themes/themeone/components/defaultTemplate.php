@@ -303,8 +303,12 @@ for ($i = 0; $i < ($hasFooter ? 2 : 1); $i++) {
     echo $containerClassName . ' .bearcms-elements > .bearcms-elements-floating-box{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
     echo $containerClassName . ' .bearcms-blogpost-page-title-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
     echo $containerClassName . ' .bearcms-blogpost-page-date-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
+    echo $containerClassName . ' .bearcms-blogpost-page-comments-block-separator{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
     echo $containerClassName . ' .bearcms-blogpost-page-comments-title-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
     echo $containerClassName . ' .bearcms-blogpost-page-comments-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
+    echo $containerClassName . ' .bearcms-blogpost-page-related-block-separator{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
+    echo $containerClassName . ' .bearcms-blogpost-page-related-title-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
+    echo $containerClassName . ' .bearcms-blogpost-page-related-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
     echo $containerClassName . ' .bearcms-new-forum-post-page-title-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
     echo $containerClassName . ' .bearcms-new-forum-post-page-content{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
     echo $containerClassName . ' .bearcms-forum-post-page-title-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
