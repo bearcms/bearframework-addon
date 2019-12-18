@@ -253,6 +253,7 @@ for ($i = 0; $i < ($hasFooter ? 2 : 1); $i++) {
     echo $containerClassName . ' .bearcms-blogpost-page-content{padding-top:calc(' . $fontSize . ' * 1.6);}';
     echo $containerClassName . ' .bearcms-blogpost-page-comments-title-container{padding-top:calc(' . $fontSize . ' * 1.6);}';
     echo $containerClassName . ' .bearcms-blogpost-page-comments-container{padding-top:calc(' . $fontSize . ' * 1.6);}';
+    echo $containerClassName . ' .bearcms-blogpost-page-related-container{padding-top:calc(' . $fontSize . ' * 1.6);}';
 
     echo $containerClassName . ' .bearcms-new-forum-post-page-title{' . $h1 . 'padding-bottom:' . $fontSize . ';}';
     echo $containerClassName . ' .bearcms-new-forum-post-page-title-label{' . $text . '}';
