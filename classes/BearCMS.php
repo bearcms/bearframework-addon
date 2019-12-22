@@ -1169,7 +1169,6 @@ class BearCMS
                                         }
                                         $relatedBlogTitle = strlen($relatedBlogPost->title) > 0 ? $relatedBlogPost->title : 'Unknown';
                                         $relatedBlogURL = $this->app->urls->get(Config::$blogPagesPathPrefix . $relatedBlogPost->slug . '/');
-                                        //$links[] = '<component src="bearcms-link-element" url="' . htmlentities($relatedBlogURL) . '" text="' . htmlentities($relatedBlogTitle) . '" title="' . htmlentities($relatedBlogTitle) . '" size="small"/>';
                                         $links[] = '<a href="' . htmlentities($relatedBlogURL) . '" title="' . htmlentities($relatedBlogTitle) . '">' . htmlspecialchars($relatedBlogTitle) . '</a>';
                                         if (sizeof($links) >= 5) {
                                             break;
