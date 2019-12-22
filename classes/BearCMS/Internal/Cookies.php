@@ -131,7 +131,7 @@ class Cookies
         $requestUrlParts = parse_url($app->request->base);
         $serverUrlParts = parse_url(Config::$serverUrl);
         $cookieMatches = [];
-        preg_match_all('/Set-Cookie:(.*)/u', $headers, $cookieMatches);
+        preg_match_all('/Set-Cookie:(.*)/ui', $headers, $cookieMatches);
         foreach ($cookieMatches[1] as $cookieMatch) {
             $cookieMatchData = explode(';', $cookieMatch);
             $cookieData = array('name' => '', 'value' => '', 'expire' => '', 'path' => '', 'domain' => '', 'secure' => false, 'httponly' => false);
