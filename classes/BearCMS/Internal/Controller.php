@@ -152,7 +152,7 @@ class Controller
                 $response->headers->set($response->headers->make('Content-Type', $details['mimeType']));
             }
             if (!$preview) {
-                $response->headers->set($response->headers->make('Content-Disposition', 'attachment; filename=' . $fileData['name'])); // rawurlencode
+                $response->headers->set($response->headers->make('Content-Disposition', 'attachment; filename="' . $fileData['name'] . '"')); // rawurlencode
                 $response->headers->set($response->headers->make('Content-Length', (string) filesize($fullFilename)));
             }
             if ($noCache) {
