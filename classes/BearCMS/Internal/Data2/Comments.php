@@ -36,5 +36,4 @@ class Comments
         }
         return $result;
     }
-
 }

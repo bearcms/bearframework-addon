@@ -24,6 +24,7 @@ class ServerCommands
 {
 
     static $external = [];
+    static $cache = [];
 
     /**
      * 
@@ -216,12 +217,38 @@ class ServerCommands
 
     /**
      * 
+     * @return \IvoPetkov\DataList
+     */
+    static private function _commentsGetList(): \IvoPetkov\DataList
+    {
+        if (!isset(self::$cache['commentsList'])) {
+            self::$cache['commentsList'] = Internal2::$data2->comments->getList();
+        }
+        return clone (self::$cache['commentsList']);
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    static private function _commentsClearCache(): void
+    {
+        if (isset(self::$cache['commentsList'])) {
+            unset(self::$cache['commentsList']);
+        }
+    }
+
+
+
+    /**
+     * 
      * @param array $data
      * @return void
      */
     static function commentDelete(array $data): void
     {
         Internal\Data\Comments::deleteCommentForever($data['threadID'], $data['commentID']);
+        self::_commentsClearCache();
     }
 
     /**
@@ -232,6 +259,7 @@ class ServerCommands
     static function commentSetStatus(array $data): void
     {
         Internal\Data\Comments::setStatus($data['threadID'], $data['commentID'], $data['status']);
+        self::_commentsClearCache();
     }
 
     /**
@@ -241,7 +269,7 @@ class ServerCommands
      */
     static function commentsCount(array $data): int
     {
-        $result = Internal2::$data2->comments->getList();
+        $result = self::_commentsGetList();
         if ($data['type'] !== 'all') {
             $result->filterBy('status', $data['type']);
         }
@@ -255,7 +283,7 @@ class ServerCommands
      */
     static function commentsList(array $data): array
     {
-        $result = Internal2::$data2->comments->getList();
+        $result = self::_commentsGetList();
         $result->sortBy('createdTime', 'desc');
         if ($data['type'] !== 'all') {
             $result->filterBy('status', $data['type']);
