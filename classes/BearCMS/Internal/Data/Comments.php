@@ -155,8 +155,8 @@ class Comments
     static function getCommentsElementsLocations(): array
     {
         $app = App::get();
-        $cacheKey = 'bearcms-comments-elements-locations';
-        $result = $app->cache->getValue($cacheKey);
+        $tempDataKey = '.temp/bearcms/comments-elements-locations';
+        $result = $app->data->getValue($tempDataKey);
         if ($result !== null) {
             $result = json_decode($result, true);
         }
@@ -193,7 +193,7 @@ class Comments
                 $threadID = 'bearcms-blogpost-' . $blogPost->id;
                 $result[$threadID] = $url;
             }
-            $app->cache->set($app->cache->make($cacheKey, json_encode($result)));
+            $app->data->setValue($tempDataKey, json_encode($result));
         }
         return $result;
     }

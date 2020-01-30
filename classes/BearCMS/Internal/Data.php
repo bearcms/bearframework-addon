@@ -231,7 +231,7 @@ class Data
         self::$cache = [];
         self::_updateGroupValue('all');
         if (strpos($key, 'bearcms/elements/') === 0 || strpos($key, 'bearcms/pages/') === 0 || strpos($key, 'bearcms/blog/') === 0) {
-            $app->cache->delete('bearcms-comments-elements-locations');
+            $app->data->delete('.temp/bearcms/comments-elements-locations');
         }
     }
 
