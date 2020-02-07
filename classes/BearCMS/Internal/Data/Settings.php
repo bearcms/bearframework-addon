@@ -36,7 +36,6 @@ class Settings
                 }
                 $cache->set($cache->make($cacheKey, json_encode($sizes)));
             }
-            print_r($sizes);
             $list = [];
             foreach ($sizes as $filename => $size) {
                 $list[$filename] = $size[0] > $size[1] ? $size[1] : $size[0];
