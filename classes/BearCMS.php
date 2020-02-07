@@ -1388,6 +1388,49 @@ class BearCMS
         }
 
         $this->app->assets
+            ->addEventListener('beforePrepare', function (\BearFramework\App\Assets\BeforePrepareEventDetails $details) {
+                $filename = $details->filename;
+                // Theme media file
+                $matchingDir = $this->context->dir . '/assets/tm/';
+                if (strpos($filename, $matchingDir) === 0) {
+                    $details->filename = '';
+                    $pathParts = explode('/', substr($filename, strlen($matchingDir)), 2);
+                    if (isset($pathParts[0], $pathParts[1])) {
+                        $themeIDMD5 = $pathParts[0];
+                        $mediaFilenameMD5 = $pathParts[1];
+                        $themes = Internal\Themes::getIDs();
+                        foreach ($themes as $id) {
+                            if ($themeIDMD5 === md5($id)) {
+                                $themeManifest = Internal\Themes::getManifest($id, false);
+                                if (isset($themeManifest['media'])) {
+                                    foreach ($themeManifest['media'] as $i => $mediaItem) {
+                                        if (isset($mediaItem['filename'])) {
+                                            if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
+                                                $details->filename = $mediaItem['filename'];
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                                $themeStyles = Internal\Themes::getStyles($id, false);
+                                foreach ($themeStyles as $themeStyle) {
+                                    if (isset($themeStyle['media'])) {
+                                        foreach ($themeStyle['media'] as $i => $mediaItem) {
+                                            if (isset($mediaItem['filename'])) {
+                                                if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
+                                                    $details->filename = $mediaItem['filename'];
+                                                    return;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return;
+                }
+            })
             ->addEventListener('prepare', function (\BearFramework\App\Assets\PrepareEventDetails $details) {
                 $filename = $details->filename;
                 $addonAssetsDir = $this->context->dir . '/assets/';
@@ -1423,47 +1466,6 @@ class BearCMS
                         if (isset($pathParts[0], $pathParts[1], $pathParts[2])) {
                             $url = $pathParts[0] . '://' . $pathParts[1] . '/' . str_replace('\\', '/', $pathParts[2]);
                             $details->returnValue = $downloadUrl($url);
-                        }
-                        return;
-                    }
-
-                    // Theme media file
-                    $matchingDir = $addonAssetsDir . 'tm/';
-                    if (strpos($filename, $matchingDir) === 0) {
-                        $details->returnValue = null;
-                        $pathParts = explode('/', substr($filename, strlen($matchingDir)), 2);
-                        if (isset($pathParts[0], $pathParts[1])) {
-                            $themeIDMD5 = $pathParts[0];
-                            $mediaFilenameMD5 = $pathParts[1];
-                            $themes = Internal\Themes::getIDs();
-                            foreach ($themes as $id) {
-                                if ($themeIDMD5 === md5($id)) {
-                                    $themeManifest = Internal\Themes::getManifest($id, false);
-                                    if (isset($themeManifest['media'])) {
-                                        foreach ($themeManifest['media'] as $i => $mediaItem) {
-                                            if (isset($mediaItem['filename'])) {
-                                                if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
-                                                    $details->returnValue = $mediaItem['filename'];
-                                                    return;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    $themeStyles = Internal\Themes::getStyles($id, false);
-                                    foreach ($themeStyles as $themeStyle) {
-                                        if (isset($themeStyle['media'])) {
-                                            foreach ($themeStyle['media'] as $i => $mediaItem) {
-                                                if (isset($mediaItem['filename'])) {
-                                                    if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
-                                                        $details->returnValue = $mediaItem['filename'];
-                                                        return;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
                         }
                         return;
                     }
