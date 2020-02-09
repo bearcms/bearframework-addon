@@ -23,18 +23,11 @@ class Settings
         $app = App::get();
         $settings = $app->bearCMS->data->settings->get();
         if (!empty($settings->icons)) {
-            $cache = $app->cache;
-            $cacheKey = 'lazy-image-size-' . json_encode($settings->icons);
-            $cachedData = $cache->getValue($cacheKey);
-            if ($cachedData !== null) {
-                $sizes = json_decode($cachedData, true);
-            } else {
-                $sizes = [];
-                foreach ($settings->icons as $icon) {
-                    $details = $app->assets->getDetails($icon['filename'], ['width', 'height']);
-                    $sizes[$icon['filename']] = [$details['width'], $details['height']];
-                }
-                $cache->set($cache->make($cacheKey, json_encode($sizes)));
+            $sizes = [];
+            foreach ($settings->icons as $icon) {
+                $filename = $icon['filename'];
+                $details = $app->assets->getDetails($filename, ['width', 'height']);
+                $sizes[$filename] = [$details['width'], $details['height']];
             }
             $list = [];
             foreach ($sizes as $filename => $size) {
@@ -51,5 +44,4 @@ class Settings
         }
         return null;
     }
-
 }
