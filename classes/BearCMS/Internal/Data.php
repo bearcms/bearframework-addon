@@ -121,7 +121,7 @@ class Data
         $app = App::get();
         $keys = [];
         foreach (self::$cacheRequests as $requestData) {
-            if (strpos($requestData[2], '.temp/') !== 0) {
+            if (strpos($requestData[2], 'bearcms/') === 0) {
                 $keys[$requestData[1] . '-' . $requestData[2]] = [$requestData[1], $requestData[2]];
             }
         }
@@ -223,15 +223,14 @@ class Data
      */
     static function onDataChanged(string $key): void
     {
-        if (strpos($key, '.temp/bearcms/') !== 0 && strpos($key, 'bearcms/') !== 0) {
-            return;
-        }
-        $app = App::get();
-        self::$hasContentChange = true;
-        self::$cache = [];
-        self::_updateGroupValue('all');
-        if (strpos($key, 'bearcms/elements/') === 0 || strpos($key, 'bearcms/pages/') === 0 || strpos($key, 'bearcms/blog/') === 0) {
-            $app->data->delete('.temp/bearcms/comments-elements-locations');
+        if (strpos($key, 'bearcms/') === 0) {
+            $app = App::get();
+            self::$hasContentChange = true;
+            self::$cache = [];
+            self::_updateGroupValue('all');
+            if (strpos($key, 'bearcms/elements/') === 0 || strpos($key, 'bearcms/pages/') === 0 || strpos($key, 'bearcms/blog/') === 0) {
+                $app->data->delete('.temp/bearcms/comments-elements-locations');
+            }
         }
     }
 
