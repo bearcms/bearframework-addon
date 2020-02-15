@@ -48,7 +48,8 @@ class Themes
      */
     public function getUserOptions(string $id, string $userID): ?array
     {
-        $data = Internal\Data::getValue('.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json');
+        $app = App::get();
+        $data = $app->data->getValue('.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json');
         if ($data !== null) {
             $data = json_decode($data, true);
             if (isset($data['options'])) {
@@ -170,5 +171,4 @@ class Themes
     {
         $this->setOptionsValues($id, null);
     }
-
 }

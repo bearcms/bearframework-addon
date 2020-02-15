@@ -736,7 +736,7 @@ class ServerCommands
                     }
                     $themeData['options']['activeValues'] = $optionsValues;
 
-                    $result = Internal\Data::getValue('.temp/bearcms/userthemeoptions/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($id) . '.json');
+                    $result = $app->data->getValue('.temp/bearcms/userthemeoptions/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($id) . '.json');
                     if ($result !== null) {
                         $temp = json_decode($result, true);
                         $optionsValues = isset($temp['options']) ? $temp['options'] : [];
