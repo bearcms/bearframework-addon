@@ -722,7 +722,7 @@ class ServerCommands
                 $themeData = $themeManifest;
                 $themeData['id'] = $id;
                 $themeData['hasOptions'] = !empty($optionsAsArray);
-                $themeData['hasStyles'] = sizeof(Internal\Themes::getStyles($id)) > 0;
+                $themeData['stylesCount'] = sizeof(Internal\Themes::getStyles($id));
                 if ($includeOptions) {
                     $themeData['options'] = [
                         'definition' => $optionsAsArray
@@ -815,6 +815,7 @@ class ServerCommands
             $themeData = $themeManifest;
             $themeData['id'] = $id;
             $themeData['hasOptions'] = Internal\Themes::getOptions($id) !== null;
+            $themeData['stylesCount'] = sizeof(Internal\Themes::getStyles($id));
             $result[] = $themeData;
         }
         return $result;
