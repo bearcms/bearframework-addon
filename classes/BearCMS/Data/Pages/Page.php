@@ -9,8 +9,6 @@
 
 namespace BearCMS\Data\Pages;
 
-use BearFramework\App;
-
 /**
  * @property string|null $id
  * @property string|null $name
@@ -60,9 +58,7 @@ class Page extends \BearFramework\Models\Model
             ->defineProperty('children', [
                 'readonly' => true,
                 'init' => function () {
-                    $app = App::get();
-                    return $app->bearCMS->data->pages->getList()
-                        ->filterBy('parentID', $this->id);
+                    return \BearCMS\Internal\Data\Pages::getChildrenList($this->id);
                 }
             ])
             ->defineProperty('lastChangeTime', [

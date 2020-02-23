@@ -47,34 +47,6 @@ class Pages
      */
     public function getList(): \BearFramework\Models\ModelsList
     {
-        $cacheKey = 'pages_list';
-        if (!isset(Internal\Data::$cache[$cacheKey])) {
-            $list = Internal\Data::getList('bearcms/pages/page/');
-            array_walk($list, function (&$value) {
-                $value = \BearCMS\Data\Pages\Page::fromJSON($value);
-            });
-            $structureData = Internal\Data::getValue('bearcms/pages/structure.json');
-            $structureData = $structureData === null ? [] : json_decode($structureData, true);
-            $flattenStructureData = [];
-            $flattenStructure = function ($structureData) use (&$flattenStructure, &$flattenStructureData) {
-                foreach ($structureData as $item) {
-                    $flattenStructureData[] = $item['id'];
-                    if (isset($item['children'])) {
-                        $flattenStructure($item['children']);
-                    }
-                }
-            };
-            $flattenStructure($structureData);
-            unset($flattenStructure);
-            unset($structureData);
-            $flattenStructureData = array_flip($flattenStructureData);
-            usort($list, function ($object1, $object2) use ($flattenStructureData) {
-                return $flattenStructureData[$object1->id] - $flattenStructureData[$object2->id];
-            });
-            unset($flattenStructureData);
-            Internal\Data::$cache[$cacheKey] = $list;
-            unset($list);
-        }
-        return new \BearFramework\Models\ModelsList(Internal\Data::$cache[$cacheKey]);
+        return Internal\Data\Pages::getPagesList();
     }
 }

@@ -82,26 +82,11 @@ if (strlen($component->menuType) > 0) {
 
 $pages = null;
 if ($source === 'topPages' || $source === 'allPages') {
-    $pages = $app->bearCMS->data->pages->getList()
-        ->filterBy('parentID', null)
-        ->filterBy('status', 'published');
-} elseif ($source === 'pageChildren') {
-    $pages = $app->bearCMS->data->pages->getList()
-        ->filterBy('parentID', $sourceParentPageID)
-        ->filterBy('status', 'published');
-} elseif ($source === 'pageAllChildren') {
-    $pages = $app->bearCMS->data->pages->getList()
-        ->filterBy('status', 'published');
-    $pagesToRemove = [];
-    foreach ($pages as $i => $page) {
-        if ($page->parentID !== $sourceParentPageID) {
-            $pagesToRemove[] = $i;
-        }
-    }
-    $pagesToRemove = array_reverse($pagesToRemove);
-    foreach ($pagesToRemove as $pageToRemove) {
-        unset($pages[$pageToRemove]);
-    }
+    $pages = \BearCMS\Internal\Data\Pages::getChildrenList(null); // Used instead of $app->bearCMS->data->pages->getList() for better performance
+    $pages->filterBy('status', 'published');
+} elseif ($source === 'pageChildren' || $source === 'pageAllChildren') {
+    $pages = \BearCMS\Internal\Data\Pages::getChildrenList($sourceParentPageID); // Used instead of $app->bearCMS->data->pages->getList() for better performance
+    $pages->filterBy('status', 'published');
 }
 
 $attributes = '';
