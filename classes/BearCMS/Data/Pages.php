@@ -16,16 +16,16 @@ use BearCMS\Internal;
  */
 class Pages
 {
-//    use \BearFramework\Models\ModelsRepositoryTrait;
-//    use \BearFramework\Models\ModelsRepositoryRequestTrait;
-//    use \BearFramework\Models\ModelsRepositoryToArrayTrait;
-//    use \BearFramework\Models\ModelsRepositoryToJSONTrait;
-//
-//    function __construct()
-//    {
-//        $this->setModel(\BearCMS\Data\Pages\Page::class, 'id');
-//        $this->useAppDataDriver('bearcms/pages/page/');
-//    }
+    //    use \BearFramework\Models\ModelsRepositoryTrait;
+    //    use \BearFramework\Models\ModelsRepositoryRequestTrait;
+    //    use \BearFramework\Models\ModelsRepositoryToArrayTrait;
+    //    use \BearFramework\Models\ModelsRepositoryToJSONTrait;
+    //
+    //    function __construct()
+    //    {
+    //        $this->setModel(\BearCMS\Data\Pages\Page::class, 'id');
+    //        $this->useAppDataDriver('bearcms/pages/page/');
+    //    }
 
     /**
      * 
@@ -50,13 +50,13 @@ class Pages
         $cacheKey = 'pages_list';
         if (!isset(Internal\Data::$cache[$cacheKey])) {
             $list = Internal\Data::getList('bearcms/pages/page/');
-            array_walk($list, function(&$value) {
+            array_walk($list, function (&$value) {
                 $value = \BearCMS\Data\Pages\Page::fromJSON($value);
             });
             $structureData = Internal\Data::getValue('bearcms/pages/structure.json');
             $structureData = $structureData === null ? [] : json_decode($structureData, true);
             $flattenStructureData = [];
-            $flattenStructure = function($structureData) use (&$flattenStructure, &$flattenStructureData) {
+            $flattenStructure = function ($structureData) use (&$flattenStructure, &$flattenStructureData) {
                 foreach ($structureData as $item) {
                     $flattenStructureData[] = $item['id'];
                     if (isset($item['children'])) {
@@ -68,7 +68,7 @@ class Pages
             unset($flattenStructure);
             unset($structureData);
             $flattenStructureData = array_flip($flattenStructureData);
-            usort($list, function($object1, $object2) use ($flattenStructureData) {
+            usort($list, function ($object1, $object2) use ($flattenStructureData) {
                 return $flattenStructureData[$object1->id] - $flattenStructureData[$object2->id];
             });
             unset($flattenStructureData);
@@ -77,5 +77,4 @@ class Pages
         }
         return new \BearFramework\Models\ModelsList(Internal\Data::$cache[$cacheKey]);
     }
-
 }
