@@ -21,17 +21,15 @@ class Addon
     public function __construct(string $id)
     {
         $this
-                ->defineProperty('id', [
-                    'type' => 'string',
-                    'get' => function() use ($id) {
-                        return $id;
-                    },
-                    'readonly' => true
-                ])
-                ->defineProperty('initialize', [
-                    'type' => '?callable'
-                ])
-        ;
+            ->defineProperty('id', [
+                'type' => 'string',
+                'get' => function () use ($id) {
+                    return $id;
+                },
+                'readonly' => true
+            ])
+            ->defineProperty('initialize', [
+                'type' => '?callable'
+            ]);
     }
-
 }

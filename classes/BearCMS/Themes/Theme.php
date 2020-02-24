@@ -31,35 +31,34 @@ class Theme
     public function __construct(string $id)
     {
         $this
-                ->defineProperty('id', [
-                    'type' => 'string',
-                    'get' => function() use ($id) {
-                        return $id;
-                    },
-                    'readonly' => true
-                ])
-                ->defineProperty('version', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('initialize', [
-                    'type' => '?callable'
-                ])
-                ->defineProperty('apply', [
-                    'type' => '?callable'
-                ])
-                ->defineProperty('get', [
-                    'type' => '?callable'
-                ])
-                ->defineProperty('manifest', [
-                    'type' => '?callable'
-                ])
-                ->defineProperty('options', [
-                    'type' => '?callable'
-                ])
-                ->defineProperty('styles', [
-                    'type' => '?callable'
-                ])
-        ;
+            ->defineProperty('id', [
+                'type' => 'string',
+                'get' => function () use ($id) {
+                    return $id;
+                },
+                'readonly' => true
+            ])
+            ->defineProperty('version', [
+                'type' => '?string'
+            ])
+            ->defineProperty('initialize', [
+                'type' => '?callable'
+            ])
+            ->defineProperty('apply', [
+                'type' => '?callable'
+            ])
+            ->defineProperty('get', [
+                'type' => '?callable'
+            ])
+            ->defineProperty('manifest', [
+                'type' => '?callable'
+            ])
+            ->defineProperty('options', [
+                'type' => '?callable'
+            ])
+            ->defineProperty('styles', [
+                'type' => '?callable'
+            ]);
     }
 
     /**
@@ -79,7 +78,7 @@ class Theme
     {
         return new \BearCMS\Themes\Theme\Style();
     }
-    
+
     /**
      * 
      * @return \BearCMS\Themes\Theme\Manifest
@@ -88,5 +87,4 @@ class Theme
     {
         return new \BearCMS\Themes\Theme\Manifest();
     }
-
 }

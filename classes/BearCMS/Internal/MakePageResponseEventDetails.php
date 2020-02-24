@@ -28,15 +28,13 @@ class MakePageResponseEventDetails
     public function __construct(\BearFramework\App\Response $response, string $pageID)
     {
         $this
-                ->defineProperty('response', [
-                    'type' => \BearFramework\App\Response::class
-                ])
-                ->defineProperty('pageID', [
-                    'type' => 'string'
-                ])
-        ;
+            ->defineProperty('response', [
+                'type' => \BearFramework\App\Response::class
+            ])
+            ->defineProperty('pageID', [
+                'type' => 'string'
+            ]);
         $this->response = $response;
         $this->pageID = $pageID;
     }
-
 }

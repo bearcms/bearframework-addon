@@ -32,28 +32,26 @@ class BeforeAddCommentEventDetails
     public function __construct(array $author, string $text, string $status)
     {
         $this
-                ->defineProperty('author', [
-                    'type' => 'array'
-                ])
-                ->defineProperty('text', [
-                    'type' => 'string'
-                ])
-                ->defineProperty('status', [
-                    'type' => 'string'
-                ])
-                ->defineProperty('cancel', [
-                    'type' => 'bool',
-                    'init' => function() {
-                        return false;
-                    }
-                ])
-                ->defineProperty('cancelMessage', [
-                    'type' => 'string'
-                ])
-        ;
+            ->defineProperty('author', [
+                'type' => 'array'
+            ])
+            ->defineProperty('text', [
+                'type' => 'string'
+            ])
+            ->defineProperty('status', [
+                'type' => 'string'
+            ])
+            ->defineProperty('cancel', [
+                'type' => 'bool',
+                'init' => function () {
+                    return false;
+                }
+            ])
+            ->defineProperty('cancelMessage', [
+                'type' => 'string'
+            ]);
         $this->author = $author;
         $this->text = $text;
         $this->status = $status;
     }
-
 }

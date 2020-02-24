@@ -26,21 +26,21 @@ class Comment
 
     function __construct()
     {
-        $this->defineProperty('id', [
-            'type' => 'string'
-        ]);
-        $this->defineProperty('status', [
-            'type' => 'string'
-        ]);
-        $this->defineProperty('author', [
-            'type' => 'array'
-        ]);
-        $this->defineProperty('text', [
-            'type' => '?string'
-        ]);
-        $this->defineProperty('createdTime', [
-            'type' => '?int'
-        ]);
+        $this
+            ->defineProperty('id', [
+                'type' => 'string'
+            ])
+            ->defineProperty('status', [
+                'type' => 'string'
+            ])
+            ->defineProperty('author', [
+                'type' => 'array'
+            ])
+            ->defineProperty('text', [
+                'type' => '?string'
+            ])
+            ->defineProperty('createdTime', [
+                'type' => '?int'
+            ]);
     }
-
 }

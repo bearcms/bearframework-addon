@@ -28,15 +28,13 @@ class MakeBlogPostPageResponseEventDetails
     public function __construct(\BearFramework\App\Response $response, string $blogPostID)
     {
         $this
-                ->defineProperty('response', [
-                    'type' => \BearFramework\App\Response::class
-                ])
-                ->defineProperty('blogPostID', [
-                    'type' => 'string'
-                ])
-        ;
+            ->defineProperty('response', [
+                'type' => \BearFramework\App\Response::class
+            ])
+            ->defineProperty('blogPostID', [
+                'type' => 'string'
+            ]);
         $this->response = $response;
         $this->blogPostID = $blogPostID;
     }
-
 }

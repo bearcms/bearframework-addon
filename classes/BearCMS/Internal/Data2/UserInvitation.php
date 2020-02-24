@@ -26,13 +26,12 @@ class UserInvitation
     {
         $this->defineProperty('key', [
             'type' => 'string'
-        ]);
-        $this->defineProperty('email', [
-            'type' => 'string'
-        ]);
-        $this->defineProperty('permissions', [
-            'type' => 'array'
-        ]);
+        ])
+            ->defineProperty('email', [
+                'type' => 'string'
+            ])
+            ->defineProperty('permissions', [
+                'type' => 'array'
+            ]);
     }
-
 }

@@ -24,31 +24,30 @@ class Data
     function __construct()
     {
         $this
-                ->defineProperty('blogPosts', [
-                    'init' => function() {
-                        return new \BearCMS\Data\BlogPosts();
-                    },
-                    'readonly' => true
-                ])
-                ->defineProperty('pages', [
-                    'init' => function() {
-                        return new \BearCMS\Data\Pages();
-                    },
-                    'readonly' => true
-                ])
-                ->defineProperty('settings', [
-                    'init' => function() {
-                        return new \BearCMS\Data\Settings();
-                    },
-                    'readonly' => true
-                ])
-                ->defineProperty('users', [
-                    'init' => function() {
-                        return new \BearCMS\Data\Users();
-                    },
-                    'readonly' => true
-                ])
-        ;
+            ->defineProperty('blogPosts', [
+                'init' => function () {
+                    return new \BearCMS\Data\BlogPosts();
+                },
+                'readonly' => true
+            ])
+            ->defineProperty('pages', [
+                'init' => function () {
+                    return new \BearCMS\Data\Pages();
+                },
+                'readonly' => true
+            ])
+            ->defineProperty('settings', [
+                'init' => function () {
+                    return new \BearCMS\Data\Settings();
+                },
+                'readonly' => true
+            ])
+            ->defineProperty('users', [
+                'init' => function () {
+                    return new \BearCMS\Data\Users();
+                },
+                'readonly' => true
+            ]);
     }
 
     /**
@@ -59,5 +58,4 @@ class Data
     {
         return Internal\Data\UploadsSize::getSize();
     }
-
 }

@@ -28,19 +28,17 @@ class Style
     public function __construct()
     {
         $this
-                ->defineProperty('id', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('name', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('media', [
-                    'type' => 'array'
-                ])
-                ->defineProperty('values', [
-                    'type' => 'array'
-                ])
-        ;
+            ->defineProperty('id', [
+                'type' => '?string'
+            ])
+            ->defineProperty('name', [
+                'type' => '?string'
+            ])
+            ->defineProperty('media', [
+                'type' => 'array'
+            ])
+            ->defineProperty('values', [
+                'type' => 'array'
+            ]);
     }
-
 }

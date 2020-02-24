@@ -28,15 +28,13 @@ class AddCommentEventDetails
     public function __construct(string $threadID, string $commentID)
     {
         $this
-                ->defineProperty('threadID', [
-                    'type' => 'string'
-                ])
-                ->defineProperty('commentID', [
-                    'type' => 'string'
-                ])
-        ;
+            ->defineProperty('threadID', [
+                'type' => 'string'
+            ])
+            ->defineProperty('commentID', [
+                'type' => 'string'
+            ]);
         $this->threadID = $threadID;
         $this->commentID = $commentID;
     }
-
 }

@@ -28,19 +28,17 @@ class Manifest
     public function __construct()
     {
         $this
-                ->defineProperty('name', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('description', [
-                    'type' => '?string'
-                ])
-                ->defineProperty('author', [
-                    'type' => 'array'
-                ])
-                ->defineProperty('media', [
-                    'type' => 'array'
-                ])
-        ;
+            ->defineProperty('name', [
+                'type' => '?string'
+            ])
+            ->defineProperty('description', [
+                'type' => '?string'
+            ])
+            ->defineProperty('author', [
+                'type' => 'array'
+            ])
+            ->defineProperty('media', [
+                'type' => 'array'
+            ]);
     }
-
 }

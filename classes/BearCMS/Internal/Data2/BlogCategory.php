@@ -21,15 +21,15 @@ class BlogCategory
 
     function __construct()
     {
-        $this->defineProperty('id', [
-            'type' => 'string'
-        ]);
-        $this->defineProperty('name', [
-            'type' => 'string'
-        ]);
-        $this->defineProperty('status', [
-            'type' => 'string'
-        ]);
+        $this
+            ->defineProperty('id', [
+                'type' => 'string'
+            ])
+            ->defineProperty('name', [
+                'type' => 'string'
+            ])
+            ->defineProperty('status', [
+                'type' => 'string'
+            ]);
     }
-
 }

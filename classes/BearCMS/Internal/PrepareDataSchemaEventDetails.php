@@ -26,11 +26,9 @@ class PrepareDataSchemaEventDetails
     public function __construct(\BearCMS\Internal\DataSchema $dataSchema)
     {
         $this
-                ->defineProperty('dataSchema', [
-                    'type' => '\BearCMS\Internal\DataSchema'
-                ])
-        ;
+            ->defineProperty('dataSchema', [
+                'type' => '\BearCMS\Internal\DataSchema'
+            ]);
         $this->dataSchema = $dataSchema;
     }
-
 }
