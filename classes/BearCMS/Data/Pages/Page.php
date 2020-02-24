@@ -71,11 +71,11 @@ class Page extends \BearFramework\Models\Model
 
     static function fromJSON(string $data)
     {
-        $data = json_decode($data, true);
-        if (isset($data['parentID']) && strlen($data['parentID']) === 0) {
-            $data['parentID'] = null;
+        $temp = json_decode($data, true);
+        if (isset($temp['parentID']) && strlen($temp['parentID']) === 0) {
+            $temp['parentID'] = null;
+            $data = json_encode($temp);
         }
-        $data = json_encode($data);
         return parent::fromJSON($data);
     }
 }
