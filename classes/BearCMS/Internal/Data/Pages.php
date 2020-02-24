@@ -71,31 +71,32 @@ class Pages
     {
         $cacheKey = 'pages_list';
         if (!isset(Internal\Data::$cache[$cacheKey])) {
-            $list = Internal\Data::getList('bearcms/pages/page/');
-            array_walk($list, function (&$value) {
-                $value = \BearCMS\Data\Pages\Page::fromJSON($value);
-            });
+            $rawList = Internal\Data::getList('bearcms/pages/page/');
+            $pages = [];
+            foreach ($rawList as $pageJSON) {
+                $page = \BearCMS\Data\Pages\Page::fromJSON($pageJSON);
+                $pages[$page->id] = $page;
+            }
             $structureData = Internal\Data::getValue('bearcms/pages/structure.json');
             $structureData = $structureData === null ? [] : json_decode($structureData, true);
-            $flattenStructureData = [];
-            $flattenStructure = function ($structureData) use (&$flattenStructure, &$flattenStructureData) {
+            $result = [];
+            $walkPages = function ($structureData) use (&$walkPages, &$result, $pages) {
                 foreach ($structureData as $item) {
-                    $flattenStructureData[] = $item['id'];
+                    $pageID = $item['id'];
+                    if (isset($pages[$pageID])) {
+                        $result[] = $pages[$pageID];
+                    }
                     if (isset($item['children'])) {
-                        $flattenStructure($item['children']);
+                        $walkPages($item['children']);
                     }
                 }
             };
-            $flattenStructure($structureData);
-            unset($flattenStructure);
+            $walkPages($structureData);
+            unset($walkPages);
             unset($structureData);
-            $flattenStructureData = array_flip($flattenStructureData);
-            usort($list, function ($object1, $object2) use ($flattenStructureData) {
-                return $flattenStructureData[$object1->id] - $flattenStructureData[$object2->id];
-            });
-            unset($flattenStructureData);
-            Internal\Data::$cache[$cacheKey] = $list;
-            unset($list);
+            unset($pages);
+            Internal\Data::$cache[$cacheKey] = $result;
+            return $result;
         }
         return Internal\Data::$cache[$cacheKey];
     }
