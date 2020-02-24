@@ -1739,7 +1739,7 @@ class BearCMS
         }
 
         if ($generateDescriptionMetaTag || $generateKeywordsMetaTag) {
-            $elements = $document->querySelectorAll('.bearcms-heading-element-large,.bearcms-heading-element-medium,.bearcms-heading-element-small,.bearcms-text-element');
+            $elements = $document->querySelectorAll('h1.bearcms-heading-element-large,h2.bearcms-heading-element-medium,h3.bearcms-heading-element-small,div.bearcms-text-element');
             if ($elements->length > 0) {
 
                 if ($generateDescriptionMetaTag) {
