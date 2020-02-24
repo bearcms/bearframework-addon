@@ -24,9 +24,10 @@ class UserInvitation
 
     function __construct()
     {
-        $this->defineProperty('key', [
-            'type' => 'string'
-        ])
+        $this
+            ->defineProperty('key', [
+                'type' => 'string'
+            ])
             ->defineProperty('email', [
                 'type' => 'string'
             ])
