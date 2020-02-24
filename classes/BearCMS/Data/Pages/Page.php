@@ -58,6 +58,9 @@ class Page extends \BearFramework\Models\Model
             ->defineProperty('children', [
                 'readonly' => true,
                 'init' => function () {
+                    if ($this->id === null) {
+                        return [];
+                    }
                     return \BearCMS\Internal\Data\Pages::getChildrenList($this->id);
                 }
             ])
