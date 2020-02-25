@@ -35,7 +35,13 @@ class Page extends \BearFramework\Models\Model
                 'type' => '?string'
             ])
             ->defineProperty('parentID', [
-                'type' => '?string'
+                'type' => '?string',
+                'set' => function ($value) {
+                    if ($value === '') {
+                        return null;
+                    }
+                    return $value;
+                }
             ])
             ->defineProperty('status', [
                 'type' => '?string'
@@ -67,15 +73,5 @@ class Page extends \BearFramework\Models\Model
             ->defineProperty('lastChangeTime', [
                 'type' => '?int'
             ]);
-    }
-
-    static function fromJSON(string $data)
-    {
-        $temp = json_decode($data, true);
-        if (isset($temp['parentID']) && strlen($temp['parentID']) === 0) {
-            $temp['parentID'] = null;
-            $data = json_encode($temp);
-        }
-        return parent::fromJSON($data);
     }
 }
