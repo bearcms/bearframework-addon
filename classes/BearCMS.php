@@ -1817,6 +1817,7 @@ class BearCMS
             $html .= '<meta name="robots" content="noindex">';
         }
         $url = rtrim($this->app->request->getURL(), '/') . '/';
+        $url = explode('?', $url)[0]; // remove the query string
         $html .= '<link rel="canonical" href="' . htmlentities($url) . '"/>';
         if ($settings->enableRSS) {
             $languages = $settings->languages;
