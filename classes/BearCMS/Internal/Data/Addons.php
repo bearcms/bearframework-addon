@@ -33,7 +33,7 @@ class Addons
     {
         $app = App::get();
         $list = $app->data->getList()
-                ->filterBy('key', 'bearcms/addons/addon/', 'startWith');
+            ->filterBy('key', 'bearcms/addons/addon/', 'startWith');
         $result = new \BearFramework\DataList();
         foreach ($list as $item) {
             $result[] = self::makeFromRawData($item->value);
@@ -69,27 +69,27 @@ class Addons
             'exists' => \BearFramework\Addons::exists($data['id']),
             'options' => (isset($data['options']) ? $data['options'] : []),
         ]);
-//        $includeOptions = isset($data['includeOptions']) && !empty($data['includeOptions']);
-//        $addonManifestData = BearCMS\Internal\Data\Addons::getManifestData($data['id']);
-//        if (is_array($addonManifestData)) {
-//            $addonData['hasOptions'] = isset($addonManifestData['options']) && !empty($addonManifestData['options']);
-//            if ($includeOptions) {
-//                $addonData['options'] = [];
-//                $addonData['options']['definition'] = isset($addonManifestData['options']) ? $addonManifestData['options'] : [];
-//                $addonData['options']['values'] = $optionsValues;
-//                $addonData['options']['valid'] = BearCMS\Internal\Data\Addons::validateOptions($addonData['options']['definition'], $addonData['options']['values']);
-//            }
-//            unset($addonManifestData['options']);
-//            $addonData = array_merge($addonData, $addonManifestData);
-//        } else {
-//            $addonData['hasOptions'] = false;
-//            if ($includeOptions) {
-//                $addonData['options'] = [];
-//                $addonData['options']['definition'] = [];
-//                $addonData['options']['values'] = [];
-//                $addonData['options']['valid'] = true;
-//            }
-//        }
+        //        $includeOptions = isset($data['includeOptions']) && !empty($data['includeOptions']);
+        //        $addonManifestData = BearCMS\Internal\Data\Addons::getManifestData($data['id']);
+        //        if (is_array($addonManifestData)) {
+        //            $addonData['hasOptions'] = isset($addonManifestData['options']) && !empty($addonManifestData['options']);
+        //            if ($includeOptions) {
+        //                $addonData['options'] = [];
+        //                $addonData['options']['definition'] = isset($addonManifestData['options']) ? $addonManifestData['options'] : [];
+        //                $addonData['options']['values'] = $optionsValues;
+        //                $addonData['options']['valid'] = BearCMS\Internal\Data\Addons::validateOptions($addonData['options']['definition'], $addonData['options']['values']);
+        //            }
+        //            unset($addonManifestData['options']);
+        //            $addonData = array_merge($addonData, $addonManifestData);
+        //        } else {
+        //            $addonData['hasOptions'] = false;
+        //            if ($includeOptions) {
+        //                $addonData['options'] = [];
+        //                $addonData['options']['definition'] = [];
+        //                $addonData['options']['values'] = [];
+        //                $addonData['options']['valid'] = true;
+        //            }
+        //        }
     }
 
     /**
@@ -220,33 +220,33 @@ class Addons
         $app->cache->delete($cacheKey);
     }
 
-//    static function validateOptions($definition, $values)
-//    {
-//        foreach ($definition as $optionData) {
-//            if (isset($optionData['id'])) {
-//                $id = $optionData['id'];
-//                $validations = isset($optionData['validations']) ? $optionData['validations'] : [];
-//                if (empty($validations)) {
-//                    continue;
-//                }
-//                $isValid = true;
-//                foreach ($validations as $validationData) {
-//                    if (isset($validationData[0])) {
-//                        if ($validationData[0] === 'required') {
-//                            if (!isset($values[$id]) || strlen($values[$id]) === 0) {
-//                                $isValid = false;
-//                                break;
-//                            }
-//                        }
-//                    }
-//                }
-//                if (!$isValid) {
-//                    return false;
-//                }
-//            }
-//        }
-//        return true;
-//    }
+    //    static function validateOptions($definition, $values)
+    //    {
+    //        foreach ($definition as $optionData) {
+    //            if (isset($optionData['id'])) {
+    //                $id = $optionData['id'];
+    //                $validations = isset($optionData['validations']) ? $optionData['validations'] : [];
+    //                if (empty($validations)) {
+    //                    continue;
+    //                }
+    //                $isValid = true;
+    //                foreach ($validations as $validationData) {
+    //                    if (isset($validationData[0])) {
+    //                        if ($validationData[0] === 'required') {
+    //                            if (!isset($values[$id]) || strlen($values[$id]) === 0) {
+    //                                $isValid = false;
+    //                                break;
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //                if (!$isValid) {
+    //                    return false;
+    //                }
+    //            }
+    //        }
+    //        return true;
+    //    }
 
     /**
      * 
@@ -266,9 +266,11 @@ class Addons
             }
             $app->cache->set($app->cache->make($cacheKey, $addonIDsToAdd));
         }
-        foreach ($addonIDsToAdd as $addonID) {
-            $app->bearCMS->addons->add($addonID);
+        if (!empty($addonIDsToAdd)) {
+            $bearCMSAddons = $app->bearCMS->addons;
+            foreach ($addonIDsToAdd as $addonID) {
+                $bearCMSAddons->add($addonID);
+            }
         }
     }
-
 }

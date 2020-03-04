@@ -965,7 +965,7 @@ class BearCMS
             ->add(['/rss.xml', '/rss.*.xml'], [
                 [$this, 'disabledCheck'],
                 function (App\Request $request) {
-                    $settings = $this->app->bearCMS->data->settings->get();
+                    $settings = $this->data->settings->get();
                     if ($settings->enableRSS) {
                         $segmentParts = explode('.', $request->path->getSegment(0));
                         $language = sizeof($segmentParts) === 3 ? $segmentParts[1] : '';
@@ -1111,7 +1111,7 @@ class BearCMS
                         $slugsList = Internal\Data\BlogPosts::getSlugsList('published');
                         $blogPostID = array_search($slug, $slugsList);
                         if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) && $this->currentUser->exists()) {
-                            $blogPost = $this->app->bearCMS->data->blogPosts->get(substr($slug, 6));
+                            $blogPost = $this->data->blogPosts->get(substr($slug, 6));
                             if ($blogPost !== null) {
                                 if ($blogPost->status === 'published') {
                                     return new App\Response\PermanentRedirect($this->app->urls->get(Config::$blogPagesPathPrefix . $blogPost->slug . '/'));
@@ -1120,7 +1120,7 @@ class BearCMS
                             }
                         }
                         if ($blogPostID !== false) {
-                            $blogPost = $this->app->bearCMS->data->blogPosts->get($blogPostID);
+                            $blogPost = $this->data->blogPosts->get($blogPostID);
                             if ($blogPost !== null) {
                                 $path = $this->app->request->path->get();
                                 $hasSlash = substr($path, -1) === '/';
@@ -1151,7 +1151,7 @@ class BearCMS
                                 $content .= '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost->title) . '</h1></div>';
                                 $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost->status === 'published' ? $this->app->localization->formatDate($blogPost->publishedTime, ['date']) : __('bearcms.blogPost.draft')) . '</div></div>';
                                 $content .= '<div class="bearcms-blogpost-page-content"><bearcms-elements id="bearcms-blogpost-' . $blogPostID . '"/></div>';
-                                $settings = $this->app->bearCMS->data->settings->get();
+                                $settings = $this->data->settings->get();
                                 if ($settings->allowCommentsInBlogPosts) {
                                     $content .= '<div class="bearcms-blogpost-page-comments-block-separator"><component src="bearcms-separator-element" size="large"/></div>';
                                     $content .= '<div class="bearcms-blogpost-page-comments-title-container"><component src="bearcms-heading-element" text="' . __('bearcms.pages.blogPost.Comments') . '" size="small"/></div>';
@@ -1160,7 +1160,7 @@ class BearCMS
                                 $categoriesIDs = $blogPost->categoriesIDs;
                                 if ($settings->showRelatedBlogPosts && !empty($categoriesIDs)) {
                                     $links = [];
-                                    $relatedBlogPosts = $this->app->bearCMS->data->blogPosts->getList()
+                                    $relatedBlogPosts = $this->data->blogPosts->getList()
                                         ->filterBy('status', 'published')
                                         ->sortBy('publishedTime', 'desc');
                                     foreach ($relatedBlogPosts as $relatedBlogPost) {
@@ -1321,14 +1321,14 @@ class BearCMS
                                 return $response;
                             }
                             $found = false;
-                            $settings = $this->app->bearCMS->data->settings->get();
+                            $settings = $this->data->settings->get();
                             if ($pageID === 'home') {
                                 $title = trim($settings->title);
                                 $description = trim($settings->description);
                                 $keywords = trim($settings->keywords);
                                 $found = true;
                             } else {
-                                $page = $this->app->bearCMS->data->pages->get($pageID);
+                                $page = $this->data->pages->get($pageID);
                                 if ($page !== null) {
                                     $title = isset($page->titleTagContent) ? trim($page->titleTagContent) : '';
                                     if (!isset($title[0])) {
@@ -1676,7 +1676,7 @@ class BearCMS
     public function applyDefaults(\BearFramework\App\Response $response, \BearCMS\ApplyContext $applyContext = null): void
     {
         $currentUserExists = Config::hasServer() && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
-        $settings = $this->app->bearCMS->data->settings->get();
+        $settings = $this->data->settings->get();
 
         if ($currentUserExists) {
             $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
@@ -1891,7 +1891,7 @@ class BearCMS
 
         $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
 
-        $settings = $this->app->bearCMS->data->settings->get();
+        $settings = $this->data->settings->get();
 
         $serverCookies = Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER);
         if (!empty($serverCookies['tmcs']) || !empty($serverCookies['tmpr'])) {
@@ -1959,7 +1959,7 @@ class BearCMS
         $currentThemeID = Internal\CurrentTheme::getID();
         $currentCustomizations = Internal\Themes::getCustomizations($currentThemeID, $currentUserExists ? $this->currentUser->getID() : null);
 
-        $settings = $this->app->bearCMS->data->settings->get();
+        $settings = $this->data->settings->get();
         $languages = $settings->languages;
         $language = null;
         if ($applyContext !== null) {
@@ -2031,7 +2031,7 @@ class BearCMS
     public function disabledCheck(): ?\BearFramework\App\Response
     {
         $currentUserExists = Config::hasServer() && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
-        $settings = $this->app->bearCMS->data->settings->get();
+        $settings = $this->data->settings->get();
         $isDisabled = !$currentUserExists && $settings->disabled;
         if ($isDisabled) {
             return new App\Response\TemporaryUnavailable(htmlspecialchars($settings->disabledText));
