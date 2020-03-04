@@ -33,7 +33,7 @@ class Config
     static $maxUploadsSize = null;
     static $maxUploadSize = null;
     static $defaultThemeID = null;
-    static $htmlSandboxUrl = '';
+    static $htmlSandboxUrl = null;
     static $useDefaultUserProfile = true;
     static $whitelabel = false;
     static $addonManager = null;
@@ -138,7 +138,7 @@ class Config
             self::$defaultThemeID = $data['defaultThemeID'];
         }
         if (isset($data['htmlSandboxUrl'])) {
-            self::$htmlSandboxUrl = (string) $data['htmlSandboxUrl'];
+            self::$htmlSandboxUrl = $data['htmlSandboxUrl'];
         }
         if (isset($data['useDefaultUserProfile'])) {
             self::$useDefaultUserProfile = (int) $data['useDefaultUserProfile'] > 0;
@@ -239,6 +239,21 @@ class Config
             if (sizeof($parts) === 2) {
                 return strtoupper('sha256-' . $parts[0] . '-' . hash('sha256', $parts[1]));
             }
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @return string|null
+     */
+    static function getHTMLSandboxURL(): ?string
+    {
+        if (self::$htmlSandboxUrl !== null) {
+            if (is_callable(self::$htmlSandboxUrl)) {
+                return (string) call_user_func(self::$htmlSandboxUrl);
+            }
+            return (string) self::$htmlSandboxUrl;
         }
         return null;
     }

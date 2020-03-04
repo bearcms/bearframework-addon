@@ -17,7 +17,7 @@ if ($renderMode === '') {
     $renderMode = 'clean';
 }
 
-$htmlSandboxUrl = Config::$htmlSandboxUrl;
+$htmlSandboxUrl = Config::getHTMLSandboxURL();
 
 $addHTMLSandbox = false;
 $content = '';
