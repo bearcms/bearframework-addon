@@ -11,7 +11,7 @@ use BearFramework\App;
 use BearCMS\Internal;
 
 $app = App::get();
-$context = $app->contexts->get(__FILE__);
+$context = $app->contexts->get(__DIR__);
 
 $context->classes
     ->add('BearCMS', 'classes/BearCMS.php')

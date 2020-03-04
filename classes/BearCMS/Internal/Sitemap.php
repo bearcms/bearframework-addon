@@ -46,6 +46,7 @@ class Sitemap
     static public function getXML(): string
     {
         $app = App::get();
+        $requestBase = $app->request->base;
         $pathsToUpdate = [];
         $sitemap = self::getSitemap();
         $list = $sitemap->getList()->sortBy('location');
@@ -59,7 +60,7 @@ class Sitemap
             if ($item->lastModified !== null) {
                 $lastModified = null;
                 if (is_callable($item->lastModified)) {
-                    $locationPath = str_replace($app->request->base, '', $item->location);
+                    $locationPath = str_replace($requestBase, '', $item->location);
                     $date = self::getCachedDate($locationPath);
                     if ($date !== null) {
                         $lastModified = $date;
@@ -105,8 +106,9 @@ class Sitemap
     static function updateCachedDate(string $path): void
     {
         $app = App::get();
+        $requestBase = $app->request->base;
         $sitemap = self::getSitemap();
-        $list = $sitemap->getList()->filterBy('location', $app->request->base . $path);
+        $list = $sitemap->getList()->filterBy('location', $requestBase . $path);
         if (isset($list[0])) {
             $item = $list[0];
             if ($item->lastModified !== null) {
@@ -122,7 +124,7 @@ class Sitemap
                     if (strlen($date) === 0) {
                         $date = date('c', $minAllowedDate);
                     }
-                    self::setCachedDate(str_replace($app->request->base, '', $item->location), $date);
+                    self::setCachedDate(str_replace($requestBase, '', $item->location), $date);
                 }
             }
         }
