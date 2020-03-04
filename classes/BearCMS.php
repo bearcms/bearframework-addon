@@ -1376,8 +1376,9 @@ class BearCMS
                 if (Config::$autoCreateHomePage) {
                     $list['home'] = '/';
                 }
+                $appURLs = $this->app->urls;
                 foreach ($list as $pageID => $path) {
-                    $url = $this->app->urls->get($path);
+                    $url = $appURLs->get($path);
                     $sitemap->addURL($url, function () use ($pageID, $url) {
                         $details = Internal\Data\Pages::getLastModifiedDetails($pageID);
                         Internal\Sitemap::addLastModifiedDetails($url, $details);

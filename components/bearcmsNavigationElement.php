@@ -10,6 +10,7 @@ use BearFramework\App;
 use IvoPetkov\HTML5DOMDocument;
 
 $app = App::get();
+$appURLs = $app->urls;
 
 $selectedPath = '';
 if (strlen($component->selectedPath) > 0) {
@@ -35,7 +36,7 @@ if ($itemsType === 'onlySelected' && $showHomeLink) {
     $items[] = '_home';
 }
 
-$buildTree = function ($pages, $recursive = false, $level = 0) use ($app, $selectedPath, &$buildTree, $itemsType, $items) {
+$buildTree = function ($pages, $recursive = false, $level = 0) use ($appURLs, $selectedPath, &$buildTree, $itemsType, $items) {
     $itemsHtml = [];
     foreach ($pages as $page) {
         if ($page->status !== 'published') { //needed for the children
@@ -55,7 +56,7 @@ $buildTree = function ($pages, $recursive = false, $level = 0) use ($app, $selec
         } elseif ($pageID !== '_home' && strpos($selectedPath, $pagePath) === 0) {
             $classNames .= ' bearcms-navigation-element-item-in-path';
         }
-        $itemsHtml[] = '<li class="' . $classNames . '"><a href="' . htmlentities($app->urls->get($pagePath)) . '">' . htmlspecialchars($page->name) . '</a>';
+        $itemsHtml[] = '<li class="' . $classNames . '"><a href="' . htmlentities($appURLs->get($pagePath)) . '">' . htmlspecialchars($page->name) . '</a>';
         if ($recursive && isset($page->children)) {
             $itemsHtml[] = $buildTree($page->children, true, $level + 1);
         }
@@ -114,10 +115,11 @@ if (isset($itemsHtml[0])) {
         $ulElement->setAttribute('class', trim($ulElement->getAttribute('class') . ' ' . ($index === 0 ? 'bearcms-navigation-element' : 'bearcms-navigation-element-item-children')));
     }
     $liElements = $domDocument->querySelectorAll('li');
+    $requestBase = $app->request->base;
     foreach ($liElements as $index => $liElement) {
         $liClasssName = 'bearcms-navigation-element-item';
         if ($liElement->firstChild) {
-            $liPath = str_replace($app->request->base, '', $liElement->firstChild->getAttribute('href'));
+            $liPath = str_replace($requestBase, '', $liElement->firstChild->getAttribute('href'));
             if ($liPath === $selectedPath) {
                 $liClasssName .= ' bearcms-navigation-element-item-selected';
             } elseif ($liPath !== '/' && strpos($selectedPath, $liPath) === 0) {
