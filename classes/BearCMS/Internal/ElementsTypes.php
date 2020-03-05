@@ -31,7 +31,7 @@ class ElementsTypes
     {
         $app = App::get();
         if (self::$contextDir === null) {
-            $context = $app->contexts->get(__FILE__);
+            $context = $app->contexts->get(__DIR__);
             self::$contextDir = $context->dir;
         }
         $name = $options['componentSrc'];

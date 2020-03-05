@@ -14,7 +14,7 @@ $app = App::get();
 
 $app->bearCMS->themes
     ->register('bearcms/themeone', function (\BearCMS\Themes\Theme $theme) use ($app) {
-        $context = $app->contexts->get(__FILE__);
+        $context = $app->contexts->get(__DIR__);
 
         $app->localization
             ->addDictionary('en', function () use ($context) {

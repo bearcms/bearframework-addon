@@ -144,7 +144,7 @@ class Server
     {
         $serverUrl = Config::$serverUrl;
         $app = App::get();
-        $context = $app->contexts->get(__FILE__);
+        $context = $app->contexts->get(__DIR__);
         $updateUrl = function ($url) use ($context, $serverUrl) {
             if (strpos($url, '?') !== false) {
                 $url = explode('?', $url)[0];

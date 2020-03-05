@@ -10,7 +10,7 @@ use BearFramework\App;
 use BearCMS\Internal;
 
 $app = App::get();
-$context = $app->contexts->get(__FILE__);
+$context = $app->contexts->get(__DIR__);
 
 $form->constraints->setRequired('cfcomment', __('bearcms.comments.Your comment cannot be empty!'));
 

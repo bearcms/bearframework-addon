@@ -255,7 +255,7 @@ class ElementsHelper
     static function renderColumn(array $elementContainerData, bool $editable, array $contextData, bool $inContainer, string $outputType = 'full-html'): string
     {
         $app = App::get();
-        $context = $app->contexts->get(__FILE__);
+        $context = $app->contexts->get(__DIR__);
         $columnsSizes = explode(':', $elementContainerData['data']['mode']);
         $responsive = isset($elementContainerData['data']['responsive']) ? (int) $elementContainerData['data']['responsive'] > 0 : false;
         $columnsCount = sizeof($columnsSizes);
@@ -359,7 +359,7 @@ class ElementsHelper
     static function renderFloatingBox(array $elementContainerData, bool $editable, array $contextData, bool $inContainer, string $outputType = 'full-html'): string
     {
         $app = App::get();
-        $context = $app->contexts->get(__FILE__);
+        $context = $app->contexts->get(__DIR__);
         $position = $elementContainerData['data']['position'];
         $width = $elementContainerData['data']['width'];
         if (strlen($width) === 0 || $width === 'auto') {

@@ -9,7 +9,7 @@
 use BearCMS\Internal;
 
 $app = BearFramework\App::get();
-$context = $app->contexts->get(__FILE__);
+$context = $app->contexts->get(__DIR__);
 
 $lazyLimit = 70;
 $contextData = Internal\ElementsHelper::getComponentContextData($component);

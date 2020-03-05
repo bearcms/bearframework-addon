@@ -72,7 +72,7 @@ class BearCMS
             ]);
 
         $this->app = App::get();
-        $this->context = $this->app->contexts->get(__FILE__);
+        $this->context = $this->app->contexts->get(__DIR__);
     }
 
     /**

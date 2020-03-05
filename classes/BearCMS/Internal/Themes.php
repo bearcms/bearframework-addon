@@ -118,7 +118,7 @@ class Themes
         }
         if (is_callable($theme->manifest)) {
             $app = App::get();
-            $context = $app->contexts->get(__FILE__);
+            $context = $app->contexts->get(__DIR__);
             $manifest = call_user_func($theme->manifest);
             if ((!$manifest instanceof \BearCMS\Themes\Theme\Manifest)) {
                 throw new \Exception('Invalid theme manifest value for theme ' . $id . '!');
@@ -258,7 +258,7 @@ class Themes
             }
             if ($updateMediaFilenames) {
                 $app = App::get();
-                $context = $app->contexts->get(__FILE__);
+                $context = $app->contexts->get(__DIR__);
                 foreach ($result as $j => $style) {
                     if (isset($style['media']) && is_array($style['media'])) {
                         foreach ($style['media'] as $i => $mediaItem) {

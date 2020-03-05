@@ -9,7 +9,7 @@
 use BearFramework\App;
 
 $app = App::get();
-$context = $app->contexts->get(__FILE__);
+$context = $app->contexts->get(__DIR__);
 
 $count = strlen($component->count) > 0 ? (int) $component->count : 5;
 if ($count < 1) {

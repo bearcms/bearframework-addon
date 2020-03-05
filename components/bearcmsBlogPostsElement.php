@@ -12,7 +12,7 @@ use BearCMS\Internal\Config;
 use BearCMS\Internal2;
 
 $app = App::get();
-$context = $app->contexts->get(__FILE__);
+$context = $app->contexts->get(__DIR__);
 
 $source = 'allPosts';
 if (strlen($component->source) > 0 && array_search($component->source, ['allPosts', 'postsInCategories']) !== false) {

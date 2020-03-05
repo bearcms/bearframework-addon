@@ -12,7 +12,7 @@ use BearCMS\Internal2;
 use BearCMS\Internal\Config;
 
 $app = App::get();
-$context = $app->contexts->get(__FILE__);
+$context = $app->contexts->get(__DIR__);
 
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
