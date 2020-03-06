@@ -1454,7 +1454,7 @@ class BearCMS
                                 $this->app->data->set($this->app->data->make($tempFileKey, $response));
                                 return $tempFilename;
                             } else {
-                                throw new Exception('Cannot download file from URL (' . $url . ')');
+                                throw new \Exception('Cannot download file from URL (' . $url . ')');
                             }
                         }
                     };

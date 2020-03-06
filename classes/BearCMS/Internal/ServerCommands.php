@@ -472,7 +472,7 @@ class ServerCommands
      * @param array $data
      * @param \ArrayObject $response
      * @return void
-     * @throws Exception
+     * @throws \Exception
      */
     static function elementsEditor(array $data, \ArrayObject $response): void
     {
@@ -485,7 +485,7 @@ class ServerCommands
                 $response['value'] = Internal\Server::mergeAjaxResponses($response['value'], json_decode($elementsEditorData['result']['content'], true));
                 $response['value'] = Internal\Server::updateAssetsUrls($response['value'], true);
             } else {
-                throw new Exception('');
+                throw new \Exception('');
             }
         }
     }
@@ -532,7 +532,7 @@ class ServerCommands
      * 
      * @param array $data
      * @return void
-     * @throws Exception
+     * @throws \Exception
      */
     static function fileSet(array $data): void
     {

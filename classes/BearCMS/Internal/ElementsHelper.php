@@ -254,8 +254,6 @@ class ElementsHelper
      */
     static function renderColumn(array $elementContainerData, bool $editable, array $contextData, bool $inContainer, string $outputType = 'full-html'): string
     {
-        $app = App::get();
-        $context = $app->contexts->get(__DIR__);
         $columnsSizes = explode(':', $elementContainerData['data']['mode']);
         $responsive = isset($elementContainerData['data']['responsive']) ? (int) $elementContainerData['data']['responsive'] > 0 : false;
         $columnsCount = sizeof($columnsSizes);
@@ -358,8 +356,6 @@ class ElementsHelper
      */
     static function renderFloatingBox(array $elementContainerData, bool $editable, array $contextData, bool $inContainer, string $outputType = 'full-html'): string
     {
-        $app = App::get();
-        $context = $app->contexts->get(__DIR__);
         $position = $elementContainerData['data']['position'];
         $width = $elementContainerData['data']['width'];
         if (strlen($width) === 0 || $width === 'auto') {
@@ -490,7 +486,7 @@ class ElementsHelper
      * 
      * @param string $id
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     static function getContainerData(string $id): array
     {
@@ -500,7 +496,7 @@ class ElementsHelper
             $data['elements'] = [];
         }
         if (!is_array($data['elements'])) {
-            throw new Exception('');
+            throw new \Exception('');
         }
         return $data;
     }
