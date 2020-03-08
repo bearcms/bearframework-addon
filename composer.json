@@ -14,7 +14,7 @@
         "php": ">=7.1.0",
         "ext-curl": "*",
         "ext-zip": "*",
-        "bearframework/bearframework": "1.*",
+        "bearframework/bearframework": "^1.2.*",
         "bearframework/html-template": "0.2.*",
         "bearframework/emails-addon": "0.7.*",
         "bearframework/localization-addon": "0.2.*",

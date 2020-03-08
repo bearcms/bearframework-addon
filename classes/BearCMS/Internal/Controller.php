@@ -159,6 +159,7 @@ class Controller
                 $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
                 $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
             }
+            $response->headers->set($response->headers->make('Accept-Ranges', 'bytes'));
             return $response;
         }
         return new App\Response\NotFound();
