@@ -231,6 +231,23 @@ class Data
             if (strpos($key, 'bearcms/elements/') === 0 || strpos($key, 'bearcms/pages/') === 0 || strpos($key, 'bearcms/blog/') === 0) {
                 $app->data->delete('.temp/bearcms/comments-elements-locations');
             }
+            if (strpos($key, 'bearcms/pages/') === 0) {
+                $prefix = '.temp/bearcms/navigation-element-cache/';
+                $list = $app->data->getList()->filterBy('key', $prefix, 'startWith')->sliceProperties(['key']);
+                $cacheKeysToDelete = [];
+                $dataKeysToDelete = [];
+                foreach ($list as $item) {
+                    $dataKey = $item->key;
+                    $cacheKeysToDelete[] = 'bearcms-navigation-' . str_replace($prefix, '', $dataKey);
+                    $dataKeysToDelete[] = $dataKey;
+                }
+                foreach ($cacheKeysToDelete as $cacheKeyToDelete) {
+                    $app->cache->delete($cacheKeyToDelete);
+                }
+                foreach ($dataKeysToDelete as $dataKeyToDelete) {
+                    $app->data->delete($dataKeyToDelete);
+                }
+            }
         }
     }
 

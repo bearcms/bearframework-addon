@@ -10,84 +10,17 @@ use BearFramework\App;
 use IvoPetkov\HTML5DOMDocument;
 
 $app = App::get();
-$appURLs = $app->urls;
 
 $selectedPath = '';
 if (strlen($component->selectedPath) > 0) {
     $selectedPath = $component->selectedPath;
 }
 
-$source = 'topPages';
-if (strlen($component->source) > 0 && array_search($component->source, ['allPages', 'pageChildren', 'topPages', 'pageAllChildren']) !== false) {
-    $source = $component->source;
-}
-
-$showHomeLink = false;
-if ($source === 'pageChildren' || $source === 'pageAllChildren') {
-    $sourceParentPageID = (string) $component->sourceParentPageID;
-} elseif ($source === 'allPages' || $source === 'topPages') {
-    $showHomeLink = $component->showHomeLink === 'true';
-    $homeLinkText = strlen($component->homeLinkText) > 0 ? $component->homeLinkText : __('bearcms.navigation.home');
-}
-
-$itemsType = (string) $component->itemsType === 'onlySelected' ? 'onlySelected' : 'allExcept';
-$items = strlen($component->items) > 0 ? explode(';', $component->items) : [];
-if ($itemsType === 'onlySelected' && $showHomeLink) {
-    $items[] = '_home';
-}
-
-$buildTree = function ($pages, $recursive = false, $level = 0) use ($appURLs, $selectedPath, &$buildTree, $itemsType, $items) {
-    $itemsHtml = [];
-    foreach ($pages as $page) {
-        if ($page->status !== 'published') { //needed for the children
-            continue;
-        }
-        $pageID = $page->id;
-        if ($itemsType === 'allExcept' && array_search($pageID, $items) !== false) {
-            continue;
-        }
-        if ($itemsType === 'onlySelected' && array_search($pageID, $items) === false) {
-            continue;
-        }
-        $pagePath = $page->path;
-        $classNames = 'bearcms-navigation-element-item';
-        if ($pagePath === $selectedPath) {
-            $classNames .= ' bearcms-navigation-element-item-selected';
-        } elseif ($pageID !== '_home' && strpos($selectedPath, $pagePath) === 0) {
-            $classNames .= ' bearcms-navigation-element-item-in-path';
-        }
-        $itemsHtml[] = '<li class="' . $classNames . '"><a href="' . htmlentities($appURLs->get($pagePath)) . '">' . htmlspecialchars($page->name) . '</a>';
-        if ($recursive && isset($page->children)) {
-            $itemsHtml[] = $buildTree($page->children, true, $level + 1);
-        }
-        $itemsHtml[] = '</li>';
-    }
-    if (empty($itemsHtml)) {
-        return '';
-    }
-
-    if ($level === 0) {
-        $attributes = ' class="bearcms-navigation-element"';
-    } else {
-        $attributes = ' class="bearcms-navigation-element-item-children"';
-    }
-    return '<ul' . $attributes . '>' . implode('', $itemsHtml) . '</ul>';
-};
-
 $menuType = 'list-vertical';
 if (strlen($component->menuType) > 0) {
     if (array_search($component->menuType, ['horizontal-down', 'vertical-left', 'vertical-right', 'list-vertical']) !== false) {
         $menuType = $component->menuType;
     }
-}
-
-$pages = null;
-if ($source === 'topPages' || $source === 'allPages') {
-    $pages = \BearCMS\Internal\Data\Pages::getChildrenList(null); // Used instead of $app->bearCMS->data->pages->getList() for better performance
-    $pages->filterBy('status', 'published');
-} elseif ($source === 'pageChildren' || $source === 'pageAllChildren') {
-    $pages = \BearCMS\Internal\Data\Pages::getChildrenList($sourceParentPageID); // Used instead of $app->bearCMS->data->pages->getList() for better performance
-    $pages->filterBy('status', 'published');
 }
 
 $attributes = '';
@@ -100,10 +33,6 @@ $attributes .= ' moreItemHtml="' . htmlentities('<li class="bearcms-navigation-e
 $dataResponsiveAttributes = $component->getAttribute('data-responsive-attributes');
 if (strlen($dataResponsiveAttributes) > 0) {
     $attributes .= ' data-responsive-attributes="' . htmlentities(str_replace('=>menuType=', '=>type=', $dataResponsiveAttributes)) . '"';
-}
-
-if ($pages !== null && $showHomeLink) {
-    $pages->unshift(\BearCMS\Data\Pages\Page::fromArray(['id' => '_home', 'path' => '/', 'name' => $homeLinkText, 'parentID' => null, 'status' => 'published']));
 }
 
 $itemsHtml = (string) $component->innerHTML;
@@ -133,10 +62,119 @@ if (isset($itemsHtml[0])) {
         $itemsHtml = $rootULElement->outerHTML;
     }
 } else {
-    if ($pages === null || $pages->count() === 0) {
+    $source = 'topPages';
+    if (strlen($component->source) > 0 && array_search($component->source, ['allPages', 'pageChildren', 'topPages', 'pageAllChildren']) !== false) {
+        $source = $component->source;
+    }
+
+    $showHomeLink = false;
+    $sourceParentPageID = null;
+    if ($source === 'pageChildren' || $source === 'pageAllChildren') {
+        $sourceParentPageID = (string) $component->sourceParentPageID;
+    } elseif ($source === 'allPages' || $source === 'topPages') {
+        $showHomeLink = $component->showHomeLink === 'true';
+        $homeLinkText = strlen($component->homeLinkText) > 0 ? $component->homeLinkText : __('bearcms.navigation.home');
+    }
+
+    $itemsType = (string) $component->itemsType === 'onlySelected' ? 'onlySelected' : 'allExcept';
+    $items = strlen($component->items) > 0 ? explode(';', $component->items) : [];
+
+    $dataKey = md5(json_encode([$source, $sourceParentPageID, $itemsType, $items]));
+
+    $optimizedPages = null;
+
+    $requestBase = $app->request->base;
+
+    $cacheKey = 'bearcms-navigation-' . $dataKey;
+    $tempDataKey = '.temp/bearcms/navigation-element-cache/' . $dataKey;
+    $updateCache = false;
+
+    $optimizedPages = $app->cache->getValue($cacheKey);
+    if ($optimizedPages !== null) {
+        $optimizedPages = json_decode($optimizedPages, true);
+    }
+    if (!is_array($optimizedPages)) {
+        $optimizedPages = $app->data->getValue($tempDataKey);
+        if ($optimizedPages !== null) {
+            $optimizedPages = json_decode($optimizedPages, true);
+        }
+        $updateCache = true;
+    }
+    if (!is_array($optimizedPages)) {
+        $updateCache = true;
+        $appURLs = $app->urls;
+        $optimizePages = function ($pages, $recursive = false) use (&$optimizePages, $itemsType, $items, $appURLs, $requestBase) {
+            $result = [];
+            foreach ($pages as $page) {
+                if ($page->status !== 'published') {
+                    continue;
+                }
+                $pageID = $page->id;
+                if ($itemsType === 'allExcept' && array_search($pageID, $items) !== false) {
+                    continue;
+                }
+                if ($itemsType === 'onlySelected' && array_search($pageID, $items) === false) {
+                    continue;
+                }
+                $pagePath = $page->path;
+                $item = [
+                    0 => $page->path,
+                    1 => '<a href="' . htmlentities(str_replace($requestBase, '', $appURLs->get($pagePath))) . '">' . htmlspecialchars($page->name) . '</a>'
+                ];
+                if ($recursive && isset($page->children)) {
+                    $children = $optimizePages($page->children, true);
+                    if (!empty($children)) {
+                        $item[2] = $children;
+                    }
+                }
+                $result[] = $item;
+            }
+            return $result;
+        };
+        $pages = null;
+        if ($source === 'topPages' || $source === 'allPages') {
+            $pages = \BearCMS\Internal\Data\Pages::getChildrenList(null); // Used instead of $app->bearCMS->data->pages->getList() for better performance
+        } elseif ($source === 'pageChildren' || $source === 'pageAllChildren') {
+            $pages = \BearCMS\Internal\Data\Pages::getChildrenList($sourceParentPageID); // Used instead of $app->bearCMS->data->pages->getList() for better performance
+        }
+        if ($pages !== null) {
+            $optimizedPages = $optimizePages($pages, $source === 'allPages' || $source === 'pageAllChildren');
+        }
+        $encodedOptimizedPages = json_encode($optimizedPages);
+        $app->data->setValue($tempDataKey, $encodedOptimizedPages);
+    }
+    if ($updateCache) {
+        $app->cache->set($app->cache->make($cacheKey, $encodedOptimizedPages));
+    }
+    if ($showHomeLink) {
+        array_unshift($optimizedPages, [0 => '/', 1 => '<a href="/">' . htmlspecialchars($homeLinkText) . '</a>']);
+    }
+
+    if ($optimizedPages === null || empty($optimizedPages)) {
         $itemsHtml = '';
     } else {
-        $itemsHtml = $buildTree($pages, $source === 'allPages' || $source === 'pageAllChildren');
+        $buildTree = function ($optimizedPages, $level = 0) use ($selectedPath, &$buildTree) {
+            $itemsHtml = [];
+            foreach ($optimizedPages as $page) {
+                $pagePath = $page[0];
+                $classNames = 'bearcms-navigation-element-item';
+                if ($pagePath === $selectedPath) {
+                    $classNames .= ' bearcms-navigation-element-item-selected';
+                } elseif ($pagePath !== '/' && strpos($selectedPath, $pagePath) === 0) {
+                    $classNames .= ' bearcms-navigation-element-item-in-path';
+                }
+                $itemsHtml[] = '<li class="' . $classNames . '">' . $page[1];
+                if (isset($page[2])) {
+                    $itemsHtml[] = $buildTree($page[2], $level + 1);
+                }
+                $itemsHtml[] = '</li>';
+            }
+            if (empty($itemsHtml)) {
+                return '';
+            }
+            return '<ul class="' . ($level === 0 ? 'bearcms-navigation-element' : 'bearcms-navigation-element-item-children') . '">' . implode('', $itemsHtml) . '</ul>';
+        };
+        $itemsHtml = str_replace('<a href="', '<a href="' . $requestBase, $buildTree($optimizedPages));
     }
 }
 
