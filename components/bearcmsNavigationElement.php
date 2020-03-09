@@ -101,7 +101,6 @@ if (isset($itemsHtml[0])) {
         $updateCache = true;
     }
     if (!is_array($optimizedPages)) {
-        $updateCache = true;
         $appURLs = $app->urls;
         $optimizePages = function ($pages, $recursive = false) use (&$optimizePages, $itemsType, $items, $appURLs, $requestBase) {
             $result = [];
@@ -137,14 +136,12 @@ if (isset($itemsHtml[0])) {
         } elseif ($source === 'pageChildren' || $source === 'pageAllChildren') {
             $pages = \BearCMS\Internal\Data\Pages::getChildrenList($sourceParentPageID); // Used instead of $app->bearCMS->data->pages->getList() for better performance
         }
-        if ($pages !== null) {
-            $optimizedPages = $optimizePages($pages, $source === 'allPages' || $source === 'pageAllChildren');
-        }
-        $encodedOptimizedPages = json_encode($optimizedPages);
-        $app->data->setValue($tempDataKey, $encodedOptimizedPages);
+        $optimizedPages = $pages !== null ? $optimizePages($pages, $source === 'allPages' || $source === 'pageAllChildren') : [];
+        $app->data->setValue($tempDataKey, json_encode($optimizedPages));
+        $updateCache = true;
     }
     if ($updateCache) {
-        $app->cache->set($app->cache->make($cacheKey, $encodedOptimizedPages));
+        $app->cache->set($app->cache->make($cacheKey, json_encode($optimizedPages)));
     }
     if ($showHomeLink) {
         array_unshift($optimizedPages, [0 => '/', 1 => '<a href="/">' . htmlspecialchars($homeLinkText) . '</a>']);
