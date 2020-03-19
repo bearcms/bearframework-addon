@@ -183,7 +183,7 @@ echo '<html>';
 
 echo '<head>';
 echo '<style>';
-echo '.bearcms-navigation-element-item{word-wrap: break-word;}';
+echo '.bearcms-navigation-element-item{word-wrap:break-word;}';
 echo '</style>';
 echo '</head>';
 

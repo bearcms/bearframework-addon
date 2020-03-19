@@ -561,7 +561,7 @@ class BearCMS
                         $groupElements->addOption($idPrefix . "NavigationItemLinkCSS", "css", '', [
                             "cssTypes" => ["cssText", "cssTextShadow"],
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-navigation-element-item a", "text-decoration:none;"],
+                                ["rule", $parentSelector . " .bearcms-navigation-element-item a", "text-decoration:none;"], // treat as text link // no max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
                                 ["selector", $parentSelector . " .bearcms-navigation-element-item a"]
                             ]
                         ]);
