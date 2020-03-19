@@ -179,16 +179,8 @@ $content = '';
 if (isset($itemsHtml[0])) {
     $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';
 }
-echo '<html>';
-
-echo '<head>';
-echo '<style>';
+echo '<html><head><style>';
 echo '.bearcms-navigation-element-item{word-wrap:break-word;}';
-echo '</style>';
-echo '</head>';
-
-echo '<body>';
+echo '</style></head><body>';
 echo $content;
-echo '</body>';
-
-echo '</html>';
+echo '</body></html>';

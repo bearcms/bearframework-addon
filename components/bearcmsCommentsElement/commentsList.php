@@ -95,6 +95,4 @@ if ($thread !== null) {
         echo '</div>';
     }
 }
-echo '</div>';
-echo '</body>';
-echo '</html>';
+echo '</div></body></html>';

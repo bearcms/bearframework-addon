@@ -22,5 +22,4 @@ if ($outputType === 'full-html') {
 }
 echo '<body>';
 echo $content;
-echo '</body>';
-echo '</html>';
+echo '</body></html>';

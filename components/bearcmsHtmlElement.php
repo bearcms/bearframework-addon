@@ -57,5 +57,4 @@ k=e.length,d=document.createElement("iframe");e[k]=[a,d,h];d.style.border="0";h=
 }
 echo '<body>';
 echo $content;
-echo '</body>';
-echo '</html>';
+echo '</body></html>';

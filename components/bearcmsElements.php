@@ -186,5 +186,4 @@ if ($renderElementsContainer) {
         echo '</div>';
     }
 }
-echo '</body>';
-echo '</html>';
+echo '</body></html>';

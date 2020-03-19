@@ -171,5 +171,6 @@ echo '<html>';
 if ($outputType === 'full-html' && $addResponsivelyLazy) {
     echo '<head><link rel="client-packages-embed" name="-bearcms-responsively-lazy"></head>';
 }
-echo '<body>' . $content . '</body>';
-echo '</html>';
+echo '<body>';
+echo $content;
+echo '</body></html>';
