@@ -547,7 +547,7 @@ class Themes
         if ($version === null) {
             return null;
         }
-        return 'bearcms-theme-options-' . md5($id) . '-' . md5($version) . '-' . md5($userID) . '-6';
+        return 'bearcms-theme-options-' . md5($id) . '-' . md5($version) . '-' . md5($userID) . '-7';
     }
 
     /**
