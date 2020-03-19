@@ -23,14 +23,11 @@ if (strlen($threadID) > 0) {
     $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsCommentsElement/commentsForm.php" count="' . htmlentities($count) . '" threadID="' . htmlentities($threadID) . '" />';
     $content .= '</div>';
 }
-?><html>
-    <head>
-        <style>
-            .bearcms-comments-comment{display:block;clear:both;zoom:1;word-wrap:break-word;}
-            .bearcms-comments-comment:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}
-            .bearcms-comments-comment-author-image{display:inline-block;float:left;}
-            .bearcms-comments-comment-date{float:right;}
-        </style>
-    </head>
-    <body><?= $content ?></body>
-</html>
+echo '<html><head><style>';
+echo '.bearcms-comments-comment{display:block;clear:both;zoom:1;word-wrap:break-word;}';
+echo '.bearcms-comments-comment:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
+echo '.bearcms-comments-comment-author-image{display:inline-block;float:left;}';
+echo '.bearcms-comments-comment-date{float:right;}';
+echo '</style></head><body>';
+echo $content;
+echo '</body></html>';

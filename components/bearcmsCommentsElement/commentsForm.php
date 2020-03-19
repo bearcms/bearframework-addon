@@ -14,7 +14,7 @@ $context = $app->contexts->get(__DIR__);
 
 $form->constraints->setRequired('cfcomment', __('bearcms.comments.Your comment cannot be empty!'));
 
-$form->onSubmit = function($values) use ($component, $app, $context) {
+$form->onSubmit = function ($values) use ($component, $app, $context) {
     $contextData = json_decode($values['cfcontext'], true);
     if (is_array($contextData) && isset($contextData['listElementID'], $contextData['listCommentsCount'])) {
         $listElementID = (string) $contextData['listElementID'];
@@ -58,21 +58,17 @@ $form->onSubmit = function($values) use ($component, $app, $context) {
         'success' => 1
     ];
 };
-?><html>
-    <head>
-        <link rel="client-packages-embed" name="-bearcms-comments-element-form">
-        <style>
-            .bearcms-comments-element-text-input{display:block;resize:none;}
-            .bearcms-comments-element-send-button{cursor:pointer;}
-        </style>
-    </head>
-    <body><?php
-        $formID = 'cmntfrm' . uniqid();
-        echo '<form id="' . $formID . '">';
-        echo '<form-element-hidden name="cfcontext" />';
-        echo '<form-element-textarea name="cfcomment" readonly="true" placeholder="' . __('bearcms.comments.Your comment') . '" class="bearcms-comments-element-text-input"/>';
-        echo '<form-element-submit-button text="' . __('bearcms.comments.Send') . '" waitingText="' . __('bearcms.comments.Sending ...') . '" style="display:none;" class="bearcms-comments-element-send-button" waitingClass="bearcms-comments-element-send-button bearcms-comments-element-send-button-waiting"/>';
-        echo '</form>';
-        echo '<script>bearCMS.commentsElementForm.initialize("' . $formID . '",' . (int) $app->currentUser->exists() . ');</script>';
-        ?></body>
-</html>
+echo '<html><head>';
+echo '<link rel="client-packages-embed" name="-bearcms-comments-element-form">';
+echo '<style>';
+echo '.bearcms-comments-element-text-input{display:block;resize:none;}';
+echo '.bearcms-comments-element-send-button{cursor:pointer;}';
+echo '</style></head><body>';
+$formID = 'cmntfrm' . uniqid();
+echo '<form id="' . $formID . '">';
+echo '<form-element-hidden name="cfcontext" />';
+echo '<form-element-textarea name="cfcomment" readonly="true" placeholder="' . __('bearcms.comments.Your comment') . '" class="bearcms-comments-element-text-input"/>';
+echo '<form-element-submit-button text="' . __('bearcms.comments.Send') . '" waitingText="' . __('bearcms.comments.Sending ...') . '" style="display:none;" class="bearcms-comments-element-send-button" waitingClass="bearcms-comments-element-send-button bearcms-comments-element-send-button-waiting"/>';
+echo '</form>';
+echo '<script>bearCMS.commentsElementForm.initialize("' . $formID . '",' . (int) $app->currentUser->exists() . ');</script>';
+echo '</body></html>';

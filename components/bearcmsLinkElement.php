@@ -25,5 +25,4 @@ echo '<a title="' . htmlentities($title) . '" href="' . htmlentities($url) . '">
 if ($outputType === 'full-html') {
     echo '</div>';
 }
-echo '</body>';
-echo '</html>';
+echo '</body>'</html>';
