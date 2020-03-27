@@ -215,8 +215,11 @@ class BearCMS
                         $groupText->addOption($idPrefix . "TextCSS", "css", '', [
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-text-element", "box-sizing:border-box;"],
-                                ["rule", $parentSelector . " .bearcms-text-element ul,ol,li", "list-style-position:inside;"],
-                                ["rule", $parentSelector . " .bearcms-text-element ul,ol,li,p,input", "margin:0;padding:0;"],
+                                ["rule", $parentSelector . " .bearcms-text-element ul", "list-style-position:inside;margin:0;padding:0;"],
+                                ["rule", $parentSelector . " .bearcms-text-element ol", "list-style-position:inside;margin:0;padding:0;"],
+                                ["rule", $parentSelector . " .bearcms-text-element li", "list-style-position:inside;margin:0;padding:0;"],
+                                ["rule", $parentSelector . " .bearcms-text-element p", "margin:0;padding:0;"],
+                                ["rule", $parentSelector . " .bearcms-text-element input", "margin:0;padding:0;"],
                                 ["selector", $parentSelector . " .bearcms-text-element"]
                             ]
                         ]);
@@ -553,6 +556,8 @@ class BearCMS
                         $groupNavigation->addOption($idPrefix . "NavigationCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBorder", "cssBackground"],
                             "cssOutput" => [
+                                ["rule", $parentSelector . " .bearcms-navigation-element", "margin:0;padding:0;"],
+                                ["rule", $parentSelector . " .bearcms-navigation-element ul", "margin:0;padding:0;"],
                                 ["selector", $parentSelector . " .bearcms-navigation-element"]
                             ]
                         ]);
@@ -601,8 +606,11 @@ class BearCMS
                         $groupHTMLCode = $context->addGroup(__("bearcms.themes.options.HTML code"));
                         $groupHTMLCode->addOption($idPrefix . "HtmlCSS", "css", '', [
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-html-element ul,ol,li", "list-style-position:inside;"],
-                                ["rule", $parentSelector . " .bearcms-html-element ul,ol,li,p,input", "margin:0;padding:0;"],
+                                ["rule", $parentSelector . " .bearcms-html-element ul", "list-style-position:inside;margin:0;padding:0;"],
+                                ["rule", $parentSelector . " .bearcms-html-element ol", "list-style-position:inside;margin:0;padding:0;"],
+                                ["rule", $parentSelector . " .bearcms-html-element li", "list-style-position:inside;margin:0;padding:0;"],
+                                ["rule", $parentSelector . " .bearcms-html-element p", "margin:0;padding:0;"],
+                                ["rule", $parentSelector . " .bearcms-html-element input", "margin:0;padding:0;"],
                                 ["selector", $parentSelector . " .bearcms-html-element"]
                             ]
                         ]);
