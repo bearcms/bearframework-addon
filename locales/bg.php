@@ -89,4 +89,6 @@ return [
     'bearcms.elements.video.Play on %s' => 'Пусни в %s',
     'bearcms.pages.blogPost.Comments' => 'Коментари',
     'bearcms.pages.blogPost.Continue reading' => 'Още статии',
+    'bearcms.themes.options.Related posts' => 'Още статии',
+    'bearcms.themes.options.Related list' => 'Списък',
 ];
