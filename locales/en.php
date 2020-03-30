@@ -89,4 +89,6 @@ return [
     'bearcms.elements.video.Play on %s' => 'Play on %s',
     'bearcms.pages.blogPost.Comments' => 'Comments',
     'bearcms.pages.blogPost.Continue reading' => 'Continue reading',
+    'bearcms.themes.options.Related posts' => 'Related posts',
+    'bearcms.themes.options.Related list' => 'List',
 ];
