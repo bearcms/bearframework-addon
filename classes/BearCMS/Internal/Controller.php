@@ -145,22 +145,25 @@ class Controller
             }
         }
         if ($hasAccess) {
-            $fullFilename = $app->data->getFilename('bearcms/files/custom/' . $filename);
-            $response = new App\Response\FileReader($fullFilename);
-            $details = $app->assets->getDetails($fileData['name'], ['mimeType']);
-            if (strlen($details['mimeType']) > 0) {
-                $response->headers->set($response->headers->make('Content-Type', $details['mimeType']));
+            $dataKey = 'bearcms/files/custom/' . $filename;
+            if ($app->data->validate($dataKey)) {
+                $fullFilename = $app->data->getFilename($dataKey);
+                $response = new App\Response\FileReader($fullFilename);
+                $details = $app->assets->getDetails($fileData['name'], ['mimeType']);
+                if (strlen($details['mimeType']) > 0) {
+                    $response->headers->set($response->headers->make('Content-Type', $details['mimeType']));
+                }
+                if (!$preview) {
+                    $response->headers->set($response->headers->make('Content-Disposition', 'attachment; filename="' . $fileData['name'] . '"')); // rawurlencode
+                    $response->headers->set($response->headers->make('Content-Length', (string) filesize($fullFilename)));
+                }
+                if ($noCache) {
+                    $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
+                    $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
+                }
+                $response->headers->set($response->headers->make('Accept-Ranges', 'bytes'));
+                return $response;
             }
-            if (!$preview) {
-                $response->headers->set($response->headers->make('Content-Disposition', 'attachment; filename="' . $fileData['name'] . '"')); // rawurlencode
-                $response->headers->set($response->headers->make('Content-Length', (string) filesize($fullFilename)));
-            }
-            if ($noCache) {
-                $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
-                $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
-            }
-            $response->headers->set($response->headers->make('Accept-Ranges', 'bytes'));
-            return $response;
         }
         return new App\Response\NotFound();
     }

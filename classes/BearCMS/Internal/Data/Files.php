@@ -26,16 +26,18 @@ class Files
     static function getFileData(string $filename): ?array
     {
         $app = App::get();
-        $item = $app->data->get('bearcms/files/custom/' . $filename);
-        if ($item !== null) {
-            $result = [
-                'filename' => $filename,
-                'published' => (isset($item->metadata['published']) ? (int) $item->metadata['published'] : 0),
-                'name' => (isset($item->metadata['name']) && strlen($item->metadata['name']) > 0 ? $item->metadata['name'] : $filename)
-            ];
-            return $result;
+        $dataKey = 'bearcms/files/custom/' . $filename;
+        if ($app->data->validate($dataKey)) {
+            $item = $app->data->get($dataKey);
+            if ($item !== null) {
+                $result = [
+                    'filename' => $filename,
+                    'published' => (isset($item->metadata['published']) ? (int) $item->metadata['published'] : 0),
+                    'name' => (isset($item->metadata['name']) && strlen($item->metadata['name']) > 0 ? $item->metadata['name'] : $filename)
+                ];
+                return $result;
+            }
         }
         return null;
     }
-
 }
