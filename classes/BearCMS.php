@@ -675,7 +675,7 @@ class BearCMS
                         $groupPostTitle->addOption($idPrefix . "BlogPostsPostTitleCSS", "css", '', [
                             "cssTypes" => ["cssText", "cssTextShadow"],
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-blog-posts-element-post-title a", "text-decoration:none;"],
+                                ["rule", $parentSelector . " .bearcms-blog-posts-element-post-title", "text-decoration:none;"],
                                 ["selector", $parentSelector . " .bearcms-blog-posts-element-post-title"]
                             ]
                         ]);
