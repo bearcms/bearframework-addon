@@ -48,9 +48,9 @@ class BlogPost extends \BearFramework\Models\Model
             ->defineProperty('publishedTime', [
                 'type' => '?int'
             ])
-            ->defineProperty('trashedTime', [
-                'type' => '?int'
-            ])
+            // ->defineProperty('trashedTime', [
+            //     'type' => '?int'
+            // ])
             ->defineProperty('categoriesIDs', [
                 'type' => 'array'
             ])

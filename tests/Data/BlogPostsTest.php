@@ -35,7 +35,7 @@ class BlogPostsTest extends BearCMSTestCase
         $this->assertEquals($blogPost->createdTime, null);
         $this->assertEquals($blogPost->status, null);
         $this->assertEquals($blogPost->publishedTime, null);
-        $this->assertEquals($blogPost->trashedTime, null);
+        //$this->assertEquals($blogPost->trashedTime, null);
         $this->assertEquals($blogPost->categoriesIDs, []);
         $this->assertEquals($blogPost->titleTagContent, null);
         $this->assertEquals($blogPost->descriptionTagContent, null);
