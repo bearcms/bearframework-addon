@@ -1363,7 +1363,7 @@ class BearCMS
                             }
                         } else {
                             $hasSlash = substr($path, -1) === '/';
-                            $pathsList = Internal\Data\Pages::getPathsList((Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) && $this->currentUser->exists() ? 'all' : 'published');
+                            $pathsList = Internal\Data\Pages::getPathsList((Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) && $this->currentUser->exists() ? 'all' : 'publishedOrUnlisted');
                             if ($hasSlash) {
                                 $pageID = array_search($path, $pathsList);
                             } else {
@@ -1378,6 +1378,7 @@ class BearCMS
                             if ($response !== null) {
                                 return $response;
                             }
+                            $status = null;
                             $found = false;
                             $settings = $this->data->settings->get();
                             if ($pageID === 'home') {
@@ -1395,6 +1396,7 @@ class BearCMS
                                     $description = isset($page->descriptionTagContent) ? trim($page->descriptionTagContent) : '';
                                     $keywords = isset($page->keywordsTagContent) ? trim($page->keywordsTagContent) : '';
                                     $found = true;
+                                    $status = $page->status;
                                 }
                             }
                             if ($found) {
@@ -1424,6 +1426,10 @@ class BearCMS
                                     $applyContext->language = $potentialLanguage;
                                 }
                                 $this->apply($response, $applyContext);
+                                if ($status !== 'published') {
+                                    $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
+                                    $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
+                                }
                                 return $response;
                             }
                         }

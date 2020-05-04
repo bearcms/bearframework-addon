@@ -40,10 +40,18 @@ class Pages
                 is_string($pageData['path']) &&
                 is_string($pageData['status'])
             ) {
-                if ($status !== 'all' && $status !== $pageData['status']) {
-                    continue;
+                $pageStatus = $pageData['status'];
+                $add = false;
+                if ($status === 'all') {
+                    $add = true;
+                } elseif ($status === 'publishedOrUnlisted') {
+                    $add = $pageStatus === 'published' || $pageStatus === 'unlisted';
+                } else {
+                    $add =  $status === $pageStatus;
                 }
-                $result[$pageData['id']] = $pageData['path'];
+                if ($add) {
+                    $result[$pageData['id']] = $pageData['path'];
+                }
             }
         }
         return $result;
