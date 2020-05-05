@@ -1047,7 +1047,7 @@ class BearCMS
                     } else {
                         $pages = $this->data->pages->getList();
                         foreach ($pages as $page) {
-                            if ($page->status === 'published' && $page->path === $path) {
+                            if ($page->status === 'public' && $page->path === $path) {
                                 $containerID = 'bearcms-page-' . $page->id;
                                 break;
                             }
@@ -1363,7 +1363,7 @@ class BearCMS
                             }
                         } else {
                             $hasSlash = substr($path, -1) === '/';
-                            $pathsList = Internal\Data\Pages::getPathsList((Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) && $this->currentUser->exists() ? 'all' : 'publishedOrUnlisted');
+                            $pathsList = Internal\Data\Pages::getPathsList((Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) && $this->currentUser->exists() ? 'all' : 'publicOrSecret');
                             if ($hasSlash) {
                                 $pageID = array_search($path, $pathsList);
                             } else {
@@ -1426,7 +1426,7 @@ class BearCMS
                                     $applyContext->language = $potentialLanguage;
                                 }
                                 $this->apply($response, $applyContext);
-                                if ($status !== 'published') {
+                                if ($status !== 'public') {
                                     $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
                                     $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
                                 }
@@ -1436,7 +1436,7 @@ class BearCMS
                     }
                 ]);
             \BearCMS\Internal\Sitemap::register(function (\BearCMS\Internal\Sitemap\Sitemap $sitemap) {
-                $list = Internal\Data\Pages::getPathsList('published');
+                $list = Internal\Data\Pages::getPathsList('public');
                 if (Config::$autoCreateHomePage) {
                     $list['home'] = '/';
                 }

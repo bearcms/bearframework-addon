@@ -74,4 +74,16 @@ class Page extends \BearFramework\Models\Model
                 'type' => '?int'
             ]);
     }
+
+    public function __modelWakeup(array $data)
+    {
+        if (isset($data['status'])) {
+            if ($data['status'] === 'published') {
+                $data['status'] = 'public';
+            } elseif ($data['status'] === 'notPublished') {
+                $data['status'] = 'private';
+            }
+        }
+        return $data;
+    }
 }

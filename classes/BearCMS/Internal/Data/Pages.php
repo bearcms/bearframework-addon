@@ -22,7 +22,7 @@ class Pages
 
     /**
      * 
-     * @param string $status all or published
+     * @param string $status
      * @return array
      */
     static function getPathsList(string $status = 'all'): array
@@ -41,11 +41,16 @@ class Pages
                 is_string($pageData['status'])
             ) {
                 $pageStatus = $pageData['status'];
+                if ($pageStatus === 'published') {
+                    $pageStatus = 'public';
+                } elseif ($pageStatus === 'notPublished') {
+                    $pageStatus = 'private';
+                }
                 $add = false;
                 if ($status === 'all') {
                     $add = true;
-                } elseif ($status === 'publishedOrUnlisted') {
-                    $add = $pageStatus === 'published' || $pageStatus === 'unlisted';
+                } elseif ($status === 'publicOrSecret') {
+                    $add = $pageStatus === 'public' || $pageStatus === 'secret';
                 } else {
                     $add =  $status === $pageStatus;
                 }
