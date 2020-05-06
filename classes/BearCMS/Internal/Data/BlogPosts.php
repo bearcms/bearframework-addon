@@ -43,9 +43,9 @@ class BlogPosts
             ) {
                 $postStatus = $blogPostData['status'];
                 if ($postStatus === 'trashed') {
-                    $pageStatus = 'private';
+                    $postStatus = 'private';
                 }
-                if ($status !== 'all' && $status !== $pageStatus) {
+                if ($status !== 'all' && $status !== $postStatus) {
                     continue;
                 }
                 $result[$blogPostData['id']] = $blogPostData['slug'];
