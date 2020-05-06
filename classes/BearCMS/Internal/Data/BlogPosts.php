@@ -41,7 +41,11 @@ class BlogPosts
                 is_string($blogPostData['slug']) &&
                 is_string($blogPostData['status'])
             ) {
-                if ($status !== 'all' && $status !== $blogPostData['status']) {
+                $postStatus = $blogPostData['status'];
+                if ($postStatus === 'trashed') {
+                    $pageStatus = 'private';
+                }
+                if ($status !== 'all' && $status !== $pageStatus) {
                     continue;
                 }
                 $result[$blogPostData['id']] = $blogPostData['slug'];
