@@ -1118,11 +1118,18 @@ class BearCMS
                         $slug = (string) $this->app->request->path->getSegment(1);
                         $slugsList = Internal\Data\BlogPosts::getSlugsList('published');
                         $blogPostID = array_search($slug, $slugsList);
-                        if ($blogPostID === false && substr($slug, 0, 6) === 'draft-' && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) && $this->currentUser->exists()) {
-                            $blogPost = $this->data->blogPosts->get(substr($slug, 6));
+                        if ($blogPostID === false && substr($slug, 0, 1) === '-') {
+                            $blogPost = $this->data->blogPosts->get(substr($slug, 1));
                             if ($blogPost !== null) {
-                                if ($blogPost->status === 'published') {
+                                $status = $blogPost->status;
+                                if ($status === 'published') {
                                     return new App\Response\PermanentRedirect($this->app->urls->get(Config::$blogPagesPathPrefix . $blogPost->slug . '/'));
+                                } elseif ($status === 'draft') {
+                                    // allow access
+                                } else { // private
+                                    if (!((Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) && $this->currentUser->exists())) {
+                                        return;
+                                    }
                                 }
                                 $blogPostID = $blogPost->id;
                             }
@@ -1157,7 +1164,7 @@ class BearCMS
                                     . '</style>';
                                 $content .= '</head><body>';
                                 $content .= '<div class="bearcms-blogpost-page-title-container"><h1 class="bearcms-blogpost-page-title">' . htmlspecialchars($blogPost->title) . '</h1></div>';
-                                $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost->status === 'published' ? $this->app->localization->formatDate($blogPost->publishedTime, ['date']) : __('bearcms.blogPost.draft')) . '</div></div>';
+                                $content .= '<div class="bearcms-blogpost-page-date-container"><div class="bearcms-blogpost-page-date">' . ($blogPost->status === 'published' ? $this->app->localization->formatDate($blogPost->publishedTime, ['date']) : ($blogPost->status === 'draft' ? __('bearcms.blogPost.draft') : __('bearcms.blogPost.private'))) . '</div></div>';
                                 $content .= '<div class="bearcms-blogpost-page-content"><bearcms-elements id="bearcms-blogpost-' . $blogPostID . '"/></div>';
                                 $settings = $this->data->settings->get();
                                 if ($settings->allowCommentsInBlogPosts) {
@@ -1200,6 +1207,10 @@ class BearCMS
                                     $applyContext->language = $blogPost->language;
                                 }
                                 $this->apply($response, $applyContext);
+                                if ($blogPost->status !== 'published') {
+                                    $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
+                                    $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
+                                }
                                 return $response;
                             }
                         }

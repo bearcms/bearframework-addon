@@ -236,7 +236,7 @@ class Server
             'lan3k', // has page duplicate support,
             'kan4', // has multilanguage support,
             'j93a', // has related posts support
-            'k931' // has support for new pages statuses (public,secret,private)
+            'k931' // has support for new pages and blogs statuses (public,secret,private and published,draft,private)
         ]);
         $settings = $app->bearCMS->data->settings->get();
         $clientData['contentLanguages'] = $settings->languages;

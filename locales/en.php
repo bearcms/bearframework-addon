@@ -10,6 +10,7 @@ return [
     'bearcms.blogPosts.Show more posts' => 'Show more posts',
     'bearcms.blogPosts.Read more' => 'Read more',
     'bearcms.blogPost.draft' => 'draft',
+    'bearcms.blogPost.private' => 'private',
     'bearcms.rss.Read the full post at %s' => 'Read the full post at %s',
     'bearcms.rss.Read the post at %s' => 'Read the post at %s',
     'bearcms.navigation.home' => 'Home',

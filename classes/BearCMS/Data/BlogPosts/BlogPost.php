@@ -16,7 +16,6 @@ namespace BearCMS\Data\BlogPosts;
  * @property int|null $createdTime
  * @property string|null $status
  * @property string|null $publishedTime
- * @property string|null $trashedTime
  * @property array $categoriesIDs
  * @property string|null $titleTagContent
  * @property string|null $descriptionTagContent
@@ -69,5 +68,15 @@ class BlogPost extends \BearFramework\Models\Model
             ->defineProperty('language', [
                 'type' => '?string'
             ]);
+    }
+
+    public function __modelWakeup(array $data)
+    {
+        if (isset($data['status'])) {
+            if ($data['status'] === 'trashed') {
+                $data['status'] = 'private';
+            }
+        }
+        return $data;
     }
 }
