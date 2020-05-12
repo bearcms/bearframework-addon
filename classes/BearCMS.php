@@ -1397,6 +1397,7 @@ class BearCMS
                                 $description = trim($settings->description);
                                 $keywords = trim($settings->keywords);
                                 $found = true;
+                                $status = 'public';
                             } else {
                                 $page = $this->data->pages->get($pageID);
                                 if ($page !== null) {
