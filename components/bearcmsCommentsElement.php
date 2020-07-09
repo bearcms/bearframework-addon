@@ -24,7 +24,7 @@ if (strlen($threadID) > 0) {
     $content .= '</div>';
 }
 echo '<html><head><style>';
-echo '.bearcms-comments-comment{display:block;clear:both;zoom:1;word-wrap:break-word;}';
+echo '.bearcms-comments-comment{display:block;clear:both;zoom:1;word-break:break-word;}';
 echo '.bearcms-comments-comment:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
 echo '.bearcms-comments-comment-author-image{display:inline-block;float:left;}';
 echo '.bearcms-comments-comment-date{float:right;}';

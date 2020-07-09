@@ -33,7 +33,7 @@ $attributes = $outputType === 'full-html' ? ' class="' . $className . '"' : '';
 $content = '<' . $tagName . $attributes . '>' . htmlspecialchars($text) . '</' . $tagName . '>';
 echo '<html>';
 if ($outputType === 'full-html') {
-    echo '<head><style>.' . $className . '{word-wrap:break-word;}</style></head>';
+    echo '<head><style>.' . $className . '{word-break:break-word;}</style></head>';
 }
 echo '<body>';
 echo $content;

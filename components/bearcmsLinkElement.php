@@ -15,7 +15,7 @@ $title = $component->title;
 
 echo '<html>';
 if ($outputType === 'full-html') {
-    echo '<head><style>.bearcms-link-element{word-wrap:break-word;}</style></head>';
+    echo '<head><style>.bearcms-link-element{word-break:break-word;}</style></head>';
 }
 echo '<body>';
 if ($outputType === 'full-html') {

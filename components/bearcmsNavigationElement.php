@@ -180,7 +180,7 @@ if (isset($itemsHtml[0])) {
     $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';
 }
 echo '<html><head><style>';
-echo '.bearcms-navigation-element-item{word-wrap:break-word;}';
+echo '.bearcms-navigation-element-item{word-break:break-word;}';
 echo '</style></head><body>';
 echo $content;
 echo '</body></html>';

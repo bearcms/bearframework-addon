@@ -44,7 +44,7 @@ if ($code !== '') {
 echo '<html>';
 if ($outputType === 'full-html') {
     echo '<head><style>';
-    echo '.bearcms-html-element{word-wrap:break-word;}';
+    echo '.bearcms-html-element{word-break:break-word;}';
     echo '.bearcms-html-element:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
     echo '</style>';
     if ($addHTMLSandbox) {

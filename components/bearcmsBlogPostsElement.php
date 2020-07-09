@@ -212,7 +212,7 @@ if ($list->count() > 0) {
 $content .= '</div>';
 $content .= '</div>';
 ?><html>
-    <head><style>.bearcms-blog-posts-element-post-title{word-wrap:break-word;}</style><?php
+    <head><style>.bearcms-blog-posts-element-post-title{word-break:break-word;}</style><?php
         if ($list->count() > $limit) {
             echo '<link rel="client-packages-embed" name="-bearcms-blog-posts-element">';
         }
