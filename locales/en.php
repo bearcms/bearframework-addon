@@ -81,6 +81,7 @@ return [
     'bearcms.themes.options.Separator.Medium' => 'Medium',
     'bearcms.themes.options.Separator.Small' => 'Small',
     'bearcms.users.Administrator' => 'Administrator',
+    'bearcms.users.settingsButton' => 'Profile settings',
     'bearcms.users.settings.name' => 'Name',
     'bearcms.users.settings.description' => 'Description',
     'bearcms.users.settings.save' => 'Save changes',

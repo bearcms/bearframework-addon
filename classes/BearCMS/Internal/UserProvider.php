@@ -15,7 +15,7 @@ use BearFramework\App;
  * @internal
  * @codeCoverageIgnore
  */
-class UserProvider extends \IvoPetkov\BearFrameworkAddons\Users\LoginProvider
+class UserProvider extends \IvoPetkov\BearFrameworkAddons\Users\Provider
 {
 
     /**
@@ -23,18 +23,25 @@ class UserProvider extends \IvoPetkov\BearFrameworkAddons\Users\LoginProvider
      */
     public function __construct()
     {
-        $this->hasSettings = true;
+        $this->screens = [
+            ['id' => 'settings', 'name' => __('bearcms.users.settingsButton'), 'showInProfile' => true]
+        ];
     }
 
     /**
      * 
      * @return string
      */
-    public function getSettingsForm(): string
+    public function getScreenContent(string $id): string
     {
-        $app = App::get();
-        $context = $app->contexts->get();
-        return $app->components->process('<component src="form" filename="' . $context->dir . '/components/bearcms-user-profile-settings-form.php"/>');
+        if ($id === 'settings') {
+            $app = App::get();
+            $context = $app->contexts->get();
+            if ($app->currentUser->exists() && $app->currentUser->provider === 'bearcms') {
+                return $app->components->process('<component src="form" filename="' . $context->dir . '/components/bearcms-user-profile-settings-form.php"/>');
+            }
+        }
+        return '';
     }
 
     /**
@@ -42,7 +49,7 @@ class UserProvider extends \IvoPetkov\BearFrameworkAddons\Users\LoginProvider
      * @param string $id
      * @return array
      */
-    public function getUserProperties(string $id): array
+    public function getProfileData(string $id): array
     {
         $app = App::get();
         $properties = [];
@@ -59,5 +66,4 @@ class UserProvider extends \IvoPetkov\BearFrameworkAddons\Users\LoginProvider
         }
         return $properties;
     }
-
 }

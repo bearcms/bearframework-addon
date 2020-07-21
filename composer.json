@@ -23,7 +23,7 @@
         "ivopetkov/html-server-components-bearframework-addon": "0.7.*|0.8.*",
         "ivopetkov/image-gallery-bearframework-addon": "0.1.*",
         "ivopetkov/navigation-menu-bearframework-addon": "0.1.*",
-        "ivopetkov/users-bearframework-addon": "0.5.*",
+        "ivopetkov/users-bearframework-addon": "0.6.*",
         "ivopetkov/server-requests-bearframework-addon": "0.4.*",
         "ivopetkov/video-embed": "0.2.*",
         "ivopetkov/html5-dom-document-php": "2.*",
@@ -33,7 +33,7 @@
         "ivopetkov/encryption-bearframework-addon": "0.1.*",
         "ivopetkov/notifications-bearframework-addon": "0.3.*",
         "ivopetkov/client-packages-bearframework-addon": "0.2.*",
-        "ivopetkov/form-elements-bearframework-addon": "0.2.*",
+        "ivopetkov/form-elements-bearframework-addon": "0.3.*",
         "ivopetkov/google-fonts-embed-bearframework-addon": "0.1.*"
     },
     "require-dev": {

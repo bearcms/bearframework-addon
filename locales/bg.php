@@ -81,6 +81,7 @@ return [
     'bearcms.themes.options.Separator.Medium' => 'Среден',
     'bearcms.themes.options.Separator.Small' => 'Малък',
     'bearcms.users.Administrator' => 'Администратор',
+    'bearcms.users.settingsButton' => 'Настройки на профила',
     'bearcms.users.settings.name' => 'Име',
     'bearcms.users.settings.description' => 'Описание',
     'bearcms.users.settings.save' => 'Запази промените',
