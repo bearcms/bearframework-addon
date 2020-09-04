@@ -131,6 +131,7 @@ class BearCMS
                         $serverData = Internal\TempClientData::get($data['serverData']);
                         if (is_array($serverData) && isset($serverData['componentHTML'])) {
                             $content = $this->app->components->process($serverData['componentHTML']);
+                            $content = $this->app->clientPackages->process($content);
                             $editorContent = Internal\ElementsHelper::getEditableElementsHtml();
                             return json_encode([
                                 'content' => $content,
