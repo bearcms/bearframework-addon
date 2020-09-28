@@ -58,7 +58,7 @@ bearCMS.commentsElementForm = bearCMS.commentsElementForm || (function () {
     var openLogin = function (event) {
         clientPackages.get('lightbox').then(function (lightbox) {
             lightbox.make();
-            var formID = event.target.parentNode.parentNode.id;
+            var formID = event.target.closest('form').id;
             clientPackages.get('users').then(function (users) {
                 prepareForUserAction(formID);
                 users.openLogin();
