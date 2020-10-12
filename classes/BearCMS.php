@@ -1938,6 +1938,19 @@ class BearCMS
             }
         }
 
+        // Set target="_blank" to files preview links
+        if (strpos($response->content, '/files/preview/') !== false) {
+            $linkElements = $document->querySelectorAll('a');
+            foreach ($linkElements as $linkElement) {
+                if (strpos($linkElement->getAttribute('href'), '/files/preview/') !== false) {
+                    $linkTarget = $linkElement->getAttribute('target');
+                    if (strlen($linkTarget) === 0) {
+                        $linkElement->setAttribute('target', '_blank');
+                    }
+                }
+            }
+        }
+
         $response->content = $document->saveHTML();
 
         if ($this->app->currentUser->exists()) {
