@@ -147,6 +147,19 @@ class Controller
         if ($hasAccess) {
             $dataKey = 'bearcms/files/custom/' . $filename;
             if ($app->data->validate($dataKey)) {
+                if ($preview) {
+                    $previewName = $request->path->getSegment(3);
+                    if ($previewName === null) {
+                        $newURL = $request->getURL();
+                        $newURL = trim($newURL, '/') . '/' . rawurlencode($fileData['name']);
+                        $response = new App\Response\TemporaryRedirect($newURL);
+                        if ($noCache) {
+                            $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
+                            $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
+                        }
+                        return $response;
+                    }
+                }
                 $fullFilename = $app->data->getFilename($dataKey);
                 $response = new App\Response\FileReader($fullFilename);
                 $details = $app->assets->getDetails($fileData['name'], ['mimeType']);

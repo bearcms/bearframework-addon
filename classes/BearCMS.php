@@ -961,7 +961,7 @@ class BearCMS
         // Register the file handlers
         if (Config::hasFeature('FILES')) {
             $this->app->routes
-                ->add('/files/preview/?', function ($request) {
+                ->add('/files/preview/*', function ($request) {
                     return Internal\Controller::handleFilePreview($request);
                 })
                 ->add('/files/download/?', function ($request) {
