@@ -29,6 +29,9 @@ if ($size === 'large') {
 }
 
 $attributes = $outputType === 'full-html' ? ' class="' . $className . '"' : '';
+if (strlen($component->linkTargetID) > 0) {
+    $attributes .= ' id="' . htmlentities($component->linkTargetID) . '"';
+}
 
 $content = '<' . $tagName . $attributes . '>' . htmlspecialchars($text) . '</' . $tagName . '>';
 echo '<html>';

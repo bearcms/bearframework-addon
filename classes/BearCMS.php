@@ -166,6 +166,10 @@ class BearCMS
                         [
                             'id' => 'text',
                             'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'linkTargetID',
+                            'type' => 'textbox'
                         ]
                     ]
                 ]);
