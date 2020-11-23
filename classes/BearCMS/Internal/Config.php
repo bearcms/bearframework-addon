@@ -41,6 +41,7 @@ class Config
     static $addDefaultThemes = true;
     static $appSpecificServerData = [];
     static $videoPrivateEmbed = false;
+    static $allowRenderGlobalHTML = true;
 
     /**
      * 
@@ -168,6 +169,9 @@ class Config
         }
         if (isset($data['internalVideoPrivateEmbed'])) {
             self::$videoPrivateEmbed = (int) $data['internalVideoPrivateEmbed'];
+        }
+        if (isset($data['internalAllowRenderGlobalHTML'])) {
+            self::$allowRenderGlobalHTML = (int) $data['internalAllowRenderGlobalHTML'];
         }
     }
 

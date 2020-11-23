@@ -29,6 +29,7 @@ use BearCMS\Internal2;
  * @property boolean $enableRSS
  * @property string|null $rssType
  * @property array $translations
+ * @property string|null $globalHTML
  */
 class Settings extends \BearFramework\Models\Model
 {
@@ -107,6 +108,9 @@ class Settings extends \BearFramework\Models\Model
             ])
             ->defineProperty('translations', [
                 'type' => 'array',
+            ])
+            ->defineProperty('globalHTML', [
+                'type' => '?string'
             ]);
     }
 

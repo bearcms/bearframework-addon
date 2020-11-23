@@ -1931,7 +1931,14 @@ class BearCMS
             }
         }
         $html .= '</body></html>';
-        $document->insertHTML($html);
+        $htmlToInsert[] = ['source' => $html];
+        if (Config::$allowRenderGlobalHTML && $response instanceof App\Response\HTML) {
+            $globalHTML = $settings->globalHTML;
+            if (isset($globalHTML[0]) && (!$currentUserExists || ($currentUserExists && !$this->app->request->query->exists('disable-global-html')))) {
+                $htmlToInsert[] = ['source' => $globalHTML];
+            }
+        }
+        $document->insertHTMLMulti($htmlToInsert);
 
         if (strlen($title) > 0) {
             $imageElements = $document->querySelectorAll('img');
