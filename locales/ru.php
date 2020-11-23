@@ -21,4 +21,10 @@ return [
     'bearcms.elements.video.Play on %s' => 'Play on %s',
     'bearcms.pages.blogPost.Comments' => 'Комментарии',
     'bearcms.pages.blogPost.Continue reading' => 'Продолжить чтение',
+    'bearcms.element.UnsupportedElement.title' => 'Unsupported element!', // todo
+    'bearcms.element.UnsupportedElement.description' => 'This message is visible to administrators only.', // todo
+    'bearcms.element.HTMLCodeTemporaryDisabled.title' => 'HTML code element temporary disabled!', // todo
+    'bearcms.element.HTMLCodeTemporaryDisabled.description' => 'This message is visible to you only, because of the "disable-html-elements" in the URL.', // todo
+    'bearcms.element.HTMLCodeUnavailableSecurityMode.title' => 'The HTML code cannot be shown in the selected security mode!', // todo
+    'bearcms.element.HTMLCodeUnavailableSecurityMode.description' => 'This message is visible to administrators only.' // todo
 ];

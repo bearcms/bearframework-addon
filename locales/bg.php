@@ -93,4 +93,10 @@ return [
     'bearcms.pages.blogPost.Continue reading' => 'Още статии',
     'bearcms.themes.options.Related posts' => 'Още статии',
     'bearcms.themes.options.Related list' => 'Списък',
+    'bearcms.element.UnsupportedElement.title' => 'Този елемент не може да се покаже!',
+    'bearcms.element.UnsupportedElement.description' => 'Това съобщение е видимо само за администраторите на сайта.',
+    'bearcms.element.HTMLCodeTemporaryDisabled.title' => 'Елементът HTML код е временно спрян!',
+    'bearcms.element.HTMLCodeTemporaryDisabled.description' => 'Това съобщение е видимо само от вас, защото сте добавили "disable-html-elements" в адреса на страницата.',
+    'bearcms.element.HTMLCodeUnavailableSecurityMode.title' => 'Този елемент (HTML код) не може да се покаже в избрания режим на сигурност!',
+    'bearcms.element.HTMLCodeUnavailableSecurityMode.description' => 'Това съобщение е видимо само за администраторите на сайта.'
 ];

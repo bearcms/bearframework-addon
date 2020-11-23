@@ -93,4 +93,10 @@ return [
     'bearcms.pages.blogPost.Continue reading' => 'Continue reading',
     'bearcms.themes.options.Related posts' => 'Related posts',
     'bearcms.themes.options.Related list' => 'List',
+    'bearcms.element.UnsupportedElement.title' => 'Unsupported element!',
+    'bearcms.element.UnsupportedElement.description' => 'This message is visible to administrators only.',
+    'bearcms.element.HTMLCodeTemporaryDisabled.title' => 'HTML code element temporary disabled!',
+    'bearcms.element.HTMLCodeTemporaryDisabled.description' => 'This message is visible to you only, because of the "disable-html-elements" in the URL.',
+    'bearcms.element.HTMLCodeUnavailableSecurityMode.title' => 'The HTML code cannot be shown in the selected security mode!',
+    'bearcms.element.HTMLCodeUnavailableSecurityMode.description' => 'This message is visible to administrators only.'
 ];

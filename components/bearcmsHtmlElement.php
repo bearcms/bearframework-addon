@@ -6,7 +6,10 @@
  * Free to use under the MIT license.
  */
 
+use BearFramework\App;
 use BearCMS\Internal\Config;
+
+$app = App::get();
 
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
@@ -19,15 +22,33 @@ if ($renderMode === '') {
 
 $htmlSandboxUrl = Config::getHTMLSandboxURL();
 
+$currentUserExists = $app->bearCMS->currentUser->exists();
+$disabled = $currentUserExists && $app->request->query->exists('disable-html-elements');
+
 $addHTMLSandbox = false;
 $content = '';
 if ($code !== '') {
-    if ($renderMode === 'clean' || $renderMode === 'default') {
-        if ($outputType === 'full-html') {
+    if ($renderMode === 'clean' || $renderMode === 'default' || $disabled) {
+        if ($outputType === 'full-html' || $disabled) {
             $content .= '<div class="bearcms-html-element">';
         }
-        $content .= '<component src="data:base64,' . base64_encode($code) . '" />';
-        if ($outputType === 'full-html') {
+        if ($disabled) {
+            $content .= '<div style="background-color:red;color:#fff;padding:10px 15px 9px 15px;border-radius:4px;line-height:25px;font-size:14px;font-family:Arial,sans-serif;">';
+            $content .= __('bearcms.element.HTMLCodeTemporaryDisabled.title') . '<div style="font-size:11px;">' . __('bearcms.element.HTMLCodeTemporaryDisabled.description') . '</div>';
+            $content .= '</div>';
+        } else {
+            if (!Config::$htmlAllowDefaultMode && $renderMode === 'default') {
+                if ($currentUserExists) {
+                    $content .= '<div style="background-color:red;color:#fff;padding:10px 15px 9px 15px;border-radius:4px;line-height:25px;font-size:14px;font-family:Arial,sans-serif;">';
+                    $content .= __('bearcms.element.HTMLCodeUnavailableSecurityMode.title') . '<div style="font-size:11px;">' . __('bearcms.element.HTMLCodeUnavailableSecurityMode.description') . '</div>';
+                    $content .= '</div>';
+                } else {
+                }
+            } else {
+                $content .= '<component src="data:base64,' . base64_encode($code) . '" />';
+            }
+        }
+        if ($outputType === 'full-html' || $disabled) {
             $content .= '</div>';
         }
     } else if ($renderMode === 'sandbox') {
