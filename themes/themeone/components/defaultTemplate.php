@@ -192,8 +192,8 @@ for ($i = 0; $i < ($hasFooter ? 2 : 1); $i++) {
     $elementsTextColor = $i === 0 ? $textColor : '#fff';
     $separatorColor = $i === 0 ? '#ddd' : '#333';
 
-    $h1 = 'color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 1.6);line-height:180%;';
-    $h2 = 'color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 1.3);line-height:180%;';
+    $h1 = 'color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 2);line-height:160%;';
+    $h2 = 'color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 1.5);line-height:170%;';
     $h3 = 'color:' . $elementsAccentColor . ';font-size:' . $fontSize . ';line-height:180%;';
     $input = 'box-sizing:border-box;border:1px solid ' . $elementsTextColor . ';color:' . $elementsTextColor . ';margin-bottom:10px;font-family:' . $fontFamily . ';font-size:' . $fontSize . ';line-height:180%;padding:calc(' . $fontSize . ' * 0.5) ' . $fontSize . ';width:100%;background-color:transparent;border-radius:2px;';
     $text = 'line-height:180%;color:' . $elementsTextColor . ';';
@@ -231,13 +231,13 @@ for ($i = 0; $i < ($hasFooter ? 2 : 1); $i++) {
     echo $containerClassName . ' .bearcms-comments-element-send-button{' . $button . '}';
     echo $containerClassName . ' .bearcms-comments-element-send-button-waiting{' . $buttonWaiting . '}';
 
-    echo $containerClassName . ' .bearcms-blog-posts-element-post:not(:first-child){margin-top:' . $spacing . ';}';
     echo $containerClassName . ' .bearcms-blog-posts-element-show-more-button-container{margin-top:' . $spacing . ';}';
     echo $containerClassName . ' .bearcms-blog-posts-element-show-more-button{' . $button . '}';
     echo $containerClassName . ' .bearcms-blog-posts-element-post-title{line-height:180%;font-size:calc(' . $fontSize . ' * 1.3);text-decoration:underline;color:' . $elementsTextColor . ';}';
     echo $containerClassName . ' .bearcms-blog-posts-element-post-date-container{padding-top:' . $fontSize . ';}';
     echo $containerClassName . ' .bearcms-blog-posts-element-post-date{font-size:calc(' . $fontSize . ' * 0.8);color:' . $elementsTextColor . ';}';
-    echo $containerClassName . ' .bearcms-blog-posts-element-post-content{padding-top:calc(1.5rem);}';
+    echo $containerClassName . ' .bearcms-blog-posts-element-post-content{padding-top:1.5rem;}';
+    echo $containerClassName . ' .bearcms-blog-posts-element-post:not(:last-child) .bearcms-blog-posts-element-post-content{padding-bottom:2rem;}';
 
     echo $containerClassName . ' .bearcms-forum-posts-post:not(:first-child){margin-top:calc(' . $fontSize . ' * 0.5);}';
     echo $containerClassName . ' .bearcms-forum-posts-post-title{line-height:180%;text-decoration:underline;color:' . $elementsTextColor . ';}';
