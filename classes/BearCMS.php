@@ -1995,7 +1995,8 @@ class BearCMS
         $settings = $this->data->settings->get();
 
         $serverCookies = Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER);
-        if (!empty($serverCookies['tmcs']) || !empty($serverCookies['tmpr'])) {
+
+        if (!empty($serverCookies['tmcs']) || !empty($serverCookies['tmpr']) || !empty($serverCookies['wspr'])) {
             Internal\ElementsHelper::$editorData = [];
         }
 
