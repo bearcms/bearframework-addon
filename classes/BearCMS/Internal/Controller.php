@@ -100,6 +100,7 @@ class Controller
                     }
                 }
             }
+            
             move_uploaded_file($file->filename, $filename);
             if (is_file($filename)) {
                 $queryList = $app->request->query->getList();
