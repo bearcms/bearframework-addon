@@ -10,6 +10,7 @@
 namespace BearCMS\Data;
 
 use BearCMS\Internal;
+use BearCMS\Internal\Config;
 
 /**
  * 
@@ -37,6 +38,9 @@ class Pages
         $data = Internal\Data::getValue('bearcms/pages/page/' . md5($id) . '.json');
         if ($data !== null) {
             return \BearCMS\Data\Pages\Page::fromJSON($data);
+        }
+        if ($id === 'home' && Config::$autoCreateHomePage) {
+            return \BearCMS\Internal\Data\Pages::getDefaultHomePage();
         }
         return null;
     }

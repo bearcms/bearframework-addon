@@ -105,6 +105,9 @@ if (isset($itemsHtml[0])) {
         $optimizePages = function ($pages, $recursive = false) use (&$optimizePages, $itemsType, $items, $appURLs, $requestBase) {
             $result = [];
             foreach ($pages as $page) {
+                if ($page->id === 'home') {
+                    continue;
+                }
                 if ($page->status !== 'public') {
                     continue;
                 }

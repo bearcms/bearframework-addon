@@ -15,7 +15,6 @@ use BearCMS\Internal2;
  * 
  * @property string|null $title
  * @property string|null $description
- * @property string|null $keywords
  * @property string|null $language
  * @property array $languages
  * @property string|null $icon Will be removed in v2
@@ -43,9 +42,9 @@ class Settings extends \BearFramework\Models\Model
             ->defineProperty('description', [
                 'type' => '?string'
             ])
-            ->defineProperty('keywords', [
-                'type' => '?string'
-            ])
+            // ->defineProperty('keywords', [
+            //     'type' => '?string'
+            // ])
             ->defineProperty('language', [
                 'type' => '?string',
                 'init' => function () {

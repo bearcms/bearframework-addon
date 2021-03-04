@@ -22,6 +22,7 @@ namespace BearCMS\Data\BlogPosts;
  * @property string|null $keywordsTagContent
  * @property int|null $lastChangeTime
  * @property string|null $language
+ * @property string|null $image
  */
 class BlogPost extends \BearFramework\Models\Model
 {
@@ -66,6 +67,9 @@ class BlogPost extends \BearFramework\Models\Model
                 'type' => '?int'
             ])
             ->defineProperty('language', [
+                'type' => '?string'
+            ])
+            ->defineProperty('image', [
                 'type' => '?string'
             ]);
     }

@@ -1034,17 +1034,18 @@ class BearCMS
                         return $iconCache[0];
                     };
 
+                    $filename = null;
+
                     $containerID = null;
-                    if ($path === '/') {
-                        $iconFilename = $getIconFilename();
-                        if ($iconFilename === null) {
-                            $containerID = 'bearcms-page-home';
-                        }
-                    } elseif (strpos($path, Config::$blogPagesPathPrefix) === 0) {
+                    if (strpos($path, Config::$blogPagesPathPrefix) === 0) {
                         $slug = rtrim(substr($path, strlen(Config::$blogPagesPathPrefix)), '/');
                         $blogPosts = $this->data->blogPosts->getList();
                         foreach ($blogPosts as $blogPost) {
                             if ($blogPost->status === 'published' && $blogPost->slug === $slug) {
+                                if (strlen($blogPost->image) > 0) {
+                                    $filename = $blogPost->image;
+                                    break;
+                                }
                                 $containerID = 'bearcms-blogpost-' . $blogPost->id;
                                 break;
                             }
@@ -1053,29 +1054,45 @@ class BearCMS
                         $pages = $this->data->pages->getList();
                         foreach ($pages as $page) {
                             if ($page->status === 'public' && $page->path === $path) {
+                                if (strlen($page->image) > 0) {
+                                    $filename = $page->image;
+                                    break;
+                                }
                                 $containerID = 'bearcms-page-' . $page->id;
                                 break;
+                            }
+                        }
+                        if ($path === '/' && $filename === null) {
+                            $iconFilename = $getIconFilename();
+                            if ($iconFilename !== null) {
+                                $filename = $iconFilename;
+                            } else {
+                                $containerID = 'bearcms-page-home';
                             }
                         }
                     }
 
                     $imageUrl = null;
-                    if ($containerID !== null) {
-                        $content = $this->app->components->process('<component src="bearcms-elements" id="' . htmlentities($containerID) . '"/>');
-                        if (strpos($content, '<img') !== false) {
-                            $html5Document = new HTML5DOMDocument();
-                            $html5Document->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
-                            $imageElement = $html5Document->querySelector('img');
-                            if ($imageElement !== null) {
-                                $imageUrl = $imageElement->getAttribute('src');
+
+                    if ($filename !== null) {
+                        $imageUrl = $this->app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
+                    } else {
+                        if ($containerID !== null) {
+                            $content = $this->app->components->process('<component src="bearcms-elements" id="' . htmlentities($containerID) . '"/>');
+                            if (strpos($content, '<img') !== false) {
+                                $html5Document = new HTML5DOMDocument();
+                                $html5Document->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
+                                $imageElement = $html5Document->querySelector('img');
+                                if ($imageElement !== null) {
+                                    $imageUrl = $imageElement->getAttribute('src');
+                                }
                             }
                         }
-                    }
-
-                    if ($imageUrl === null) { // use the website icon if no image found on page
-                        $filename = $getIconFilename();
-                        if ($filename !== null) {
-                            $imageUrl = $this->app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
+                        if ($imageUrl === null) { // use the website icon if no image found on page
+                            $filename = $getIconFilename();
+                            if ($filename !== null) {
+                                $imageUrl = $this->app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
+                            }
                         }
                     }
 
@@ -1394,27 +1411,32 @@ class BearCMS
                             if ($response !== null) {
                                 return $response;
                             }
+                            $title = '';
+                            $description = '';
+                            $keywords = '';
                             $status = null;
                             $found = false;
                             $settings = $this->data->settings->get();
+                            $page = $this->data->pages->get($pageID);
+                            if ($page !== null) {
+                                $title = isset($page->titleTagContent) ? trim($page->titleTagContent) : '';
+                                if (!isset($title[0])) {
+                                    $title = isset($page->name) ? trim($page->name) : '';
+                                }
+                                $description = isset($page->descriptionTagContent) ? trim($page->descriptionTagContent) : '';
+                                $keywords = isset($page->keywordsTagContent) ? trim($page->keywordsTagContent) : '';
+                                $found = true;
+                                $status = $page->status;
+                            }
                             if ($pageID === 'home') {
-                                $title = trim($settings->title);
-                                $description = trim($settings->description);
-                                $keywords = trim($settings->keywords);
+                                if (!isset($title[0])) {
+                                    $title = trim($settings->title);
+                                }
+                                if (!isset($description[0])) {
+                                    $description = trim($settings->description);
+                                }
                                 $found = true;
                                 $status = 'public';
-                            } else {
-                                $page = $this->data->pages->get($pageID);
-                                if ($page !== null) {
-                                    $title = isset($page->titleTagContent) ? trim($page->titleTagContent) : '';
-                                    if (!isset($title[0])) {
-                                        $title = isset($page->name) ? trim($page->name) : '';
-                                    }
-                                    $description = isset($page->descriptionTagContent) ? trim($page->descriptionTagContent) : '';
-                                    $keywords = isset($page->keywordsTagContent) ? trim($page->keywordsTagContent) : '';
-                                    $found = true;
-                                    $status = $page->status;
-                                }
                             }
                             if ($found) {
                                 $content = '<html><head>';

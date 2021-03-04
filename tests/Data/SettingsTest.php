@@ -25,7 +25,7 @@ class SettingsTest extends BearCMSTestCase
         $settings = $app->bearCMS->data->settings->get();
         $this->assertEquals($settings->title, 'My website!');
         $this->assertEquals($settings->description, null);
-        $this->assertEquals($settings->keywords, null);
+        //$this->assertEquals($settings->keywords, null);
         $this->assertEquals($settings->language, 'en');
         $this->assertEquals($settings->languages, ['en']);
         $this->assertEquals($settings->icon, null);

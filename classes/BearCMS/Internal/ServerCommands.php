@@ -14,6 +14,7 @@ use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use BearCMS\Internal2;
 use BearCMS\Internal\Data\Elements;
+use BearCMS\Internal\Data\Pages;
 use IvoPetkov\HTML5DOMDocument;
 
 /**
@@ -348,6 +349,24 @@ class ServerCommands
                         throw $e;
                     }
                 }
+            } elseif ($command === 'duplicate') {
+                $validateKey($commandData['sourceKey']);
+                $validateKey($commandData['targetKey']);
+                $silent = isset($commandData['silent']) ? (int) $commandData['silent'] > 0 : false;
+                $updateUploadsSize = isset($commandData['updateUploadsSize']) ? (int) $commandData['updateUploadsSize'] > 0 : false;
+                try {
+                    $app->data->duplicate($commandData['sourceKey'], $commandData['targetKey']);
+                    if ($updateUploadsSize) {
+                        $size = (int)Internal\Data\UploadsSize::getItemSize($commandData['sourceKey']);
+                        if ($size > 0) {
+                            Internal\Data\UploadsSize::add($commandData['targetKey'], $size);
+                        }
+                    }
+                } catch (\Exception $e) {
+                    if (!$silent) {
+                        throw $e;
+                    }
+                }
             } elseif ($command === 'makePublic') {
                 //$validateKey($commandData['key']);
                 //$app->data->makePublic($commandData['key']);
@@ -592,8 +611,19 @@ class ServerCommands
         $temp = [];
         $temp['structure'] = $structure !== null ? json_decode($structure, true) : [];
         $temp['pages'] = [];
+        $homeIsFound = false;
         foreach ($list as $value) {
-            $temp['pages'][] = json_decode($value, true);
+            $pageData = json_decode($value, true);
+            if (isset($pageData['id']) && $pageData['id'] === 'home') {
+                $homeIsFound = true;
+            }
+            $temp['pages'][] = $pageData;
+        }
+        if (!$homeIsFound) {
+            if (Config::$autoCreateHomePage) {
+                $defaultHomePage = Pages::getDefaultHomePage();
+                $temp['pages'][] = $defaultHomePage->toArray();
+            }
         }
         return $temp;
     }
@@ -839,6 +869,16 @@ class ServerCommands
     static function uploadsSizeRemove(array $data): void
     {
         Internal\Data\UploadsSize::remove($data['key']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function uploadsSizeGet(array $data): ?int
+    {
+        return Internal\Data\UploadsSize::getItemSize($data['key']);
     }
 
     /**

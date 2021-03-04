@@ -16,6 +16,7 @@ namespace BearCMS\Data\Pages;
  * @property string|null $status
  * @property string|null $slug
  * @property string|null $path
+ * @property string|null $image
  * @property string|null $titleTagContent
  * @property string|null $descriptionTagContent
  * @property string|null $keywordsTagContent
@@ -50,6 +51,9 @@ class Page extends \BearFramework\Models\Model
                 'type' => '?string'
             ])
             ->defineProperty('path', [
+                'type' => '?string'
+            ])
+            ->defineProperty('image', [
                 'type' => '?string'
             ])
             ->defineProperty('titleTagContent', [

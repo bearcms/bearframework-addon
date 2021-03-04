@@ -10,6 +10,7 @@
 namespace BearCMS\Internal\Data;
 
 use BearCMS\Internal;
+use BearCMS\Internal\Config;
 use BearCMS\Internal\ElementsHelper;
 use BearFramework\App;
 
@@ -93,6 +94,13 @@ class Pages
             $structureData = Internal\Data::getValue('bearcms/pages/structure.json');
             $structureData = $structureData === null ? [] : json_decode($structureData, true);
             $result = [];
+            if (isset($pages['home'])) {
+                $result[] = $pages['home'];
+            } else {
+                if (Config::$autoCreateHomePage) {
+                    $result[] = self::getDefaultHomePage();
+                }
+            }
             $walkPages = function ($structureData) use (&$walkPages, &$result, $pages) {
                 foreach ($structureData as $item) {
                     $pageID = $item['id'];
@@ -135,5 +143,21 @@ class Pages
             Internal\Data::$cache[$cacheKey] = $result;
         }
         return new \BearFramework\Models\ModelsList(isset(Internal\Data::$cache[$cacheKey][$parentID]) ? Internal\Data::$cache[$cacheKey][$parentID] : []);
+    }
+
+    static function getDefaultHomePage()
+    {
+        $page = new \BearCMS\Data\Pages\Page();
+        $page->id = 'home';
+        $page->path = '/';
+        $page->status = 'public';
+        $data = Internal\Data::getValue('bearcms/settings.json');
+        if ($data !== null) {
+            $data = json_decode($data, true);
+            if (is_array($data) && isset($data['keywords']) && is_string($data['keywords'])) { // The key is not used since v1.16.
+                $page->keywordsTagContent = $data['keywords'];
+            }
+        }
+        return $page;
     }
 }

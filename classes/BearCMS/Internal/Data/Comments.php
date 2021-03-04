@@ -183,7 +183,6 @@ class Comments
                     }
                 }
             };
-            $walkPageElements('home', '/');
             foreach ($pages as $page) {
                 $walkPageElements($page->id, $page->path);
             }
