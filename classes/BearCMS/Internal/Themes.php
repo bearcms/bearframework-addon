@@ -26,6 +26,9 @@ class Themes
     static $registrations = [];
     static $cache = [];
 
+    const OPTIONS_CONTEXT_THEME = 1;
+    const OPTIONS_CONTEXT_ELEMENT = 2;
+
     /**
      * 
      * @return string
@@ -201,6 +204,16 @@ class Themes
         if ($options === null) {
             return [];
         }
+        return self::optionsToArray($options);
+    }
+
+    /**
+     * 
+     * @param \BearCMS\Themes\Theme\Options $options
+     * @return array
+     */
+    static function optionsToArray(\BearCMS\Themes\Theme\Options $options): array
+    {
         $walkOptions = function (array $options) use (&$walkOptions) {
             $result = [];
             foreach ($options as $option) {
@@ -310,7 +323,7 @@ class Themes
         if (!isset(self::$cache[$localCacheKey])) {
             $app = App::get();
             $cacheKey = Internal\Themes::getCacheItemKey($id, $userID);
-            $envKey = md5(serialize(array_keys(self::$elementsOptions)) . serialize(array_keys(self::$pagesOptions)) . '-v4');
+            $envKey = md5(serialize(array_keys(self::$elementsOptions)) . serialize(array_keys(self::$pagesOptions)) . '-v5');
             $useCache = $cacheKey !== null;
             $resultData = null;
             if ($useCache) {
@@ -804,5 +817,36 @@ class Themes
             $html = str_replace($search, $replace, $html);
         }
         return $html;
+    }
+
+    static function getElementsOptionsSelectors(string $themeID, string $elementType): array
+    {
+        $result = [];
+        $themeOptions = Internal\Themes::getOptions($themeID);
+        if ($themeOptions !== null) {
+            $walkOptions = function ($options) use (&$result, &$walkOptions, $elementType) {
+                foreach ($options as $option) {
+                    if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
+                        if (isset($option->details['cssOutput'], $option->details['elementType']) && $option->details['elementType'] === $elementType) {
+                            foreach ($option->details['cssOutput'] as $outputDefinition) {
+                                if (is_array($outputDefinition)) {
+                                    if (isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
+                                        $optionID = $option->id;
+                                        if (!isset($result[$optionID])) {
+                                            $result[$optionID] = [];
+                                        }
+                                        $result[$optionID][] = $outputDefinition[1];
+                                    }
+                                }
+                            }
+                        }
+                    } elseif ($option instanceof \BearCMS\Themes\Theme\Options\Group) {
+                        $walkOptions($option->getList());
+                    }
+                }
+            };
+            $walkOptions($themeOptions->getList());
+        }
+        return $result;
     }
 }

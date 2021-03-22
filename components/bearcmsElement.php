@@ -28,6 +28,8 @@ if ($editable) {
 $componentName = strlen($component->src) > 0 ? $component->src : ($component->tagName !== 'component' ? $component->tagName : null);
 $isMissing = $componentName === 'bearcms-missing-element';
 
+$elementType = null;
+$elementStyleData = null;
 if (!$isMissing) {
     $rawData = $component->getAttribute('bearcms-internal-attribute-raw-data');
     if ($rawData !== null && strlen($rawData) > 0) {
@@ -49,6 +51,12 @@ if (!$isMissing) {
         }
         if (isset($options['updateComponentFromData'])) {
             $component = call_user_func($options['updateComponentFromData'], clone ($component), $data);
+        }
+        if (isset($rawData['type'])) {
+            $elementType = $rawData['type'];
+        }
+        if (isset($rawData['style']) && !empty($rawData['style'])) {
+            $elementStyleData = $rawData['style'];
         }
 
         unset($rawData);
@@ -81,6 +89,7 @@ if (!$isMissing) {
             if ($editable) {
                 $componentContextData['rawData'] = $getRawDataFromComponent($component);
             }
+            $elementType = Internal\ElementsHelper::$elementsTypesCodes[$componentName];
         }
     }
 
@@ -105,6 +114,7 @@ if (!$isMissing) {
 if ($containerType === 'none') {
     echo $componentHTML;
 } else {
+    $classAttributeValue = '';
     $attributes = '';
     if ($editable) {
         Internal\ElementsHelper::$editorData[] = ['element', $component->id, $componentContextData, $typeCode];
@@ -112,7 +122,19 @@ if ($containerType === 'none') {
         $attributes .= ' id="' . $htmlElementID . '"';
     }
     if ($outputType === 'full-html') {
-        $attributes .= ' class="bearcms-elements-element-container"';
+        $classAttributeValue .= ' bearcms-elements-element-container';
+        if (isset(Internal\Themes::$elementsOptions[$elementType]) && $elementStyleData !== null) {
+            $classAttributeValue .= ' bearcms-elements-element-style-' . md5($component->id);
+            $options = new \BearCMS\Themes\Theme\Options();
+            call_user_func(Internal\Themes::$elementsOptions[$elementType], $options, '', '.bearcms-elements-element-style-' . md5($component->id), Internal\Themes::OPTIONS_CONTEXT_ELEMENT);
+            $options->setValues($elementStyleData);
+            $htmlData = Internal\Themes::getOptionsHTMLData($options->getList());
+            $html = Internal\Themes::processOptionsHTMLData($htmlData);
+            echo '<component src="data:base64,' . base64_encode($html) . '" />';
+        }
+    }
+    if ($classAttributeValue !== '') {
+        $attributes .= ' class="' . trim($classAttributeValue) . '"';
     }
     if ($editable && !$inElementsContainer) {
         echo '<div>';

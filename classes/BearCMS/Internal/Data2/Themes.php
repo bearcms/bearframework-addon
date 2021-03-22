@@ -54,6 +54,8 @@ class Themes
             $data = json_decode($data, true);
             if (isset($data['options'])) {
                 return $data['options'];
+            } else {
+                return []; // the user wants the default values
             }
         }
         return null;
@@ -112,7 +114,7 @@ class Themes
                 $dataToSet['userID'] = $userID;
             }
             $dataToSet['options'] = $values;
-            if (!$hasUser && empty($values)) {
+            if (!$hasUser && empty($values)) { // use default theme values
                 $app->data->delete($dataKey);
             } else {
                 $app->data->setValue($dataKey, json_encode($dataToSet));

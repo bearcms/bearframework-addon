@@ -11,6 +11,7 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 use BearCMS\Internal;
+use BearCMS\Internal\Data\UploadsSize;
 
 /**
  * @internal
@@ -83,33 +84,14 @@ class ElementsHelper
             $component->color = Config::$uiColor;
         }
 
-        // Update canEdit
-        //        if (strlen($component->canEdit) > 0) {
-        //            if ($component->canEdit !== 'true') {
-        //                $component->canEdit = '';
-        //            }
-        //        }
-        //        if ((string) $component->canEdit === '') {
-        //            $component->canEdit = 'true';
-        //        }
-        // Update canMove
-        //        if (strlen($component->canMove) > 0) {
-        //            if ($component->canMove !== 'true') {
-        //                $component->canMove = '';
-        //            }
-        //        }
-        //        if ((string) $component->canMove === '') {
-        //            $component->canMove = 'true';
-        //        }
-        // Update canDelete
-        //        if (strlen($component->canDelete) > 0) {
-        //            if ($component->canDelete !== 'true') {
-        //                $component->canDelete = '';
-        //            }
-        //        }
-        //        if ((string) $component->canDelete === '') {
-        //            $component->canDelete = 'true';
-        //        }
+        if (strlen($component->canStyle) > 0) {
+            if (isset(Internal\ElementsHelper::$elementsTypesOptions[$component->src])) {
+                $elementTypeOptions = Internal\ElementsHelper::$elementsTypesOptions[$component->src];
+                if (!(isset($elementTypeOptions['canStyle']) && $elementTypeOptions['canStyle'])) {
+                    $component->canStyle = 'false';
+                }
+            }
+        }
     }
 
     /**
@@ -123,12 +105,29 @@ class ElementsHelper
         $result['width'] = $component->width;
         $result['spacing'] = $component->spacing;
         $result['color'] = $component->color;
-        //        $result['canEdit'] = $component->canEdit === 'true';
-        //        $result['canMove'] = $component->canMove === 'true';
-        //        $result['canDelete'] = $component->canDelete === 'true';
+        $canEdit = $component->canEdit;
+        if ($canEdit !== null) {
+            $result['canEdit'] = $canEdit;
+        }
+        $canDuplicate = $component->canDuplicate;
+        if ($canDuplicate !== null) {
+            $result['canDuplicate'] = $canDuplicate;
+        }
+        $canStyle = $component->canStyle;
+        if ($canStyle !== null) {
+            $result['canStyle'] = $canStyle;
+        }
+        $canMove = $component->canMove;
+        if ($canMove !== null) {
+            $result['canMove'] = $canMove;
+        }
+        $canDelete = $component->canDelete;
+        if ($canDelete !== null) {
+            $result['canDelete'] = $canDelete;
+        }
 
         $otherAttributes = [];
-        $attributesToSkip = ['src', 'id', 'editable', 'width', 'spacing', 'color', 'group'];
+        $attributesToSkip = ['src', 'id', 'editable', 'width', 'spacing', 'color', 'group', 'canEdit', 'canDuplicate', 'canStyle', 'canMove', 'canDelete'];
         $attributes = $component->getAttributes();
         foreach ($attributes as $key => $value) {
             $add = true;
@@ -238,6 +237,11 @@ class ElementsHelper
             . ' bearcms-internal-attribute-in-elements-container="' . ((int) $contextData['inElementsContainer'] === 1 ? 'true' : 'false') . '"'
             . ' width="' . $contextData['width'] . '"'
             . ' spacing="' . $contextData['spacing'] . '"'
+            . ($editable && isset($contextData['canEdit']) ? ' canEdit="' . $contextData['canEdit'] . '"' : '')
+            . ($editable && isset($contextData['canDuplicate']) ? ' canDuplicate="' . $contextData['canDuplicate'] . '"' : '')
+            . ($editable && isset($contextData['canStyle']) ? ' canStyle="' . $contextData['canStyle'] . '"' : '')
+            . ($editable && isset($contextData['canMove']) ? ' canMove="' . $contextData['canMove'] . '"' : '')
+            . ($editable && isset($contextData['canDelete']) ? ' canEdit="' . $contextData['canDelete'] . '"' : '')
             . ' color="' . $contextData['color'] . '"'
             . ' output-type="' . $outputType . '"'
             . '/>';
@@ -470,6 +474,144 @@ class ElementsHelper
     {
         $data = self::getElementsRawData([$elementID]);
         return $data[$elementID] !== null ? json_decode($data[$elementID], true) : null;
+    }
+
+    /**
+     * 
+     * @param string $elementID
+     * @param array $data
+     * @return void
+     */
+    static function setElementData(string $elementID, array $data): void
+    {
+        $app = App::get();
+        $app->data->setValue('bearcms/elements/element/' . md5($elementID) . '.json', json_encode($data));
+    }
+
+    /**
+     * 
+     * @param string $containerID
+     * @param string $elementID
+     * @return array
+     */
+    static function getElementStyleOptions(string $containerID, string $elementID): ?array
+    {
+        $elementData = self::getElementData($elementID);
+        if (is_array($elementData) && isset($elementData['type'])) {
+            $type = $elementData['type'];
+            if (isset(Internal\Themes::$elementsOptions[$type])) {
+                $themeID = Internal\Themes::getActiveThemeID();
+                $themeOptionsSelectors = Internal\Themes::getElementsOptionsSelectors($themeID, $type);
+                $options = new \BearCMS\Themes\Theme\Options();
+                call_user_func(Internal\Themes::$elementsOptions[$type], $options, 'ElementStyle', '.bearcms-elements-element-style-' . md5($elementID), Internal\Themes::OPTIONS_CONTEXT_ELEMENT);
+                $values = [];
+                if (isset($elementData['style'])) {
+                    foreach ($elementData['style'] as $name => $value) {
+                        $values['ElementStyle' . $name] = $value;
+                    }
+                }
+                return [$options, $values, $themeID, $themeOptionsSelectors];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @param string $containerID
+     * @param string $elementID
+     * @param array $values
+     * @return void
+     */
+    static function setElementStyleOptionsValues(string $containerID, string $elementID, array $values)
+    {
+        $app = App::get();
+        $elementData = self::getElementData($elementID);
+        if ($elementData !== null) {
+            $oldStyle = isset($elementData['style']) ? $elementData['style'] : [];
+            $filesInOldStyle = Internal\Themes::getFilesInValues($oldStyle);
+            $filesToDelete = [];
+
+            $elementData['style'] = [];
+            foreach ($values as $key => $value) {
+                $value = trim($value);
+                if (strpos($key, 'ElementStyle') === 0 && strlen($value) > 0) {
+                    $optionKey = substr($key, strlen('ElementStyle'));
+                    if (!isset($elementData['style'][$optionKey]) || $elementData['style'][$optionKey] !== $value) {
+                        $elementData['style'][$optionKey] = $value;
+                    }
+                }
+            }
+            $filesInNewStyle = Internal\Themes::getFilesInValues($elementData['style']);
+            $filesKeysToUpdate = [];
+            foreach ($filesInNewStyle as $key) {
+                if (strpos($key, 'data:') === 0) {
+                    $dataKay = substr($key, 5);
+                    if (strpos($dataKay, '.temp/bearcms/files/elementstyleimage/') === 0) {
+                        $newDataKey = 'bearcms/files/elementstyleimage/' . pathinfo($dataKay, PATHINFO_BASENAME);
+                        $app->data->duplicate($dataKay, $newDataKey);
+                        UploadsSize::add($newDataKey, filesize($app->data->getFilename($newDataKey)));
+                        $filesKeysToUpdate['data:' . $dataKay] = 'data:' . $newDataKey;
+                        $filesToDelete[] = $key;
+                    }
+                }
+            }
+            $filesToDelete = array_merge($filesToDelete, array_diff($filesInOldStyle, $filesInNewStyle));
+            $elementData['style'] = Internal\Themes::updateFilesInValues($elementData['style'], $filesKeysToUpdate);
+            if (empty($elementData['style'])) {
+                unset($elementData['style']);
+            }
+            self::setElementData($elementID, $elementData);
+            self::deleteElementStyleFiles($filesToDelete);
+        }
+    }
+
+    /**
+     * 
+     * @param string $elementID
+     * @return void
+     */
+    static function deleteElement(string $elementID): void
+    {
+        $app = App::get();
+        $elementData = self::getElementData($elementID);
+        if ($elementData !== null) {
+            $app->data->delete(self::getElementDataKey($elementID));
+            if (isset($elementData['type'])) {
+                $componentName = array_search($elementData['type'], self::$elementsTypesCodes);
+                if ($componentName !== false) {
+                    $options = self::$elementsTypesOptions[$componentName];
+                    if (isset($options['onDelete']) && is_callable($options['onDelete'])) {
+                        call_user_func($options['onDelete'], isset($elementData['data']) ? $elementData['data'] : []);
+                    }
+                }
+            }
+            if (isset($elementData['style'])) {
+                self::deleteElementStyleFiles(Internal\Themes::getFilesInValues($elementData['style']));
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param array $fileKeys
+     * @return void
+     */
+    static private function deleteElementStyleFiles(array $fileKeys): void
+    {
+        if (!empty($fileKeys)) {
+            $app = App::get();
+            $recycleBinPrefix = '.recyclebin/bearcms/element-style-changes-' . str_replace('.', '-', microtime(true)) . '/';
+            foreach ($fileKeys as $fileKey) {
+                if (substr($fileKey, 0, 5) === 'data:') {
+                    $dataKay = substr($fileKey, 5);
+                    if ($app->data->exists($dataKay)) {
+                        $app->data->rename($dataKay, $recycleBinPrefix . $dataKay);
+                    }
+                    UploadsSize::remove($dataKay);
+                }
+            }
+        }
     }
 
     /**

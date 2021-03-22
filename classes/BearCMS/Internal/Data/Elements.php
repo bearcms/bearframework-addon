@@ -9,7 +9,9 @@
 
 namespace BearCMS\Internal\Data;
 
+use BearCMS\Internal\Data;
 use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal\Themes;
 use BearFramework\App;
 
 /**
@@ -20,6 +22,48 @@ class Elements
 {
 
 
+    static function copyElement(string $sourceElementID, string $targetElementID): void
+    {
+        $app = App::get();
+        $elementData = ElementsHelper::getElementData($sourceElementID);
+        $elementData['id'] = $targetElementID;
+        $elementData['lastChangeTime'] = time();
+        if (isset($elementData['type'])) {
+            $componentName = array_search($elementData['type'], ElementsHelper::$elementsTypesCodes);
+            if ($componentName !== false) {
+                $options = ElementsHelper::$elementsTypesOptions[$componentName];
+                if (isset($options['onDuplicate']) && is_callable($options['onDuplicate'])) {
+                    $elementData['data'] = call_user_func($options['onDuplicate'], isset($elementData['data']) ? $elementData['data'] : []);
+                }
+            }
+        }
+        if (isset($elementData['style'])) {
+            $fileKeys = Themes::getFilesInValues($elementData['style']);
+            if (!empty($fileKeys)) {
+                $filesKeysToUpdate = [];
+                foreach ($fileKeys as $fileKey) {
+                    if (substr($fileKey, 0, 5) === 'data:') {
+                        $dataKay = substr($fileKey, 5);
+                        if ($app->data->exists($dataKay)) {
+                            $newDataKey = Data::generateNewFilename($dataKay);
+                            $filesKeysToUpdate[$fileKey] = 'data:' . $newDataKey;
+                            $app->data->duplicate($dataKay, $newDataKey);
+                            UploadsSize::add($dataKay, filesize($app->data->getFilename($newDataKey)));
+                        }
+                    }
+                }
+                $elementData['style'] = Themes::updateFilesInValues($elementData['style'], $filesKeysToUpdate);
+            }
+        }
+        $app->data->setValue('bearcms/elements/element/' . md5($elementData['id']) . '.json', json_encode($elementData));
+    }
+
+    /**
+     * 
+     * @param string $sourceContainerID
+     * @param string $targetContainerID
+     * @return void
+     */
     static function copyContainer(string $sourceContainerID, string $targetContainerID): void
     {
         $app = App::get();
@@ -36,8 +80,8 @@ class Elements
         $containerData = ElementsHelper::getContainerData($sourceContainerID);
         $newContainerData = $containerData;
         $newContainerData['id'] = $targetContainerID;
-        $itemsToCopy = [];
-        $updateElements = function ($elements) use (&$updateElements, &$itemsToCopy, $generateItemID) {
+        $copiedElementIDs = [];
+        $updateElementIDs = function ($elements) use (&$updateElementIDs, &$copiedElementIDs, $generateItemID) {
             foreach ($elements as $index => $element) {
                 if (isset($element['id'])) {
                     $oldItemID = $element['id'];
@@ -47,14 +91,14 @@ class Elements
                         if ($element['data']['type'] === 'floatingBox' || $element['data']['type'] === 'columns') {
                             if (isset($element['data']['elements'])) {
                                 foreach ($element['data']['elements'] as $location => $locationElements) {
-                                    $elements[$index]['data']['elements'][$location] = $updateElements($locationElements);
+                                    $elements[$index]['data']['elements'][$location] = $updateElementIDs($locationElements);
                                 }
                             }
                         } else {
                             throw new \Exception('Unsupported type for an element');
                         }
                     } else {
-                        $itemsToCopy[$oldItemID] = $newItemID;
+                        $copiedElementIDs[$oldItemID] = $newItemID;
                     }
                 } else {
                     throw new \Exception('Missing id for an element');
@@ -62,26 +106,19 @@ class Elements
             }
             return $elements;
         };
-        $newContainerData['elements'] = $updateElements($newContainerData['elements']);
+        $newContainerData['elements'] = $updateElementIDs($newContainerData['elements']);
 
-        foreach ($itemsToCopy as $sourceElementID => $targetElementID) {
-            $elementData = ElementsHelper::getElementData($sourceElementID);
-            $elementData['id'] = $targetElementID;
-            $elementData['lastChangeTime'] = time();
-            if (isset($elementData['type'])) {
-                $componentName = array_search($elementData['type'], ElementsHelper::$elementsTypesCodes);
-                if ($componentName !== false) {
-                    $options = ElementsHelper::$elementsTypesOptions[$componentName];
-                    if (isset($options['onDuplicate']) && is_callable($options['onDuplicate'])) {
-                        $elementData['data'] = call_user_func($options['onDuplicate'], isset($elementData['data']) ? $elementData['data'] : []);
-                    }
-                }
-            }
-            $app->data->setValue('bearcms/elements/element/' . md5($elementData['id']) . '.json', json_encode($elementData));
+        foreach ($copiedElementIDs as $sourceElementID => $targetElementID) {
+            self::copyElement($sourceElementID, $sourceContainerID);
         }
         $app->data->setValue('bearcms/elements/container/' . md5($newContainerData['id']) . '.json', json_encode($newContainerData));
     }
 
+    /**
+     * 
+     * @param string $containerID
+     * @return integer
+     */
     static function getContainerUploadsSize(string $containerID): int
     {
         $size = 0;
@@ -92,8 +129,14 @@ class Elements
         return $size;
     }
 
+    /**
+     * 
+     * @param string $elementID
+     * @return integer
+     */
     static function getElementUploadsSize(string $elementID): int
     {
+        $size = 0;
         $elementData = ElementsHelper::getElementData($elementID);
         if ($elementData !== null) {
             if (isset($elementData['type'])) {
@@ -101,11 +144,20 @@ class Elements
                 if ($componentName !== false) {
                     $options = ElementsHelper::$elementsTypesOptions[$componentName];
                     if (isset($options['getUploadsSize']) && is_callable($options['getUploadsSize'])) {
-                        return (int) call_user_func($options['getUploadsSize'], isset($elementData['data']) ? $elementData['data'] : []);
+                        $size += (int) call_user_func($options['getUploadsSize'], isset($elementData['data']) ? $elementData['data'] : []);
+                    }
+                }
+            }
+            if (isset($elementData['style'])) {
+                $fileKeys = Themes::getFilesInValues($elementData['style']);
+                foreach ($fileKeys as $fileKey) {
+                    if (substr($fileKey, 0, 5) === 'data:') {
+                        $dataKay = substr($fileKey, 5);
+                        $size += (int) UploadsSize::getItemSize($dataKay);
                     }
                 }
             }
         }
-        return 0;
+        return $size;
     }
 }

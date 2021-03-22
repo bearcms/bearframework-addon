@@ -41,5 +41,4 @@ class ElementsTypes
         Internal\ElementsHelper::$elementsTypesFilenames[$name] = $options['componentFilename'];
         Internal\ElementsHelper::$elementsTypesOptions[$name] = $options;
     }
-
 }

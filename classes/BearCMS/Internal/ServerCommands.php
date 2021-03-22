@@ -426,22 +426,18 @@ class ServerCommands
      */
     static function elementDelete(array $data): void
     {
-        $app = App::get();
         $elementID = $data['id'];
-        $rawDataList = Internal\ElementsHelper::getElementsRawData([$elementID]);
-        if ($rawDataList[$elementID] !== null) {
-            $elementData = json_decode($rawDataList[$elementID], true);
-            $app->data->delete('bearcms/elements/element/' . md5($elementID) . '.json');
-            if (isset($elementData['type'])) {
-                $componentName = array_search($elementData['type'], Internal\ElementsHelper::$elementsTypesCodes);
-                if ($componentName !== false) {
-                    $options = Internal\ElementsHelper::$elementsTypesOptions[$componentName];
-                    if (isset($options['onDelete']) && is_callable($options['onDelete'])) {
-                        call_user_func($options['onDelete'], isset($elementData['data']) ? $elementData['data'] : []);
-                    }
-                }
-            }
-        }
+        ElementsHelper::deleteElement($elementID);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementCopy(array $data): void
+    {
+        Elements::copyElement($data['sourceID'], $data['targetID']);
     }
 
     /**
@@ -507,6 +503,44 @@ class ServerCommands
                 throw new \Exception('');
             }
         }
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function elementStyleGet(array $data): array
+    {
+        $result = [];
+
+        $containerID = isset($data['containerID']) ? $data['containerID'] : null;
+        $elementID = isset($data['elementID']) ? $data['elementID'] : null;
+
+        $styleOptions = ElementsHelper::getElementStyleOptions($containerID, $elementID);
+        if ($styleOptions !== null) {
+            list($options, $values, $themeID, $themeOptionsSelectors) = $styleOptions;
+            $result['options'] = [];
+            $result['options']['definition'] = Internal\Themes::optionsToArray($options);
+            $result['options']['values'] = $values;
+            $result['options']['themeID'] = $themeID;
+            $result['options']['themeOptionsSelectors'] = $themeOptionsSelectors;
+        }
+        //Internal2::$data2->themes->getValues($id);
+        return $result;
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementStyleSet(array $data): void
+    {
+        $containerID = isset($data['containerID']) ? $data['containerID'] : null;
+        $elementID = isset($data['elementID']) ? $data['elementID'] : null;
+        $value = isset($data['value']) ? $data['value'] : null;
+        ElementsHelper::setElementStyleOptionsValues($containerID, $elementID, $value);
     }
 
     /**
@@ -757,23 +791,8 @@ class ServerCommands
                     $themeData['options'] = [
                         'definition' => $optionsAsArray
                     ];
-                    $result = Internal\Data::getValue('bearcms/themes/theme/' . md5($id) . '.json');
-                    if ($result !== null) {
-                        $temp = json_decode($result, true);
-                        $optionsValues = isset($temp['options']) ? $temp['options'] : [];
-                    } else {
-                        $optionsValues = [];
-                    }
-                    $themeData['options']['activeValues'] = $optionsValues;
-
-                    $result = $app->data->getValue('.temp/bearcms/userthemeoptions/' . md5($app->bearCMS->currentUser->getID()) . '/' . md5($id) . '.json');
-                    if ($result !== null) {
-                        $temp = json_decode($result, true);
-                        $optionsValues = isset($temp['options']) ? $temp['options'] : [];
-                    } else {
-                        $optionsValues = null;
-                    }
-                    $themeData['options']['currentUserValues'] = $optionsValues;
+                    $themeData['options']['activeValues'] = Internal2::$data2->themes->getValues($id);
+                    $themeData['options']['currentUserValues'] = Internal2::$data2->themes->getUserOptions($id, $app->bearCMS->currentUser->getID());
                 }
                 return $themeData;
             }

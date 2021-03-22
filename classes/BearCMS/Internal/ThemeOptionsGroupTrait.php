@@ -60,11 +60,12 @@ trait ThemeOptionsGroupTrait
      * @param string $description
      * @return \BearCMS\Themes\Theme\Options\Group
      */
-    public function addGroup(string $name, string $description = ''): \BearCMS\Themes\Theme\Options\Group
+    public function addGroup(string $name, string $description = '', array $details = []): \BearCMS\Themes\Theme\Options\Group
     {
         $group = new \BearCMS\Themes\Theme\Options\Group();
         $group->name = $name;
         $group->description = $description;
+        $group->details = $details;
         $this->options[] = $group;
         return $group;
     }
@@ -91,7 +92,7 @@ trait ThemeOptionsGroupTrait
     public function addElements(string $idPrefix, string $parentSelector): self
     {
         foreach (Internal\Themes::$elementsOptions as $callable) {
-            call_user_func($callable, $this, $idPrefix, $parentSelector);
+            call_user_func($callable, $this, $idPrefix, $parentSelector, Internal\Themes::OPTIONS_CONTEXT_THEME);
         }
         return $this;
     }
@@ -138,5 +139,4 @@ trait ThemeOptionsGroupTrait
     {
         return $this->options; // todo clone
     }
-
 }

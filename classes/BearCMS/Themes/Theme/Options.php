@@ -9,7 +9,6 @@
 
 namespace BearCMS\Themes\Theme;
 
-use BearFramework\App;
 use BearCMS\Internal\Themes as InternalThemes;
 
 /**

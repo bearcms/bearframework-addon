@@ -171,35 +171,55 @@ class BearCMS
                             'id' => 'linkTargetID',
                             'type' => 'textbox'
                         ]
-                    ]
+                    ],
+                    'canStyle' => true
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions['heading'] = function ($context, $idPrefix, $parentSelector) {
-                        $group = $context->addGroup(__("bearcms.themes.options.Heading"));
+                    Internal\Themes::$elementsOptions['heading'] = function ($options, $idPrefix, $parentSelector, $context) {
 
-                        $groupLarge = $group->addGroup(__("bearcms.themes.options.Large"));
-                        $groupLarge->addOption($idPrefix . "HeadingLargeCSS", "css", '', [
-                            "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-heading-element-large", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
-                                ["selector", $parentSelector . " .bearcms-heading-element-large"]
-                            ]
-                        ]);
+                        if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+                            $options->addOption($idPrefix . "HeadingCSS", "css", '', [
+                                "cssOutput" => [
+                                    ["rule", $parentSelector . " .bearcms-heading-element-large", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
+                                    ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
+                                    ["rule", $parentSelector . " .bearcms-heading-element-small", "box-sizing:border-box;box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
+                                    ["selector", $parentSelector . " .bearcms-heading-element-large"],
+                                    ["selector", $parentSelector . " .bearcms-heading-element-medium"],
+                                    ["selector", $parentSelector . " .bearcms-heading-element-small"]
+                                ],
+                                "elementType" => "heading"
+                            ]);
+                        } else {
+                            $group = $options->addGroup(__("bearcms.themes.options.Heading"));
+                            $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"])';
 
-                        $groupMedium = $group->addGroup(__("bearcms.themes.options.Medium"));
-                        $groupMedium->addOption($idPrefix . "HeadingMediumCSS", "css", '', [
-                            "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
-                                ["selector", $parentSelector . " .bearcms-heading-element-medium"]
-                            ]
-                        ]);
+                            $groupLarge = $group->addGroup(__("bearcms.themes.options.Large"));
+                            $groupLarge->addOption($idPrefix . "HeadingLargeCSS", "css", '', [
+                                "cssOutput" => [
+                                    ["rule", $parentSelector . " .bearcms-heading-element-large", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
+                                    ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-large"]
+                                ],
+                                "elementType" => "heading"
+                            ]);
 
-                        $groupSmall = $group->addGroup(__("bearcms.themes.options.Small"));
-                        $groupSmall->addOption($idPrefix . "HeadingSmallCSS", "css", '', [
-                            "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-heading-element-small", "box-sizing:border-box;box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
-                                ["selector", $parentSelector . " .bearcms-heading-element-small"]
-                            ]
-                        ]);
+                            $groupMedium = $group->addGroup(__("bearcms.themes.options.Medium"));
+                            $groupMedium->addOption($idPrefix . "HeadingMediumCSS", "css", '', [
+                                "cssOutput" => [
+                                    ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
+                                    ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-medium"]
+                                ],
+                                "elementType" => "heading"
+                            ]);
+
+                            $groupSmall = $group->addGroup(__("bearcms.themes.options.Small"));
+                            $groupSmall->addOption($idPrefix . "HeadingSmallCSS", "css", '', [
+                                "cssOutput" => [
+                                    ["rule", $parentSelector . " .bearcms-heading-element-small", "box-sizing:border-box;box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
+                                    ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-small"]
+                                ],
+                                "elementType" => "heading"
+                            ]);
+                        }
                     };
                 }
             }
@@ -212,12 +232,19 @@ class BearCMS
                             'id' => 'text',
                             'type' => 'textbox'
                         ]
-                    ]
+                    ],
+                    'canStyle' => true
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions['text'] = function ($context, $idPrefix, $parentSelector) {
-                        $groupText = $context->addGroup(__("bearcms.themes.options.Text"));
-                        $groupText->addOption($idPrefix . "TextCSS", "css", '', [
+                    Internal\Themes::$elementsOptions['text'] = function ($options, $idPrefix, $parentSelector, $context) {
+                        if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+                            $optionsGroup = $options;
+                            $customStyleSelector = '';
+                        } else {
+                            $optionsGroup = $options->addGroup(__("bearcms.themes.options.Text"));
+                            $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"])';
+                        }
+                        $optionsGroup->addOption($idPrefix . "TextCSS", "css", '', [
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-text-element", "box-sizing:border-box;"],
                                 ["rule", $parentSelector . " .bearcms-text-element ul", "list-style-position:inside;margin:0;padding:0;"],
@@ -225,17 +252,19 @@ class BearCMS
                                 ["rule", $parentSelector . " .bearcms-text-element li", "list-style-position:inside;margin:0;padding:0;"],
                                 ["rule", $parentSelector . " .bearcms-text-element p", "margin:0;padding:0;"],
                                 ["rule", $parentSelector . " .bearcms-text-element input", "margin:0;padding:0;"],
-                                ["selector", $parentSelector . " .bearcms-text-element"]
-                            ]
+                                ["selector", $parentSelector . $customStyleSelector . " .bearcms-text-element"]
+                            ],
+                            "elementType" => "text"
                         ]);
 
-                        $groupLinks = $groupText->addGroup(__("bearcms.themes.options.Links"));
+                        $groupLinks = $optionsGroup->addGroup(__("bearcms.themes.options.Links"));
                         $groupLinks->addOption($idPrefix . "TextLinkCSS", "css", '', [
                             "cssTypes" => ["cssText", "cssTextShadow"],
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-text-element a", "text-decoration:none;"],
-                                ["selector", $parentSelector . " .bearcms-text-element a"]
-                            ]
+                                ["selector", $parentSelector . $customStyleSelector . " .bearcms-text-element a"]
+                            ],
+                            "elementType" => "text"
                         ]);
                     };
                 }
@@ -257,26 +286,35 @@ class BearCMS
                             'id' => 'title',
                             'type' => 'textbox'
                         ]
-                    ]
+                    ],
+                    'canStyle' => true
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions['link'] = function ($context, $idPrefix, $parentSelector) {
-                        $group = $context->addGroup(__("bearcms.themes.options.Link"));
-                        $group->addOption($idPrefix . "LinkCSS", "css", '', [
-                            "cssTypes" => ["cssText", "cssTextShadow"],
+                    Internal\Themes::$elementsOptions['link'] = function ($options, $idPrefix, $parentSelector, $context) {
+                        if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+                            $optionsGroup = $options;
+                            $customStyleSelector = '';
+                        } else {
+                            $optionsGroup = $options->addGroup(__("bearcms.themes.options.Link"));
+                            $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"])';
+                        }
+
+                        $optionsGroup->addOption($idPrefix . "LinkCSS", "css", '', [
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-link-element a", "text-decoration:none;"],
-                                ["selector", $parentSelector . " .bearcms-link-element a"]
-                            ]
+                                ["rule", $parentSelector . " .bearcms-link-element a", "text-decoration:none;box-sizing:border-box;display:inline-block;"],
+                                ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element a"]
+                            ],
+                            "elementType" => "link"
                         ]);
 
-                        $groupContainer = $group->addGroup(__("bearcms.themes.options.Container"));
+                        $groupContainer = $optionsGroup->addGroup(__("bearcms.themes.options.Container"));
                         $groupContainer->addOption($idPrefix . "LinkContainerCSS", "css", '', [
-                            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTextAlign"],
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-link-element", "box-sizing:border-box;"],
-                                ["selector", $parentSelector . " .bearcms-link-element"]
-                            ]
+                                ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element"]
+                            ],
+                            "elementType" => "link"
                         ]);
                     };
                 }
@@ -341,18 +379,27 @@ class BearCMS
                             return (int) UploadsSize::getItemSize(Internal\Data::filenameToDataKey($filename));
                         }
                         return 0;
-                    }
+                    },
+                    'canStyle' => true
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions['image'] = function ($context, $idPrefix, $parentSelector) {
-                        $group = $context->addGroup(__("bearcms.themes.options.Image"));
-                        $group->addOption($idPrefix . "ImageCSS", "css", '', [
+                    Internal\Themes::$elementsOptions['image'] = function ($options, $idPrefix, $parentSelector, $context) {
+                        if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+                            $optionsGroup = $options;
+                            $customStyleSelector = '';
+                        } else {
+                            $optionsGroup = $options->addGroup(__("bearcms.themes.options.Image"));
+                            $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"])';
+                        }
+
+                        $optionsGroup->addOption($idPrefix . "ImageCSS", "css", '', [
                             "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-image-element", "overflow:hidden;"],
                                 ["rule", $parentSelector . " .bearcms-image-element img", "border:0;"],
-                                ["selector", $parentSelector . " .bearcms-image-element"]
-                            ]
+                                ["selector", $parentSelector . $customStyleSelector . " .bearcms-image-element"]
+                            ],
+                            "elementType" => "image"
                         ]);
                     };
                 }
@@ -436,8 +483,8 @@ class BearCMS
                     }
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions['imageGallery'] = function ($context, $idPrefix, $parentSelector) {
-                        $groupImageGallery = $context->addGroup(__("bearcms.themes.options.Image gallery"));
+                    Internal\Themes::$elementsOptions['imageGallery'] = function ($options, $idPrefix, $parentSelector) {
+                        $groupImageGallery = $options->addGroup(__("bearcms.themes.options.Image gallery"));
                         $groupImageGallery->addOption($idPrefix . "ImageGalleryCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
                             "cssOutput" => [
@@ -512,8 +559,8 @@ class BearCMS
                     }
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions['video'] = function ($context, $idPrefix, $parentSelector) {
-                        $group = $context->addGroup(__("bearcms.themes.options.Video"));
+                    Internal\Themes::$elementsOptions['video'] = function ($options, $idPrefix, $parentSelector) {
+                        $group = $options->addGroup(__("bearcms.themes.options.Video"));
                         $group->addOption($idPrefix . "VideoCSS", "css", '', [
                             "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
                             "cssOutput" => [
@@ -556,8 +603,8 @@ class BearCMS
                     ]
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions['navigation'] = function ($context, $idPrefix, $parentSelector) {
-                        $groupNavigation = $context->addGroup(__("bearcms.themes.options.Navigation"));
+                    Internal\Themes::$elementsOptions['navigation'] = function ($options, $idPrefix, $parentSelector) {
+                        $groupNavigation = $options->addGroup(__("bearcms.themes.options.Navigation"));
                         $groupNavigation->addOption($idPrefix . "NavigationCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBorder", "cssBackground"],
                             "cssOutput" => [
@@ -607,8 +654,8 @@ class BearCMS
                     ]
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions['html'] = function ($context, $idPrefix, $parentSelector) {
-                        $groupHTMLCode = $context->addGroup(__("bearcms.themes.options.HTML code"));
+                    Internal\Themes::$elementsOptions['html'] = function ($options, $idPrefix, $parentSelector) {
+                        $groupHTMLCode = $options->addGroup(__("bearcms.themes.options.HTML code"));
                         $groupHTMLCode->addOption($idPrefix . "HtmlCSS", "css", '', [
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-html-element ul", "list-style-position:inside;margin:0;padding:0;"],
@@ -659,8 +706,8 @@ class BearCMS
                     ]
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions['blogPosts'] = function ($context, $idPrefix, $parentSelector) {
-                        $groupBlogPosts = $context->addGroup(__("bearcms.themes.options.Blog posts"));
+                    Internal\Themes::$elementsOptions['blogPosts'] = function ($options, $idPrefix, $parentSelector) {
+                        $groupBlogPosts = $options->addGroup(__("bearcms.themes.options.Blog posts"));
                         $groupBlogPosts->addOption($idPrefix . "BlogPostsCSS", "css", '', [
                             "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
                             "cssOutput" => [
@@ -768,8 +815,8 @@ class BearCMS
                     }
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions['comments'] = function ($context, $idPrefix, $parentSelector) {
-                        $groupComments = $context->addGroup(__("bearcms.themes.options.Comments"));
+                    Internal\Themes::$elementsOptions['comments'] = function ($options, $idPrefix, $parentSelector) {
+                        $groupComments = $options->addGroup(__("bearcms.themes.options.Comments"));
 
                         $groupComment = $groupComments->addGroup(__("bearcms.themes.options.comments.Comment"));
                         $groupComment->addOption($idPrefix . "CommentsCommentCSS", "css", '', [
@@ -889,8 +936,8 @@ class BearCMS
                     ]
                 ]);
                 if ($hasThemes) {
-                    Internal\Themes::$elementsOptions['separator'] = function ($context, $idPrefix, $parentSelector) {
-                        $group = $context->addGroup(__("bearcms.themes.options.Separator"));
+                    Internal\Themes::$elementsOptions['separator'] = function ($options, $idPrefix, $parentSelector) {
+                        $group = $options->addGroup(__("bearcms.themes.options.Separator"));
 
                         $groupLarge = $group->addGroup(__("bearcms.themes.options.Separator.Large"));
                         $groupLarge->addOption($idPrefix . "SeparatorLargeCSS", "css", '', [
@@ -1263,8 +1310,8 @@ class BearCMS
                 });
 
             if (Config::hasFeature('THEMES')) {
-                Internal\Themes::$pagesOptions['blog'] = function ($context) {
-                    $group = $context->addGroup(__("bearcms.themes.options.Blog post page"));
+                Internal\Themes::$pagesOptions['blog'] = function ($options) {
+                    $group = $options->addGroup(__("bearcms.themes.options.Blog post page"));
 
                     $groupTitle = $group->addGroup(__("bearcms.themes.options.Title"));
                     $groupTitle->addOption("blogPostPageTitleCSS", "css", '', [
