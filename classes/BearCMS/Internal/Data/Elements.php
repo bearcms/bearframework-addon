@@ -109,7 +109,7 @@ class Elements
         $newContainerData['elements'] = $updateElementIDs($newContainerData['elements']);
 
         foreach ($copiedElementIDs as $sourceElementID => $targetElementID) {
-            self::copyElement($sourceElementID, $sourceContainerID);
+            self::copyElement($sourceElementID, $targetElementID);
         }
         $app->data->setValue('bearcms/elements/container/' . md5($newContainerData['id']) . '.json', json_encode($newContainerData));
     }
