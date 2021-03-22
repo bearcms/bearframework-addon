@@ -20,12 +20,12 @@ if (strlen($component->source) > 0 && array_search($component->source, ['allPost
 }
 
 $list = $app->bearCMS->data->blogPosts->getList()
-        ->filterBy('status', 'published')
-        ->sortBy('publishedTime', 'desc');
+    ->filterBy('status', 'published')
+    ->sortBy('publishedTime', 'desc');
 
 if ($source === 'postsInCategories') {
     $categoriesIDs = strlen($component->sourceCategoriesIDs) > 0 ? explode(';', $component->sourceCategoriesIDs) : [];
-    $list->filter(function($blogPost) use ($categoriesIDs) {
+    $list->filter(function ($blogPost) use ($categoriesIDs) {
         if (isset($blogPost->categoriesIDs)) {
             foreach ($blogPost->categoriesIDs as $categoryID) {
                 if (array_search($categoryID, $categoriesIDs) !== false) {
@@ -88,7 +88,7 @@ if ($list->count() > 0) {
                 $textElementData = null;
                 $imageElementData = null;
 
-                $walkElements = function($elementID) use (&$textElementData, &$imageElementData) {
+                $walkElements = function ($elementID) use (&$textElementData, &$imageElementData) {
                     $elementsRawData = Internal\ElementsHelper::getElementsRawData([$elementID]);
                     if ($elementsRawData[$elementID] === null) {
                         return false;
@@ -159,25 +159,25 @@ if ($list->count() > 0) {
                 $hasText = $textElementData !== null;
                 if ($hasImage && $hasText) {
                     $content .= Internal\ElementsHelper::renderFloatingBox([
-                                'data' => [
-                                    'type' => 'floatingBox',
-                                    'position' => 'left',
-                                    'width' => '33%',
-                                    'elements' => [
-                                        'inside' => [
-                                            ['id' => $imageElementData['id']]
-                                        ],
-                                        'outside' => [
-                                            ['id' => $textElementData['id']]
-                                        ]
-                                    ]
+                        'data' => [
+                            'type' => 'floatingBox',
+                            'position' => 'left',
+                            'width' => '33%',
+                            'elements' => [
+                                'inside' => [
+                                    ['id' => $imageElementData['id']]
+                                ],
+                                'outside' => [
+                                    ['id' => $textElementData['id']]
                                 ]
-                                    ], false, [
-                                'spacing' => $spacing,
-                                'width' => '100%',
-                                'color' => '#000',
-                                'inElementsContainer' => true
-                                    ], true);
+                            ]
+                        ]
+                    ], false, [
+                        'spacing' => $spacing,
+                        'width' => '100%',
+                        'color' => '#000',
+                        'inElementsContainer' => true
+                    ], true);
                 } elseif ($hasImage) {
                     $content .= '<component src="bearcms-image-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($imageElementData)) . '"/>';
                 } elseif ($hasText) {
@@ -211,11 +211,18 @@ if ($list->count() > 0) {
 }
 $content .= '</div>';
 $content .= '</div>';
-?><html>
-    <head><style>.bearcms-blog-posts-element-post-title{word-break:break-word;}</style><?php
-        if ($list->count() > $limit) {
-            echo '<link rel="client-packages-embed" name="-bearcms-blog-posts-element">';
-        }
-        ?></head>
-    <body><?= $content ?></body>
-</html>
+
+echo '<html>';
+
+echo '<head>';
+echo '<style>.bearcms-blog-posts-element-post-title{word-break:break-word;}</style>';
+if ($list->count() > $limit) {
+    echo '<link rel="client-packages-embed" name="-bearcms-blog-posts-element">';
+}
+echo '</head>';
+
+echo '<body>';
+echo $content;
+echo '</body>';
+
+echo '</html>';
