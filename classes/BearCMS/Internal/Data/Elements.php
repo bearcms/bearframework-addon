@@ -48,7 +48,7 @@ class Elements
                             $newDataKey = Data::generateNewFilename($dataKay);
                             $filesKeysToUpdate[$fileKey] = 'data:' . $newDataKey;
                             $app->data->duplicate($dataKay, $newDataKey);
-                            UploadsSize::add($dataKay, filesize($app->data->getFilename($newDataKey)));
+                            UploadsSize::add($newDataKey, filesize($app->data->getFilename($newDataKey)));
                         }
                     }
                 }
