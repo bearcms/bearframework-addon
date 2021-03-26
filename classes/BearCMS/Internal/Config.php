@@ -43,6 +43,7 @@ class Config
     static $videoPrivateEmbed = false;
     static $htmlAllowDefaultMode = true;
     static $allowRenderGlobalHTML = true;
+    static $videoEmbedConfig = [];
 
     /**
      * 
@@ -178,6 +179,9 @@ class Config
         }
         if (isset($data['internalAllowRenderGlobalHTML'])) {
             self::$allowRenderGlobalHTML = (int) $data['internalAllowRenderGlobalHTML'];
+        }
+        if (isset($data['videoEmbedConfig'])) {
+            self::$videoEmbedConfig = $data['videoEmbedConfig'];
         }
     }
 

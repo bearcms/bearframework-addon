@@ -101,9 +101,7 @@ if (strlen($component->url) > 0) {
             $setData($tempData);
         } else {
             try {
-                $embed = new IvoPetkov\VideoEmbed($component->url);
-                // print_r($embed);
-                // exit;
+                $embed = new IvoPetkov\VideoEmbed($component->url, Config::$videoEmbedConfig);
                 $videoExists = true;
                 $videoTitle = $embed->title;
                 $videoUrl = $embed->url;
@@ -116,7 +114,6 @@ if (strlen($component->url) > 0) {
                 $embed->setSize('100%', '100%');
                 $videoHTML = $embed->html;
             } catch (\Exception $e) {
-                //echo $e->getMessage();exit;
                 $videoExists = false;
             }
             if ($videoExists) {
