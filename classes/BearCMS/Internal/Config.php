@@ -166,7 +166,9 @@ class Config
             if (!is_array($data['internalAppSpecificServerData'])) {
                 throw new \Exception('The internalAppSpecificServerData value must be of type array!');
             }
-            self::$appSpecificServerData = $data['internalAppSpecificServerData'];
+            foreach ($data['internalAppSpecificServerData'] as $key => $value) {
+                self::$appSpecificServerData[$key] = $value;
+            }
         }
         if (isset($data['internalVideoPrivateEmbed'])) {
             self::$videoPrivateEmbed = (int) $data['internalVideoPrivateEmbed'];
