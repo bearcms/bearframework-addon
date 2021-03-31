@@ -2036,7 +2036,7 @@ class BearCMS
         if ($this->app->currentUser->exists()) {
             $addUserBadge = true;
             $serverCookies = Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER);
-            if (!empty($serverCookies['tmcs']) || !empty($serverCookies['tmpr'])) {
+            if (!empty($serverCookies['tmcs']) || !empty($serverCookies['tmpr']) || !empty($serverCookies['wspr'])) {
                 $addUserBadge = false;
             }
             if ($addUserBadge) {
