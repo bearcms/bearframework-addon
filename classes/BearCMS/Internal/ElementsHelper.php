@@ -84,10 +84,14 @@ class ElementsHelper
             $component->color = Config::$uiColor;
         }
 
-        if (strlen($component->canStyle) > 0) {
-            if (isset(Internal\ElementsHelper::$elementsTypesOptions[$component->src])) {
-                $elementTypeOptions = Internal\ElementsHelper::$elementsTypesOptions[$component->src];
-                if (!(isset($elementTypeOptions['canStyle']) && $elementTypeOptions['canStyle'])) {
+        if ($component->canStyle === 'true') {
+            if (isset(self::$elementsTypesOptions[$component->src])) { // Check if element supports styling
+                $canStyle = false;
+                $elementTypeOptions = self::$elementsTypesOptions[$component->src];
+                if (isset($elementTypeOptions['canStyle']) && $elementTypeOptions['canStyle']) {
+                    $canStyle = true;
+                }
+                if (!$canStyle) {
                     $component->canStyle = 'false';
                 }
             }
@@ -269,21 +273,11 @@ class ElementsHelper
         for ($i = 0; $i < $columnsCount; $i++) {
             $columnContent = '';
             if (isset($elementContainerData['data']['elements'], $elementContainerData['data']['elements'][$i])) {
-                $elementsInColumn = $elementContainerData['data']['elements'][$i];
-                if (!empty($elementsInColumn)) {
+                $elementsInColumnContainerData = $elementContainerData['data']['elements'][$i];
+                if (!empty($elementsInColumnContainerData)) {
                     $elementsInColumnContextData = $contextData;
                     $elementsInColumnContextData['width'] = '100%';
-                    $elementsIDs = [];
-                    foreach ($elementsInColumn as $elementInColumnContainerData) {
-                        $elementsIDs[] = $elementInColumnContainerData['id'];
-                    }
-                    $elementsInColumnRawData = self::getElementsRawData($elementsIDs);
-                    foreach ($elementsInColumn as $elementInColumnContainerData) {
-                        $elementInColumnRawData = $elementsInColumnRawData[$elementInColumnContainerData['id']];
-                        if ($elementInColumnRawData !== null) {
-                            $columnContent .= self::renderElement($elementInColumnRawData, $editable, $elementsInColumnContextData, $outputType);
-                        }
-                    }
+                    $columnContent .= self::renderContainerElements($elementsInColumnContainerData, $editable, $elementsInColumnContextData, $outputType);
                 }
             }
 
@@ -374,21 +368,11 @@ class ElementsHelper
 
         $getElementsContent = function ($location) use ($elementContainerData, $contextData, $editable, $outputType) {
             $content = '';
-            $elements = $elementContainerData['data']['elements'][$location];
-            if (!empty($elements)) {
+            $elementsContainerData = $elementContainerData['data']['elements'][$location];
+            if (!empty($elementsContainerData)) {
                 $elementsContextData = $contextData;
                 $elementsContextData['width'] = '100%';
-                $elementsIDs = [];
-                foreach ($elements as $elementData) {
-                    $elementsIDs[] = $elementData['id'];
-                }
-                $elementsRawData = self::getElementsRawData($elementsIDs);
-                foreach ($elements as $elementData) {
-                    $elementRawData = $elementsRawData[$elementData['id']];
-                    if ($elementRawData !== null) {
-                        $content .= self::renderElement($elementRawData, $editable, $elementsContextData, $outputType);
-                    }
-                }
+                $content .= self::renderContainerElements($elementsContainerData, $editable, $elementsContextData, $outputType);
             }
             return $content;
         };
@@ -449,6 +433,83 @@ class ElementsHelper
             . '</html>';
         return '<component src="data:base64,' . base64_encode($content) . '" />';
     }
+
+    /**
+     * 
+     * @param array $elementsContainerData
+     * @param boolean $editable
+     * @param array $contextData
+     * @param string $outputType
+     * @return string
+     */
+    static function renderContainerElements(array $elementsContainerData, bool $editable, array $contextData, string $outputType = 'full-html'): string
+    {
+        $content = '';
+        $elementsIDs = [];
+
+        foreach ($elementsContainerData as $elementContainerData) {
+            if (!self::isStructuralElementContainerData($elementContainerData)) {
+                $elementsIDs[] = $elementContainerData['id'];
+            }
+        }
+        $elementsRawData = self::getElementsRawData($elementsIDs);
+        $childrenContextData = $contextData;
+        $childrenContextData['width'] = '100%';
+        $childrenContextData['inElementsContainer'] = '1';
+        foreach ($elementsContainerData as $elementContainerData) {
+            if (self::isColumnsElementContainerData($elementContainerData)) {
+                $content .= self::renderColumn($elementContainerData, $editable, $childrenContextData, true, $outputType);
+            } elseif (self::isFloatingBoxElementContainerData($elementContainerData)) {
+                $content .= self::renderFloatingBox($elementContainerData, $editable, $childrenContextData, true, $outputType);
+            } else {
+                $elementRawData = $elementsRawData[$elementContainerData['id']];
+                if ($elementRawData !== null) {
+                    $content .= self::renderElement($elementRawData, $editable, $contextData, $outputType);
+                }
+            }
+        }
+        return $content;
+    }
+
+    /**
+     * 
+     * @param array $elementContainerData
+     * @return boolean
+     */
+    static function isColumnsElementContainerData(array $elementContainerData): bool
+    {
+        return isset($elementContainerData['data'], $elementContainerData['data']['type']) && ($elementContainerData['data']['type'] === 'columns' || $elementContainerData['data']['type'] === 'column');
+    }
+
+    /**
+     * 
+     * @param array $elementContainerData
+     * @return boolean
+     */
+    static function isFloatingBoxElementContainerData(array $elementContainerData): bool
+    {
+        return isset($elementContainerData['data'], $elementContainerData['data']['type']) && $elementContainerData['data']['type'] === 'floatingBox';
+    }
+
+    /**
+     * 
+     * @param array $elementContainerData
+     * @return boolean
+     */
+    static function isStructuralElementContainerData(array $elementContainerData): bool
+    {
+        if (isset($elementContainerData['data'], $elementContainerData['data']['type'])) {
+            if ($elementContainerData['data']['type'] === 'columns' || $elementContainerData['data']['type'] === 'column') {
+                return true;
+                // columns element
+            } elseif ($elementContainerData['data']['type'] === 'floatingBox') {
+                // floating box element
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * 
@@ -662,39 +723,24 @@ class ElementsHelper
     {
         $containerData = self::getContainerData($id);
         $result = [];
-        foreach ($containerData['elements'] as $elementData) {
-            if (isset($elementData['data'], $elementData['data']['type'])) {
-                if (($elementData['data']['type'] === 'column' || $elementData['data']['type'] === 'columns') && isset($elementData['data']['elements'])) {
-                    foreach ($elementData['data']['elements'] as $columnElements) {
-                        foreach ($columnElements as $columnElement) {
-                            if (isset($columnElement['id'])) {
-                                $result[] = $columnElement['id'];
-                            }
+        $walkElements = function ($elements) use (&$result, &$walkElements) {
+            foreach ($elements as $elementData) {
+                if (isset($elementData['data'], $elementData['data']['type'])) {
+                    if (($elementData['data']['type'] === 'column' || $elementData['data']['type'] === 'columns') && isset($elementData['data']['elements'])) {
+                        foreach ($elementData['data']['elements'] as $columnElements) {
+                            $walkElements($columnElements);
+                        }
+                    } elseif ($elementData['data']['type'] === 'floatingBox' && isset($elementData['data']['elements'])) {
+                        foreach ($elementData['data']['elements'] as $boxElements) {
+                            $walkElements($boxElements);
                         }
                     }
-                    continue;
-                } elseif ($elementData['data']['type'] === 'floatingBox' && isset($elementData['data']['elements'])) {
-                    if (isset($elementData['data']['elements']['inside'])) {
-                        foreach ($elementData['data']['elements']['inside'] as $insideElement) {
-                            if (isset($insideElement['id'])) {
-                                $result[] = $insideElement['id'];
-                            }
-                        }
-                    }
-                    if (isset($elementData['data']['elements']['outside'])) {
-                        foreach ($elementData['data']['elements']['outside'] as $outsideElement) {
-                            if (isset($outsideElement['id'])) {
-                                $result[] = $outsideElement['id'];
-                            }
-                        }
-                    }
-                    continue;
+                } elseif (isset($elementData['id'])) {
+                    $result[] = $elementData['id'];
                 }
             }
-            if (isset($elementData['id'])) {
-                $result[] = $elementData['id'];
-            }
-        }
+        };
+        $walkElements($containerData['elements']);
         return $result;
     }
 
@@ -748,5 +794,35 @@ class ElementsHelper
             }
         }
         return ['dates' => $dates, 'dataKeys' => $dataKeys];
+    }
+
+    static function getStructuralElement(array $containerData, string $elementID): ?array
+    {
+        $findElement = function ($elements) use (&$findElement, $elementID) {
+            foreach ($elements as $elementData) {
+                if (isset($elementData['id'], $elementData['data'], $elementData['data']['type'])) {
+                    if ($elementData['id'] === $elementID) {
+                        return $elementData;
+                    }
+                    if (($elementData['data']['type'] === 'column' || $elementData['data']['type'] === 'columns') && isset($elementData['data']['elements'])) {
+                        foreach ($elementData['data']['elements'] as $columnElements) {
+                            $result = $findElement($columnElements);
+                            if ($result !== null) {
+                                return $result;
+                            }
+                        }
+                    } elseif ($elementData['data']['type'] === 'floatingBox' && isset($elementData['data']['elements'])) {
+                        foreach ($elementData['data']['elements'] as $boxElements) {
+                            $result = $findElement($boxElements);
+                            if ($result !== null) {
+                                return $result;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        };
+        return $findElement($containerData['elements']);
     }
 }

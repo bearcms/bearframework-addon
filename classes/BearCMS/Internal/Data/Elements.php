@@ -88,7 +88,7 @@ class Elements
                     $newItemID = $generateItemID();
                     $elements[$index]['id'] = $newItemID;
                     if (isset($element['data'], $element['data']['type'])) {
-                        if ($element['data']['type'] === 'floatingBox' || $element['data']['type'] === 'columns') {
+                        if ($element['data']['type'] === 'floatingBox' || $element['data']['type'] === 'column' || $element['data']['type'] === 'columns') {
                             if (isset($element['data']['elements'])) {
                                 foreach ($element['data']['elements'] as $location => $locationElements) {
                                     $elements[$index]['data']['elements'][$location] = $updateElementIDs($locationElements);
