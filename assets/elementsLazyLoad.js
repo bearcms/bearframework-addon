@@ -22,8 +22,8 @@ bearCMS.elementsLazyLoad = bearCMS.elementsLazyLoad || (function () {
         } catch (e) {
         }
         var loadingElement = document.createElement('div');
-        loadingElement.className = 'bearcms-text-element';
-        loadingElement.innerHTML = loadingText;
+        loadingElement.className = 'bearcms-elements-element-container';
+        loadingElement.innerHTML = '<div class="bearcms-text-element">' + loadingText + '</div>';
         container.appendChild(loadingElement);
         clientPackages.get('serverRequests').then(function (serverRequests) {
             serverRequests.send('bearcms-elements-load-more', requestData).then(function (response) {
