@@ -323,7 +323,7 @@ class Themes
         if (!isset(self::$cache[$localCacheKey])) {
             $app = App::get();
             $cacheKey = Internal\Themes::getCacheItemKey($id, $userID);
-            $envKey = md5(serialize(array_keys(self::$elementsOptions)) . serialize(array_keys(self::$pagesOptions)) . '-v5');
+            $envKey = md5(serialize(array_keys(self::$elementsOptions)) . serialize(array_keys(self::$pagesOptions)) . '-v6');
             $useCache = $cacheKey !== null;
             $resultData = null;
             if ($useCache) {

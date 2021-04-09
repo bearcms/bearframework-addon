@@ -191,7 +191,7 @@ class BearCMS
                             ]);
                         } else {
                             $group = $options->addGroup(__("bearcms.themes.options.Heading"));
-                            $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"])';
+                            $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"]) >';
 
                             $groupLarge = $group->addGroup(__("bearcms.themes.options.Large"));
                             $groupLarge->addOption($idPrefix . "HeadingLargeCSS", "css", '', [
@@ -242,7 +242,7 @@ class BearCMS
                             $customStyleSelector = '';
                         } else {
                             $optionsGroup = $options->addGroup(__("bearcms.themes.options.Text"));
-                            $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"])';
+                            $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"]) >';
                         }
                         $optionsGroup->addOption($idPrefix . "TextCSS", "css", '', [
                             "cssOutput" => [
@@ -296,7 +296,7 @@ class BearCMS
                             $customStyleSelector = '';
                         } else {
                             $optionsGroup = $options->addGroup(__("bearcms.themes.options.Link"));
-                            $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"])';
+                            $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"]) >';
                         }
 
                         $optionsGroup->addOption($idPrefix . "LinkCSS", "css", '', [
@@ -389,7 +389,7 @@ class BearCMS
                             $customStyleSelector = '';
                         } else {
                             $optionsGroup = $options->addGroup(__("bearcms.themes.options.Image"));
-                            $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"])';
+                            $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"]) >';
                         }
 
                         $optionsGroup->addOption($idPrefix . "ImageCSS", "css", '', [
