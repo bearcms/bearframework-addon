@@ -98,5 +98,15 @@ return [
     'bearcms.element.HTMLCodeTemporaryDisabled.title' => 'HTML code element temporary disabled!',
     'bearcms.element.HTMLCodeTemporaryDisabled.description' => 'This message is visible to you only, because of the "disable-html-elements" in the URL.',
     'bearcms.element.HTMLCodeUnavailableSecurityMode.title' => 'The HTML code cannot be shown in the selected security mode!',
-    'bearcms.element.HTMLCodeUnavailableSecurityMode.description' => 'This message is visible to administrators only.'
+    'bearcms.element.HTMLCodeUnavailableSecurityMode.description' => 'This message is visible to administrators only.',
+    'bearcms.themes.options.flexibleBox.Direction' => 'Elements direction',
+    'bearcms.themes.options.flexibleBox.AutoVertical' => 'Automatic vertical direction',
+    'bearcms.themes.options.columns.AutoVertical' => 'Automatic vertical ordering',
+    'bearcms.themes.options.columns.ColumnsCount' => 'Columns count',
+    'bearcms.themes.options.floatingBox.Position' => 'Position',
+    'bearcms.themes.options.floatingBox.Width' => 'Width',
+    'bearcms.themes.options.floatingBox.AutoVertical' => 'Automatic vertical ordering',
+    'bearcms.themes.options.columns.ElementsSpacing' => 'Elements spacing',
+    'bearcms.themes.options.floatingBox.ElementsSpacing' => 'Elements spacing',
+    'bearcms.themes.options.flexibleBox.RowAlignment' => 'Horizontal alignment'
 ];

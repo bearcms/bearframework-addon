@@ -513,20 +513,18 @@ class ServerCommands
     static function elementStyleGet(array $data): array
     {
         $result = [];
-
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
         $elementID = isset($data['elementID']) ? $data['elementID'] : null;
-
         $styleOptions = ElementsHelper::getElementStyleOptions($containerID, $elementID);
         if ($styleOptions !== null) {
-            list($options, $values, $themeID, $themeOptionsSelectors) = $styleOptions;
+            list($options, $values, $themeID, $themeOptionsSelectors, $elementType) = $styleOptions;
             $result['options'] = [];
             $result['options']['definition'] = Internal\Themes::optionsToArray($options);
             $result['options']['values'] = $values;
             $result['options']['themeID'] = $themeID;
             $result['options']['themeOptionsSelectors'] = $themeOptionsSelectors;
+            $result['options']['elementType'] = $elementType;
         }
-        //Internal2::$data2->themes->getValues($id);
         return $result;
     }
 
@@ -541,6 +539,28 @@ class ServerCommands
         $elementID = isset($data['elementID']) ? $data['elementID'] : null;
         $value = isset($data['value']) ? $data['value'] : null;
         ElementsHelper::setElementStyleOptionsValues($containerID, $elementID, $value);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function elementsCombinationsGetList(array $data): array
+    {
+        return ElementsCombinations::getList();
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function elementsCombinationGet(array $data): array
+    {
+        $combinationData = ElementsCombinations::get($data['id']);
+        $result = $combinationData;
+        return $result;
     }
 
     /**
@@ -898,6 +918,47 @@ class ServerCommands
     static function uploadsSizeGet(array $data): ?int
     {
         return Internal\Data\UploadsSize::getItemSize($data['key']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function fileCopy(array $data): void
+    {
+        $source = $data['source'];
+        $target = $data['target'];
+        if (strpos($target, 'appdata://') !== 0) {
+            throw new \Exception('Cannot copy to file outside the data directory! (' . $target . ')'); // security purposes
+        }
+        if (is_file($target)) {
+            throw new \Exception('Target file already exists! (' . $target . ')');
+        }
+        if (is_file($source)) {
+            copy($source, $target);
+        } else {
+            throw new \Exception('Source file not found! (' . $source . ')');
+        }
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function filesSize(array $data): array
+    {
+        $result = [];
+        $result['size'] = 0;
+        $result['files'] = [];
+        $files = $data['files'];
+        foreach ($files as $filename) {
+            $size = filesize($filename);
+            $result['size'] += $size;
+            $result['files'][$filename] = $size;
+        }
+        return $result;
     }
 
     /**

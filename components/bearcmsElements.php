@@ -13,19 +13,20 @@ $app = BearFramework\App::get();
 $context = $app->contexts->get(__DIR__);
 
 $lazyLimit = 70;
-$contextData = Internal\ElementsHelper::getComponentContextData($component);
+$contextData = ElementsHelper::getComponentContextData($component);
 $editable = $component->editable === 'true';
 $group = $component->group;
 
-$containerData = Internal\ElementsHelper::getContainerData($component->id);
+$containerData = ElementsHelper::getContainerData($component->id);
 
 $elements = $containerData['elements'];
 $hasLazyLoading = sizeof($elements) > $lazyLimit;
 
 $columnID = (string) $component->getAttribute('bearcms-internal-attribute-columns-id');
 $floatingBoxID = (string) $component->getAttribute('bearcms-internal-attribute-floatingbox-id');
+$flexibleBoxID = (string) $component->getAttribute('bearcms-internal-attribute-flexiblebox-id');
 $inContainer = $component->getAttribute('bearcms-internal-attribute-container') !== 'none';
-$renderElementsContainer = $inContainer && !isset($columnID[0]) && !isset($floatingBoxID[0]);
+$renderElementsContainer = $inContainer && !isset($columnID[0]) && !isset($floatingBoxID[0]) && !isset($flexibleBoxID[0]);
 
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
@@ -42,6 +43,9 @@ if (!empty($elements)) {
     } elseif (isset($floatingBoxID[0])) {
         $floatingBoxElement = ElementsHelper::getStructuralElement($containerData, $floatingBoxID);
         $elements = $floatingBoxElement !== null ? [$floatingBoxElement] : [];
+    } elseif (isset($flexibleBoxID[0])) {
+        $flexibleBoxElement = ElementsHelper::getStructuralElement($containerData, $flexibleBoxID);
+        $elements = $flexibleBoxElement !== null ? [$flexibleBoxElement] : [];
     } else if ($hasLazyLoading) {
         $remainingLazyLoadElements = (string) $component->getAttribute('bearcms-internal-attribute-remaining-lazy-load-elements');
         if ($remainingLazyLoadElements === '') {
@@ -72,7 +76,7 @@ if (!empty($elements)) {
             $loadMoreComponent->setAttribute('bearcms-internal-attribute-remaining-lazy-load-elements', implode(',', $remainingLazyLoadElements));
             $loadMoreComponent->setAttribute('bearcms-internal-attribute-container', 'none');
             $lazyLoadServerData = \BearCMS\Internal\TempClientData::set(['componentHTML' => (string) $loadMoreComponent]);
-            Internal\ElementsHelper::$lastLoadMoreServerData = $lazyLoadServerData;
+            ElementsHelper::$lastLoadMoreServerData = $lazyLoadServerData;
         }
     }
 }
@@ -86,23 +90,12 @@ if ($renderElementsContainer) {
     $attributes = '';
     if ($editable) {
         $htmlElementID = 'brela' . md5($component->id);
-        Internal\ElementsHelper::$editorData[] = ['container', $component->id, $contextData, $group];
+        ElementsHelper::$editorData[] = ['container', $component->id, $contextData, $group];
         $attributes .= ' id="' . $htmlElementID . '"';
     }
 
-    $styles .= '.' . $className . '{width:' . $width . ';text-align:left;}';
-    $styles .= '.' . $className . '>div{margin-bottom:' . $spacing . ';display:block;clear:both;zoom:1;}';
-    $styles .= '.' . $className . '>div:last-child{margin-bottom:0;}';
-    $styles .= '.' . $className . '>div:empty{display:none;}';
-
-    $spacingSelector = 's' . $spacing;
-    $styles .= '.' . $className . '>[data-srvri~="t2"][data-srvri~="' . $spacingSelector . '"]>div>div:empty{display:none;}';
-    $styles .= '.' . $className . '>[data-srvri~="t2"][data-srvri~="' . $spacingSelector . '"]>div{display:inline-block;vertical-align:top;}';
-    $styles .= '.' . $className . '>[data-srvri~="t2"][data-srvri~="' . $spacingSelector . '"]>div>div:not(:last-child){margin-bottom:' . $spacing . ';}';
-    $styles .= '.' . $className . '>[data-srvri~="t2"][data-srvri~="' . $spacingSelector . '"]>div>div:not([data-srvri]){display:block;clear:both;zoom:1;}';
-    $styles .= '.' . $className . '>[data-srvri~="t3"][data-srvri~="' . $spacingSelector . '"]>div>div:empty{display:none;}';
-    $styles .= '.' . $className . '>[data-srvri~="t3"][data-srvri~="' . $spacingSelector . '"]>div>div:not(:last-child){margin-bottom:' . $spacing . ';}';
-    $styles .= '.' . $className . '>[data-srvri~="t3"][data-srvri~="' . $spacingSelector . '"]>div>div:not([data-srvri]){display:block;zoom:1;}';
+    $styles .= '.' . $className . '{width:' . $width . ';text-align:left;' . ($editable ? '--bearcms-elements-spacing:' . $spacing . ';' : '') . '}';
+    $styles .= '.' . $className . '>div:not(:last-child){margin-bottom:' . ($editable ? 'var(--bearcms-elements-spacing)' : $spacing) . ';}';
 
     if ($outputType === 'full-html') {
         $attributes .= ' class="bearcms-elements ' . $className . (strlen($component->class) > 0 ? ' ' . $component->class : '') . '"';
@@ -137,10 +130,15 @@ if (!empty($elements)) {
     $childrenContextData = $contextData;
     $childrenContextData['width'] = '100%';
     $childrenContextData['inElementsContainer'] = '1';
+    if ($editable) {
+        $childrenContextData['spacing'] = 'var(--bearcms-elements-spacing)';
+    }
     if (isset($columnID[0])) {
-        echo Internal\ElementsHelper::renderColumn($elements[0], $editable, $childrenContextData, $inContainer, $outputType);
+        echo ElementsHelper::renderColumns($elements[0], $editable, $childrenContextData, $inContainer, $outputType);
     } elseif (isset($floatingBoxID[0])) {
-        echo Internal\ElementsHelper::renderFloatingBox($elements[0], $editable, $childrenContextData, $inContainer, $outputType);
+        echo ElementsHelper::renderFloatingBox($elements[0], $editable, $childrenContextData, $inContainer, $outputType);
+    } elseif (isset($flexibleBoxID[0])) {
+        echo ElementsHelper::renderFlexibleBox($elements[0], $editable, $childrenContextData, $inContainer, $outputType);
     } else {
         echo ElementsHelper::renderContainerElements($elements, $editable, $childrenContextData, $outputType);
     }

@@ -8,12 +8,13 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal;
+use BearCMS\Internal\ElementsHelper;
 
 $editable = $component->editable === 'true';
 $typeCode = $component->getAttribute('bearcms-internal-attribute-type');
 $containerType = $component->getAttribute('bearcms-internal-attribute-container');
 $inElementsContainer = $component->getAttribute('bearcms-internal-attribute-in-elements-container') === 'true';
+$canStyle = $component->canStyle === 'true';
 
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
@@ -22,7 +23,7 @@ if ($outputType !== 'full-html') {
 }
 
 if ($editable) {
-    $componentContextData = Internal\ElementsHelper::getComponentContextData($component);
+    $componentContextData = ElementsHelper::getComponentContextData($component);
 }
 
 $componentName = strlen($component->src) > 0 ? $component->src : ($component->tagName !== 'component' ? $component->tagName : null);
@@ -35,7 +36,7 @@ if (!$isMissing) {
     if ($rawData !== null && strlen($rawData) > 0) {
         $rawData = json_decode($rawData, true);
         $data = $rawData['data'];
-        $options = Internal\ElementsHelper::$elementsTypesOptions[$componentName];
+        $options = ElementsHelper::$elementsTypesOptions[$componentName];
         if (isset($options['fields'])) {
             foreach ($options['fields'] as $field) {
                 $fieldID = $field['id'];
@@ -66,7 +67,7 @@ if (!$isMissing) {
         if (strlen($component->id) > 0 && $component->editable === 'true') {
             $getRawDataFromComponent = function ($component) {
                 $componentName = strlen($component->src) > 0 ? $component->src : ($component->tagName !== 'component' ? $component->tagName : null);
-                $options = Internal\ElementsHelper::$elementsTypesOptions[$componentName];
+                $options = ElementsHelper::$elementsTypesOptions[$componentName];
                 $data = [];
                 if (isset($options['fields'])) {
                     foreach ($options['fields'] as $field) {
@@ -84,12 +85,12 @@ if (!$isMissing) {
                 if (isset($options['updateDataFromComponent'])) {
                     $data = call_user_func($options['updateDataFromComponent'], clone ($component), $data);
                 }
-                return json_encode(['id' => $component->id, 'type' => Internal\ElementsHelper::$elementsTypesCodes[$componentName], 'data' => $data]);
+                return json_encode(['id' => $component->id, 'type' => ElementsHelper::$elementsTypesCodes[$componentName], 'data' => $data]);
             };
             if ($editable) {
                 $componentContextData['rawData'] = $getRawDataFromComponent($component);
             }
-            $elementType = Internal\ElementsHelper::$elementsTypesCodes[$componentName];
+            $elementType = ElementsHelper::$elementsTypesCodes[$componentName];
         }
     }
 
@@ -116,21 +117,20 @@ if ($containerType === 'none') {
 } else {
     $classAttributeValue = '';
     $attributes = '';
-    if ($editable) {
-        Internal\ElementsHelper::$editorData[] = ['element', $component->id, $componentContextData, $typeCode];
+    $hasElementStyle = $canStyle && $elementStyleData !== null;
+    if ($editable || $hasElementStyle) {
         $htmlElementID = 'brelc' . md5($component->id);
         $attributes .= ' id="' . $htmlElementID . '"';
+        if ($editable) {
+            ElementsHelper::$editorData[] = ['element', $component->id, $componentContextData, $typeCode];
+        }
     }
     if ($outputType === 'full-html') {
         $classAttributeValue .= ' bearcms-elements-element-container';
-        if (isset(Internal\Themes::$elementsOptions[$elementType]) && $elementStyleData !== null) {
-            $classAttributeValue .= ' bearcms-elements-element-style-' . md5($component->id);
-            $options = new \BearCMS\Themes\Theme\Options();
-            call_user_func(Internal\Themes::$elementsOptions[$elementType], $options, '', '.bearcms-elements-element-style-' . md5($component->id), Internal\Themes::OPTIONS_CONTEXT_ELEMENT);
-            $options->setValues($elementStyleData);
-            $htmlData = Internal\Themes::getOptionsHTMLData($options->getList());
-            $html = Internal\Themes::processOptionsHTMLData($htmlData);
-            echo '<component src="data:base64,' . base64_encode($html) . '" />';
+        if ($hasElementStyle) {
+            $styleClassName = 'bearcms-elements-element-style-' . md5($component->id);
+            $classAttributeValue .= ' ' . $styleClassName;
+            echo ElementsHelper::getElementStyleHTML($elementType, $elementStyleData, '#' . $htmlElementID . '.' . $styleClassName);
         }
     }
     if ($classAttributeValue !== '') {

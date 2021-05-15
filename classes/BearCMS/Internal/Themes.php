@@ -66,7 +66,6 @@ class Themes
     {
         if (isset(self::$registrations[$id])) {
             if (is_callable(self::$registrations[$id])) {
-                $app = App::get();
                 $theme = new \BearCMS\Themes\Theme($id);
                 call_user_func(self::$registrations[$id], $theme);
                 self::$registrations[$id] = $theme;

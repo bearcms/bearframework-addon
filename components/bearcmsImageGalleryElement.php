@@ -31,7 +31,6 @@ $fixFilename = function ($filename): ?string {
     return null;
 };
 
-
 $content = '';
 if ($outputType === 'full-html') {
     $content = '<div class="bearcms-image-gallery-element">';

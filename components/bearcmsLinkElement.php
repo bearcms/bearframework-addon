@@ -21,7 +21,7 @@ echo '<body>';
 if ($outputType === 'full-html') {
     echo '<div class="bearcms-link-element">';
 }
-echo '<a title="' . htmlentities($title) . '" href="' . htmlentities($url) . '">' . htmlspecialchars(isset($text[0]) ? $text : $url) . '</a>';
+echo '<a title="' . htmlentities($title) . '" href="' . htmlentities($url) . '">' . htmlspecialchars($text) . '</a>'; // htmlspecialchars(isset($text[0]) ? $text : $url)
 if ($outputType === 'full-html') {
     echo '</div>';
 }

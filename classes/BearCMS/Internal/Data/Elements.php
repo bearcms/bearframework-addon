@@ -21,11 +21,13 @@ use BearFramework\App;
 class Elements
 {
 
-
     static function copyElement(string $sourceElementID, string $targetElementID): void
     {
         $app = App::get();
         $elementData = ElementsHelper::getElementData($sourceElementID);
+        if ($elementData === null) {
+            throw new \Exception('Source element (' . $sourceElementID . ') not found!');
+        }
         $elementData['id'] = $targetElementID;
         $elementData['lastChangeTime'] = time();
         if (isset($elementData['type'])) {
@@ -87,12 +89,19 @@ class Elements
                     $oldItemID = $element['id'];
                     $newItemID = $generateItemID();
                     $elements[$index]['id'] = $newItemID;
-                    if (isset($element['data'], $element['data']['type'])) {
-                        if ($element['data']['type'] === 'floatingBox' || $element['data']['type'] === 'column' || $element['data']['type'] === 'columns') {
-                            if (isset($element['data']['elements'])) {
-                                foreach ($element['data']['elements'] as $location => $locationElements) {
-                                    $elements[$index]['data']['elements'][$location] = $updateElementIDs($locationElements);
+                    $structuralElementData = ElementsHelper::getUpdatedStructuralElementData($element);
+                    if ($structuralElementData !== null) {
+                        if ($structuralElementData['type'] === 'floatingBox' || $structuralElementData['type'] === 'columns') {
+                            if (isset($structuralElementData['elements'])) {
+                                foreach ($structuralElementData['elements'] as $location => $locationElements) {
+                                    $structuralElementData['elements'][$location] = $updateElementIDs($locationElements);
                                 }
+                                $elements[$index] = $structuralElementData;
+                            }
+                        } else if ($structuralElementData['type'] === 'flexibleBox') {
+                            if (isset($structuralElementData['elements'])) {
+                                $structuralElementData['elements'] = $updateElementIDs($structuralElementData['elements']);
+                                $elements[$index] = $structuralElementData;
                             }
                         } else {
                             throw new \Exception('Unsupported type for an element');

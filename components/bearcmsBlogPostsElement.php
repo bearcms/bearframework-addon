@@ -7,9 +7,9 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use BearCMS\Internal2;
+use BearCMS\Internal\ElementsHelper;
 
 $app = App::get();
 $context = $app->contexts->get(__DIR__);
@@ -84,93 +84,41 @@ if ($list->count() > 0) {
             $containerID = 'bearcms-blogpost-' . $blogPost->id;
             $content .= '<div class="bearcms-blog-posts-element-post-content">';
             if ($type === 'summary') {
-                $containerData = Internal\ElementsHelper::getContainerData($containerID);
+                $elementsIDs = ElementsHelper::getContainerElementsIDs($containerID);
                 $textElementData = null;
                 $imageElementData = null;
-
-                $walkElements = function ($elementID) use (&$textElementData, &$imageElementData) {
-                    $elementsRawData = Internal\ElementsHelper::getElementsRawData([$elementID]);
-                    if ($elementsRawData[$elementID] === null) {
-                        return false;
+                foreach ($elementsIDs as $elementID) {
+                    $elementData = ElementsHelper::getElementData($elementID);
+                    if ($elementData === null) {
+                        continue;
                     }
-                    $elementData = json_decode($elementsRawData[$elementID], true);
-                    if (isset($elementData['type'])) {
-                        if ($textElementData === null && $elementData['type'] === 'text') {
-                            $textElementData = $elementData;
-                        }
-                        if ($imageElementData === null && $elementData['type'] === 'image') {
-                            $imageElementData = $elementData;
-                        }
+                    if ($textElementData === null && $elementData['type'] === 'text') {
+                        $textElementData = $elementData;
                     }
-                    return $textElementData !== null && $imageElementData !== null;
-                };
-
-                foreach ($containerData['elements'] as $elementContainerData) {
-                    if (isset($elementContainerData['data'], $elementContainerData['data']['type']) && ($elementContainerData['data']['type'] === 'column' || $elementContainerData['data']['type'] === 'columns')) {
-                        $columnsSizes = explode(':', $elementContainerData['data']['mode']);
-                        $columnsCount = sizeof($columnsSizes);
-                        $break = false;
-                        for ($i = 0; $i < $columnsCount; $i++) {
-                            if (isset($elementContainerData['data']['elements'], $elementContainerData['data']['elements'][$i])) {
-                                $elementsInColumn = $elementContainerData['data']['elements'][$i];
-                                if (!empty($elementsInColumn)) {
-                                    foreach ($elementsInColumn as $elementInColumnContainerData) {
-                                        if ($walkElements($elementInColumnContainerData['id'])) {
-                                            $break = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if ($break) {
-                            break;
-                        }
-                    } elseif (isset($elementContainerData['data'], $elementContainerData['data']['type']) && $elementContainerData['data']['type'] === 'floatingBox') {
-                        $break = false;
-                        if (isset($elementContainerData['data']['elements'])) {
-                            if (isset($elementContainerData['data']['elements']['inside'])) {
-                                foreach ($elementContainerData['data']['elements']['inside'] as $elementInFloatingBoxData) {
-                                    if ($walkElements($elementInFloatingBoxData['id'])) {
-                                        $break = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (isset($elementContainerData['data']['elements']['outside'])) {
-                                foreach ($elementContainerData['data']['elements']['outside'] as $elementInFloatingBoxData) {
-                                    if ($walkElements($elementInFloatingBoxData['id'])) {
-                                        $break = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        if ($break) {
-                            break;
-                        }
-                    } else {
-                        if ($walkElements($elementContainerData['id'])) {
-                            break;
-                        }
+                    if ($imageElementData === null && $elementData['type'] === 'image') {
+                        $imageElementData = $elementData;
+                    }
+                    if ($textElementData !== null && $imageElementData !== null) {
+                        break;
                     }
                 }
+
                 $hasImage = $imageElementData !== null;
                 $hasText = $textElementData !== null;
                 if ($hasImage && $hasText) {
-                    $content .= Internal\ElementsHelper::renderFloatingBox([
-                        'data' => [
-                            'type' => 'floatingBox',
+                    $content .= ElementsHelper::renderFloatingBox([
+                        'type' => 'floatingBox',
+                        'elements' => [
+                            'inside' => [
+                                ['id' => $imageElementData['id']]
+                            ],
+                            'outside' => [
+                                ['id' => $textElementData['id']]
+                            ]
+                        ],
+                        'style' => [
                             'position' => 'left',
                             'width' => '33%',
-                            'elements' => [
-                                'inside' => [
-                                    ['id' => $imageElementData['id']]
-                                ],
-                                'outside' => [
-                                    ['id' => $textElementData['id']]
-                                ]
-                            ]
                         ]
                     ], false, [
                         'spacing' => $spacing,

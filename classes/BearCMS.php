@@ -14,6 +14,7 @@ use BearCMS\Internal\Config;
 use IvoPetkov\HTML5DOMDocument;
 use BearCMS\Internal2;
 use BearCMS\Internal\Data\UploadsSize;
+use BearCMS\Internal\ElementsCombinations;
 
 /**
  * 
@@ -384,7 +385,8 @@ class BearCMS
                 ]);
                 if ($hasThemes) {
                     Internal\Themes::$elementsOptions['image'] = function ($options, $idPrefix, $parentSelector, $context) {
-                        if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+                        $isElementContext = $context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT;
+                        if ($isElementContext) {
                             $optionsGroup = $options;
                             $customStyleSelector = '';
                         } else {
@@ -401,6 +403,15 @@ class BearCMS
                             ],
                             "elementType" => "image"
                         ]);
+                        if ($isElementContext) {
+                            $optionsGroup->addOption($idPrefix . "elementContainerCSS", "css", '', [
+                                "cssTypes" => ["cssSize"],
+                                "cssOutput" => [
+                                    ["selector", $parentSelector . $customStyleSelector]
+                                ],
+                                "elementType" => "image"
+                            ]);
+                        }
                     };
                 }
             }
@@ -967,6 +978,80 @@ class BearCMS
                         ]);
                     };
                 }
+            }
+            if ($hasElements || Config::hasFeature('ELEMENTS_COLUMNS')) {
+                Internal\Themes::$elementsOptions['columns'] = function ($options, $idPrefix, $parentSelector, $context) {
+                    if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+                        $optionsGroup = $options;
+                    } else {
+                        throw new \Exception('Not supported in theme context');
+                    }
+                    $optionsGroup->addOption($idPrefix . "widths", "columnsWidths", __('bearcms.themes.options.columns.ColumnsCount'), [
+                        "defaultValue" => ",",
+                        "onHighlight" => [['cssSelector', $parentSelector]]
+                    ]);
+                    $optionsGroup->addOption($idPrefix . "autoVerticalWidth", "columnsAutoVerticalWidth",  __('bearcms.themes.options.columns.AutoVertical'), [
+                        "defaultValue" => "500px",
+                        "onHighlight" => [['cssSelector', $parentSelector]]
+                    ]);
+                    $optionsGroup->addOption($idPrefix . "elementsSpacing", "columnsElementsSpacing",  __('bearcms.themes.options.columns.ElementsSpacing'), [
+                        "onHighlight" => [['cssSelector', $parentSelector]]
+                    ]);
+                };
+            }
+            if ($hasElements || Config::hasFeature('ELEMENTS_FLOATING_BOX')) {
+                Internal\Themes::$elementsOptions['floatingBox'] = function ($options, $idPrefix, $parentSelector, $context) {
+                    if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+                        $optionsGroup = $options;
+                    } else {
+                        throw new \Exception('Not supported in theme context');
+                    }
+                    $optionsGroup->addOption($idPrefix . "position", "floatingBoxPosition", __('bearcms.themes.options.floatingBox.Position'), [
+                        "defaultValue" => "left",
+                        "onHighlight" => [['cssSelector', $parentSelector]]
+                    ]);
+                    $optionsGroup->addOption($idPrefix . "width", "floatingBoxWidth", __('bearcms.themes.options.floatingBox.Width'), [
+                        "defaultValue" => "50%",
+                        "onHighlight" => [['cssSelector', $parentSelector]]
+                    ]);
+                    $optionsGroup->addOption($idPrefix . "autoVerticalWidth", "floatingBoxAutoVerticalWidth",  __('bearcms.themes.options.floatingBox.AutoVertical'), [
+                        "defaultValue" => "500px",
+                        "onHighlight" => [['cssSelector', $parentSelector]]
+                    ]);
+                    $optionsGroup->addOption($idPrefix . "elementsSpacing", "floatingBoxElementsSpacing",  __('bearcms.themes.options.floatingBox.ElementsSpacing'), [
+                        "onHighlight" => [['cssSelector', $parentSelector]]
+                    ]);
+                };
+            }
+            if ($hasElements || Config::hasFeature('ELEMENTS_FLEXIBLE_BOX')) {
+                Internal\Themes::$elementsOptions['flexibleBox'] = function ($options, $idPrefix, $parentSelector, $context) {
+                    if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+                        $optionsGroup = $options;
+                    } else {
+                        throw new \Exception('Not supported in theme context');
+                    }
+                    $optionsGroup->addOption($idPrefix . "direction", "flexibleBoxDirection", __('bearcms.themes.options.flexibleBox.Direction'), [
+                        "defaultValue" => "column",
+                        "onHighlight" => [['cssSelector', $parentSelector]]
+                    ]);
+                    $optionsGroup->addOption($idPrefix . "rowAlignment", "flexibleBoxRowAlignment",  __('bearcms.themes.options.flexibleBox.RowAlignment'), [
+                        "defaultValue" => "left",
+                        "onHighlight" => [['cssSelector', $parentSelector]]
+                    ]);
+                    $optionsGroup->addOption($idPrefix . "autoVerticalWidth", "flexibleBoxAutoVerticalWidth",  __('bearcms.themes.options.flexibleBox.AutoVertical'), [
+                        "defaultValue" => "500px",
+                        "onHighlight" => [['cssSelector', $parentSelector]]
+                    ]);
+                    $optionsGroup->addOption($idPrefix . "elementsSpacing", "flexibleBoxElementsSpacing",  __('bearcms.themes.options.flexibleBox.ElementsSpacing'), [
+                        "onHighlight" => [['cssSelector', $parentSelector]]
+                    ]);
+                    $optionsGroup->addOption($idPrefix . "css", "css", '', [
+                        "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"], // cssMargin conflicts with the elements spacing margin-bottom
+                        "cssOutput" => [
+                            ["selector", $parentSelector]
+                        ]
+                    ]);
+                };
             }
 
             $this->app->clientPackages
@@ -1554,7 +1639,7 @@ class BearCMS
                             if ($themeIDMD5 === md5($id)) {
                                 $themeManifest = Internal\Themes::getManifest($id, false);
                                 if (isset($themeManifest['media'])) {
-                                    foreach ($themeManifest['media'] as $i => $mediaItem) {
+                                    foreach ($themeManifest['media'] as $mediaItem) {
                                         if (isset($mediaItem['filename'])) {
                                             if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
                                                 $details->filename = $mediaItem['filename'];
@@ -1566,7 +1651,7 @@ class BearCMS
                                 $themeStyles = Internal\Themes::getStyles($id, false);
                                 foreach ($themeStyles as $themeStyle) {
                                     if (isset($themeStyle['media'])) {
-                                        foreach ($themeStyle['media'] as $i => $mediaItem) {
+                                        foreach ($themeStyle['media'] as $mediaItem) {
                                             if (isset($mediaItem['filename'])) {
                                                 if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
                                                     $details->filename = $mediaItem['filename'];
@@ -1579,7 +1664,12 @@ class BearCMS
                             }
                         }
                     }
-                    return;
+                }
+                // Element combination media file
+                $matchingDir = $this->context->dir . '/assets/ec/';
+                if (strpos($filename, $matchingDir) === 0) {
+                    $originalFilename = ElementsCombinations::getOriginalMediaFilename($filename);
+                    $details->filename = $originalFilename !== null ? $originalFilename : '';
                 }
             })
             ->addEventListener('prepare', function (\BearFramework\App\Assets\PrepareEventDetails $details) {
@@ -1775,6 +1865,15 @@ class BearCMS
         // Initialize to add asset dirs
         $currentThemeID = Internal\CurrentTheme::getID();
         Internal\Themes::initialize($currentThemeID);
+
+        $theme = Internal\Themes::get($currentThemeID);
+        if ($theme !== null) { // just in case it's registered later or other
+            if ($theme->useDefaultElementsCombinations) {
+                if ($hasElements || Config::hasFeature('ELEMENTS_*')) {
+                    ElementsCombinations::addDefault();
+                }
+            }
+        }
 
         Config::$initialized = true;
     }
@@ -2109,6 +2208,11 @@ class BearCMS
                 $elementsHtml = Internal\ElementsHelper::getEditableElementsHtml();
                 if (isset($elementsHtml[0])) {
                     $htmlToInsert[] = ['source' => $elementsHtml];
+                }
+                if (!empty(Internal\ElementsHelper::$editorData)) {
+                    $app = App::get();
+                    $context = $app->contexts->get(__DIR__);
+                    $htmlToInsert[] = ['source' => '<html><head><script src="' . $context->assets->getURL('assets/elementsEditor.min.js', ['cacheMaxAge' => 999999999, 'version' => 1]) . '"></head></html>'];
                 }
                 $htmlToInsert[] = ['source' => '<html><head><link rel="client-packages"></head></html>']; // used by ServerCommands to update content
                 $document->insertHTMLMulti($htmlToInsert);

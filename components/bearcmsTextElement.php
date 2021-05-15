@@ -16,7 +16,7 @@ $content = '<div' . $attributes . '>' . $component->text . '</div>';
 echo '<html>';
 if ($outputType === 'full-html') {
     echo '<head><style>';
-    echo '.bearcms-text-element{word-break:break-word;}';
+    echo '.bearcms-text-element{display:block;zoom:1;word-break:break-word;}';// no clear:both - breaks floating box
     echo '.bearcms-text-element:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
     echo '</style></head>';
 }

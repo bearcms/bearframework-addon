@@ -91,7 +91,10 @@ trait ThemeOptionsGroupTrait
      */
     public function addElements(string $idPrefix, string $parentSelector): self
     {
-        foreach (Internal\Themes::$elementsOptions as $callable) {
+        foreach (Internal\Themes::$elementsOptions as $type => $callable) {
+            if ($type === 'columns' || $type === 'floatingBox' || $type === 'flexibleBox') {
+                continue;
+            }
             call_user_func($callable, $this, $idPrefix, $parentSelector, Internal\Themes::OPTIONS_CONTEXT_THEME);
         }
         return $this;

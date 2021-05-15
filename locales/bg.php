@@ -98,5 +98,16 @@ return [
     'bearcms.element.HTMLCodeTemporaryDisabled.title' => 'Елементът HTML код е временно спрян!',
     'bearcms.element.HTMLCodeTemporaryDisabled.description' => 'Това съобщение е видимо само от вас, защото сте добавили "disable-html-elements" в адреса на страницата.',
     'bearcms.element.HTMLCodeUnavailableSecurityMode.title' => 'Този елемент (HTML код) не може да се покаже в избрания режим на сигурност!',
-    'bearcms.element.HTMLCodeUnavailableSecurityMode.description' => 'Това съобщение е видимо само за администраторите на сайта.'
+    'bearcms.element.HTMLCodeUnavailableSecurityMode.description' => 'Това съобщение е видимо само за администраторите на сайта.',
+    'bearcms.themes.options.flexibleBox.Direction' => 'Посока на елементите',
+    'bearcms.themes.options.flexibleBox.AutoVertical' => 'Автоматичнa вертикална посока',
+    'bearcms.themes.options.columns.AutoVertical' => 'Автоматично вертикално подреждане',
+    'bearcms.themes.options.columns.ColumnsCount' => 'Брой колони',
+    'bearcms.themes.options.floatingBox.Position' => 'Разположение',
+    'bearcms.themes.options.floatingBox.Width' => 'Ширина',
+    'bearcms.themes.options.floatingBox.AutoVertical' => 'Автоматично вертикално подреждане',
+    'bearcms.themes.options.columns.ElementsSpacing' => 'Разстояние между елементите',
+    'bearcms.themes.options.floatingBox.ElementsSpacing' => 'Разстояние между елементите',
+    'bearcms.themes.options.flexibleBox.ElementsSpacing' => 'Разстояние между елементите',
+    'bearcms.themes.options.flexibleBox.RowAlignment' => 'Хоризонтално подравняване'
 ];
