@@ -238,7 +238,7 @@ class Server
             'j93a', // has related posts support
             'k931', // has support for new pages and blogs statuses (public,secret,private and published,draft,private)
             'm3a1', // has image property for pages and blog posts
-            '7a2f', // new structural elements data format (no data key) and new flexible box element
+            '7a2f', // new structural elements data format (no data key), new flexible box element and elements combinations
         ]);
         $settings = $app->bearCMS->data->settings->get();
         $clientData['contentLanguages'] = $settings->languages;
