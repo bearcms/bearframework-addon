@@ -57,7 +57,7 @@ if ($outputType === 'full-html') {
         $attributes .= ' lazyLoadImages="true"';
     }
 
-    $content .= '<component src="image-gallery" spacing="' . $spacing . '"' . $attributes . '>';
+    $content .= '<component src="image-gallery" spacing="' . $spacing . '" maxImageSize="4000"' . $attributes . '>';
     if ($files !== null) {
         foreach ($files as $file) {
             $fixedFilename = $fixFilename($file->getAttribute('filename'));
