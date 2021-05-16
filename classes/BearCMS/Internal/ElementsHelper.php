@@ -317,6 +317,7 @@ class ElementsHelper
             }
         }
 
+        $styles = '';
         if ($inContainer) {
             $attributes = '';
             if ($editable) {
@@ -351,7 +352,6 @@ class ElementsHelper
 
                 $className = 'bre' . md5('columns$' . (isset($elementContainerData['id']) ? $elementContainerData['id'] : uniqid()));
 
-                $styles = '';
                 $styles .= '.' . $className . '{display:flex !important;flex-direction:row;}';
                 $styles .= '.' . $className . '>div>div:not(:last-child){margin-bottom:' . ($editable ? 'var(--bearcms-elements-spacing)' : $spacing) . ';}';
                 foreach ($columnsStyles as $index => $columnStyle) {
@@ -442,6 +442,7 @@ class ElementsHelper
 
         $responsiveFunctionName = 'cmsefbr' . md5((isset($elementContainerData['id']) ? $elementContainerData['id'] : uniqid()));
 
+        $styles = '';
         if ($inContainer) {
             $attributes = '';
             if ($editable) {
@@ -452,7 +453,6 @@ class ElementsHelper
             if ($outputType === 'full-html') {
                 $className = 'bre' . md5('floatingbox$' . (isset($elementContainerData['id']) ? $elementContainerData['id'] : uniqid()));
 
-                $styles = '';
                 $styles .= '.' . $className . '{--bearcms-floating-box-width:' . (substr($width, -1) === '%' && $width !== '100%' ? 'calc(' . $width . ' - ' . ($editable ? 'var(--bearcms-elements-spacing)' : $spacing) . '/2)' : $width) . ';}';
                 $styles .= '.' . $className . '>div{' . (strlen($spacingStyleRule) > 0 ? $spacingStyleRule : '') . '}';
                 $styles .= '.' . $className . '>div:first-child{max-width:100%;}';
@@ -538,6 +538,7 @@ class ElementsHelper
         }
         $innerContent .= '</div>';
 
+        $styles = '';
         if ($inContainer) {
 
             $attributes = '';
@@ -564,7 +565,6 @@ class ElementsHelper
                     }
                 }
 
-                $styles = '';
                 $styles .= '.' . $className . '>div{' . (strlen($spacingStyleRule) > 0 ? $spacingStyleRule : '') . ';}';
                 $styles .= '.' . $className . '[data-flexible-box-direction="row"]:not([data-flexible-box-auto-vertical="1"])[data-flexible-box-row-alignment="center"]>div{justify-content:center;}';
                 $styles .= '.' . $className . '[data-flexible-box-direction="row"]:not([data-flexible-box-auto-vertical="1"])[data-flexible-box-row-alignment="right"]>div{justify-content:right;}';
