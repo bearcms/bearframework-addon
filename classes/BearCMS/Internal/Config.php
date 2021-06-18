@@ -44,6 +44,7 @@ class Config
     static $htmlAllowDefaultMode = true;
     static $allowRenderGlobalHTML = true;
     static $videoEmbedConfig = [];
+    static $elementsLazyLoadingOffset = 70;
 
     /**
      * 
@@ -182,6 +183,9 @@ class Config
         }
         if (isset($data['videoEmbedConfig'])) {
             self::$videoEmbedConfig = $data['videoEmbedConfig'];
+        }
+        if (isset($data['elementsLazyLoadingOffset'])) {
+            self::$elementsLazyLoadingOffset = $data['elementsLazyLoadingOffset'];
         }
     }
 

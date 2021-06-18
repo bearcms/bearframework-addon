@@ -6,13 +6,13 @@
  * Free to use under the MIT license.
  */
 
-use BearCMS\Internal;
+use BearCMS\Internal\Config;
 use BearCMS\Internal\ElementsHelper;
 
 $app = BearFramework\App::get();
 $context = $app->contexts->get(__DIR__);
 
-$lazyLimit = 70;
+$lazyLimit = Config::$elementsLazyLoadingOffset;
 $contextData = ElementsHelper::getComponentContextData($component);
 $editable = $component->editable === 'true';
 $group = $component->group;
