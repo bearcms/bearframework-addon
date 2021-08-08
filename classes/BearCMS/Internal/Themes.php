@@ -672,7 +672,11 @@ class Themes
                                     if (isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
                                         $selector = $outputDefinition[1];
                                         $selectorVariants = ['', '', ''];
-                                        if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
+                                        if ($optionType === 'htmlUnit') {
+                                            if (isset($outputDefinition[2])) {
+                                                $selectorVariants[0] .= str_replace('{value}', strlen($value) > 0 ? $value : '0', $outputDefinition[2]);
+                                            }
+                                        } elseif ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
                                             $temp = isset($value[0]) ? json_decode($value, true) : [];
                                             if (is_array($temp)) {
                                                 foreach ($temp as $key => $_value) {
