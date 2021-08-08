@@ -1033,4 +1033,27 @@ class ServerCommands
         $app = App::get();
         return $app->googleFontsEmbed->getURL($data['name']);
     }
+
+    /**
+     * 
+     * @param object $list
+     * @param array $modifications
+     * @return void
+     */
+    static function applyListModifications($list, array $modifications)
+    {
+        $result = $list;
+        foreach ($modifications as $modification) {
+            if ($modification[0] === 'filterBy') {
+                $result = $result->filterBy($modification[1], $modification[2], isset($modification[3]) ? $modification[3] : 'equal');
+            } elseif ($modification[0] === 'sortBy') {
+                $result = $result->sortBy($modification[1], $modification[2]);
+            } elseif ($modification[0] === 'sliceProperties') {
+                $result = $result->sliceProperties($modification[1]);
+            } elseif ($modification[0] === 'slice') {
+                $result = $result->slice($modification[1]);
+            }
+        }
+        return $result;
+    }
 }
