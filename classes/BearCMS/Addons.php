@@ -18,6 +18,13 @@ use BearCMS\Internal;
 class Addons
 {
 
+
+    /**
+     * 
+     * @var array
+     */
+    private $addedAddons = [];
+
     /**
      * Register a new addon.
      * 
@@ -49,9 +56,20 @@ class Addons
                 if (is_callable($addon->initialize)) {
                     call_user_func($addon->initialize, $options);
                 }
+                $this->addedAddons[$id] = true;
             }
         }
         return $this;
     }
 
+    /**
+     * Returns TRUE if the addon specified is added.
+     * 
+     * @param string $id
+     * @return boolean
+     */
+    public function exists(string $id): bool
+    {
+        return isset($this->addedAddons[$id]);
+    }
 }
