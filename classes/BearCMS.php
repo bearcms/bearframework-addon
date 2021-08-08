@@ -726,6 +726,14 @@ class BearCMS
                             ]
                         ]);
 
+                        $groupBlogPosts->addOption($idPrefix . "BlogPostsSpacing", "htmlUnit", __("bearcms.themes.options.Posts spacing"), [
+                            "defaultValue" => "0",
+                            "cssOutput" => [
+                                ["selector", $parentSelector . " .bearcms-blog-posts-element-post:not(:first-child)", "margin-top:{value};"]
+                            ],
+                            "onHighlight" => [['cssSelector', $parentSelector . " .bearcms-blog-posts-element-post"]]
+                        ]);
+
                         $groupPost = $groupBlogPosts->addGroup(__("bearcms.themes.options.Post"));
                         $groupPost->addOption($idPrefix . "BlogPostsPostCSS", "css", '', [
                             "cssTypes" => ["cssBorder", "cssBackground", "cssShadow"],

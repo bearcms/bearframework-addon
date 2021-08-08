@@ -44,6 +44,7 @@ return [
     'bearcms.themes.options.Heading' => 'Heading',
     'bearcms.themes.options.Image gallery' => 'Image gallery',
     'bearcms.themes.options.Blog posts' => 'Blog posts',
+    'bearcms.themes.options.Posts spacing' => 'Posts spacing',
     'bearcms.themes.options.Post' => 'Post',
     'bearcms.themes.options.Title' => 'Title',
     'bearcms.themes.options.Date' => 'Date',

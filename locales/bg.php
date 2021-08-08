@@ -44,6 +44,7 @@ return [
     'bearcms.themes.options.Heading' => 'Заглавие',
     'bearcms.themes.options.Image gallery' => 'Албум със снимки',
     'bearcms.themes.options.Blog posts' => 'Статии от блога',
+    'bearcms.themes.options.Posts spacing' => 'Разстояние между статиите',
     'bearcms.themes.options.Post' => 'Статия',
     'bearcms.themes.options.Title' => 'Заглавие',
     'bearcms.themes.options.Date' => 'Дата',
