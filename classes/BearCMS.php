@@ -182,8 +182,8 @@ class BearCMS
                             $options->addOption($idPrefix . "HeadingCSS", "css", '', [
                                 "cssOutput" => [
                                     ["rule", $parentSelector . " .bearcms-heading-element-large", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
-                                    ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
-                                    ["rule", $parentSelector . " .bearcms-heading-element-small", "box-sizing:border-box;box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
+                                    ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
+                                    ["rule", $parentSelector . " .bearcms-heading-element-small", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                     ["selector", $parentSelector . " .bearcms-heading-element-large"],
                                     ["selector", $parentSelector . " .bearcms-heading-element-medium"],
                                     ["selector", $parentSelector . " .bearcms-heading-element-small"]
@@ -206,7 +206,7 @@ class BearCMS
                             $groupMedium = $group->addGroup(__("bearcms.themes.options.Medium"));
                             $groupMedium->addOption($idPrefix . "HeadingMediumCSS", "css", '', [
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
+                                    ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                     ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-medium"]
                                 ],
                                 "elementType" => "heading"
@@ -215,7 +215,7 @@ class BearCMS
                             $groupSmall = $group->addGroup(__("bearcms.themes.options.Small"));
                             $groupSmall->addOption($idPrefix . "HeadingSmallCSS", "css", '', [
                                 "cssOutput" => [
-                                    ["rule", $parentSelector . " .bearcms-heading-element-small", "box-sizing:border-box;box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
+                                    ["rule", $parentSelector . " .bearcms-heading-element-small", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                     ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-small"]
                                 ],
                                 "elementType" => "heading"
