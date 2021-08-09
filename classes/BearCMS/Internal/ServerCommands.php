@@ -313,7 +313,7 @@ class ServerCommands
         $app = App::get();
 
         $validateKey = function ($key) {
-            if (strpos($key, 'bearcms/') !== 0 && strpos($key, '.temp/bearcms/') !== 0 && strpos($key, '.recyclebin/bearcms/') !== 0) {
+            if (strpos($key, 'bearcms/') !== 0 && strpos($key, '.temp/bearcms/') !== 0 && strpos($key, '.recyclebin/bearcms/') !== 0 && strpos($key, 'bearcms-store/') !== 0 && strpos($key, '.temp/bearcms-store/') !== 0 && strpos($key, '.recyclebin/bearcms-store/') !== 0) {
                 throw new \Exception('The key ' . $key . ' is forbidden!');
             }
         };
