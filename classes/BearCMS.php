@@ -600,6 +600,10 @@ class BearCMS
                             'type' => 'checkbox'
                         ],
                         [
+                            'id' => 'showStoreCartButton',
+                            'type' => 'checkbox'
+                        ],
+                        [
                             'id' => 'homeLinkText',
                             'type' => 'textbox'
                         ],

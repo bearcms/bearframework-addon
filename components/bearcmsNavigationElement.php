@@ -35,6 +35,8 @@ if (strlen($dataResponsiveAttributes) > 0) {
     $attributes .= ' data-responsive-attributes="' . htmlentities(str_replace('=>menuType=', '=>type=', $dataResponsiveAttributes)) . '"';
 }
 
+$showStoreCartButton = false;
+
 $itemsHtml = (string) $component->innerHTML;
 if (isset($itemsHtml[0])) {
     $domDocument = new HTML5DOMDocument();
@@ -74,6 +76,9 @@ if (isset($itemsHtml[0])) {
     } elseif ($source === 'allPages' || $source === 'topPages') {
         $showHomeLink = $component->showHomeLink === 'true';
         $homeLinkText = strlen($component->homeLinkText) > 0 ? $component->homeLinkText : __('bearcms.navigation.home');
+        if ($app->bearCMS->addons->exists('bearcms/store-addon')) {
+            $showStoreCartButton = $component->showStoreCartButton === 'true';
+        }
     }
 
     $itemsType = (string) $component->itemsType === 'onlySelected' ? 'onlySelected' : 'allExcept';
@@ -150,6 +155,10 @@ if (isset($itemsHtml[0])) {
         array_unshift($optimizedPages, [0 => '/', 1 => '<a href="/">' . htmlspecialchars($homeLinkText) . '</a>']);
     }
 
+    if ($showStoreCartButton) {
+        $optimizedPages[] = [0 => null, 1 => '<a href="javascript:void(0);" onclick="bearCMS.store.openCart();"></a>', 3 => true, 'bearcms-navigation-element-item bearcms-navigation-element-item-store-cart'];
+    }
+
     if ($optimizedPages === null || empty($optimizedPages)) {
         $itemsHtml = '';
     } else {
@@ -157,13 +166,16 @@ if (isset($itemsHtml[0])) {
             $itemsHtml = [];
             foreach ($optimizedPages as $page) {
                 $pagePath = $page[0];
-                $classNames = 'bearcms-navigation-element-item';
-                if ($pagePath === $selectedPath) {
-                    $classNames .= ' bearcms-navigation-element-item-selected';
-                } elseif ($pagePath !== '/' && strpos($selectedPath, $pagePath) === 0) {
-                    $classNames .= ' bearcms-navigation-element-item-in-path';
+                $alwaysVisible = isset($page[3]) && $page[3];
+                $classNames = isset($page[4]) ? $page[4] : 'bearcms-navigation-element-item';
+                if ($pagePath !== null) {
+                    if ($pagePath === $selectedPath) {
+                        $classNames .= ' bearcms-navigation-element-item-selected';
+                    } elseif ($pagePath !== '/' && strpos($selectedPath, $pagePath) === 0) {
+                        $classNames .= ' bearcms-navigation-element-item-in-path';
+                    }
                 }
-                $itemsHtml[] = '<li class="' . $classNames . '">' . $page[1];
+                $itemsHtml[] = '<li class="' . $classNames . '"' . ($alwaysVisible ? ' data-navigation-visible="always"' : '') . '>' . $page[1];
                 if (isset($page[2])) {
                     $itemsHtml[] = $buildTree($page[2], $level + 1);
                 }
@@ -182,7 +194,11 @@ $content = '';
 if (isset($itemsHtml[0])) {
     $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';
 }
-echo '<html><head><style>';
+echo '<html><head>';
+if ($showStoreCartButton) {
+    echo '<link rel="client-packages-embed" name="-bearcms-store">';
+}
+echo '<style>';
 echo '.bearcms-navigation-element-item{word-break:break-word;}';
 echo '</style></head><body>';
 echo $content;
