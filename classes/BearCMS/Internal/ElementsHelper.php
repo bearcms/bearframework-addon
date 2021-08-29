@@ -347,7 +347,7 @@ class ElementsHelper
                     if (strlen($columnWidth) === 0) {
                         $columnWidth = (strlen($notEmptyColumnsWidthsCalc) === 0 ? '100%' : '(100% - (' . $notEmptyColumnsWidthsCalc . '))') . '/' . $emptyColumnsWidths;
                     }
-                    $columnsStyles[$i] = 'flex:1 0 auto;min-width:15px;max-width:' . ($isFixedWidth ? $columnWidth : 'calc(' . $columnWidth . ' - (' . ($editable ? 'var(--bearcms-elements-spacing)' : $spacing) . '*' . ($columnsCount - 1) . '/' . $columnsCount . '))') . ';margin-right:' . ($columnsCount > $i + 1 ? ($editable ? 'var(--bearcms-elements-spacing)' : $spacing) : '0') . ';';
+                    $columnsStyles[$i] = 'min-width:15px;' . ($isFixedWidth ? 'flex:0 0 auto;width:' . $columnWidth : 'flex:1 0 auto;max-width:calc(' . $columnWidth . ' - (' . ($editable ? 'var(--bearcms-elements-spacing)' : $spacing) . '*' . ($columnsCount - 1) . '/' . $columnsCount . '))') . ';margin-right:' . ($columnsCount > $i + 1 ? ($editable ? 'var(--bearcms-elements-spacing)' : $spacing) : '0') . ';';
                 }
 
                 $className = 'bre' . md5('columns$' . (isset($elementContainerData['id']) ? $elementContainerData['id'] : uniqid()));
@@ -359,7 +359,7 @@ class ElementsHelper
                 }
                 $styles .= '.' . $className . '[data-columns-auto-vertical="1"]{flex-direction:column;}';
                 foreach ($columnsStyles as $index => $columnStyle) {
-                    $styles .= '.' . $className . '[data-columns-auto-vertical="1"]>div:nth-child(' . ($index + 1) . '){width:100%;max-width:100%;margin-right:0;}';
+                    $styles .= '.' . $className . '[data-columns-auto-vertical="1"]>div:nth-child(' . ($index + 1) . '){flex:1 0 auto;width:100%;max-width:100%;margin-right:0;}';
                 }
                 $styles .= '.' . $className . '[data-columns-auto-vertical="1"]>div:not(:empty):not(:last-child){margin-bottom:' . ($editable ? 'var(--bearcms-elements-spacing)' : $spacing) . ';}';
                 $styles .= '.' . $className . '[data-rvr-editable][data-columns-auto-vertical="1"]>div:not(:last-child){margin-bottom:' . ($editable ? 'var(--bearcms-elements-spacing)' : $spacing) . ';}';
