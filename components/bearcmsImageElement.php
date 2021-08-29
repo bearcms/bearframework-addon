@@ -26,8 +26,8 @@ if ($component->lazyLoad === 'false') {
     $lazyLoad = 'false';
 }
 
-$width = (string) $component->width;
-$align = (string) $component->align;
+$width = (string) $component->width; // Deprecated on 14 August 2021
+$align = (string) $component->align; // Deprecated on 14 August 2021
 if ($align !== 'left' && $align !== 'center' && $align !== 'right') {
     $align = 'left';
 }
