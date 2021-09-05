@@ -131,7 +131,7 @@ class ElementsCombinations
                 'group' => 'socialButtons',
                 'media' => [
                     [
-                        'filename' => $context->dir . '/assets/elements/image-bearcms-social-buttons-1.png',
+                        'filename' => $context->dir . '/assets/elements/image-bearcms-social-buttons-1a.png',
                         'width' => 2000,
                         'height' => 800,
                     ]
@@ -159,6 +159,17 @@ class ElementsCombinations
                             ],
                             'style' => [
                                 'LinkCSS' => '{"border-top-left-radius":"3px","border-top-right-radius":"3px","border-bottom-left-radius":"3px","border-bottom-right-radius":"3px","font-family":"Arial","color":"#111111","text-decoration":"underline","background-color:hover":"#E50572","background-image:hover":"","background-position:hover":"","background-repeat:hover":"","background-attachment:hover":"","background-size:hover":"","background-color:active":"#D40269","background-image:active":"","background-position:active":"","background-repeat:active":"","background-attachment:active":"","background-size:active":"","background-color":"#F00075","background-image":"url(' . $context->dir . '/assets/elements/icon-ffffff-instagram.svg)","background-position":"center center","background-repeat":"repeat","background-attachment":"scroll","background-size":"contain","min-width":"42px","min-height":"42px"}',
+                            ],
+                        ],
+                        [
+                            'type' => 'link',
+                            'data' => [
+                                'url' => '#',
+                                'text' => '',
+                                'title' => 'YouTube',
+                            ],
+                            'style' => [
+                                'LinkCSS' => '{"border-top-left-radius":"3px","border-top-right-radius":"3px","border-bottom-left-radius":"3px","border-bottom-right-radius":"3px","font-family":"Arial","color":"#111111","text-decoration":"underline","background-color:hover":"#ed0000","background-image:hover":"","background-position:hover":"","background-repeat:hover":"","background-attachment:hover":"","background-size:hover":"","background-color:active":"#d90000","background-image:active":"","background-position:active":"","background-repeat:active":"","background-attachment:active":"","background-size:active":"","background-color":"#ff0000","background-image":"url(' . $context->dir . '/assets/elements/icon-ffffff-youtube.svg)","background-position":"center center","background-repeat":"repeat","background-attachment":"scroll","background-size":"contain","min-width":"42px","min-height":"42px"}',
                             ],
                         ],
                         [
@@ -211,7 +222,7 @@ class ElementsCombinations
                 'group' => 'socialButtons',
                 'media' => [
                     [
-                        'filename' => $context->dir . '/assets/elements/image-bearcms-social-buttons-2.png',
+                        'filename' => $context->dir . '/assets/elements/image-bearcms-social-buttons-2a.png',
                         'width' => 2000,
                         'height' => 800,
                     ]
@@ -239,6 +250,17 @@ class ElementsCombinations
                             ],
                             'style' => [
                                 'LinkCSS' => '{"font-family":"Arial","color":"#111111","text-decoration":"underline","background-color:hover":"#E50572","background-image:hover":"","background-position:hover":"","background-repeat:hover":"","background-attachment:hover":"","background-size:hover":"","background-color:active":"#D40269","background-image:active":"","background-position:active":"","background-repeat:active":"","background-attachment:active":"","background-size:active":"","min-width":"42px","min-height":"42px","border-top-left-radius":"21px","border-top-right-radius":"21px","border-bottom-left-radius":"21px","border-bottom-right-radius":"21px","background-color":"#F00075","background-image":"url(' . $context->dir . '/assets/elements/icon-ffffff-instagram.svg)","background-position":"center center","background-repeat":"no-repeat","background-attachment":"scroll","background-size":"24px 24px"}',
+                            ],
+                        ],
+                        [
+                            'type' => 'link',
+                            'data' => [
+                                'url' => '#',
+                                'text' => '',
+                                'title' => 'YouTube',
+                            ],
+                            'style' => [
+                                'LinkCSS' => '{"font-family":"Arial","color":"#111111","text-decoration":"underline","background-color:hover":"#ed0000","background-image:hover":"","background-position:hover":"","background-repeat:hover":"","background-attachment:hover":"","background-size:hover":"","background-color:active":"#d90000","background-image:active":"","background-position:active":"","background-repeat:active":"","background-attachment:active":"","background-size:active":"","min-width":"42px","min-height":"42px","border-top-left-radius":"21px","border-top-right-radius":"21px","border-bottom-left-radius":"21px","border-bottom-right-radius":"21px","background-color":"#ff0000","background-image":"url(' . $context->dir . '/assets/elements/icon-ffffff-youtube.svg)","background-position":"center center","background-repeat":"no-repeat","background-attachment":"scroll","background-size":"24px 24px"}',
                             ],
                         ],
                         [
@@ -291,7 +313,7 @@ class ElementsCombinations
                 'group' => 'socialButtons',
                 'media' => [
                     [
-                        'filename' => $context->dir . '/assets/elements/image-bearcms-social-buttons-3.png',
+                        'filename' => $context->dir . '/assets/elements/image-bearcms-social-buttons-3a.png',
                         'width' => 2000,
                         'height' => 800,
                     ]
@@ -319,6 +341,17 @@ class ElementsCombinations
                             ],
                             'style' => [
                                 'LinkCSS' => '{"font-family":"Arial","color":"#111111","text-decoration":"underline","min-width":"42px","min-height":"42px","background-color:hover":"#E5E5E5","background-image:hover":"","background-position:hover":"","background-repeat:hover":"","background-attachment:hover":"","background-size:hover":"","background-color:active":"#DDDDDD","background-image:active":"","background-position:active":"","background-repeat:active":"","background-attachment:active":"","background-size:active":"","background-color":"#EEEEEE","background-image":"url(' . $context->dir . '/assets/elements/icon-000000-instagram.svg)","background-position":"center center","background-repeat":"no-repeat","background-attachment":"scroll","background-size":"28px 28px"}',
+                            ],
+                        ],
+                        [
+                            'type' => 'link',
+                            'data' => [
+                                'url' => '#',
+                                'text' => '',
+                                'title' => 'YouTube',
+                            ],
+                            'style' => [
+                                'LinkCSS' => '{"font-family":"Arial","color":"#111111","text-decoration":"underline","min-width":"42px","min-height":"42px","background-color:hover":"#E5E5E5","background-image:hover":"","background-position:hover":"","background-repeat:hover":"","background-attachment:hover":"","background-size:hover":"","background-color:active":"#DDDDDD","background-image:active":"","background-position:active":"","background-repeat:active":"","background-attachment:active":"","background-size:active":"","background-color":"#EEEEEE","background-image":"url(' . $context->dir . '/assets/elements/icon-000000-youtube.svg)","background-position":"center center","background-repeat":"no-repeat","background-attachment":"scroll","background-size":"28px 28px"}',
                             ],
                         ],
                         [
@@ -371,7 +404,7 @@ class ElementsCombinations
                 'group' => 'socialButtons',
                 'media' => [
                     [
-                        'filename' => $context->dir . '/assets/elements/image-bearcms-social-buttons-4.png',
+                        'filename' => $context->dir . '/assets/elements/image-bearcms-social-buttons-4a.png',
                         'width' => 2000,
                         'height' => 800,
                     ]
@@ -399,6 +432,17 @@ class ElementsCombinations
                             ],
                             'style' => [
                                 'LinkCSS' => '{"font-family":"Arial","color":"#111111","text-decoration":"underline","min-width":"42px","min-height":"42px","border-top-left-radius":"21px","border-top-right-radius":"21px","border-bottom-left-radius":"21px","border-bottom-right-radius":"21px","background-image":"url(' . $context->dir . '/assets/elements/icon-000000-instagram.svg)","background-position":"center center","background-repeat":"no-repeat","background-attachment":"scroll","background-size":"28px 28px","background-color:hover":"#F00075","background-image:hover":"url(' . $context->dir . '/assets/elements/icon-ffffff-instagram.svg)","background-position:hover":"center center","background-repeat:hover":"no-repeat","background-attachment:hover":"scroll","background-size:hover":"28px 28px","background-color:active":"#E50572","background-image:active":"url(' . $context->dir . '/assets/elements/icon-ffffff-instagram.svg)","background-position:active":"center center","background-repeat:active":"no-repeat","background-attachment:active":"scroll","background-size:active":"28px 28px"}',
+                            ],
+                        ],
+                        [
+                            'type' => 'link',
+                            'data' => [
+                                'url' => '#',
+                                'text' => '',
+                                'title' => 'YouTube',
+                            ],
+                            'style' => [
+                                'LinkCSS' => '{"font-family":"Arial","color":"#111111","text-decoration":"underline","min-width":"42px","min-height":"42px","border-top-left-radius":"21px","border-top-right-radius":"21px","border-bottom-left-radius":"21px","border-bottom-right-radius":"21px","background-image":"url(' . $context->dir . '/assets/elements/icon-000000-youtube.svg)","background-position":"center center","background-repeat":"no-repeat","background-attachment":"scroll","background-size":"28px 28px","background-color:hover":"#ff0000","background-image:hover":"url(' . $context->dir . '/assets/elements/icon-ffffff-youtube.svg)","background-position:hover":"center center","background-repeat:hover":"no-repeat","background-attachment:hover":"scroll","background-size:hover":"28px 28px","background-color:active":"#ed0000","background-image:active":"url(' . $context->dir . '/assets/elements/icon-ffffff-youtube.svg)","background-position:active":"center center","background-repeat:active":"no-repeat","background-attachment:active":"scroll","background-size:active":"28px 28px"}',
                             ],
                         ],
                         [
@@ -635,6 +679,17 @@ class ElementsCombinations
                                     ],
                                     'style' => [
                                         'LinkCSS' => '{"font-family":"Arial","color":"#111111","text-decoration":"underline","min-width":"42px","min-height":"42px","background-color:hover":"#E5E5E5","background-image:hover":"","background-position:hover":"","background-repeat:hover":"","background-attachment:hover":"","background-size:hover":"","background-color:active":"#DDDDDD","background-image:active":"","background-position:active":"","background-repeat:active":"","background-attachment:active":"","background-size:active":"","background-image":"url(' . $context->dir . '/assets/elements/icon-000000-instagram.svg)","background-position":"center center","background-repeat":"no-repeat","background-attachment":"scroll","background-size":"24px 24px"}',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'link',
+                                    'data' => [
+                                        'url' => '#',
+                                        'text' => '',
+                                        'title' => 'YouTube',
+                                    ],
+                                    'style' => [
+                                        'LinkCSS' => '{"font-family":"Arial","color":"#111111","text-decoration":"underline","min-width":"42px","min-height":"42px","background-color:hover":"#E5E5E5","background-image:hover":"","background-position:hover":"","background-repeat:hover":"","background-attachment:hover":"","background-size:hover":"","background-color:active":"#DDDDDD","background-image:active":"","background-position:active":"","background-repeat:active":"","background-attachment:active":"","background-size:active":"","background-image":"url(' . $context->dir . '/assets/elements/icon-000000-youtube.svg)","background-position":"center center","background-repeat":"no-repeat","background-attachment":"scroll","background-size":"24px 24px"}',
                                     ],
                                 ],
                                 [
