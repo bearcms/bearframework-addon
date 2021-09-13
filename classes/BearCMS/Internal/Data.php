@@ -263,6 +263,12 @@ class Data
     static function sendNotification(string $type, string $status, string $authorName, string $message, int $pendingApprovalCount): void
     {
         $app = App::get();
+        $previousLocale = $app->localization->getLocale();
+        if ($previousLocale !== Config::$language) {
+            $app->localization->setLocale(Config::$language);
+        } else {
+            $previousLocale = null;
+        }
         $host = $app->request->host;
         if ($status === 'pendingApproval') {
             $title = sprintf(__('bearcms.notifications.' . $type . '.new.pendingApproval'), $host);
@@ -287,6 +293,9 @@ class Data
         $notification->clickURL = $app->urls->get() . '#admin-open-' . $type;
         $notification->type = 'bearcms-' . $type . '-new';
         $app->notifications->send('bearcms-user-administrator', $notification);
+        if ($previousLocale !== null) {
+            $app->localization->setLocale($previousLocale);
+        }
     }
 
     static function generateNewFilename(string $filename): string

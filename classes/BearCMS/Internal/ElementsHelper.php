@@ -755,6 +755,13 @@ class ElementsHelper
         }
         if ($elementType !== null) {
             if (isset(Internal\Themes::$elementsOptions[$elementType])) {
+                $app = App::get();
+                $previousLocale = $app->localization->getLocale();
+                if ($previousLocale !== Config::$language) {
+                    $app->localization->setLocale(Config::$language);
+                } else {
+                    $previousLocale = null;
+                }
                 if ($elementType === 'flexibleBox') {
                     $themeID = null;
                     $themeOptionsSelectors = null;
@@ -767,6 +774,9 @@ class ElementsHelper
                 $values = [];
                 foreach ($elementStyle as $name => $value) {
                     $values['ElementStyle' . $name] = $value;
+                }
+                if ($previousLocale !== null) {
+                    $app->localization->setLocale($previousLocale);
                 }
                 return [$options, $values, $themeID, $themeOptionsSelectors, $elementType];
             }

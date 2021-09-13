@@ -801,6 +801,12 @@ class ServerCommands
         $themes = Internal\Themes::getIDs();
         foreach ($themes as $id) {
             if ($id === $themeID) {
+                $previousLocale = $app->localization->getLocale();
+                if ($previousLocale !== Config::$language) {
+                    $app->localization->setLocale(Config::$language);
+                } else {
+                    $previousLocale = null;
+                }
                 $optionsAsArray = Internal\Themes::getOptionsAsArray($id);
                 $themeManifest = Internal\Themes::getManifest($id);
                 $themeData = $themeManifest;
@@ -813,6 +819,9 @@ class ServerCommands
                     ];
                     $themeData['options']['activeValues'] = Internal2::$data2->themes->getValues($id);
                     $themeData['options']['currentUserValues'] = Internal2::$data2->themes->getUserOptions($id, $app->bearCMS->currentUser->getID());
+                }
+                if ($previousLocale !== null) {
+                    $app->localization->setLocale($previousLocale);
                 }
                 return $themeData;
             }
@@ -877,6 +886,13 @@ class ServerCommands
      */
     static function themesList(): array
     {
+        $app = App::get();
+        $previousLocale = $app->localization->getLocale();
+        if ($previousLocale !== Config::$language) {
+            $app->localization->setLocale(Config::$language);
+        } else {
+            $previousLocale = null;
+        }
         $themes = Internal\Themes::getIDs();
         $result = [];
         foreach ($themes as $id) {
@@ -886,6 +902,9 @@ class ServerCommands
             $themeData['hasOptions'] = Internal\Themes::getOptions($id) !== null;
             $themeData['stylesCount'] = sizeof(Internal\Themes::getStyles($id));
             $result[] = $themeData;
+        }
+        if ($previousLocale !== null) {
+            $app->localization->setLocale($previousLocale);
         }
         return $result;
     }
