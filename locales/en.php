@@ -109,5 +109,6 @@ return [
     'bearcms.themes.options.floatingBox.AutoVertical' => 'Automatic vertical ordering',
     'bearcms.themes.options.columns.ElementsSpacing' => 'Elements spacing',
     'bearcms.themes.options.floatingBox.ElementsSpacing' => 'Elements spacing',
+    'bearcms.themes.options.flexibleBox.ElementsSpacing' => 'Elements spacing',
     'bearcms.themes.options.flexibleBox.RowAlignment' => 'Horizontal alignment'
 ];
