@@ -801,12 +801,7 @@ class ServerCommands
         $themes = Internal\Themes::getIDs();
         foreach ($themes as $id) {
             if ($id === $themeID) {
-                $previousLocale = $app->localization->getLocale();
-                if ($previousLocale !== Config::$language) {
-                    $app->localization->setLocale(Config::$language);
-                } else {
-                    $previousLocale = null;
-                }
+                Localization::setAdminLocale();
                 $optionsAsArray = Internal\Themes::getOptionsAsArray($id);
                 $themeManifest = Internal\Themes::getManifest($id);
                 $themeData = $themeManifest;
@@ -820,9 +815,7 @@ class ServerCommands
                     $themeData['options']['activeValues'] = Internal2::$data2->themes->getValues($id);
                     $themeData['options']['currentUserValues'] = Internal2::$data2->themes->getUserOptions($id, $app->bearCMS->currentUser->getID());
                 }
-                if ($previousLocale !== null) {
-                    $app->localization->setLocale($previousLocale);
-                }
+                Localization::restoreLocale();
                 return $themeData;
             }
         }
@@ -886,13 +879,7 @@ class ServerCommands
      */
     static function themesList(): array
     {
-        $app = App::get();
-        $previousLocale = $app->localization->getLocale();
-        if ($previousLocale !== Config::$language) {
-            $app->localization->setLocale(Config::$language);
-        } else {
-            $previousLocale = null;
-        }
+        Localization::setAdminLocale();
         $themes = Internal\Themes::getIDs();
         $result = [];
         foreach ($themes as $id) {
@@ -903,9 +890,7 @@ class ServerCommands
             $themeData['stylesCount'] = sizeof(Internal\Themes::getStyles($id));
             $result[] = $themeData;
         }
-        if ($previousLocale !== null) {
-            $app->localization->setLocale($previousLocale);
-        }
+        Localization::restoreLocale();
         return $result;
     }
 
@@ -1070,7 +1055,7 @@ class ServerCommands
             } elseif ($modification[0] === 'sliceProperties') {
                 $result = $result->sliceProperties($modification[1]);
             } elseif ($modification[0] === 'slice') {
-                $result = $result->slice($modification[1]);
+                $result = $result->slice($modification[1], $modification[2]);
             }
         }
         return $result;
