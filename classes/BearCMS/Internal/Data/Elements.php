@@ -140,20 +140,35 @@ class Elements
 
     /**
      * 
-     * @param string $elementID
-     * @return integer
+     * @param string $containerID
+     * @return array
      */
-    static function getElementUploadsSize(string $elementID): int
+    static function getContainerUploadsSizeItems(string $containerID): array
     {
-        $size = 0;
+        $result = [];
+        $elementsIDs = ElementsHelper::getContainerElementsIDs($containerID);
+        foreach ($elementsIDs as $elementID) {
+            $result = array_merge($result, self::getElementUploadsSizeItems($elementID));
+        }
+        return $result;
+    }
+
+    /**
+     * 
+     * @param string $elementID
+     * @return array
+     */
+    static function getElementUploadsSizeItems(string $elementID): array
+    {
+        $result = [];
         $elementData = ElementsHelper::getElementData($elementID);
         if ($elementData !== null) {
             if (isset($elementData['type'])) {
                 $componentName = array_search($elementData['type'], ElementsHelper::$elementsTypesCodes);
                 if ($componentName !== false) {
                     $options = ElementsHelper::$elementsTypesOptions[$componentName];
-                    if (isset($options['getUploadsSize']) && is_callable($options['getUploadsSize'])) {
-                        $size += (int) call_user_func($options['getUploadsSize'], isset($elementData['data']) ? $elementData['data'] : []);
+                    if (isset($options['getUploadsSizeItems']) && is_callable($options['getUploadsSizeItems'])) {
+                        $result = array_merge($result, call_user_func($options['getUploadsSizeItems'], isset($elementData['data']) ? $elementData['data'] : []));
                     }
                 }
             }
@@ -161,11 +176,25 @@ class Elements
                 $fileKeys = Themes::getFilesInValues($elementData['style']);
                 foreach ($fileKeys as $fileKey) {
                     if (substr($fileKey, 0, 5) === 'data:') {
-                        $dataKay = substr($fileKey, 5);
-                        $size += (int) UploadsSize::getItemSize($dataKay);
+                        $result[] = substr($fileKey, 5);
                     }
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * 
+     * @param string $elementID
+     * @return integer
+     */
+    static function getElementUploadsSize(string $elementID): int
+    {
+        $items = self::getElementUploadsSizeItems($elementID);
+        $size = 0;
+        foreach ($items as $key) {
+            $size += (int) UploadsSize::getItemSize($key);
         }
         return $size;
     }

@@ -373,13 +373,13 @@ class BearCMS
                         }
                         return $data;
                     },
-                    'getUploadsSize' => function ($data) {
+                    'getUploadsSizeItems' => function ($data) {
                         $filename = isset($data['filename']) ? $data['filename'] : '';
                         if (strlen($filename) > 0) {
                             $filename = Internal2::$data2->fixFilename($filename);
-                            return (int) UploadsSize::getItemSize(Internal\Data::filenameToDataKey($filename));
+                            return [Internal\Data::filenameToDataKey($filename)];
                         }
-                        return 0;
+                        return [];
                     },
                     'canStyle' => true
                 ]);
@@ -477,20 +477,20 @@ class BearCMS
                         }
                         return $data;
                     },
-                    'getUploadsSize' => function ($data) {
-                        $size = 0;
+                    'getUploadsSizeItems' => function ($data) {
+                        $result = [];
                         if (isset($data['files']) && is_array($data['files'])) {
                             foreach ($data['files'] as $index => $file) {
                                 if (isset($file['filename'])) {
                                     $filename = $file['filename'];
                                     if (strlen($filename) > 0) {
                                         $filename = Internal2::$data2->fixFilename($filename);
-                                        $size += (int) UploadsSize::getItemSize(Internal\Data::filenameToDataKey($filename));
+                                        $result[] = Internal\Data::filenameToDataKey($filename);
                                     }
                                 }
                             }
                         }
-                        return $size;
+                        return $result;
                     }
                 ]);
                 if ($hasThemes) {
@@ -560,13 +560,13 @@ class BearCMS
                         }
                         return $data;
                     },
-                    'getUploadsSize' => function ($data) {
+                    'getUploadsSizeItems' => function ($data) {
                         $filename = isset($data['filename']) ? $data['filename'] : '';
                         if (strlen($filename) > 0) {
                             $filename = Internal2::$data2->fixFilename($filename);
-                            return (int) UploadsSize::getItemSize(Internal\Data::filenameToDataKey($filename));
+                            return [Internal\Data::filenameToDataKey($filename)];
                         }
-                        return 0;
+                        return [];
                     }
                 ]);
                 if ($hasThemes) {
