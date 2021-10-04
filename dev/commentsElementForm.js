@@ -36,12 +36,12 @@ bearCMS.commentsElementForm = bearCMS.commentsElementForm || (function () {
                 textarea.removeAttribute('readonly');
                 textarea.style.cursor = "auto";
                 textarea.removeEventListener('click', openLogin);
-                form.querySelector('.bearcms-comments-element-send-button').style.removeProperty('display');
+                form.querySelector('[data-form-element-type="submit-button"]').style.removeProperty('display');
             } else {
                 textarea.setAttribute('readonly', true);
                 textarea.style.cursor = "pointer";
                 textarea.addEventListener('click', openLogin);
-                form.querySelector('.bearcms-comments-element-send-button').style.display = 'none';
+                form.querySelector('[data-form-element-type="submit-button"]').style.display = 'none';
             }
         };
         if (hasUser !== null) {
