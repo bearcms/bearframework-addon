@@ -807,9 +807,14 @@ class Themes
                 if ($updateData[0] === 'asset') {
                     $filename = Internal2::$data2->getRealFilename($updateData[1]);
                     if ($filename !== null) {
-                        $url = $app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
-                        $search[] = $updateKey;
-                        $replace[] = $url;
+                        try {
+                            $url = $app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
+                            $search[] = $updateKey;
+                            $replace[] = $url;
+                        } catch (\Exception $e) { // May be file in an invalid dir
+                            $search[] = $updateKey;
+                            $replace[] = '';
+                        }
                     }
                 } elseif ($updateData[0] === 'googlefont') {
                     $url = $app->googleFontsEmbed->getURL($updateData[1]);
