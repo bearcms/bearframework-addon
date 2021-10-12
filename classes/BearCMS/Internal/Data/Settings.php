@@ -18,7 +18,12 @@ use BearFramework\App;
 class Settings
 {
 
-    static function getIconForSize($preferedSize = null): ?string
+    /**
+     * 
+     * @param integer $preferedSize
+     * @return string|null
+     */
+    static function getIconForSize(int $preferedSize = null): ?string
     {
         $app = App::get();
         $settings = $app->bearCMS->data->settings->get();
@@ -43,5 +48,25 @@ class Settings
             return key($list);
         }
         return null;
+    }
+
+    /**
+     * 
+     * @param string $text
+     * @param string $language
+     * @return string
+     */
+    static function applyPageTitleFormat(string $text, string $language = ''): string
+    {
+        $app = App::get();
+        $settings = $app->bearCMS->data->settings->get();
+        $pageTitleFormat = $settings->getPageTitleFormat($language);
+        if (strlen($pageTitleFormat) > 0) {
+            if (strpos($pageTitleFormat, '{title}') !== false) {
+                return str_replace('{title}', $text, $pageTitleFormat);
+            }
+            return $text . ' | ' . $pageTitleFormat;
+        }
+        return $text;
     }
 }

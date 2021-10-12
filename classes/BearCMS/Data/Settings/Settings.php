@@ -15,6 +15,7 @@ use BearCMS\Internal2;
  * 
  * @property string|null $title
  * @property string|null $description
+ * @property string|null $pageTitleFormat
  * @property string|null $language
  * @property array $languages
  * @property string|null $icon Will be removed in v2
@@ -33,6 +34,9 @@ use BearCMS\Internal2;
 class Settings extends \BearFramework\Models\Model
 {
 
+    /**
+     *
+     */
     function __construct()
     {
         $this
@@ -42,9 +46,9 @@ class Settings extends \BearFramework\Models\Model
             ->defineProperty('description', [
                 'type' => '?string'
             ])
-            // ->defineProperty('keywords', [
-            //     'type' => '?string'
-            // ])
+            ->defineProperty('pageTitleFormat', [
+                'type' => '?string'
+            ])
             ->defineProperty('language', [
                 'type' => '?string',
                 'init' => function () {
@@ -113,7 +117,12 @@ class Settings extends \BearFramework\Models\Model
             ]);
     }
 
-    static function fromArray(array $data)
+    /**
+     * 
+     * @param array $data
+     * @return self
+     */
+    static function fromArray(array $data): self
     {
         if (!isset($data['icons'])) {
             $data['icons'] = [];
@@ -141,17 +150,43 @@ class Settings extends \BearFramework\Models\Model
         return parent::fromArray($data);
     }
 
-    public function getTitle(string $language)
+    /**
+     * 
+     * @param string $language
+     * @return string|null
+     */
+    public function getTitle(string $language): ?string
     {
         return $this->getPropertyForLanguage($language, 'title');
     }
 
-    public function getDescription(string $language)
+    /**
+     * 
+     * @param string $language
+     * @return string|null
+     */
+    public function getDescription(string $language): ?string
     {
         return $this->getPropertyForLanguage($language, 'description');
     }
 
-    private function getPropertyForLanguage(string $language, string $property)
+    /**
+     * 
+     * @param string $language
+     * @return string|null
+     */
+    public function getPageTitleFormat(string $language): ?string
+    {
+        return $this->getPropertyForLanguage($language, 'pageTitleFormat');
+    }
+
+    /**
+     * 
+     * @param string $language
+     * @param string $property
+     * @return string|null
+     */
+    private function getPropertyForLanguage(string $language, string $property): ?string
     {
         if (strlen($language) > 0 && isset($this->translations[$language], $this->translations[$language][$property])) {
             return $this->translations[$language][$property];

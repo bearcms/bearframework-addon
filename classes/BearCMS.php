@@ -13,6 +13,7 @@ use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use IvoPetkov\HTML5DOMDocument;
 use BearCMS\Internal2;
+use BearCMS\Internal\Data\Settings;
 use BearCMS\Internal\Data\UploadsSize;
 use BearCMS\Internal\ElementsCombinations;
 
@@ -1308,10 +1309,15 @@ class BearCMS
                                 if (!$hasSlash) {
                                     return new App\Response\PermanentRedirect($this->app->request->base . $this->app->request->path . '/');
                                 }
+                                $applyContext = $this->makeApplyContext();
+                                if (strlen($blogPost->language) > 0) {
+                                    $applyContext->language = $blogPost->language;
+                                }
                                 $content = '<html><head>';
                                 $title = isset($blogPost->titleTagContent) ? trim($blogPost->titleTagContent) : '';
                                 if (!isset($title[0])) {
                                     $title = isset($blogPost->title) ? trim($blogPost->title) : '';
+                                    $title = Settings::applyPageTitleFormat($title, (string)$applyContext->language);
                                 }
                                 $description = isset($blogPost->descriptionTagContent) ? trim($blogPost->descriptionTagContent) : '';
                                 $keywords = isset($blogPost->keywordsTagContent) ? trim($blogPost->keywordsTagContent) : '';
@@ -1367,10 +1373,6 @@ class BearCMS
                                 if ($this->hasEventListeners('internalMakeBlogPostPageResponse')) {
                                     $eventDetails = new \BearCMS\Internal\MakeBlogPostPageResponseEventDetails($response, $blogPostID);
                                     $this->dispatchEvent('internalMakeBlogPostPageResponse', $eventDetails);
-                                }
-                                $applyContext = $this->makeApplyContext();
-                                if (strlen($blogPost->language) > 0) {
-                                    $applyContext->language = $blogPost->language;
                                 }
                                 $this->apply($response, $applyContext);
                                 if ($blogPost->status !== 'published') {
@@ -1555,17 +1557,27 @@ class BearCMS
                             if ($response !== null) {
                                 return $response;
                             }
+
+                            $settings = $this->data->settings->get();
+                            $applyContext = $this->makeApplyContext();
+                            $potentialLanguage = $this->app->request->path->getSegment(0);
+                            if (strlen($potentialLanguage) > 0 && array_search($potentialLanguage, $settings->languages) !== false) {
+                                $applyContext->language = $potentialLanguage;
+                            }
+
                             $title = '';
                             $description = '';
                             $keywords = '';
                             $status = null;
                             $found = false;
-                            $settings = $this->data->settings->get();
                             $page = $this->data->pages->get($pageID);
                             if ($page !== null) {
                                 $title = isset($page->titleTagContent) ? trim($page->titleTagContent) : '';
                                 if (!isset($title[0])) {
                                     $title = isset($page->name) ? trim($page->name) : '';
+                                    if ($pageID !== 'home') {
+                                        $title = Settings::applyPageTitleFormat($title, (string)$applyContext->language);
+                                    }
                                 }
                                 $description = isset($page->descriptionTagContent) ? trim($page->descriptionTagContent) : '';
                                 $keywords = isset($page->keywordsTagContent) ? trim($page->keywordsTagContent) : '';
@@ -1603,11 +1615,6 @@ class BearCMS
                                     $this->dispatchEvent('internalMakePageResponse', $eventDetails);
                                 }
 
-                                $applyContext = $this->makeApplyContext();
-                                $potentialLanguage = $this->app->request->path->getSegment(0);
-                                if (strlen($potentialLanguage) > 0 && array_search($potentialLanguage, $settings->languages) !== false) {
-                                    $applyContext->language = $potentialLanguage;
-                                }
                                 $this->apply($response, $applyContext);
                                 if ($status !== 'public') {
                                     $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
