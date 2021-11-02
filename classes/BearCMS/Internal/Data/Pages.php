@@ -160,4 +160,34 @@ class Pages
         }
         return $page;
     }
+
+    static function onCreatePage(string $pageID): void
+    {
+        $app = App::get();
+        $page = $app->bearCMS->data->pages->get($pageID);
+        if ($page === null) {
+            return;
+        }
+        $containerID = 'bearcms-page-' . $pageID;
+        $containerData = ElementsHelper::getContainerData($containerID);
+        if (empty($containerData['elements'])) {
+            $containerData['id'] = $containerID;
+
+            $elementID = ElementsHelper::generateElementID('np');
+            $containerData['elements'][] = ['id' => $elementID];
+
+            $elementData = [
+                'id' => $elementID,
+                'type' => 'heading',
+                'data' => [
+                    'text' => $page->name,
+                    'size' => 'large'
+                ],
+                'lastChangeTime' => time()
+            ];
+
+            $app->data->setValue('bearcms/elements/element/' . md5($elementData['id']) . '.json', json_encode($elementData));
+            $app->data->setValue('bearcms/elements/container/' . md5($containerData['id']) . '.json', json_encode($containerData));
+        }
+    }
 }

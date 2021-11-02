@@ -685,6 +685,16 @@ class ServerCommands
     /**
      * 
      * @param array $data
+     * @return void
+     */
+    static function onCreatePage(array $data): void
+    {
+        Internal\Data\Pages::onCreatePage($data['id']);
+    }
+
+    /**
+     * 
+     * @param array $data
      * @param \ArrayObject $response
      * @return void
      */

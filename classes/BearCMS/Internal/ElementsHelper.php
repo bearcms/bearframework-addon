@@ -1251,4 +1251,21 @@ class ElementsHelper
         }
         return $result;
     }
+
+    /**
+     * 
+     * @param string $suffix
+     * @return string
+     */
+    static function generateElementID(string $suffix): string
+    {
+        for ($i = 0; $i < 100; $i++) {
+            $id = base_convert(md5(uniqid()), 16, 36) . $suffix;
+            $elementsRawData = ElementsHelper::getElementsRawData([$id]);
+            if ($elementsRawData[$id] === null) {
+                return $id;
+            }
+        }
+        throw new \Exception('Too much retries!');
+    }
 }

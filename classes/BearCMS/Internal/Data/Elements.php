@@ -69,25 +69,15 @@ class Elements
     static function copyContainer(string $sourceContainerID, string $targetContainerID): void
     {
         $app = App::get();
-        $generateItemID = function () {
-            for ($i = 0; $i < 100; $i++) {
-                $id = base_convert(md5(uniqid()), 16, 36) . 'cc';
-                $elementsRawData = ElementsHelper::getElementsRawData([$id]);
-                if ($elementsRawData[$id] === null) {
-                    return $id;
-                }
-            }
-            throw new \Exception('Too much retries');
-        };
         $containerData = ElementsHelper::getContainerData($sourceContainerID);
         $newContainerData = $containerData;
         $newContainerData['id'] = $targetContainerID;
         $copiedElementIDs = [];
-        $updateElementIDs = function ($elements) use (&$updateElementIDs, &$copiedElementIDs, $generateItemID) {
+        $updateElementIDs = function ($elements) use (&$updateElementIDs, &$copiedElementIDs) {
             foreach ($elements as $index => $element) {
                 if (isset($element['id'])) {
                     $oldItemID = $element['id'];
-                    $newItemID = $generateItemID();
+                    $newItemID = ElementsHelper::generateElementID('cc');
                     $elements[$index]['id'] = $newItemID;
                     $structuralElementData = ElementsHelper::getUpdatedStructuralElementData($element);
                     if ($structuralElementData !== null) {
