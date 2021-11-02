@@ -1281,8 +1281,8 @@ class BearCMS
             $this->app->routes
                 ->add([Config::$blogPagesPathPrefix . '?', Config::$blogPagesPathPrefix . '?/'], [
                     [$this, 'disabledCheck'],
-                    function () {
-                        $slug = (string) $this->app->request->path->getSegment(1);
+                    function (App\Request $request) {
+                        $slug = (string) $request->path->getSegment(1);
                         $slugsList = Internal\Data\BlogPosts::getSlugsList('published');
                         $blogPostID = array_search($slug, $slugsList);
                         if ($blogPostID === false && substr($slug, 0, 1) === '-') {
@@ -1304,10 +1304,10 @@ class BearCMS
                         if ($blogPostID !== false) {
                             $blogPost = $this->data->blogPosts->get($blogPostID);
                             if ($blogPost !== null) {
-                                $path = $this->app->request->path->get();
+                                $path = $request->path->get();
                                 $hasSlash = substr($path, -1) === '/';
                                 if (!$hasSlash) {
-                                    return new App\Response\PermanentRedirect($this->app->request->base . $this->app->request->path . '/');
+                                    return new App\Response\PermanentRedirect($request->getURL() . '/');
                                 }
                                 $applyContext = $this->makeApplyContext();
                                 if (strlen($blogPost->language) > 0) {
@@ -1532,8 +1532,8 @@ class BearCMS
             $this->app->routes
                 ->add('*', [
                     [$this, 'disabledCheck'],
-                    function () {
-                        $path = $this->app->request->path->get();
+                    function (App\Request $request) {
+                        $path = $request->path->get();
                         if ($path === '/') {
                             if (Config::$autoCreateHomePage) {
                                 $pageID = 'home';
@@ -1548,7 +1548,7 @@ class BearCMS
                             } else {
                                 $pageID = array_search($path . '/', $pathsList);
                                 if ($pageID !== false) {
-                                    return new App\Response\PermanentRedirect($this->app->request->base . $this->app->request->path . '/');
+                                    return new App\Response\PermanentRedirect($request->getURL() . '/');
                                 }
                             }
                         }
@@ -1560,7 +1560,7 @@ class BearCMS
 
                             $settings = $this->data->settings->get();
                             $applyContext = $this->makeApplyContext();
-                            $potentialLanguage = $this->app->request->path->getSegment(0);
+                            $potentialLanguage = $request->path->getSegment(0);
                             if (strlen($potentialLanguage) > 0 && array_search($potentialLanguage, $settings->languages) !== false) {
                                 $applyContext->language = $potentialLanguage;
                             }
