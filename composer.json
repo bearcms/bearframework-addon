@@ -25,7 +25,7 @@
         "ivopetkov/navigation-menu-bearframework-addon": "1.*",
         "ivopetkov/users-bearframework-addon": "1.*",
         "ivopetkov/server-requests-bearframework-addon": "1.*",
-        "ivopetkov/video-embed": "0.3.*,0.4.*",
+        "ivopetkov/video-embed": "0.3.*|0.4.*",
         "ivopetkov/html5-dom-document-php": "2.*",
         "ivopetkov/data-object": "1.*",
         "ivopetkov/form-bearframework-addon": "1.*",
