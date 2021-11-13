@@ -322,7 +322,7 @@ class Themes
         if (!isset(self::$cache[$localCacheKey])) {
             $app = App::get();
             $cacheKey = Internal\Themes::getCacheItemKey($id, $userID);
-            $envKey = md5(serialize(array_keys(self::$elementsOptions)) . serialize(array_keys(self::$pagesOptions)) . '-v6');
+            $envKey = md5(serialize(array_keys(self::$elementsOptions)) . serialize(array_keys(self::$pagesOptions)) . '-v7');
             $useCache = $cacheKey !== null;
             $resultData = null;
             if ($useCache) {
@@ -765,7 +765,8 @@ class Themes
                     $updateKey = md5('googlefont') . md5($googleFontName);
                     if (!isset($updates[$updateKey])) {
                         $updates[$updateKey] = ['googlefont', $googleFontName];
-                        $linkTags[] = '<link href="' . htmlentities($updateKey) . '" rel="stylesheet" type="text/css">';
+                        //$linkTags[] = '<link href="' . htmlentities($updateKey) . '" rel="stylesheet">';
+                        $linkTags[] = '<link href="' . htmlentities($updateKey) . '" rel="preload" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"><noscript><link href="' . htmlentities($updateKey) . '" rel="stylesheet"></noscript>';
                     }
                 }
             }
