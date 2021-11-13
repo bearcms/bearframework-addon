@@ -62,7 +62,7 @@ if ($outputType === 'full-html') {
         foreach ($files as $file) {
             $fixedFilename = $fixFilename($file->getAttribute('filename'));
             if ($fixedFilename !== null) {
-                $content .= '<file class="bearcms-image-gallery-element-image" filename="' . htmlentities($fixedFilename) . '"/>';
+                $content .= '<file class="bearcms-image-gallery-element-image" filename="' . htmlentities($fixedFilename) . '" quality="' . htmlentities($file->getAttribute('quality')) . '"/>';
             }
         }
     }
@@ -73,7 +73,12 @@ if ($outputType === 'full-html') {
         foreach ($files as $file) {
             $fixedFilename = $fixFilename($file->getAttribute('filename'));
             if ($fixedFilename !== null) {
-                $content .= '<img src="' . htmlentities($app->assets->getURL($fixedFilename, ['cacheMaxAge' => 999999999])) . '">';
+                $assetOptions = ['cacheMaxAge' => 999999999];
+                $quality = $file->getAttribute('quality');
+                if (strlen($quality) > 0) {
+                    $assetOptions['quality'] = (int)$quality;
+                }
+                $content .= '<img src="' . htmlentities($app->assets->getURL($fixedFilename, $assetOptions)) . '">';
             }
         }
     }
