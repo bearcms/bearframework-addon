@@ -601,6 +601,10 @@ class BearCMS
                             'type' => 'checkbox'
                         ],
                         [
+                            'id' => 'showSearchButton',
+                            'type' => 'checkbox'
+                        ],
+                        [
                             'id' => 'showStoreCartButton',
                             'type' => 'checkbox'
                         ],
@@ -2072,15 +2076,11 @@ class BearCMS
         $icon = $settings->icon;
         if (isset($icon[0])) {
             $baseUrl = $this->app->urls->get();
-            $html .= '<link rel="apple-touch-icon" sizes="180x180" href="' . htmlentities($baseUrl . '-link-rel-icon-180') . '">';
-            $html .= '<link rel="apple-touch-icon" sizes="64x64" href="' . htmlentities($baseUrl . '-link-rel-icon-64') . '">';
-            $html .= '<link rel="apple-touch-icon" sizes="32x32" href="' . htmlentities($baseUrl . '-link-rel-icon-32') . '">';
-            $html .= '<link rel="icon" sizes="192x192" href="' . htmlentities($baseUrl . '-link-rel-icon-192') . '">';
-            $html .= '<link rel="icon" sizes="64x64" href="' . htmlentities($baseUrl . '-link-rel-icon-64') . '">';
-            $html .= '<link rel="icon" sizes="32x32" href="' . htmlentities($baseUrl . '-link-rel-icon-32') . '">';
+            $html .= '<link rel="icon" href="' . htmlentities($baseUrl . '-link-rel-icon-32') . '">';
+            $html .= '<link rel="apple-touch-icon" href="' . htmlentities($baseUrl . '-link-rel-icon-192') . '">';
         } else if ($currentUserExists) {
-            $html .= '<link rel="apple-touch-icon" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
             $html .= '<link rel="icon" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            $html .= '<link rel="apple-touch-icon" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
         }
         if (empty($settings->allowSearchEngines)) {
             $html .= '<meta name="robots" content="noindex">';
