@@ -24,6 +24,7 @@ BearFramework\Addons::register('bearcms/bearframework-addon', __DIR__, [
         'ivopetkov/notifications-bearframework-addon',
         'ivopetkov/client-packages-bearframework-addon',
         'ivopetkov/form-elements-bearframework-addon',
-        'ivopetkov/google-fonts-embed-bearframework-addon'
+        'ivopetkov/google-fonts-embed-bearframework-addon',
+        'ivopetkov/responsively-lazy-bearframework-addon'
     ]
 ]);

@@ -145,7 +145,7 @@ if (strlen($component->url) > 0) {
             }
             $addResponsivelyLazy = true;
             $content = '<div style="position:absolute;top:0;left:0;width:100%;height:100%;">' . $html . '</div>';
-            $content = '<div class="responsively-lazy" style="padding-bottom:' . (1 / $videoAspectRatio * 100) . '%;" data-lazycontent="' . htmlentities($content) . '"></div>';
+            $content = '<div data-responsively-lazy-type="html" data-responsively-lazy="' . htmlentities($content) . '" style="position:relative;height:0;padding-bottom:' . (1 / $videoAspectRatio * 100) . '%"></div>';
             $content = '<div class="bearcms-video-element">' . $innerContainerStartTag . $content . $innerContainerEndTag . '</div>';
         } else {
             // todo update video width
@@ -178,7 +178,7 @@ if ($outputType === 'full-html') {
     }
     echo '</style>';
     if ($addResponsivelyLazy) {
-        echo '<head><link rel="client-packages-embed" name="-bearcms-responsively-lazy"></head>';
+        echo '<head><link rel="client-packages-embed" name="responsivelyLazy"></head>';
     }
 }
 echo '<body>';
