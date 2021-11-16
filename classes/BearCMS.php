@@ -16,6 +16,7 @@ use BearCMS\Internal2;
 use BearCMS\Internal\Data\Settings;
 use BearCMS\Internal\Data\UploadsSize;
 use BearCMS\Internal\ElementsCombinations;
+use BearCMS\Internal\MetaOGImages;
 
 /**
  * 
@@ -1170,81 +1171,8 @@ class BearCMS
             ->add(['/-meta-og-image', '*/-meta-og-image'], [
                 [$this, 'disabledCheck'],
                 function (App\Request $request) {
-                    $path = (string) $request->path;
-                    if (strpos($path, '-meta-og-image') !== false) {
-                        $path = substr($path, 0, -strlen('-meta-og-image'));
-                    }
-
-                    $iconCache = null;
-                    $getIconFilename = function () use (&$iconCache) {
-                        if ($iconCache === null) {
-                            $iconCache = [\BearCMS\Internal\Data\Settings::getIconForSize(2000)];
-                        }
-                        return $iconCache[0];
-                    };
-
-                    $filename = null;
-
-                    $containerID = null;
-                    if (strpos($path, Config::$blogPagesPathPrefix) === 0) {
-                        $slug = rtrim(substr($path, strlen(Config::$blogPagesPathPrefix)), '/');
-                        $blogPosts = $this->data->blogPosts->getList();
-                        foreach ($blogPosts as $blogPost) {
-                            if ($blogPost->status === 'published' && $blogPost->slug === $slug) {
-                                if (strlen($blogPost->image) > 0) {
-                                    $filename = $blogPost->image;
-                                    break;
-                                }
-                                $containerID = 'bearcms-blogpost-' . $blogPost->id;
-                                break;
-                            }
-                        }
-                    } else {
-                        $pages = $this->data->pages->getList();
-                        foreach ($pages as $page) {
-                            if ($page->status === 'public' && $page->path === $path) {
-                                if (strlen($page->image) > 0) {
-                                    $filename = $page->image;
-                                    break;
-                                }
-                                $containerID = 'bearcms-page-' . $page->id;
-                                break;
-                            }
-                        }
-                        if ($path === '/' && $filename === null) {
-                            $iconFilename = $getIconFilename();
-                            if ($iconFilename !== null) {
-                                $filename = $iconFilename;
-                            } else {
-                                $containerID = 'bearcms-page-home';
-                            }
-                        }
-                    }
-
-                    $imageURL = null;
-
-                    if ($filename !== null) {
-                        $imageURL = $this->app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
-                    } else {
-                        if ($containerID !== null) {
-                            $content = $this->app->components->process('<component src="bearcms-elements" id="' . htmlentities($containerID) . '"/>');
-                            if (strpos($content, '<img') !== false) {
-                                $html5Document = new HTML5DOMDocument();
-                                $html5Document->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
-                                $imageElement = $html5Document->querySelector('img');
-                                if ($imageElement !== null) {
-                                    $imageURL = $imageElement->getAttribute('src');
-                                }
-                            }
-                        }
-                        if ($imageURL === null) { // use the website icon if no image found on page
-                            $filename = $getIconFilename();
-                            if ($filename !== null) {
-                                $imageURL = $this->app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
-                            }
-                        }
-                    }
-
+                    $path = substr((string) $request->path, 0, -strlen('-meta-og-image'));
+                    $imageURL = MetaOGImages::getImage($path);
                     if ($imageURL !== null) {
                         $response = new App\Response\TemporaryRedirect($imageURL);
                         $response->headers->set($response->headers->make('Cache-Control', 'public, max-age=3600'));
