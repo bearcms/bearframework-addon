@@ -1221,10 +1221,10 @@ class BearCMS
                         }
                     }
 
-                    $imageUrl = null;
+                    $imageURL = null;
 
                     if ($filename !== null) {
-                        $imageUrl = $this->app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
+                        $imageURL = $this->app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
                     } else {
                         if ($containerID !== null) {
                             $content = $this->app->components->process('<component src="bearcms-elements" id="' . htmlentities($containerID) . '"/>');
@@ -1233,20 +1233,20 @@ class BearCMS
                                 $html5Document->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
                                 $imageElement = $html5Document->querySelector('img');
                                 if ($imageElement !== null) {
-                                    $imageUrl = $imageElement->getAttribute('src');
+                                    $imageURL = $imageElement->getAttribute('src');
                                 }
                             }
                         }
-                        if ($imageUrl === null) { // use the website icon if no image found on page
+                        if ($imageURL === null) { // use the website icon if no image found on page
                             $filename = $getIconFilename();
                             if ($filename !== null) {
-                                $imageUrl = $this->app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
+                                $imageURL = $this->app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
                             }
                         }
                     }
 
-                    if ($imageUrl !== null) {
-                        $response = new App\Response\TemporaryRedirect($imageUrl);
+                    if ($imageURL !== null) {
+                        $response = new App\Response\TemporaryRedirect($imageURL);
                         $response->headers->set($response->headers->make('Cache-Control', 'public, max-age=3600'));
                         return $response;
                     }
