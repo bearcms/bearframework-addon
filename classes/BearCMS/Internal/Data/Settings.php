@@ -66,6 +66,9 @@ class Settings
      */
     static function updateIconsDetails()
     {
+        if (self::$disableUpdateIconsDetails) {
+            return;
+        }
         $app = App::get();
         $settings = $app->bearCMS->data->settings->get();
         $hasChange = false;
