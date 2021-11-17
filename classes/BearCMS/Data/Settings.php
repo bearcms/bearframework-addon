@@ -10,6 +10,7 @@
 namespace BearCMS\Data;
 
 use BearCMS\Internal;
+use BearFramework\App;
 
 /**
  * 
@@ -42,5 +43,20 @@ class Settings
             Internal\Data::$cache[$cacheKey] = \BearCMS\Data\Settings\Settings::fromArray($data);
         }
         return Internal\Data::$cache[$cacheKey];
+    }
+
+    /**
+     * 
+     * @param \BearCMS\Data\Settings\Settings $settings
+     * @return void
+     */
+    public function set(\BearCMS\Data\Settings\Settings $settings): void
+    {
+        $app = App::get();
+        $app->data->setValue('bearcms/settings.json', json_encode($settings->toArray()));
+        $cacheKey = 'settings';
+        if (isset(Internal\Data::$cache[$cacheKey])) {
+            unset(Internal\Data::$cache[$cacheKey]);
+        }
     }
 }
