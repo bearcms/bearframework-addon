@@ -10,6 +10,7 @@
 namespace BearCMS\Internal;
 
 use BearCMS\Internal\Data\Elements;
+use BearCMS\Internal\Data\Settings;
 use BearCMS\Internal\Data\UploadsSize;
 use BearFramework\App;
 
@@ -141,5 +142,15 @@ class Maintenance
         }
 
         return $result;
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    static function optimizeSettings()
+    {
+        // Caches icons' details (width and height) into the settings data item.
+        Settings::updateIconsDetails();
     }
 }

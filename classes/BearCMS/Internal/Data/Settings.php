@@ -20,6 +20,12 @@ class Settings
 
     /**
      * 
+     * @var boolean
+     */
+    private static $disableUpdateIconsDetails = false;
+
+    /**
+     * 
      * @param integer $preferedSize
      * @return string|null
      */
@@ -31,8 +37,12 @@ class Settings
             $sizes = [];
             foreach ($settings->icons as $icon) {
                 $filename = $icon['filename'];
-                $details = $app->assets->getDetails($filename, ['width', 'height']);
-                $sizes[$filename] = [$details['width'], $details['height']];
+                if (isset($icon['width'], $icon['height'])) {
+                    $sizes[$filename] = [$icon['width'], $icon['height']];
+                } else {
+                    $details = $app->assets->getDetails($filename, ['width', 'height']);
+                    $sizes[$filename] = [$details['width'], $details['height']];
+                }
             }
             $list = [];
             foreach ($sizes as $filename => $size) {
@@ -48,6 +58,34 @@ class Settings
             return key($list);
         }
         return null;
+    }
+
+    /**
+     * Improves performance if the details are saved in the settings
+     * @return void
+     */
+    static function updateIconsDetails()
+    {
+        $app = App::get();
+        $settings = $app->bearCMS->data->settings->get();
+        $hasChange = false;
+        if (!empty($settings->icons)) {
+            foreach ($settings->icons as $index => $icon) {
+                if (!isset($icon['width']) || !isset($icon['height'])) {
+                    $details = $app->assets->getDetails($icon['filename'], ['width', 'height']);
+                    $icon['width'] = $details['width'] !== null ? $details['width'] : 0;
+                    $icon['height'] = $details['height'] !== null ? $details['height'] : 0;
+                    $settings->icons[$index] = $icon;
+                    $hasChange = true;
+                }
+            }
+        }
+        if ($hasChange) {
+            $app->data->duplicate('bearcms/settings.json', '.recyclebin/bearcms/update-' . str_replace('.', '-', microtime(true)) . '-settings.json');
+            self::$disableUpdateIconsDetails = true;
+            $app->bearCMS->data->settings->set($settings);
+            self::$disableUpdateIconsDetails = false;
+        }
     }
 
     /**

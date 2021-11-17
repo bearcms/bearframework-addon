@@ -9,6 +9,7 @@
 
 namespace BearCMS\Internal;
 
+use BearCMS\Internal\Data\Settings;
 use BearFramework\App;
 
 /**
@@ -247,6 +248,9 @@ class Data
                 foreach ($dataKeysToDelete as $dataKeyToDelete) {
                     $app->data->delete($dataKeyToDelete);
                 }
+            }
+            if ($key === 'bearcms/settings.json') {
+                Settings::updateIconsDetails();
             }
         }
     }
