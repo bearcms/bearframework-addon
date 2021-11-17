@@ -344,11 +344,11 @@ class BearCMS
                             'type' => 'textbox'
                         ],
                         [
-                            'id' => 'width',
+                            'id' => 'width', // Deprecated on 14 August 2021
                             'type' => 'textbox'
                         ],
                         [
-                            'id' => 'align',
+                            'id' => 'align', // Deprecated on 14 August 2021
                             'type' => 'list',
                             'defaultValue' => 'left',
                             'options' => [
@@ -382,6 +382,28 @@ class BearCMS
                             return [Internal\Data::filenameToDataKey($filename)];
                         }
                         return [];
+                    },
+                    'optimizeData' => function ($data) {
+                        $hasChange = false;
+                        $filename = isset($data['filename']) ? $data['filename'] : '';
+                        if (strlen($filename) > 0) {
+                            $filename = Internal2::$data2->fixFilename($filename);
+                            if (strpos($filename, 'appdata://') === 0) {
+                                if ($filename !== $data['filename']) {
+                                    $data['filename'] = $filename;
+                                    $hasChange = true;
+                                }
+                                if (!isset($data['fileWidth']) || !isset($data['fileHeight'])) {
+                                    $details = $this->app->assets->getDetails($filename, ['width', 'height']);
+                                    $data['fileWidth'] = $details['width'] !== null ? $details['width'] : 0;
+                                    $data['fileHeight'] = $details['height'] !== null ? $details['height'] : 0;
+                                    $hasChange = true;
+                                }
+                            }
+                        }
+                        if ($hasChange) {
+                            return $data;
+                        }
                     },
                     'canStyle' => true
                 ]);
@@ -493,7 +515,36 @@ class BearCMS
                             }
                         }
                         return $result;
-                    }
+                    },
+                    'optimizeData' => function ($data) {
+                        $hasChange = false;
+                        if (isset($data['files']) && is_array($data['files'])) {
+                            foreach ($data['files'] as $index => $file) {
+                                if (isset($file['filename'])) {
+                                    $filename = $file['filename'];
+                                    if (strlen($filename) > 0) {
+                                        $filename = Internal2::$data2->fixFilename($filename);
+                                        if (strpos($filename, 'appdata://') === 0) {
+                                            if ($filename !== $file['filename']) {
+                                                $file['filename'] = $filename;
+                                                $hasChange = true;
+                                            }
+                                            if (!isset($file['width']) || !isset($file['height'])) {
+                                                $details = $this->app->assets->getDetails($filename, ['width', 'height']);
+                                                $file['width'] = $details['width'] !== null ? $details['width'] : 0;
+                                                $file['height'] = $details['height'] !== null ? $details['height'] : 0;
+                                                $hasChange = true;
+                                            }
+                                            $data['files'][$index] = $file;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if ($hasChange) {
+                            return $data;
+                        }
+                    },
                 ]);
                 if ($hasThemes) {
                     Internal\Themes::$elementsOptions['imageGallery'] = function ($options, $idPrefix, $parentSelector) {

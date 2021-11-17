@@ -21,6 +21,18 @@ use BearFramework\App;
 class Elements
 {
 
+    /**
+     * 
+     * @var array
+     */
+    private static $disableOptimizeElementData = [];
+
+    /**
+     * 
+     * @param string $sourceElementID
+     * @param string $targetElementID
+     * @return void
+     */
     static function copyElement(string $sourceElementID, string $targetElementID): void
     {
         $app = App::get();
@@ -187,5 +199,45 @@ class Elements
             $size += (int) UploadsSize::getItemSize($key);
         }
         return $size;
+    }
+
+    /**
+     * Optimizes the element's data
+     * 
+     * @return void
+     */
+    static function optimizeElementData(string $dataKey)
+    {
+        if (strpos($dataKey, 'bearcms/elements/element/') !== 0) {
+            return;
+        }
+        if (isset(self::$disableOptimizeElementData[$dataKey])) {
+            return;
+        }
+        $app = App::get();
+        $rawData = $app->data->getValue($dataKey);
+        if ($rawData === null) {
+            return;
+        }
+        $data = ElementsHelper::decodeElementRawData($rawData);
+        if ($data === null) {
+            return;
+        }
+        if (isset($data['type'], $data['data'])) {
+            $componentName = array_search($data['type'], ElementsHelper::$elementsTypesCodes);
+            if ($componentName !== false) {
+                $options = ElementsHelper::$elementsTypesOptions[$componentName];
+                if (isset($options['optimizeData']) && is_callable($options['optimizeData'])) {
+                    $result = call_user_func($options['optimizeData'], $data['data']);
+                    if (is_array($result)) {
+                        $data['data'] = $result;
+                        $app->data->duplicate($dataKey, '.recyclebin/bearcms/update-' . str_replace('.', '-', microtime(true)) . '-' . str_replace('/', '-', $dataKey));
+                        self::$disableOptimizeElementData[$dataKey] = true;
+                        $app->data->setValue($dataKey, json_encode($data));
+                        unset(self::$disableOptimizeElementData[$dataKey]);
+                    }
+                }
+            }
+        }
     }
 }

@@ -93,7 +93,6 @@ class Data2
      */
     public function getRealFilename(string $filename): ?string
     {
-        $app = App::get();
         if (substr($filename, 0, 10) === 'appdata://') {
             return $filename;
         } elseif (substr($filename, 0, 5) === 'data:') {

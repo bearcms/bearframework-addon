@@ -9,6 +9,7 @@
 
 namespace BearCMS\Internal;
 
+use BearCMS\Internal\Data\Elements;
 use BearCMS\Internal\Data\Settings;
 use BearFramework\App;
 
@@ -251,6 +252,9 @@ class Data
             }
             if ($key === 'bearcms/settings.json') {
                 Settings::updateIconsDetails();
+            }
+            if (strpos($key, 'bearcms/elements/element/') === 0) {
+                Elements::optimizeElementData($key);
             }
         }
     }
