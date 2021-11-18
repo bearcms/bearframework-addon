@@ -30,7 +30,6 @@ $fixFilename = function ($filename): ?string {
     }
     return null;
 };
-
 $content = '';
 if ($outputType === 'full-html') {
     $content = '<div class="bearcms-image-gallery-element">';
@@ -62,7 +61,7 @@ if ($outputType === 'full-html') {
         foreach ($files as $file) {
             $fixedFilename = $fixFilename($file->getAttribute('filename'));
             if ($fixedFilename !== null) {
-                $content .= '<file class="bearcms-image-gallery-element-image" filename="' . htmlentities($fixedFilename) . '" quality="' . htmlentities($file->getAttribute('quality')) . '"/>';
+                $content .= '<file class="bearcms-image-gallery-element-image" filename="' . htmlentities($fixedFilename) . '" quality="' . htmlentities($file->getAttribute('quality')) . '" fileWidth="' . htmlentities($file->getAttribute('filewidth')) . '" fileHeight="' . htmlentities($file->getAttribute('fileheight')) . '"/>';
             }
         }
     }
