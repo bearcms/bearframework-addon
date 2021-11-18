@@ -148,9 +148,34 @@ class Maintenance
      * 
      * @return void
      */
-    static function optimizeSettings()
+    static function optimizeSettings(): void
     {
         // Caches icons' details (width and height) into the settings data item.
         Settings::updateIconsDetails();
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    static function optimizeElements(): void
+    {
+        $app = App::get();
+        $list = $app->data->getList()
+            ->filterBy('key', 'bearcms/elements/element/', 'startWith')
+            ->sliceProperties(['key']);
+        foreach ($list as $item) {
+            Elements::optimizeElementData($item->key);
+        }
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    static function optimizeData(): void
+    {
+        self::optimizeSettings();
+        self::optimizeElements();
     }
 }
