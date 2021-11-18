@@ -318,7 +318,7 @@ for ($i = 0; $i < ($hasFooter ? 2 : 1); $i++) {
 }
 echo '</style>';
 if ($hasNavigation) {
-    echo '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">';
+    echo '<link rel="client-packages-embed" name="responsiveAttributes">';
 }
 echo '</head>';
 echo '<body><div class="template-container">';

@@ -80,7 +80,7 @@ bearCMS.commentsElementForm = bearCMS.commentsElementForm || (function () {
         var result = event.result;
         if (typeof result.success !== 'undefined') {
             form.querySelector('[name="cfcomment"]').value = '';
-            clientPackages.get('-bearcms-html5domdocument').then(function (html5DOMDocument) {
+            clientPackages.get('html5DOMDocument').then(function (html5DOMDocument) {
                 var listElement = document.getElementById(result.listElementID);
                 html5DOMDocument.insert(result.listContent, [listElement, 'outerHTML']);
             });

@@ -1125,7 +1125,7 @@ class BearCMS
 
             $this->app->clientPackages
                 ->add('-bearcms-elements-lazy-load', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
-                    $package->addJSFile($this->context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 5]));
+                    $package->addJSFile($this->context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 6]));
                     $data = [
                         __('bearcms.elements.LoadingMore')
                     ];

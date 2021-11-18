@@ -20,7 +20,7 @@ bearCMS.commentsElementList = bearCMS.commentsElementList || (function () {
         clientPackages.get('serverRequests').then(function (serverRequests) {
             serverRequests.send('bearcms-comments-load-more', requestData).then(function (response) {
                 var result = JSON.parse(response);
-                clientPackages.get('-bearcms-html5domdocument').then(function (html5DOMDocument) {
+                clientPackages.get('html5DOMDocument').then(function (html5DOMDocument) {
                     html5DOMDocument.insert(result.html, [container, 'outerHTML']);
                 });
             });

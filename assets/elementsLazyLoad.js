@@ -27,7 +27,7 @@ bearCMS.elementsLazyLoad = bearCMS.elementsLazyLoad || (function () {
         container.appendChild(loadingElement);
         clientPackages.get('serverRequests').then(function (serverRequests) {
             serverRequests.send('bearcms-elements-load-more', requestData).then(function (response) {
-                clientPackages.get('-bearcms-html5domdocument').then(function (html5DOMDocument) {
+                clientPackages.get('html5DOMDocument').then(function (html5DOMDocument) {
                     loadingElement.parentNode.removeChild(loadingElement);
                     var result = JSON.parse(response);
                     html5DOMDocument.insert(result.content, [container, 'beforeEnd']);

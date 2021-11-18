@@ -374,7 +374,7 @@ class ElementsHelper
         if ($outputType === 'full-html' && $inContainer) {
             $content .= '<head>'
                 . '<style>' . $styles . '</style>'
-                . (($editable || $autoVerticalWidthInPx !== null) ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
+                . (($editable || $autoVerticalWidthInPx !== null) ? '<link rel="client-packages-embed" name="responsiveAttributes">' : '')
                 . '</head>';
         }
         $content .= '<body>'
@@ -481,7 +481,7 @@ class ElementsHelper
                 'var w=e.firstChild.getBoundingClientRect().width;' .
                 'return w>=d.width;' .
                 '};</script>'; // element, details
-            $content .= (($editable || $autoVerticalWidthInPx !== null) ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '');
+            $content .= (($editable || $autoVerticalWidthInPx !== null) ? '<link rel="client-packages-embed" name="responsiveAttributes">' : '');
             $content .= '</head>';
         }
         $content .= '<body>'
@@ -586,7 +586,7 @@ class ElementsHelper
         if ($outputType === 'full-html' && $inContainer) {
             $content .= '<head>'
                 . '<style>' . $styles . '</style>'
-                . (($editable || $autoVerticalWidthInPx !== null) ? '<link rel="client-packages-embed" name="-bearcms-responsive-attributes">' : '')
+                . (($editable || $autoVerticalWidthInPx !== null) ? '<link rel="client-packages-embed" name="responsiveAttributes">' : '')
                 . '</head>';
         }
         $content .= '<body>'
