@@ -79,7 +79,7 @@ if ($outputType === 'full-html') {
     $fixedFilename = $fixFilename($filename);
     if ($fixedFilename !== null) {
         $content .= '<component src="image-gallery" columnsCount="1" maxImageSize="4000"' . $attributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
-        $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' ? ' url="' . htmlentities($component->url) . '"' : '') . ' title="' . htmlentities($component->title) . '" filename="' . $fixedFilename . '" quality="' . $component->quality . '"/>';
+        $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' ? ' url="' . htmlentities($component->url) . '"' : '') . ' title="' . htmlentities($component->title) . '" filename="' . $fixedFilename . '" quality="' . $component->quality . '" fileWidth="' . $component->fileWidth . '" fileHeight="' . $component->fileHeight . '"/>';
         $content .= '</component>';
     }
     if (isset($innerContainerStyle[0])) {

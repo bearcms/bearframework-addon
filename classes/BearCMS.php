@@ -344,6 +344,14 @@ class BearCMS
                             'type' => 'textbox'
                         ],
                         [
+                            'id' => 'fileWidth',
+                            'type' => 'textbox'
+                        ],
+                        [
+                            'id' => 'fileHeight',
+                            'type' => 'textbox'
+                        ],
+                        [
                             'id' => 'width', // Deprecated on 14 August 2021
                             'type' => 'textbox'
                         ],
@@ -466,7 +474,7 @@ class BearCMS
                             $innerHTML = '';
                             foreach ($data['files'] as $file) {
                                 if (isset($file['filename'])) {
-                                    $innerHTML .= '<file filename="' . htmlentities($file['filename']) . '"/>';
+                                    $innerHTML .= '<file filename="' . htmlentities($file['filename']) . '" fileWidth="' . (isset($file['width']) ? htmlentities($file['width']) : null) . '" fileHeight="' . (isset($file['height']) ? htmlentities($file['height']) : null) . '"/>';
                                 }
                             }
                             $component->innerHTML = $innerHTML;
@@ -479,7 +487,16 @@ class BearCMS
                         $files = [];
                         $filesElements = $domDocument->querySelectorAll('file');
                         foreach ($filesElements as $fileElement) {
-                            $files[] = ['filename' => $fileElement->getAttribute('filename')];
+                            $file = ['filename' => $fileElement->getAttribute('filename')];
+                            $width = (string)$fileElement->getAttribute('filewidth');
+                            if (isset($width[0])) {
+                                $file['width'] = $width[0];
+                            }
+                            $height = (string)$fileElement->getAttribute('fileheight');
+                            if (isset($height[0])) {
+                                $file['height'] = $height[0];
+                            }
+                            $files[] = $file;
                         }
                         $data['files'] = $files;
                         return $data;
