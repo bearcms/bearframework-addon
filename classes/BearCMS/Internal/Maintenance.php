@@ -24,14 +24,14 @@ class Maintenance
     /**
      * Used by addons
      */
-    static $checkUploadsSizeCallbacks = [];
+    static $fixUploadsSizeCallbacks = [];
 
     /**
      * 
-     * @param boolean $fix
-     * @return void
+     * @param boolean $preview
+     * @return array
      */
-    static function checkUploadsSize($fix = false)
+    static function fixUploadsSize($preview): array
     {
 
         $app = App::get();
@@ -82,7 +82,7 @@ class Maintenance
 
         // Items from addons
 
-        foreach (self::$checkUploadsSizeCallbacks as $callback) {
+        foreach (self::$fixUploadsSizeCallbacks as $callback) {
             $files = array_merge($files, call_user_func($callback));
         }
 
@@ -117,13 +117,14 @@ class Maintenance
         }
 
         $result = [
+            'mode' => ($preview ? 'Preview mode' : 'Fix mode'),
             'keep' => $itemsToKeep,
             'add' => $itemsToAdd,
             'delete' => $itemsToDelete,
             'update' => $itemsToUpdate
         ];
 
-        if ($fix) {
+        if (!$preview) {
             foreach ($itemsToAdd as $key => $size) {
                 UploadsSize::add($key, $size);
             }
