@@ -62,17 +62,21 @@ class Settings
 
     /**
      * Improves performance if the details are saved in the settings
-     * @return void
+     *
+     * @param boolean $preview
+     * @return array
      */
-    static function updateIconsDetails()
+    static function updateIconsDetails(bool $preview = false): array
     {
+        $result = [];
         if (self::$disableUpdateIconsDetails) {
-            return;
+            return $result;
         }
         $app = App::get();
         $settings = $app->bearCMS->data->settings->get();
         $hasChange = false;
         if (!empty($settings->icons)) {
+            $oldIcons = $settings->icons;
             foreach ($settings->icons as $index => $icon) {
                 if (!isset($icon['width']) || !isset($icon['height'])) {
                     $details = $app->assets->getDetails($icon['filename'], ['width', 'height']);
@@ -84,11 +88,16 @@ class Settings
             }
         }
         if ($hasChange) {
-            $app->data->duplicate('bearcms/settings.json', '.recyclebin/bearcms/update-' . str_replace('.', '-', microtime(true)) . '-settings.json');
-            self::$disableUpdateIconsDetails = true;
-            $app->bearCMS->data->settings->set($settings);
-            self::$disableUpdateIconsDetails = false;
+            $result['old'] = $oldIcons;
+            $result['new'] = $settings->icons;
+            if (!$preview) {
+                $app->data->duplicate('bearcms/settings.json', '.recyclebin/bearcms/update-' . str_replace('.', '-', microtime(true)) . '-settings.json');
+                self::$disableUpdateIconsDetails = true;
+                $app->bearCMS->data->settings->set($settings);
+                self::$disableUpdateIconsDetails = false;
+            }
         }
+        return $result;
     }
 
     /**

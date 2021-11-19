@@ -203,41 +203,49 @@ class Elements
 
     /**
      * Optimizes the element's data
-     * 
-     * @return void
+     *
+     * @param string $dataKey
+     * @param boolean $preview
+     * @return array
      */
-    static function optimizeElementData(string $dataKey)
+    static function optimizeElementData(string $dataKey, bool $preview = true): array
     {
+        $result = [];
         if (strpos($dataKey, 'bearcms/elements/element/') !== 0) {
-            return;
+            return ['error' => 'Wrong data key!'];
         }
         if (isset(self::$disableOptimizeElementData[$dataKey])) {
-            return;
+            return ['error' => 'Locked!'];
         }
         $app = App::get();
         $rawData = $app->data->getValue($dataKey);
         if ($rawData === null) {
-            return;
+            return ['error' => 'Not found!'];
         }
         $data = ElementsHelper::decodeElementRawData($rawData);
         if ($data === null) {
-            return;
+            return ['error' => 'Invalid!'];
         }
         if (isset($data['type'], $data['data'])) {
             $componentName = array_search($data['type'], ElementsHelper::$elementsTypesCodes);
             if ($componentName !== false) {
                 $options = ElementsHelper::$elementsTypesOptions[$componentName];
                 if (isset($options['optimizeData']) && is_callable($options['optimizeData'])) {
-                    $result = call_user_func($options['optimizeData'], $data['data']);
-                    if (is_array($result)) {
-                        $data['data'] = $result;
-                        $app->data->duplicate($dataKey, '.recyclebin/bearcms/update-' . str_replace('.', '-', microtime(true)) . '-' . str_replace('/', '-', $dataKey));
-                        self::$disableOptimizeElementData[$dataKey] = true;
-                        $app->data->setValue($dataKey, json_encode($data));
-                        unset(self::$disableOptimizeElementData[$dataKey]);
+                    $newData = call_user_func($options['optimizeData'], $data['data']);
+                    if (is_array($newData)) {
+                        $result['old'] = $data['data'];
+                        $result['new'] = $newData;
+                        if (!$preview) {
+                            $data['data'] = $newData;
+                            $app->data->duplicate($dataKey, '.recyclebin/bearcms/update-' . str_replace('.', '-', microtime(true)) . '-' . str_replace('/', '-', $dataKey));
+                            self::$disableOptimizeElementData[$dataKey] = true;
+                            $app->data->setValue($dataKey, json_encode($data));
+                            unset(self::$disableOptimizeElementData[$dataKey]);
+                        }
                     }
                 }
             }
         }
+        return $result;
     }
 }

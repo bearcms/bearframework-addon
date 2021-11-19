@@ -147,36 +147,45 @@ class Maintenance
 
     /**
      * 
-     * @return void
+     * @param boolean $preview
+     * @return array
      */
-    static function optimizeSettings(): void
+    static function optimizeSettings(bool $preview): array
     {
-        // Caches icons' details (width and height) into the settings data item.
-        Settings::updateIconsDetails();
+        $result = [];
+        $result['icons'] = Settings::updateIconsDetails($preview);
+        return $result;
     }
 
     /**
      * 
-     * @return void
+     * @param boolean $preview
+     * @return array
      */
-    static function optimizeElements(): void
+    static function optimizeElements(bool $preview): array
     {
+        $result = [];
         $app = App::get();
         $list = $app->data->getList()
             ->filterBy('key', 'bearcms/elements/element/', 'startWith')
             ->sliceProperties(['key']);
         foreach ($list as $item) {
-            Elements::optimizeElementData($item->key);
+            $dataKey = $item->key;
+            $result[$dataKey] = Elements::optimizeElementData($dataKey, $preview);
         }
+        return $result;
     }
 
     /**
      * 
-     * @return void
+     * @param boolean $preview
+     * @return array
      */
-    static function optimizeData(): void
+    static function optimizeData(bool $preview): array
     {
-        self::optimizeSettings();
-        self::optimizeElements();
+        $result = [];
+        $result['settings'] = self::optimizeSettings($preview);
+        $result['elements'] = self::optimizeElements($preview);
+        return $result;
     }
 }
