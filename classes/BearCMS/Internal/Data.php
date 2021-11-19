@@ -254,7 +254,7 @@ class Data
                 Settings::updateIconsDetails();
             }
             if (strpos($key, 'bearcms/elements/element/') === 0) {
-                Elements::optimizeElementData($key);
+                Elements::optimizeElementData($key, false);
             }
         }
     }
