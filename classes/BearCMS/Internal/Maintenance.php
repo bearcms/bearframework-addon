@@ -171,7 +171,10 @@ class Maintenance
             ->sliceProperties(['key']);
         foreach ($list as $item) {
             $dataKey = $item->key;
-            $result[$dataKey] = Elements::optimizeElementData($dataKey, $preview);
+            $optimizationResult = Elements::optimizeElementData($dataKey, $preview);
+            if (!empty($optimizationResult)) {
+                $result[$dataKey] = $optimizationResult;
+            }
         }
         return $result;
     }
