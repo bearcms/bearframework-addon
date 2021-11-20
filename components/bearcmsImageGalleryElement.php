@@ -56,12 +56,28 @@ if ($outputType === 'full-html') {
         $attributes .= ' lazyLoadImages="true"';
     }
 
-    $content .= '<component src="image-gallery" spacing="' . $spacing . '" maxImageSize="4000"' . $attributes . '>';
+    $content .= '<component src="image-gallery" spacing="' . $spacing . '"' . $attributes . '>';
     if ($files !== null) {
         foreach ($files as $file) {
             $fixedFilename = $fixFilename($file->getAttribute('filename'));
             if ($fixedFilename !== null) {
-                $content .= '<file class="bearcms-image-gallery-element-image" filename="' . htmlentities($fixedFilename) . '" quality="' . htmlentities($file->getAttribute('quality')) . '" fileWidth="' . htmlentities($file->getAttribute('filewidth')) . '" fileHeight="' . htmlentities($file->getAttribute('fileheight')) . '"/>';
+                $maxImageWidth = (string)$file->getAttribute('maximagewidth');
+                if (!isset($maxImageWidth[0])) {
+                    $maxImageWidth = 4000;
+                }
+                $maxImageHeight = (string)$file->getAttribute('maximageheight');
+                if (!isset($maxImageHeight[0])) {
+                    $maxImageHeight = 4000;
+                }
+                $content .= '<file class="bearcms-image-gallery-element-image"'
+                    . ' filename="' . htmlentities($fixedFilename) . '"'
+                    . ' quality="' . htmlentities($file->getAttribute('quality')) . '"'
+                    . ' minImageWidth="' . htmlentities($file->getAttribute('minimagewidth')) . '"'
+                    . ' minImageHeight="' . htmlentities($file->getAttribute('minimageheight')) . '"'
+                    . ' maxImageWidth="' . htmlentities($maxImageWidth) . '"'
+                    . ' maxImageHeight="' . htmlentities($maxImageHeight) . '"'
+                    . ' fileWidth="' . htmlentities($file->getAttribute('filewidth')) . '"'
+                    . ' fileHeight="' . htmlentities($file->getAttribute('fileheight')) . '"/>';
             }
         }
     }
