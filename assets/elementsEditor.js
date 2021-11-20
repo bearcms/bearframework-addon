@@ -172,8 +172,11 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
             element.removeAttribute('data-responsive-attributes');
             element.removeAttribute(attributeName);
         }
-        if (typeof responsiveAttributes !== 'undefined') {
-            responsiveAttributes.run();
+        if (typeof clientPackages !== 'undefined') {
+            clientPackages.get('responsiveAttributes')
+                .then(function (responsiveAttributes) {
+                    responsiveAttributes.run();
+                })
         }
     };
 
