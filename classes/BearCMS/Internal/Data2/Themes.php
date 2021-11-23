@@ -104,7 +104,7 @@ class Themes
             foreach ($filesInNewValues as $key) {
                 if (strpos($key, 'data:') === 0) {
                     $dataKay = substr($key, 5);
-                    $dataKeysToDelete = array_diff($dataKeysToDelete, [$dataKay]);
+                    $dataKeysToDelete = array_diff($dataKeysToDelete, [$dataKay]); // Keeps the file if it's in the new values
                 }
             }
 
@@ -128,10 +128,7 @@ class Themes
             }
         }
 
-        $cacheItemKey = $hasUser ? Internal\Themes::getCacheItemKey($id, $userID) : Internal\Themes::getCacheItemKey($id);
-        if ($cacheItemKey !== null) {
-            $app->cache->delete($cacheItemKey);
-        }
+        Internal\Themes::clearCustomizationsCache($id, $hasUser ? $userID : null);
     }
 
     /**

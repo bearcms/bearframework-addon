@@ -41,44 +41,11 @@ class Options
         $valuesSetCount = 0;
         $valuesCount = sizeof($values);
 
-        $updateAppDataKey = function ($filename) {
-            if (substr($filename, 0, 5) === 'data:') {
-                return 'appdata://' . substr($filename, 5);
-            }
-            return $filename;
-        };
-
-        $walkOptions = function ($options) use (&$walkOptions, &$valuesSetCount, $valuesCount, $values, $updateAppDataKey) {
+        $walkOptions = function ($options) use (&$walkOptions, &$valuesSetCount, $valuesCount, $values) {
             foreach ($options as $option) {
                 if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                     if (isset($values[$option->id])) {
                         $value = $values[$option->id];
-                        $optionType = $option->type;
-                        if ($optionType === 'image') {
-                            $value = $updateAppDataKey($value);
-                        } elseif ($optionType === 'css' || $optionType === 'cssBackground') {
-                            if (strpos($value, 'url') !== false) {
-                                $temp = json_decode($value, true);
-                                if (is_array($temp)) {
-                                    $hasChange = false;
-                                    foreach ($temp as $_key => $_value) {
-                                        $matches = [];
-                                        preg_match_all('/url\((.*?)\)/', $_value, $matches);
-                                        if (!empty($matches[1])) {
-                                            $temp2 = array_unique($matches[1]);
-                                            foreach ($temp2 as $_value2) {
-                                                $updatedValue2 = $updateAppDataKey($_value2);
-                                                $temp[$_key] = str_replace($_value2, $updatedValue2, $temp[$_key]);
-                                            }
-                                            $hasChange = true;
-                                        }
-                                    }
-                                    if ($hasChange) {
-                                        $value = json_encode($temp);
-                                    }
-                                }
-                            }
-                        }
                         $option->details['value'] = $value;
                         $valuesSetCount++;
                         if ($valuesSetCount === $valuesCount) {

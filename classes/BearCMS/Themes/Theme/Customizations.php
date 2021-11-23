@@ -9,6 +9,8 @@
 
 namespace BearCMS\Themes\Theme;
 
+use BearCMS\Internal2;
+
 /**
  * 
  */
@@ -32,11 +34,21 @@ class Customizations
      * 
      * @param array $values
      * @param string $html
+     * @param array $assetsDetails
      */
-    public function __construct(array $values, string $html)
+    private $assetsDetails = [];
+
+    /**
+     * 
+     * @param array $values
+     * @param string $html
+     * @param array $assetsDetails
+     */
+    public function __construct(array $values = [], string $html = '', array $assetsDetails = [])
     {
         $this->values = $values;
         $this->html = $html;
+        $this->assetsDetails = $assetsDetails;
     }
 
     /**
@@ -67,4 +79,22 @@ class Customizations
         return $this->html;
     }
 
+    /**
+     * 
+     * @param string $key
+     * @param array $details
+     * @return array
+     */
+    public function getAssetDetails(string $key, array $details = []): array
+    {
+        $result = [];
+        foreach ($details as $detail) {
+            if ($detail === 'filename') {
+                $result[$detail] = Internal2::$data2->fixFilename($key);
+            } else {
+                $result[$detail] = isset($this->assetsDetails[$key], $this->assetsDetails[$key][$detail]) ? $this->assetsDetails[$key][$detail] : null;
+            }
+        }
+        return $result;
+    }
 }

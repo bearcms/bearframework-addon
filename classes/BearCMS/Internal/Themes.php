@@ -311,6 +311,31 @@ class Themes
      * 
      * @param string $id
      * @param string $userID
+     * @return string|null
+     */
+    static private function getCustomizationsCacheKey(string $id, string $userID = null): ?string
+    {
+        return 'bearcms-theme-customizations-' . md5($id) . '-' . md5($userID);
+    }
+
+    /**
+     * 
+     * @param string $id
+     * @param string $userID
+     * @return void
+     */
+    static function clearCustomizationsCache(string $id, string $userID = null): void
+    {
+        $cacheKey = self::getCustomizationsCacheKey($id, $userID);
+        $app = App::get();
+        $app->data->delete('.temp/bearcms/theme-customizations/' . md5($cacheKey));
+        $app->cache->delete($cacheKey);
+    }
+
+    /**
+     * 
+     * @param string $id
+     * @param string $userID
      * @return \BearCMS\Themes\Theme\Customizations|null
      */
     static public function getCustomizations(string $id, string $userID = null): ?\BearCMS\Themes\Theme\Customizations
@@ -318,17 +343,31 @@ class Themes
         if (!isset(self::$registrations[$id])) {
             return null;
         }
-        $localCacheKey = 'options-' . $id . '-' . $userID;
+        $localCacheKey = 'customizations-' . $id . '-' . $userID;
         if (!isset(self::$cache[$localCacheKey])) {
             $app = App::get();
-            $cacheKey = Internal\Themes::getCacheItemKey($id, $userID);
-            $envKey = md5(serialize(array_keys(self::$elementsOptions)) . serialize(array_keys(self::$pagesOptions)) . '-v7');
-            $useCache = $cacheKey !== null;
+            $version = self::getVersion($id);
+            $useCache = $version !== null;
+            $envKey = md5(md5(serialize(array_keys(self::$elementsOptions))) . md5(serialize(array_keys(self::$pagesOptions))) . md5($version) . md5('v7'));
             $resultData = null;
             if ($useCache) {
+                $cacheKey = self::getCustomizationsCacheKey($id, $userID);
+                $tempDataKey = '.temp/bearcms/theme-customizations/' . md5($cacheKey);
+                $saveToCache = false;
+                $saveToTempData = false;
                 $resultData = $app->cache->getValue($cacheKey);
                 if ($resultData !== null) {
                     $resultData = json_decode($resultData, true);
+                } else {
+                    $saveToCache = true;
+                }
+                if ($resultData === null) {
+                    $resultData = $app->data->getValue($tempDataKey);
+                    if ($resultData !== null) {
+                        $resultData = json_decode($resultData, true);
+                    } else {
+                        $saveToTempData = true;
+                    }
                 }
             }
             if ($resultData === null || !isset($resultData[2]) || $resultData[2] !== $envKey) {
@@ -348,18 +387,30 @@ class Themes
                     $htmlData = [];
                 } else {
                     $themeOptions->setValues($currentValues);
-                    $values = $themeOptions->getValues(); // "data: -> appdata://" is updated inside
-                    $htmlData = self::getOptionsHTMLData($themeOptions->getList());
+                    $values = $themeOptions->getValues();
+                    $htmlData = self::getOptionsHTMLData($themeOptions->getList(), true);
                 }
-                if ($useCache) {
-                    $app->cache->set($app->cache->make($cacheKey, json_encode([$values, $htmlData, $envKey])));
+                $resultData = [$values, $htmlData, $envKey];
+            }
+            if ($useCache) {
+                if ($saveToCache) {
+                    $app->cache->set($app->cache->make($cacheKey, json_encode($resultData)));
                 }
-            } else {
-                $values = $resultData[0];
-                $htmlData = $resultData[1];
+                if ($saveToTempData) {
+                    $app->data->setValue($tempDataKey, json_encode($resultData));
+                }
+            }
+            $values = $resultData[0];
+            $htmlData = $resultData[1];
+            $assetsDetails = [];
+            if (isset($htmlData['updates'], $htmlData['updates']['assets'])) {
+                foreach ($htmlData['updates']['assets'] as $key => $details) {
+                    $assetsDetails[$key] = $details;
+                }
             }
             $html = self::processOptionsHTMLData($htmlData);
-            self::$cache[$localCacheKey] = new \BearCMS\Themes\Theme\Customizations($values, $html);
+
+            self::$cache[$localCacheKey] = new \BearCMS\Themes\Theme\Customizations($values, $html, $assetsDetails);
         }
         return self::$cache[$localCacheKey];
     }
@@ -549,21 +600,6 @@ class Themes
 
     /**
      * 
-     * @param string $id
-     * @param string $userID
-     * @return string|null
-     */
-    static public function getCacheItemKey(string $id, string $userID = null): ?string
-    {
-        $version = self::getVersion($id);
-        if ($version === null) {
-            return null;
-        }
-        return 'bearcms-theme-options-' . md5($id) . '-' . md5($version) . '-' . md5($userID) . '-8';
-    }
-
-    /**
-     * 
      * @param array $values
      * @return array
      */
@@ -618,17 +654,36 @@ class Themes
 
     /**
      * 
-     *
      * @param array $options
+     * @param boolean $includeAssetsDetails
      * @return array
      */
-    static public function getOptionsHTMLData(array $options): array
+    static public function getOptionsHTMLData(array $options, bool $includeAssetsDetails = false): array
     {
+        $app = App::get();
+
         $cssRules = [];
         $cssCode = '';
         $updates = [];
 
-        $walkOptions = function ($options) use (&$cssRules, &$cssCode, &$updates, &$walkOptions) {
+        $addAssetUpdate = function (string $value) use ($app, &$updates, $includeAssetsDetails) {
+            if (!isset($updates['assets'])) {
+                $updates['assets'] = [];
+            }
+            if ($includeAssetsDetails) {
+                $filename = Internal2::$data2->getRealFilename($value);
+                if ($filename === null) {
+                    $assetDetails = ['width' => null, 'height' => null];
+                } else {
+                    $assetDetails = $app->assets->getDetails($filename, ['width', 'height']);
+                }
+                $updates['assets'][$value] = ['width' => $assetDetails['width'], 'height' => $assetDetails['height']];
+            } else {
+                $updates['assets'][$value] = [];
+            }
+        };
+
+        $walkOptions = function ($options) use (&$cssRules, &$cssCode, &$walkOptions, &$addAssetUpdate) {
             foreach ($options as $option) {
                 if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                     $value = isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value']) : $option->details['value']) : null;
@@ -638,9 +693,7 @@ class Themes
                     } else {
                         if (strlen($value) > 0) {
                             if ($optionType === 'image') {
-                                $updateKey = md5('asset') . md5($value);
-                                $updates[$updateKey] = ['asset', $value];
-                                $value = $updateKey;
+                                $addAssetUpdate($value);
                             } elseif ($optionType === 'css' || $optionType === 'cssBackground') {
                                 if (strpos($value, 'url') !== false) {
                                     $temp = json_decode($value, true);
@@ -652,9 +705,7 @@ class Themes
                                             if (!empty($matches[1])) {
                                                 $temp2 = array_unique($matches[1]);
                                                 foreach ($temp2 as $_value2) {
-                                                    $updateKey = md5('asset') .  md5($_value2);
-                                                    $temp[$_key] = str_replace($_value2, $updateKey, $temp[$_key]);
-                                                    $updates[$updateKey] = ['asset', $_value2];
+                                                    $addAssetUpdate($_value2);
                                                 }
                                                 $hasChange = true;
                                             }
@@ -762,10 +813,12 @@ class Themes
                 } elseif (strpos($fontName, 'googlefonts:') === 0) {
                     $googleFontName = substr($fontName, strlen('googlefonts:'));
                     $text = str_replace($match, 'font-family:\'' . $googleFontName . '\';', $text);
-                    $updateKey = md5('googlefont') . md5($googleFontName);
-                    if (!isset($updates[$updateKey])) {
-                        $updates[$updateKey] = ['googlefont', $googleFontName];
-                        //$linkTags[] = '<link href="' . htmlentities($updateKey) . '" rel="stylesheet">';
+                    if (!isset($updates['googleFonts'])) {
+                        $updates['googleFonts'] = [];
+                    }
+                    $updateKey = 'googlefont:' . md5($googleFontName);
+                    if (!isset($updates['googleFonts'][$updateKey])) {
+                        $updates['googleFonts'][$updateKey] = $googleFontName;
                         $linkTags[] = '<link href="' . htmlentities($updateKey) . '" rel="preload" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"><noscript><link href="' . htmlentities($updateKey) . '" rel="stylesheet"></noscript>';
                     }
                 }
@@ -804,23 +857,24 @@ class Themes
             $app = App::get();
             $search = [];
             $replace = [];
-            foreach ($updates as $updateKey => $updateData) {
-                if ($updateData[0] === 'asset') {
-                    $filename = Internal2::$data2->getRealFilename($updateData[1]);
-                    if ($filename !== null) {
-                        try {
-                            $url = $app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
-                            $search[] = $updateKey;
-                            $replace[] = $url;
-                        } catch (\Exception $e) { // May be file in an invalid dir
-                            $search[] = $updateKey;
-                            $replace[] = '';
-                        }
+            if (isset($updates['assets'])) {
+                $appAssets = $app->assets;
+                foreach ($updates['assets'] as $updateKey => $assetDetails) {
+                    try {
+                        $filename = Internal2::$data2->getRealFilename($updateKey);
+                        $search[] = $updateKey;
+                        $replace[] = $appAssets->getURL($filename, ['cacheMaxAge' => 999999999]);
+                    } catch (\Exception $e) { // May be file in an invalid dir
+                        $search[] = $updateKey;
+                        $replace[] = '';
                     }
-                } elseif ($updateData[0] === 'googlefont') {
-                    $url = $app->googleFontsEmbed->getURL($updateData[1]);
+                }
+            }
+            if (isset($updates['googleFonts'])) {
+                $googleFontsEmbed = $app->googleFontsEmbed;
+                foreach ($updates['googleFonts'] as $updateKey => $fontName) {
                     $search[] = $updateKey;
-                    $replace[] = htmlentities($url);
+                    $replace[] = htmlentities($googleFontsEmbed->getURL($fontName));
                 }
             }
             $html = str_replace($search, $replace, $html);

@@ -878,8 +878,7 @@ class ElementsHelper
             $options = new \BearCMS\Themes\Theme\Options();
             call_user_func(Internal\Themes::$elementsOptions[$elementType], $options, '', $cssSelector, Internal\Themes::OPTIONS_CONTEXT_ELEMENT);
             $options->setValues($elementStyleData);
-            $htmlData = Internal\Themes::getOptionsHTMLData($options->getList());
-            $html = Internal\Themes::processOptionsHTMLData($htmlData);
+            $html = Internal\Themes::processOptionsHTMLData(Internal\Themes::getOptionsHTMLData($options->getList()));
             return '<component src="data:base64,' . base64_encode($html) . '" />';
         }
         return '';

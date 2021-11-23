@@ -28,12 +28,12 @@ $accentColor = $customizations->getValue('accentColor');
 $textSizeOptionValue = $customizations->getValue('textSize');
 $contentWidthOptionValue = $customizations->getValue('contentWidth');
 
-$headerLogoImage = $customizations->getValue('headerLogoImage');
+$headerLogoImage = (string)$customizations->getValue('headerLogoImage');
 
-$hasHeaderLogo = strlen($headerLogoImage) > 0;
+$hasHeaderLogo = isset($headerLogoImage[0]);
 if ($hasHeaderLogo) {
-    $headerLogoImageSize = $app->assets->getDetails($headerLogoImage, ['width', 'height']);
-    $headerLogoMaxWidth = $headerLogoImageSize['width'] * ($isHomePage ? 180 : 90) / $headerLogoImageSize['height'];
+    $headerLogoImageDetails = $customizations->getAssetDetails($headerLogoImage, ['filename', 'width', 'height']);
+    $headerLogoMaxWidth = $headerLogoImageDetails['width'] !== null && $headerLogoImageDetails['height'] !== null ? ($headerLogoImageDetails['width'] * ($isHomePage ? 180 : 90) / $headerLogoImageDetails['height']) : ($isHomePage ? 180 : 90);
 }
 
 $hasHeaderTitle = $customizations->getValue('headerTitleVisibility') === '1';
@@ -94,7 +94,7 @@ echo '.template-header-languages-container a:hover{opacity:1;}';
 
 if ($hasHeaderLogo) {
     echo '.template-header-logo-container{margin-top:3rem;}';
-    echo '.template-header-logo{box-sizing:border-box;max-width:' . $headerLogoMaxWidth . 'px;margin:0 auto;}';
+    echo '.template-header-logo{box-sizing:border-box;' . ($headerLogoMaxWidth !== null ? 'max-width:' . $headerLogoMaxWidth . 'px;' : '') . 'margin:0 auto;}';
 }
 if ($hasHeaderTitle) {
     echo '.template-header-title-container{margin-top:' . ($hasHeaderLogo ? '2rem' : '3rem') . ';text-align:center;}';
@@ -337,7 +337,7 @@ if ($hasLanguagesPicker) {
 }
 
 if ($hasHeaderLogo) {
-    $imageHTML = '<component src="bearcms-image-element" class="template-header-logo"' . ($isHomePage ? '' : ' onClick="openUrl" url="' . htmlentities($app->urls->get()) . '"') . ' filename="' . htmlentities($headerLogoImage) . '"/>';
+    $imageHTML = '<component src="bearcms-image-element" class="template-header-logo"' . ($isHomePage ? '' : ' onClick="openUrl" url="' . htmlentities($app->urls->get()) . '"') . ' filename="' . htmlentities($headerLogoImageDetails['filename']) . '" fileWidth="' . htmlentities($headerLogoImageDetails['width']) . '" fileHeight="' . htmlentities($headerLogoImageDetails['height']) . '"/>';
     echo '<div class="template-header-logo-container">' . $imageHTML . '</div>';
 }
 if ($hasHeaderTitle) {
