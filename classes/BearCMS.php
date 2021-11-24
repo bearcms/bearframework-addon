@@ -1850,15 +1850,16 @@ class BearCMS
             $language = $applyContext->language;
         }
         if ($language !== null) {
-            $previousLocale = $this->app->localization->getLocale();
-            $this->app->localization->setLocale($language);
+            $localization = $this->app->localization;
+            $previousLocale = $localization->getLocale();
+            $localization->setLocale($language);
         }
         $this->applyTheme($response, $applyContext);
         $this->process($response, $applyContext);
         $this->applyDefaults($response, $applyContext);
         $this->applyAdminUI($response, $applyContext);
         if ($language !== null) {
-            $this->app->localization->setLocale($previousLocale);
+            $localization->setLocale($previousLocale);
         }
     }
 
