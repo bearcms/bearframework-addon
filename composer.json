@@ -41,7 +41,7 @@
     },
     "require-dev": {
         "bearframework/addon-tests": "1.*",
-        "ivopetkov/docs-generator": "0.2.*"
+        "ivopetkov/docs-generator": "1.*"
     },
     "autoload": {
         "files": [
