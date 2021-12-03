@@ -73,7 +73,7 @@ class Themes
             throw new \InvalidArgumentException('The values argument is not valid');
         }
         $app = App::get();
-        $hasUser = strlen($userID) > 0;
+        $hasUser = $userID !== null && strlen($userID) > 0;
         $dataKeysToDelete = [];
 
         if ($hasUser) {

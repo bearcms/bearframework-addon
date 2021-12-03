@@ -98,7 +98,8 @@ if ($renderElementsContainer) {
     $styles .= '.' . $className . '>div:not(:last-child){margin-bottom:' . ($editable ? 'var(--bearcms-elements-spacing)' : $spacing) . ';}';
 
     if ($outputType === 'full-html') {
-        $attributes .= ' class="bearcms-elements ' . $className . (strlen($component->class) > 0 ? ' ' . $component->class : '') . '"';
+        $componentClass = (string)$component->class;
+        $attributes .= ' class="bearcms-elements ' . $className . (strlen($componentClass) > 0 ? ' ' . $componentClass : '') . '"';
     }
 
     if ($hasLazyLoading && isset($lazyLoadServerData[0])) {

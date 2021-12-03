@@ -46,7 +46,7 @@ class CurrentUser
             $cookies = Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER);
             $cookieKey = '_s';
             $key = isset($cookies[$cookieKey]) ? (string) $cookies[$cookieKey] : '';
-            self::$cache[$cacheKey] = strlen((string) $key) > 70 ? $key : null;
+            self::$cache[$cacheKey] = strlen($key) > 70 ? $key : null;
         }
         return self::$cache[$cacheKey];
     }
@@ -58,7 +58,7 @@ class CurrentUser
      */
     public function getID(): ?string
     {
-        $sessionKey = $this->getSessionKey();
+        $sessionKey = (string)$this->getSessionKey();
         if (strlen($sessionKey) === 0) {
             return null;
         }
@@ -137,5 +137,4 @@ class CurrentUser
         ]);
         self::$cache = [];
     }
-
 }

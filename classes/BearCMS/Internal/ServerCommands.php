@@ -45,7 +45,7 @@ class ServerCommands
     static function about(): array
     {
         $result = [];
-        if (strlen(Config::$appSecretKey) > 0) {
+        if (Config::$appSecretKey !== null && strlen(Config::$appSecretKey) > 0) {
             $temp = explode('-', Config::$appSecretKey);
             $result['appID'] = $temp[0];
         }

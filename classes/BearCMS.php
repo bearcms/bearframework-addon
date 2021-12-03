@@ -113,7 +113,8 @@ class BearCMS
                 ->addEventListener('makeComponent', function ($details) {
                     // Updates the BearCMS components when created
                     $component = $details->component;
-                    $name = strlen($component->src) > 0 ? $component->src : ($component->tagName !== 'component' ? $component->tagName : null);
+                    $componentSrc = (string)$component->src;
+                    $name = strlen($componentSrc) > 0 ? $componentSrc : ($component->tagName !== 'component' ? $component->tagName : null);
                     if ($name !== null) {
                         if ($name === 'bearcms-elements') {
                             Internal\ElementsHelper::updateContainerComponent($component);
@@ -373,7 +374,7 @@ class BearCMS
                         ],
                     ],
                     'onDuplicate' => function ($data) {
-                        $filename = isset($data['filename']) ? $data['filename'] : '';
+                        $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                         if (strlen($filename) > 0) {
                             $filename = Internal2::$data2->fixFilename($filename);
                             $newFilename = Internal\Data::generateNewFilename($filename);
@@ -384,7 +385,7 @@ class BearCMS
                         return $data;
                     },
                     'getUploadsSizeItems' => function ($data) {
-                        $filename = isset($data['filename']) ? $data['filename'] : '';
+                        $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                         if (strlen($filename) > 0) {
                             $filename = Internal2::$data2->fixFilename($filename);
                             return [Internal\Data::filenameToDataKey($filename)];
@@ -393,7 +394,7 @@ class BearCMS
                     },
                     'optimizeData' => function ($data) {
                         $hasChange = false;
-                        $filename = isset($data['filename']) ? $data['filename'] : '';
+                        $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                         if (strlen($filename) > 0) {
                             $filename = Internal2::$data2->fixFilename($filename);
                             if (strpos($filename, 'appdata://') === 0) {
@@ -505,7 +506,7 @@ class BearCMS
                         if (isset($data['files']) && is_array($data['files'])) {
                             foreach ($data['files'] as $index => $file) {
                                 if (isset($file['filename'])) {
-                                    $filename = $file['filename'];
+                                    $filename = (string)$file['filename'];
                                     if (strlen($filename) > 0) {
                                         $filename = Internal2::$data2->fixFilename($filename);
                                         $newFilename = Internal\Data::generateNewFilename($filename);
@@ -523,7 +524,7 @@ class BearCMS
                         if (isset($data['files']) && is_array($data['files'])) {
                             foreach ($data['files'] as $index => $file) {
                                 if (isset($file['filename'])) {
-                                    $filename = $file['filename'];
+                                    $filename = (string)$file['filename'];
                                     if (strlen($filename) > 0) {
                                         $filename = Internal2::$data2->fixFilename($filename);
                                         $result[] = Internal\Data::filenameToDataKey($filename);
@@ -538,7 +539,7 @@ class BearCMS
                         if (isset($data['files']) && is_array($data['files'])) {
                             foreach ($data['files'] as $index => $file) {
                                 if (isset($file['filename'])) {
-                                    $filename = $file['filename'];
+                                    $filename = (string)$file['filename'];
                                     if (strlen($filename) > 0) {
                                         $filename = Internal2::$data2->fixFilename($filename);
                                         if (strpos($filename, 'appdata://') === 0) {
@@ -620,7 +621,7 @@ class BearCMS
                         ],
                     ],
                     'onDuplicate' => function ($data) {
-                        $filename = isset($data['filename']) ? $data['filename'] : '';
+                        $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                         if (strlen($filename) > 0) {
                             $filename = Internal2::$data2->fixFilename($filename);
                             $newFilename = Internal\Data::generateNewFilename($filename);
@@ -631,7 +632,7 @@ class BearCMS
                         return $data;
                     },
                     'getUploadsSizeItems' => function ($data) {
-                        $filename = isset($data['filename']) ? $data['filename'] : '';
+                        $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                         if (strlen($filename) > 0) {
                             $filename = Internal2::$data2->fixFilename($filename);
                             return [Internal\Data::filenameToDataKey($filename)];
@@ -1310,8 +1311,9 @@ class BearCMS
                                     return new App\Response\PermanentRedirect($request->getURL() . '/');
                                 }
                                 $applyContext = $this->makeApplyContext();
-                                if (strlen($blogPost->language) > 0) {
-                                    $applyContext->language = $blogPost->language;
+                                $blogPostLanguage = (string)$blogPost->language;
+                                if (isset($blogPostLanguage[0])) {
+                                    $applyContext->language = $blogPostLanguage;
                                 }
                                 $content = '<html><head>';
                                 $title = isset($blogPost->titleTagContent) ? trim($blogPost->titleTagContent) : '';
@@ -1560,7 +1562,7 @@ class BearCMS
 
                             $settings = $this->data->settings->get();
                             $applyContext = $this->makeApplyContext();
-                            $potentialLanguage = $request->path->getSegment(0);
+                            $potentialLanguage = (string)$request->path->getSegment(0);
                             if (strlen($potentialLanguage) > 0 && array_search($potentialLanguage, $settings->languages) !== false) {
                                 $applyContext->language = $potentialLanguage;
                             }
@@ -1586,10 +1588,10 @@ class BearCMS
                             }
                             if ($pageID === 'home') {
                                 if (!isset($title[0])) {
-                                    $title = trim($settings->title);
+                                    $title = trim((string)$settings->title);
                                 }
                                 if (!isset($description[0])) {
-                                    $description = trim($settings->description);
+                                    $description = trim((string)$settings->description);
                                 }
                                 $found = true;
                                 $status = 'public';
@@ -1706,7 +1708,7 @@ class BearCMS
                             curl_setopt($ch, CURLOPT_URL, $url);
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                            $response = curl_exec($ch);
+                            $response = (string)curl_exec($ch);
                             $valid = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200 && strlen($response) > 0;
                             curl_close($ch);
                             if ($valid) {
@@ -1897,6 +1899,7 @@ class BearCMS
         if ($applyContext !== null) {
             $language = $applyContext->language;
         }
+        $language = (string)$language;
         if (strlen($language) === 0 && isset($settings->languages[0])) {
             $language = $settings->languages[0];
         }
@@ -1970,7 +1973,7 @@ class BearCMS
                     }
                 }
 
-                $prepare = function ($content) {
+                $prepare = function (string $content) {
                     $content = preg_replace('/<script.*?<\/script>/s', '', $content);
                     $content = preg_replace('/<.*?>/', ' $0 ', $content);
                     $content = preg_replace('/\s/u', ' ', $content);
@@ -2032,7 +2035,7 @@ class BearCMS
                 $languages[0] = '';
             }
             foreach ($languages as $language) {
-                $rssTitle = $settings->getTitle($language);
+                $rssTitle = (string)$settings->getTitle($language);
                 $rssURL = $this->app->urls->get('/rss' . ($language === '' ? '' : '.' . $language) . '.xml');
                 $html .= '<link rel="alternate" type="application/rss+xml" title="' . htmlentities(trim($rssTitle)) . '" href="' . htmlentities($rssURL) . '" />';
             }
@@ -2066,7 +2069,7 @@ class BearCMS
         if (strlen($title) > 0) {
             $imageElements = $document->querySelectorAll('img');
             foreach ($imageElements as $imageElement) {
-                if (strlen($imageElement->getAttribute('alt')) === 0) {
+                if (strlen((string)$imageElement->getAttribute('alt')) === 0) {
                     $imageElement->setAttribute('alt', $title);
                 }
             }
@@ -2078,7 +2081,7 @@ class BearCMS
             foreach ($linkElements as $linkElement) {
                 if (strpos($linkElement->getAttribute('href'), '/files/preview/') !== false) {
                     $linkTarget = $linkElement->getAttribute('target');
-                    if (strlen($linkTarget) === 0) {
+                    if (strlen((string)$linkTarget) === 0) {
                         $linkElement->setAttribute('target', '_blank');
                     }
                 }
@@ -2195,6 +2198,7 @@ class BearCMS
         if ($applyContext !== null) {
             $language = $applyContext->language;
         }
+        $language = (string)$language;
         if (strlen($language) === 0) {
             if (isset($languages[0])) {
                 $language = $languages[0];

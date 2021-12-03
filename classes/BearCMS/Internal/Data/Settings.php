@@ -110,7 +110,7 @@ class Settings
     {
         $app = App::get();
         $settings = $app->bearCMS->data->settings->get();
-        $pageTitleFormat = $settings->getPageTitleFormat($language);
+        $pageTitleFormat = (string)$settings->getPageTitleFormat($language);
         if (strlen($pageTitleFormat) > 0) {
             if (strpos($pageTitleFormat, '{title}') !== false) {
                 return str_replace('{title}', $text, $pageTitleFormat);

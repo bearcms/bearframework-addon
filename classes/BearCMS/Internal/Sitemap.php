@@ -113,7 +113,7 @@ class Sitemap
             $item = $list[0];
             if ($item->lastModified !== null) {
                 if (is_callable($item->lastModified)) {
-                    $date = call_user_func($item->lastModified);
+                    $date = (string)call_user_func($item->lastModified);
                     $minAllowedDate = 1572633993; // the date this feature is added
                     if (strlen($date) > 0) {
                         $dateTime = new DateTime($date);
@@ -182,7 +182,7 @@ class Sitemap
             return self::$cache['cached-dates'];
         }
         $app = App::get();
-        $data = $app->data->getValue(self::getCachedDatesDataKey());
+        $data = (string)$app->data->getValue(self::getCachedDatesDataKey());
         $data = strlen($data) > 0 ? json_decode($data, true) : null;
         if (!is_array($data)) {
             $data = [];
@@ -233,7 +233,7 @@ class Sitemap
     static private function getLastModifiedDetailsData(): array
     {
         $app = App::get();
-        $data = $app->data->getValue(self::getLastModifiedDetailsDataKey());
+        $data = (string)$app->data->getValue(self::getLastModifiedDetailsDataKey());
         $data = strlen($data) > 0 ? json_decode($data, true) : null;
         if (!is_array($data)) {
             $data = [];
@@ -318,7 +318,7 @@ class Sitemap
     {
         $app = App::get();
         $changedDataKeysListDataKey = self::getChangedDataKeysListDataKey();
-        $dataKeys = $app->data->getValue($changedDataKeysListDataKey);
+        $dataKeys = (string)$app->data->getValue($changedDataKeysListDataKey);
         if (strlen($dataKeys) === 0) {
             return;
         }

@@ -14,13 +14,13 @@ $app = App::get();
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
 
-$code = trim($component->code);
-$renderMode = trim($component->renderMode);
+$code = trim((string)$component->code);
+$renderMode = trim((string)$component->renderMode);
 if ($renderMode === '') {
     $renderMode = 'clean';
 }
 
-$htmlSandboxUrl = Config::getHTMLSandboxURL();
+$htmlSandboxUrl = (string)Config::getHTMLSandboxURL();
 
 $currentUserExists = $app->bearCMS->currentUser->exists();
 $disabled = $currentUserExists && $app->request->query->exists('disable-html-elements');

@@ -26,7 +26,8 @@ if ($editable) {
     $componentContextData = ElementsHelper::getComponentContextData($component);
 }
 
-$componentName = strlen($component->src) > 0 ? $component->src : ($component->tagName !== 'component' ? $component->tagName : null);
+$componentSrc = (string)$component->src;
+$componentName = strlen($componentSrc) > 0 ? $componentSrc : ($component->tagName !== 'component' ? $component->tagName : null);
 $isMissing = $componentName === 'bearcms-missing-element';
 
 $elementType = null;
@@ -64,9 +65,10 @@ if (!$isMissing) {
         unset($data);
         unset($options);
     } else {
-        if (strlen($component->id) > 0 && $component->editable === 'true') {
+        if ($component->id !== null && strlen($component->id) > 0 && $component->editable === 'true') {
             $getRawDataFromComponent = function ($component) {
-                $componentName = strlen($component->src) > 0 ? $component->src : ($component->tagName !== 'component' ? $component->tagName : null);
+                $componentSrc = (string)$component->src;
+                $componentName = strlen($componentSrc) > 0 ? $componentSrc : ($component->tagName !== 'component' ? $component->tagName : null);
                 $options = ElementsHelper::$elementsTypesOptions[$componentName];
                 $data = [];
                 if (isset($options['fields'])) {

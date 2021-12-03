@@ -74,7 +74,7 @@ class Config
             self::$features = $data['features'];
         }
 
-        self::$cookiePrefix = substr(md5(md5($app->request->base) . md5(self::$serverUrl)), 0, 14) . '_bearcms_';
+        self::$cookiePrefix = substr(md5(md5((string)$app->request->base) . md5((string)self::$serverUrl)), 0, 14) . '_bearcms_';
 
         self::$logServerRequests = isset($data['logServerRequests']) && $data['logServerRequests'] === true;
 
@@ -252,7 +252,7 @@ class Config
      */
     static function getHashedAppSecretKey(): ?string
     {
-        if (strlen(self::$appSecretKey) > 0) {
+        if (self::$appSecretKey !== null && strlen(self::$appSecretKey) > 0) {
             $parts = explode('-', self::$appSecretKey, 2);
             if (sizeof($parts) === 2) {
                 return strtoupper('sha256-' . $parts[0] . '-' . hash('sha256', $parts[1]));

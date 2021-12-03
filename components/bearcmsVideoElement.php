@@ -50,7 +50,8 @@ $addResponsivelyLazy = false;
 $addPriveteEmbedStyles = false;
 $content = '';
 
-if (strlen($component->url) > 0) {
+$componentURL = (string)$component->url;
+if (strlen($componentURL) > 0) {
     $videoExists = false;
     $videoTitle = null;
     $videoUrl = null;
@@ -87,12 +88,12 @@ if (strlen($component->url) > 0) {
             return ['exists' => false];
         }
     };
-    $cacheKey = 'bearcms-video-element-data-' . md5($component->url) . '-3';
+    $cacheKey = 'bearcms-video-element-data-' . md5($componentURL) . '-3';
     $cachedData = $app->cache->getValue($cacheKey);
     if (is_array($cachedData)) { // && false
         $setData($cachedData);
     } else {
-        $tempDataKey = '.temp/bearcms/videoelementdata/' . md5($component->url . '-3');
+        $tempDataKey = '.temp/bearcms/videoelementdata/' . md5($componentURL . '-3');
         $tempData = $app->data->getValue($tempDataKey);
         if ($tempData !== null) {
             $tempData = json_decode($tempData, true);
@@ -101,7 +102,7 @@ if (strlen($component->url) > 0) {
             $setData($tempData);
         } else {
             try {
-                $embed = new IvoPetkov\VideoEmbed($component->url, Config::$videoEmbedConfig);
+                $embed = new IvoPetkov\VideoEmbed($componentURL, Config::$videoEmbedConfig);
                 $videoExists = true;
                 $videoTitle = $embed->title;
                 $videoUrl = $embed->url;
@@ -132,7 +133,7 @@ if (strlen($component->url) > 0) {
         if ($outputType === 'full-html') {
             if (Config::$videoPrivateEmbed) {
                 $addPriveteEmbedStyles = true;
-                $hasImage = strlen($videoImage) > 0;
+                $hasImage = $videoImage !== null && strlen($videoImage) > 0;
                 $html = '<div style="width:100%;height:100%;' . ($hasImage ? 'background-image:url(' . $context->assets->getURL('assets/p/' . str_replace('://', '/', $videoImage), ['cacheMaxAge' => 86400 * 30]) . ');background-size:cover;background-position:center center;' : '') . '">' .
                     '<div class="bearcms-video-element-overlay" style="background-color:' . ($hasImage ? 'rgba(0,0,0,0.7)' : '#111') . ';">' .
                     '<div class="bearcms-video-element-title">' . htmlspecialchars($videoTitle) . '</div>' .
@@ -154,7 +155,7 @@ if (strlen($component->url) > 0) {
     } else {
         $content = '';
     }
-} elseif (strlen($component->filename) > 0) {
+} elseif ($component->filename !== null && strlen($component->filename) > 0) {
     $filename = Internal2::$data2->fixFilename($component->filename);
     if ($outputType === 'full-html') {
         $content = '<div class="bearcms-video-element" style="">' . $innerContainerStartTag;

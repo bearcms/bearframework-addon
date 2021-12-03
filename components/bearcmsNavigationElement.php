@@ -12,25 +12,26 @@ use IvoPetkov\HTML5DOMDocument;
 $app = App::get();
 
 $selectedPath = '';
-if (strlen($component->selectedPath) > 0) {
-    $selectedPath = $component->selectedPath;
+$componentSelectedPath = (string)$component->selectedPath;
+if (strlen($componentSelectedPath) > 0) {
+    $selectedPath = $componentSelectedPath;
 }
 
 $menuType = 'list-vertical';
-if (strlen($component->menuType) > 0) {
-    if (array_search($component->menuType, ['horizontal-down', 'vertical-left', 'vertical-right', 'list-vertical']) !== false) {
-        $menuType = $component->menuType;
-    }
+$componentMenuType = (string)$component->menuType;
+if (array_search($componentMenuType, ['horizontal-down', 'vertical-left', 'vertical-right', 'list-vertical']) !== false) {
+    $menuType = $componentMenuType;
 }
 
 $attributes = '';
 $attributes .= ' type="' . $menuType . '"';
-if (strlen($component->class) > 0) {
-    $attributes .= ' class="' . htmlentities($component->class) . '"';
+$componentClass = (string)$component->class;
+if (strlen($componentClass) > 0) {
+    $attributes .= ' class="' . htmlentities($componentClass) . '"';
 }
 $attributes .= ' moreItemHtml="' . htmlentities('<li class="bearcms-navigation-element-item bearcms-navigation-element-item-more"><a></a><ul class="bearcms-navigation-element-item-children"></ul></li>') . '"';
 
-$dataResponsiveAttributes = $component->getAttribute('data-responsive-attributes');
+$dataResponsiveAttributes = (string)$component->getAttribute('data-responsive-attributes');
 if (strlen($dataResponsiveAttributes) > 0) {
     $attributes .= ' data-responsive-attributes="' . htmlentities(str_replace('=>menuType=', '=>type=', $dataResponsiveAttributes)) . '"';
 }
@@ -65,8 +66,9 @@ if (isset($itemsHtml[0])) {
     }
 } else {
     $source = 'topPages';
-    if (strlen($component->source) > 0 && array_search($component->source, ['allPages', 'pageChildren', 'topPages', 'pageAllChildren']) !== false) {
-        $source = $component->source;
+    $componentSource = (string)$component->source;
+    if (array_search($componentSource, ['allPages', 'pageChildren', 'topPages', 'pageAllChildren']) !== false) {
+        $source = $componentSource;
     }
 
     $showHomeLink = false;
@@ -75,14 +77,16 @@ if (isset($itemsHtml[0])) {
         $sourceParentPageID = (string) $component->sourceParentPageID;
     } elseif ($source === 'allPages' || $source === 'topPages') {
         $showHomeLink = $component->showHomeLink === 'true';
-        $homeLinkText = strlen($component->homeLinkText) > 0 ? $component->homeLinkText : __('bearcms.navigation.home');
+        $componentHomeLinkText = (string)$component->homeLinkText;
+        $homeLinkText = strlen($componentHomeLinkText) > 0 ? $componentHomeLinkText : __('bearcms.navigation.home');
         if ($app->bearCMS->addons->exists('bearcms/store-addon')) {
             $showStoreCartButton = $component->showStoreCartButton === 'true';
         }
     }
 
     $itemsType = (string) $component->itemsType === 'onlySelected' ? 'onlySelected' : 'allExcept';
-    $items = strlen($component->items) > 0 ? explode(';', $component->items) : [];
+    $componentItems = (string)$component->items;
+    $items = strlen($componentItems) > 0 ? explode(';', $componentItems) : [];
 
     $dataKey = md5(json_encode([$source, $sourceParentPageID, $itemsType, $items]));
 

@@ -11,11 +11,12 @@ use BearFramework\App;
 $app = App::get();
 $context = $app->contexts->get(__DIR__);
 
-$count = strlen($component->count) > 0 ? (int) $component->count : 5;
+$componentCount = (string)$component->count;
+$count = strlen($componentCount) > 0 ? (int) $componentCount : 5;
 if ($count < 1) {
     $count = 1;
 }
-$threadID = $component->threadID;
+$threadID = (string)$component->threadID;
 $content = '';
 if (strlen($threadID) > 0) {
     $content .= '<div class="bearcms-comments-element">';

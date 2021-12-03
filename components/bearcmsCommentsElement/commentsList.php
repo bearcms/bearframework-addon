@@ -14,7 +14,7 @@ use BearCMS\Internal2;
 $app = App::get();
 
 $count = (int) $component->count;
-$threadID = $component->threadID;
+$threadID = (string)$component->threadID;
 $elementID = 'cml' . md5($threadID);
 
 echo '<html>';
@@ -23,7 +23,7 @@ echo '<body>';
 echo '<div id="' . $elementID . '" data-count="' . $count . '">';
 $thread = Internal2::$data2->commentsThreads->get($threadID);
 if ($thread !== null) {
-    $thread->comments->filter(function($comment) use ($app) {
+    $thread->comments->filter(function ($comment) use ($app) {
         if ($comment->status === 'approved') {
             return true;
         }
@@ -48,7 +48,7 @@ if ($thread !== null) {
         echo '</div>';
     }
 
-    $urlsToHTML = function($text) {
+    $urlsToHTML = function ($text) {
         $letters = 'абвгдежзийклмнопрстуфхчцшщьъюяАБВГДЕЖЗИЙКЛМНОПРСТУФХЧЦШЩЬЪЮЯ';
         $exp = '/(http|https|ftp|ftps)\:\/\/[' . $letters . 'a-zA-Z0-9\-\.]+\.[' . $letters . 'a-zA-Z]+[^\s]*/';
         $matches = null;

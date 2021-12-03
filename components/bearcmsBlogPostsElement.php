@@ -15,8 +15,9 @@ $app = App::get();
 $context = $app->contexts->get(__DIR__);
 
 $source = 'allPosts';
-if (strlen($component->source) > 0 && array_search($component->source, ['allPosts', 'postsInCategories']) !== false) {
-    $source = $component->source;
+$componentSource = (string)$component->source;
+if (strlen($componentSource) > 0 && array_search($componentSource, ['allPosts', 'postsInCategories']) !== false) {
+    $source = $componentSource;
 }
 
 $list = $app->bearCMS->data->blogPosts->getList()
@@ -24,7 +25,8 @@ $list = $app->bearCMS->data->blogPosts->getList()
     ->sortBy('publishedTime', 'desc');
 
 if ($source === 'postsInCategories') {
-    $categoriesIDs = strlen($component->sourceCategoriesIDs) > 0 ? explode(';', $component->sourceCategoriesIDs) : [];
+    $componentSourceCategoriesIDs = (string)$component->sourceCategoriesIDs;
+    $categoriesIDs = strlen($componentSourceCategoriesIDs) > 0 ? explode(';', $componentSourceCategoriesIDs) : [];
     $list->filter(function ($blogPost) use ($categoriesIDs) {
         if (isset($blogPost->categoriesIDs)) {
             foreach ($blogPost->categoriesIDs as $categoryID) {
@@ -41,15 +43,15 @@ if ($source === 'postsInCategories') {
 }
 
 $type = 'full';
-if (strlen($component->type) > 0) {
-    if (array_search($component->type, ['summary', 'full', 'titles']) !== false) {
-        $type = $component->type;
-    }
+$componentType = (string)$component->type;
+if (strlen($componentType) > 0 && array_search($componentType, ['summary', 'full', 'titles']) !== false) {
+    $type = $componentType;
 }
 
 $spacing = '';
-if (strlen($component->spacing) > 0) {
-    $spacing = $component->spacing;
+$componentSpacing = (string)$component->spacing;
+if (strlen($componentSpacing) > 0) {
+    $spacing = $componentSpacing;
 }
 
 $showDate = $component->showDate === 'true';
@@ -64,7 +66,8 @@ if ($list->count() > 0) {
     $counter = 0;
     foreach ($list as $blogPost) {
         $counter++;
-        $title = strlen($blogPost->title) > 0 ? $blogPost->title : 'Unknown';
+        $blogPostTitle = (string)$blogPost->title;
+        $title = strlen($blogPostTitle) > 0 ? $blogPostTitle : 'Unknown';
         $url = $app->urls->get(Config::$blogPagesPathPrefix . $blogPost->slug . '/');
         $publishedTime = $blogPost->publishedTime;
 

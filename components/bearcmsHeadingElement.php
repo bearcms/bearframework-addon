@@ -8,10 +8,9 @@
 
 $text = (string) $component->text;
 $size = 'large';
-if (strlen($component->size) > 0) {
-    if (array_search($component->size, ['large', 'medium', 'small']) !== false) {
-        $size = $component->size;
-    }
+$componentSize = (string)$component->size;
+if (strlen($componentSize) > 0 && array_search($componentSize, ['large', 'medium', 'small']) !== false) {
+    $size = $componentSize;
 }
 
 $outputType = (string) $component->getAttribute('output-type');
@@ -29,8 +28,9 @@ if ($size === 'large') {
 }
 
 $attributes = $outputType === 'full-html' ? ' class="' . $className . '"' : '';
-if (strlen($component->linkTargetID) > 0) {
-    $attributes .= ' id="' . htmlentities($component->linkTargetID) . '"';
+$componentLinkTargetID = (string)$component->linkTargetID;
+if (strlen($componentLinkTargetID) > 0) {
+    $attributes .= ' id="' . htmlentities($componentLinkTargetID) . '"';
 }
 
 $content = '<' . $tagName . $attributes . '>' . htmlspecialchars($text) . '</' . $tagName . '>';

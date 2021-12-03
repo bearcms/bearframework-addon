@@ -76,8 +76,9 @@ class MetaOGImages
             $blogPosts = $app->bearCMS->data->blogPosts->getList();
             foreach ($blogPosts as $blogPost) {
                 if ($blogPost->status === 'published' && $blogPost->slug === $slug) {
-                    if (strlen($blogPost->image) > 0) {
-                        $filename = $blogPost->image;
+                    $blogPostImage = $blogPost->image;
+                    if (strlen($blogPostImage) > 0) {
+                        $filename = $blogPostImage;
                         break;
                     }
                     $containerID = 'bearcms-blogpost-' . $blogPost->id;
@@ -88,8 +89,9 @@ class MetaOGImages
             $pages = $app->bearCMS->data->pages->getList();
             foreach ($pages as $page) {
                 if ($page->status === 'public' && $page->path === $path) {
-                    if (strlen($page->image) > 0) {
-                        $filename = $page->image;
+                    $pageImage = $page->image;
+                    if (strlen($pageImage) > 0) {
+                        $filename = $pageImage;
                         break;
                     }
                     $containerID = 'bearcms-page-' . $page->id;

@@ -46,8 +46,9 @@ class Maintenance
         $pages = $bearCMS->data->pages->getList();
         foreach ($pages as $page) {
             $elementsContainersToCheck[] = 'bearcms-page-' . $page->id;
-            if (strlen($page->image) > 0) {
-                $files[] = str_replace('appdata://', '', $page->image);
+            $pageImage = (string)$page->image;
+            if (strlen($pageImage) > 0) {
+                $files[] = str_replace('appdata://', '', $pageImage);
             }
         }
         if (array_search('bearcms-page-home', $elementsContainersToCheck) === false) {
@@ -59,8 +60,9 @@ class Maintenance
         $blogPosts = $bearCMS->data->blogPosts->getList();
         foreach ($blogPosts as $blogPost) {
             $elementsContainersToCheck[] = 'bearcms-blogpost-' . $blogPost->id;
-            if (strlen($blogPost->image) > 0) {
-                $files[] = str_replace('appdata://', '', $blogPost->image);
+            $blogPostImage = $blogPost->image;
+            if (strlen($blogPostImage) > 0) {
+                $files[] = str_replace('appdata://', '', $blogPostImage);
             }
         }
         if (array_search('bearcms-page-home', $elementsContainersToCheck) === false) {

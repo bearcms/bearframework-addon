@@ -42,7 +42,7 @@ class Themes
                 return $data['id'];
             }
         }
-        if (strlen(Config::$defaultThemeID) > 0) {
+        if (Config::$defaultThemeID !== null && strlen(Config::$defaultThemeID) > 0) {
             return Config::$defaultThemeID;
         }
         return 'none';
@@ -260,7 +260,7 @@ class Themes
                 if (!($style instanceof \BearCMS\Themes\Theme\Style)) {
                     throw new \Exception('Invalid theme style at index ' . $j . '!');
                 }
-                if (strlen($style->id) === 0) {
+                if ($style->id === null || strlen($style->id) === 0) {
                     $style->id = 'style' . $j;
                 }
                 if ($style->name == null) {
@@ -315,7 +315,7 @@ class Themes
      */
     static private function getCustomizationsCacheKey(string $id, string $userID = null): ?string
     {
-        return 'bearcms-theme-customizations-' . md5($id) . '-' . md5($userID);
+        return 'bearcms-theme-customizations-' . md5($id) . '-' . md5((string)$userID);
     }
 
     /**
@@ -348,7 +348,7 @@ class Themes
             $app = App::get();
             $version = self::getVersion($id);
             $useCache = $version !== null;
-            $envKey = md5(md5(serialize(array_keys(self::$elementsOptions))) . md5(serialize(array_keys(self::$pagesOptions))) . md5($version) . md5('v7'));
+            $envKey = md5(md5(serialize(array_keys(self::$elementsOptions))) . md5(serialize(array_keys(self::$pagesOptions))) . md5((string)$version) . md5('v7'));
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID);
@@ -480,7 +480,7 @@ class Themes
         if (!$app->data->exists($fileDataKey)) {
             throw new \Exception('Import file not found!', 2);
         }
-        $hasUser = strlen($userID) > 0;
+        $hasUser = $userID !== null && strlen($userID) > 0;
         $archiveFilename = $app->data->getFilename($fileDataKey);
         $tempArchiveFilename = sys_get_temp_dir() . '/bearcms-theme-import-' . uniqid() . '.zip';
         copy($archiveFilename, $tempArchiveFilename);
@@ -691,7 +691,7 @@ class Themes
                     if ($optionType === 'cssCode') {
                         $cssCode .= $value;
                     } else {
-                        if (strlen($value) > 0) {
+                        if ($value !== null && strlen($value) > 0) {
                             if ($optionType === 'image') {
                                 $addAssetUpdate($value);
                             } elseif ($optionType === 'css' || $optionType === 'cssBackground') {
@@ -725,7 +725,7 @@ class Themes
                                         $selectorVariants = ['', '', ''];
                                         if ($optionType === 'htmlUnit') {
                                             if (isset($outputDefinition[2])) {
-                                                $selectorVariants[0] .= str_replace('{value}', strlen($value) > 0 ? $value : '0', $outputDefinition[2]);
+                                                $selectorVariants[0] .= str_replace('{value}', $value !== null && strlen($value) > 0 ? $value : '0', $outputDefinition[2]);
                                             }
                                         } elseif ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
                                             $temp = isset($value[0]) ? json_decode($value, true) : [];

@@ -35,22 +35,22 @@ if ($outputType === 'full-html') {
     $content = '<div class="bearcms-image-gallery-element">';
 
     $attributes = '';
-    if (strlen($component->type) > 0) {
+    if ($component->type !== null && strlen($component->type) > 0) {
         $attributes .= ' type="' . $component->type . '"';
     }
-    if (strlen($component->columnsCount) > 0) {
+    if ($component->columnsCount !== null && strlen($component->columnsCount) > 0) {
         $attributes .= ' columnsCount="' . $component->columnsCount . '"';
     }
-    if (strlen($component->imageSize) > 0) {
+    if ($component->imageSize !== null && strlen($component->imageSize) > 0) {
         $attributes .= ' imageSize="' . $component->imageSize . '"';
     }
-    if (strlen($component->imageAspectRatio) > 0) {
+    if ($component->imageAspectRatio !== null && strlen($component->imageAspectRatio) > 0) {
         $attributes .= ' imageAspectRatio="' . $component->imageAspectRatio . '"';
     }
-    if (strlen($component->imageLoadingBackground) > 0) {
+    if ($component->imageLoadingBackground !== null && strlen($component->imageLoadingBackground) > 0) {
         $attributes .= ' imageLoadingBackground="' . $component->imageLoadingBackground . '"';
     }
-    if (strlen($component->lazyLoadImages) > 0) {
+    if ($component->lazyLoadImages !== null && strlen($component->lazyLoadImages) > 0) {
         $attributes .= ' lazyLoadImages="' . $component->lazyLoadImages . '"';
     } else {
         $attributes .= ' lazyLoadImages="true"';
@@ -89,7 +89,7 @@ if ($outputType === 'full-html') {
             $fixedFilename = $fixFilename($file->getAttribute('filename'));
             if ($fixedFilename !== null) {
                 $assetOptions = ['cacheMaxAge' => 999999999];
-                $quality = $file->getAttribute('quality');
+                $quality = (string)$file->getAttribute('quality');
                 if (strlen($quality) > 0) {
                     $assetOptions['quality'] = (int)$quality;
                 }

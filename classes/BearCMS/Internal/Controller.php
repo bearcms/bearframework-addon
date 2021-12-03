@@ -100,7 +100,7 @@ class Controller
                     }
                 }
             }
-            
+
             move_uploaded_file($file->filename, $filename);
             if (is_file($filename)) {
                 $queryList = $app->request->query->getList();
@@ -164,7 +164,7 @@ class Controller
                 $fullFilename = $app->data->getFilename($dataKey);
                 $response = new App\Response\FileReader($fullFilename);
                 $details = $app->assets->getDetails($fileData['name'], ['mimeType']);
-                if (strlen($details['mimeType']) > 0) {
+                if ($details['mimeType'] !== null && strlen($details['mimeType']) > 0) {
                     $response->headers->set($response->headers->make('Content-Type', $details['mimeType']));
                 }
                 if (!$preview) {
@@ -215,7 +215,7 @@ class Controller
         if (strlen($language) === 0) {
             $language = $primaryLanguage;
         }
-
+        $language = (string)$language;
         $data = '<title>' . htmlspecialchars($settings->getTitle($language)) . '</title>';
         $data .= '<link>' . $app->urls->get('/') . '</link>';
         $data .= '<description>' . htmlspecialchars($settings->getDescription($language)) . '</description>';
@@ -232,7 +232,7 @@ class Controller
         $counter = 0;
         foreach ($blogPosts as $blogPost) {
             $add = false;
-            $blogPostLanguage = $blogPost->language;
+            $blogPostLanguage = (string)$blogPost->language;
             if ($primaryLanguage === $language) {
                 if (strlen($blogPostLanguage) === 0 || (string) $blogPostLanguage === (string) $language) {
                     $add = true;

@@ -50,7 +50,7 @@ class Cookies
                 throw new \InvalidArgumentException('');
             }
             $result = [];
-            $cookiePrefix = Config::$cookiePrefix;
+            $cookiePrefix = (string)Config::$cookiePrefix;
             $cookiePrefixLength = strlen($cookiePrefix);
             $cookies = $app->request->cookies->getList();
             foreach ($cookies as $cookie) {
@@ -58,7 +58,7 @@ class Cookies
                 $value = $cookie->value;
                 if (substr($name, 0, $cookiePrefixLength) === $cookiePrefix) {
                     $cookieTypePrefix = substr($name, 0, $cookiePrefixLength + 2);
-                    if (($type === self::TYPE_SERVER && $cookieTypePrefix === $cookiePrefix . 's_') || ($type === self::TYPE_CLIENT && $cookieTypePrefix === $cookiePrefix . 'c_' )) {
+                    if (($type === self::TYPE_SERVER && $cookieTypePrefix === $cookiePrefix . 's_') || ($type === self::TYPE_CLIENT && $cookieTypePrefix === $cookiePrefix . 'c_')) {
                         $result[substr($name, $cookiePrefixLength + 2)] = $value;
                     }
                 }
@@ -67,8 +67,8 @@ class Cookies
             foreach (self::$pending as $cookieData) {
                 $cookieTypePrefix = substr($cookieData['name'], 0, $cookiePrefixLength + 2);
                 $key = substr($cookieData['name'], $cookiePrefixLength + 2);
-                if (strlen($cookieData['expire']) === 0 || $cookieData['expire'] > time()) {
-                    if (($type === self::TYPE_SERVER && $cookieTypePrefix === $cookiePrefix . 's_') || ($type === self::TYPE_CLIENT && $cookieTypePrefix === $cookiePrefix . 'c_' )) {
+                if ($cookieData['expire'] === null || strlen($cookieData['expire']) === 0 || $cookieData['expire'] > time()) {
+                    if (($type === self::TYPE_SERVER && $cookieTypePrefix === $cookiePrefix . 's_') || ($type === self::TYPE_CLIENT && $cookieTypePrefix === $cookiePrefix . 'c_')) {
                         $result[$key] = $cookieData['value'];
                     }
                 } else {
@@ -172,5 +172,4 @@ class Cookies
         }
         return array_values($result);
     }
-
 }

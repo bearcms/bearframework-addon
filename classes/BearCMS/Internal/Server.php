@@ -403,10 +403,12 @@ class Server
                 for ($i = 1; $i <= 3; $i++) {
                     try {
                         $currentUserData = $requestResponseMeta['currentUser'];
-                        $dataKey = '.temp/bearcms/userkeys/' . md5($currentUserData['key']);
-                        $userID = (string) $currentUserData['id'];
-                        if ($app->data->getValue($dataKey) !== $userID) {
-                            $app->data->set($app->data->make($dataKey, $userID));
+                        if ($currentUserData['key'] !== null) {
+                            $dataKey = '.temp/bearcms/userkeys/' . md5($currentUserData['key']);
+                            $userID = (string) $currentUserData['id'];
+                            if ($app->data->getValue($dataKey) !== $userID) {
+                                $app->data->set($app->data->make($dataKey, $userID));
+                            }
                         }
                         break;
                     } catch (\BearFramework\App\Data\DataLockedException $e) {
