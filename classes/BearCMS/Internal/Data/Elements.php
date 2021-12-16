@@ -57,11 +57,11 @@ class Elements
                 $filesKeysToUpdate = [];
                 foreach ($fileKeys as $fileKey) {
                     if (substr($fileKey, 0, 5) === 'data:') {
-                        $dataKay = substr($fileKey, 5);
-                        if ($app->data->exists($dataKay)) {
-                            $newDataKey = Data::generateNewFilename($dataKay);
+                        $dataKey = substr($fileKey, 5);
+                        if ($app->data->exists($dataKey)) {
+                            $newDataKey = Data::generateNewFilename($dataKey);
                             $filesKeysToUpdate[$fileKey] = 'data:' . $newDataKey;
-                            $app->data->duplicate($dataKay, $newDataKey);
+                            $app->data->duplicate($dataKey, $newDataKey);
                             UploadsSize::add($newDataKey, filesize($app->data->getFilename($newDataKey)));
                         }
                     }
