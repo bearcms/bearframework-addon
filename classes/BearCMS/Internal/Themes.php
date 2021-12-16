@@ -348,7 +348,7 @@ class Themes
             $app = App::get();
             $version = self::getVersion($id);
             $useCache = $version !== null;
-            $envKey = md5(md5(serialize(array_keys(self::$elementsOptions))) . md5(serialize(array_keys(self::$pagesOptions))) . md5((string)$version) . md5('v7'));
+            $envKey = md5(md5(serialize(array_keys(self::$elementsOptions))) . md5(serialize(array_keys(self::$pagesOptions))) . md5((string)$version) . md5('v8'));
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID);
@@ -665,6 +665,7 @@ class Themes
         $cssRules = [];
         $cssCode = '';
         $updates = [];
+        $linkTags = [];
 
         $addAssetUpdate = function (string $value) use ($app, &$updates, $includeAssetsDetails) {
             if (!isset($updates['assets'])) {
@@ -683,7 +684,46 @@ class Themes
             }
         };
 
-        $walkOptions = function ($options) use (&$cssRules, &$cssCode, &$walkOptions, &$addAssetUpdate) {
+        $webSafeFonts = [
+            'Arial' => 'Arial,Helvetica,sans-serif',
+            'Arial Black' => '"Arial Black",Gadget,sans-serif',
+            'Comic Sans' => '"Comic Sans MS",cursive,sans-serif',
+            'Courier' => '"Courier New",Courier,monospace',
+            'Georgia' => 'Georgia,serif',
+            'Impact' => 'Impact,Charcoal,sans-serif',
+            'Lucida' => '"Lucida Sans Unicode","Lucida Grande",sans-serif',
+            'Lucida Console' => '"Lucida Console",Monaco,monospace',
+            'Palatino' => '"Palatino Linotype","Book Antiqua",Palatino,serif',
+            'Tahoma' => 'Tahoma,Geneva,sans-serif',
+            'Times New Roman' => '"Times New Roman",Times,serif',
+            'Trebuchet' => '"Trebuchet MS",Helvetica,sans-serif',
+            'Verdana' => 'Verdana,Geneva,sans-serif'
+        ];
+
+        $updateFontFamily = function (string $fontName) use ($webSafeFonts, &$updates, &$linkTags) {
+            // $matches = [];
+            // preg_match_all('/font\-family\:(.*?);/', $text, $matches);
+            // foreach ($matches[0] as $i => $match) {
+            //    $fontName = $matches[1][$i];
+            // }
+            if (isset($webSafeFonts[$fontName])) {
+                return $webSafeFonts[$fontName];
+            } elseif (strpos($fontName, 'googlefonts:') === 0) {
+                $googleFontName = substr($fontName, strlen('googlefonts:'));
+                if (!isset($updates['googleFonts'])) {
+                    $updates['googleFonts'] = [];
+                }
+                $updateKey = 'googlefont:' . md5($googleFontName);
+                if (!isset($updates['googleFonts'][$updateKey])) {
+                    $updates['googleFonts'][$updateKey] = $googleFontName;
+                    $linkTags[] = '<link href="' . htmlentities($updateKey) . '" rel="preload" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"><noscript><link href="' . htmlentities($updateKey) . '" rel="stylesheet"></noscript>';
+                }
+                return $googleFontName;
+            }
+            return $fontName;
+        };
+
+        $walkOptions = function ($options) use (&$cssRules, &$cssCode, &$walkOptions, &$addAssetUpdate, $updateFontFamily) {
             foreach ($options as $option) {
                 if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                     $value = isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value']) : $option->details['value']) : null;
@@ -723,27 +763,73 @@ class Themes
                                     if (isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
                                         $selector = $outputDefinition[1];
                                         $selectorVariants = ['', '', ''];
-                                        if ($optionType === 'htmlUnit') {
-                                            if (isset($outputDefinition[2])) {
-                                                $selectorVariants[0] .= str_replace('{value}', $value !== null && strlen($value) > 0 ? $value : '0', $outputDefinition[2]);
-                                            }
-                                        } elseif ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
+                                        if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
                                             $temp = isset($value[0]) ? json_decode($value, true) : [];
                                             if (is_array($temp)) {
-                                                foreach ($temp as $key => $_value) {
-                                                    $pseudo = substr($key, -6);
-                                                    if ($pseudo === ':hover') {
-                                                        $selectorVariants[1] .= substr($key, 0, -6) . ':' . $_value . ';';
-                                                    } else if ($pseudo === 'active') { // optimization
-                                                        if (substr($key, -7) === ':active') {
-                                                            $selectorVariants[2] .= substr($key, 0, -7) . ':' . $_value . ';';
+                                                if (isset($outputDefinition[2])) { // has selector value specified
+                                                    $ruleValue = $outputDefinition[2];
+                                                    $valuesToSearch = [];
+                                                    $valuesToReplace = [];
+                                                    $matches = [];
+                                                    preg_match_all('/{cssPropertyValue\((.*?)\)}/', $ruleValue, $matches);
+                                                    foreach ($matches[0] as $i => $match) {
+                                                        $valuesToSearch[] = $match;
+                                                        $cssPropertyName = $matches[1][$i];
+                                                        $valueToSet = isset($temp[$cssPropertyName]) ? $temp[$cssPropertyName] : '';
+                                                        if ($cssPropertyName === 'font-family') {
+                                                            $valueToSet = $updateFontFamily($valueToSet);
+                                                        }
+                                                        $valuesToReplace[] = $valueToSet;
+                                                    }
+                                                    $matches = [];
+                                                    preg_match_all('/' . rawurlencode('{cssPropertyValue(') . '(.*?)' . rawurlencode(')}') . '/', $ruleValue, $matches);
+                                                    foreach ($matches[0] as $i => $match) {
+                                                        $valuesToSearch[] = $match;
+                                                        $cssPropertyName = $matches[1][$i];
+                                                        $valueToSet = isset($temp[$cssPropertyName]) ? $temp[$cssPropertyName] : '';
+                                                        if ($cssPropertyName === 'font-family') {
+                                                            $valueToSet = $updateFontFamily($valueToSet);
+                                                        }
+                                                        $valuesToReplace[] = rawurlencode($valueToSet);
+                                                    }
+                                                    $selectorVariants[0] .= str_replace($valuesToSearch, $valuesToReplace, $ruleValue);
+                                                } else {
+                                                    foreach ($temp as $key => $_value) {
+                                                        if ($key === 'font-family') {
+                                                            $_value = $updateFontFamily($_value);
+                                                        }
+                                                        $pseudo = substr($key, -6);
+                                                        if ($pseudo === ':hover') {
+                                                            $selectorVariants[1] .= substr($key, 0, -6) . ':' . $_value . ';';
+                                                        } else if ($pseudo === 'active') { // optimization
+                                                            if (substr($key, -7) === ':active') {
+                                                                $selectorVariants[2] .= substr($key, 0, -7) . ':' . $_value . ';';
+                                                            } else {
+                                                                $selectorVariants[0] .= $key . ':' . $_value . ';';
+                                                            }
                                                         } else {
                                                             $selectorVariants[0] .= $key . ':' . $_value . ';';
                                                         }
-                                                    } else {
-                                                        $selectorVariants[0] .= $key . ':' . $_value . ';';
                                                     }
                                                 }
+                                            }
+                                        } else {
+                                            if (isset($outputDefinition[2])) { // has selector value specified
+                                                $defaultValue = '';
+                                                if ($optionType === 'htmlUnit') {
+                                                    $defaultValue = '0';
+                                                }
+                                                $valueToSet = $value !== null && strlen($value) > 0 ? $value : $defaultValue;
+                                                $valuesToSearch = ['{value}', rawurlencode('{value}')];
+                                                $valuesToReplace = [$valueToSet, rawurlencode($valueToSet)];
+                                                if ($optionType === 'font') {
+                                                    $valueAsFontName = $updateFontFamily($valueToSet);
+                                                    $valuesToSearch[] = '{valueAsFontName}';
+                                                    $valuesToReplace[] = $valueAsFontName;
+                                                    $valuesToSearch[] = rawurlencode('{valueAsFontName}');
+                                                    $valuesToReplace[] = rawurlencode($valueAsFontName);
+                                                }
+                                                $selectorVariants[0] .= str_replace($valuesToSearch, $valuesToReplace, $outputDefinition[2]);
                                             }
                                         }
                                         if ($selectorVariants[0] !== '') {
@@ -786,46 +872,6 @@ class Themes
         foreach ($cssRules as $key => $value) {
             $style .= $key . '{' . $value . '}';
         }
-        $linkTags = [];
-        $applyFontNames = function ($text) use (&$updates, &$linkTags) {
-            $webSafeFonts = [
-                'Arial' => 'Arial,Helvetica,sans-serif',
-                'Arial Black' => '"Arial Black",Gadget,sans-serif',
-                'Comic Sans' => '"Comic Sans MS",cursive,sans-serif',
-                'Courier' => '"Courier New",Courier,monospace',
-                'Georgia' => 'Georgia,serif',
-                'Impact' => 'Impact,Charcoal,sans-serif',
-                'Lucida' => '"Lucida Sans Unicode","Lucida Grande",sans-serif',
-                'Lucida Console' => '"Lucida Console",Monaco,monospace',
-                'Palatino' => '"Palatino Linotype","Book Antiqua",Palatino,serif',
-                'Tahoma' => 'Tahoma,Geneva,sans-serif',
-                'Times New Roman' => '"Times New Roman",Times,serif',
-                'Trebuchet' => '"Trebuchet MS",Helvetica,sans-serif',
-                'Verdana' => 'Verdana,Geneva,sans-serif'
-            ];
-
-            $matches = [];
-            preg_match_all('/font\-family\:(.*?);/', $text, $matches);
-            foreach ($matches[0] as $i => $match) {
-                $fontName = $matches[1][$i];
-                if (isset($webSafeFonts[$fontName])) {
-                    $text = str_replace($match, 'font-family:' . $webSafeFonts[$fontName] . ';', $text);
-                } elseif (strpos($fontName, 'googlefonts:') === 0) {
-                    $googleFontName = substr($fontName, strlen('googlefonts:'));
-                    $text = str_replace($match, 'font-family:\'' . $googleFontName . '\';', $text);
-                    if (!isset($updates['googleFonts'])) {
-                        $updates['googleFonts'] = [];
-                    }
-                    $updateKey = 'googlefont:' . md5($googleFontName);
-                    if (!isset($updates['googleFonts'][$updateKey])) {
-                        $updates['googleFonts'][$updateKey] = $googleFontName;
-                        $linkTags[] = '<link href="' . htmlentities($updateKey) . '" rel="preload" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"><noscript><link href="' . htmlentities($updateKey) . '" rel="stylesheet"></noscript>';
-                    }
-                }
-            }
-            return $text;
-        };
-        $style = $applyFontNames($style);
 
         $cssCode = trim($cssCode); // Positioned in different style tag just in case it's invalid
 
