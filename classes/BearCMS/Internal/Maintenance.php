@@ -193,4 +193,26 @@ class Maintenance
         $result['elements'] = self::optimizeElements($preview);
         return $result;
     }
+
+    /**
+     * 
+     * @param boolean $preview
+     * @return array
+     */
+    static function fixStructuralElements(bool $preview): array
+    {
+        $result = [];
+        $app = App::get();
+        $list = $app->data->getList()
+            ->filterBy('key', 'bearcms/elements/container/', 'startWith')
+            ->sliceProperties(['key']);
+        foreach ($list as $item) {
+            $dataKey = $item->key;
+            $fixResult = Elements::fixStructuralElements($dataKey, $preview);
+            if (!empty($fixResult)) {
+                $result[$dataKey] = $fixResult;
+            }
+        }
+        return $result;
+    }
 }

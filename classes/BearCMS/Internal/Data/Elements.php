@@ -210,7 +210,6 @@ class Elements
      */
     static function optimizeElementData(string $dataKey, bool $preview = true): array
     {
-        $result = [];
         if (strpos($dataKey, 'bearcms/elements/element/') !== 0) {
             return ['error' => 'Wrong data key!'];
         }
@@ -226,6 +225,7 @@ class Elements
         if ($data === null) {
             return ['error' => 'Invalid!'];
         }
+        $result = [];
         if (isset($data['type'], $data['data'])) {
             $componentName = array_search($data['type'], ElementsHelper::$elementsTypesCodes);
             if ($componentName !== false) {
@@ -245,6 +245,102 @@ class Elements
                     }
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * 
+     * @param string $dataKey
+     * @param boolean $preview
+     * @return array
+     */
+    static function fixStructuralElements(string $dataKey, bool $preview = true): array
+    {
+        if (strpos($dataKey, 'bearcms/elements/container/') !== 0) {
+            return ['error' => 'Wrong data key!'];
+        }
+
+        $app = App::get();
+
+        $walkElements = function ($elements) use (&$walkElements): array {
+            $hasChange = false;
+            $updatedElements = [];
+            foreach ($elements as $elementData) {
+                $structuralElementData = ElementsHelper::getUpdatedStructuralElementData($elementData);
+                if ($structuralElementData !== null) {
+                    $_hasChange = false;
+                    if (isset($elementData['elements']) && isset($elementData['data']) && !isset($elementData['type'])) { // Has 'elements' and 'data' keys, but no 'type' key
+                        $_hasChange = true;
+                    }
+                    if ($structuralElementData['type'] === 'columns') {
+                        if (isset($structuralElementData['elements'])) {
+                            for ($i = 0; $i < 100; $i++) {
+                                if (isset($structuralElementData['elements'][$i])) {
+                                    $result = $walkElements($structuralElementData['elements'][$i]);
+                                    if ($result[0]) {
+                                        $_hasChange = true;
+                                        $structuralElementData['elements'][$i] = $result[1];
+                                    }
+                                }
+                            }
+                        }
+                    } elseif ($structuralElementData['type'] === 'floatingBox') {
+                        if (isset($structuralElementData['elements'])) {
+                            if (isset($structuralElementData['elements']['inside'])) {
+                                $result = $walkElements($structuralElementData['elements']['inside']);
+                                if ($result[0]) {
+                                    $_hasChange = true;
+                                    $structuralElementData['elements']['inside'] = $result[1];
+                                }
+                            }
+                            if (isset($structuralElementData['elements']['outside'])) {
+                                $result = $walkElements($structuralElementData['elements']['outside']);
+                                if ($result[0]) {
+                                    $_hasChange = true;
+                                    $structuralElementData['elements']['outside'] = $result[1];
+                                }
+                            }
+                        }
+                    } elseif ($structuralElementData['type'] === 'flexibleBox') {
+                        if (isset($structuralElementData['elements'])) {
+                            $result = $walkElements($structuralElementData['elements']);
+                            if ($result[0]) {
+                                $_hasChange = true;
+                                $structuralElementData['elements'] = $result[1];
+                            }
+                        }
+                    }
+                    if ($_hasChange) {
+                        $hasChange = true;
+                        $updatedElements[] = $structuralElementData;
+                    } else {
+                        $updatedElements[] = $elementData;
+                    }
+                } else {
+                    $updatedElements[] = $elementData;
+                }
+            }
+            return [$hasChange, $updatedElements];
+        };
+
+        $result = [];
+        $containerDataValue = $app->data->getValue($dataKey);
+        $containerData = $containerDataValue !== null ? json_decode($containerDataValue, true) : [];
+        if (isset($containerData['elements'])) {
+            $walkElementsResult = $walkElements($containerData['elements']);
+            if ($walkElementsResult[0]) { // has change
+                $updatedContainerData = $containerData;
+                $updatedContainerData['elements'] = $walkElementsResult[1];
+                if (!$preview) {
+                    $app->data->duplicate($dataKey, '.recyclebin/bearcms/update-' . str_replace('.', '-', microtime(true)) . '-' . str_replace('/', '-', $dataKey));
+                    $app->data->setValue($dataKey, json_encode($updatedContainerData));
+                }
+                $result['new'] = $updatedContainerData;
+                $result['old'] = $containerData;
+            }
+        } else {
+            return ['error' => 'Missing elements key!'];
         }
         return $result;
     }
