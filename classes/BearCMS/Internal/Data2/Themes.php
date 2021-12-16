@@ -23,19 +23,24 @@ class Themes
      * Returns a list containing the options for the theme specified
      * 
      * @param string $id The id of the theme
+     * @param bool $updateValues Update values
      * @return array A list containing the theme options
      * @throws \InvalidArgumentException
      */
-    public function getValues(string $id): array
+    public function getValues(string $id, bool $updateValues = true): array
     {
+        $result = [];
         $data = Internal\Data::getValue('bearcms/themes/theme/' . md5($id) . '.json');
         if ($data !== null) {
             $data = json_decode($data, true);
             if (isset($data['options'])) {
-                return $data['options'];
+                $result = $data['options'];
             }
         }
-        return [];
+        if ($updateValues) {
+            $result = $this->updateOptionsValues($id, $result);
+        }
+        return $result;
     }
 
     /**
@@ -43,22 +48,43 @@ class Themes
      * 
      * @param string $id The id of the theme
      * @param string $userID The id of the user
+     * @param bool $updateValues Update values
      * @return array A list containing the theme options
      * @throws \InvalidArgumentException
      */
-    public function getUserOptions(string $id, string $userID): ?array
+    public function getUserOptions(string $id, string $userID, bool $updateValues = true): ?array
     {
+        $result = null;
         $app = App::get();
         $data = $app->data->getValue('.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json');
         if ($data !== null) {
             $data = json_decode($data, true);
             if (isset($data['options'])) {
-                return $data['options'];
+                $result = $data['options'];
             } else {
-                return []; // the user wants the default values
+                $result = []; // the user wants the default values
             }
         }
-        return null;
+        if ($updateValues) {
+            $result = $this->updateOptionsValues($id, $result);
+        }
+        return $result;
+    }
+
+    /**
+     * Call the theme updateValues() method to update the values if options are modified
+     *
+     * @param string $id
+     * @param array|null $values
+     * @return array|null
+     */
+    private function updateOptionsValues(string $id, array $values = null): ?array
+    {
+        $theme = Internal\Themes::get($id);
+        if ($theme !== null && is_callable($theme->updateValues)) {
+            $values = call_user_func($theme->updateValues, $values);
+        }
+        return $values;
     }
 
     /**
