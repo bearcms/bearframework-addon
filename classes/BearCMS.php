@@ -1230,7 +1230,7 @@ class BearCMS
                             if ($extension !== '') {
                                 $response->headers->set($response->headers->make('Content-Type', 'image/' . $extension));
                             }
-                            $response->headers->set($response->headers->make('Cache-Control', 'public, max-age=3600'));
+                            $response->headers->set($response->headers->make('Cache-Control', 'public, max-age=43200'));
                             return $response;
                         }
                         return new App\Response\NotFound();
@@ -1244,7 +1244,7 @@ class BearCMS
                     $imageURL = MetaOGImages::getImage($path);
                     if ($imageURL !== null) {
                         $response = new App\Response\TemporaryRedirect($imageURL);
-                        $response->headers->set($response->headers->make('Cache-Control', 'public, max-age=3600'));
+                        $response->headers->set($response->headers->make('Cache-Control', 'public, max-age=43200'));
                         return $response;
                     }
                 }
