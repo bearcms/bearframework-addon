@@ -692,7 +692,6 @@ class ElementsHelper
         return false;
     }
 
-
     /**
      * 
      * @param array $elementsIDs
@@ -757,7 +756,6 @@ class ElementsHelper
         }
         if ($elementType !== null) {
             if (isset(Internal\Themes::$elementsOptions[$elementType])) {
-                $app = App::get();
                 Localization::setAdminLocale();
                 if ($elementType === 'flexibleBox') {
                     $themeID = null;
@@ -1126,35 +1124,58 @@ class ElementsHelper
     {
         $elementID = $newElementData['id'];
         $walkElements = function ($elements) use (&$walkElements, $elementID, $newElementData) {
+            $hasChange = false;
             foreach ($elements as $index => $elementData) {
                 $structuralElementData = self::getUpdatedStructuralElementData($elementData);
                 if ($structuralElementData !== null) {
                     if ($structuralElementData['id'] === $elementID) {
                         $elements[$index] = $newElementData;
-                        return $elements;
+                        $hasChange = true;
+                        break;
                     }
                     if ($structuralElementData['type'] === 'columns') {
                         if (isset($structuralElementData['elements'])) {
                             foreach ($structuralElementData['elements'] as $i => $columnElements) {
-                                $elements[$index]['elements'][$i] = $walkElements($columnElements);
+                                $result = $walkElements($columnElements);
+                                if ($result[0]) {
+                                    $structuralElementData['elements'][$i] = $result[1];
+                                    $elements[$index] = $structuralElementData;
+                                    $hasChange = true;
+                                    break;
+                                }
                             }
                         }
                     } elseif ($structuralElementData['type'] === 'floatingBox') {
                         if (isset($structuralElementData['elements'])) {
                             foreach ($structuralElementData['elements'] as $i => $boxElements) {
-                                $elements[$index]['elements'][$i] = $walkElements($boxElements);
+                                $result = $walkElements($boxElements);
+                                if ($result[0]) {
+                                    $structuralElementData['elements'][$i] = $result[1];
+                                    $elements[$index] = $structuralElementData;
+                                    $hasChange = true;
+                                    break;
+                                }
                             }
                         }
                     } elseif ($structuralElementData['type'] === 'flexibleBox') {
                         if (isset($structuralElementData['elements'])) {
-                            $elements[$index]['elements'] = $walkElements($structuralElementData['elements']);
+                            $result = $walkElements($structuralElementData['elements']);
+                            if ($result[0]) {
+                                $structuralElementData['elements'] = $result[1];
+                                $elements[$index] = $structuralElementData;
+                                $hasChange = true;
+                                break;
+                            }
                         }
                     }
                 }
             }
-            return $elements;
+            return [$hasChange, $elements];
         };
-        $containerData['elements'] = $walkElements($containerData['elements']);
+        $result = $walkElements($containerData['elements']);
+        if ($result[0]) { // has change
+            $containerData['elements'] = $result[1];
+        }
         return $containerData;
     }
 
