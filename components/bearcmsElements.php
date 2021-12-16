@@ -127,6 +127,7 @@ if ($renderElementsContainer) {
     }
     echo '<div' . $attributes . '>';
 }
+
 if (!empty($elements)) {
     $childrenContextData = $contextData;
     $childrenContextData['width'] = '100%';
