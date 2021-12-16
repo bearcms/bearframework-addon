@@ -36,6 +36,10 @@ if (strlen($dataResponsiveAttributes) > 0) {
     $attributes .= ' data-responsive-attributes="' . htmlentities(str_replace('=>menuType=', '=>type=', $dataResponsiveAttributes)) . '"';
 }
 
+$allowSearchButtonOption = $component->allowSearchButtonOption === 'true' && $app->bearCMS->addons->exists('bearcms/search-box-element-addon');
+$allowStoreCartButtonOption = $component->allowStoreCartButtonOption === 'true' && $app->bearCMS->addons->exists('bearcms/store-addon');
+
+$showSearchButton = false;
 $showStoreCartButton = false;
 
 $itemsHtml = (string) $component->innerHTML;
@@ -79,7 +83,10 @@ if (isset($itemsHtml[0])) {
         $showHomeLink = $component->showHomeLink === 'true';
         $componentHomeLinkText = (string)$component->homeLinkText;
         $homeLinkText = strlen($componentHomeLinkText) > 0 ? $componentHomeLinkText : __('bearcms.navigation.home');
-        if ($app->bearCMS->addons->exists('bearcms/store-addon')) {
+        if ($allowSearchButtonOption) {
+            $showSearchButton = $component->showSearchButton === 'true';
+        }
+        if ($allowStoreCartButtonOption) {
             $showStoreCartButton = $component->showStoreCartButton === 'true';
         }
     }
@@ -159,6 +166,9 @@ if (isset($itemsHtml[0])) {
         array_unshift($optimizedPages, [0 => '/', 1 => '<a href="/">' . htmlspecialchars($homeLinkText) . '</a>']);
     }
 
+    if ($showSearchButton) {
+        $optimizedPages[] = [0 => null, 1 => '<a href="javascript:void(0);" onclick="bearCMS.search.open();"></a>', 3 => true, 'bearcms-navigation-element-item bearcms-navigation-element-item-search'];
+    }
     if ($showStoreCartButton) {
         $optimizedPages[] = [0 => null, 1 => '<a href="javascript:void(0);" onclick="bearCMS.store.openCart();"></a>', 3 => true, 'bearcms-navigation-element-item bearcms-navigation-element-item-store-cart'];
     }
@@ -199,6 +209,9 @@ if (isset($itemsHtml[0])) {
     $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';
 }
 echo '<html><head>';
+if ($showSearchButton) {
+    echo '<link rel="client-packages-embed" name="-bearcms-search">';
+}
 if ($showStoreCartButton) {
     echo '<link rel="client-packages-embed" name="-bearcms-store">';
 }
