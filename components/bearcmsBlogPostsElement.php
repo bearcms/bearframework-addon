@@ -132,7 +132,7 @@ if ($list->count() > 0) {
                         'width' => '100%',
                         'color' => '#000',
                         'inElementsContainer' => true
-                    ], true);
+                    ], true, $outputType);
                 } elseif ($hasImage) {
                     $content .= '<component output-type="' . $outputType . '" src="bearcms-image-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($imageElementData)) . '"/>';
                 } elseif ($hasText) {
