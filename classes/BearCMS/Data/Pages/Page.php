@@ -9,6 +9,8 @@
 
 namespace BearCMS\Data\Pages;
 
+use BearFramework\App;
+
 /**
  * @property string|null $id
  * @property string|null $name
@@ -26,6 +28,9 @@ namespace BearCMS\Data\Pages;
 class Page extends \BearFramework\Models\Model
 {
 
+    /**
+     * 
+     */
     function __construct()
     {
         $this
@@ -79,6 +84,11 @@ class Page extends \BearFramework\Models\Model
             ]);
     }
 
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
     public function __modelWakeup(array $data)
     {
         if (isset($data['status'])) {
@@ -89,5 +99,18 @@ class Page extends \BearFramework\Models\Model
             }
         }
         return $data;
+    }
+
+    /**
+     * 
+     * @return string|null
+     */
+    public function getURL(): ?string
+    {
+        if (strlen((string)$this->id) === 0 || strlen((string)$this->path) === 0) {
+            return null;
+        }
+        $app = App::get();
+        return $app->urls->get($this->path);
     }
 }

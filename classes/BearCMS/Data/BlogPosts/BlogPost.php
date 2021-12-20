@@ -9,6 +9,9 @@
 
 namespace BearCMS\Data\BlogPosts;
 
+use BearFramework\App;
+use BearCMS\Internal\Config;
+
 /**
  * @property string|null $id
  * @property string|null $title
@@ -27,6 +30,9 @@ namespace BearCMS\Data\BlogPosts;
 class BlogPost extends \BearFramework\Models\Model
 {
 
+    /**
+     * 
+     */
     function __construct()
     {
         $this
@@ -74,6 +80,11 @@ class BlogPost extends \BearFramework\Models\Model
             ]);
     }
 
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
     public function __modelWakeup(array $data)
     {
         if (isset($data['status'])) {
@@ -82,5 +93,19 @@ class BlogPost extends \BearFramework\Models\Model
             }
         }
         return $data;
+    }
+
+    /**
+     * 
+     * @return string|null
+     */
+    public function getURL(): ?string
+    {
+        if (strlen((string)$this->id) === 0) {
+            return null;
+        }
+        $app = App::get();
+        $slug = (string)$this->slug;
+        return $app->urls->get(Config::$blogPagesPathPrefix . (strlen($this->slug) === 0 ? '-' . $this->id : $slug) . '/');
     }
 }

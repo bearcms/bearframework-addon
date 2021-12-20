@@ -1291,7 +1291,7 @@ class BearCMS
                             if ($blogPost !== null) {
                                 $status = $blogPost->status;
                                 if ($status === 'published') {
-                                    return new App\Response\PermanentRedirect($this->app->urls->get(Config::$blogPagesPathPrefix . $blogPost->slug . '/'));
+                                    return new App\Response\PermanentRedirect($blogPost->getURL());
                                 } elseif ($status === 'draft') {
                                     // allow access
                                 } else { // private
@@ -1357,7 +1357,7 @@ class BearCMS
                                             continue;
                                         }
                                         $relatedBlogTitle = strlen($relatedBlogPost->title) > 0 ? $relatedBlogPost->title : 'Unknown';
-                                        $relatedBlogURL = $this->app->urls->get(Config::$blogPagesPathPrefix . $relatedBlogPost->slug . '/');
+                                        $relatedBlogURL = $relatedBlogPost->getURL();
                                         $links[] = '<a href="' . htmlentities($relatedBlogURL) . '" title="' . htmlentities($relatedBlogTitle) . '">' . htmlspecialchars($relatedBlogTitle) . '</a>';
                                         if (sizeof($links) >= 5) {
                                             break;

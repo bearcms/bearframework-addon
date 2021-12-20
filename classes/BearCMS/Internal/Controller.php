@@ -245,7 +245,7 @@ class Controller
             if (!$add) {
                 continue;
             }
-            $blogPostUrl = $app->urls->get(Config::$blogPagesPathPrefix . $blogPost->slug . '/');
+            $blogPostURL = $blogPost->getURL();
             $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPost->id . '" output-type="simple-html"/>');
             $domDocument = new HTML5DOMDocument();
             $domDocument->loadHTML($blogPostContent, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
@@ -259,16 +259,16 @@ class Controller
                 if ($child != null) {
                     $content .= $child->outerHTML . '<br><br>';
                 }
-                $content .= sprintf(__('bearcms.rss.Read the full post at %s'), '<a href="' . $blogPostUrl . '">' . $blogPostUrl . '</a>');
+                $content .= sprintf(__('bearcms.rss.Read the full post at %s'), '<a href="' . $blogPostURL . '">' . $blogPostURL . '</a>');
             } elseif ($contentType === 'noContent') {
-                $content .= sprintf(__('bearcms.rss.Read the post at %s'), '<a href="' . $blogPostUrl . '">' . $blogPostUrl . '</a>');
+                $content .= sprintf(__('bearcms.rss.Read the post at %s'), '<a href="' . $blogPostURL . '">' . $blogPostURL . '</a>');
             }
             $data .= '<item>';
             $data .= '<title>' . htmlspecialchars($blogPost->title) . '</title>';
-            $data .= '<link>' . $blogPostUrl . '</link>';
+            $data .= '<link>' . $blogPostURL . '</link>';
             $data .= '<description><![CDATA[' . $content . ']]></description>';
             $data .= '<pubDate>' . date('r', $blogPost->publishedTime) . '</pubDate>';
-            $data .= '<guid isPermaLink="false">' . $blogPostUrl . '</guid>';
+            $data .= '<guid isPermaLink="false">' . $blogPostURL . '</guid>';
             $data .= '</item>';
             $counter++;
             if ($counter >= 20) {

@@ -188,9 +188,8 @@ class Comments
             }
             $blogPosts = $app->bearCMS->data->blogPosts->getList();
             foreach ($blogPosts as $blogPost) {
-                $url = $app->urls->get(Config::$blogPagesPathPrefix . (strlen($blogPost->slug) === 0 ? '-' . $blogPost->id : $blogPost->slug) . '/');
                 $threadID = 'bearcms-blogpost-' . $blogPost->id;
-                $result[$threadID] = $url;
+                $result[$threadID] = $blogPost->getURL();
             }
             $app->data->setValue($tempDataKey, json_encode($result));
         }
