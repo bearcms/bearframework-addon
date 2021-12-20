@@ -14,6 +14,7 @@ $app = App::get();
 
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
+$isFullHtmlOutputType = $outputType === 'full-html';
 
 $files = null;
 if (strlen($component->innerHTML) > 0) {
@@ -31,7 +32,7 @@ $fixFilename = function ($filename): ?string {
     return null;
 };
 $content = '';
-if ($outputType === 'full-html') {
+if ($isFullHtmlOutputType) {
     $content = '<div class="bearcms-image-gallery-element">';
 
     $attributes = '';
@@ -83,7 +84,8 @@ if ($outputType === 'full-html') {
     }
     $content .= '</component>';
     $content .= '</div>';
-} elseif ($outputType === 'simple-html') {
+} else {
+    echo '<div>';
     if ($files !== null) {
         foreach ($files as $file) {
             $fixedFilename = $fixFilename($file->getAttribute('filename'));
@@ -93,13 +95,14 @@ if ($outputType === 'full-html') {
                 if (strlen($quality) > 0) {
                     $assetOptions['quality'] = (int)$quality;
                 }
-                $content .= '<img src="' . htmlentities($app->assets->getURL($fixedFilename, $assetOptions)) . '">';
+                $content .= '<img src="' . htmlentities($app->assets->getURL($fixedFilename, $assetOptions)) . '" style="max-width:100%;">';
             }
         }
     }
+    echo '</div>';
 }
 echo '<html>';
-if ($outputType === 'full-html') {
+if ($isFullHtmlOutputType) {
     echo '<head><style>.bearcms-image-gallery-element, .bearcms-image-gallery-element *{font-size:0;line-height:0;}</style></head>';
 }
 echo '<body>';

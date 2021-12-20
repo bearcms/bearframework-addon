@@ -16,6 +16,7 @@ $context = $app->contexts->get(__DIR__);
 
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
+$isFullHtmlOutputType = $outputType === 'full-html';
 
 $width = (string) $component->width;
 $align = (string) $component->align;
@@ -130,7 +131,7 @@ if (strlen($componentURL) > 0) {
     }
 
     if ($videoExists) {
-        if ($outputType === 'full-html') {
+        if ($isFullHtmlOutputType) {
             if (Config::$videoPrivateEmbed) {
                 $addPriveteEmbedStyles = true;
                 $hasImage = $videoImage !== null && strlen($videoImage) > 0;
@@ -157,18 +158,14 @@ if (strlen($componentURL) > 0) {
     }
 } elseif ($component->filename !== null && strlen($component->filename) > 0) {
     $filename = Internal2::$data2->fixFilename($component->filename);
-    if ($outputType === 'full-html') {
-        $content = '<div class="bearcms-video-element" style="">' . $innerContainerStartTag;
-    }
+    $content = '<div' . ($isFullHtmlOutputType ? ' class="bearcms-video-element"' : '') . '>' . $innerContainerStartTag;
     $content .= '<video style="width:100%;" controls>';
     $content .= '<source src="' . $app->assets->getURL($filename) . '" type="video/mp4">';
     $content .= '</video>';
-    if ($outputType === 'full-html') {
-        $content .= $innerContainerEndTag . '</div>';
-    }
+    $content .= $innerContainerEndTag . '</div>';
 }
 echo '<html>';
-if ($outputType === 'full-html') {
+if ($isFullHtmlOutputType) {
     echo '<style>';
     echo '.bearcms-video-element{font-size:0;}';
     if ($addPriveteEmbedStyles) {

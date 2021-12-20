@@ -8,21 +8,20 @@
 
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
+$isFullHtmlOutputType = $outputType === 'full-html';
 
 $url = $component->url;
 $text = $component->text;
 $title = $component->title;
 
 echo '<html>';
-if ($outputType === 'full-html') {
+if ($isFullHtmlOutputType) {
     echo '<head><style>.bearcms-link-element{word-break:break-word;}</style></head>';
 }
 echo '<body>';
-if ($outputType === 'full-html') {
-    echo '<div class="bearcms-link-element">';
-}
+
+echo '<div' . ($isFullHtmlOutputType ? ' class="bearcms-link-element"' : '') . '>';
 echo '<a title="' . htmlentities($title) . '" href="' . htmlentities($url) . '">' . htmlspecialchars($text) . '</a>'; // htmlspecialchars(isset($text[0]) ? $text : $url)
-if ($outputType === 'full-html') {
-    echo '</div>';
-}
+echo '</div>';
+
 echo '</body></html>';

@@ -14,6 +14,7 @@ if (array_search($componentSize, ['large', 'medium', 'small']) !== false) {
 
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
+$isFullHtmlOutputType = $outputType === 'full-html';
 
 if ($size === 'large') {
     $className = 'bearcms-separator-element-large';
@@ -23,11 +24,11 @@ if ($size === 'large') {
     $className = 'bearcms-separator-element-small';
 }
 
-$attributes = $outputType === 'full-html' ? ' class="' . $className . '"' : '';
+$attributes = $isFullHtmlOutputType ? ' class="' . $className . '"' : '';
 
 $content = '<div' . $attributes . '></div>';
 echo '<html>';
-if ($outputType === 'full-html') {
+if ($isFullHtmlOutputType) {
     echo '<head><style>.' . $className . '{font-size:0;line-height:0;}</style></head>';
 }
 echo '<body>';

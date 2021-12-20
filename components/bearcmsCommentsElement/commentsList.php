@@ -13,14 +13,20 @@ use BearCMS\Internal2;
 
 $app = App::get();
 
+$outputType = (string) $component->getAttribute('output-type');
+$outputType = isset($outputType[0]) ? $outputType : 'full-html';
+$isFullHtmlOutputType = $outputType === 'full-html';
+
 $count = (int) $component->count;
 $threadID = (string)$component->threadID;
 $elementID = 'cml' . md5($threadID);
 
 echo '<html>';
-echo '<head><link rel="client-packages-embed" name="-bearcms-comments-element-list"></head>';
+if ($isFullHtmlOutputType) {
+    echo '<head><link rel="client-packages-embed" name="-bearcms-comments-element-list"></head>';
+}
 echo '<body>';
-echo '<div id="' . $elementID . '" data-count="' . $count . '">';
+echo '<div' . ($isFullHtmlOutputType ? ' id="' . $elementID . '" data-count="' . $count . '"' : '') . '>';
 $thread = Internal2::$data2->commentsThreads->get($threadID);
 if ($thread !== null) {
     $thread->comments->filter(function ($comment) use ($app) {
@@ -39,13 +45,15 @@ if ($thread !== null) {
         $startIndex = 0;
     }
     if ($startIndex > 0) {
-        echo '<div class="bearcms-comments-show-more-button-container">';
-        $loadMoreData = [
-            'serverData' => \BearCMS\Internal\TempClientData::set(['threadID' => $threadID])
-        ];
-        $onClick = 'bearCMS.commentsElementList.loadMore(this,' . json_encode($loadMoreData) . ');';
-        echo '<a class="bearcms-comments-show-more-button" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">' . __('bearcms.comments.Show more') . '</a>';
-        echo '</div>';
+        if ($isFullHtmlOutputType) {
+            echo '<div class="bearcms-comments-show-more-button-container">';
+            $loadMoreData = [
+                'serverData' => \BearCMS\Internal\TempClientData::set(['threadID' => $threadID])
+            ];
+            $onClick = 'bearCMS.commentsElementList.loadMore(this,' . json_encode($loadMoreData) . ');';
+            echo '<a class="bearcms-comments-show-more-button" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">' . __('bearcms.comments.Show more') . '</a>';
+            echo '</div>';
+        }
     }
 
     $urlsToHTML = function ($text) {
@@ -87,11 +95,13 @@ if ($thread !== null) {
         $profile = Internal\PublicProfile::getFromAuthor($author);
 
         $onClick = 'bearCMS.commentsElementList.previewUser("' . $author['provider'] . '","' . $author['id'] . '");';
-        $linkAttributes = ' title="' . htmlentities($profile->name) . '" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '"';
-        echo '<div class="bearcms-comments-comment">';
-        echo '<a class="bearcms-comments-comment-author-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></a>';
-        echo '<a class="bearcms-comments-comment-author-name"' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</a> <span class="bearcms-comments-comment-date">' . $statusText . $app->localization->formatDate($comment->createdTime, ['timeAgo']) . '</span>';
-        echo '<div class="bearcms-comments-comment-text">' . nl2br($urlsToHTML(htmlspecialchars($comment->text))) . '</div>';
+        $linkAttributes = ' title="' . htmlentities($profile->name) . '"' . ($isFullHtmlOutputType ? ' href="javascript:void(0);" onclick="' . htmlentities($onClick) . '"' : '');
+        echo '<div' . ($isFullHtmlOutputType ? ' class="bearcms-comments-comment"' : '') . '>';
+        if ($isFullHtmlOutputType) {
+            echo '<a class="bearcms-comments-comment-author-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></a>';
+        }
+        echo '<a' . ($isFullHtmlOutputType ? ' class="bearcms-comments-comment-author-name"' : '') . '' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</a> <span' . ($isFullHtmlOutputType ? ' class="bearcms-comments-comment-date"' : '') . '>' . $statusText . $app->localization->formatDate($comment->createdTime, ['timeAgo']) . '</span>';
+        echo '<div' . ($isFullHtmlOutputType ? ' class="bearcms-comments-comment-text"' : '') . '>' . nl2br($urlsToHTML(htmlspecialchars($comment->text))) . '</div>';
         echo '</div>';
     }
 }

@@ -14,6 +14,10 @@ use BearCMS\Internal\ElementsHelper;
 $app = App::get();
 $context = $app->contexts->get(__DIR__);
 
+$outputType = (string) $component->getAttribute('output-type');
+$outputType = isset($outputType[0]) ? $outputType : 'full-html';
+$isFullHtmlOutputType = $outputType === 'full-html';
+
 $source = 'allPosts';
 $componentSource = (string)$component->source;
 if (strlen($componentSource) > 0 && array_search($componentSource, ['allPosts', 'postsInCategories']) !== false) {
@@ -60,8 +64,8 @@ if ($limit < 1) {
     $limit = 5;
 }
 
-$content = '<div class="bearcms-blog-posts-element">';
-$content .= '<div class="bearcms-blog-posts-element-posts">';
+$content = '<div' . ($isFullHtmlOutputType ? ' class="bearcms-blog-posts-element"' : '') . '>';
+$content .= '<div' . ($isFullHtmlOutputType ? ' class="bearcms-blog-posts-element-posts"' : '') . '>';
 if ($list->count() > 0) {
     $counter = 0;
     foreach ($list as $blogPost) {
@@ -71,21 +75,21 @@ if ($list->count() > 0) {
         $url = $blogPost->getURL();
         $publishedTime = $blogPost->publishedTime;
 
-        $content .= '<div class="bearcms-blog-posts-element-post">';
+        $content .= '<div' . ($isFullHtmlOutputType ? ' class="bearcms-blog-posts-element-post"' : '') . '>';
 
-        $content .= '<div class="bearcms-blog-posts-element-post-title-container">';
-        $content .= '<a title="' . htmlentities($title) . '" class="bearcms-blog-posts-element-post-title" href="' . htmlentities($url) . '">' . htmlspecialchars($title) . '</a>';
+        $content .= '<div' . ($isFullHtmlOutputType ? '  class="bearcms-blog-posts-element-post-title-container"' : '') . '>';
+        $content .= '<a title="' . htmlentities($title) . '"' . ($isFullHtmlOutputType ? '  class="bearcms-blog-posts-element-post-title"' : '') . ' href="' . htmlentities($url) . '">' . htmlspecialchars($title) . '</a>';
         $content .= '</div>';
         if ($showDate) {
-            $content .= '<div class="bearcms-blog-posts-element-post-date-container">';
-            $content .= '<span class="bearcms-blog-posts-element-post-date">';
+            $content .= '<div' . ($isFullHtmlOutputType ? '  class="bearcms-blog-posts-element-post-date-container"' : '') . '>';
+            $content .= '<span' . ($isFullHtmlOutputType ? '  class="bearcms-blog-posts-element-post-date"' : '') . '>';
             $content .= $app->localization->formatDate($publishedTime, ['date']);
             $content .= '</span>';
             $content .= '</div>';
         }
         if ($type === 'summary' || $type === 'full') {
             $containerID = 'bearcms-blogpost-' . $blogPost->id;
-            $content .= '<div class="bearcms-blog-posts-element-post-content">';
+            $content .= '<div' . ($isFullHtmlOutputType ? '  class="bearcms-blog-posts-element-post-content"' : '') . '>';
             if ($type === 'summary') {
                 $elementsIDs = ElementsHelper::getContainerElementsIDs($containerID);
                 $textElementData = null;
@@ -130,16 +134,16 @@ if ($list->count() > 0) {
                         'inElementsContainer' => true
                     ], true);
                 } elseif ($hasImage) {
-                    $content .= '<component src="bearcms-image-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($imageElementData)) . '"/>';
+                    $content .= '<component output-type="' . $outputType . '" src="bearcms-image-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($imageElementData)) . '"/>';
                 } elseif ($hasText) {
-                    $content .= '<component src="bearcms-text-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($textElementData)) . '"/>';
+                    $content .= '<component output-type="' . $outputType . '" src="bearcms-text-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($textElementData)) . '"/>';
                 }
                 if ($hasImage || $hasText) {
                     $readMoreText = '<a href="' . htmlentities($url) . '">' . __('bearcms.blogPosts.Read more') . '</a>';
-                    $content .= '<component src="bearcms-text-element" text="' . htmlentities($readMoreText) . '"/>';
+                    $content .= '<component output-type="' . $outputType . '" src="bearcms-text-element" text="' . htmlentities($readMoreText) . '"/>';
                 }
             } else {
-                $content .= '<component src="bearcms-elements" id="' . $containerID . '"/>';
+                $content .= '<component output-type="' . $outputType . '" src="bearcms-elements" id="' . $containerID . '"/>';
             }
             $content .= '</div>';
         }
@@ -149,7 +153,7 @@ if ($list->count() > 0) {
             break;
         }
     }
-    if ($list->count() > $limit) {
+    if ($isFullHtmlOutputType && $list->count() > $limit) {
         $content .= '<div class="bearcms-blog-posts-element-show-more-button-container">';
         $component->limit = (string) ($limit + 10);
         $loadMoreData = [
@@ -166,9 +170,11 @@ $content .= '</div>';
 echo '<html>';
 
 echo '<head>';
-echo '<style>.bearcms-blog-posts-element-post-title{word-break:break-word;}</style>';
-if ($list->count() > $limit) {
-    echo '<link rel="client-packages-embed" name="-bearcms-blog-posts-element">';
+if ($isFullHtmlOutputType) {
+    echo '<style>.bearcms-blog-posts-element-post-title{word-break:break-word;}</style>';
+    if ($list->count() > $limit) {
+        echo '<link rel="client-packages-embed" name="-bearcms-blog-posts-element">';
+    }
 }
 echo '</head>';
 

@@ -11,6 +11,10 @@ use IvoPetkov\HTML5DOMDocument;
 
 $app = App::get();
 
+$outputType = (string) $component->getAttribute('output-type');
+$outputType = isset($outputType[0]) ? $outputType : 'full-html';
+$isFullHtmlOutputType = $outputType === 'full-html';
+
 $selectedPath = '';
 $componentSelectedPath = (string)$component->selectedPath;
 if (strlen($componentSelectedPath) > 0) {
@@ -24,16 +28,18 @@ if (array_search($componentMenuType, ['horizontal-down', 'vertical-left', 'verti
 }
 
 $attributes = '';
-$attributes .= ' type="' . $menuType . '"';
-$componentClass = (string)$component->class;
-if (strlen($componentClass) > 0) {
-    $attributes .= ' class="' . htmlentities($componentClass) . '"';
-}
-$attributes .= ' moreItemHtml="' . htmlentities('<li class="bearcms-navigation-element-item bearcms-navigation-element-item-more"><a></a><ul class="bearcms-navigation-element-item-children"></ul></li>') . '"';
+if ($isFullHtmlOutputType) {
+    $attributes .= ' type="' . $menuType . '"';
+    $componentClass = (string)$component->class;
+    if (strlen($componentClass) > 0) {
+        $attributes .= ' class="' . htmlentities($componentClass) . '"';
+    }
+    $attributes .= ' moreItemHtml="' . htmlentities('<li class="bearcms-navigation-element-item bearcms-navigation-element-item-more"><a></a><ul class="bearcms-navigation-element-item-children"></ul></li>') . '"';
 
-$dataResponsiveAttributes = (string)$component->getAttribute('data-responsive-attributes');
-if (strlen($dataResponsiveAttributes) > 0) {
-    $attributes .= ' data-responsive-attributes="' . htmlentities(str_replace('=>menuType=', '=>type=', $dataResponsiveAttributes)) . '"';
+    $dataResponsiveAttributes = (string)$component->getAttribute('data-responsive-attributes');
+    if (strlen($dataResponsiveAttributes) > 0) {
+        $attributes .= ' data-responsive-attributes="' . htmlentities(str_replace('=>menuType=', '=>type=', $dataResponsiveAttributes)) . '"';
+    }
 }
 
 $allowSearchButtonOption = $component->allowSearchButtonOption === 'true' && $app->bearCMS->addons->exists('bearcms/search-box-element-addon');
@@ -166,17 +172,19 @@ if (isset($itemsHtml[0])) {
         array_unshift($optimizedPages, [0 => '/', 1 => '<a href="/">' . htmlspecialchars($homeLinkText) . '</a>']);
     }
 
-    if ($showSearchButton) {
-        $optimizedPages[] = [0 => null, 1 => '<a href="javascript:void(0);" onclick="bearCMS.search.open();"></a>', 3 => true, 'bearcms-navigation-element-item bearcms-navigation-element-item-search'];
-    }
-    if ($showStoreCartButton) {
-        $optimizedPages[] = [0 => null, 1 => '<a href="javascript:void(0);" onclick="bearCMS.store.openCart();"></a>', 3 => true, 'bearcms-navigation-element-item bearcms-navigation-element-item-store-cart'];
+    if ($isFullHtmlOutputType) {
+        if ($showSearchButton) {
+            $optimizedPages[] = [0 => null, 1 => '<a href="javascript:void(0);" onclick="bearCMS.search.open();"></a>', 3 => true, 'bearcms-navigation-element-item bearcms-navigation-element-item-search'];
+        }
+        if ($showStoreCartButton) {
+            $optimizedPages[] = [0 => null, 1 => '<a href="javascript:void(0);" onclick="bearCMS.store.openCart();"></a>', 3 => true, 'bearcms-navigation-element-item bearcms-navigation-element-item-store-cart'];
+        }
     }
 
     if ($optimizedPages === null || empty($optimizedPages)) {
         $itemsHtml = '';
     } else {
-        $buildTree = function ($optimizedPages, $level = 0) use ($selectedPath, &$buildTree) {
+        $buildTree = function ($optimizedPages, $level = 0) use ($selectedPath, &$buildTree, $isFullHtmlOutputType) {
             $itemsHtml = [];
             foreach ($optimizedPages as $page) {
                 $pagePath = $page[0];
@@ -189,7 +197,7 @@ if (isset($itemsHtml[0])) {
                         $classNames .= ' bearcms-navigation-element-item-in-path';
                     }
                 }
-                $itemsHtml[] = '<li class="' . $classNames . '"' . ($alwaysVisible ? ' data-navigation-visible="always"' : '') . '>' . $page[1];
+                $itemsHtml[] = '<li' . ($isFullHtmlOutputType ? ' class="' . $classNames . '"' . ($alwaysVisible ? ' data-navigation-visible="always"' : '') : '') . '>' . $page[1];
                 if (isset($page[2])) {
                     $itemsHtml[] = $buildTree($page[2], $level + 1);
                 }
@@ -198,7 +206,7 @@ if (isset($itemsHtml[0])) {
             if (empty($itemsHtml)) {
                 return '';
             }
-            return '<ul class="' . ($level === 0 ? 'bearcms-navigation-element' : 'bearcms-navigation-element-item-children') . '">' . implode('', $itemsHtml) . '</ul>';
+            return '<ul' . ($isFullHtmlOutputType ? ' class="' . ($level === 0 ? 'bearcms-navigation-element' : 'bearcms-navigation-element-item-children') . '"' : '') . '>' . implode('', $itemsHtml) . '</ul>';
         };
         $itemsHtml = str_replace('<a href="', '<a href="' . $requestBase, $buildTree($optimizedPages));
     }
@@ -206,17 +214,24 @@ if (isset($itemsHtml[0])) {
 
 $content = '';
 if (isset($itemsHtml[0])) {
-    $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';
+    if ($isFullHtmlOutputType) {
+        $content = '<component src="navigation-menu"' . $attributes . '>' . $itemsHtml . '</component>';
+    } else {
+        $content = $itemsHtml;
+    }
 }
 echo '<html><head>';
-if ($showSearchButton) {
-    echo '<link rel="client-packages-embed" name="-bearcms-search">';
+if ($isFullHtmlOutputType) {
+    if ($showSearchButton) {
+        echo '<link rel="client-packages-embed" name="-bearcms-search">';
+    }
+    if ($showStoreCartButton) {
+        echo '<link rel="client-packages-embed" name="-bearcms-store">';
+    }
+    echo '<style>';
+    echo '.bearcms-navigation-element-item{word-break:break-word;}';
+    echo '</style>';
 }
-if ($showStoreCartButton) {
-    echo '<link rel="client-packages-embed" name="-bearcms-store">';
-}
-echo '<style>';
-echo '.bearcms-navigation-element-item{word-break:break-word;}';
-echo '</style></head><body>';
+echo '</head><body>';
 echo $content;
 echo '</body></html>';

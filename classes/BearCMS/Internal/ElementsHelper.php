@@ -314,7 +314,7 @@ class ElementsHelper
             }
             if ($outputType === 'full-html') {
                 $innerContent .= '<div class="bearcms-elements-columns-column" style="' . $spacingStyleRule . '">' . $columnContent . '</div>'; // $spacingStyleRule must be here to prevent overwriting it in the elementsEditor.js
-            } elseif ($outputType === 'simple-html') {
+            } else {
                 $innerContent .= '<div>' . $columnContent . '</div>';
             }
         }
@@ -437,7 +437,7 @@ class ElementsHelper
         if ($outputType === 'full-html') {
             $innerContent .= '<div class="bearcms-elements-floating-box-inside">' . $getElementsContent('inside') . '</div>';
             $innerContent .= '<div class="bearcms-elements-floating-box-outside">' . $getElementsContent('outside') . '</div>';
-        } elseif ($outputType === 'simple-html') {
+        } else {
             $innerContent .= '<div>' . $getElementsContent('inside') . '</div>';
             $innerContent .= '<div>' . $getElementsContent('outside') . '</div>';
         }

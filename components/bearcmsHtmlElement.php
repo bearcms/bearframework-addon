@@ -13,6 +13,7 @@ $app = App::get();
 
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
+$isFullHtmlOutputType = $outputType === 'full-html';
 
 $code = trim((string)$component->code);
 $renderMode = trim((string)$component->renderMode);
@@ -29,7 +30,7 @@ $addHTMLSandbox = false;
 $content = '';
 if ($code !== '') {
     if ($renderMode === 'clean' || $renderMode === 'default' || $disabled) {
-        if ($outputType === 'full-html' || $disabled) {
+        if ($isFullHtmlOutputType || $disabled) {
             $content .= '<div class="bearcms-html-element">';
         }
         if ($disabled) {
@@ -48,11 +49,11 @@ if ($code !== '') {
                 $content .= '<component src="data:base64,' . base64_encode($code) . '" />';
             }
         }
-        if ($outputType === 'full-html' || $disabled) {
+        if ($isFullHtmlOutputType || $disabled) {
             $content .= '</div>';
         }
     } else if ($renderMode === 'sandbox') {
-        if ($outputType === 'full-html') {
+        if ($isFullHtmlOutputType) {
             if (strlen($htmlSandboxUrl) > 0) {
                 $addHTMLSandbox = true;
                 $content = '<div class="bearcms-html-element" style="font-size:0;"><div data-html-sandbox="' . htmlentities($code) . '" data-html-sandbox-url="' . htmlentities($htmlSandboxUrl) . '"></div><script>htmlSandbox.run();</script></div>';
@@ -63,7 +64,7 @@ if ($code !== '') {
     }
 }
 echo '<html>';
-if ($outputType === 'full-html') {
+if ($isFullHtmlOutputType) {
     echo '<head><style>';
     echo '.bearcms-html-element{word-break:break-word;}';
     echo '.bearcms-html-element:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';

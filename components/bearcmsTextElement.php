@@ -8,15 +8,16 @@
 
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
+$isFullHtmlOutputType = $outputType === 'full-html';
 
-$attributes = $outputType === 'full-html' ? ' class="bearcms-text-element"' : '';
+$attributes = $isFullHtmlOutputType ? ' class="bearcms-text-element"' : '';
 
 $content = '<div' . $attributes . '>' . $component->text . '</div>';
 
 echo '<html>';
-if ($outputType === 'full-html') {
+if ($isFullHtmlOutputType) {
     echo '<head><style>';
-    echo '.bearcms-text-element{display:block;zoom:1;word-break:break-word;}';// no clear:both - breaks floating box
+    echo '.bearcms-text-element{display:block;zoom:1;word-break:break-word;}'; // no clear:both - breaks floating box
     echo '.bearcms-text-element:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
     echo '</style></head>';
 }
