@@ -27,17 +27,27 @@ $app->bearCMS->themes
         $context->assets
             ->addDir('themes/themeone/assets');
 
-        $theme->version = '1.9';
+        $theme->version = '1.10';
+
+        $theme->canStyleElements = true;
+        $theme->useDefaultElementsCombinations = true;
 
         $theme->get = function (\BearCMS\Themes\Theme\Customizations $customizations, array $cntx) use ($app, $context) {
             $language = isset($cntx['language']) ? $cntx['language'] : null;
             $languages = isset($cntx['languages']) ? $cntx['languages'] : [];
             $templateFilename = $context->dir . '/themes/themeone/components/defaultTemplate.php';
-            return (static function ($__filename, $customizations, $language, $languages) use ($app) { // used inside
+            $template = (static function ($__filename, $customizations, $language, $languages) use ($app) { // used inside
                 ob_start();
                 include $__filename;
                 return $app->components->process(ob_get_clean());
             })($templateFilename, $customizations, $language, $languages);
+            if ($app->bearCMS->hasEventListeners('internalBearCMSThemeOneThemeGet')) {
+                $eventDetails = new stdClass();
+                $eventDetails->template = $template;
+                $app->bearCMS->dispatchEvent('internalBearCMSThemeOneThemeGet', $eventDetails);
+                $template = $eventDetails->template;
+            }
+            return $template;
         };
 
         $theme->apply = function (\BearFramework\App\Response $response, \BearCMS\Themes\Theme\Customizations $customizations) use ($context) {
@@ -46,7 +56,7 @@ $app->bearCMS->themes
             $elements = $domDocument->querySelectorAll('bearcms-elements');
             if ($elements->length > 0) {
                 foreach ($elements as $element) {
-                    $element->setAttribute('spacing', '1.5rem');
+                    $element->setAttribute('spacing', '20px');
                 }
                 $response->content = $domDocument->saveHTML();
             }
@@ -63,9 +73,9 @@ $app->bearCMS->themes
             ];
             $manifest->media = [
                 [
-                    'filename' => $context->dir . '/themes/themeone/assets/one.png',
-                    'width' => 1442,
-                    'height' => 1062,
+                    'filename' => $context->dir . '/themes/themeone/assets/cover.jpg',
+                    'width' => 1500,
+                    'height' => 1125,
                 ]
             ];
             return $manifest;
@@ -75,5 +85,88 @@ $app->bearCMS->themes
             $options = $theme->makeOptions(); // used inside
             require $context->dir . '/themes/themeone/options.php';
             return $options;
+        };
+
+        $theme->styles = function () use ($app, $context, $theme) {
+            $styles = [];
+            for ($i = 1; $i <= 5; $i++) {
+                $style = $theme->makeStyle();
+                $style->media = [
+                    [
+                        'filename' => $context->dir . '/themes/themeone/assets/s' . $i . '.jpg',
+                        'width' => 1500,
+                        'height' => 1125,
+                    ]
+                ];
+                $style->values = require $context->dir . '/themes/themeone/styles/' . $i . '.php';
+                $styles[] = $style;
+            }
+            if ($app->bearCMS->hasEventListeners('internalBearCMSUniversalThemeStyles')) {
+                $eventDetails = new stdClass();
+                $eventDetails->styles = $styles;
+                $app->bearCMS->dispatchEvent('internalBearCMSUniversalThemeStyles', $eventDetails);
+                $styles = $eventDetails->styles;
+            }
+            return $styles;
+        };
+
+        $theme->updateValues = function (array $values = null) {
+            if (is_array($values)) {
+                if (isset($values['textColor']) || isset($values['textSize'])) {
+                    $textCSS = [];
+                    if (isset($values['textColor'])) {
+                        $textCSS['color'] = $values['textColor'];
+                        unset($values['textColor']);
+                    } else {
+                        $textCSS['color'] = '#000000';
+                    }
+                    if (isset($values['textSize'])) {
+                        $textSize = (int)$values['textSize'];
+                        if ($textSize === 3) {
+                            $textCSS['font-size'] = '18px';
+                        } elseif ($textSize === 1) {
+                            $textCSS['font-size'] = '14px';
+                        } else {
+                            $textCSS['font-size'] = '16px';
+                        }
+                        unset($values['textSize']);
+                    } else {
+                        $textCSS['font-size'] = '16px';
+                    }
+                    $textCSS['font-family'] = 'Arial';
+                    $textCSS['line-height'] = '180%';
+                    $values['textCSS'] = json_encode($textCSS);
+                }
+                if (isset($values['accentColor'])) {
+                    $defaultFontSize = '16px';
+                    if (isset($values['textCSS'])) {
+                        $textCSS = json_decode($values['textCSS'], true);
+                        if (isset($textCSS['font-size'])) {
+                            $defaultFontSize = $textCSS['font-size'];
+                        }
+                    }
+                    $accentTextCSS = [];
+                    $accentTextCSS['font-family'] = 'Arial';
+                    $accentTextCSS['color'] = $values['accentColor'];
+                    $accentTextCSS['font-size'] = $defaultFontSize;
+                    $accentTextCSS['line-height'] = '170%';
+                    $values['accentTextCSS'] = json_encode($accentTextCSS);
+                    unset($values['accentColor']);
+                }
+                if (isset($values['headerLogoImage'])) {
+                    $values['logoImage'] = $values['headerLogoImage'];
+                    $values['logoImageWidth'] = '180px';
+                    unset($values['headerLogoImage']);
+                }
+                if (isset($values['headerTitleVisibility'])) {
+                    $values['logoTextVisibility'] = $values['headerTitleVisibility'];
+                    unset($values['headerTitleVisibility']);
+                }
+                if (isset($values['backgroundColor'])) {
+                    $values['backgroundCSS'] = json_encode(['background-color' => $values['backgroundColor']]);
+                    unset($values['backgroundColor']);
+                }
+            }
+            return $values;
         };
     });

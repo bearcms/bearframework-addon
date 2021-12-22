@@ -22,26 +22,39 @@ $isHomePage = (string) $app->request->path === $homePath;
 
 $hasLanguagesPicker = sizeof($languages) > 1;
 
-$backgroundColor = $customizations->getValue('backgroundColor');
-$textColor = $customizations->getValue('textColor');
-$accentColor = $customizations->getValue('accentColor');
-$textSizeOptionValue = $customizations->getValue('textSize');
-$contentWidthOptionValue = $customizations->getValue('contentWidth');
-
-$headerLogoImage = (string)$customizations->getValue('headerLogoImage');
-
-$hasHeaderLogo = isset($headerLogoImage[0]);
-if ($hasHeaderLogo) {
-    $headerLogoImageDetails = $customizations->getAssetDetails($headerLogoImage, ['filename', 'width', 'height']);
-    $headerLogoMaxWidth = $headerLogoImageDetails['width'] !== null && $headerLogoImageDetails['height'] !== null ? ($headerLogoImageDetails['width'] * ($isHomePage ? 180 : 90) / $headerLogoImageDetails['height']) : ($isHomePage ? 180 : 90);
+switch ((int)$customizations->getValue('contentWidth')) {
+    case 1:
+        $contentWidth = '680px';
+        break;
+    case 3:
+        $contentWidth = '1100px';
+        break;
+    default:
+        $contentWidth = '850px';
+        break;
 }
 
-$hasHeaderTitle = $customizations->getValue('headerTitleVisibility') === '1';
+$logoImage = (string)$customizations->getValue('logoImage');
+$logoImageWidth = (string)$customizations->getValue('logoImageWidth');
+$logoImageEffect = (string)$customizations->getValue('logoImageEffect');
+
+$hasSearchButtonOptionSupport = $app->bearCMS->addons->exists('bearcms/search-box-element-addon');
+$hasStoreCartButtonOptionSupport = $app->bearCMS->addons->exists('bearcms/store-addon');
+
+$showSearchButton = $hasSearchButtonOptionSupport && $customizations->getValue('searchButtonVisibility') === '1';
+$showStoreCartButton = $hasStoreCartButtonOptionSupport && $customizations->getValue('storeCartButtonVisibility') === '1';
+
+$hasLogoImage = isset($logoImage[0]);
+if ($hasLogoImage) {
+    $logoImageDetails = $customizations->getAssetDetails($logoImage, ['filename', 'width', 'height']);
+}
+
+$hasLogoText = $customizations->getValue('logoTextVisibility') === '1';
 $hasNavigation = $customizations->getValue('navigationVisibility') === '1';
 $hasFooter = $customizations->getValue('footerVisibility') === '1';
 
 $elementsDefaults = new \BearCMS\Themes\Theme\Options();
-$elementsDefaults->addElements('container', '.template-container');
+$elementsDefaults->addElements('container', '.bearcms-template-container');
 $elementsDefaults->addPages();
 $html = $elementsDefaults->getHTML();
 $elementsDefaultsHTML = '';
@@ -49,283 +62,259 @@ if ($html !== '') {
     $elementsDefaultsHTML = str_replace(['<html><head>', '</head></html>'], '', $html);
 }
 
-$fontFamily = 'Helvetica,Arial,sans-serif';
-$spacing = '1.5rem';
+$mainElementsVerticalSpacing = '40px';
+$borderRadius = '4px';
+$elementsSpacing = '20px';
+$windowPadding = '20px'; // same as $elementsSpacing
 
-switch ((int) $textSizeOptionValue) {
-    case 1:
-        $fontSize = '0.9rem';
-        break;
-    case 3:
-        $fontSize = '1.1rem';
-        break;
-    default:
-        $fontSize = '1rem';
-        break;
-}
+$buttonHeight = 'calc(var(--bearcms-template-text-font-size) * 3)';
+$buttonPadding = 'calc(var(--bearcms-template-text-font-size) * 1.1)';
+$buttonPaddingHalf = 'calc(var(--bearcms-template-text-font-size) * 0.55)';
+$buttonIconSize = 'calc(var(--bearcms-template-text-font-size) * 4/3)';
 
-switch ((int) $contentWidthOptionValue) {
-    case 1:
-        $contentWidth = '45rem';
-        break;
-    case 3:
-        $contentWidth = '70rem';
-        break;
-    default:
-        $contentWidth = '55rem';
-        break;
-}
+$textStyle = 'font-family:var(--bearcms-template-text-font-family);color:var(--bearcms-template-text-color);font-weight:var(--bearcms-template-text-font-weight);font-style:var(--bearcms-template-text-font-style);font-size:var(--bearcms-template-text-font-size);line-height:var(--bearcms-template-text-line-height);letter-spacing:var(--bearcms-template-text-letter-spacing);';
+$accentTextStyle = 'font-family:var(--bearcms-template-accent-text-font-family);color:var(--bearcms-template-accent-text-color);font-weight:var(--bearcms-template-accent-text-font-weight);font-style:var(--bearcms-template-accent-text-font-style);font-size:var(--bearcms-template-accent-text-font-size);line-height:var(--bearcms-template-accent-text-line-height);letter-spacing:var(--bearcms-template-accent-text-letter-spacing);';
+
 echo '<html>';
 echo '<head>';
 echo '<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,minimal-ui">';
 echo $elementsDefaultsHTML;
+
 echo '<style>';
 echo 'html,body{padding:0;margin:0;min-height:100%;}';
+echo 'body{background-color:var(--bearcms-template-footer-background-color);}';
 echo '*{outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);}';
-echo '.template-container{min-height:100vh;font-family:' . $fontFamily . ';font-size:' . $fontSize . ';background-color:' . $backgroundColor . ';color:' . $textColor . ';display:flex;flex-direction:column;}';
-echo '.template-header{box-sizing:border-box;width:100%;max-width:' . $contentWidth . ';margin:0 auto;padding:0 1rem;}';
-echo '.template-header-languages-container{position:absolute;top:0;right:' . ($app->currentUser->exists() ? '74px' : '10px') . ';}';
-echo '.template-header-languages-container *{display:inline-block;box-sizing:border-box;text-align:center;font-size:calc(' . $fontSize . ' * 0.8);text-decoration:none;color:' . $textColor . ';line-height:36px;padding:0 10px;height:36px;background-color:rgba(0,0,0,0.05);}';
-echo '.template-header-languages-container :first-child{border-bottom-left-radius:2px;}';
-echo '.template-header-languages-container :last-child{border-bottom-right-radius:2px;}';
-echo '.template-header-languages-container span{cursor:default;}';
-echo '.template-header-languages-container a{opacity:0.5;}';
-echo '.template-header-languages-container a:hover{opacity:1;}';
+echo 'body .bearcms-template-container{min-height:100vh;display:flex;flex-direction:column;}'; // body fixes collisions
+echo '.bearcms-template-header{box-sizing:border-box;width:100%;max-width:calc(' . $contentWidth . ' + var(--bearcms-template-text-font-size) * 2.2);margin:0 auto;padding:' . $windowPadding . ' ' . $windowPadding . ' 0 ' . $windowPadding . ';}'; // 2.2 = twice the nav buttons padding
+if ($hasLanguagesPicker) {
+    echo '.bearcms-template-languages{position:absolute;top:0;right:' . ($app->currentUser->exists() ? '74px' : '10px') . ';}';
+    echo '.bearcms-template-languages *{' . $textStyle . 'display:inline-block;box-sizing:border-box;text-align:center;font-size:calc(var(--bearcms-template-text-font-size) * 0.8);text-decoration:none;line-height:calc(var(--bearcms-template-text-font-size) * 2);padding:0 calc(var(--bearcms-template-text-font-size) * 0.6);min-width:calc(var(--bearcms-template-text-font-size) * 2);height:calc(var(--bearcms-template-text-font-size) * 2);border-bottom-left-radius:' . $borderRadius . ';border-bottom-right-radius:' . $borderRadius . ';}';
+    echo '.bearcms-template-languages span{background-color:rgba(0,0,0,0.04);cursor:default;}';
+    echo '.bearcms-template-languages a:hover{background-color:rgba(0,0,0,0.08);}';
+    echo '.bearcms-template-languages a:active{background-color:rgba(0,0,0,0.12);}';
+}
 
-if ($hasHeaderLogo) {
-    echo '.template-header-logo-container{margin-top:3rem;}';
-    echo '.template-header-logo{box-sizing:border-box;' . ($headerLogoMaxWidth !== null ? 'max-width:' . $headerLogoMaxWidth . 'px;' : '') . 'margin:0 auto;}';
+if ($hasLogoImage) {
+    echo '.bearcms-template-logo-container{margin-top:' . $mainElementsVerticalSpacing . ';}';
+    echo '.bearcms-template-logo{box-sizing:border-box;' . ($logoImageWidth !== '' ? 'max-width:' . ($isHomePage ? $logoImageWidth : 'calc(' . $logoImageWidth . ' / 2)') . ';' : '') . 'margin:0 auto;' . ($logoImageEffect === '1' ? 'border-radius:50%;overflow:hidden;' : '') . '}';
 }
-if ($hasHeaderTitle) {
-    echo '.template-header-title-container{margin-top:' . ($hasHeaderLogo ? '2rem' : '3rem') . ';text-align:center;}';
-    echo '.template-header-title{text-decoration:none;color:' . $accentColor . ';font-size:' . ($isHomePage ? 1.6 : 1.3) . 'rem;}';
+if ($hasLogoText) {
+    echo '.bearcms-template-logo-text-container{margin-top:' . ($hasLogoImage ? 'calc(' . $mainElementsVerticalSpacing . ' * 1/2)' : $mainElementsVerticalSpacing) . ';text-align:center;}';
 }
-echo '.template-content{box-sizing:border-box;width:100%;min-height:40rem;max-width:' . $contentWidth . ';margin:0 auto;padding:3rem 1.2rem;flex:1 0 auto;}';
-echo '.template-footer{box-sizing:border-box;width:100%;background-color:#111;}';
-echo '.template-footer > div{box-sizing:border-box;max-width:' . $contentWidth . ';margin:0 auto;padding:3rem 1.2rem;}';
+echo '.bearcms-template-main{box-sizing:border-box;width:100%;min-height:400px;max-width:' . $contentWidth . ';margin:0 auto;padding:calc(' . $mainElementsVerticalSpacing . ' + ' . $windowPadding . ') ' . $windowPadding . ' ' . $mainElementsVerticalSpacing . ' ' . $windowPadding . ';flex:1 0 auto;}';
+echo 'body .bearcms-template-footer{box-sizing:border-box;width:100%;background-color:var(--bearcms-template-footer-background-color);}'; // body fixes collisions
+echo '.bearcms-template-footer > div{box-sizing:border-box;max-width:' . $contentWidth . ';margin:0 auto;padding:' . $mainElementsVerticalSpacing . ' ' . $windowPadding . ';}';
 
 if ($hasNavigation) {
-    echo '.template-navigation ul, .template-navigation li{
-    list-style-type: none;
-    list-style-position: outside;
-}
-.template-navigation ul{
-    padding: 0;
-    margin: 0;
-    z-index: 10;
-}
-.template-navigation{margin-top:' . ($hasHeaderLogo || $hasHeaderTitle ? '2rem' : '3rem') . ';text-align:center;}
-.template-navigation .template-navigation-content{font-size:0;}
-.template-navigation .template-navigation-content > .bearcms-navigation-element-item{font-size:0;border-radius:2px;border:1px solid transparent;margin-left:0.5rem;}
-.template-navigation .template-navigation-content > .bearcms-navigation-element-item:first-child{margin-left:0;}
-.template-navigation .bearcms-navigation-element-item a{color:' . $textColor . ';padding:0.7rem 0.8rem;font-size:' . $fontSize . ';text-decoration:none;display:inline-block;}
-.template-navigation .template-navigation-content > .bearcms-navigation-element-item:hover{border:1px solid ' . $textColor . ';}
-.template-navigation .template-navigation-content > .bearcms-navigation-element-item:active{border:1px solid ' . $textColor . ';}
-.template-navigation .template-navigation-content > .bearcms-navigation-element-item-selected{border:1px solid ' . $textColor . ';}
-.template-navigation .template-navigation-content > .bearcms-navigation-element-item-selected:hover{border:1px solid ' . $textColor . ';}
-.template-navigation .template-navigation-content > .bearcms-navigation-element-item-selected:active{border:1px solid ' . $textColor . ';}
-.template-navigation .bearcms-navigation-element-item-selected > a{color:' . $textColor . ';}
-.template-navigation .bearcms-navigation-element-item-children{
-    border-radius:2px;
-    border:1px solid ' . $textColor . ';
-    text-align:left;
-    background-color:' . $backgroundColor . ';
-    margin-left:-1px !important;
-    margin-top:-1px !important;
-}
-.template-navigation .bearcms-navigation-element-item-more{
-    cursor: pointer;
-}
-.template-navigation .bearcms-navigation-element-item-more > a:before{
-    content: "...";
-}
-#template-navigation-toggle-button{
-    display: none;
-}
-#template-navigation-toggle-button + label{
-    box-sizing:border-box;
-    display: none;
-    height:2.55rem;
-    width:3.1rem;
-}
-@media(max-width: 40rem) {
-    .template-navigation{
-        display: block !important;
+    echo '.bearcms-template-navigation ul, .bearcms-template-navigation li{list-style-type:none;list-style-position:outside;}';
+    echo '.bearcms-template-navigation ul{padding:0;margin:0;z-index:10;}';
+    echo '.bearcms-template-navigation{margin-top:' . $mainElementsVerticalSpacing . ';}';
+    echo '.bearcms-template-navigation>div{font-size:0;position:relative;z-index:1;}';
+    echo '.bearcms-template-navigation>div:before{content:"";width:100%;background-color:rgba(0,0,0,0.04);height:' . $buttonHeight . ';position:absolute;display:block;border-radius:' . $borderRadius . ';}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item{font-size:0;display:inline-block;}';
+    echo '.bearcms-template-navigation :not(.bearcms-navigation-element-item-children)>.bearcms-navigation-element-item:first-child{border-top-left-radius:' . $borderRadius . ';border-bottom-left-radius:' . $borderRadius . ';}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item a{' . $textStyle . 'padding:0 ' . $buttonPadding . ';line-height:' . $buttonHeight . ';height:' . $buttonHeight . ';min-width:' . $buttonHeight . ';text-decoration:none;display:inline-block;max-width:100%;text-overflow:ellipsis;overflow:hidden;box-sizing:border-box;display:block;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item:hover{background-color:rgba(0,0,0,0.04);}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item:active{background-color:rgba(0,0,0,0.08);}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-selected{background-color:rgba(0,0,0,0.04);}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-selected:hover{background-color:rgba(0,0,0,0.04);}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-selected:active{background-color:rgba(0,0,0,0.08);}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-children{text-align:left;background-color:rgba(0,0,0,0);padding-top:10px;padding-left:5px;padding-right:5px;padding-bottom:5px;max-width:calc(100vw - 20px);box-sizing:border-box;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-children>.bearcms-navigation-element-item{background-color:#222;display:block;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-children>.bearcms-navigation-element-item:first-child{border-top-left-radius:' . $borderRadius . ';border-top-right-radius:' . $borderRadius . ';}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-children>.bearcms-navigation-element-item:last-child{border-bottom-left-radius:' . $borderRadius . ';border-bottom-right-radius:' . $borderRadius . ';}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-children>.bearcms-navigation-element-item a{' . $textStyle . 'padding:0 ' . $buttonPadding . ';line-height:' . $buttonHeight . ';height:' . $buttonHeight . ';color:#fff;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-children>.bearcms-navigation-element-item:hover{background-color:#292929;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-children>.bearcms-navigation-element-item:active{background-color:#333;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-more{cursor:pointer;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-more > a:before{content:"...";}';
+    $customButtonsCount = 0;
+    if ($showSearchButton) {
+        echo '.bearcms-template-navigation-custom-item-search{float:right;background-size:auto ' . $buttonIconSize . ';background-position:center center;background-repeat:no-repeat;}';
+        $customButtonsCount++;
     }
-    .template-navigation .bearcms-navigation-element-item{
-        display: block !important;
+    if ($showStoreCartButton) {
+        echo '.bearcms-template-navigation-custom-item-store-cart{float:right;background-size:auto ' . $buttonIconSize . ';background-position:center center;background-repeat:no-repeat;}';
+        $customButtonsCount++;
     }
-    .template-navigation .bearcms-navigation-element-item-children{
-        display: none !important;
-    }
-    #template-navigation-toggle-button + label{
-        display: block;
-        margin: 0 auto;
-        cursor: pointer;
-        background-image: url(\'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" fill="' . $textColor . '"><path d="M512 192l-96-96-160 160L96 96 0 192l256 256z"/></svg>') . '\');
-        background-size: auto 50%;
-        background-position: center center;
-        background-repeat: no-repeat;
-        border:1px solid ' . $textColor . ';
-        border-radius:2px;
-    }
-    #template-navigation-toggle-button + label + div{
-        display: none;
-    }
-    #template-navigation-toggle-button:checked + label + div{
-        box-sizing:border-box;
-        display: block;
-        width: 100%;
-        box-sizing: border-box;
-        margin-top:1rem;
-    }
-    #template-navigation-toggle-button:checked + label + div .template-navigation-content > .bearcms-navigation-element-item{
-        margin-left:0;
-        margin-top:1px;
-    }
-}';
-}
-
-for ($i = 0; $i < ($hasFooter ? 2 : 1); $i++) {
-    $containerClassName = $i === 0 ? '.template-content' : '.template-footer';
-    $elementsAccentColor = $i === 0 ? $accentColor : '#aaa';
-    $elementsTextColor = $i === 0 ? $textColor : '#fff';
-    $separatorColor = $i === 0 ? '#ddd' : '#333';
-
-    $h1 = 'color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 2);line-height:160%;';
-    $h2 = 'color:' . $elementsAccentColor . ';font-size:calc(' . $fontSize . ' * 1.5);line-height:170%;';
-    $h3 = 'color:' . $elementsAccentColor . ';font-size:' . $fontSize . ';line-height:180%;';
-    $input = 'box-sizing:border-box;border:1px solid ' . $elementsTextColor . ';color:' . $elementsTextColor . ';margin-bottom:10px;font-family:' . $fontFamily . ';font-size:' . $fontSize . ';line-height:180%;padding:calc(' . $fontSize . ' * 0.5) ' . $fontSize . ';width:100%;background-color:transparent;border-radius:2px;';
-    $text = 'line-height:180%;color:' . $elementsTextColor . ';';
-    $link = 'text-decoration:underline;color:' . $elementsTextColor . ';';
-    $button = 'color:' . $elementsTextColor . ';text-decoration:underline;';
-    $buttonWaiting = 'color:' . $elementsTextColor . ';text-decoration:none;';
-    $userImage = 'box-sizing:border-box;width:50px;height:50px;margin-right:0.8rem;border-radius:2px;';
-    $separator = 'background-color:' . $separatorColor . ';height:2px;margin-top:60px;margin-bottom:60px;margin-left:auto;margin-right:auto;';
-
-    echo $containerClassName . ' .bearcms-heading-element-large{' . $h1 . 'padding-top:1rem;}';
-    echo $containerClassName . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-large{padding-top:0;}';
-    echo $containerClassName . ' .bearcms-heading-element-medium{' . $h2 . 'padding-top:1rem;}';
-    echo $containerClassName . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-medium{padding-top:0;}';
-    echo $containerClassName . ' .bearcms-heading-element-small{' . $h3 . 'padding-top:1rem;}';
-    echo $containerClassName . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-small{padding-top:0;}';
-    echo $containerClassName . ' .bearcms-text-element{' . $text . 'margin:-0.3rem 0;}';
-    echo $containerClassName . ' .bearcms-text-element a{' . $link . '}';
-    echo $containerClassName . ' .bearcms-html-element{' . $text . 'margin:-0.3rem 0;}';
-    echo $containerClassName . ' .bearcms-html-element a{' . $link . '}';
-    echo $containerClassName . ' .bearcms-link-element a{line-height:180%;' . $link . '}';
-    echo $containerClassName . ' .bearcms-image-element-image{border-radius:2px;}';
-    echo $containerClassName . ' .bearcms-image-gallery-element-image{border-radius:2px;}';
-    echo $containerClassName . ' .bearcms-video-element{border-radius:2px;}';
-    echo $containerClassName . ' .bearcms-navigation-element-item a{line-height:180%;' . $link . '}';
-
-    echo $containerClassName . ' .bearcms-comments-comment{margin-bottom:1rem;}';
-    echo $containerClassName . ' .bearcms-comments-show-more-button-container{padding-bottom:1rem;}';
-    echo $containerClassName . ' .bearcms-comments-show-more-button{' . $button . '}';
-    echo $containerClassName . ' .bearcms-comments-comment-author-image{' . $userImage . '}';
-    echo $containerClassName . ' .bearcms-comments-comment-author-name{' . $link . '}';
-    echo $containerClassName . ' .bearcms-comments-comment-text{' . $text . '}';
-    echo $containerClassName . ' .bearcms-comments-comment-text a{' . $link . '}';
-    echo $containerClassName . ' .bearcms-comments-comment-date{font-size:calc(' . $fontSize . ' * 0.8);color:' . $elementsTextColor . ';}';
-    echo $containerClassName . ' .bearcms-comments-element-text-input{' . $input . 'height:calc(' . $fontSize . ' * 8);}';
-    echo $containerClassName . ' .bearcms-comments-element-send-button{' . $button . '}';
-    echo $containerClassName . ' .bearcms-comments-element-send-button-waiting{' . $buttonWaiting . '}';
-
-    echo $containerClassName . ' .bearcms-blog-posts-element-show-more-button-container{margin-top:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-blog-posts-element-show-more-button{' . $button . '}';
-    echo $containerClassName . ' .bearcms-blog-posts-element-post-title{line-height:180%;font-size:calc(' . $fontSize . ' * 1.3);text-decoration:underline;color:' . $elementsTextColor . ';}';
-    echo $containerClassName . ' .bearcms-blog-posts-element-post-date-container{padding-top:' . $fontSize . ';}';
-    echo $containerClassName . ' .bearcms-blog-posts-element-post-date{font-size:calc(' . $fontSize . ' * 0.8);color:' . $elementsTextColor . ';}';
-    echo $containerClassName . ' .bearcms-blog-posts-element-post-content{padding-top:1.5rem;}';
-    echo $containerClassName . ' .bearcms-blog-posts-element-post:not(:last-child) .bearcms-blog-posts-element-post-content{padding-bottom:2rem;}';
-
-    echo $containerClassName . ' .bearcms-forum-posts-post:not(:first-child){margin-top:calc(' . $fontSize . ' * 0.5);}';
-    echo $containerClassName . ' .bearcms-forum-posts-post-title{line-height:180%;text-decoration:underline;color:' . $elementsTextColor . ';}';
-    echo $containerClassName . ' .bearcms-forum-posts-post-replies-count{font-size:calc(' . $fontSize . ' * 0.8);color:' . $elementsTextColor . ';}';
-    echo $containerClassName . ' .bearcms-forum-posts-show-more-button-container{margin-top:calc(' . $fontSize . ' * 0.5);}';
-    echo $containerClassName . ' .bearcms-forum-posts-show-more-button{' . $button . '}';
-    echo $containerClassName . ' .bearcms-forum-posts-new-post-button-container{margin-top:calc(' . $fontSize . ' * 0.5);}';
-    echo $containerClassName . ' .bearcms-forum-posts-new-post-button{' . $button . '}';
-
-    echo $containerClassName . ' .bearcms-blogpost-page-title{' . $h1 . '}';
-    echo $containerClassName . ' .bearcms-blogpost-page-date-container{padding-top:' . $fontSize . ';}';
-    echo $containerClassName . ' .bearcms-blogpost-page-date{font-size:calc(' . $fontSize . ' * 0.8);line-height:180%;}';
-    echo $containerClassName . ' .bearcms-blogpost-page-content{padding-top:calc(' . $fontSize . ' * 1.6);}';
-    echo $containerClassName . ' .bearcms-blogpost-page-comments-title-container{padding-top:calc(' . $fontSize . ' * 1.6);}';
-    echo $containerClassName . ' .bearcms-blogpost-page-comments-container{padding-top:calc(' . $fontSize . ' * 1.6);}';
-    echo $containerClassName . ' .bearcms-blogpost-page-related-container{padding-top:calc(' . $fontSize . ' * 1.6);}';
-
-    echo $containerClassName . ' .bearcms-new-forum-post-page-title{' . $h1 . 'padding-bottom:' . $fontSize . ';}';
-    echo $containerClassName . ' .bearcms-new-forum-post-page-title-label{' . $text . '}';
-    echo $containerClassName . ' .bearcms-new-forum-post-page-title-input{' . $input . '}';
-    echo $containerClassName . ' .bearcms-new-forum-post-page-text-label{' . $text . '}';
-    echo $containerClassName . ' .bearcms-new-forum-post-page-text-input{' . $input . 'height:calc(' . $fontSize . ' * 14);}';
-    echo $containerClassName . ' .bearcms-new-forum-post-page-send-button{' . $button . '}';
-    echo $containerClassName . ' .bearcms-new-forum-post-page-send-button-waiting{' . $buttonWaiting . '}';
-
-    echo $containerClassName . ' .bearcms-forum-post-page-title{' . $h1 . 'padding-bottom:' . $fontSize . ';}';
-    echo $containerClassName . ' .bearcms-forum-post-page-reply{margin-bottom:1rem;}';
-    echo $containerClassName . ' .bearcms-forum-post-page-reply-author-image{' . $userImage . '}';
-    echo $containerClassName . ' .bearcms-forum-post-page-reply-author-name{' . $link . '}';
-    echo $containerClassName . ' .bearcms-forum-post-page-reply-text{' . $text . '}';
-    echo $containerClassName . ' .bearcms-forum-post-page-reply-text a{' . $link . '}';
-    echo $containerClassName . ' .bearcms-forum-post-page-reply-date{font-size:calc(' . $fontSize . ' * 0.8);color:' . $elementsTextColor . ';}';
-    echo $containerClassName . ' .bearcms-forum-post-page-text-input{' . $input . 'height:calc(' . $fontSize . ' * 14);}';
-    echo $containerClassName . ' .bearcms-forum-post-page-send-button{' . $button . '}';
-    echo $containerClassName . ' .bearcms-forum-post-page-send-button-waiting{' . $buttonWaiting . '}';
-
-    echo $containerClassName . ' .bearcms-code-element{' . $text . 'font-family:Courier,monospace;border-radius:2px;background-color:#333;padding:' . $fontSize . ';color:#fff;}';
-    echo $containerClassName . ' .bearcms-code-element .bearcms-code-element-entity-keyword{color:#4dc16c;}';
-    echo $containerClassName . ' .bearcms-code-element .bearcms-code-element-entity-variable{color:#00b5c3;}';
-    echo $containerClassName . ' .bearcms-code-element .bearcms-code-element-entity-value{color:#ff770a;}';
-    echo $containerClassName . ' .bearcms-code-element .bearcms-code-element-entity-comment{color:#929292;}';
-
-    echo $containerClassName . ' .bearcms-separator-element-large{' . $separator . 'width:70%;}';
-    echo $containerClassName . ' .bearcms-separator-element-medium{' . $separator . 'width:50%;}';
-    echo $containerClassName . ' .bearcms-separator-element-small{' . $separator . 'width:30%;}';
-
-    echo $containerClassName . ' .bearcms-search-box-element-input{' . $input . '}';
-    echo $containerClassName . ' .bearcms-search-box-element-button{' . $button . '}';
-
-    echo '@media(min-width: 40rem) {';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-large{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-medium{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-heading-element-small{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-text-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-html-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-link-element{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-blog-posts-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-comments-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-search-box-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-navigation-element{margin:0 ' . $spacing . ' !important;}';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-share-button-element{padding:0 ' . $spacing . ' !important;}';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-element-container > .bearcms-forum-posts-element{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-columns{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-elements > .bearcms-elements-floating-box{margin-left:' . $spacing . ';margin-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-blogpost-page-title-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-blogpost-page-date-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-blogpost-page-comments-block-separator{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-blogpost-page-comments-title-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-blogpost-page-comments-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-blogpost-page-related-block-separator{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-blogpost-page-related-title-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-blogpost-page-related-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-new-forum-post-page-title-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-new-forum-post-page-content{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-forum-post-page-title-container{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
-    echo $containerClassName . ' .bearcms-forum-post-page-content{padding-left:' . $spacing . ';padding-right:' . $spacing . ';}';
+    echo '.bearcms-template-navigation-custom-item{display:inline-block;position:relative;z-index:2;box-sizing:border-box;height:' . $buttonHeight . ';width:' . $buttonHeight . ';cursor:pointer;}';
+    echo '.bearcms-template-navigation-custom-item:hover{background-color:rgba(0,0,0,0.04);}';
+    echo '.bearcms-template-navigation-custom-item:active{background-color:rgba(0,0,0,0.08);}';
+    echo '.bearcms-template-navigation-custom-item:first-child{border-top-right-radius:' . $borderRadius . ';border-bottom-right-radius:' . $borderRadius . ';}';
+    echo '#bearcms-template-navigation-menu-button{display:none;}';
+    echo '#bearcms-template-navigation-menu-button+label{display:none;}';
+    echo '#bearcms-template-navigation-menu-button+label+div{width:calc(100% - ' . $customButtonsCount . '*' . $buttonHeight . ');}';
+    echo '@media(max-width:600px){';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item{background-color:#222;display:block !important;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item:hover{background-color:#292929;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item:active{background-color:#333;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item:first-child{border-top-left-radius:' . $borderRadius . ';border-top-right-radius:' . $borderRadius . ';border-bottom-left-radius:0 !important;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item:last-child{border-bottom-left-radius:' . $borderRadius . ';border-bottom-right-radius:' . $borderRadius . ';border-top-right-radius:0 !important;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item a{display:block !important;color:#fff !important;text-align:left;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-children{display:none !important;}';
+    echo '#bearcms-template-navigation-menu-button+label{display:inline-block;background-size:auto calc(var(--bearcms-template-text-font-size) + 9px);background-position:center center;background-repeat:no-repeat;border-top-left-radius:' . $borderRadius . ';border-bottom-left-radius:' . $borderRadius . ';}';
+    echo '#bearcms-template-navigation-menu-button+label+div{display:none;}';
+    echo '#bearcms-template-navigation-menu-button:checked+label+div{display:block;width:100%;box-sizing:border-box;padding-top:10px;}';
     echo '}';
 }
+
+$elementTextStyle = $textStyle . 'color:var(--bearcms-template-context-text-color);';
+$elementAccentTextStyle = $accentTextStyle . 'color:var(--bearcms-template-context-accent-text-color);';
+
+$elementHeadingLarge = $elementAccentTextStyle . 'font-size:calc(var(--bearcms-template-accent-text-font-size) * 2);';
+$elementHeadingMedium = $elementAccentTextStyle . 'font-size:calc(var(--bearcms-template-accent-text-font-size) * 1.5);';
+$elementHeadingSmall = $elementAccentTextStyle;
+$elementLabel = $elementTextStyle;
+$elementInput = 'border:1px solid var(--bearcms-template-context-text-color);' . $elementTextStyle . 'height:' . $buttonHeight . ';padding:0 ' . $buttonPadding . ';width:100%;background-color:transparent;border-radius:' . $borderRadius . ';';
+$elementTextarea = 'padding-top:' . $buttonPaddingHalf . ';padding-bottom:' . $buttonPaddingHalf . ';';
+$elementText = $elementTextStyle;
+$elementLink = $elementTextStyle . 'text-decoration:underline;';
+$elementButton = $elementTextStyle . 'background-color:transparent;border:1px solid var(--bearcms-template-context-text-color);text-decoration:none;border-radius:' . $borderRadius . ';padding:0 ' . $buttonPadding . ';line-height:' . $buttonHeight . ';height:' . $buttonHeight . ';';
+$elementButtonOver = 'background-color:rgba(0,0,0,0.04);';
+$elementButtonActive = 'background-color:rgba(0,0,0,0.08);';
+$elementUserImage = 'box-sizing:border-box;width:50px;height:50px;margin-right:calc(' . $elementsSpacing . ' / 2);border-radius:' . $borderRadius . ';';
+$elementSeparator = 'background-color:var(--bearcms-template-context-text-color);height:2px;margin:calc(' . $elementsSpacing . ' * 3) auto calc(' . $elementsSpacing . ' * 3) auto;';
+
+// bearcms-tc fixes collistions with the theme options
+
+echo '.bearcms-tc .bearcms-heading-element-large{' . $elementHeadingLarge . 'padding-top:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .bearcms-elements-element-container:first-child > .bearcms-heading-element-large{padding-top:0;}';
+echo '.bearcms-tc .bearcms-heading-element-medium{' . $elementHeadingMedium . 'padding-top:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .bearcms-elements-element-container:first-child > .bearcms-heading-element-medium{padding-top:0;}';
+echo '.bearcms-tc .bearcms-heading-element-small{' . $elementHeadingSmall . 'padding-top:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .bearcms-elements-element-container:first-child > .bearcms-heading-element-small{padding-top:0;}';
+echo '.bearcms-tc .bearcms-text-element{' . $elementText . '}';
+echo '.bearcms-tc .bearcms-text-element a{' . $elementLink . '}';
+echo '.bearcms-tc .bearcms-html-element{' . $elementText . '}';
+echo '.bearcms-tc .bearcms-html-element a{' . $elementLink . '}';
+echo '.bearcms-tc .bearcms-link-element a{' . $elementLink . '}';
+echo '.bearcms-tc .bearcms-image-element-image{border-radius:' . $borderRadius . ';}';
+echo '.bearcms-tc .bearcms-image-gallery-element-image{border-radius:' . $borderRadius . ';}';
+echo '.bearcms-tc .bearcms-video-element{border-radius:' . $borderRadius . ';}';
+echo '.bearcms-tc .bearcms-navigation-element-item a{' . $elementLink . '}';
+
+echo '.bearcms-tc .bearcms-comments-comment{margin-bottom:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .bearcms-comments-show-more-button-container{padding-bottom:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .bearcms-comments-show-more-button{' . $elementLink . '}';
+echo '.bearcms-tc .bearcms-comments-comment-author-image{' . $elementUserImage . '}';
+echo '.bearcms-tc .bearcms-comments-comment-author-name{' . $elementLink . '}';
+echo '.bearcms-tc .bearcms-comments-comment-text{' . $elementText . '}';
+echo '.bearcms-tc .bearcms-comments-comment-text a{' . $elementLink . '}';
+echo '.bearcms-tc .bearcms-comments-comment-date{' . $elementText . 'font-size:calc(var(--bearcms-template-text-font-size) * 0.8);}';
+echo '.bearcms-tc .bearcms-comments-element-text-input{' . $elementInput . $elementTextarea . 'height:calc(var(--bearcms-template-text-font-size) * 8);}';
+echo '.bearcms-tc .bearcms-comments-element [data-form-element-type="submit-button"]{font-size:0;}';
+echo '.bearcms-tc .bearcms-comments-element-send-button{margin-top:calc(' . $elementsSpacing . ' / 2);' . $elementButton . '}';
+echo '.bearcms-tc .bearcms-comments-element-send-button:not(.bearcms-comments-element-send-button-waiting):hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .bearcms-comments-element-send-button:not(.bearcms-comments-element-send-button-waiting):active{' . $elementButtonActive . '}';
+
+echo '.bearcms-tc .bearcms-blog-posts-element-show-more-button{' . $elementLink . '}';
+echo '.bearcms-tc .bearcms-blog-posts-element-post-title{' . $elementHeadingMedium . 'color:var(--bearcms-template-context-text-color);text-decoration:underline;}';
+echo '.bearcms-tc .bearcms-blog-posts-element-post-date-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .bearcms-blog-posts-element-post-date{' . $elementText . 'font-size:calc(var(--bearcms-template-text-font-size) * 0.8);}';
+echo '.bearcms-tc .bearcms-blog-posts-element-post-content{padding-top:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .bearcms-blog-posts-element-post:not(:last-child) .bearcms-blog-posts-element-post-content{padding-bottom:' . $elementsSpacing . ';}';
+
+echo '.bearcms-tc .bearcms-forum-posts-post-title{' . $elementText . 'text-decoration:underline;}';
+echo '.bearcms-tc .bearcms-forum-posts-post-replies-count{' . $elementText . 'font-size:calc(var(--bearcms-template-text-font-size) * 0.8);}';
+//echo '.bearcms-tc .bearcms-forum-posts-show-more-button-container{font-size:0;}';
+echo '.bearcms-tc .bearcms-forum-posts-show-more-button{' . $elementLink . '}';
+echo '.bearcms-tc .bearcms-forum-posts-new-post-button-container{margin-top:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .bearcms-forum-posts-new-post-button{' . $elementButton . '}';
+echo '.bearcms-tc .bearcms-forum-posts-new-post-button:hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .bearcms-forum-posts-new-post-button:active{' . $elementButtonActive . '}';
+
+echo '.bearcms-tc .bearcms-blogpost-page-title{' . $elementHeadingLarge . '}';
+echo '.bearcms-tc .bearcms-blogpost-page-date-container{padding-top:var(--bearcms-template-text-font-size);}';
+echo '.bearcms-tc .bearcms-blogpost-page-date{' . $elementText . 'font-size:calc(var(--bearcms-template-text-font-size) * 0.8);}';
+echo '.bearcms-tc .bearcms-blogpost-page-content{padding-top:calc(var(--bearcms-template-text-font-size) * 1.6);}';
+echo '.bearcms-tc .bearcms-blogpost-page-comments-title-container{padding-top:calc(var(--bearcms-template-text-font-size) * 1.6);}';
+echo '.bearcms-tc .bearcms-blogpost-page-comments-container{padding-top:calc(var(--bearcms-template-text-font-size) * 1.6);}';
+echo '.bearcms-tc .bearcms-blogpost-page-related-container{padding-top:calc(var(--bearcms-template-text-font-size) * 1.6);}';
+
+echo '.bearcms-tc .bearcms-forum-post-page-title{' . $elementHeadingLarge . 'padding-bottom:var(--bearcms-template-text-font-size);}';
+echo '.bearcms-tc .bearcms-forum-post-page-reply{margin-bottom:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .bearcms-forum-post-page-reply-author-image{' . $elementUserImage . '}';
+echo '.bearcms-tc .bearcms-forum-post-page-reply-author-name{' . $elementLink . '}';
+echo '.bearcms-tc .bearcms-forum-post-page-reply-text{' . $elementText . '}';
+echo '.bearcms-tc .bearcms-forum-post-page-reply-text a{' . $elementLink . '}';
+echo '.bearcms-tc .bearcms-forum-post-page-reply-date{' . $elementText . 'font-size:calc(var(--bearcms-template-text-font-size) * 0.8);}';
+echo '.bearcms-tc .bearcms-forum-post-page-text-input{' . $elementInput . $elementTextarea . 'height:calc(var(--bearcms-template-text-font-size) * 14);}';
+echo '.bearcms-tc .bearcms-forum-post-page-content [data-form-element-type="submit-button"]{font-size:0;}';
+echo '.bearcms-tc .bearcms-forum-post-page-send-button{margin-top:calc(' . $elementsSpacing . ' / 2);' . $elementButton . '}';
+echo '.bearcms-tc .bearcms-forum-post-page-send-button:not(.bearcms-forum-post-page-send-button-waiting):hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .bearcms-forum-post-page-send-button:not(.bearcms-forum-post-page-send-button-waiting):active{' . $elementButtonActive . '}';
+
+echo '.bearcms-tc .bearcms-code-element{' . $elementText . 'font-family:Courier,monospace;border-radius:' . $borderRadius . ';background-color:#333;padding:var(--bearcms-template-text-font-size);color:#fff;}';
+echo '.bearcms-tc .bearcms-code-element .bearcms-code-element-entity-keyword{color:#4dc16c;}';
+echo '.bearcms-tc .bearcms-code-element .bearcms-code-element-entity-variable{color:#00b5c3;}';
+echo '.bearcms-tc .bearcms-code-element .bearcms-code-element-entity-value{color:#ff770a;}';
+echo '.bearcms-tc .bearcms-code-element .bearcms-code-element-entity-comment{color:#929292;}';
+
+echo '.bearcms-tc .bearcms-separator-element-large{' . $elementSeparator . 'width:70%;}';
+echo '.bearcms-tc .bearcms-separator-element-medium{' . $elementSeparator . 'width:50%;}';
+echo '.bearcms-tc .bearcms-separator-element-small{' . $elementSeparator . 'width:30%;}';
+
+echo '.bearcms-tc .bearcms-search-box-element-input{' . $elementInput . '}';
+echo '.bearcms-tc .bearcms-search-box-element-button{' . $elementButton . 'width:' . $buttonHeight . ';border:0px;border-left:1px solid var(--bearcms-template-context-text-color);border-top-left-radius:0;border-bottom-left-radius:0;background-size:auto ' . $buttonIconSize . ';background-position:center center;background-repeat:no-repeat;}';
+echo '.bearcms-tc .bearcms-search-box-element-button:hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .bearcms-search-box-element-button:active{' . $elementButtonActive . '}';
+
+echo '.bearcms-tc .bearcms-store-items-element-item-image{border-radius:' . $borderRadius . ';}';
+echo '.bearcms-tc .bearcms-store-items-element-item-name{' . $elementHeadingMedium . 'color:var(--bearcms-template-context-text-color);text-decoration:underline;}';
+echo '.bearcms-tc .bearcms-store-items-element-item-price-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .bearcms-store-items-element-item-price{' . $elementText . '}';
+
+echo '.bearcms-tc .bearcms-store-item-page-images-image{border-radius:' . $borderRadius . ';}';
+echo '.bearcms-tc .bearcms-store-item-page-name{' . $elementHeadingLarge . '}';
+echo '.bearcms-tc .bearcms-store-item-page-price-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .bearcms-store-item-page-price{' . $elementText . '}';
+echo '.bearcms-tc .bearcms-store-item-page-buy-button-container{padding-top:calc(' . $elementsSpacing . ' / 2);font-size:0;}';
+echo '.bearcms-tc .bearcms-store-item-page-buy-button{' . $elementButton . '}';
+echo '.bearcms-tc .bearcms-store-item-page-buy-button:hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .bearcms-store-item-page-buy-button:active{' . $elementButtonActive . '}';
+
+// Temp (remove in the future)
+echo '.bearcms-tc .allebg-contact-form-element-email-label{' . $elementLabel . '}';
+echo '.bearcms-tc .allebg-contact-form-element-email{' . $elementInput . '}';
+echo '.bearcms-tc .allebg-contact-form-element-message-label{' . $elementLabel . 'margin-top:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .allebg-contact-form-element-message{' . $elementInput . $elementTextarea . 'height:calc(var(--bearcms-template-text-font-size) * 12);}';
+echo '.bearcms-tc .allebg-contact-form-element-send-button{background-color:transparent;margin-top:calc(' . $elementsSpacing . ' / 2);' . $elementButton . '}';
+echo '.bearcms-tc .allebg-contact-form-element-send-button:hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .allebg-contact-form-element-send-button:active{' . $elementButtonActive . '}';
+
+// Temp (remove in the future)
+echo '.bearcms-tc .allebg-poll-element-answer:not(:last-child){margin-bottom:calc(' . $elementsSpacing . ' / 2)}';
+echo '.bearcms-tc .allebg-poll-element-answer-unchecked{' . $elementButton . 'padding:0;width:' . $buttonHeight . ';}';
+echo '.bearcms-tc .allebg-poll-element-answer-unchecked:hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .allebg-poll-element-answer-unchecked:active{' . $elementButtonActive . '}';
+echo '.bearcms-tc .allebg-poll-element-answer-checked{' . $elementButton . 'padding:0;width:' . $buttonHeight . ';background-size:auto ' . $buttonIconSize . ';background-position:center center;background-repeat:no-repeat;}';
+echo '.bearcms-tc .allebg-poll-element-answer-checked:hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .allebg-poll-element-answer-checked:active{' . $elementButtonActive . '}';
+echo '.bearcms-tc .allebg-poll-element-answer-text{' . $elementText . 'padding:calc(var(--bearcms-template-text-font-size) / 2) 0 var(--bearcms-template-text-font-size) calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .allebg-poll-element-answer-count{' . $elementText . 'padding:calc(var(--bearcms-template-text-font-size) / 2) 0 var(--bearcms-template-text-font-size) calc(' . $elementsSpacing . ' / 2);}';
+
+echo '.bearcms-tc .bearcms-share-button-element{font-size:0;}';
+echo '.bearcms-tc .bearcms-share-button-element-button{' . $elementButton . 'background-color:transparent;}';
+echo '.bearcms-tc .bearcms-share-button-element-button:hover{' . $elementButtonOver . ';}';
+echo '.bearcms-tc .bearcms-share-button-element-button:active{' . $elementButtonActive . ';}';
+
 echo '</style>';
 if ($hasNavigation) {
     echo '<link rel="client-packages-embed" name="responsiveAttributes">';
 }
+if ($showStoreCartButton) {
+    echo '<link rel="client-packages-embed" name="-bearcms-store">';
+}
+if ($showSearchButton) {
+    echo '<link rel="client-packages-embed" name="-bearcms-search">';
+}
 echo '</head>';
-echo '<body><div class="template-container">';
-echo '<header class="template-header">';
+
+echo '<body><div class="bearcms-template-container">';
+echo '<header class="bearcms-template-header">';
 
 if ($hasLanguagesPicker) {
-    echo '<div class="template-header-languages-container">';
+    echo '<div class="bearcms-template-languages">';
     foreach ($languages as $_language) {
         if ($_language === $language) {
             echo '<span>' . strtoupper($_language) . '</span>';
@@ -336,32 +325,37 @@ if ($hasLanguagesPicker) {
     echo '</div>';
 }
 
-if ($hasHeaderLogo) {
-    $imageHTML = '<component src="bearcms-image-element" class="template-header-logo"' . ($isHomePage ? '' : ' onClick="openUrl" url="' . htmlentities($app->urls->get()) . '"') . ' filename="' . htmlentities($headerLogoImageDetails['filename']) . '" fileWidth="' . htmlentities($headerLogoImageDetails['width']) . '" fileHeight="' . htmlentities($headerLogoImageDetails['height']) . '"/>';
-    echo '<div class="template-header-logo-container">' . $imageHTML . '</div>';
+if ($hasLogoImage) {
+    $imageHTML = '<component src="bearcms-image-element" class="bearcms-template-logo"' . ($isHomePage ? '' : ' onClick="openUrl" url="' . htmlentities($app->urls->get()) . '"') . ' filename="' . htmlentities($logoImageDetails['filename']) . '" fileWidth="' . htmlentities($logoImageDetails['width']) . '" fileHeight="' . htmlentities($logoImageDetails['height']) . '"/>';
+    echo '<div class="bearcms-template-logo-container">' . $imageHTML . '</div>';
 }
-if ($hasHeaderTitle) {
-    echo '<div class="template-header-title-container"><' . ($isHomePage ? 'span' : 'a href="' . htmlentities($app->urls->get()) . '"') . ' class="template-header-title">' . htmlspecialchars($settings->getTitle((string) $language)) . '</' . ($isHomePage ? 'span' : 'a') . '></div>';
+if ($hasLogoText) {
+    echo '<div class="bearcms-template-logo-text-container"><' . ($isHomePage ? 'span' : 'a href="' . htmlentities($app->urls->get()) . '"') . ' class="bearcms-template-logo-text' . ($isHomePage ? '' : ' bearcms-template-inner-page-logo-text') . '">' . htmlspecialchars($settings->getTitle((string) $language)) . '</' . ($isHomePage ? 'span' : 'a') . '></div>';
 }
 
 if ($hasNavigation) {
-    echo '<nav class="template-navigation">';
+    echo '<nav class="bearcms-template-navigation">';
     echo '<div>';
-    echo '<input id="template-navigation-toggle-button" type="checkbox"/><label for="template-navigation-toggle-button"></label>';
-    echo '<div><component src="bearcms-navigation-element" editable="true" id="main-navigation' . $elementsLanguageSuffix . '" source="allPages" showHomeLink="true" menuType="horizontal-down" class="template-navigation-content" selectedPath="' . (string) $app->request->path . '" data-responsive-attributes="w<650=>menuType=none,w>=650=>menuType=horizontal-down" /></div>';
+    if ($showStoreCartButton) {
+        echo '<div class="bearcms-template-navigation-custom-item bearcms-template-navigation-custom-item-store-cart bearcms-template-navigation-custom-item-store-cart-icon" onclick="bearCMS.store.openCart();" title="' . htmlentities(__('bearcms.themes.themeone.Open store cart')) . '"></div>';
+    }
+    if ($showSearchButton) {
+        echo '<div class="bearcms-template-navigation-custom-item bearcms-template-navigation-custom-item-search bearcms-template-navigation-custom-item-search-icon" onclick="bearCMS.search.open();" title="' . htmlentities(__('bearcms.themes.themeone.Open site search')) . '"></div>';
+    }
+    echo '<input id="bearcms-template-navigation-menu-button" type="checkbox"/><label for="bearcms-template-navigation-menu-button" class="bearcms-template-navigation-custom-item bearcms-template-navigation-menu-button-icon"></label>';
+    echo '<div><component src="bearcms-navigation-element" editable="true" id="main-navigation' . $elementsLanguageSuffix . '" source="allPages" showHomeLink="true" menuType="horizontal-down" class="bearcms-template-navigation-content" selectedPath="' . (string) $app->request->path . '" data-responsive-attributes="vw<600=>menuType=none,vw>=600=>menuType=horizontal-down" /></div>';
     echo '</div>';
     echo '</nav>';
 }
 
 echo '</header>';
 
-echo '<section class="template-content">';
+echo '<section class="bearcms-tc bearcms-template-context bearcms-template-main" style="--bearcms-template-context-accent-text-color:var(--bearcms-template-accent-text-color);--bearcms-template-context-text-color:var(--bearcms-template-text-color);">';
 echo '{{body}}';
-//echo '<component src="bearcms-elements" id="test1" editable="true"/>';
 echo '</section>';
 
 if ($hasFooter) {
-    echo '<footer class="template-footer"><div>';
+    echo '<footer class="bearcms-tc bearcms-template-context bearcms-template-footer" style="--bearcms-template-context-accent-text-color:var(--bearcms-template-footer-text-color);--bearcms-template-context-text-color:var(--bearcms-template-footer-text-color);"><div>';
     echo '<component src="bearcms-elements" editable="true" class="footer-bearcms-elements" id="footer' . $elementsLanguageSuffix . '"/>';
     echo '</div></footer>';
 }
