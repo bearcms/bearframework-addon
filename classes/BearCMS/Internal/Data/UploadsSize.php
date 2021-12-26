@@ -88,7 +88,11 @@ class UploadsSize
     {
         $app = App::get();
         $dataKey = 'bearcms/uploadssize.json';
-        $app->data->set($app->data->make($dataKey, json_encode($data)));
+        if (empty($data)) {
+            $app->data->delete($dataKey);
+        } else {
+            $app->data->set($app->data->make($dataKey, json_encode($data)));
+        }
         $app->bearCMS->dispatchEvent('internalChangeUploadsSize');
     }
 }
