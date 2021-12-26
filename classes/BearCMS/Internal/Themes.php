@@ -82,11 +82,11 @@ class Themes
      */
     static function initialize(string $id): void
     {
-        $theme = Internal\Themes::get($id);
+        $theme = self::get($id);
         if ($theme instanceof \BearCMS\Themes\Theme && is_callable($theme->initialize)) {
             $app = App::get();
             $currentUserID = $app->bearCMS->currentUser->exists() ? $app->bearCMS->currentUser->getID() : null;
-            $currentCustomizations = Internal\Themes::getCustomizations($id, $currentUserID);
+            $currentCustomizations = self::getCustomizations($id, $currentUserID);
             call_user_func($theme->initialize, $currentCustomizations);
         }
     }
@@ -145,29 +145,6 @@ class Themes
         }
         return [];
     }
-
-    /**
-     * 
-     * @param string $id
-     * @return ?array
-     */
-    //    public function getManifest2(string $id): ?array
-    //    {
-    //        if (!isset(self::$registrations[$id])) {
-    //            return null;
-    //        }
-    //        $result = Internal\Themes::getManifest($id);
-    //        $styles = Internal\Themes::getStyles($id);
-    //        $result['styles'] = [];
-    //        foreach ($styles as $style) {
-    //            $result['styles'][] = [
-    //                'id' => $style['id'],
-    //                'name' => $style['name'],
-    //                'media' => $style['media']
-    //            ];
-    //        }
-    //        return $result;
-    //    }
 
     /**
      * 
@@ -240,11 +217,11 @@ class Themes
     /**
      * 
      * @param string $id
-     * @param type $updateMediaFilenames
+     * @param boolean $updateMediaFilenames
      * @return array|null
      * @throws \Exception
      */
-    static function getStyles(string $id, $updateMediaFilenames = true): ?array
+    static function getStyles(string $id, bool $updateMediaFilenames = true): ?array
     {
         $theme = self::get($id);
         if ($theme === null) {
@@ -296,7 +273,7 @@ class Themes
         if (!isset(self::$registrations[$id])) {
             return null;
         }
-        $styles = Internal\Themes::getStyles($id);
+        $styles = self::getStyles($id);
         foreach ($styles as $style) {
             if ($style['id'] === $styleID) {
                 if (isset($style['values'])) {
@@ -328,7 +305,7 @@ class Themes
     {
         $cacheKey = self::getCustomizationsCacheKey($id, $userID);
         $app = App::get();
-        $app->data->delete('.temp/bearcms/theme-customizations/' . md5($cacheKey));
+        $app->data->delete('.temp/bearcms/theme-customizations-' . md5($cacheKey));
         $app->cache->delete($cacheKey);
     }
 
@@ -352,7 +329,7 @@ class Themes
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID);
-                $tempDataKey = '.temp/bearcms/theme-customizations/' . md5($cacheKey);
+                $tempDataKey = '.temp/bearcms/theme-customizations-' . md5($cacheKey);
                 $saveToCache = false;
                 $saveToTempData = false;
                 $resultData = $app->cache->getValue($cacheKey);
@@ -381,7 +358,7 @@ class Themes
                 if ($currentValues === null) {
                     $currentValues = Internal2::$data2->themes->getValues($id);
                 }
-                $themeOptions = Internal\Themes::getOptions($id);
+                $themeOptions = self::getOptions($id);
                 if ($themeOptions === null) {
                     $values = [];
                     $htmlData = [];
@@ -430,14 +407,14 @@ class Themes
         $customizations = self::getCustomizations($id);
         $values = $customizations->getValues();
         $filesToAttach = [];
-        $filesInValues = Internal\Themes::getFilesInValues($values);
+        $filesInValues = self::getFilesInValues($values);
         $filesKeysToUpdate = [];
         foreach ($filesInValues as $filename) {
             $attachmentName = 'files/' . (sizeof($filesToAttach) + 1) . '.' . pathinfo($filename, PATHINFO_EXTENSION); // the slash helps in import (shows if the value is encoded)
             $filesToAttach[$attachmentName] = $filename;
             $filesKeysToUpdate[$filename] = 'data:' . $attachmentName;
         }
-        $values = Internal\Themes::updateFilesInValues($values, $filesKeysToUpdate);
+        $values = self::updateFilesInValues($values, $filesKeysToUpdate);
 
         $manifest = [
             'themeID' => $id,
@@ -515,7 +492,7 @@ class Themes
             };
             $values = $getValues();
 
-            $filesInValues = Internal\Themes::getFilesInValues($values);
+            $filesInValues = self::getFilesInValues($values);
             $filesKeysToUpdate = [];
             foreach ($filesInValues as $key) {
                 if (strpos($key, 'data:files/') !== 0) {
@@ -552,7 +529,7 @@ class Themes
                 }
             }
 
-            $values = Internal\Themes::updateFilesInValues($values, $filesKeysToUpdate);
+            $values = self::updateFilesInValues($values, $filesKeysToUpdate);
             if ($hasUser) {
                 Internal2::$data2->themes->setUserOptions($id, $userID, $values);
             } else {
@@ -579,7 +556,7 @@ class Themes
         $app = App::get();
         $values = Internal2::$data2->themes->getUserOptions($id, $userID);
         if (is_array($values)) {
-            $filesInValues = Internal\Themes::getFilesInValues($values);
+            $filesInValues = self::getFilesInValues($values);
             $filesKeysToUpdate = [];
             foreach ($filesInValues as $key) {
                 if (strpos($key, 'data:') === 0) {
@@ -591,7 +568,7 @@ class Themes
                     }
                 }
             }
-            $values = Internal\Themes::updateFilesInValues($values, $filesKeysToUpdate);
+            $values = self::updateFilesInValues($values, $filesKeysToUpdate);
             Internal2::$data2->themes->setOptions($id, $values);
             Internal2::$data2->themes->discardUserOptions($id, $userID);
             self::$cache = [];
@@ -928,10 +905,16 @@ class Themes
         return $html;
     }
 
+    /**
+     * 
+     * @param string $themeID
+     * @param string $elementType
+     * @return array
+     */
     static function getElementsOptionsSelectors(string $themeID, string $elementType): array
     {
         $result = [];
-        $themeOptions = Internal\Themes::getOptions($themeID);
+        $themeOptions = self::getOptions($themeID);
         if ($themeOptions !== null) {
             $walkOptions = function ($options) use (&$result, &$walkOptions, $elementType) {
                 foreach ($options as $option) {

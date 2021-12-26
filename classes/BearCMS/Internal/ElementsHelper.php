@@ -29,83 +29,6 @@ class ElementsHelper
     /**
      * 
      * @param \IvoPetkov\HTMLServerComponent $component
-     * @return void
-     */
-    static function updateComponentEditableAttribute(\IvoPetkov\HTMLServerComponent $component): void
-    {
-        $app = App::get();
-        $editable = false;
-        if ($component->editable === 'true' && $component->id !== null && strlen($component->id) > 0) {
-            if ($app->bearCMS->currentUser->exists() && $app->bearCMS->currentUser->hasPermission('modifyContent')) {
-                $editable = true;
-            }
-        }
-        $component->editable = $editable ? 'true' : 'false';
-    }
-
-    /**
-     * 
-     * @param \IvoPetkov\HTMLServerComponent $component
-     * @return void
-     */
-    static function updateComponentContextAttributes(\IvoPetkov\HTMLServerComponent $component): void
-    {
-        $getUpdatedHTMLUnit = function (string $value): string {
-            if (strlen($value) > 0) {
-                if (substr($value, 0, 4) === 'var(') {
-                    return $value;
-                }
-                if (is_numeric($value)) {
-                    $value .= 'px';
-                }
-                if (preg_match('/^(([0-9]+)|(([0-9]*)\.([0-9]+)))(px|rem|em|%|in|cm)$/', $value) !== 1) {
-                    $value = '';
-                }
-            }
-            return $value;
-        };
-
-        // Update width
-        $component->width = $getUpdatedHTMLUnit((string)$component->width);
-        if ($component->width === '') {
-            $component->width = '100%';
-        }
-
-        // Update spacing
-        $component->spacing = $getUpdatedHTMLUnit((string)$component->spacing);
-        if ($component->spacing === '') {
-            $component->spacing = '1rem';
-        }
-
-        // Update color
-        $componentColor = (string)$component->color;
-        if ($componentColor !== '') {
-            if (preg_match('/^#[0-9a-fA-F]{6}$/', $componentColor) !== 1) {
-                $componentColor = '';
-            }
-        }
-        if ($componentColor === '') {
-            $componentColor = Config::$uiColor;
-        }
-        $component->color = $componentColor;
-
-        if ($component->canStyle === 'true') {
-            if (isset(self::$elementsTypesOptions[$component->src])) { // Check if element supports styling
-                $canStyle = false;
-                $elementTypeOptions = self::$elementsTypesOptions[$component->src];
-                if (isset($elementTypeOptions['canStyle']) && $elementTypeOptions['canStyle']) {
-                    $canStyle = true;
-                }
-                if (!$canStyle) {
-                    $component->canStyle = 'false';
-                }
-            }
-        }
-    }
-
-    /**
-     * 
-     * @param \IvoPetkov\HTMLServerComponent $component
      * @return array
      */
     static function getComponentContextData(\IvoPetkov\HTMLServerComponent $component): array
@@ -164,54 +87,6 @@ class ElementsHelper
         return $result;
     }
 
-    /**
-     * 
-     * @param \IvoPetkov\HTMLServerComponent $component
-     * @return void
-     * @throws \Exception
-     */
-    static function updateContainerComponent(\IvoPetkov\HTMLServerComponent $component): void
-    {
-        if ($component->id === null || strlen($component->id) === 0) {
-            throw new \Exception('');
-        }
-        self::updateComponentEditableAttribute($component);
-        self::updateComponentContextAttributes($component);
-        if (strlen((string)$component->group) === 0) {
-            $component->group = 'default';
-        }
-        if ($component->getAttribute('canStyle', '') === '') {
-            $currentThemeID = Internal\CurrentTheme::getID();
-            $theme = Internal\Themes::get($currentThemeID);
-            if ($theme !== null) { // just in case it's registered later or other
-                if ($theme->canStyleElements) {
-                    $component->setAttribute('canStyle', 'true');
-                }
-            }
-        }
-    }
-
-    /**
-     * 
-     * @param \IvoPetkov\HTMLServerComponent $component
-     * @return void
-     */
-    static function updateElementComponent(\IvoPetkov\HTMLServerComponent $component): void
-    {
-        $rawData = (string)$component->getAttribute('bearcms-internal-attribute-raw-data');
-        $elementData = null;
-        if (strlen($rawData) > 0) {
-            $elementData = self::decodeElementRawData($rawData);
-            if (is_array($elementData)) {
-                $component->id = $elementData['id'];
-            }
-        } elseif ($component->id !== null && strlen($component->id) > 0) {
-            $elementsRawData = self::getElementsRawData([$component->id]);
-            $component->setAttribute('bearcms-internal-attribute-raw-data', $elementsRawData[$component->id]);
-        }
-        self::updateComponentEditableAttribute($component);
-        self::updateComponentContextAttributes($component);
-    }
 
     /**
      * Returns an array (['id' => ..., 'type' => ..., 'data' => ...]) or null if data is invalid
@@ -1030,7 +905,7 @@ class ElementsHelper
      * 
      * @return string
      */
-    static function getEditableElementsHtml(): string
+    static function getEditableElementsHTML(): string
     {
         $app = App::get();
         $html = '';
@@ -1289,5 +1164,118 @@ class ElementsHelper
             }
         }
         throw new \Exception('Too much retries!');
+    }
+
+    /**
+     * 
+     * @param \IvoPetkov\HTMLServerComponent $component
+     * @return void
+     */
+    static function updateComponent(\IvoPetkov\HTMLServerComponent $component): void
+    {
+        $componentSrc = (string)$component->src;
+        $name = strlen($componentSrc) > 0 ? $componentSrc : ($component->tagName !== 'component' ? $component->tagName : null);
+        if ($name !== null) {
+
+            $updateEditableAttribute = function (\IvoPetkov\HTMLServerComponent $component): void {
+                $app = App::get();
+                $editable = false;
+                if ($component->editable === 'true' && $component->id !== null && strlen($component->id) > 0) {
+                    if ($app->bearCMS->currentUser->exists() && $app->bearCMS->currentUser->hasPermission('modifyContent')) { // Todo cache
+                        $editable = true;
+                    }
+                }
+                $component->editable = $editable ? 'true' : 'false';
+            };
+
+            $updateContextAttributes = function (\IvoPetkov\HTMLServerComponent $component): void {
+                $getUpdatedHTMLUnit = function (string $value): string {
+                    if (strlen($value) > 0) {
+                        if (substr($value, 0, 4) === 'var(') {
+                            return $value;
+                        }
+                        if (is_numeric($value)) {
+                            $value .= 'px';
+                        }
+                        if (preg_match('/^(([0-9]+)|(([0-9]*)\.([0-9]+)))(px|rem|em|%|in|cm)$/', $value) !== 1) {
+                            $value = '';
+                        }
+                    }
+                    return $value;
+                };
+
+                // Update width
+                $component->width = $getUpdatedHTMLUnit((string)$component->width);
+                if ($component->width === '') {
+                    $component->width = '100%';
+                }
+
+                // Update spacing
+                $component->spacing = $getUpdatedHTMLUnit((string)$component->spacing);
+                if ($component->spacing === '') {
+                    $component->spacing = '1rem';
+                }
+
+                // Update color
+                $componentColor = (string)$component->color;
+                if ($componentColor !== '') {
+                    if (preg_match('/^#[0-9a-fA-F]{6}$/', $componentColor) !== 1) {
+                        $componentColor = '';
+                    }
+                }
+                if ($componentColor === '') {
+                    $componentColor = Config::$uiColor;
+                }
+                $component->color = $componentColor;
+            };
+
+            if ($name === 'bearcms-elements') {
+                if ($component->id === null || strlen($component->id) === 0) {
+                    throw new \Exception('The ID attribute is required for <bearcms-elements>');
+                }
+                $updateEditableAttribute($component);
+                $updateContextAttributes($component);
+                if (strlen((string)$component->group) === 0) {
+                    $component->group = 'default';
+                }
+                if ($component->getAttribute('canStyle', '') === '') {
+                    $currentThemeID = Internal\CurrentTheme::getID();
+                    $theme = Internal\Themes::get($currentThemeID);
+                    if ($theme !== null && $theme->canStyleElements) { // just in case it's registered later or other
+                        $component->setAttribute('canStyle', 'true');
+                    }
+                }
+            } elseif (isset(Internal\ElementsHelper::$elementsTypesFilenames[$name])) {
+                $component->setAttribute('bearcms-internal-attribute-type', Internal\ElementsHelper::$elementsTypesCodes[$name]);
+                $component->setAttribute('bearcms-internal-attribute-filename', Internal\ElementsHelper::$elementsTypesFilenames[$name]);
+                $rawData = (string)$component->getAttribute('bearcms-internal-attribute-raw-data');
+                $elementData = null;
+                if (strlen($rawData) > 0) {
+                    $elementData = self::decodeElementRawData($rawData);
+                    if (is_array($elementData)) {
+                        $component->id = $elementData['id'];
+                    }
+                } elseif ($component->id !== null && strlen($component->id) > 0) {
+                    $elementsRawData = self::getElementsRawData([$component->id]);
+                    $component->setAttribute('bearcms-internal-attribute-raw-data', $elementsRawData[$component->id]);
+                }
+                $updateEditableAttribute($component);
+                $updateContextAttributes($component);
+                if ($component->canStyle === 'true' && isset(self::$elementsTypesOptions[$component->src])) { // Check if element supports styling
+                    $canStyle = false;
+                    $elementTypeOptions = self::$elementsTypesOptions[$component->src];
+                    if (isset($elementTypeOptions['canStyle']) && $elementTypeOptions['canStyle']) {
+                        $canStyle = true;
+                    }
+                    if (!$canStyle) {
+                        $component->canStyle = 'false';
+                    }
+                }
+            } elseif ($name === 'bearcms-missing-element') {
+                $component->setAttribute('bearcms-internal-attribute-type', 'missing');
+                $updateEditableAttribute($component);
+                $updateContextAttributes($component);
+            }
+        }
     }
 }

@@ -306,4 +306,42 @@ Sitemap: ' . $app->request->base . '/sitemap.xml');
         $response->headers->set($response->headers->make('Content-Type', 'text/plain'));
         return $response;
     }
+
+    /**
+     * 
+     * @param integer $size
+     * @return \BearFramework\App\Response|null
+     */
+    static function handleIcon(int $size): ?\BearFramework\App\Response
+    {
+        $filename = \BearCMS\Internal\Data\Settings::getIconForSize($size);
+        if ($filename !== null) {
+            $app = App::get();
+            $content = $app->assets->getContent($filename, ['width' => $size, 'height' => $size]);
+            $response = new App\Response($content);
+            $extension = pathinfo($filename, PATHINFO_EXTENSION);
+            if ($extension !== '') {
+                $response->headers->set($response->headers->make('Content-Type', 'image/' . $extension));
+            }
+            $response->headers->set($response->headers->make('Cache-Control', 'public, max-age=43200'));
+            return $response;
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @param string $path
+     * @return \BearFramework\App\Response|null
+     */
+    static function handleMetaOGImage(string $path): ?\BearFramework\App\Response
+    {
+        $imageURL = MetaOGImages::getImage($path);
+        if ($imageURL !== null) {
+            $response = new App\Response\TemporaryRedirect($imageURL);
+            $response->headers->set($response->headers->make('Cache-Control', 'public, max-age=43200'));
+            return $response;
+        }
+        return null;
+    }
 }
