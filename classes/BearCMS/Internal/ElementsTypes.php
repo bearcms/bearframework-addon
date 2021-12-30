@@ -292,6 +292,15 @@ class ElementsTypes
                         ]
                     ],
                 ],
+                'onDelete' => function ($data) use ($app) {
+                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                    if (strlen($filename) > 0) {
+                        $filename = Internal2::$data2->fixFilename($filename);
+                        $dataKey = Internal\Data::filenameToDataKey($filename);
+                        $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                        UploadsSize::remove($dataKey);
+                    }
+                },
                 'onDuplicate' => function ($data) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
@@ -312,6 +321,7 @@ class ElementsTypes
                     return [];
                 },
                 'optimizeData' => function ($data) {
+                    $app = App::get();
                     $hasChange = false;
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
@@ -322,7 +332,7 @@ class ElementsTypes
                                 $hasChange = true;
                             }
                             if (!isset($data['fileWidth']) || !isset($data['fileHeight'])) {
-                                $details = $this->app->assets->getDetails($filename, ['width', 'height']);
+                                $details = $app->assets->getDetails($filename, ['width', 'height']);
                                 $data['fileWidth'] = $details['width'] !== null ? $details['width'] : 0;
                                 $data['fileHeight'] = $details['height'] !== null ? $details['height'] : 0;
                                 $hasChange = true;
@@ -421,6 +431,21 @@ class ElementsTypes
                     $data['files'] = $files;
                     return $data;
                 },
+                'onDelete' => function ($data) use ($app) {
+                    if (isset($data['files']) && is_array($data['files'])) {
+                        foreach ($data['files'] as $index => $file) {
+                            if (isset($file['filename'])) {
+                                $filename = (string)$file['filename'];
+                                if (strlen($filename) > 0) {
+                                    $filename = Internal2::$data2->fixFilename($filename);
+                                    $dataKey = Internal\Data::filenameToDataKey($filename);
+                                    $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                                    UploadsSize::remove($dataKey);
+                                }
+                            }
+                        }
+                    }
+                },
                 'onDuplicate' => function ($data) {
                     if (isset($data['files']) && is_array($data['files'])) {
                         foreach ($data['files'] as $index => $file) {
@@ -454,6 +479,7 @@ class ElementsTypes
                     return $result;
                 },
                 'optimizeData' => function ($data) {
+                    $app = App::get();
                     $hasChange = false;
                     if (isset($data['files']) && is_array($data['files'])) {
                         foreach ($data['files'] as $index => $file) {
@@ -467,7 +493,7 @@ class ElementsTypes
                                             $hasChange = true;
                                         }
                                         if (!isset($file['width']) || !isset($file['height'])) {
-                                            $details = $this->app->assets->getDetails($filename, ['width', 'height']);
+                                            $details = $app->assets->getDetails($filename, ['width', 'height']);
                                             $file['width'] = $details['width'] !== null ? $details['width'] : 0;
                                             $file['height'] = $details['height'] !== null ? $details['height'] : 0;
                                             $hasChange = true;
@@ -539,6 +565,15 @@ class ElementsTypes
                         ]
                     ],
                 ],
+                'onDelete' => function ($data) use ($app) {
+                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                    if (strlen($filename) > 0) {
+                        $filename = Internal2::$data2->fixFilename($filename);
+                        $dataKey = Internal\Data::filenameToDataKey($filename);
+                        $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                        UploadsSize::remove($dataKey);
+                    }
+                },
                 'onDuplicate' => function ($data) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
@@ -818,8 +853,9 @@ class ElementsTypes
                     ]
                 ],
                 'onDelete' => function ($data) {
+                    $app = App::get();
                     if (isset($data['threadID'])) {
-                        $this->app->data->delete('bearcms/comments/thread/' . md5($data['threadID']) . '.json');
+                        $app->data->delete('bearcms/comments/thread/' . md5($data['threadID']) . '.json');
                     }
                 },
                 'onDuplicate' => function ($data) {
