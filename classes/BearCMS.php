@@ -255,7 +255,7 @@ class BearCMS
                 });
 
             if (Config::hasFeature('THEMES')) {
-                Internal\Themes::$pagesOptions['blog'] = function (\BearCMS\Themes\Theme\Options $options) {
+                Internal\Themes::$pagesOptions['blog'] = function (\BearCMS\Internal\ThemeOptionsGroupInterface $options) {
                     Blog::addThemesPageOptions($options);
                 };
             }

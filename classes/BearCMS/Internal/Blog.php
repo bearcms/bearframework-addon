@@ -155,10 +155,10 @@ class Blog
 
     /**
      * 
-     * @param \BearCMS\Themes\Theme\Options $options
+     * @param \BearCMS\Internal\ThemeOptionsGroupInterface $options
      * @return void
      */
-    public static function addThemesPageOptions(\BearCMS\Themes\Theme\Options $options): void
+    public static function addThemesPageOptions(\BearCMS\Internal\ThemeOptionsGroupInterface $options): void
     {
         $group = $options->addGroup(__("bearcms.themes.options.Blog post page"));
 

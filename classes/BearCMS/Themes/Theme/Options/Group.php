@@ -12,7 +12,7 @@ namespace BearCMS\Themes\Theme\Options;
 /**
  * 
  */
-class Group
+class Group implements \BearCMS\Internal\ThemeOptionsGroupInterface
 {
 
     use \BearCMS\Internal\ThemeOptionsGroupTrait;
@@ -28,5 +28,4 @@ class Group
      * @var string 
      */
     public $description = '';
-
 }

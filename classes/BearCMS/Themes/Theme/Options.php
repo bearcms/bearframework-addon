@@ -14,7 +14,7 @@ use BearCMS\Internal\Themes as InternalThemes;
 /**
  * 
  */
-class Options
+class Options implements \BearCMS\Internal\ThemeOptionsGroupInterface
 {
 
     use \BearCMS\Internal\ThemeOptionsGroupTrait;
