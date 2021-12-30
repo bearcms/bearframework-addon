@@ -11,6 +11,7 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 use BearCMS\Internal;
+use BearCMS\Internal\Data\Elements as InternalDataElements;
 use BearCMS\Internal\Data\UploadsSize;
 
 /**
@@ -66,8 +67,8 @@ class ElementsHelper
             if (array_search($key, $attributesToSkip) !== false || strpos($key, 'bearcms-internal-attribute-') === 0) {
                 $add = false;
             }
-            if ($add && isset(ElementsHelper::$elementsTypesOptions[$component->src])) {
-                $options = ElementsHelper::$elementsTypesOptions[$component->src];
+            if ($add && isset(self::$elementsTypesOptions[$component->src])) {
+                $options = self::$elementsTypesOptions[$component->src];
                 if (isset($options['fields'])) {
                     foreach ($options['fields'] as $field) {
                         if (strtolower($key) === strtolower($field['id'])) {
@@ -87,26 +88,6 @@ class ElementsHelper
         return $result;
     }
 
-
-    /**
-     * Returns an array (['id' => ..., 'type' => ..., 'data' => ...]) or null if data is invalid
-     * @param string $data
-     * @return array|null
-     */
-    static function decodeElementRawData(string $data): ?array
-    {
-        $data = json_decode($data, true);
-        if (
-            is_array($data) &&
-            isset($data['id']) && is_string($data['id']) && strlen($data['id']) > 0 &&
-            isset($data['type']) && is_string($data['type']) && strlen($data['type']) > 0 &&
-            isset($data['data']) && is_array($data['data'])
-        ) {
-            return $data;
-        }
-        return null;
-    }
-
     /**
      * 
      * @param string $rawData
@@ -118,7 +99,7 @@ class ElementsHelper
      */
     static function renderElement(string $rawData, bool $editable, array $contextData, string $outputType = 'full-html'): string
     {
-        $elementData = self::decodeElementRawData($rawData);
+        $elementData = InternalDataElements::decodeElementRawData($rawData);
         if (!is_array($elementData)) {
             return '';
         }
@@ -151,7 +132,7 @@ class ElementsHelper
      */
     static function renderColumns(array $elementContainerData, bool $editable, array $contextData, bool $inContainer, string $outputType = 'full-html'): string
     {
-        $elementContainerData = ElementsHelper::getUpdatedStructuralElementData($elementContainerData);
+        $elementContainerData = self::getUpdatedStructuralElementData($elementContainerData);
         if ($elementContainerData === null) {
             return '';
         }
@@ -200,7 +181,7 @@ class ElementsHelper
             if ($editable) {
                 $htmlElementID = 'brelb' . md5($elementContainerData['id']);
                 $attributes .= ' id="' . $htmlElementID . '"';
-                ElementsHelper::$editorData[] = ['columns', $elementContainerData['id'], $contextData];
+                self::$editorData[] = ['columns', $elementContainerData['id'], $contextData];
                 $attributes .= ' data-columns-elements-editor-widths="' . $widths . '"';
             }
             if ($outputType === 'full-html') {
@@ -272,7 +253,7 @@ class ElementsHelper
      */
     static function renderFloatingBox(array $elementContainerData, bool $editable, array $contextData, bool $inContainer, string $outputType = 'full-html'): string
     {
-        $elementContainerData = ElementsHelper::getUpdatedStructuralElementData($elementContainerData);
+        $elementContainerData = self::getUpdatedStructuralElementData($elementContainerData);
         if ($elementContainerData === null) {
             return '';
         }
@@ -325,7 +306,7 @@ class ElementsHelper
             if ($editable) {
                 $htmlElementID = 'brelb' . md5($elementContainerData['id']);
                 $attributes .= ' id="' . $htmlElementID . '"';
-                ElementsHelper::$editorData[] = ['floatingBox', $elementContainerData['id'], $contextData];
+                self::$editorData[] = ['floatingBox', $elementContainerData['id'], $contextData];
             }
             if ($outputType === 'full-html') {
                 $className = 'bre' . md5('floatingbox$' . (isset($elementContainerData['id']) ? $elementContainerData['id'] : uniqid()));
@@ -379,7 +360,7 @@ class ElementsHelper
      */
     static function renderFlexibleBox(array $elementContainerData, bool $editable, array $contextData, bool $inContainer, string $outputType = 'full-html'): string
     {
-        $elementContainerData = ElementsHelper::getUpdatedStructuralElementData($elementContainerData);
+        $elementContainerData = self::getUpdatedStructuralElementData($elementContainerData);
         if ($elementContainerData === null) {
             return '';
         }
@@ -426,7 +407,7 @@ class ElementsHelper
                 $htmlElementID = 'brelb' . md5($elementContainerData['id']);
                 $attributes .= ' id="' . $htmlElementID . '"';
                 if ($editable) {
-                    ElementsHelper::$editorData[] = ['flexibleBox', $elementContainerData['id'], $contextData];
+                    self::$editorData[] = ['flexibleBox', $elementContainerData['id'], $contextData];
                 }
             }
 
@@ -438,7 +419,7 @@ class ElementsHelper
                     $styleClassName = 'bearcms-elements-element-style-' . md5($elementContainerData['id']);
                     $classAttributeValue .= ' ' . $styleClassName;
                     if (isset($elementStyle['css'])) {
-                        $innerContent .= ElementsHelper::getElementStyleHTML('flexibleBox', $elementStyle, '#' . $htmlElementID . '.' . $styleClassName);
+                        $innerContent .= self::getElementStyleHTML('flexibleBox', $elementStyle, '#' . $htmlElementID . '.' . $styleClassName);
                     }
                 }
 
@@ -491,7 +472,7 @@ class ElementsHelper
                 $elementsIDs[] = $elementContainerData['id'];
             }
         }
-        $elementsRawData = self::getElementsRawData($elementsIDs);
+        $elementsRawData = InternalDataElements::getElementsRawData($elementsIDs);
         foreach ($elementsContainerData as $elementContainerData) {
             if (self::isColumnsElementContainerData($elementContainerData)) {
                 $content .= self::renderColumns($elementContainerData, $editable, $contextData, true, $outputType);
@@ -514,7 +495,7 @@ class ElementsHelper
      * @param array $elementContainerData
      * @return boolean
      */
-    static function isColumnsElementContainerData(array $elementContainerData): bool
+    static private function isColumnsElementContainerData(array $elementContainerData): bool
     {
         if (isset($elementContainerData['type']) && $elementContainerData['type'] === 'columns') {
             return true;
@@ -527,7 +508,7 @@ class ElementsHelper
      * @param array $elementContainerData
      * @return boolean
      */
-    static function isFloatingBoxElementContainerData(array $elementContainerData): bool
+    static private function isFloatingBoxElementContainerData(array $elementContainerData): bool
     {
         if (isset($elementContainerData['type']) && $elementContainerData['type'] === 'floatingBox') {
             return true;
@@ -540,7 +521,7 @@ class ElementsHelper
      * @param array $elementContainerData
      * @return boolean
      */
-    static function isFlexibleBoxElementContainerData(array $elementContainerData): bool
+    static private function isFlexibleBoxElementContainerData(array $elementContainerData): bool
     {
         if (isset($elementContainerData['type']) && $elementContainerData['type'] === 'flexibleBox') {
             return true;
@@ -553,7 +534,7 @@ class ElementsHelper
      * @param array $elementContainerData
      * @return boolean
      */
-    static function isStructuralElementContainerData(array $elementContainerData): bool
+    static private function isStructuralElementContainerData(array $elementContainerData): bool
     {
         if (self::isColumnsElementContainerData($elementContainerData)) {
             return true;
@@ -569,44 +550,6 @@ class ElementsHelper
 
     /**
      * 
-     * @param array $elementsIDs
-     * @return array
-     */
-    static function getElementsRawData(array $elementsIDs): array
-    {
-        $result = [];
-        $elementsIDs = array_values($elementsIDs);
-        foreach ($elementsIDs as $elementID) {
-            $result[$elementID] = Internal\Data::getValue(self::getElementDataKey($elementID));
-        }
-        return $result;
-    }
-
-    /**
-     * 
-     * @param string $elementID
-     * @return array|null
-     */
-    static function getElementData(string $elementID): ?array
-    {
-        $data = self::getElementsRawData([$elementID]);
-        return $data[$elementID] !== null ? self::decodeElementRawData($data[$elementID]) : null;
-    }
-
-    /**
-     * 
-     * @param string $elementID
-     * @param array $data
-     * @return void
-     */
-    static function setElementData(string $elementID, array $data): void
-    {
-        $app = App::get();
-        $app->data->setValue('bearcms/elements/element/' . md5($elementID) . '.json', json_encode($data));
-    }
-
-    /**
-     * 
      * @param string $containerID
      * @param string $elementID
      * @return array
@@ -614,14 +557,14 @@ class ElementsHelper
     static function getElementStyleOptions(string $containerID, string $elementID): ?array
     {
         $elementType = null;
-        $elementData = self::getElementData($elementID);
+        $elementData = InternalDataElements::getElement($elementID);
         if (is_array($elementData) && isset($elementData['type'])) {
             $elementType = $elementData['type'];
             $elementStyle = isset($elementData['style']) ? $elementData['style'] : [];
             $htmlElementID = 'brelc' . md5($elementData['id']);
         }
         if ($elementType === null) {
-            $containerData = self::getContainerData($containerID);
+            $containerData = InternalDataElements::getContainer($containerID);
             $elementData = self::getStructuralElement($containerData, $elementID);
             if (is_array($elementData)) {
                 $elementType = $elementData['type'];
@@ -659,18 +602,18 @@ class ElementsHelper
      * @param array $values
      * @return void
      */
-    static function setElementStyleOptionsValues(string $containerID, string $elementID, array $values)
+    static function setElementStyleValues(string $containerID, string $elementID, array $values)
     {
         $app = App::get();
         $elementType = null;
         $isStructural = false;
-        $elementData = self::getElementData($elementID);
+        $elementData = InternalDataElements::getElement($elementID);
         if (is_array($elementData) && isset($elementData['type'])) {
             $elementType = $elementData['type'];
             $oldElementStyle = isset($elementData['style']) ? $elementData['style'] : [];
         }
         if ($elementType === null) {
-            $containerData = self::getContainerData($containerID);
+            $containerData = InternalDataElements::getContainer($containerID);
             $elementData = self::getStructuralElement($containerData, $elementID);
             if (is_array($elementData)) {
                 $elementType = $elementData['type'];
@@ -735,18 +678,27 @@ class ElementsHelper
                 }
 
                 $containerData = self::setStructuralElement($containerData, $elementData);
-                self::setContainerData($containerID, $containerData);
+                InternalDataElements::setContainer($containerID, $containerData);
+                InternalDataElements::dispatchContainerChangeEvent($containerID);
             } else {
                 $elementData['style'] = $newElementStyle;
                 if (empty($elementData['style'])) {
                     unset($elementData['style']);
                 }
-                self::setElementData($elementID, $elementData);
+                InternalDataElements::setElement($elementID, $elementData, $containerID);
+                InternalDataElements::dispatchElementChangeEvent($elementID, $containerID);
             }
             self::deleteElementStyleFiles($filesToDelete);
         }
     }
 
+    /**
+     * 
+     * @param string $elementType
+     * @param array $elementStyleData
+     * @param string $cssSelector
+     * @return string
+     */
     static function getElementStyleHTML(string $elementType, array $elementStyleData, string $cssSelector): string
     {
         if (isset(Internal\Themes::$elementsOptions[$elementType])) {
@@ -762,14 +714,14 @@ class ElementsHelper
     /**
      * 
      * @param string $elementID
+     * @param string|null $containerID
      * @return void
      */
-    static function deleteElement(string $elementID): void
+    static function deleteElement(string $elementID, string $containerID = null): void
     {
-        $app = App::get();
-        $elementData = self::getElementData($elementID);
+        $elementData = InternalDataElements::getElement($elementID);
         if ($elementData !== null) {
-            $app->data->delete(self::getElementDataKey($elementID));
+            InternalDataElements::deleteElement($elementID, $containerID);
             if (isset($elementData['type'])) {
                 $componentName = array_search($elementData['type'], self::$elementsTypesCodes);
                 if ($componentName !== false) {
@@ -783,6 +735,20 @@ class ElementsHelper
                 self::deleteElementStyleFiles(Internal\Themes::getFilesInValues($elementData['style']));
             }
         }
+    }
+
+    /**
+     * 
+     * @param string $containerID
+     * @return void
+     */
+    static function deleteContainer(string $containerID): void
+    {
+        $elementsIDs = self::getContainerElementsIDs($containerID);
+        foreach ($elementsIDs as $elementID) {
+            self::deleteElement($elementID, $containerID);
+        }
+        InternalDataElements::deleteContainer($containerID);
     }
 
     /**
@@ -808,63 +774,13 @@ class ElementsHelper
     }
 
     /**
-     * 
-     * @param string $elementID
-     * @return string
-     */
-    static function getElementDataKey(string $elementID): string
-    {
-        return 'bearcms/elements/element/' . md5($elementID) . '.json';
-    }
-
-    /**
-     * 
-     * @param string $id
-     * @return array
-     * @throws \Exception
-     */
-    static function getContainerData(string $id): array
-    {
-        $container = Internal\Data::getValue(self::getContainerDataKey($id));
-        $data = $container !== null ? json_decode($container, true) : [];
-        if (!isset($data['elements'])) {
-            $data['elements'] = [];
-        }
-        if (!is_array($data['elements'])) {
-            throw new \Exception('');
-        }
-        return $data;
-    }
-
-    /**
-     * 
-     * @param string $id
-     * @param array $data
-     */
-    static function setContainerData(string $id, array $data): void
-    {
-        $app = App::get();
-        $app->data->setValue(self::getContainerDataKey($id), json_encode($data));
-    }
-
-    /**
-     * 
-     * @param string $id
-     * @return string
-     */
-    static function getContainerDataKey(string $id): string
-    {
-        return 'bearcms/elements/container/' . md5($id) . '.json';
-    }
-
-    /**
      * Returns a list of element IDs in rendered order (from top left)
      * @param string $id
      * @return array
      */
     static function getContainerElementsIDs(string $id): array
     {
-        $containerData = self::getContainerData($id);
+        $containerData = InternalDataElements::getContainer($id);
         $result = [];
         $walkElements = function ($elements) use (&$result, &$walkElements) {
             foreach ($elements as $elementData) {
@@ -929,30 +845,36 @@ class ElementsHelper
         return $html;
     }
 
-    static function getLastModifiedDetails(string $elementsContainerID): array
+    /**
+     * 
+     * @param string $elementsContainerID
+     * @return integer|null
+     */
+    static function getLastChangeTime(string $elementsContainerID): ?int
     {
         $dates = [];
-        $dataKeys = [];
-        $dataKeys[] = ElementsHelper::getContainerDataKey($elementsContainerID);
-        $containerData = ElementsHelper::getContainerData($elementsContainerID);
+        $containerData = InternalDataElements::getContainer($elementsContainerID);
         if (is_array($containerData)) {
             if (isset($containerData['lastChangeTime'])) {
-                $dates[] = $containerData['lastChangeTime'];
+                $dates[] = (int)$containerData['lastChangeTime'];
             }
-            $elementsIDs = ElementsHelper::getContainerElementsIDs($elementsContainerID);
+            $elementsIDs = self::getContainerElementsIDs($elementsContainerID);
             foreach ($elementsIDs as $elementID) {
-                $dataKeys[] = ElementsHelper::getElementDataKey($elementID);
-                $elementData = ElementsHelper::getElementData($elementID);
-                if (is_array($elementData)) {
-                    if (isset($elementData['lastChangeTime'])) {
-                        $dates[] = $elementData['lastChangeTime'];
-                    }
+                $elementData = InternalDataElements::getElement($elementID);
+                if (is_array($elementData) && isset($elementData['lastChangeTime'])) {
+                    $dates[] = (int)$elementData['lastChangeTime'];
                 }
             }
         }
-        return ['dates' => $dates, 'dataKeys' => $dataKeys];
+        return empty($dates) ? null : max($dates);
     }
 
+    /**
+     * 
+     * @param array $containerData
+     * @param string $elementID
+     * @return array|null
+     */
     static function getStructuralElement(array $containerData, string $elementID): ?array
     {
         $findElement = function ($elements) use (&$findElement, $elementID) {
@@ -995,7 +917,13 @@ class ElementsHelper
         return $findElement($containerData['elements']);
     }
 
-    static function setStructuralElement(array $containerData, array $newElementData)
+    /**
+     * 
+     * @param array $containerData
+     * @param array $newElementData
+     * @return array
+     */
+    static function setStructuralElement(array $containerData, array $newElementData): array
     {
         $elementID = $newElementData['id'];
         $walkElements = function ($elements) use (&$walkElements, $elementID, $newElementData) {
@@ -1054,6 +982,11 @@ class ElementsHelper
         return $containerData;
     }
 
+    /**
+     * 
+     * @param array $elementContainerData
+     * @return array|null
+     */
     static function getUpdatedStructuralElementData(array $elementContainerData): ?array
     {
         $result = [];
@@ -1158,8 +1091,7 @@ class ElementsHelper
     {
         for ($i = 0; $i < 100; $i++) {
             $id = base_convert(md5(uniqid()), 16, 36) . $suffix;
-            $elementsRawData = ElementsHelper::getElementsRawData([$id]);
-            if ($elementsRawData[$id] === null) {
+            if (InternalDataElements::getElementRawData($id) === null) {
                 return $id;
             }
         }
@@ -1245,19 +1177,19 @@ class ElementsHelper
                         $component->setAttribute('canStyle', 'true');
                     }
                 }
-            } elseif (isset(Internal\ElementsHelper::$elementsTypesFilenames[$name])) {
-                $component->setAttribute('bearcms-internal-attribute-type', Internal\ElementsHelper::$elementsTypesCodes[$name]);
-                $component->setAttribute('bearcms-internal-attribute-filename', Internal\ElementsHelper::$elementsTypesFilenames[$name]);
+            } elseif (isset(self::$elementsTypesFilenames[$name])) {
+                $component->setAttribute('bearcms-internal-attribute-type', self::$elementsTypesCodes[$name]);
+                $component->setAttribute('bearcms-internal-attribute-filename', self::$elementsTypesFilenames[$name]);
                 $rawData = (string)$component->getAttribute('bearcms-internal-attribute-raw-data');
                 $elementData = null;
                 if (strlen($rawData) > 0) {
-                    $elementData = self::decodeElementRawData($rawData);
+                    $elementData = InternalDataElements::decodeElementRawData($rawData);
                     if (is_array($elementData)) {
                         $component->id = $elementData['id'];
                     }
                 } elseif ($component->id !== null && strlen($component->id) > 0) {
-                    $elementsRawData = self::getElementsRawData([$component->id]);
-                    $component->setAttribute('bearcms-internal-attribute-raw-data', $elementsRawData[$component->id]);
+                    $elementRawData = InternalDataElements::getElementRawData($component->id);
+                    $component->setAttribute('bearcms-internal-attribute-raw-data', $elementRawData);
                 }
                 $updateEditableAttribute($component);
                 $updateContextAttributes($component);
@@ -1277,5 +1209,189 @@ class ElementsHelper
                 $updateContextAttributes($component);
             }
         }
+    }
+
+    /**
+     * 
+     * @param string $sourceElementID
+     * @param string $targetElementID
+     * @param string|null $sourceContainerID
+     * @param string|null $targetContainerID
+     * @return void
+     */
+    static function copyElement(string $sourceElementID, string $targetElementID, string $sourceContainerID = null, string $targetContainerID = null): void
+    {
+        $app = App::get();
+        $elementData = InternalDataElements::getElement($sourceElementID);
+        if ($elementData === null) {
+            throw new \Exception('Source element (' . $sourceElementID . ') not found!');
+        }
+        $elementData['id'] = $targetElementID;
+        $elementData['lastChangeTime'] = time();
+        if (isset($elementData['type'])) {
+            $componentName = array_search($elementData['type'], self::$elementsTypesCodes);
+            if ($componentName !== false) {
+                $options = self::$elementsTypesOptions[$componentName];
+                if (isset($options['onDuplicate']) && is_callable($options['onDuplicate'])) {
+                    $elementData['data'] = call_user_func($options['onDuplicate'], isset($elementData['data']) ? $elementData['data'] : []);
+                }
+            }
+        }
+        if (isset($elementData['style'])) {
+            $fileKeys = Themes::getFilesInValues($elementData['style']);
+            if (!empty($fileKeys)) {
+                $filesKeysToUpdate = [];
+                foreach ($fileKeys as $fileKey) {
+                    if (substr($fileKey, 0, 5) === 'data:') {
+                        $dataKey = substr($fileKey, 5);
+                        if ($app->data->exists($dataKey)) {
+                            $newDataKey = \BearCMS\Internal\Data::generateNewFilename($dataKey);
+                            $filesKeysToUpdate[$fileKey] = 'data:' . $newDataKey;
+                            $app->data->duplicate($dataKey, $newDataKey);
+                            UploadsSize::add($newDataKey, filesize($app->data->getFilename($newDataKey)));
+                        }
+                    }
+                }
+                $elementData['style'] = Themes::updateFilesInValues($elementData['style'], $filesKeysToUpdate);
+            }
+        }
+        InternalDataElements::setElement($targetElementID, $elementData, $targetContainerID);
+        InternalDataElements::dispatchElementChangeEvent($targetElementID, $targetContainerID);
+    }
+
+    /**
+     * 
+     * @param string $sourceContainerID
+     * @param string $targetContainerID
+     * @return void
+     */
+    static function copyContainer(string $sourceContainerID, string $targetContainerID): void
+    {
+        $containerData = InternalDataElements::getContainer($sourceContainerID);
+        $newContainerData = $containerData;
+        $newContainerData['id'] = $targetContainerID;
+        $copiedElementIDs = [];
+        $updateElementIDs = function ($elements) use (&$updateElementIDs, &$copiedElementIDs) {
+            foreach ($elements as $index => $element) {
+                if (isset($element['id'])) {
+                    $oldItemID = $element['id'];
+                    $newItemID = self::generateElementID('cc');
+                    $elements[$index]['id'] = $newItemID;
+                    $structuralElementData = self::getUpdatedStructuralElementData($element);
+                    if ($structuralElementData !== null) {
+                        if ($structuralElementData['type'] === 'floatingBox' || $structuralElementData['type'] === 'columns') {
+                            if (isset($structuralElementData['elements'])) {
+                                foreach ($structuralElementData['elements'] as $location => $locationElements) {
+                                    $structuralElementData['elements'][$location] = $updateElementIDs($locationElements);
+                                }
+                                $elements[$index] = $structuralElementData;
+                            }
+                        } else if ($structuralElementData['type'] === 'flexibleBox') {
+                            if (isset($structuralElementData['elements'])) {
+                                $structuralElementData['elements'] = $updateElementIDs($structuralElementData['elements']);
+                                $elements[$index] = $structuralElementData;
+                            }
+                        } else {
+                            throw new \Exception('Unsupported type for an element');
+                        }
+                    } else {
+                        $copiedElementIDs[$oldItemID] = $newItemID;
+                    }
+                } else {
+                    throw new \Exception('Missing id for an element');
+                }
+            }
+            return $elements;
+        };
+        $newContainerData['elements'] = $updateElementIDs($newContainerData['elements']);
+
+        foreach ($copiedElementIDs as $sourceElementID => $targetElementID) {
+            self::copyElement($sourceElementID, $targetElementID);
+        }
+        InternalDataElements::setContainer($targetContainerID, $newContainerData);
+        InternalDataElements::dispatchContainerChangeEvent($targetContainerID);
+    }
+
+
+
+
+
+
+
+
+    /**
+     * 
+     * @param string $containerID
+     * @return integer
+     */
+    static function getContainerUploadsSize(string $containerID): int
+    {
+        $size = 0;
+        $elementsIDs = ElementsHelper::getContainerElementsIDs($containerID);
+        foreach ($elementsIDs as $elementID) {
+            $size += self::getElementUploadsSize($elementID);
+        }
+        return $size;
+    }
+
+    /**
+     * 
+     * @param string $containerID
+     * @return array
+     */
+    static function getContainerUploadsSizeItems(string $containerID): array
+    {
+        $result = [];
+        $elementsIDs = ElementsHelper::getContainerElementsIDs($containerID);
+        foreach ($elementsIDs as $elementID) {
+            $result = array_merge($result, self::getElementUploadsSizeItems($elementID));
+        }
+        return $result;
+    }
+
+    /**
+     * 
+     * @param string $elementID
+     * @return integer
+     */
+    static function getElementUploadsSize(string $elementID): int
+    {
+        $items = self::getElementUploadsSizeItems($elementID);
+        $size = 0;
+        foreach ($items as $key) {
+            $size += (int) UploadsSize::getItemSize($key);
+        }
+        return $size;
+    }
+
+    /**
+     * 
+     * @param string $elementID
+     * @return array
+     */
+    static function getElementUploadsSizeItems(string $elementID): array
+    {
+        $result = [];
+        $elementData = InternalDataElements::getElement($elementID);
+        if ($elementData !== null) {
+            if (isset($elementData['type'])) {
+                $componentName = array_search($elementData['type'], ElementsHelper::$elementsTypesCodes);
+                if ($componentName !== false) {
+                    $options = ElementsHelper::$elementsTypesOptions[$componentName];
+                    if (isset($options['getUploadsSizeItems']) && is_callable($options['getUploadsSizeItems'])) {
+                        $result = array_merge($result, call_user_func($options['getUploadsSizeItems'], isset($elementData['data']) ? $elementData['data'] : []));
+                    }
+                }
+            }
+            if (isset($elementData['style'])) {
+                $fileKeys = Themes::getFilesInValues($elementData['style']);
+                foreach ($fileKeys as $fileKey) {
+                    if (substr($fileKey, 0, 5) === 'data:') {
+                        $result[] = substr($fileKey, 5);
+                    }
+                }
+            }
+        }
+        return $result;
     }
 }

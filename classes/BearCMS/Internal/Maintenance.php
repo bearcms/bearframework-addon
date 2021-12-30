@@ -79,7 +79,7 @@ class Maintenance
         // Elements
 
         foreach ($elementsContainersToCheck as $elementsContainerID) {
-            $files = array_merge($files, Elements::getContainerUploadsSizeItems($elementsContainerID));
+            $files = array_merge($files, ElementsHelper::getContainerUploadsSizeItems($elementsContainerID));
         }
 
         // Items from addons
@@ -173,9 +173,17 @@ class Maintenance
             ->sliceProperties(['key']);
         foreach ($list as $item) {
             $dataKey = $item->key;
-            $optimizationResult = Elements::optimizeElementData($dataKey, $preview);
-            if (!empty($optimizationResult)) {
-                $result[$dataKey] = $optimizationResult;
+            $elementData = Elements::decodeElementRawData($app->data->getValue($dataKey));
+            $optimizedElementData = Elements::getOptimizedElementData($elementData);
+            if (is_array($optimizedElementData)) {
+                $result[$dataKey] = [
+                    'old' => $elementData,
+                    'new' => $optimizedElementData
+                ];
+                if (!$preview) {
+                    $app->data->duplicate($dataKey, '.recyclebin/bearcms/update-' . str_replace('.', '-', microtime(true)) . '-' . str_replace('/', '-', $dataKey));
+                    $app->data->setValue($dataKey, Elements::encodeElementData($optimizedElementData));
+                }
             }
         }
         return $result;
@@ -208,7 +216,7 @@ class Maintenance
             ->sliceProperties(['key']);
         foreach ($list as $item) {
             $dataKey = $item->key;
-            $fixResult = Elements::fixStructuralElements($dataKey, $preview);
+            $fixResult = Elements::fixContainerStructuralElements($dataKey, $preview);
             if (!empty($fixResult)) {
                 $result[$dataKey] = $fixResult;
             }

@@ -11,22 +11,13 @@ namespace BearCMS\Data;
 
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
+use BearCMS\Internal\Data\Pages as InternalDataPages;
 
 /**
  * 
  */
 class Pages
 {
-    //    use \BearFramework\Models\ModelsRepositoryTrait;
-    //    use \BearFramework\Models\ModelsRepositoryRequestTrait;
-    //    use \BearFramework\Models\ModelsRepositoryToArrayTrait;
-    //    use \BearFramework\Models\ModelsRepositoryToJSONTrait;
-    //
-    //    function __construct()
-    //    {
-    //        $this->setModel(\BearCMS\Data\Pages\Page::class, 'id');
-    //        $this->useAppDataDriver('bearcms/pages/page/');
-    //    }
 
     /**
      * 
@@ -35,12 +26,12 @@ class Pages
      */
     public function get(string $id): ?\BearCMS\Data\Pages\Page
     {
-        $data = Internal\Data::getValue('bearcms/pages/page/' . md5($id) . '.json');
+        $data = Internal\Data\Pages::get($id);
         if ($data !== null) {
-            return \BearCMS\Data\Pages\Page::fromJSON($data);
+            return \BearCMS\Data\Pages\Page::fromArray($data);
         }
         if ($id === 'home' && Config::$autoCreateHomePage) {
-            return \BearCMS\Internal\Data\Pages::getDefaultHomePage();
+            return InternalDataPages::getDefaultHomePage();
         }
         return null;
     }
@@ -51,6 +42,6 @@ class Pages
      */
     public function getList(): \BearFramework\Models\ModelsList
     {
-        return Internal\Data\Pages::getPagesList();
+        return new \BearFramework\Models\ModelsList(InternalDataPages::getRawPagesList());
     }
 }

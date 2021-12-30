@@ -18,9 +18,12 @@ use BearCMS\Internal;
 class BlogCategories
 {
 
-    static private $cache = [];
-
-    private function makeBlogCategoryFromRawData($rawData): \BearCMS\Internal\Data2\BlogCategory
+    /**
+     * 
+     * @param string $rawData
+     * @return \BearCMS\Internal\Data2\BlogCategory
+     */
+    private function makeBlogCategoryFromRawData(string $rawData): \BearCMS\Internal\Data2\BlogCategory
     {
         $rawData = json_decode($rawData, true);
         $blogCategory = new Internal\Data2\BlogCategory();
@@ -59,7 +62,7 @@ class BlogCategories
         $cacheKey = 'blog_categories_list';
         if (!isset(Internal\Data::$cache[$cacheKey])) {
             $list = Internal\Data::getList('bearcms/blog/categories/category/');
-            array_walk($list, function(&$value) {
+            array_walk($list, function (&$value) {
                 $value = $this->makeBlogCategoryFromRawData($value);
             });
 
@@ -70,7 +73,7 @@ class BlogCategories
                 $flattenStructureData[] = $itemData['id'];
             }
             $flattenStructureData = array_flip($flattenStructureData);
-            usort($list, function($object1, $object2) use ($flattenStructureData) {
+            usort($list, function ($object1, $object2) use ($flattenStructureData) {
                 return $flattenStructureData[$object1->id] - $flattenStructureData[$object2->id];
             });
             unset($flattenStructureData);
@@ -79,5 +82,4 @@ class BlogCategories
         }
         return new \IvoPetkov\DataList(Internal\Data::$cache[$cacheKey]);
     }
-
 }

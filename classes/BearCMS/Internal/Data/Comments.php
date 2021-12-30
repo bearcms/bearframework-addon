@@ -12,6 +12,7 @@ namespace BearCMS\Internal\Data;
 use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
+use BearCMS\Internal\Data\Elements as InternalDataElements;
 
 /**
  * @internal
@@ -100,8 +101,9 @@ class Comments
      * 
      * @param string $threadID
      * @param string $commentID
+     * @return void
      */
-    static function deleteCommentForever(string $threadID, string $commentID)
+    static function deleteComment(string $threadID, string $commentID): void
     {
         $app = App::get();
         $dataKey = 'bearcms/comments/thread/' . md5($threadID) . '.json';
@@ -167,12 +169,12 @@ class Comments
             $walkPageElements = function ($pageID, $path) use ($app, &$result) {
                 $url = null;
                 $containerElementIDs = Internal\ElementsHelper::getContainerElementsIDs('bearcms-page-' . $pageID);
-                $elementsRawData = Internal\ElementsHelper::getElementsRawData($containerElementIDs);
+                $elementsRawData = InternalDataElements::getElementsRawData($containerElementIDs);
                 foreach ($elementsRawData as $elementRawData) {
                     if ($elementRawData === null) {
                         continue;
                     }
-                    $elementData = Internal\ElementsHelper::decodeElementRawData($elementRawData);
+                    $elementData = InternalDataElements::decodeElementRawData($elementRawData);
                     if (is_array($elementData) && $elementData['type'] === 'comments') {
                         if (isset($elementData['data']['threadID'])) {
                             if ($url === null) {
@@ -196,7 +198,11 @@ class Comments
         return $result;
     }
 
-    static function generateNewThreadID()
+    /**
+     * 
+     * @return string
+     */
+    static function generateNewThreadID(): string
     {
         $app = App::get();
         for ($i = 0; $i < 100; $i++) {
@@ -209,7 +215,13 @@ class Comments
         throw new \Exception('Too many retries');
     }
 
-    static function copyThread(string $sourceThreadID, string $targetThreadID)
+    /**
+     * 
+     * @param string $sourceThreadID
+     * @param string $targetThreadID
+     * @return void
+     */
+    static function copyThread(string $sourceThreadID, string $targetThreadID): void
     {
         $app = App::get();
         $dataKey = 'bearcms/comments/thread/' . md5($sourceThreadID) . '.json';

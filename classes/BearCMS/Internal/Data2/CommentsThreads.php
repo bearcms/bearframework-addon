@@ -18,7 +18,12 @@ use BearCMS\Internal;
 class CommentsThreads
 {
 
-    private function makeCommentsThreadPostFromRawData($rawData): \BearCMS\Internal\Data2\CommentsThread
+    /**
+     * 
+     * @param string $rawData
+     * @return \BearCMS\Internal\Data2\CommentsThread
+     */
+    private function makeCommentsThreadPostFromRawData(string $rawData): \BearCMS\Internal\Data2\CommentsThread
     {
         $rawData = json_decode($rawData, true);
         $object = new Internal\Data2\CommentsThread($rawData);
@@ -50,10 +55,9 @@ class CommentsThreads
     public function getList()
     {
         $list = Internal\Data::getList('bearcms/comments/thread/');
-        array_walk($list, function(&$value) {
+        array_walk($list, function (&$value) {
             $value = $this->makeCommentsThreadPostFromRawData($value);
         });
         return new \IvoPetkov\DataList($list);
     }
-
 }

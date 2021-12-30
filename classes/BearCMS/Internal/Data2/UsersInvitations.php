@@ -16,7 +16,12 @@ namespace BearCMS\Internal\Data2;
 class UsersInvitations
 {
 
-    private function makeUserFromRawData($rawData): \BearCMS\Internal\Data2\UserInvitation
+    /**
+     * 
+     * @param string $rawData
+     * @return \BearCMS\Internal\Data2\UserInvitation
+     */
+    private function makeUserFromRawData(string $rawData): \BearCMS\Internal\Data2\UserInvitation
     {
         $rawData = json_decode($rawData, true);
         $user = new \BearCMS\Internal\Data2\UserInvitation();
@@ -52,10 +57,9 @@ class UsersInvitations
     public function getList()
     {
         $list = \BearCMS\Internal\Data::getList('bearcms/users/invitation/');
-        array_walk($list, function(&$value) {
+        array_walk($list, function (&$value) {
             $value = $this->makeUserFromRawData($value);
         });
         return new \IvoPetkov\DataList($list);
     }
-
 }

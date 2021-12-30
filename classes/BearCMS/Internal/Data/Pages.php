@@ -12,6 +12,7 @@ namespace BearCMS\Internal\Data;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal\Data\Elements as InternalDataElements;
 use BearFramework\App;
 
 /**
@@ -63,24 +64,29 @@ class Pages
         return $result;
     }
 
-    static function getDataKey(string $id)
+    /**
+     * 
+     * @param string $pageID
+     * @return string
+     */
+    static private function getPageDataKey(string $pageID): string
     {
-        return 'bearcms/pages/page/' . md5($id) . '.json';
+        return 'bearcms/pages/page/' . md5($pageID) . '.json';
     }
 
-    static function getLastModifiedDetails(string $pageID)
+    /**
+     * 
+     * @return string
+     */
+    static private function getStructureDataKey(): string
     {
-        $app = App::get();
-        $details = ElementsHelper::getLastModifiedDetails('bearcms-page-' . $pageID);
-        $details['dataKeys'][] = self::getDataKey($pageID);
-        $details['dataKeys'][] = 'bearcms/settings.json';
-        $page = $app->bearCMS->data->pages->get($pageID);
-        if ($page !== null) {
-            $details['dates'][] = $page->lastChangeTime;
-        }
-        return $details;
+        return 'bearcms/pages/structure.json';
     }
 
+    /**
+     * 
+     * @return array
+     */
     static function getRawPagesList(): array
     {
         $cacheKey = 'pages_list';
@@ -91,7 +97,7 @@ class Pages
                 $page = \BearCMS\Data\Pages\Page::fromJSON($pageJSON);
                 $pages[$page->id] = $page;
             }
-            $structureData = Internal\Data::getValue('bearcms/pages/structure.json');
+            $structureData = Internal\Data::getValue(self::getStructureDataKey());
             $structureData = $structureData === null ? [] : json_decode($structureData, true);
             $result = [];
             if (isset($pages['home'])) {
@@ -122,11 +128,11 @@ class Pages
         return Internal\Data::$cache[$cacheKey];
     }
 
-    static function getPagesList(): \BearFramework\Models\ModelsList
-    {
-        return new \BearFramework\Models\ModelsList(self::getRawPagesList());
-    }
-
+    /**
+     * 
+     * @param string|null $parentID
+     * @return \BearFramework\Models\ModelsList
+     */
     static function getChildrenList(string $parentID = null): \BearFramework\Models\ModelsList
     {
         $cacheKey = 'pages_children_list';
@@ -145,7 +151,11 @@ class Pages
         return new \BearFramework\Models\ModelsList(isset(Internal\Data::$cache[$cacheKey][$parentID]) ? Internal\Data::$cache[$cacheKey][$parentID] : []);
     }
 
-    static function getDefaultHomePage()
+    /**
+     * 
+     * @return \BearCMS\Data\Pages\Page
+     */
+    static function getDefaultHomePage(): \BearCMS\Data\Pages\Page
     {
         $page = new \BearCMS\Data\Pages\Page();
         $page->id = 'home';
@@ -161,33 +171,79 @@ class Pages
         return $page;
     }
 
-    static function onCreatePage(string $pageID): void
+    /**
+     * 
+     * @param string $pageID
+     * @return array|null
+     */
+    static function get(string $pageID): ?array
+    {
+        $data = Internal\Data::getValue(self::getPageDataKey($pageID));
+        if ($data !== null) {
+            return json_decode($data, true);
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @param string $pageID
+     * @param array $data
+     * @return void
+     */
+    static function set(string $pageID, array $data): void
     {
         $app = App::get();
-        $page = $app->bearCMS->data->pages->get($pageID);
-        if ($page === null) {
-            return;
+        $app->data->setValue(self::getPageDataKey($pageID), json_encode($data));
+    }
+
+    /**
+     * 
+     * @param string $pageID
+     * @return void
+     */
+    static function delete(string $pageID): void
+    {
+        $app = App::get();
+        $app->data->delete(self::getPageDataKey($pageID));
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function setStructure(array $data): void
+    {
+        $app = App::get();
+        $structureDataKey = self::getStructureDataKey();
+        if (empty($data)) {
+            $app->data->delete($structureDataKey);
+        } else {
+            $app->data->setValue($structureDataKey, json_encode($data));
         }
-        $containerID = 'bearcms-page-' . $pageID;
-        $containerData = ElementsHelper::getContainerData($containerID);
-        if (empty($containerData['elements'])) {
-            $containerData['id'] = $containerID;
+    }
 
-            $elementID = ElementsHelper::generateElementID('np');
-            $containerData['elements'][] = ['id' => $elementID];
-
-            $elementData = [
-                'id' => $elementID,
-                'type' => 'heading',
-                'data' => [
-                    'text' => $page->name,
-                    'size' => 'large'
-                ],
-                'lastChangeTime' => time()
-            ];
-
-            $app->data->setValue('bearcms/elements/element/' . md5($elementData['id']) . '.json', json_encode($elementData));
-            $app->data->setValue('bearcms/elements/container/' . md5($containerData['id']) . '.json', json_encode($containerData));
+    /**
+     * 
+     * @param string $pageID
+     * @return void
+     */
+    static function deleteImage(string $pageID, bool $updateData): void
+    {
+        $data = self::get($pageID);
+        if ($data !== null) {
+            $filename = isset($data['image']) ? (string)$data['image'] : '';
+            if (strlen($filename) > 0) {
+                $app = App::get();
+                $dataKey = Internal\Data::filenameToDataKey($filename);
+                $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                UploadsSize::remove($dataKey);
+            }
+            if ($updateData) {
+                $data['image'] = null;
+                self::set($pageID, $data);
+            }
         }
     }
 }

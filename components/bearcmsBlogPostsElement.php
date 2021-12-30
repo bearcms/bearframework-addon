@@ -7,9 +7,9 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal\Config;
 use BearCMS\Internal2;
 use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal\Data\Elements as InternalDataElements;
 
 $app = App::get();
 $context = $app->contexts->get(__DIR__);
@@ -95,7 +95,7 @@ if ($list->count() > 0) {
                 $textElementData = null;
                 $imageElementData = null;
                 foreach ($elementsIDs as $elementID) {
-                    $elementData = ElementsHelper::getElementData($elementID);
+                    $elementData = InternalDataElements::getElement($elementID);
                     if ($elementData === null) {
                         continue;
                     }

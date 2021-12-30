@@ -9,9 +9,8 @@
 
 namespace BearCMS\Internal\Data;
 
-use BearCMS\Internal\Data;
+use BearCMS\Internal\Data as InternalData;
 use BearCMS\Internal\ElementsHelper;
-use BearCMS\Internal\Themes;
 use BearFramework\App;
 
 /**
@@ -23,134 +22,54 @@ class Elements
 
     /**
      * 
-     * @var array
+     * @param string $elementID
+     * @return string
      */
-    private static $disableOptimizeElementData = [];
-
-    /**
-     * 
-     * @param string $sourceElementID
-     * @param string $targetElementID
-     * @return void
-     */
-    static function copyElement(string $sourceElementID, string $targetElementID): void
+    static private function getElementDataKey(string $elementID): string
     {
-        $app = App::get();
-        $elementData = ElementsHelper::getElementData($sourceElementID);
-        if ($elementData === null) {
-            throw new \Exception('Source element (' . $sourceElementID . ') not found!');
-        }
-        $elementData['id'] = $targetElementID;
-        $elementData['lastChangeTime'] = time();
-        if (isset($elementData['type'])) {
-            $componentName = array_search($elementData['type'], ElementsHelper::$elementsTypesCodes);
-            if ($componentName !== false) {
-                $options = ElementsHelper::$elementsTypesOptions[$componentName];
-                if (isset($options['onDuplicate']) && is_callable($options['onDuplicate'])) {
-                    $elementData['data'] = call_user_func($options['onDuplicate'], isset($elementData['data']) ? $elementData['data'] : []);
-                }
-            }
-        }
-        if (isset($elementData['style'])) {
-            $fileKeys = Themes::getFilesInValues($elementData['style']);
-            if (!empty($fileKeys)) {
-                $filesKeysToUpdate = [];
-                foreach ($fileKeys as $fileKey) {
-                    if (substr($fileKey, 0, 5) === 'data:') {
-                        $dataKey = substr($fileKey, 5);
-                        if ($app->data->exists($dataKey)) {
-                            $newDataKey = Data::generateNewFilename($dataKey);
-                            $filesKeysToUpdate[$fileKey] = 'data:' . $newDataKey;
-                            $app->data->duplicate($dataKey, $newDataKey);
-                            UploadsSize::add($newDataKey, filesize($app->data->getFilename($newDataKey)));
-                        }
-                    }
-                }
-                $elementData['style'] = Themes::updateFilesInValues($elementData['style'], $filesKeysToUpdate);
-            }
-        }
-        $app->data->setValue('bearcms/elements/element/' . md5($elementData['id']) . '.json', json_encode($elementData));
+        return 'bearcms/elements/element/' . md5($elementID) . '.json';
     }
 
     /**
      * 
-     * @param string $sourceContainerID
-     * @param string $targetContainerID
-     * @return void
+     * @param array $data
+     * @return string
      */
-    static function copyContainer(string $sourceContainerID, string $targetContainerID): void
+    static function encodeElementData(array $data): string
     {
-        $app = App::get();
-        $containerData = ElementsHelper::getContainerData($sourceContainerID);
-        $newContainerData = $containerData;
-        $newContainerData['id'] = $targetContainerID;
-        $copiedElementIDs = [];
-        $updateElementIDs = function ($elements) use (&$updateElementIDs, &$copiedElementIDs) {
-            foreach ($elements as $index => $element) {
-                if (isset($element['id'])) {
-                    $oldItemID = $element['id'];
-                    $newItemID = ElementsHelper::generateElementID('cc');
-                    $elements[$index]['id'] = $newItemID;
-                    $structuralElementData = ElementsHelper::getUpdatedStructuralElementData($element);
-                    if ($structuralElementData !== null) {
-                        if ($structuralElementData['type'] === 'floatingBox' || $structuralElementData['type'] === 'columns') {
-                            if (isset($structuralElementData['elements'])) {
-                                foreach ($structuralElementData['elements'] as $location => $locationElements) {
-                                    $structuralElementData['elements'][$location] = $updateElementIDs($locationElements);
-                                }
-                                $elements[$index] = $structuralElementData;
-                            }
-                        } else if ($structuralElementData['type'] === 'flexibleBox') {
-                            if (isset($structuralElementData['elements'])) {
-                                $structuralElementData['elements'] = $updateElementIDs($structuralElementData['elements']);
-                                $elements[$index] = $structuralElementData;
-                            }
-                        } else {
-                            throw new \Exception('Unsupported type for an element');
-                        }
-                    } else {
-                        $copiedElementIDs[$oldItemID] = $newItemID;
-                    }
-                } else {
-                    throw new \Exception('Missing id for an element');
-                }
-            }
-            return $elements;
-        };
-        $newContainerData['elements'] = $updateElementIDs($newContainerData['elements']);
+        return json_encode($data);
+    }
 
-        foreach ($copiedElementIDs as $sourceElementID => $targetElementID) {
-            self::copyElement($sourceElementID, $targetElementID);
+    /**
+     * Returns an array (['id' => ..., 'type' => ..., 'data' => ...]) or null if data is invalid
+     * @param string $data
+     * @return array|null
+     */
+    static function decodeElementRawData(string $data): ?array
+    {
+        $data = json_decode($data, true);
+        if (
+            is_array($data) &&
+            isset($data['id']) && is_string($data['id']) && strlen($data['id']) > 0 &&
+            isset($data['type']) && is_string($data['type']) && strlen($data['type']) > 0 &&
+            isset($data['data']) && is_array($data['data'])
+        ) {
+            return $data;
         }
-        $app->data->setValue('bearcms/elements/container/' . md5($newContainerData['id']) . '.json', json_encode($newContainerData));
+        return null;
     }
 
     /**
      * 
-     * @param string $containerID
-     * @return integer
-     */
-    static function getContainerUploadsSize(string $containerID): int
-    {
-        $size = 0;
-        $elementsIDs = ElementsHelper::getContainerElementsIDs($containerID);
-        foreach ($elementsIDs as $elementID) {
-            $size += self::getElementUploadsSize($elementID);
-        }
-        return $size;
-    }
-
-    /**
-     * 
-     * @param string $containerID
+     * @param array $elementsIDs
      * @return array
      */
-    static function getContainerUploadsSizeItems(string $containerID): array
+    static function getElementsRawData(array $elementsIDs): array
     {
         $result = [];
-        $elementsIDs = ElementsHelper::getContainerElementsIDs($containerID);
+        $elementsIDs = array_unique($elementsIDs);
         foreach ($elementsIDs as $elementID) {
-            $result = array_merge($result, self::getElementUploadsSizeItems($elementID));
+            $result[$elementID] = self::getElementRawData($elementID);
         }
         return $result;
     }
@@ -158,95 +77,173 @@ class Elements
     /**
      * 
      * @param string $elementID
-     * @return array
+     * @return string|null
      */
-    static function getElementUploadsSizeItems(string $elementID): array
+    static function getElementRawData(string $elementID): ?string
     {
-        $result = [];
-        $elementData = ElementsHelper::getElementData($elementID);
-        if ($elementData !== null) {
-            if (isset($elementData['type'])) {
-                $componentName = array_search($elementData['type'], ElementsHelper::$elementsTypesCodes);
-                if ($componentName !== false) {
-                    $options = ElementsHelper::$elementsTypesOptions[$componentName];
-                    if (isset($options['getUploadsSizeItems']) && is_callable($options['getUploadsSizeItems'])) {
-                        $result = array_merge($result, call_user_func($options['getUploadsSizeItems'], isset($elementData['data']) ? $elementData['data'] : []));
-                    }
-                }
-            }
-            if (isset($elementData['style'])) {
-                $fileKeys = Themes::getFilesInValues($elementData['style']);
-                foreach ($fileKeys as $fileKey) {
-                    if (substr($fileKey, 0, 5) === 'data:') {
-                        $result[] = substr($fileKey, 5);
-                    }
-                }
-            }
-        }
-        return $result;
+        return InternalData::getValue(self::getElementDataKey($elementID));
     }
 
     /**
      * 
      * @param string $elementID
-     * @return integer
+     * @return array|null
      */
-    static function getElementUploadsSize(string $elementID): int
+    static function getElement(string $elementID): ?array // todo add $containerID
     {
-        $items = self::getElementUploadsSizeItems($elementID);
-        $size = 0;
-        foreach ($items as $key) {
-            $size += (int) UploadsSize::getItemSize($key);
+        $data = self::getElementRawData($elementID);
+        return $data !== null ? self::decodeElementRawData($data) : null;
+    }
+
+    /**
+     * 
+     * @param string $elementID
+     * @param array $data
+     * @param string|null $containerID
+     * @return void
+     */
+    static function setElement(string $elementID, array $data, string $containerID = null): void
+    {
+        $app = App::get();
+        $app->data->setValue(self::getElementDataKey($elementID), self::encodeElementData($data));
+    }
+
+    /**
+     * Delete only the element's data. Use ElementsHelper::deleteElement() to delete artifacts.
+     *
+     * @param string $elementID
+     * @param string|null $containerID
+     * @return void
+     */
+    static function deleteElement(string $elementID, string $containerID = null): void
+    {
+        $app = App::get();
+        $app->data->delete(self::getElementDataKey($elementID));
+    }
+
+    /**
+     * 
+     * @param string $elementID
+     * @param string|null $containerID
+     * @return void
+     */
+    static function dispatchElementChangeEvent(string $elementID, string $containerID = null): void
+    {
+        $app = App::get();
+        $bearCMS = $app->bearCMS;
+        if ($bearCMS->hasEventListeners('internalElementChange')) {
+            $eventDetails = new \BearCMS\Internal\ElementChangeEventDetails($elementID, $containerID);
+            $bearCMS->dispatchEvent('internalElementChange', $eventDetails);
         }
-        return $size;
     }
 
     /**
      * Optimizes the element's data
      *
-     * @param string $dataKey
-     * @param boolean $preview
-     * @return array
+     * @param string $elementID
+     * @param string|null $containerID
+     * @return void
      */
-    static function optimizeElementData(string $dataKey, bool $preview = true): array
+    static function optimizeElement(string $elementID, string $containerID = null): void
     {
-        if (strpos($dataKey, 'bearcms/elements/element/') !== 0) {
-            return ['error' => 'Wrong data key!'];
+        $data = self::getElement($elementID);
+        if ($data !== null) {
+            $optimizedData = self::getOptimizedElementData($data);
+            if (is_array($optimizedData)) {
+                self::setElement($elementID, $optimizedData, $containerID);
+            }
         }
-        if (isset(self::$disableOptimizeElementData[$dataKey])) {
-            return ['error' => 'Locked!'];
-        }
-        $app = App::get();
-        $rawData = $app->data->getValue($dataKey);
-        if ($rawData === null) {
-            return ['error' => 'Not found!'];
-        }
-        $data = ElementsHelper::decodeElementRawData($rawData);
-        if ($data === null) {
-            return ['error' => 'Invalid!'];
-        }
-        $result = [];
-        if (isset($data['type'], $data['data'])) {
-            $componentName = array_search($data['type'], ElementsHelper::$elementsTypesCodes);
+    }
+
+    /**
+     * Returns the element's optimized data.
+     *
+     * @param array $elementData
+     * @return array|null Returns array if optimized, NULL otherwise.
+     */
+    static function getOptimizedElementData(array $elementData): ?array
+    {
+        if (isset($elementData['type'], $elementData['data'])) {
+            $componentName = array_search($elementData['type'], ElementsHelper::$elementsTypesCodes);
             if ($componentName !== false) {
                 $options = ElementsHelper::$elementsTypesOptions[$componentName];
                 if (isset($options['optimizeData']) && is_callable($options['optimizeData'])) {
-                    $newData = call_user_func($options['optimizeData'], $data['data']);
+                    $newData = call_user_func($options['optimizeData'], $elementData['data']);
                     if (is_array($newData)) {
-                        $result['old'] = $data['data'];
-                        $result['new'] = $newData;
-                        if (!$preview) {
-                            $data['data'] = $newData;
-                            $app->data->duplicate($dataKey, '.recyclebin/bearcms/update-' . str_replace('.', '-', microtime(true)) . '-' . str_replace('/', '-', $dataKey));
-                            self::$disableOptimizeElementData[$dataKey] = true;
-                            $app->data->setValue($dataKey, json_encode($data));
-                            unset(self::$disableOptimizeElementData[$dataKey]);
-                        }
+                        $elementData['data'] = $newData;
+                        return $elementData;
                     }
                 }
             }
         }
-        return $result;
+        return null;
+    }
+
+    /**
+     * 
+     * @param string $containerID
+     * @return string
+     */
+    static private function getContainerDataKey(string $containerID): string
+    {
+        return 'bearcms/elements/container/' . md5($containerID) . '.json';
+    }
+
+    /**
+     * 
+     * @param string $containerID
+     * @return array
+     * @throws \Exception
+     */
+    static function getContainer(string $containerID): array
+    {
+        $container = InternalData::getValue(self::getContainerDataKey($containerID));
+        $data = $container !== null ? json_decode($container, true) : [];
+        if (!isset($data['elements'])) {
+            $data['elements'] = [];
+        }
+        if (!is_array($data['elements'])) {
+            throw new \Exception('');
+        }
+        return $data;
+    }
+
+    /**
+     * 
+     * @param string $containerID
+     * @param array $data
+     */
+    static function setContainer(string $containerID, array $data): void
+    {
+        $app = App::get();
+        $app->data->setValue(self::getContainerDataKey($containerID), json_encode($data));
+    }
+
+    /**
+     * 
+     * @param string $containerID
+     * @return void
+     */
+    static function deleteContainer(string $containerID): void
+    {
+        $app = App::get();
+        $containerDataKey = self::getContainerDataKey($containerID);
+        $app->data->delete($containerDataKey);
+    }
+
+    /**
+     * 
+     * @param string $containerID
+     * @return void
+     */
+    static function dispatchContainerChangeEvent(string $containerID): void
+    {
+        $app = App::get();
+        $bearCMS = $app->bearCMS;
+        if ($bearCMS->hasEventListeners('internalElementsContainerChange')) {
+            $eventDetails = new \BearCMS\Internal\ElementsContainerChangeEventDetails($containerID);
+            $bearCMS->dispatchEvent('internalElementsContainerChange', $eventDetails);
+        }
     }
 
     /**
@@ -255,7 +252,7 @@ class Elements
      * @param boolean $preview
      * @return array
      */
-    static function fixStructuralElements(string $dataKey, bool $preview = true): array
+    static function fixContainerStructuralElements(string $dataKey, bool $preview = true): array
     {
         if (strpos($dataKey, 'bearcms/elements/container/') !== 0) {
             return ['error' => 'Wrong data key!'];

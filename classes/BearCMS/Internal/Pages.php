@@ -11,6 +11,7 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 use BearCMS\Internal;
+use BearCMS\Internal\Data\Elements as InternalDataElements;
 use BearCMS\Internal\Data\Settings;
 
 /**
@@ -116,5 +117,70 @@ class Pages
             }
         }
         return null;
+    }
+
+    /**
+     * 
+     * @param \BearCMS\Internal\Sitemap\Sitemap $sitemap
+     * @return void
+     */
+    public static function addSitemapItems(\BearCMS\Internal\Sitemap\Sitemap $sitemap): void
+    {
+        $list = Internal\Data\Pages::getPathsList('public');
+        if (Config::$autoCreateHomePage) {
+            $list['home'] = '/';
+        }
+        foreach ($list as $pageID => $path) {
+            $sitemap->addItem($path, function () use ($pageID) {
+                $app = App::get();
+                $dates = [];
+                $date = ElementsHelper::getLastChangeTime('bearcms-page-' . $pageID);
+                if ($date !== null) {
+                    $dates[] = $date;
+                }
+                $page = $app->bearCMS->data->pages->get($pageID);
+                if ($page !== null && strlen((string)$page->lastChangeTime) > 0) {
+                    $dates[] = (int)$page->lastChangeTime;
+                }
+                return empty($dates) ? null : max($dates);
+            });
+        }
+    }
+
+    /**
+     * 
+     * @param string $pageID
+     * @return void
+     */
+    static function createNewPageHeadingElement(string $pageID): void
+    {
+        $app = App::get();
+        $page = $app->bearCMS->data->pages->get($pageID);
+        if ($page === null) {
+            return;
+        }
+        $containerID = 'bearcms-page-' . $pageID;
+        $containerData = InternalDataElements::getContainer($containerID);
+        if (empty($containerData['elements'])) {
+            $containerData['id'] = $containerID;
+
+            $elementID = ElementsHelper::generateElementID('np');
+            $containerData['elements'][] = ['id' => $elementID];
+
+            $elementData = [
+                'id' => $elementID,
+                'type' => 'heading',
+                'data' => [
+                    'text' => $page->name,
+                    'size' => 'large'
+                ],
+            ];
+            $containerData['lastChangeTime'] = time();
+
+            InternalDataElements::setElement($elementID, $elementData, $containerID);
+            InternalDataElements::setContainer($containerID, $containerData);
+            InternalDataElements::dispatchElementChangeEvent($elementID, $containerID);
+            InternalDataElements::dispatchContainerChangeEvent($containerID);
+        }
     }
 }

@@ -19,7 +19,12 @@ use BearCMS\Internal;
 class Addons
 {
 
-    private function makeAddonFromRawData($rawData): \BearCMS\Internal\Data2\Addon
+    /**
+     * 
+     * @param string $rawData
+     * @return \BearCMS\Internal\Data2\Addon
+     */
+    private function makeAddonFromRawData(string $rawData): \BearCMS\Internal\Data2\Addon
     {
         return new Internal\Data2\Addon(json_decode($rawData, true));
     }
@@ -50,12 +55,11 @@ class Addons
     {
         $app = App::get();
         $list = $app->data->getList()
-                ->filterBy('key', 'bearcms/addons/addon/', 'startWith');
+            ->filterBy('key', 'bearcms/addons/addon/', 'startWith');
         $result = [];
         foreach ($list as $item) {
             $result[] = $this->makeAddonFromRawData($item->value);
         }
         return new \IvoPetkov\DataList($result);
     }
-
 }

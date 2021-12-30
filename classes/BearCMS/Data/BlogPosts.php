@@ -24,9 +24,9 @@ class BlogPosts
      */
     public function get(string $id): ?\BearCMS\Data\BlogPosts\BlogPost
     {
-        $data = Internal\Data::getValue('bearcms/blog/post/' . md5($id) . '.json');
+        $data = Internal\Data\BlogPosts::get($id);
         if ($data !== null) {
-            return \BearCMS\Data\BlogPosts\BlogPost::fromJSON($data);
+            return \BearCMS\Data\BlogPosts\BlogPost::fromArray($data);
         }
         return null;
     }
@@ -38,10 +38,9 @@ class BlogPosts
     public function getList(): \BearFramework\Models\ModelsList
     {
         $list = Internal\Data::getList('bearcms/blog/post/');
-        array_walk($list, function(&$value) {
+        array_walk($list, function (&$value) {
             $value = \BearCMS\Data\BlogPosts\BlogPost::fromJSON($value);
         });
         return new \BearFramework\Models\ModelsList($list);
     }
-
 }

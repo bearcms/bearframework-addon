@@ -15,5 +15,4 @@ namespace BearCMS\Internal\Data2;
  */
 class Addon extends \IvoPetkov\DataObject
 {
-    
 }

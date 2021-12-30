@@ -8,6 +8,7 @@
 
 use BearCMS\Internal\Config;
 use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal\Data\Elements as InternalDataElements;
 
 $app = BearFramework\App::get();
 $context = $app->contexts->get(__DIR__);
@@ -17,7 +18,7 @@ $contextData = ElementsHelper::getComponentContextData($component);
 $editable = $component->editable === 'true';
 $group = $component->group;
 
-$containerData = ElementsHelper::getContainerData($component->id);
+$containerData = InternalDataElements::getContainer($component->id);
 
 $elements = $containerData['elements'];
 $hasLazyLoading = sizeof($elements) > $lazyLimit;

@@ -13,8 +13,10 @@ use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use BearCMS\Internal2;
-use BearCMS\Internal\Data\Elements;
-use BearCMS\Internal\Data\Pages;
+use BearCMS\Internal\Data\BlogPosts as InternalDataBlogPosts;
+use BearCMS\Internal\Data\Elements as InternalDataElements;
+use BearCMS\Internal\Data\Pages as InternalDataPages;
+use BearCMS\Internal\Pages as InternalPages;
 use IvoPetkov\HTML5DOMDocument;
 
 /**
@@ -162,17 +164,6 @@ class ServerCommands
      * @param array $data
      * @return string
      */
-    //    static function appAssetUrl(array $data): string
-    //    {
-    //        $app = App::get();
-    //        return $app->assets->getURL($app->config->appDir . '/' . $data['key'], $data['options']);
-    //    }
-
-    /**
-     * 
-     * @param array $data
-     * @return string
-     */
     static function assetUrl(array $data): string
     {
         $app = App::get();
@@ -194,6 +185,45 @@ class ServerCommands
             $temp['categories'][] = json_decode($value, true);
         }
         return $temp;
+    }
+
+    static function blogPostsGet(array $data): ?array
+    {
+        $app = App::get();
+        $blogPost = $app->bearCMS->data->blogPosts->get($data['id']);
+        if ($blogPost !== null) {
+            return $blogPost->toArray();
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function blogPostsSet(array $data): void
+    {
+        $app = App::get();
+        $blogPostID = $data['id'];
+        InternalDataBlogPosts::set($blogPostID, $data['data']);
+        $blogPost = $app->bearCMS->data->blogPosts->get($blogPostID);
+        if ($blogPost !== null) {
+            Sitemap::addUpdateDateTask($blogPost->getURLPath());
+        }
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function blogPostsDelete(array $data): void
+    {
+        $blogPostID = $data['id'];
+        InternalDataBlogPosts::deleteImage($blogPostID, false);
+        InternalDataBlogPosts::delete($blogPostID);
+        ElementsHelper::deleteContainer('bearcms-blogpost-' . $blogPostID);
     }
 
     /**
@@ -239,8 +269,6 @@ class ServerCommands
         }
     }
 
-
-
     /**
      * 
      * @param array $data
@@ -248,7 +276,7 @@ class ServerCommands
      */
     static function commentDelete(array $data): void
     {
-        Internal\Data\Comments::deleteCommentForever($data['threadID'], $data['commentID']);
+        Internal\Data\Comments::deleteComment($data['threadID'], $data['commentID']);
         self::_commentsClearCache();
     }
 
@@ -368,11 +396,7 @@ class ServerCommands
                     }
                 }
             } elseif ($command === 'makePublic') {
-                //$validateKey($commandData['key']);
-                //$app->data->makePublic($commandData['key']);
             } elseif ($command === 'makePrivate') {
-                //$validateKey($commandData['key']);
-                //$app->data->makePrivate($commandData['key']);
             }
             $result[] = $commandResult;
         }
@@ -424,10 +448,36 @@ class ServerCommands
      * @param array $data
      * @return void
      */
+    static function elementSet(array $data): void
+    {
+        $elementID = $data['id'];
+        $containerID = isset($data['containerID']) ? $data['containerID'] : null;
+        InternalDataElements::setElement($elementID, $data['data'], $containerID);
+        InternalDataElements::optimizeElement($elementID, $containerID);
+        InternalDataElements::dispatchElementChangeEvent($elementID, $containerID);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function elementGet(array $data): ?array
+    {
+        //$containerID = isset($data['containerID']) ? $data['containerID'] : null;
+        return InternalDataElements::getElement($data['id']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
     static function elementDelete(array $data): void
     {
         $elementID = $data['id'];
-        ElementsHelper::deleteElement($elementID);
+        $containerID = isset($data['containerID']) ? $data['containerID'] : null;
+        ElementsHelper::deleteElement($elementID, $containerID);
     }
 
     /**
@@ -437,7 +487,11 @@ class ServerCommands
      */
     static function elementCopy(array $data): void
     {
-        Elements::copyElement($data['sourceID'], $data['targetID']);
+        $sourceElementID = $data['sourceID'];
+        $targetElementID = $data['targetID'];
+        $sourceContainerID = isset($data['sourceContainerID']) ? $data['sourceContainerID'] : null;
+        $targetContainerID = isset($data['targetContainerID']) ? $data['targetContainerID'] : null;
+        ElementsHelper::copyElement($sourceElementID, $targetElementID, $sourceContainerID, $targetContainerID);
     }
 
     /**
@@ -451,7 +505,7 @@ class ServerCommands
         $result['size'] = 0;
         $elementsIDs = $data['ids'];
         foreach ($elementsIDs as $elementID) {
-            $result['size'] += Elements::getElementUploadsSize($elementID);
+            $result['size'] += ElementsHelper::getElementUploadsSize($elementID);
         }
         return $result;
     }
@@ -467,7 +521,7 @@ class ServerCommands
         $result['size'] = 0;
         $containersIDs = $data['ids'];
         foreach ($containersIDs as $containerID) {
-            $result['size'] += Elements::getContainerUploadsSize($containerID);
+            $result['size'] += ElementsHelper::getContainerUploadsSize($containerID);
         }
         return $result;
     }
@@ -477,9 +531,41 @@ class ServerCommands
      * @param array $data
      * @return void
      */
+    static function elementsContainerSet(array $data): void
+    {
+        $containerID = $data['id'];
+        InternalDataElements::setContainer($containerID, $data['data']);
+        InternalDataElements::dispatchContainerChangeEvent($containerID);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function elementsContainerGet(array $data): ?array
+    {
+        return InternalDataElements::getContainer($data['id']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementsContainerDelete(array $data): void
+    {
+        ElementsHelper::deleteContainer($data['id']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
     static function elementsContainerCopy(array $data): void
     {
-        Elements::copyContainer($data['sourceID'], $data['targetID']);
+        ElementsHelper::copyContainer($data['sourceID'], $data['targetID']);
     }
 
     /**
@@ -538,7 +624,7 @@ class ServerCommands
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
         $elementID = isset($data['elementID']) ? $data['elementID'] : null;
         $value = isset($data['value']) ? $data['value'] : null;
-        ElementsHelper::setElementStyleOptionsValues($containerID, $elementID, $value);
+        ElementsHelper::setElementStyleValues($containerID, $elementID, $value);
     }
 
     /**
@@ -656,6 +742,48 @@ class ServerCommands
 
     /**
      * 
+     * @param array $data
+     * @return void
+     */
+    static function pagesSet(array $data): void
+    {
+        $app = App::get();
+        $pageID = $data['id'];
+        InternalDataPages::set($pageID, $data['data']);
+        if (isset($data['isNew']) && (int)$data['isNew'] > 0) {
+            InternalPages::createNewPageHeadingElement($pageID);
+        }
+        $page = $app->bearCMS->data->pages->get($pageID);
+        if ($page !== null) {
+            Sitemap::addUpdateDateTask($page->path);
+        }
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function pagesDelete(array $data): void
+    {
+        $pageID = $data['id'];
+        InternalDataPages::deleteImage($pageID, false);
+        InternalDataPages::delete($pageID);
+        ElementsHelper::deleteContainer('bearcms-page-' . $pageID);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function pagesSetStructure(array $data): void
+    {
+        InternalDataPages::setStructure($data['data']);
+    }
+
+    /**
+     * 
      * @return array
      */
     static function pagesList(): array
@@ -675,21 +803,11 @@ class ServerCommands
         }
         if (!$homeIsFound) {
             if (Config::$autoCreateHomePage) {
-                $defaultHomePage = Pages::getDefaultHomePage();
+                $defaultHomePage = InternalDataPages::getDefaultHomePage();
                 $temp['pages'][] = $defaultHomePage->toArray();
             }
         }
         return $temp;
-    }
-
-    /**
-     * 
-     * @param array $data
-     * @return void
-     */
-    static function onCreatePage(array $data): void
-    {
-        Internal\Data\Pages::onCreatePage($data['id']);
     }
 
     /**

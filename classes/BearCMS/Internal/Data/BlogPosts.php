@@ -10,8 +10,6 @@
 namespace BearCMS\Internal\Data;
 
 use BearCMS\Internal;
-use BearCMS\Internal\Config;
-use BearCMS\Internal\ElementsHelper;
 use BearFramework\App;
 
 /**
@@ -54,20 +52,73 @@ class BlogPosts
         return $result;
     }
 
-    static function getDataKey(string $id)
+    /**
+     * 
+     * @param string $blogPostID
+     * @return string
+     */
+    static private function getDataKey(string $blogPostID): string
     {
-        return 'bearcms/blog/post/' . md5($id) . '.json';
+        return 'bearcms/blog/post/' . md5($blogPostID) . '.json';
     }
 
-    static function getLastModifiedDetails(string $blogPostID)
+    /**
+     * 
+     * @param string $blogPostID
+     * @return array|null
+     */
+    static function get(string $blogPostID): ?array
+    {
+        $data = Internal\Data::getValue(self::getDataKey($blogPostID));
+        if ($data !== null) {
+            return json_decode($data, true);
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @param string $blogPostID
+     * @param array $data
+     * @return void
+     */
+    static function set(string $blogPostID, array $data): void
     {
         $app = App::get();
-        $details = ElementsHelper::getLastModifiedDetails('bearcms-blogpost-' . $blogPostID);
-        $details['dataKeys'][] = self::getDataKey($blogPostID);
-        $blogPost = $app->bearCMS->data->blogPosts->get($blogPostID);
-        if ($blogPost !== null) {
-            $details['dates'][] = $blogPost->lastChangeTime;
+        $app->data->setValue(self::getDataKey($blogPostID), json_encode($data));
+    }
+
+    /**
+     * 
+     * @param string $blogPostID
+     * @return void
+     */
+    static function delete(string $blogPostID): void
+    {
+        $app = App::get();
+        $app->data->delete(self::getDataKey($blogPostID));
+    }
+
+    /**
+     * 
+     * @param string $blogPostID
+     * @return void
+     */
+    static function deleteImage(string $blogPostID, bool $updateData): void
+    {
+        $data = self::get($blogPostID);
+        if ($data !== null) {
+            $filename = isset($data['image']) ? (string)$data['image'] : '';
+            if (strlen($filename) > 0) {
+                $app = App::get();
+                $dataKey = Internal\Data::filenameToDataKey($filename);
+                $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                UploadsSize::remove($dataKey);
+            }
+            if ($updateData) {
+                $data['image'] = null;
+                self::set($blogPostID, $data);
+            }
         }
-        return $details;
     }
 }
