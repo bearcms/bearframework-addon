@@ -269,4 +269,29 @@ class Blog
             ]
         ]);
     }
+
+    /**
+     * 
+     * @param \BearCMS\Internal\Sitemap\Sitemap $sitemap
+     * @return void
+     */
+    public static function addSitemapItems(\BearCMS\Internal\Sitemap\Sitemap $sitemap): void
+    {
+        $list = Internal\Data\BlogPosts::getSlugsList('published');
+        foreach ($list as $blogPostID => $slug) {
+            $sitemap->addItem(Config::$blogPagesPathPrefix . $slug . '/', function () use ($blogPostID) {
+                $app = App::get();
+                $dates = [];
+                $date = ElementsHelper::getLastChangeTime('bearcms-blogpost-' . $blogPostID);
+                if ($date !== null) {
+                    $dates[] = $date;
+                }
+                $blogPost = $app->bearCMS->data->blogPosts->get($blogPostID);
+                if ($blogPost !== null && strlen((string)$blogPost->lastChangeTime) > 0) {
+                    $dates[] = (int)$blogPost->lastChangeTime;
+                }
+                return empty($dates) ? null : max($dates);
+            });
+        }
+    }
 }

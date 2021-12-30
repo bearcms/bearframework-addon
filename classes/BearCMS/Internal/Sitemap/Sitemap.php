@@ -19,16 +19,16 @@ class Sitemap
 
     /**
      * 
-     * @param string $location
+     * @param string $locationPath
      * @param string|callable $lastModified
      * @param string $changeFrequency
      * @param float $priority
      * @return self Returns a reference to itself.
      */
-    public function addURL(string $location, $lastModified = null, string $changeFrequency = null, float $priority = null): self
+    public function addItem(string $locationPath, $lastModified = null, string $changeFrequency = null, float $priority = null): self
     {
         $this->data[] = [
-            'location' => $location,
+            'locationPath' => $locationPath,
             'lastModified' => $lastModified,
             'changeFrequency' => $changeFrequency,
             'priority' => $priority

@@ -96,13 +96,26 @@ class BlogPost extends \BearFramework\Models\Model
      * 
      * @return string|null
      */
-    public function getURL(): ?string
+    public function getURLPath(): ?string
     {
         if (strlen((string)$this->id) === 0) {
             return null;
         }
-        $app = App::get();
         $slug = (string)$this->slug;
-        return $app->urls->get(Config::$blogPagesPathPrefix . (strlen($this->slug) === 0 ? '-' . $this->id : $slug) . '/');
+        return Config::$blogPagesPathPrefix . (strlen($this->slug) === 0 ? '-' . $this->id : $slug) . '/';
+    }
+
+    /**
+     * 
+     * @return string|null
+     */
+    public function getURL(): ?string
+    {
+        $path = $this->getURLPath();
+        if ($path === null) {
+            return null;
+        }
+        $app = App::get();
+        return $app->urls->get($path);
     }
 }

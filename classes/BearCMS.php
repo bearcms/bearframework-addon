@@ -12,15 +12,14 @@ use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
 use IvoPetkov\HTML5DOMDocument;
-use BearCMS\Internal2;
 use BearCMS\Internal\Blog;
 use BearCMS\Internal\Comments;
 use BearCMS\Internal\Elements;
 use BearCMS\Internal\ElementsCombinations;
 use BearCMS\Internal\ElementsHelper;
 use BearCMS\Internal\ElementsTypes;
-use BearCMS\Internal\MetaOGImages;
 use BearCMS\Internal\Pages;
+use BearCMS\Internal\Sitemap;
 
 /**
  * 
@@ -106,6 +105,8 @@ class BearCMS
         }
 
         $hasElements = Config::hasFeature('ELEMENTS') || Config::hasFeature('ELEMENTS_*');
+        $hasPages = Config::hasFeature('PAGES');
+        $hasBlog = Config::hasFeature('BLOG');
 
         // Enable elements
         if ($hasElements) {
@@ -127,8 +128,7 @@ class BearCMS
             $this->app->clientPackages
                 ->add('-bearcms-elements-lazy-load', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
                     $package->addJSFile($this->context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 6]));
-                    $data = [__('bearcms.elements.LoadingMore')];
-                    $package->get = 'bearCMS.elementsLazyLoad.initialize(' . json_encode($data) . ');';
+                    $package->get = 'bearCMS.elementsLazyLoad.initialize(' . json_encode([__('bearcms.elements.LoadingMore')]) . ');';
                 });
         }
 
@@ -241,7 +241,7 @@ class BearCMS
                 });
         }
 
-        if (Config::hasFeature('BLOG')) {
+        if ($hasBlog) {
             $this->app->routes
                 ->add([Config::$blogPagesPathPrefix . '?', Config::$blogPagesPathPrefix . '?/'], [
                     $disabledCheck,
@@ -249,17 +249,6 @@ class BearCMS
                         return Blog::handleBlogPostPageRequest($this, $request);
                     }
                 ]);
-            \BearCMS\Internal\Sitemap::register(function (\BearCMS\Internal\Sitemap\Sitemap $sitemap) {
-                $list = Internal\Data\BlogPosts::getSlugsList('published');
-                foreach ($list as $blogPostID => $slug) {
-                    $url = $this->app->urls->get(Config::$blogPagesPathPrefix . $slug . '/');
-                    $sitemap->addURL($url, function () use ($blogPostID, $url) {
-                        $details = Internal\Data\BlogPosts::getLastModifiedDetails($blogPostID);
-                        Internal\Sitemap::addLastModifiedDetails($url, $details);
-                        return Internal\Sitemap::getDateFromLastModifiedDetails($details);
-                    });
-                }
-            });
             $this->app->serverRequests
                 ->add('bearcms-blogposts-load-more', function ($data) {
                     return Blog::handleLoadMoreServerRequest($data);
@@ -278,7 +267,7 @@ class BearCMS
         }
 
         // Register a home page and the dynamic pages handler
-        if (Config::hasFeature('PAGES')) {
+        if ($hasPages) {
             $this->app->routes
                 ->add('*', [
                     $disabledCheck,
@@ -286,21 +275,43 @@ class BearCMS
                         return Pages::handlePageRequest($this, $request);
                     }
                 ]);
-            \BearCMS\Internal\Sitemap::register(function (\BearCMS\Internal\Sitemap\Sitemap $sitemap) {
-                $list = Internal\Data\Pages::getPathsList('public');
-                if (Config::$autoCreateHomePage) {
-                    $list['home'] = '/';
+        }
+
+        // Sitemap for pages and blog posts
+        if ($hasPages || $hasBlog) {
+            Sitemap::addSource(function (\BearCMS\Internal\Sitemap\Sitemap $sitemap) use ($hasPages, $hasBlog) {
+                if ($hasPages) {
+                    Pages::addSitemapItems($sitemap);
                 }
-                $appURLs = $this->app->urls;
-                foreach ($list as $pageID => $path) {
-                    $url = $appURLs->get($path);
-                    $sitemap->addURL($url, function () use ($pageID, $url) {
-                        $details = Internal\Data\Pages::getLastModifiedDetails($pageID);
-                        Internal\Sitemap::addLastModifiedDetails($url, $details);
-                        return Internal\Sitemap::getDateFromLastModifiedDetails($details);
-                    });
+                if ($hasBlog) {
+                    Blog::addSitemapItems($sitemap);
                 }
             });
+            $checkElementsContainerID = function (string $containerID) use ($hasPages, $hasBlog) {
+                if ($hasPages && strpos($containerID, 'bearcms-page-') === 0) {
+                    $pageID = str_replace('bearcms-page-', '', $containerID);
+                    $page = $this->data->pages->get($pageID);
+                    if ($page !== null) {
+                        Sitemap::addUpdateDateTask($page->path);
+                    }
+                }
+                if ($hasBlog && strpos($containerID, 'bearcms-blogpost-') === 0) {
+                    $blogPostID = str_replace('bearcms-blogpost-', '', $containerID);
+                    $blogPost = $this->data->blogPosts->get($blogPostID);
+                    if ($blogPost !== null) {
+                        Sitemap::addUpdateDateTask($blogPost->getURLPath());
+                    }
+                }
+            };
+            $this
+                ->addEventListener('internalElementChange', function (\BearCMS\Internal\ElementChangeEventDetails $details) use ($checkElementsContainerID) {
+                    if ($details->containerID !== null) {
+                        $checkElementsContainerID($details->containerID);
+                    }
+                })
+                ->addEventListener('internalElementsContainerChange', function (\BearCMS\Internal\ElementsContainerChangeEventDetails $details) use ($checkElementsContainerID) {
+                    $checkElementsContainerID($details->containerID);
+                });
         }
 
         $this->app->assets
@@ -451,19 +462,13 @@ class BearCMS
         }
 
         $this->app->tasks
-            ->define('bearcms-sitemap-process-changes', function () {
-                Internal\Sitemap::processChangedDataKeys();
-            })
-            ->define('bearcms-sitemap-update-cached-dates', function ($paths) {
+            ->define('bearcms-sitemap-update-dates', function ($paths) {
                 foreach ($paths as $path) {
-                    Internal\Sitemap::addUpdateCachedDateTasks($path);
+                    Internal\Sitemap::addUpdateDateTask($path);
                 }
             })
-            ->define('bearcms-sitemap-update-cached-date', function ($path) {
-                Internal\Sitemap::updateCachedDate($path);
-            })
-            ->define('bearcms-sitemap-check-for-changes', function () {
-                Internal\Sitemap::checkSitemapForChanges();
+            ->define('bearcms-sitemap-update-date', function ($path) {
+                Internal\Sitemap::updateDate($path);
             })
             ->define('bearcms-sitemap-notify-search-engines', function () {
                 Internal\Sitemap::notifySearchEngines();
