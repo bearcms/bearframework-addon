@@ -43,7 +43,7 @@ class Sitemap
         $appURLs = $app->urls;
         $pathsToUpdate = [];
         $sitemap = self::getSitemap();
-        $list = $sitemap->getList()->sortBy('location');
+        $list = $sitemap->getList()->sortBy('locationPath');
         $code = [];
         $tempData = null;
         foreach ($list as $item) {
