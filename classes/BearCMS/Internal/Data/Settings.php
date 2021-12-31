@@ -20,12 +20,6 @@ class Settings
 
     /**
      * 
-     * @var boolean
-     */
-    private static $disableUpdateIconsDetails = false;
-
-    /**
-     * 
      * @param integer $preferedSize
      * @return string|null
      */
@@ -69,9 +63,6 @@ class Settings
     static function updateIconsDetails(bool $preview = false): array
     {
         $result = [];
-        if (self::$disableUpdateIconsDetails) {
-            return $result;
-        }
         $app = App::get();
         $settings = $app->bearCMS->data->settings->get();
         $hasChange = false;
@@ -92,9 +83,7 @@ class Settings
             $result['new'] = $settings->icons;
             if (!$preview) {
                 $app->data->duplicate('bearcms/settings.json', '.recyclebin/bearcms/update-' . str_replace('.', '-', microtime(true)) . '-settings.json');
-                self::$disableUpdateIconsDetails = true;
                 $app->bearCMS->data->settings->set($settings);
-                self::$disableUpdateIconsDetails = false;
             }
         }
         return $result;

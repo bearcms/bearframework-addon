@@ -250,9 +250,6 @@ class Data
                     $app->data->delete($dataKeyToDelete);
                 }
             }
-            if ($key === 'bearcms/settings.json') {
-                Settings::updateIconsDetails();
-            }
         }
     }
 

@@ -16,6 +16,7 @@ use BearCMS\Internal2;
 use BearCMS\Internal\Data\BlogPosts as InternalDataBlogPosts;
 use BearCMS\Internal\Data\Elements as InternalDataElements;
 use BearCMS\Internal\Data\Pages as InternalDataPages;
+use BearCMS\Internal\Data\Settings as InternalDataSettings;
 use BearCMS\Internal\Pages as InternalPages;
 use IvoPetkov\HTML5DOMDocument;
 
@@ -864,6 +865,19 @@ class ServerCommands
     /**
      * 
      * @param array $data
+     * @return void
+     */
+    static function settingsSet(array $data): void
+    {
+        $app = App::get();
+        $settings = \BearCMS\Data\Settings\Settings::fromArray($data['data']);
+        $app->bearCMS->data->settings->set($settings);
+        InternalDataSettings::updateIconsDetails();
+    }
+
+    /**
+     * 
+     * @param array $data
      * @param \ArrayObject $response
      */
     static function temporaryRedirect(array $data, \ArrayObject $response)
@@ -957,6 +971,16 @@ class ServerCommands
     static function themeGetActive(): string
     {
         return Internal\Themes::getActiveThemeID();
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function themeSetActive(array $data): void
+    {
+        Internal\Themes::setActiveThemeID($data['id']);
     }
 
     /**

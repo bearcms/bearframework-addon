@@ -50,6 +50,17 @@ class Themes
 
     /**
      * 
+     * @param string $id
+     * @return void
+     */
+    static function setActiveThemeID(string $id): void
+    {
+        $app = App::get();
+        $app->data->setValue('bearcms/themes/active.json', json_encode(['id' => $id]));
+    }
+
+    /**
+     * 
      * @return array
      */
     static public function getIDs(): array
