@@ -294,4 +294,43 @@ class Blog
             });
         }
     }
+
+    /**
+     * 
+     * @param string|null $blogPostID
+     * @return void
+     */
+    static function setCommentsLocations(string $blogPostID = null): void
+    {
+        $app = App::get();
+        $blogPosts = $app->bearCMS->data->blogPosts;
+        if ($blogPostID !== null) {
+            $blogPost = $blogPosts->get($blogPostID);
+            $list = $blogPost !== null ? [$blogPost] : [];
+        } else {
+            $list = $blogPosts->getList();
+        }
+        $result = [];
+        foreach ($list as $blogPost) {
+            $urlPath = $blogPost->getURLPath();
+            $threadID = 'bearcms-blogpost-' . $blogPost->id;
+            $result[$threadID] = $urlPath;
+        }
+        CommentsLocations::setLocations($result);
+    }
+
+    /**
+     * 
+     * @param string $blogPostID
+     * @return void
+     */
+    static function addUpdateCommentsLocationsTask(string $blogPostID): void
+    {
+        $app = App::get();
+        $app->tasks->add('bearcms-blog-comments-locations-update', $blogPostID, [
+            'id' => 'bearcms-blog-comments-locations-update-' . md5($blogPostID),
+            'priority' => 4,
+            'ignoreIfExists' => true
+        ]);
+    }
 }

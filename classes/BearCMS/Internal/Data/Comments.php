@@ -152,54 +152,6 @@ class Comments
 
     /**
      * 
-     * @return array
-     */
-    static function getCommentsElementsLocations(): array
-    {
-        $app = App::get();
-        $tempDataKey = '.temp/bearcms/comments-elements-locations';
-        $result = $app->data->getValue($tempDataKey);
-        if ($result !== null) {
-            $result = json_decode($result, true);
-        }
-        if (!is_array($result)) {
-            $result = [];
-
-            $pages = $app->bearCMS->data->pages->getList();
-            $walkPageElements = function ($pageID, $path) use ($app, &$result) {
-                $url = null;
-                $containerElementIDs = Internal\ElementsHelper::getContainerElementsIDs('bearcms-page-' . $pageID);
-                $elementsRawData = InternalDataElements::getElementsRawData($containerElementIDs);
-                foreach ($elementsRawData as $elementRawData) {
-                    if ($elementRawData === null) {
-                        continue;
-                    }
-                    $elementData = InternalDataElements::decodeElementRawData($elementRawData);
-                    if (is_array($elementData) && $elementData['type'] === 'comments') {
-                        if (isset($elementData['data']['threadID'])) {
-                            if ($url === null) {
-                                $url = $app->urls->get($path);
-                            }
-                            $result[$elementData['data']['threadID']] = $url;
-                        }
-                    }
-                }
-            };
-            foreach ($pages as $page) {
-                $walkPageElements($page->id, $page->path);
-            }
-            $blogPosts = $app->bearCMS->data->blogPosts->getList();
-            foreach ($blogPosts as $blogPost) {
-                $threadID = 'bearcms-blogpost-' . $blogPost->id;
-                $result[$threadID] = $blogPost->getURL();
-            }
-            $app->data->setValue($tempDataKey, json_encode($result));
-        }
-        return $result;
-    }
-
-    /**
-     * 
      * @return string
      */
     static function generateNewThreadID(): string

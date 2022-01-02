@@ -230,9 +230,6 @@ class Data
             self::$hasContentChange = true;
             self::$cache = [];
             self::_updateGroupValue('all');
-            if (strpos($key, 'bearcms/elements/') === 0 || strpos($key, 'bearcms/pages/') === 0 || strpos($key, 'bearcms/blog/') === 0) {
-                $app->data->delete('.temp/bearcms/comments-elements-locations');
-            }
             if (strpos($key, 'bearcms/pages/') === 0) {
                 $prefix = '.temp/bearcms/navigation-element-cache/';
                 $list = $app->data->getList()->filterBy('key', $prefix, 'startWith')->sliceProperties(['key']);

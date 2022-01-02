@@ -20,6 +20,7 @@ use BearCMS\Internal\ElementsHelper;
 use BearCMS\Internal\ElementsTypes;
 use BearCMS\Internal\Pages;
 use BearCMS\Internal\Sitemap;
+use BearCMS\Internal\CommentsLocations;
 
 /**
  * 
@@ -239,6 +240,29 @@ class BearCMS
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/commentsElementList.js'));
                     $package->embedPackage('lightbox'); // for the preview
                 });
+            CommentsLocations::addSource(function () use ($hasPages, $hasBlog) {
+                if ($hasPages) {
+                    Pages::setCommentsLocations();
+                }
+                if ($hasBlog) {
+                    Blog::setCommentsLocations();
+                }
+            });
+            $checkCommentsLocationsElementsContainerID = function (string $containerID) use ($hasPages) {
+                if ($hasPages && strpos($containerID, 'bearcms-page-') === 0) {
+                    $pageID = str_replace('bearcms-page-', '', $containerID);
+                    Pages::addUpdateCommentsLocationsTask($pageID);
+                }
+            };
+            $this
+                ->addEventListener('internalElementChange', function (\BearCMS\Internal\ElementChangeEventDetails $details) use ($checkCommentsLocationsElementsContainerID) {
+                    if ($details->containerID !== null) {
+                        $checkCommentsLocationsElementsContainerID($details->containerID);
+                    }
+                })
+                ->addEventListener('internalElementsContainerChange', function (\BearCMS\Internal\ElementsContainerChangeEventDetails $details) use ($checkCommentsLocationsElementsContainerID) {
+                    $checkCommentsLocationsElementsContainerID($details->containerID);
+                });
         }
 
         if ($hasBlog) {
@@ -287,7 +311,7 @@ class BearCMS
                     Blog::addSitemapItems($sitemap);
                 }
             });
-            $checkElementsContainerID = function (string $containerID) use ($hasPages, $hasBlog) {
+            $checkSitemapElementsContainerID = function (string $containerID) use ($hasPages, $hasBlog) {
                 if ($hasPages && strpos($containerID, 'bearcms-page-') === 0) {
                     $pageID = str_replace('bearcms-page-', '', $containerID);
                     $page = $this->data->pages->get($pageID);
@@ -304,13 +328,13 @@ class BearCMS
                 }
             };
             $this
-                ->addEventListener('internalElementChange', function (\BearCMS\Internal\ElementChangeEventDetails $details) use ($checkElementsContainerID) {
+                ->addEventListener('internalElementChange', function (\BearCMS\Internal\ElementChangeEventDetails $details) use ($checkSitemapElementsContainerID) {
                     if ($details->containerID !== null) {
-                        $checkElementsContainerID($details->containerID);
+                        $checkSitemapElementsContainerID($details->containerID);
                     }
                 })
-                ->addEventListener('internalElementsContainerChange', function (\BearCMS\Internal\ElementsContainerChangeEventDetails $details) use ($checkElementsContainerID) {
-                    $checkElementsContainerID($details->containerID);
+                ->addEventListener('internalElementsContainerChange', function (\BearCMS\Internal\ElementsContainerChangeEventDetails $details) use ($checkSitemapElementsContainerID) {
+                    $checkSitemapElementsContainerID($details->containerID);
                 });
         }
 
@@ -472,6 +496,12 @@ class BearCMS
             })
             ->define('bearcms-sitemap-notify-search-engines', function () {
                 Internal\Sitemap::notifySearchEngines();
+            })
+            ->define('bearcms-page-comments-locations-update', function ($pageID) {
+                Pages::setCommentsLocations($pageID);
+            })
+            ->define('bearcms-blog-comments-locations-update', function ($blogPostID) {
+                Blog::setCommentsLocations($blogPostID);
             });
 
         // Initialize to add asset dirs

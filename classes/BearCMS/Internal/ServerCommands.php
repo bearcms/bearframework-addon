@@ -18,6 +18,7 @@ use BearCMS\Internal\Data\Elements as InternalDataElements;
 use BearCMS\Internal\Data\Pages as InternalDataPages;
 use BearCMS\Internal\Data\Settings as InternalDataSettings;
 use BearCMS\Internal\Pages as InternalPages;
+use BearCMS\Internal\Blog as InternalBlog;
 use IvoPetkov\HTML5DOMDocument;
 
 /**
@@ -212,6 +213,9 @@ class ServerCommands
         if ($blogPost !== null) {
             Sitemap::addUpdateDateTask($blogPost->getURLPath());
         }
+        if (Config::hasFeature('COMMENTS')) {
+            InternalBlog::addUpdateCommentsLocationsTask($blogPostID);
+        }
     }
 
     /**
@@ -313,16 +317,18 @@ class ServerCommands
      */
     static function commentsList(array $data): array
     {
+        $app = App::get();
+        $appURLs = $app->urls;
         $result = self::_commentsGetList();
         $result->sortBy('createdTime', 'desc');
         if ($data['type'] !== 'all') {
             $result->filterBy('status', $data['type']);
         }
         $result = $result->slice($data['limit'] * ($data['page'] - 1), $data['limit']);
-        $locations = Internal\Data\Comments::getCommentsElementsLocations();
+        $locations = Internal\CommentsLocations::get();
         foreach ($result as $i => $item) {
             if (isset($locations[$item->threadID])) {
-                $result[$i]->location = $locations[$item->threadID];
+                $result[$i]->location = $appURLs->get($locations[$item->threadID]);
             } else {
                 $result[$i]->location = '';
             }
@@ -757,6 +763,9 @@ class ServerCommands
         $page = $app->bearCMS->data->pages->get($pageID);
         if ($page !== null) {
             Sitemap::addUpdateDateTask($page->path);
+        }
+        if (Config::hasFeature('COMMENTS')) {
+            InternalPages::addUpdateCommentsLocationsTask($pageID);
         }
     }
 

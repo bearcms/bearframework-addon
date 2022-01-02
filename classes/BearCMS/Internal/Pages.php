@@ -183,4 +183,55 @@ class Pages
             InternalDataElements::dispatchContainerChangeEvent($containerID);
         }
     }
+
+    /**
+     * 
+     * @param string|null $pageID
+     * @return void
+     */
+    static function setCommentsLocations(string $pageID = null): void
+    {
+        $app = App::get();
+        $pages = $app->bearCMS->data->pages;
+        if ($pageID !== null) {
+            $page = $pages->get($pageID);
+            $list = $page !== null ? [$page] : [];
+        } else {
+            $list = $pages->getList();
+        }
+        $result = [];
+        foreach ($list as $page) {
+            $urlPath = $page->path;
+            $containerID = 'bearcms-page-' . $page->id;
+            $containerElementIDs = Internal\ElementsHelper::getContainerElementsIDs($containerID);
+            $elementsRawData = InternalDataElements::getElementsRawData($containerElementIDs);
+            foreach ($elementsRawData as $elementRawData) {
+                if ($elementRawData === null) {
+                    continue;
+                }
+                $elementData = InternalDataElements::decodeElementRawData($elementRawData);
+                if (is_array($elementData) && $elementData['type'] === 'comments') {
+                    if (isset($elementData['data']['threadID'])) {
+                        $result[$elementData['data']['threadID']] = $urlPath;
+                    }
+                }
+            }
+        }
+        CommentsLocations::setLocations($result);
+    }
+
+    /**
+     * 
+     * @param string $pageID
+     * @return void
+     */
+    static function addUpdateCommentsLocationsTask(string $pageID): void
+    {
+        $app = App::get();
+        $app->tasks->add('bearcms-page-comments-locations-update', $pageID, [
+            'id' => 'bearcms-page-comments-locations-update-' . md5($pageID),
+            'priority' => 4,
+            'ignoreIfExists' => true
+        ]);
+    }
 }
