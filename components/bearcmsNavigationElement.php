@@ -208,7 +208,7 @@ if (isset($itemsHtml[0])) {
             }
             return '<ul' . ($isFullHtmlOutputType ? ' class="' . ($level === 0 ? 'bearcms-navigation-element' : 'bearcms-navigation-element-item-children') . '"' : '') . '>' . implode('', $itemsHtml) . '</ul>';
         };
-        $itemsHtml = str_replace('<a href="', '<a href="' . $requestBase, $buildTree($optimizedPages));
+        $itemsHtml = str_replace('<a href="/', '<a href="' . $requestBase . '/', $buildTree($optimizedPages));
     }
 }
 
