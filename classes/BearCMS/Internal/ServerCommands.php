@@ -209,13 +209,15 @@ class ServerCommands
         $app = App::get();
         $blogPostID = $data['id'];
         InternalDataBlogPosts::set($blogPostID, $data['data']);
-        $blogPost = $app->bearCMS->data->blogPosts->get($blogPostID);
-        if ($blogPost !== null) {
-            Sitemap::addUpdateDateTask($blogPost->getURLPath());
-        }
-        if (Config::hasFeature('COMMENTS')) {
-            InternalBlog::addUpdateCommentsLocationsTask($blogPostID);
-        }
+        $app->addEventListener('sendResponse', function () use ($app, $blogPostID) {
+            $blogPost = $app->bearCMS->data->blogPosts->get($blogPostID);
+            if ($blogPost !== null) {
+                Sitemap::addUpdateDateTask($blogPost->getURLPath());
+            }
+            if (Config::hasFeature('COMMENTS')) {
+                InternalBlog::addUpdateCommentsLocationsTask($blogPostID);
+            }
+        });
     }
 
     /**
@@ -760,13 +762,15 @@ class ServerCommands
         if (isset($data['isNew']) && (int)$data['isNew'] > 0) {
             InternalPages::createNewPageHeadingElement($pageID);
         }
-        $page = $app->bearCMS->data->pages->get($pageID);
-        if ($page !== null) {
-            Sitemap::addUpdateDateTask($page->path);
-        }
-        if (Config::hasFeature('COMMENTS')) {
-            InternalPages::addUpdateCommentsLocationsTask($pageID);
-        }
+        $app->addEventListener('sendResponse', function () use ($app, $pageID) {
+            $page = $app->bearCMS->data->pages->get($pageID);
+            if ($page !== null) {
+                Sitemap::addUpdateDateTask($page->path);
+            }
+            if (Config::hasFeature('COMMENTS')) {
+                InternalPages::addUpdateCommentsLocationsTask($pageID);
+            }
+        });
     }
 
     /**

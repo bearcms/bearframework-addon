@@ -251,7 +251,9 @@ class BearCMS
             $checkCommentsLocationsElementsContainerID = function (string $containerID) use ($hasPages) {
                 if ($hasPages && strpos($containerID, 'bearcms-page-') === 0) {
                     $pageID = str_replace('bearcms-page-', '', $containerID);
-                    Pages::addUpdateCommentsLocationsTask($pageID);
+                    $this->app->addEventListener('sendResponse', function () use ($pageID) {
+                        Pages::addUpdateCommentsLocationsTask($pageID);
+                    });
                 }
             };
             $this
@@ -314,17 +316,21 @@ class BearCMS
             $checkSitemapElementsContainerID = function (string $containerID) use ($hasPages, $hasBlog) {
                 if ($hasPages && strpos($containerID, 'bearcms-page-') === 0) {
                     $pageID = str_replace('bearcms-page-', '', $containerID);
-                    $page = $this->data->pages->get($pageID);
-                    if ($page !== null) {
-                        Sitemap::addUpdateDateTask($page->path);
-                    }
+                    $this->app->addEventListener('sendResponse', function () use ($pageID) {
+                        $page = $this->data->pages->get($pageID);
+                        if ($page !== null) {
+                            Sitemap::addUpdateDateTask($page->path);
+                        }
+                    });
                 }
                 if ($hasBlog && strpos($containerID, 'bearcms-blogpost-') === 0) {
                     $blogPostID = str_replace('bearcms-blogpost-', '', $containerID);
-                    $blogPost = $this->data->blogPosts->get($blogPostID);
-                    if ($blogPost !== null) {
-                        Sitemap::addUpdateDateTask($blogPost->getURLPath());
-                    }
+                    $this->app->addEventListener('sendResponse', function () use ($blogPostID) {
+                        $blogPost = $this->data->blogPosts->get($blogPostID);
+                        if ($blogPost !== null) {
+                            Sitemap::addUpdateDateTask($blogPost->getURLPath());
+                        }
+                    });
                 }
             };
             $this
