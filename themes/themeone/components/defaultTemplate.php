@@ -177,19 +177,21 @@ $elementSeparator = 'background-color:var(--bearcms-template-context-text-color)
 
 // bearcms-tc fixes collistions with the theme options
 
-echo '.bearcms-tc .bearcms-heading-element-large{' . $elementHeadingLarge . 'padding-top:calc(' . $elementsSpacing . ' / 2);}';
-echo '.bearcms-tc .bearcms-elements-element-container:first-child > .bearcms-heading-element-large{padding-top:0;}';
-echo '.bearcms-tc .bearcms-heading-element-medium{' . $elementHeadingMedium . 'padding-top:calc(' . $elementsSpacing . ' / 2);}';
-echo '.bearcms-tc .bearcms-elements-element-container:first-child > .bearcms-heading-element-medium{padding-top:0;}';
-echo '.bearcms-tc .bearcms-heading-element-small{' . $elementHeadingSmall . 'padding-top:calc(' . $elementsSpacing . ' / 2);}';
-echo '.bearcms-tc .bearcms-elements-element-container:first-child > .bearcms-heading-element-small{padding-top:0;}';
-echo '.bearcms-tc .bearcms-text-element{' . $elementText . '}';
-echo '.bearcms-tc .bearcms-text-element a{' . $elementLink . '}';
+$customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"]) >';
+
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-heading-element-large{' . $elementHeadingLarge . 'padding-top:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-large{padding-top:0;}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-heading-element-medium{' . $elementHeadingMedium . 'padding-top:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-medium{padding-top:0;}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-heading-element-small{' . $elementHeadingSmall . 'padding-top:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-small{padding-top:0;}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-text-element{' . $elementText . '}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-text-element a{' . $elementLink . '}';
 echo '.bearcms-tc .bearcms-html-element{' . $elementText . '}';
 echo '.bearcms-tc .bearcms-html-element a{' . $elementLink . '}';
-echo '.bearcms-tc .bearcms-link-element a{' . $elementLink . '}';
-echo '.bearcms-tc .bearcms-image-element-image{border-radius:' . $borderRadius . ';}';
-echo '.bearcms-tc .bearcms-image-gallery-element-image{border-radius:' . $borderRadius . ';}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-link-element a{' . $elementLink . '}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-image-element-image{border-radius:' . $borderRadius . ';}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-image-gallery-element-image{border-radius:' . $borderRadius . ';}';
 echo '.bearcms-tc .bearcms-video-element{border-radius:' . $borderRadius . ';}';
 echo '.bearcms-tc .bearcms-navigation-element-item a{' . $elementLink . '}';
 
