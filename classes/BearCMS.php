@@ -108,6 +108,7 @@ class BearCMS
         $hasElements = Config::hasFeature('ELEMENTS') || Config::hasFeature('ELEMENTS_*');
         $hasPages = Config::hasFeature('PAGES');
         $hasBlog = Config::hasFeature('BLOG');
+        $hasThemes = Config::hasFeature('THEMES');
 
         // Enable elements
         if ($hasElements) {
@@ -280,7 +281,7 @@ class BearCMS
                     return Blog::handleLoadMoreServerRequest($data);
                 });
 
-            if (Config::hasFeature('THEMES')) {
+            if ($hasThemes) {
                 Internal\Themes::$pagesOptions['blog'] = function (\BearCMS\Internal\ThemeOptionsGroupInterface $options) {
                     Blog::addThemesPageOptions($options);
                 };
@@ -456,7 +457,7 @@ class BearCMS
                 }
             });
 
-        if (Config::hasFeature('THEMES') && Config::$addDefaultThemes) {
+        if ($hasThemes && Config::$addDefaultThemes) {
             $this->themes->addDefault();
         }
 
