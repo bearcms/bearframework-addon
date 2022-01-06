@@ -263,13 +263,17 @@ echo '.bearcms-tc .bearcms-search-box-element-button:active{' . $elementButtonAc
 
 echo '.bearcms-tc .bearcms-store-items-element-item-image{border-radius:' . $borderRadius . ';}';
 echo '.bearcms-tc .bearcms-store-items-element-item-name{' . $elementHeadingMedium . 'color:var(--bearcms-template-context-text-color);text-decoration:underline;}';
+echo '.bearcms-tc .bearcms-store-items-element-item-description{' . $elementText . '}';
 echo '.bearcms-tc .bearcms-store-items-element-item-price-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
 echo '.bearcms-tc .bearcms-store-items-element-item-price{' . $elementText . '}';
+echo '.bearcms-tc .bearcms-store-items-element-item-price-original{' . $elementText . '}';
 
 echo '.bearcms-tc .bearcms-store-item-page-images-image{border-radius:' . $borderRadius . ';}';
 echo '.bearcms-tc .bearcms-store-item-page-name{' . $elementHeadingLarge . '}';
+echo '.bearcms-tc .bearcms-store-item-page-description{' . $elementText . '}';
 echo '.bearcms-tc .bearcms-store-item-page-price-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
 echo '.bearcms-tc .bearcms-store-item-page-price{' . $elementText . '}';
+echo '.bearcms-tc .bearcms-store-item-page-price-original{' . $elementText . '}';
 echo '.bearcms-tc .bearcms-store-item-page-buy-button-container{padding-top:calc(' . $elementsSpacing . ' / 2);font-size:0;}';
 echo '.bearcms-tc .bearcms-store-item-page-buy-button{' . $elementButton . '}';
 echo '.bearcms-tc .bearcms-store-item-page-buy-button:hover{' . $elementButtonOver . '}';
