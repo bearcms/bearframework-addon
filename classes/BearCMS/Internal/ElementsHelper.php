@@ -1156,7 +1156,7 @@ class ElementsHelper
                     }
                 }
                 if ($componentColor === '') {
-                    $componentColor = Config::$uiColor;
+                    $componentColor = (string)Config::getVariable('uiColor');
                 }
                 $component->color = $componentColor;
             };

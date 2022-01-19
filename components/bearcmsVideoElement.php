@@ -103,7 +103,11 @@ if (strlen($componentURL) > 0) {
             $setData($tempData);
         } else {
             try {
-                $embed = new IvoPetkov\VideoEmbed($componentURL, Config::$videoEmbedConfig);
+                $videoEmbedConfig = Config::getVariable('videoEmbedConfig');
+                if ($videoEmbedConfig === null) {
+                    $videoEmbedConfig = [];
+                }
+                $embed = new IvoPetkov\VideoEmbed($componentURL, $videoEmbedConfig);
                 $videoExists = true;
                 $videoTitle = $embed->title;
                 $videoUrl = $embed->url;
@@ -132,7 +136,7 @@ if (strlen($componentURL) > 0) {
 
     if ($videoExists) {
         if ($isFullHtmlOutputType) {
-            if (Config::$videoPrivateEmbed) {
+            if ((int)Config::getVariable('internalVideoPrivateEmbed')) {
                 $addPriveteEmbedStyles = true;
                 $hasImage = $videoImage !== null && strlen($videoImage) > 0;
                 $html = '<div style="width:100%;height:100%;' . ($hasImage ? 'background-image:url(' . $context->assets->getURL('assets/p/' . str_replace('://', '/', $videoImage), ['cacheMaxAge' => 86400 * 30]) . ');background-size:cover;background-position:center center;' : '') . '">' .

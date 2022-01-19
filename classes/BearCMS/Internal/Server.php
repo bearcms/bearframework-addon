@@ -216,17 +216,52 @@ class Server
 
         $clientData['features'] = json_encode(Config::$features);
         $clientData['language'] = Config::$language;
-        $clientData['uiColor'] = Config::$uiColor;
-        $clientData['uiTextColor'] = Config::$uiTextColor;
+        $clientData['uiColor'] = Config::getVariable('uiColor');
+        $clientData['uiTextColor'] = Config::getVariable('uiTextColor');
         $clientData['adminPagesPathPrefix'] = Config::$adminPagesPathPrefix;
         $clientData['blogPagesPathPrefix'] = Config::$blogPagesPathPrefix;
         $clientData['elementsTypes'] = array_values(Internal\ElementsHelper::$elementsTypesCodes);
-        if (Config::$maxUploadsSize !== null) {
-            $clientData['maxUploadsSize'] = Config::$maxUploadsSize;
+        $maxUploadsSize = Config::getVariable('maxUploadsSize');
+        if ($maxUploadsSize !== null) {
+            $clientData['maxUploadsSize'] = (int)$maxUploadsSize;
             $clientData['uploadsSize'] = Internal\Data\UploadsSize::getSize();
         }
-        if (Config::$maxUploadSize !== null) {
-            $clientData['maxUploadSize'] = is_callable(Config::$maxUploadSize) ? call_user_func(Config::$maxUploadSize) : Config::$maxUploadSize;
+        $maxUploadSize = Config::getVariable('maxUploadSize');
+        if ($maxUploadSize === null) {
+            $getSystemMaxUploadSize = function () { // todo move to other class and cache result
+                $sizeToBytes = function ($size) {
+                    $suffix = strtolower(substr($size, -1));
+                    if (!in_array($suffix, ['t', 'g', 'm', 'k'])) {
+                        return (int) $size;
+                    }
+                    $value = (int) substr($size, 0, -1);
+                    switch ($suffix) {
+                        case 't':
+                            return $value * 1024 * 1024 * 1024 * 1024;
+                        case 'g':
+                            return $value * 1024 * 1024 * 1024;
+                        case 'm':
+                            return $value * 1024 * 1024;
+                        case 'k':
+                            return $value * 1024;
+                    }
+                };
+                $values = [];
+                $value = $sizeToBytes(ini_get('post_max_size'));
+                if ($value > 0) {
+                    $values[] = $value;
+                }
+                $value = $sizeToBytes(ini_get('upload_max_filesize'));
+                if ($value > 0) {
+                    $values[] = $value;
+                }
+                if (!empty($values)) {
+                    return min($values);
+                }
+                return null;
+            };
+            $maxUploadSize = $getSystemMaxUploadSize();
+            $clientData['maxUploadSize'] = $maxUploadSize;
         }
         $clientData['appSpecific'] = Config::$appSpecificServerData;
         $clientData['flags'] = json_encode([
@@ -334,7 +369,7 @@ class Server
             if ($counter > 10) {
                 throw new \Exception('Too much requests');
             }
-            $requestResponse = self::makeRequest($url, array_merge($data, $requestData, ['requestNumber' => $counter]), $cookies, Config::$logServerRequests);
+            $requestResponse = self::makeRequest($url, array_merge($data, $requestData, ['requestNumber' => $counter]), $cookies, Config::getVariable('logServerRequests') === true);
             if (self::isRetryResponse($requestResponse)) {
                 return $requestResponse;
             }
@@ -353,7 +388,7 @@ class Server
 
             $requestResponseMeta = isset($requestResponseData['meta']) ? $requestResponseData['meta'] : [];
 
-            if (Config::$logServerRequests) {
+            if (Config::getVariable('logServerRequests') === true) {
                 $logData = $requestResponse['logData'];
                 $logData['response']['data'] = [
                     'value' => $response['value'],

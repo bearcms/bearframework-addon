@@ -21,8 +21,6 @@ if ($renderMode === '') {
     $renderMode = 'clean';
 }
 
-$htmlSandboxUrl = (string)Config::getHTMLSandboxURL();
-
 $currentUserExists = $app->bearCMS->currentUser->exists();
 $disabled = $currentUserExists && $app->request->query->exists('disable-html-elements');
 
@@ -38,7 +36,9 @@ if ($code !== '') {
             $content .= __('bearcms.element.HTMLCodeTemporaryDisabled.title') . '<div style="font-size:11px;">' . __('bearcms.element.HTMLCodeTemporaryDisabled.description') . '</div>';
             $content .= '</div>';
         } else {
-            if (!Config::$htmlAllowDefaultMode && $renderMode === 'default') {
+            $allowDefaultMode = Config::getVariable('internalHTMLAllowDefaultMode');
+            $allowDefaultMode = $allowDefaultMode !== null ? (int)$allowDefaultMode : true;
+            if (!$allowDefaultMode && $renderMode === 'default') {
                 if ($currentUserExists) {
                     $content .= '<div style="background-color:red;color:#fff;padding:10px 15px 9px 15px;border-radius:4px;line-height:25px;font-size:14px;font-family:Arial,sans-serif;">';
                     $content .= __('bearcms.element.HTMLCodeUnavailableSecurityMode.title') . '<div style="font-size:11px;">' . __('bearcms.element.HTMLCodeUnavailableSecurityMode.description') . '</div>';
@@ -54,9 +54,15 @@ if ($code !== '') {
         }
     } else if ($renderMode === 'sandbox') {
         if ($isFullHtmlOutputType) {
-            if (strlen($htmlSandboxUrl) > 0) {
+            $htmlSandboxURL = Config::getVariable('htmlSandboxUrl');
+            if ($htmlSandboxURL !== null && is_callable($htmlSandboxURL)) {
+                $htmlSandboxURL = (string) call_user_func($htmlSandboxURL);
+            } else {
+                $htmlSandboxURL = '';
+            }
+            if (strlen($htmlSandboxURL) > 0) {
                 $addHTMLSandbox = true;
-                $content = '<div class="bearcms-html-element" style="font-size:0;"><div data-html-sandbox="' . htmlentities($code) . '" data-html-sandbox-url="' . htmlentities($htmlSandboxUrl) . '"></div><script>htmlSandbox.run();</script></div>';
+                $content = '<div class="bearcms-html-element" style="font-size:0;"><div data-html-sandbox="' . htmlentities($code) . '" data-html-sandbox-url="' . htmlentities($htmlSandboxURL) . '"></div><script>htmlSandbox.run();</script></div>';
             }
         } else {
             // not supported
