@@ -8,6 +8,7 @@
 
 use BearFramework\App;
 use BearCMS\Internal2;
+use BearCMS\Internal\Config;
 use IvoPetkov\HTML5DOMDocument;
 
 $app = App::get();
@@ -48,9 +49,22 @@ if ($isFullHtmlOutputType) {
     if ($component->imageAspectRatio !== null && strlen($component->imageAspectRatio) > 0) {
         $attributes .= ' imageAspectRatio="' . $component->imageAspectRatio . '"';
     }
-    if ($component->imageLoadingBackground !== null && strlen($component->imageLoadingBackground) > 0) {
-        $attributes .= ' imageLoadingBackground="' . $component->imageLoadingBackground . '"';
+    $imageLoadingBackground = (string)$component->imageLoadingBackground;
+    if ($imageLoadingBackground === '') {
+        $lazyImageLoadingBackground = Config::getVariable('lazyImageLoadingBackground');
+        if ($lazyImageLoadingBackground !== null) {
+            $imageLoadingBackground = (string)$lazyImageLoadingBackground;
+        }
     }
+    if ($imageLoadingBackground !== '') {
+        $attributes .= ' imageLoadingBackground="' . htmlentities($imageLoadingBackground) . '"';
+    }
+
+    $previewImageLoadingBackground = (string)Config::getVariable('lazyImagePreviewLoadingBackground');
+    if ($previewImageLoadingBackground !== '') {
+        $attributes .= ' previewImageLoadingBackground="' . htmlentities($previewImageLoadingBackground) . '"';
+    }
+
     if ($component->lazyLoadImages !== null && strlen($component->lazyLoadImages) > 0) {
         $attributes .= ' lazyLoadImages="' . $component->lazyLoadImages . '"';
     } else {

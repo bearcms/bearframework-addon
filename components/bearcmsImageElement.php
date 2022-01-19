@@ -8,6 +8,7 @@
 
 use BearFramework\App;
 use BearCMS\Internal2;
+use BearCMS\Internal\Config;
 
 $app = App::get();
 
@@ -57,9 +58,20 @@ $attributes .= ' onClick="' . $onClick . '"';
 $class = (string) $component->class;
 $classAttributeValue = isset($class[0]) ? ' ' . htmlentities($class) : '';
 
-$componentLoadingBackground = (string)$component->loadingBackground;
-if (strlen($componentLoadingBackground) > 0) {
-    $attributes .= ' imageLoadingBackground="' . $componentLoadingBackground . '"';
+$imageLoadingBackground = (string)$component->loadingBackground;
+if ($imageLoadingBackground === '') {
+    $lazyImageLoadingBackground = Config::getVariable('lazyImageLoadingBackground');
+    if ($lazyImageLoadingBackground !== null) {
+        $imageLoadingBackground = (string)$lazyImageLoadingBackground;
+    }
+}
+if ($imageLoadingBackground !== '') {
+    $attributes .= ' imageLoadingBackground="' . htmlentities($imageLoadingBackground) . '"';
+}
+
+$previewImageLoadingBackground = (string)Config::getVariable('lazyImagePreviewLoadingBackground');
+if ($previewImageLoadingBackground !== '') {
+    $attributes .= ' previewImageLoadingBackground="' . htmlentities($previewImageLoadingBackground) . '"';
 }
 
 $attributes .= ' lazyLoadImages="' . $lazyLoad . '"';
