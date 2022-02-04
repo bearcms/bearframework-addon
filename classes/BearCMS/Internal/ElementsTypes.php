@@ -1026,7 +1026,7 @@ class ElementsTypes
                 if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
                     $optionsGroup = $options;
                 } else {
-                    throw new \Exception('Not supported in theme context');
+                    throw new \Exception('Not supported in other contexts!');
                 }
                 $optionsGroup->addOption($idPrefix . "widths", "columnsWidths", __('bearcms.themes.options.columns.ColumnsCount'), [
                     "defaultValue" => ",",
@@ -1046,7 +1046,7 @@ class ElementsTypes
                 if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
                     $optionsGroup = $options;
                 } else {
-                    throw new \Exception('Not supported in theme context');
+                    throw new \Exception('Not supported in other contexts!');
                 }
                 $optionsGroup->addOption($idPrefix . "position", "floatingBoxPosition", __('bearcms.themes.options.floatingBox.Position'), [
                     "defaultValue" => "left",
@@ -1070,7 +1070,7 @@ class ElementsTypes
                 if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
                     $optionsGroup = $options;
                 } else {
-                    throw new \Exception('Not supported in theme context');
+                    throw new \Exception('Not supported in other contexts!');
                 }
                 $optionsGroup->addOption($idPrefix . "direction", "flexibleBoxDirection", __('bearcms.themes.options.flexibleBox.Direction'), [
                     "defaultValue" => "column",
