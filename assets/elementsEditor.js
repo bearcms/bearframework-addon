@@ -151,26 +151,28 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
     };
 
     var setStructuralElementAutoVerticalWidth = function (element, value, attributeName) {
+        var currentValue = element.getAttribute('data-responsive-attributes');
+        if (currentValue === null) {
+            currentValue = '';
+        }
+        var newValue = currentValue;
+        var match = currentValue.match("w(.*?)=>" + attributeName + "=1");
+        if (match !== null) {
+            newValue = currentValue.replace(match[0], '');
+            if (newValue.length > 0 && newValue[0] === ',') {
+                newValue = newValue.substring(1, newValue.length);
+            }
+        }
         if (value.indexOf('px') !== -1) {
             var valueInPx = parseInt(value.replace('px', ''), 10);
-            var currentValue = element.getAttribute('data-responsive-attributes');
-            if (currentValue === null) {
-                currentValue = '';
-            }
-            var suffix = currentValue;
-            var search = '=>' + attributeName + '=1';
-            var index = suffix.indexOf(search);
-            if (index !== -1) {
-                suffix = suffix.substr(index + search.length);
-            } else {
-                if (suffix.length > 0) {
-                    suffix = ',' + suffix;
-                }
-            }
-            element.setAttribute('data-responsive-attributes', 'w<=' + valueInPx + '=>' + attributeName + '=1' + suffix);
+            newValue = 'w<=' + valueInPx + '=>' + attributeName + '=1' + (newValue.length > 0 ? ',' + newValue : '');
+        } else {
+            element.removeAttribute(attributeName);
+        }
+        if (newValue !== '') {
+            element.setAttribute('data-responsive-attributes', newValue);
         } else {
             element.removeAttribute('data-responsive-attributes');
-            element.removeAttribute(attributeName);
         }
         if (typeof clientPackages !== 'undefined') {
             clientPackages.get('responsiveAttributes')
