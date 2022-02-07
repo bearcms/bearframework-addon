@@ -20,6 +20,7 @@ use BearCMS\Internal\Data\Settings as InternalDataSettings;
 use BearCMS\Internal\Pages as InternalPages;
 use BearCMS\Internal\Blog as InternalBlog;
 use IvoPetkov\HTML5DOMDocument;
+use BearCMS\Internal\Data\UploadsSize;
 
 /**
  * @internal
@@ -379,8 +380,19 @@ class ServerCommands
                 $validateKey($commandData['sourceKey']);
                 $validateKey($commandData['targetKey']);
                 $silent = isset($commandData['silent']) ? (int) $commandData['silent'] > 0 : false;
+                $updateUploadsSize = isset($commandData['updateUploadsSize']) ? (int) $commandData['updateUploadsSize'] > 0 : false;
+                $removeUploadsSize = isset($commandData['removeUploadsSize']) ? (int) $commandData['removeUploadsSize'] > 0 : false;
                 try {
                     $app->data->rename($commandData['sourceKey'], $commandData['targetKey']);
+                    if ($updateUploadsSize || $removeUploadsSize) {
+                        if ($updateUploadsSize) {
+                            $size = (int)UploadsSize::getItemSize($commandData['sourceKey']);
+                            if ($size > 0) {
+                                UploadsSize::add($commandData['targetKey'], $size);
+                            }
+                        }
+                        UploadsSize::remove($commandData['sourceKey']);
+                    }
                 } catch (\Exception $e) {
                     if (!$silent) {
                         throw $e;
@@ -394,9 +406,9 @@ class ServerCommands
                 try {
                     $app->data->duplicate($commandData['sourceKey'], $commandData['targetKey']);
                     if ($updateUploadsSize) {
-                        $size = (int)Internal\Data\UploadsSize::getItemSize($commandData['sourceKey']);
+                        $size = (int)UploadsSize::getItemSize($commandData['sourceKey']);
                         if ($size > 0) {
-                            Internal\Data\UploadsSize::add($commandData['targetKey'], $size);
+                            UploadsSize::add($commandData['targetKey'], $size);
                         }
                     }
                 } catch (\Exception $e) {
@@ -1066,7 +1078,7 @@ class ServerCommands
      */
     static function uploadsSizeAdd(array $data): void
     {
-        Internal\Data\UploadsSize::add($data['key'], (int) $data['size']);
+        UploadsSize::add($data['key'], (int) $data['size']);
     }
 
     /**
@@ -1076,7 +1088,7 @@ class ServerCommands
      */
     static function uploadsSizeRemove(array $data): void
     {
-        Internal\Data\UploadsSize::remove($data['key']);
+        UploadsSize::remove($data['key']);
     }
 
     /**
@@ -1086,7 +1098,7 @@ class ServerCommands
      */
     static function uploadsSizeGet(array $data): ?int
     {
-        return Internal\Data\UploadsSize::getItemSize($data['key']);
+        return UploadsSize::getItemSize($data['key']);
     }
 
     /**
