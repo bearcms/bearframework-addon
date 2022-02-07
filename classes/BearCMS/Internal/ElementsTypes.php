@@ -1095,5 +1095,60 @@ class ElementsTypes
                 ]);
             };
         }
+        if ($hasElements || Config::hasFeature('ELEMENTS_CANVAS')) {
+            self::add('canvas', [
+                'componentSrc' => 'bearcms-canvas-element',
+                'componentFilename' => self::$contextDir . '/components/bearcmsCanvasElement.php',
+                'fields' => [
+                    [
+                        'id' => 'value',
+                        'type' => 'textbox'
+                    ]
+                ],
+                'onDelete' => function ($data) use ($app) {
+                    if (isset($data['value'])) {
+                        $files = CanvasElementHelper::getFilesInValue((string)$data['value']);
+                        foreach ($files as $filename) {
+                            $filename = Internal2::$data2->fixFilename($filename);
+                            $dataKey = Internal\Data::filenameToDataKey($filename);
+                            if ($app->data->exists($dataKey)) {
+                                $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                            }
+                            UploadsSize::remove($dataKey);
+                        }
+                    }
+                },
+                'onDuplicate' => function ($data) {
+                    if (isset($data['value'])) {
+                        $value = (string)$data['value'];
+                        $files = CanvasElementHelper::getFilesInValue($value);
+                        $filesToUpdate = [];
+                        foreach ($files as $filename) {
+                            $oldFilename = Internal2::$data2->fixFilename($filename);
+                            $newFilename = Internal\Data::generateNewFilename($oldFilename);
+                            copy($oldFilename, $newFilename);
+                            $newFilenameDataKey = Internal\Data::filenameToDataKey($newFilename);
+                            UploadsSize::add($newFilenameDataKey, filesize($newFilename));
+                            $filesToUpdate[$filename] = 'data:' . $newFilenameDataKey;
+                        }
+                        if (!empty($filesToUpdate)) {
+                            $data['value'] = CanvasElementHelper::updateFilesInValue($value, $filesToUpdate);
+                        }
+                    }
+                    return $data;
+                },
+                'getUploadsSizeItems' => function ($data) {
+                    $result = [];
+                    if (isset($data['value'])) {
+                        $files = CanvasElementHelper::getFilesInValue((string)$data['value']);
+                        foreach ($files as $filename) {
+                            $filename = Internal2::$data2->fixFilename($filename);
+                            $result[] = Internal\Data::filenameToDataKey($filename);
+                        }
+                    }
+                    return $result;
+                }
+            ]);
+        }
     }
 }

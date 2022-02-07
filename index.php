@@ -23,6 +23,7 @@ $context->assets
 $app->assets
     ->addDir('appdata://bearcms/files/themeimage/')
     ->addDir('appdata://bearcms/files/elementstyleimage/')
+    ->addDir('appdata://bearcms/files/canvasstyleimage/')
     ->addDir('appdata://bearcms/files/blog/')
     ->addDir('appdata://bearcms/files/video/')
     ->addDir('appdata://bearcms/files/image/')
@@ -31,6 +32,7 @@ $app->assets
     ->addDir('appdata://bearcms/files/page/')
     ->addDir('appdata://.temp/bearcms/files/themeimage/')
     ->addDir('appdata://.temp/bearcms/files/elementstyleimage/')
+    ->addDir('appdata://.temp/bearcms/files/canvasstyleimage/')
     ->addDir('appdata://.temp/bearcms/themeexport/');
 
 $app->localization
