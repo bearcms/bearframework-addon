@@ -751,7 +751,7 @@ class Themes
                                     if (isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
                                         $selector = $outputDefinition[1];
                                         $selectorVariants = ['', '', ''];
-                                        if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign') {
+                                        if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign' || $optionType === 'cssOpacity') {
                                             $temp = isset($value[0]) ? json_decode($value, true) : [];
                                             if (is_array($temp)) {
                                                 if (isset($outputDefinition[2])) { // has selector value specified
