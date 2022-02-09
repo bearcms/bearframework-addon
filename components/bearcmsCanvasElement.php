@@ -42,7 +42,7 @@ $cssTypesOptionsDetails['image'] = [
 $cssTypesOptionsDetails['background'] = [
     "cssTypes" => ['cssBackground', 'cssBorder', 'cssRadius', 'cssShadow', 'cssSize'],
     "cssOutput" => [
-        ["rule", 'xxx', 'position:relative;'],
+        ["rule", 'xxx', 'position:relative;overflow:hidden;'],
         ["selector", 'xxx']
     ]
 ];
