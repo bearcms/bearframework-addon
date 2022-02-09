@@ -19,21 +19,21 @@ $value = trim((string)$component->value);
 
 $cssTypesOptionsDetails = [];
 $cssTypesOptionsDetails['text'] = [
-    "cssTypes" => ['cssText', 'cssTextShadow', 'cssBackground', 'cssPadding', 'cssBorder', 'cssRadius', 'cssShadow', 'cssPosition', 'cssSize'],
+    "cssTypes" => ['cssText', 'cssTextShadow', 'cssBackground', 'cssPadding', 'cssBorder', 'cssRadius', 'cssShadow', 'cssPosition', 'cssSize', 'cssOpacity'],
     "cssOutput" => [
         ["rule", 'xxx', 'position:absolute;'],
         ["selector", 'xxx']
     ]
 ];
 $cssTypesOptionsDetails['block'] = [
-    "cssTypes" => ['cssBackground', 'cssBorder', 'cssRadius', 'cssShadow', 'cssPosition', 'cssSize'],
+    "cssTypes" => ['cssBackground', 'cssBorder', 'cssRadius', 'cssShadow', 'cssPosition', 'cssSize', 'cssOpacity'],
     "cssOutput" => [
         ["rule", 'xxx', 'position:absolute;'],
         ["selector", 'xxx']
     ]
 ];
 $cssTypesOptionsDetails['image'] = [
-    "cssTypes" => ['cssBorder', 'cssRadius', 'cssShadow', 'cssPosition', 'cssSize'],
+    "cssTypes" => ['cssBorder', 'cssRadius', 'cssShadow', 'cssPosition', 'cssSize', 'cssOpacity'],
     "cssOutput" => [
         ["rule", 'xxx', 'position:absolute;'],
         ["selector", 'xxx']
