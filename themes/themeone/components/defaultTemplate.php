@@ -271,6 +271,9 @@ echo '.bearcms-tc .bearcms-store-items-element-item-price-original{' . $elementT
 echo '.bearcms-tc .bearcms-store-item-page-images-image{border-radius:' . $borderRadius . ';}';
 echo '.bearcms-tc .bearcms-store-item-page-name{' . $elementHeadingLarge . '}';
 echo '.bearcms-tc .bearcms-store-item-page-description{' . $elementText . '}';
+echo '.bearcms-tc .bearcms-store-item-page-option-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
+echo '.bearcms-tc .bearcms-store-item-page-option-label{' . $elementText . '}';
+echo '.bearcms-tc .bearcms-store-item-page-option-select{' . $elementInput . 'width:auto;}';
 echo '.bearcms-tc .bearcms-store-item-page-price-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
 echo '.bearcms-tc .bearcms-store-item-page-price{' . $elementText . '}';
 echo '.bearcms-tc .bearcms-store-item-page-price-original{' . $elementText . '}';
