@@ -21,8 +21,8 @@ use BearCMS\Internal2;
 class Themes
 {
 
-    static $elementsOptions = [];
-    static $pagesOptions = [];
+    static $elementsOptions = []; // [type=>callback or type=>[version,callback]]
+    static $pagesOptions = []; // [type=>callback or type=>[version,callback]]
     static $registrations = [];
     static $cache = [];
 
@@ -336,7 +336,15 @@ class Themes
             $app = App::get();
             $version = self::getVersion($id);
             $useCache = $version !== null;
-            $envKey = md5(md5(serialize(array_keys(self::$elementsOptions))) . md5(serialize(array_keys(self::$pagesOptions))) . md5((string)$version) . md5('v8'));
+            $elementsOptionsEnvKeyData = [];
+            foreach (self::$elementsOptions as $key => $value) {
+                $elementsOptionsEnvKeyData[] = $key . (is_array($value) ? '$' . $value[0] : '');
+            }
+            $pagesOptionsEnvKeyData = [];
+            foreach (self::$pagesOptions as $key => $value) {
+                $pagesOptionsEnvKeyData[] = $key . (is_array($value) ? '$' . $value[0] : '');
+            }
+            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v8'));
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID);

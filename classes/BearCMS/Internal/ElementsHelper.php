@@ -583,7 +583,11 @@ class ElementsHelper
                     $themeOptionsSelectors = Internal\Themes::getElementsOptionsSelectors($themeID, $elementType);
                 }
                 $options = new \BearCMS\Themes\Theme\Options();
-                call_user_func(Internal\Themes::$elementsOptions[$elementType], $options, 'ElementStyle', '#' . $htmlElementID . '.bearcms-elements-element-style-' . md5($elementID), Internal\Themes::OPTIONS_CONTEXT_ELEMENT);
+                $callback = Internal\Themes::$elementsOptions[$elementType];
+                if (is_array($callback)) {
+                    $callback = $callback[1];
+                }
+                call_user_func($callback, $options, 'ElementStyle', '#' . $htmlElementID . '.bearcms-elements-element-style-' . md5($elementID), Internal\Themes::OPTIONS_CONTEXT_ELEMENT);
                 $values = [];
                 foreach ($elementStyle as $name => $value) {
                     $values['ElementStyle' . $name] = $value;
@@ -703,7 +707,11 @@ class ElementsHelper
     {
         if (isset(Internal\Themes::$elementsOptions[$elementType])) {
             $options = new \BearCMS\Themes\Theme\Options();
-            call_user_func(Internal\Themes::$elementsOptions[$elementType], $options, '', $cssSelector, Internal\Themes::OPTIONS_CONTEXT_ELEMENT);
+            $callback = Internal\Themes::$elementsOptions[$elementType];
+            if (is_array($callback)) {
+                $callback = $callback[1];
+            }
+            call_user_func($callback, $options, '', $cssSelector, Internal\Themes::OPTIONS_CONTEXT_ELEMENT);
             $options->setValues($elementStyleData);
             $htmlData = Internal\Themes::getOptionsHTMLData($options->getList());
             $html = Internal\Themes::processOptionsHTMLData($htmlData);

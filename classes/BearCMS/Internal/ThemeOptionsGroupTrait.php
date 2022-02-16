@@ -95,6 +95,9 @@ trait ThemeOptionsGroupTrait
             if ($type === 'columns' || $type === 'floatingBox' || $type === 'flexibleBox') {
                 continue;
             }
+            if (is_array($callable)) {
+                $callable = $callable[1];
+            }
             call_user_func($callable, $this, $idPrefix, $parentSelector, Internal\Themes::OPTIONS_CONTEXT_THEME);
         }
         return $this;
@@ -118,6 +121,9 @@ trait ThemeOptionsGroupTrait
     public function addPages(): self
     {
         foreach (Internal\Themes::$pagesOptions as $callable) {
+            if (is_array($callable)) {
+                $callable = $callable[1];
+            }
             call_user_func($callable, $this);
         }
         return $this;
