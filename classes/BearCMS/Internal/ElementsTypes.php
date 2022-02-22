@@ -256,6 +256,10 @@ class ElementsTypes
                         'type' => 'textbox'
                     ],
                     [
+                        'id' => 'alt',
+                        'type' => 'textbox'
+                    ],
+                    [
                         'id' => 'onClick',
                         'type' => 'textbox'
                     ],
@@ -404,7 +408,13 @@ class ElementsTypes
                         $innerHTML = '';
                         foreach ($data['files'] as $file) {
                             if (isset($file['filename'])) {
-                                $innerHTML .= '<file filename="' . htmlentities($file['filename']) . '" fileWidth="' . (isset($file['width']) ? htmlentities($file['width']) : null) . '" fileHeight="' . (isset($file['height']) ? htmlentities($file['height']) : null) . '"/>';
+                                $innerHTML .= '<file '
+                                    . 'filename="' . htmlentities($file['filename']) . '" '
+                                    . 'fileWidth="' . (isset($file['width']) ? htmlentities($file['width']) : null) . '" '
+                                    . 'fileHeight="' . (isset($file['height']) ? htmlentities($file['height']) : null) . '"'
+                                    . 'title="' . (isset($file['title']) ? htmlentities($file['title']) : null) . '"'
+                                    . 'alt="' . (isset($file['alt']) ? htmlentities($file['alt']) : null) . '"'
+                                    . '/>';
                             }
                         }
                         $component->innerHTML = $innerHTML;

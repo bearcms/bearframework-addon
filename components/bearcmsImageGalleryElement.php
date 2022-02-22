@@ -92,7 +92,10 @@ if ($isFullHtmlOutputType) {
                     . ' maxImageWidth="' . htmlentities($maxImageWidth) . '"'
                     . ' maxImageHeight="' . htmlentities($maxImageHeight) . '"'
                     . ' fileWidth="' . htmlentities($file->getAttribute('filewidth')) . '"'
-                    . ' fileHeight="' . htmlentities($file->getAttribute('fileheight')) . '"/>';
+                    . ' fileHeight="' . htmlentities($file->getAttribute('fileheight')) . '"'
+                    . ' title="' . htmlentities($file->getAttribute('title')) . '"'
+                    . ' alt="' . htmlentities($file->getAttribute('alt')) . '"'
+                    . '/>';
             }
         }
     }
