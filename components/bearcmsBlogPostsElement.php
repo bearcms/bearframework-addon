@@ -64,10 +64,10 @@ if ($limit < 1) {
     $limit = 5;
 }
 
-$showSummaryReadMoreButtonAttributeValue = $component->showSummaryReadMoreButton;
+$showSummaryReadMoreButtonAttributeValue = (string)$component->showSummaryReadMoreButton;
 $showSummaryReadMoreButton = $type === 'summary' && ($showSummaryReadMoreButtonAttributeValue === 'true' || $showSummaryReadMoreButtonAttributeValue === '');
 
-$showLoadMoreButtonAttributeValue = $component->showLoadMoreButton;
+$showLoadMoreButtonAttributeValue = (string)$component->showLoadMoreButton;
 $showLoadMoreButton = $showLoadMoreButtonAttributeValue === 'true' || $showLoadMoreButtonAttributeValue === '';
 
 $content = '<div' . ($isFullHtmlOutputType ? ' class="bearcms-blog-posts-element"' : '') . '>';
