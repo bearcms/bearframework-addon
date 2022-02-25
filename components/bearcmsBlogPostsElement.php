@@ -64,6 +64,12 @@ if ($limit < 1) {
     $limit = 5;
 }
 
+$showSummaryReadMoreButtonAttributeValue = $component->showSummaryReadMoreButton;
+$showSummaryReadMoreButton = $type === 'summary' && ($showSummaryReadMoreButtonAttributeValue === 'true' || $showSummaryReadMoreButtonAttributeValue === '');
+
+$showLoadMoreButtonAttributeValue = $component->showLoadMoreButton;
+$showLoadMoreButton = $showLoadMoreButtonAttributeValue === 'true' || $showLoadMoreButtonAttributeValue === '';
+
 $content = '<div' . ($isFullHtmlOutputType ? ' class="bearcms-blog-posts-element"' : '') . '>';
 $content .= '<div' . ($isFullHtmlOutputType ? ' class="bearcms-blog-posts-element-posts"' : '') . '>';
 if ($list->count() > 0) {
@@ -138,7 +144,7 @@ if ($list->count() > 0) {
                 } elseif ($hasText) {
                     $content .= '<component output-type="' . $outputType . '" src="bearcms-text-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($textElementData)) . '"/>';
                 }
-                if ($hasImage || $hasText) {
+                if ($showSummaryReadMoreButton && ($hasImage || $hasText)) {
                     $readMoreText = '<a href="' . htmlentities($url) . '">' . __('bearcms.blogPosts.Read more') . '</a>';
                     $content .= '<component output-type="' . $outputType . '" src="bearcms-text-element" text="' . htmlentities($readMoreText) . '"/>';
                 }
@@ -153,7 +159,7 @@ if ($list->count() > 0) {
             break;
         }
     }
-    if ($isFullHtmlOutputType && $list->count() > $limit) {
+    if ($showLoadMoreButton && $isFullHtmlOutputType && $list->count() > $limit) {
         $content .= '<div class="bearcms-blog-posts-element-show-more-button-container">';
         $component->limit = (string) ($limit + 10);
         $loadMoreData = [

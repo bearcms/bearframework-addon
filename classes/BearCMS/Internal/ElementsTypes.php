@@ -754,8 +754,16 @@ class ElementsTypes
                         'type' => 'checkbox'
                     ],
                     [
+                        'id' => 'showSummaryReadMoreButton',
+                        'type' => 'checkbox'
+                    ],
+                    [
                         'id' => 'limit',
                         'type' => 'number'
+                    ],
+                    [
+                        'id' => 'showLoadMoreButton',
+                        'type' => 'checkbox'
                     ]
                 ]
             ]);
