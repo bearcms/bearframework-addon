@@ -7,7 +7,7 @@ return [
     'bearcms.comments.Your comment cannot be empty!' => 'Поле "Комментарий" не может быть пустым!',
     'bearcms.comments.Show more' => 'Показать больше',
     'bearcms.comments.pending approval' => 'ожидает одобрения',
-    'bearcms.blogPosts.Show more posts' => 'Просмотреть больше статей',
+    'bearcms.blogPosts.Show more posts' => 'Просмотреть больше',
     'bearcms.blogPosts.Read more' => 'Подробнее',
     'bearcms.blogPost.draft' => 'проект',
     'bearcms.blogPost.private' => 'частный',

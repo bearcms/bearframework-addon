@@ -7,7 +7,7 @@ return [
     'bearcms.comments.Your comment cannot be empty!' => 'Your comment cannot be empty!',
     'bearcms.comments.Show more' => 'Show more',
     'bearcms.comments.pending approval' => 'pending approval',
-    'bearcms.blogPosts.Show more posts' => 'Show more posts',
+    'bearcms.blogPosts.Show more posts' => 'Show more',
     'bearcms.blogPosts.Read more' => 'Read more',
     'bearcms.blogPost.draft' => 'draft',
     'bearcms.blogPost.private' => 'private',
