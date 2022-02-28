@@ -304,6 +304,15 @@ class BearCMS
                 ]);
         }
 
+        // Register a redirects handler
+        $this->app->routes
+            ->add('*', [
+                $disabledCheck,
+                function (App\Request $request) {
+                    return Internal\Settings::handleRedirectRequest($this->app, $this, $request);
+                }
+            ]);
+
         // Sitemap for pages and blog posts
         if ($hasPages || $hasBlog) {
             Sitemap::addSource(function (\BearCMS\Internal\Sitemap\Sitemap $sitemap) use ($hasPages, $hasBlog) {

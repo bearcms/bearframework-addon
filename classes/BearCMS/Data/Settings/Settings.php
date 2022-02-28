@@ -30,6 +30,7 @@ use BearCMS\Internal2;
  * @property string|null $rssType
  * @property array $translations
  * @property string|null $globalHTML
+ * @property array $redirects
  */
 class Settings extends \BearFramework\Models\Model
 {
@@ -114,6 +115,9 @@ class Settings extends \BearFramework\Models\Model
             ])
             ->defineProperty('globalHTML', [
                 'type' => '?string'
+            ])
+            ->defineProperty('redirects', [
+                'type' => 'array',
             ]);
     }
 

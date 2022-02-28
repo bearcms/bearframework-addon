@@ -12,7 +12,6 @@ namespace BearCMS\Internal;
 use BearFramework\App;
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
-use BearCMS\Internal2;
 use IvoPetkov\HTML5DOMDocument;
 
 /**

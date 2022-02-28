@@ -29,7 +29,6 @@ class Pages
      */
     public static function handlePageRequest(\BearCMS $bearCMS, App\Request $request): ?App\Response
     {
-        $app = App::get();
         $path = $request->path->get();
         if ($path === '/') {
             if (Config::$autoCreateHomePage) {
