@@ -297,12 +297,16 @@ class Controller
      */
     static function handleRobots(): \BearFramework\App\Response
     {
+        $disallow = [];
+        foreach (Config::$robotsTxtDisallow as $path) {
+            $disallow[] = 'Disallow: ' . $path;
+        }
         $app = App::get();
         $response = new App\Response('User-agent: *
-Disallow:
-
+' . (!empty($disallow) ? implode("\n", $disallow) : 'Disallow:') . '
 Sitemap: ' . $app->request->base . '/sitemap.xml');
         $response->headers->set($response->headers->make('Content-Type', 'text/plain'));
+        $response->headers->set($response->headers->make('Cache-Control', 'public, max-age=43200'));
         return $response;
     }
 

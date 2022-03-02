@@ -38,6 +38,8 @@ class Config
 
     static private $data = [];
 
+    static $robotsTxtDisallow = ['/-client-packages', '/-server-request'];
+
     /**
      * 
      * @param array $data
