@@ -29,16 +29,21 @@ class Settings
     {
         $settings = $bearCMS->data->settings->get();
         $path = strtolower($request->path->get());
-        $redirects = $settings->redirects;
-        $location = null;
-        if (isset($redirects[$path])) {
-            $location = $redirects[$path];
-        } elseif (isset($redirects[$path . '/'])) {
-            $location = $redirects[$path . '/'];
+        $testURL = $request->query->getValue('test-url-redirect');
+        if ($testURL !== null && $bearCMS->currentUser->exists()) {
+            $location = $testURL;
+        } else {
+            $redirects = $settings->redirects;
+            $location = null;
+            if (isset($redirects[$path])) {
+                $location = $redirects[$path];
+            } elseif (isset($redirects[$path . '/'])) {
+                $location = $redirects[$path . '/'];
+            }
         }
         if ($location !== null) {
-            $location = '/' . ltrim($location, '/');
             if (strpos($location, '://') === false) {
+                $location = '/' . ltrim($location, '/');
                 $location = $app->urls->get($location);
             }
             return new App\Response\PermanentRedirect($location);
