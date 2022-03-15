@@ -682,19 +682,27 @@ class BearCMS
         if (empty($settings->allowSearchEngines)) {
             $html .= '<meta name="robots" content="noindex">';
         }
+        $isFirstLanguage = true;
+        foreach ($settings->languages as $otherLanguage) {
+            if ($otherLanguage !== $language) {
+                $otherLanguageURL = $this->app->urls->get($isFirstLanguage ? '/' : '/' . $otherLanguage . '/');
+                $html .= '<link rel="alternate" hreflang="' . htmlentities($otherLanguage) . '" href="' . htmlentities($otherLanguageURL) . '" />';
+            }
+            $isFirstLanguage = false;
+        }
         $url = rtrim($this->app->request->getURL(), '/') . '/';
         $url = explode('?', $url)[0]; // remove the query string
         $html .= '<link rel="canonical" href="' . htmlentities($url) . '"/>';
         if ($settings->enableRSS) {
-            $languages = $settings->languages;
-            if (empty($languages)) {
-                $languages = [''];
+            $rssKeys = $settings->languages;
+            if (empty($rssKeys)) {
+                $rssKeys = [''];
             } else {
-                $languages[0] = '';
+                $rssKeys[0] = '';
             }
-            foreach ($languages as $language) {
-                $rssTitle = (string)$settings->getTitle($language);
-                $rssURL = $this->app->urls->get('/rss' . ($language === '' ? '' : '.' . $language) . '.xml');
+            foreach ($rssKeys as $rssKey) {
+                $rssTitle = (string)$settings->getTitle($rssKey);
+                $rssURL = $this->app->urls->get('/rss' . ($rssKey === '' ? '' : '.' . $rssKey) . '.xml');
                 $html .= '<link rel="alternate" type="application/rss+xml" title="' . htmlentities(trim($rssTitle)) . '" href="' . htmlentities($rssURL) . '" />';
             }
         }
