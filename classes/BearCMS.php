@@ -21,6 +21,7 @@ use BearCMS\Internal\ElementsTypes;
 use BearCMS\Internal\Pages;
 use BearCMS\Internal\Sitemap;
 use BearCMS\Internal\CommentsLocations;
+use BearCMS\Internal\TextUtilities;
 
 /**
  * 
@@ -624,34 +625,20 @@ class BearCMS
             }
         }
 
-        $strlen = function (string $string) {
-            return function_exists('mb_strlen') ? mb_strlen($string) : strlen($string);
-        };
-
-        $substr = function (string $string, int $start, int $length = null) {
-            return function_exists('mb_substr') ? mb_substr($string, $start, $length) : substr($string, $start, $length);
-        };
-
-        $strtolower = function (string $string) {
-            return function_exists('mb_strtolower') ? mb_strtolower($string) : strtolower($string);
-        };
-
         $metaElements = $document->querySelectorAll('meta');
         $generateDescriptionMetaTag = true;
         $generateKeywordsMetaTag = true;
         foreach ($metaElements as $metaElement) {
             $metaElementName = $metaElement->getAttribute('name');
-            if ($metaElementName === 'description' && $strlen($metaElement->getAttribute('content')) > 0) {
+            if ($metaElementName === 'description' && strlen($metaElement->getAttribute('content')) > 0) {
                 $generateDescriptionMetaTag = false;
-            } elseif ($metaElementName === 'keywords' && $strlen($metaElement->getAttribute('content')) > 0) {
+            } elseif ($metaElementName === 'keywords' && strlen($metaElement->getAttribute('content')) > 0) {
                 $generateKeywordsMetaTag = false;
             }
         }
-
         if ($generateDescriptionMetaTag || $generateKeywordsMetaTag) {
             $elements = $document->querySelectorAll('h1.bearcms-heading-element-large,h2.bearcms-heading-element-medium,h3.bearcms-heading-element-small,div.bearcms-text-element');
             if ($elements->length > 0) {
-
                 if ($generateDescriptionMetaTag) {
                     $descriptionContent = '';
                 }
@@ -670,39 +657,12 @@ class BearCMS
                         $keywordsContent .= ' ' . $content;
                     }
                 }
-
-                $prepare = function (string $content) {
-                    $content = preg_replace('/<script.*?<\/script>/s', '', $content);
-                    $content = preg_replace('/<.*?>/', ' $0 ', $content);
-                    $content = preg_replace('/\s/u', ' ', $content);
-                    $content = strip_tags($content);
-                    while (strpos($content, '  ') !== false) {
-                        $content = str_replace('  ', ' ', $content);
-                    }
-                    $content = html_entity_decode(trim($content));
-                    return trim($content);
-                };
-
                 if ($generateDescriptionMetaTag) {
-                    $descriptionContent = $prepare($descriptionContent);
-                    $html .= '<meta name="description" content="' . htmlentities($substr($descriptionContent, 0, 200) . (strlen($descriptionContent) > 200 ? ' ...' : '')) . '"/>';
+                    $html .= '<meta name="description" content="' . htmlentities(TextUtilities::cropText(TextUtilities::htmlToText($descriptionContent), 200)) . '"/>';
                 }
                 if ($generateKeywordsMetaTag) {
-                    $wordsText = preg_replace("/[^[:alnum:][:space:]]/u", '', $strtolower($prepare($keywordsContent)));
-                    $words = explode(' ', $wordsText);
-                    $wordsCount = array_count_values($words);
-                    arsort($wordsCount);
-                    $selectedWords = [];
-                    foreach ($wordsCount as $word => $wordCount) {
-                        $wordLength = $strlen($word);
-                        if ($wordLength >= 3 && !is_numeric($word)) {
-                            $selectedWords[] = $word;
-                            if (sizeof($selectedWords) === 10) {
-                                break;
-                            }
-                        }
-                    }
-                    $html .= '<meta name="keywords" content="' . htmlentities(implode(', ', $selectedWords)) . '"/>';
+                    $keywords = TextUtilities::getKeywords(TextUtilities::htmlToText($keywordsContent));
+                    $html .= '<meta name="keywords" content="' . htmlentities(implode(', ', $keywords)) . '"/>';
                 }
             }
         }
