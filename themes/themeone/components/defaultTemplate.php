@@ -38,11 +38,12 @@ $logoImage = (string)$customizations->getValue('logoImage');
 $logoImageWidth = (string)$customizations->getValue('logoImageWidth');
 $logoImageEffect = (string)$customizations->getValue('logoImageEffect');
 
-$hasSearchButtonOptionSupport = $app->bearCMS->addons->exists('bearcms/search-box-element-addon');
-$hasStoreCartButtonOptionSupport = $app->bearCMS->addons->exists('bearcms/store-addon');
+$hasSearchSupport = $app->bearCMS->addons->exists('bearcms/search-box-element-addon');
+$hasStoreSupport = $app->bearCMS->addons->exists('bearcms/store-addon');
+$hasFormsSupport = $app->bearCMS->addons->exists('bearcms/forms-addon');
 
-$showSearchButton = $hasSearchButtonOptionSupport && $customizations->getValue('searchButtonVisibility') === '1';
-$showStoreCartButton = $hasStoreCartButtonOptionSupport && $customizations->getValue('storeCartButtonVisibility') === '1';
+$showSearchButton = $hasSearchSupport && $customizations->getValue('searchButtonVisibility') === '1';
+$showStoreCartButton = $hasStoreSupport && $customizations->getValue('storeCartButtonVisibility') === '1';
 
 $hasLogoImage = isset($logoImage[0]);
 if ($hasLogoImage) {
@@ -256,31 +257,76 @@ echo '.bearcms-tc .bearcms-separator-element-large{' . $elementSeparator . 'widt
 echo '.bearcms-tc .bearcms-separator-element-medium{' . $elementSeparator . 'width:50%;}';
 echo '.bearcms-tc .bearcms-separator-element-small{' . $elementSeparator . 'width:30%;}';
 
-echo '.bearcms-tc .bearcms-search-box-element-input{' . $elementInput . '}';
-echo '.bearcms-tc .bearcms-search-box-element-button{' . $elementButton . 'width:' . $buttonHeight . ';border:0px;border-left:1px solid var(--bearcms-template-context-text-color);border-top-left-radius:0;border-bottom-left-radius:0;background-size:auto ' . $buttonIconSize . ';background-position:center center;background-repeat:no-repeat;}';
-echo '.bearcms-tc .bearcms-search-box-element-button:hover{' . $elementButtonOver . '}';
-echo '.bearcms-tc .bearcms-search-box-element-button:active{' . $elementButtonActive . '}';
+if ($hasSearchSupport) {
+    echo '.bearcms-tc .bearcms-search-box-element-input{' . $elementInput . '}';
+    echo '.bearcms-tc .bearcms-search-box-element-button{' . $elementButton . 'width:' . $buttonHeight . ';border:0px;border-left:1px solid var(--bearcms-template-context-text-color);border-top-left-radius:0;border-bottom-left-radius:0;background-size:auto ' . $buttonIconSize . ';background-position:center center;background-repeat:no-repeat;}';
+    echo '.bearcms-tc .bearcms-search-box-element-button:hover{' . $elementButtonOver . '}';
+    echo '.bearcms-tc .bearcms-search-box-element-button:active{' . $elementButtonActive . '}';
+}
 
-echo '.bearcms-tc .bearcms-store-items-element-item-image{border-radius:' . $borderRadius . ';}';
-echo '.bearcms-tc .bearcms-store-items-element-item-name{' . $elementHeadingMedium . 'color:var(--bearcms-template-context-text-color);text-decoration:underline;}';
-echo '.bearcms-tc .bearcms-store-items-element-item-description{' . $elementText . '}';
-echo '.bearcms-tc .bearcms-store-items-element-item-price-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
-echo '.bearcms-tc .bearcms-store-items-element-item-price{' . $elementText . '}';
-echo '.bearcms-tc .bearcms-store-items-element-item-price-original{' . $elementText . '}';
+if ($hasStoreSupport) {
+    echo '.bearcms-tc .bearcms-store-items-element-item-image{border-radius:' . $borderRadius . ';}';
+    echo '.bearcms-tc .bearcms-store-items-element-item-name{' . $elementHeadingMedium . 'color:var(--bearcms-template-context-text-color);text-decoration:underline;}';
+    echo '.bearcms-tc .bearcms-store-items-element-item-description{' . $elementText . '}';
+    echo '.bearcms-tc .bearcms-store-items-element-item-price-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
+    echo '.bearcms-tc .bearcms-store-items-element-item-price{' . $elementText . '}';
+    echo '.bearcms-tc .bearcms-store-items-element-item-price-original{' . $elementText . '}';
 
-echo '.bearcms-tc .bearcms-store-item-page-images-image{border-radius:' . $borderRadius . ';}';
-echo '.bearcms-tc .bearcms-store-item-page-name{' . $elementHeadingLarge . '}';
-echo '.bearcms-tc .bearcms-store-item-page-description{' . $elementText . '}';
-echo '.bearcms-tc .bearcms-store-item-page-option-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
-echo '.bearcms-tc .bearcms-store-item-page-option-label{' . $elementText . '}';
-echo '.bearcms-tc .bearcms-store-item-page-option-select{' . $elementInput . 'width:auto;}';
-echo '.bearcms-tc .bearcms-store-item-page-price-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
-echo '.bearcms-tc .bearcms-store-item-page-price{' . $elementText . '}';
-echo '.bearcms-tc .bearcms-store-item-page-price-original{' . $elementText . '}';
-echo '.bearcms-tc .bearcms-store-item-page-buy-button-container{padding-top:calc(' . $elementsSpacing . ' / 2);font-size:0;}';
-echo '.bearcms-tc .bearcms-store-item-page-buy-button{' . $elementButton . '}';
-echo '.bearcms-tc .bearcms-store-item-page-buy-button:hover{' . $elementButtonOver . '}';
-echo '.bearcms-tc .bearcms-store-item-page-buy-button:active{' . $elementButtonActive . '}';
+    echo '.bearcms-tc .bearcms-store-item-page-images-image{border-radius:' . $borderRadius . ';}';
+    echo '.bearcms-tc .bearcms-store-item-page-name{' . $elementHeadingLarge . '}';
+    echo '.bearcms-tc .bearcms-store-item-page-description{' . $elementText . '}';
+    echo '.bearcms-tc .bearcms-store-item-page-option-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
+    echo '.bearcms-tc .bearcms-store-item-page-option-label{' . $elementText . '}';
+    echo '.bearcms-tc .bearcms-store-item-page-option-select{' . $elementInput . 'width:auto;}';
+    echo '.bearcms-tc .bearcms-store-item-page-price-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
+    echo '.bearcms-tc .bearcms-store-item-page-price{' . $elementText . '}';
+    echo '.bearcms-tc .bearcms-store-item-page-price-original{' . $elementText . '}';
+    echo '.bearcms-tc .bearcms-store-item-page-buy-button-container{padding-top:calc(' . $elementsSpacing . ' / 2);font-size:0;}';
+    echo '.bearcms-tc .bearcms-store-item-page-buy-button{' . $elementButton . '}';
+    echo '.bearcms-tc .bearcms-store-item-page-buy-button:hover{' . $elementButtonOver . '}';
+    echo '.bearcms-tc .bearcms-store-item-page-buy-button:active{' . $elementButtonActive . '}';
+}
+
+if ($hasFormsSupport) {
+    $formFieldListOptionButton = $elementInput . 'width:40px;height:40px;background-position:center center;background-repeat:no-repeat;background-attachment:scroll;background-size:cover;';
+    $formFieldListOptionText = $elementTextStyle . 'padding-left:15px;padding-top:8px;';
+    $formFieldListOptionTextbox = $elementInput . 'height:40px;line-height:38px;width:250px;margin-left:10px;';
+    $formFieldListOptionContainer = 'padding-bottom:5px;';
+    $formFieldHint = $elementTextStyle . 'font-size:calc(var(--bearcms-template-text-font-size) * 0.8);';
+    $formFieldContainer = 'padding-bottom:15px;';
+
+    echo '.bearcms-tc .bearcms-form-element-field-text-container [data-form-element-type="textbox"] [data-form-element-component="input"]{' . $elementInput . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-text-container [data-form-element-type="textbox"] [data-form-element-component="label"]{' . $elementLabel . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-text-container [data-form-element-type="textbox"] [data-form-element-component="hint"]{' . $formFieldHint . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-text-container{' . $formFieldContainer . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-textarea-container [data-form-element-type="textarea"] [data-form-element-component="textarea"]{' . $elementInput . $elementTextarea . 'height:calc(var(--bearcms-template-text-font-size) * 8);}';
+    echo '.bearcms-tc .bearcms-form-element-field-textarea-container [data-form-element-type="textarea"] [data-form-element-component="label"]{' . $elementLabel . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-textarea-container [data-form-element-type="textarea"] [data-form-element-component="hint"]{' . $formFieldHint . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-textarea-container{' . $formFieldContainer . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="label"]{' . $elementLabel . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="hint"]{' . $formFieldHint . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="radio-list-option-input"]{' . $formFieldListOptionButton . 'border-top-left-radius:50%;border-top-right-radius:50%;border-bottom-left-radius:50%;border-bottom-right-radius:50%;background-size:25px 25px;}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="radio-list-option-label"]{' . $formFieldListOptionText . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="radio-list-option-textbox"]{' . $formFieldListOptionTextbox . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="radio-list-option"]{padding:0;}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="radio-list-option"]:not(:last-child){' . $formFieldListOptionContainer . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container{' . $formFieldContainer . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="label"]{' . $elementLabel . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="hint"]{' . $formFieldHint . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="checkbox-list-option-input"]{' . $formFieldListOptionButton . 'background-size:16px 16px;}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="checkbox-list-option-label"]{' . $formFieldListOptionText . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="checkbox-list-option-textbox"]{' . $formFieldListOptionTextbox . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="checkbox-list-option"]{padding:0;}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="checkbox-list-option"]:not(:last-child){' . $formFieldListOptionContainer . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container{' . $formFieldContainer . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-closed-list-container [data-form-element-type="select"] [data-form-element-component="select"]{' . $elementInput . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-closed-list-container [data-form-element-type="select"] [data-form-element-component="label"]{' . $elementLabel . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-closed-list-container [data-form-element-type="select"] [data-form-element-component="hint"]{' . $formFieldHint . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-closed-list-container{' . $formFieldContainer . '}';
+    echo '.bearcms-tc .bearcms-form-element-submit-button-container [data-form-element-type="submit-button"] [data-form-element-component="button"]{' . $elementButton . '}';
+    echo '.bearcms-tc .bearcms-form-element-submit-button-container [data-form-element-type="submit-button"] [data-form-element-component="button"]:hover{' . $elementButtonOver . '}';
+    echo '.bearcms-tc .bearcms-form-element-submit-button-container [data-form-element-type="submit-button"] [data-form-element-component="button"]:active{' . $elementButtonActive . '}';
+}
 
 // Temp (remove in the future)
 echo '.bearcms-tc .allebg-contact-form-element-email-label{' . $elementLabel . '}';
