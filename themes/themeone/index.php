@@ -27,7 +27,7 @@ $app->bearCMS->themes
         $context->assets
             ->addDir('themes/themeone/assets');
 
-        $theme->version = '1.11';
+        $theme->version = '1.12';
 
         $theme->canStyleElements = true;
         $theme->useDefaultElementsCombinations = true;

@@ -69,7 +69,7 @@ $elementsSpacing = '20px';
 $windowPadding = '20px'; // same as $elementsSpacing
 
 $buttonHeight = 'calc(var(--bearcms-template-text-font-size) * 3)';
-$buttonPadding = 'calc(var(--bearcms-template-text-font-size) * 1.1)';
+$buttonPadding = 'var(--bearcms-template-text-font-size)';
 $buttonPaddingHalf = 'calc(var(--bearcms-template-text-font-size) * 0.55)';
 $buttonIconSize = 'calc(var(--bearcms-template-text-font-size) * 4/3)';
 
@@ -92,6 +92,7 @@ if ($hasLanguagesPicker) {
     echo '.bearcms-template-languages *{' . $textStyle . 'display:inline-block;box-sizing:border-box;text-align:center;font-size:calc(var(--bearcms-template-text-font-size) * 0.8);text-decoration:none;line-height:calc(var(--bearcms-template-text-font-size) * 2);padding:0 calc(var(--bearcms-template-text-font-size) * 0.6);min-width:calc(var(--bearcms-template-text-font-size) * 2);height:calc(var(--bearcms-template-text-font-size) * 2);border-bottom-left-radius:' . $borderRadius . ';border-bottom-right-radius:' . $borderRadius . ';}';
     echo '.bearcms-template-languages span{background-color:rgba(0,0,0,0.04);cursor:default;}';
     echo '.bearcms-template-languages a:hover{background-color:rgba(0,0,0,0.08);}';
+    echo '.bearcms-template-languages a:focus{background-color:rgba(0,0,0,0.12);}';
     echo '.bearcms-template-languages a:active{background-color:rgba(0,0,0,0.12);}';
 }
 
@@ -116,9 +117,11 @@ if ($hasNavigation) {
     echo '.bearcms-template-navigation :not(.bearcms-navigation-element-item-children)>.bearcms-navigation-element-item:first-child{border-top-left-radius:' . $borderRadius . ';border-bottom-left-radius:' . $borderRadius . ';}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item a{' . $textStyle . 'padding:0 ' . $buttonPadding . ';line-height:' . $buttonHeight . ';height:' . $buttonHeight . ';min-width:' . $buttonHeight . ';text-decoration:none;display:inline-block;max-width:100%;text-overflow:ellipsis;overflow:hidden;box-sizing:border-box;display:block;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item:hover{background-color:rgba(0,0,0,0.04);}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item:focus{background-color:rgba(0,0,0,0.08);}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item:active{background-color:rgba(0,0,0,0.08);}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item-selected{background-color:rgba(0,0,0,0.04);}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item-selected:hover{background-color:rgba(0,0,0,0.04);}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-selected:focus{background-color:rgba(0,0,0,0.08);}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item-selected:active{background-color:rgba(0,0,0,0.08);}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item-children{text-align:left;background-color:rgba(0,0,0,0);padding-top:10px;padding-left:5px;padding-right:5px;padding-bottom:5px;max-width:calc(100vw - 20px);box-sizing:border-box;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item-children>.bearcms-navigation-element-item{background-color:#222;display:block;}';
@@ -126,6 +129,7 @@ if ($hasNavigation) {
     echo '.bearcms-template-navigation .bearcms-navigation-element-item-children>.bearcms-navigation-element-item:last-child{border-bottom-left-radius:' . $borderRadius . ';border-bottom-right-radius:' . $borderRadius . ';}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item-children>.bearcms-navigation-element-item a{' . $textStyle . 'padding:0 ' . $buttonPadding . ';line-height:' . $buttonHeight . ';height:' . $buttonHeight . ';color:#fff;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item-children>.bearcms-navigation-element-item:hover{background-color:#292929;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item-children>.bearcms-navigation-element-item:focus{background-color:#333;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item-children>.bearcms-navigation-element-item:active{background-color:#333;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item-more{cursor:pointer;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item-more > a:before{content:"...";}';
@@ -140,6 +144,7 @@ if ($hasNavigation) {
     }
     echo '.bearcms-template-navigation-custom-item{display:inline-block;position:relative;z-index:2;box-sizing:border-box;height:' . $buttonHeight . ';width:' . $buttonHeight . ';cursor:pointer;}';
     echo '.bearcms-template-navigation-custom-item:hover{background-color:rgba(0,0,0,0.04);}';
+    echo '.bearcms-template-navigation-custom-item:focus{background-color:rgba(0,0,0,0.08);}';
     echo '.bearcms-template-navigation-custom-item:active{background-color:rgba(0,0,0,0.08);}';
     echo '.bearcms-template-navigation-custom-item:first-child{border-top-right-radius:' . $borderRadius . ';border-bottom-right-radius:' . $borderRadius . ';}';
     echo '#bearcms-template-navigation-menu-button{display:none;}';
@@ -148,6 +153,7 @@ if ($hasNavigation) {
     echo '@media(max-width:600px){';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item{background-color:#222;display:block !important;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item:hover{background-color:#292929;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item:focus{background-color:#333;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item:active{background-color:#333;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item:first-child{border-top-left-radius:' . $borderRadius . ';border-top-right-radius:' . $borderRadius . ';border-bottom-left-radius:0 !important;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item:last-child{border-bottom-left-radius:' . $borderRadius . ';border-bottom-right-radius:' . $borderRadius . ';border-top-right-radius:0 !important;}';
@@ -167,6 +173,8 @@ $elementHeadingMedium = $elementAccentTextStyle . 'font-size:calc(var(--bearcms-
 $elementHeadingSmall = $elementAccentTextStyle;
 $elementLabel = $elementTextStyle;
 $elementInput = 'border:1px solid var(--bearcms-template-context-text-color);' . $elementTextStyle . 'height:' . $buttonHeight . ';padding:0 ' . $buttonPadding . ';width:100%;background-color:transparent;border-radius:' . $borderRadius . ';';
+$elementInputOver = 'background-color:rgba(0,0,0,0.02);';
+$elementInputActive = 'background-color:rgba(0,0,0,0.04);';
 $elementTextarea = 'padding-top:' . $buttonPaddingHalf . ';padding-bottom:' . $buttonPaddingHalf . ';';
 $elementText = $elementTextStyle;
 $elementLink = $elementTextStyle . 'text-decoration:underline;';
@@ -205,9 +213,13 @@ echo '.bearcms-tc .bearcms-comments-comment-text{' . $elementText . '}';
 echo '.bearcms-tc .bearcms-comments-comment-text a{' . $elementLink . '}';
 echo '.bearcms-tc .bearcms-comments-comment-date{' . $elementText . 'font-size:calc(var(--bearcms-template-text-font-size) * 0.8);}';
 echo '.bearcms-tc .bearcms-comments-element-text-input{' . $elementInput . $elementTextarea . 'height:calc(var(--bearcms-template-text-font-size) * 8);}';
+echo '.bearcms-tc .bearcms-comments-element-text-input:hover{' . $elementInputOver . '}';
+echo '.bearcms-tc .bearcms-comments-element-text-input:focus{' . $elementInputActive . '}';
+echo '.bearcms-tc .bearcms-comments-element-text-input:active{' . $elementInputActive . '}';
 echo '.bearcms-tc .bearcms-comments-element [data-form-element-type="submit-button"]{font-size:0;}';
 echo '.bearcms-tc .bearcms-comments-element-send-button{margin-top:calc(' . $elementsSpacing . ' / 2);' . $elementButton . '}';
 echo '.bearcms-tc .bearcms-comments-element-send-button:not(.bearcms-comments-element-send-button-waiting):hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .bearcms-comments-element-send-button:not(.bearcms-comments-element-send-button-waiting):focus{' . $elementButtonActive . '}';
 echo '.bearcms-tc .bearcms-comments-element-send-button:not(.bearcms-comments-element-send-button-waiting):active{' . $elementButtonActive . '}';
 
 echo '.bearcms-tc .bearcms-blog-posts-element-show-more-button{' . $elementLink . '}';
@@ -224,6 +236,7 @@ echo '.bearcms-tc .bearcms-forum-posts-show-more-button{' . $elementLink . '}';
 echo '.bearcms-tc .bearcms-forum-posts-new-post-button-container{margin-top:calc(' . $elementsSpacing . ' / 2);}';
 echo '.bearcms-tc .bearcms-forum-posts-new-post-button{' . $elementButton . '}';
 echo '.bearcms-tc .bearcms-forum-posts-new-post-button:hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .bearcms-forum-posts-new-post-button:focus{' . $elementButtonActive . '}';
 echo '.bearcms-tc .bearcms-forum-posts-new-post-button:active{' . $elementButtonActive . '}';
 
 echo '.bearcms-tc .bearcms-blogpost-page-title{' . $elementHeadingLarge . '}';
@@ -242,9 +255,13 @@ echo '.bearcms-tc .bearcms-forum-post-page-reply-text{' . $elementText . '}';
 echo '.bearcms-tc .bearcms-forum-post-page-reply-text a{' . $elementLink . '}';
 echo '.bearcms-tc .bearcms-forum-post-page-reply-date{' . $elementText . 'font-size:calc(var(--bearcms-template-text-font-size) * 0.8);}';
 echo '.bearcms-tc .bearcms-forum-post-page-text-input{' . $elementInput . $elementTextarea . 'height:calc(var(--bearcms-template-text-font-size) * 14);}';
+echo '.bearcms-tc .bearcms-forum-post-page-text-input:hover{' . $elementInputOver . '}';
+echo '.bearcms-tc .bearcms-forum-post-page-text-input:focus{' . $elementInputActive . '}';
+echo '.bearcms-tc .bearcms-forum-post-page-text-input:active{' . $elementInputActive . '}';
 echo '.bearcms-tc .bearcms-forum-post-page-content [data-form-element-type="submit-button"]{font-size:0;}';
 echo '.bearcms-tc .bearcms-forum-post-page-send-button{margin-top:calc(' . $elementsSpacing . ' / 2);' . $elementButton . '}';
 echo '.bearcms-tc .bearcms-forum-post-page-send-button:not(.bearcms-forum-post-page-send-button-waiting):hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .bearcms-forum-post-page-send-button:not(.bearcms-forum-post-page-send-button-waiting):focus{' . $elementButtonActive . '}';
 echo '.bearcms-tc .bearcms-forum-post-page-send-button:not(.bearcms-forum-post-page-send-button-waiting):active{' . $elementButtonActive . '}';
 
 echo '.bearcms-tc .bearcms-code-element{' . $elementText . 'font-family:Courier,monospace;border-radius:' . $borderRadius . ';background-color:#333;padding:var(--bearcms-template-text-font-size);color:#fff;}';
@@ -259,8 +276,12 @@ echo '.bearcms-tc .bearcms-separator-element-small{' . $elementSeparator . 'widt
 
 if ($hasSearchSupport) {
     echo '.bearcms-tc .bearcms-search-box-element-input{' . $elementInput . '}';
+    echo '.bearcms-tc .bearcms-search-box-element-input:hover{' . $elementInputOver . '}';
+    echo '.bearcms-tc .bearcms-search-box-element-input:focus{' . $elementInputActive . '}';
+    echo '.bearcms-tc .bearcms-search-box-element-input:active{' . $elementInputActive . '}';
     echo '.bearcms-tc .bearcms-search-box-element-button{' . $elementButton . 'width:' . $buttonHeight . ';border:0px;border-left:1px solid var(--bearcms-template-context-text-color);border-top-left-radius:0;border-bottom-left-radius:0;background-size:auto ' . $buttonIconSize . ';background-position:center center;background-repeat:no-repeat;}';
     echo '.bearcms-tc .bearcms-search-box-element-button:hover{' . $elementButtonOver . '}';
+    echo '.bearcms-tc .bearcms-search-box-element-button:focus{' . $elementButtonActive . '}';
     echo '.bearcms-tc .bearcms-search-box-element-button:active{' . $elementButtonActive . '}';
 }
 
@@ -278,34 +299,70 @@ if ($hasStoreSupport) {
     echo '.bearcms-tc .bearcms-store-item-page-option-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
     echo '.bearcms-tc .bearcms-store-item-page-option-label{' . $elementText . '}';
     echo '.bearcms-tc .bearcms-store-item-page-option-select{' . $elementInput . 'width:auto;}';
+    echo '.bearcms-tc .bearcms-store-item-page-option-select:hover{' . $elementInputOver . '}';
+    echo '.bearcms-tc .bearcms-store-item-page-option-select:focus{' . $elementInputActive . '}';
+    echo '.bearcms-tc .bearcms-store-item-page-option-select:active{' . $elementInputActive . '}';
     echo '.bearcms-tc .bearcms-store-item-page-price-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
     echo '.bearcms-tc .bearcms-store-item-page-price{' . $elementText . '}';
     echo '.bearcms-tc .bearcms-store-item-page-price-original{' . $elementText . '}';
     echo '.bearcms-tc .bearcms-store-item-page-buy-button-container{padding-top:calc(' . $elementsSpacing . ' / 2);font-size:0;}';
     echo '.bearcms-tc .bearcms-store-item-page-buy-button{' . $elementButton . '}';
     echo '.bearcms-tc .bearcms-store-item-page-buy-button:hover{' . $elementButtonOver . '}';
+    echo '.bearcms-tc .bearcms-store-item-page-buy-button:focus{' . $elementButtonActive . '}';
     echo '.bearcms-tc .bearcms-store-item-page-buy-button:active{' . $elementButtonActive . '}';
 }
 
 if ($hasFormsSupport) {
-    $formFieldListOptionButton = $elementInput . 'width:40px;height:40px;background-position:center center;background-repeat:no-repeat;background-attachment:scroll;background-size:cover;';
-    $formFieldListOptionText = $elementTextStyle . 'padding-left:15px;padding-top:8px;';
-    $formFieldListOptionTextbox = $elementInput . 'height:40px;line-height:38px;width:250px;margin-left:10px;';
+    $formFieldListOptionButton = $elementInput . 'width:calc(var(--bearcms-template-text-font-size) * 2.5);height:calc(var(--bearcms-template-text-font-size) * 2.5);padding:0;background-position:center center;background-repeat:no-repeat;background-attachment:scroll;background-size:cover;';
+    $formFieldListOptionButtonOver = $elementInputOver;
+    $formFieldListOptionButtonActive = $elementInputActive;
+    $formFieldListOptionText = $elementTextStyle . 'padding-left:var(--bearcms-template-text-font-size);padding-top:calc(var(--bearcms-template-text-font-size) * 0.4);';
+    $formFieldListOptionTextbox = $elementInput . 'height:calc(var(--bearcms-template-text-font-size) * 2.5);line-height:calc(var(--bearcms-template-text-font-size) * 2.5 - 2px);width:250px;margin-left:var(--bearcms-template-text-font-size);padding:0 calc(var(--bearcms-template-text-font-size) * 0.8);font-size:calc(var(--bearcms-template-text-font-size) * 0.9);';
     $formFieldListOptionContainer = 'padding-bottom:5px;';
     $formFieldHint = $elementTextStyle . 'font-size:calc(var(--bearcms-template-text-font-size) * 0.8);';
     $formFieldContainer = 'padding-bottom:15px;';
 
     echo '.bearcms-tc .bearcms-form-element-field-text-container [data-form-element-type="textbox"] [data-form-element-component="input"]{' . $elementInput . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-text-container [data-form-element-type="textbox"] [data-form-element-component="input"]:hover{' . $elementInputOver . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-text-container [data-form-element-type="textbox"] [data-form-element-component="input"]:focus{' . $elementInputActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-text-container [data-form-element-type="textbox"] [data-form-element-component="input"]:active{' . $elementInputActive . '}';
     echo '.bearcms-tc .bearcms-form-element-field-text-container [data-form-element-type="textbox"] [data-form-element-component="label"]{' . $elementLabel . '}';
     echo '.bearcms-tc .bearcms-form-element-field-text-container [data-form-element-type="textbox"] [data-form-element-component="hint"]{' . $formFieldHint . '}';
     echo '.bearcms-tc .bearcms-form-element-field-text-container{' . $formFieldContainer . '}';
     echo '.bearcms-tc .bearcms-form-element-field-textarea-container [data-form-element-type="textarea"] [data-form-element-component="textarea"]{' . $elementInput . $elementTextarea . 'height:calc(var(--bearcms-template-text-font-size) * 8);}';
+    echo '.bearcms-tc .bearcms-form-element-field-textarea-container [data-form-element-type="textarea"] [data-form-element-component="textarea"]:hover{' . $elementInputOver . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-textarea-container [data-form-element-type="textarea"] [data-form-element-component="textarea"]:focus{' . $elementInputActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-textarea-container [data-form-element-type="textarea"] [data-form-element-component="textarea"]:active{' . $elementInputActive . '}';
     echo '.bearcms-tc .bearcms-form-element-field-textarea-container [data-form-element-type="textarea"] [data-form-element-component="label"]{' . $elementLabel . '}';
     echo '.bearcms-tc .bearcms-form-element-field-textarea-container [data-form-element-type="textarea"] [data-form-element-component="hint"]{' . $formFieldHint . '}';
     echo '.bearcms-tc .bearcms-form-element-field-textarea-container{' . $formFieldContainer . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-name-container [data-form-element-type="textbox"] [data-form-element-component="input"]{' . $elementInput . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-name-container [data-form-element-type="textbox"] [data-form-element-component="input"]:hover{' . $elementInputOver . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-name-container [data-form-element-type="textbox"] [data-form-element-component="input"]:focus{' . $elementInputActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-name-container [data-form-element-type="textbox"] [data-form-element-component="input"]:active{' . $elementInputActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-name-container [data-form-element-type="textbox"] [data-form-element-component="label"]{' . $elementLabel . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-name-container [data-form-element-type="textbox"] [data-form-element-component="hint"]{' . $formFieldHint . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-name-container{' . $formFieldContainer . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-email-container [data-form-element-type="textbox"] [data-form-element-component="input"]{' . $elementInput . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-email-container [data-form-element-type="textbox"] [data-form-element-component="input"]:hover{' . $elementInputOver . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-email-container [data-form-element-type="textbox"] [data-form-element-component="input"]:focus{' . $elementInputActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-email-container [data-form-element-type="textbox"] [data-form-element-component="input"]:active{' . $elementInputActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-email-container [data-form-element-type="textbox"] [data-form-element-component="label"]{' . $elementLabel . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-email-container [data-form-element-type="textbox"] [data-form-element-component="hint"]{' . $formFieldHint . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-email-container{' . $formFieldContainer . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-phone-container [data-form-element-type="textbox"] [data-form-element-component="input"]{' . $elementInput . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-phone-container [data-form-element-type="textbox"] [data-form-element-component="input"]:hover{' . $elementInputOver . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-phone-container [data-form-element-type="textbox"] [data-form-element-component="input"]:focus{' . $elementInputActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-phone-container [data-form-element-type="textbox"] [data-form-element-component="input"]:active{' . $elementInputActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-phone-container [data-form-element-type="textbox"] [data-form-element-component="label"]{' . $elementLabel . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-phone-container [data-form-element-type="textbox"] [data-form-element-component="hint"]{' . $formFieldHint . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-phone-container{' . $formFieldContainer . '}';
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="label"]{' . $elementLabel . '}';
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="hint"]{' . $formFieldHint . '}';
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="radio-list-option-input"]{' . $formFieldListOptionButton . 'border-top-left-radius:50%;border-top-right-radius:50%;border-bottom-left-radius:50%;border-bottom-right-radius:50%;background-size:25px 25px;}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="radio-list-option-input"]:hover{' . $formFieldListOptionButtonOver . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="radio-list-option-input"]:focus{' . $formFieldListOptionButtonActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="radio-list-option-input"]:active{' . $formFieldListOptionButtonActive . '}';
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="radio-list-option-label"]{' . $formFieldListOptionText . '}';
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="radio-list-option-textbox"]{' . $formFieldListOptionTextbox . '}';
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type="radio-list"] [data-form-element-component="radio-list-option"]{padding:0;}';
@@ -314,36 +371,53 @@ if ($hasFormsSupport) {
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="label"]{' . $elementLabel . '}';
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="hint"]{' . $formFieldHint . '}';
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="checkbox-list-option-input"]{' . $formFieldListOptionButton . 'background-size:16px 16px;}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="checkbox-list-option-input"]:hover{' . $formFieldListOptionButtonOver . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="checkbox-list-option-input"]:focus{' . $formFieldListOptionButtonActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="checkbox-list-option-input"]:active{' . $formFieldListOptionButtonActive . '}';
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="checkbox-list-option-label"]{' . $formFieldListOptionText . '}';
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="checkbox-list-option-textbox"]{' . $formFieldListOptionTextbox . '}';
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="checkbox-list-option"]{padding:0;}';
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type="checkbox-list"] [data-form-element-component="checkbox-list-option"]:not(:last-child){' . $formFieldListOptionContainer . '}';
     echo '.bearcms-tc .bearcms-form-element-field-opened-list-multi-select-container{' . $formFieldContainer . '}';
     echo '.bearcms-tc .bearcms-form-element-field-closed-list-container [data-form-element-type="select"] [data-form-element-component="select"]{' . $elementInput . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-closed-list-container [data-form-element-type="select"] [data-form-element-component="select"]:hover{' . $elementInputOver . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-closed-list-container [data-form-element-type="select"] [data-form-element-component="select"]:focus{' . $elementInputActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-field-closed-list-container [data-form-element-type="select"] [data-form-element-component="select"]:active{' . $elementInputActive . '}';
     echo '.bearcms-tc .bearcms-form-element-field-closed-list-container [data-form-element-type="select"] [data-form-element-component="label"]{' . $elementLabel . '}';
     echo '.bearcms-tc .bearcms-form-element-field-closed-list-container [data-form-element-type="select"] [data-form-element-component="hint"]{' . $formFieldHint . '}';
     echo '.bearcms-tc .bearcms-form-element-field-closed-list-container{' . $formFieldContainer . '}';
     echo '.bearcms-tc .bearcms-form-element-submit-button-container [data-form-element-type="submit-button"] [data-form-element-component="button"]{' . $elementButton . '}';
-    echo '.bearcms-tc .bearcms-form-element-submit-button-container [data-form-element-type="submit-button"] [data-form-element-component="button"]:hover{' . $elementButtonOver . '}';
-    echo '.bearcms-tc .bearcms-form-element-submit-button-container [data-form-element-type="submit-button"] [data-form-element-component="button"]:active{' . $elementButtonActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-submit-button-container [data-form-element-type="submit-button"] [data-form-element-component="button"]:not([disabled]):hover{' . $elementButtonOver . '}';
+    echo '.bearcms-tc .bearcms-form-element-submit-button-container [data-form-element-type="submit-button"] [data-form-element-component="button"]:not([disabled]):focus{' . $elementButtonActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-submit-button-container [data-form-element-type="submit-button"] [data-form-element-component="button"]:not([disabled]):active{' . $elementButtonActive . '}';
+    echo '.bearcms-tc .bearcms-form-element-submit-button-container [data-form-element-type="submit-button"] [data-form-element-component="button"][disabled]{' . $elementButtonActive . '}';
 }
 
 // Temp (remove in the future)
 echo '.bearcms-tc .allebg-contact-form-element-email-label{' . $elementLabel . '}';
 echo '.bearcms-tc .allebg-contact-form-element-email{' . $elementInput . '}';
+echo '.bearcms-tc .allebg-contact-form-element-email:hover{' . $elementInputOver . '}';
+echo '.bearcms-tc .allebg-contact-form-element-email:focus{' . $elementInputActive . '}';
+echo '.bearcms-tc .allebg-contact-form-element-email:active{' . $elementInputActive . '}';
 echo '.bearcms-tc .allebg-contact-form-element-message-label{' . $elementLabel . 'margin-top:calc(' . $elementsSpacing . ' / 2);}';
 echo '.bearcms-tc .allebg-contact-form-element-message{' . $elementInput . $elementTextarea . 'height:calc(var(--bearcms-template-text-font-size) * 12);}';
+echo '.bearcms-tc .allebg-contact-form-element-message:hover{' . $elementInputOver . '}';
+echo '.bearcms-tc .allebg-contact-form-element-message:focus{' . $elementInputActive . '}';
+echo '.bearcms-tc .allebg-contact-form-element-message:active{' . $elementInputActive . '}';
 echo '.bearcms-tc .allebg-contact-form-element-send-button{background-color:transparent;margin-top:calc(' . $elementsSpacing . ' / 2);' . $elementButton . '}';
 echo '.bearcms-tc .allebg-contact-form-element-send-button:hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .allebg-contact-form-element-send-button:focus{' . $elementButtonActive . '}';
 echo '.bearcms-tc .allebg-contact-form-element-send-button:active{' . $elementButtonActive . '}';
 
 // Temp (remove in the future)
 echo '.bearcms-tc .allebg-poll-element-answer:not(:last-child){margin-bottom:calc(' . $elementsSpacing . ' / 2)}';
 echo '.bearcms-tc .allebg-poll-element-answer-unchecked{' . $elementButton . 'padding:0;width:' . $buttonHeight . ';}';
 echo '.bearcms-tc .allebg-poll-element-answer-unchecked:hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .allebg-poll-element-answer-unchecked:focus{' . $elementButtonActive . '}';
 echo '.bearcms-tc .allebg-poll-element-answer-unchecked:active{' . $elementButtonActive . '}';
 echo '.bearcms-tc .allebg-poll-element-answer-checked{' . $elementButton . 'padding:0;width:' . $buttonHeight . ';background-size:auto ' . $buttonIconSize . ';background-position:center center;background-repeat:no-repeat;}';
 echo '.bearcms-tc .allebg-poll-element-answer-checked:hover{' . $elementButtonOver . '}';
+echo '.bearcms-tc .allebg-poll-element-answer-checked:focus{' . $elementButtonActive . '}';
 echo '.bearcms-tc .allebg-poll-element-answer-checked:active{' . $elementButtonActive . '}';
 echo '.bearcms-tc .allebg-poll-element-answer-text{' . $elementText . 'padding:calc(var(--bearcms-template-text-font-size) / 2) 0 var(--bearcms-template-text-font-size) calc(' . $elementsSpacing . ' / 2);}';
 echo '.bearcms-tc .allebg-poll-element-answer-count{' . $elementText . 'padding:calc(var(--bearcms-template-text-font-size) / 2) 0 var(--bearcms-template-text-font-size) calc(' . $elementsSpacing . ' / 2);}';
@@ -351,6 +425,7 @@ echo '.bearcms-tc .allebg-poll-element-answer-count{' . $elementText . 'padding:
 echo '.bearcms-tc .bearcms-share-button-element{font-size:0;}';
 echo '.bearcms-tc .bearcms-share-button-element-button{' . $elementButton . 'background-color:transparent;}';
 echo '.bearcms-tc .bearcms-share-button-element-button:hover{' . $elementButtonOver . ';}';
+echo '.bearcms-tc .bearcms-share-button-element-button:focus{' . $elementButtonActive . ';}';
 echo '.bearcms-tc .bearcms-share-button-element-button:active{' . $elementButtonActive . ';}';
 
 echo '</style>';
