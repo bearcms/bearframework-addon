@@ -834,9 +834,9 @@ class BearCMS
                     $content = str_replace('{jsonEncodedBody}', json_encode($this->app->clientPackages->process($this->app->components->process($response->content))), $content);
                 }
                 $document->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
-                $elementsHtml = Internal\ElementsHelper::getEditableElementsHTML();
-                if (isset($elementsHtml[0])) {
-                    $htmlToInsert[] = ['source' => $elementsHtml];
+                $elementsHTML = Internal\ElementsHelper::getEditableElementsHTML();
+                if (isset($elementsHTML[0])) {
+                    $htmlToInsert[] = ['source' => $elementsHTML];
                 }
                 if (!empty(Internal\ElementsHelper::$editorData)) {
                     $app = App::get();
