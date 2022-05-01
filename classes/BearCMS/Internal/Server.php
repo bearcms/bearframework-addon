@@ -214,7 +214,7 @@ class Server
             $clientData['currentUserID'] = $currentUserID;
         }
 
-        $clientData['features'] = json_encode(Config::$features);
+        $clientData['features'] = Config::$features;
         $clientData['language'] = Config::$language;
         $clientData['uiColor'] = Config::getVariable('uiColor');
         $clientData['uiTextColor'] = Config::getVariable('uiTextColor');
@@ -264,7 +264,7 @@ class Server
             $clientData['maxUploadSize'] = $maxUploadSize;
         }
         $clientData['appSpecific'] = Config::$appSpecificServerData;
-        $clientData['flags'] = json_encode([
+        $clientData['flags'] = [
             'sbpc', // allow comments in blog posts
             'gl3a', // has files support
             'jzk3ns', // has google fonts embed support,
@@ -276,10 +276,10 @@ class Server
             '7a2f', // new structural elements data format (no data key), new flexible box element and elements combinations,
             'n4aj', // new data access api (specific server commands instead of direct data access)
             'bz49', // URL redirects support
-        ]);
+        ];
         $settings = $app->bearCMS->data->settings->get();
         $clientData['contentLanguages'] = $settings->languages;
-        $data['clientData'] = json_encode($clientData, JSON_UNESCAPED_UNICODE);
+        $data['clientData'] = $clientData;
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -287,9 +287,10 @@ class Server
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, gzcompress(json_encode($data)));
         curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Bear CMS Bear Framework Addon');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: bearcms/jsongz', 'Content-Type: bearcms/jsongz']);
         if (!empty($cookies)) {
             $cookiesValues = [];
             foreach ($cookies as $key => $value) {
@@ -303,7 +304,7 @@ class Server
         $responseHeadersSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $responseHeaders = trim(substr($response, 0, $responseHeadersSize));
         $responseBody = substr($response, $responseHeadersSize);
-        if (strpos(strtolower($responseHeaders), 'x-app-bg: 1') !== false) {
+        if (strpos(strtolower($responseHeaders), 'content-type: bearcms/jsongz') !== false) {
             try {
                 $responseBody = gzuncompress($responseBody);
             } catch (\Exception $e) {
@@ -359,7 +360,6 @@ class Server
             $data = [];
         }
 
-        $data['responseType'] = 'jsongz';
         if (isset($data['_ajaxreferer'])) {
             $data['_ajaxreferer'] = str_replace($app->request->base . '/', Config::$serverUrl, $data['_ajaxreferer']);
         }
@@ -424,10 +424,7 @@ class Server
                     }
                 }
                 if ($resend) {
-                    $resendData['commandsResults'] = json_encode($commandsResults, JSON_UNESCAPED_UNICODE);
-                    if ($resendData['commandsResults'] === false) {
-                        throw new \Exception('Cannot JSON encode server commands results: error code:' . json_last_error() . ', ' . print_r($commandsResults, true));
-                    }
+                    $resendData['commandsResults'] = $commandsResults;
                 }
             }
 
