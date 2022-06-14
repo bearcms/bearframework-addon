@@ -758,7 +758,13 @@ class Themes
                                 if (is_array($outputDefinition)) {
                                     if (isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
                                         $selector = $outputDefinition[1];
-                                        $selectorVariants = ['', '', ''];
+                                        $selectorStates = [];
+                                        $addSelectorState = function (string $cssSelector, string $rule) use (&$selectorStates) {
+                                            if (!isset($selectorStates[$cssSelector])) {
+                                                $selectorStates[$cssSelector] = '';
+                                            }
+                                            $selectorStates[$cssSelector] .= $rule;
+                                        };
                                         if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign' || $optionType === 'cssOpacity' || $optionType === 'cssRotation') {
                                             $temp = isset($value[0]) ? json_decode($value, true) : [];
                                             if (is_array($temp)) {
@@ -788,23 +794,17 @@ class Themes
                                                         }
                                                         $valuesToReplace[] = rawurlencode($valueToSet);
                                                     }
-                                                    $selectorVariants[0] .= str_replace($valuesToSearch, $valuesToReplace, $ruleValue);
+                                                    $addSelectorState('', str_replace($valuesToSearch, $valuesToReplace, $ruleValue));
                                                 } else {
                                                     foreach ($temp as $key => $_value) {
                                                         if ($key === 'font-family') {
                                                             $_value = $updateFontFamily($_value);
                                                         }
-                                                        $pseudo = substr($key, -6);
-                                                        if ($pseudo === ':hover') {
-                                                            $selectorVariants[1] .= substr($key, 0, -6) . ':' . $_value . ';';
-                                                        } else if ($pseudo === 'active') { // optimization
-                                                            if (substr($key, -7) === ':active') {
-                                                                $selectorVariants[2] .= substr($key, 0, -7) . ':' . $_value . ';';
-                                                            } else {
-                                                                $selectorVariants[0] .= $key . ':' . $_value . ';';
-                                                            }
+                                                        $colonIndex = strpos($key, ':');
+                                                        if ($colonIndex !== false) {
+                                                            $addSelectorState(substr($key, $colonIndex), substr($key, 0, $colonIndex) . ':' . $_value . ';');
                                                         } else {
-                                                            $selectorVariants[0] .= $key . ':' . $_value . ';';
+                                                            $addSelectorState('', $key . ':' . $_value . ';');
                                                         }
                                                     }
                                                 }
@@ -825,26 +825,15 @@ class Themes
                                                     $valuesToSearch[] = rawurlencode('{valueAsFontName}');
                                                     $valuesToReplace[] = rawurlencode($valueAsFontName);
                                                 }
-                                                $selectorVariants[0] .= str_replace($valuesToSearch, $valuesToReplace, $outputDefinition[2]);
+                                                $addSelectorState('', str_replace($valuesToSearch, $valuesToReplace, $outputDefinition[2]));
                                             }
                                         }
-                                        if ($selectorVariants[0] !== '') {
-                                            if (!isset($cssRules[$selector])) {
-                                                $cssRules[$selector] = '';
+                                        foreach ($selectorStates as $cssSelector => $stateValue) {
+                                            $ruleName = $selector . $cssSelector;
+                                            if (!isset($cssRules[$ruleName])) {
+                                                $cssRules[$ruleName] = '';
                                             }
-                                            $cssRules[$selector] .= $selectorVariants[0];
-                                        }
-                                        if ($selectorVariants[1] !== '') {
-                                            if (!isset($cssRules[$selector . ':hover'])) {
-                                                $cssRules[$selector . ':hover'] = '';
-                                            }
-                                            $cssRules[$selector . ':hover'] .= $selectorVariants[1];
-                                        }
-                                        if ($selectorVariants[2] !== '') {
-                                            if (!isset($cssRules[$selector . ':active'])) {
-                                                $cssRules[$selector . ':active'] = '';
-                                            }
-                                            $cssRules[$selector . ':active'] .= $selectorVariants[2];
+                                            $cssRules[$ruleName] .= $stateValue;
                                         }
                                     } elseif (isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'rule') {
                                         $selector = $outputDefinition[1];
