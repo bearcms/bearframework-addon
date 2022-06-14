@@ -192,6 +192,7 @@ class Server
                 $currentUserID = isset($currentUserData['id']) ? $currentUserData['id'] : null;
             }
             $clientData['currentUserID'] = $currentUserID;
+            $clientData['currentUserProfileID'] = [$app->currentUser->provider, $app->currentUser->id];
         }
 
         $clientData['features'] = Config::$features;
