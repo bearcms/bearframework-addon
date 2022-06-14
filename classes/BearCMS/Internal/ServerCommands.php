@@ -19,7 +19,6 @@ use BearCMS\Internal\Data\Pages as InternalDataPages;
 use BearCMS\Internal\Data\Settings as InternalDataSettings;
 use BearCMS\Internal\Pages as InternalPages;
 use BearCMS\Internal\Blog as InternalBlog;
-use IvoPetkov\HTML5DOMDocument;
 use BearCMS\Internal\Data\UploadsSize;
 
 /**
@@ -833,20 +832,22 @@ class ServerCommands
         $app = App::get();
         $value = json_encode($response['value']);
         $content = $app->components->process($data['content']);
-        $domDocument = new HTML5DOMDocument();
-        $domDocument->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
-        $bodyElement = $domDocument->querySelector('body');
-        $content = $bodyElement->innerHTML;
-        $bodyElement->parentNode->removeChild($bodyElement);
-        $allButBody = $app->clientPackages->process($domDocument->saveHTML());
-        $startPosition = strpos($value, '{bearcms-replace-content-' . $data['id'] . '-');
+        $content = $app->clientPackages->process($content);
+        // $domDocument = new HTML5DOMDocument();
+        // $domDocument->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
+        // $bodyElement = $domDocument->querySelector('body');
+        // $content = $bodyElement->innerHTML;
+        // $bodyElement->parentNode->removeChild($bodyElement);
+        // $allButBody = $app->clientPackages->process($domDocument->saveHTML());
+        $prefix = '{bearcms-replace-content-' . $data['id'] . '-';
+        $startPosition = strpos($value, $prefix);
         if ($startPosition === false) {
             return;
         }
-
+        $prefixLength = strlen($prefix);
         $endPosition = strpos($value, '}', $startPosition);
 
-        $modificationsString = substr($value, $startPosition + 58, $endPosition - $startPosition - 58);
+        $modificationsString = substr($value, $startPosition + $prefixLength, $endPosition - $startPosition - $prefixLength);
         $parts = explode('\'', $modificationsString);
         $singleQuoteSlashesCount = strlen($parts[0]);
         $doubleQuoteSlashesCount = strlen($parts[1]) - 1;
@@ -858,9 +859,10 @@ class ServerCommands
         }
         $value = str_replace(substr($value, $startPosition, $endPosition - $startPosition + 1), $content, $value);
         //todo optimize
-        $response1 = ['js' => 'clientPackages.get(\'html5DOMDocument\').then(function(html5DOMDocument){html5DOMDocument.insert(' . json_encode($allButBody, true) . ');});'];
-        $response2 = json_decode($value, true);
-        $response['value'] = Internal\Server::mergeAjaxResponses($response1, $response2);
+        // $response1 = ['js' => 'clientPackages.get(\'html5DOMDocument\').then(function(html5DOMDocument){html5DOMDocument.insert(' . json_encode($allButBody, true) . ');});'];
+        // $response2 = json_decode($value, true);
+        // $response['value'] = Internal\Server::mergeAjaxResponses($response1, $response2);
+        $response['value'] = json_decode($value, true);
     }
 
     /**

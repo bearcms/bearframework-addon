@@ -842,8 +842,7 @@ class ElementsHelper
                 $app->request->base,
                 $app->bearCMS->currentUser->getSessionKey(),
                 $app->bearCMS->currentUser->getPermissions(),
-                get_class_vars('\BearCMS\Internal\Config'),
-                Cookies::getList(Cookies::TYPE_SERVER)
+                get_class_vars('\BearCMS\Internal\Config')
             ]);
             $elementsEditorData = Server::call('elementseditor', $requestArguments, true, $cacheKey);
             if (is_array($elementsEditorData) && isset($elementsEditorData['result']) && is_array($elementsEditorData['result']) && isset($elementsEditorData['result']['content'])) {

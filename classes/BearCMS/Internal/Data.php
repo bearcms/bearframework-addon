@@ -9,8 +9,6 @@
 
 namespace BearCMS\Internal;
 
-use BearCMS\Internal\Data\Elements;
-use BearCMS\Internal\Data\Settings;
 use BearFramework\App;
 
 /**

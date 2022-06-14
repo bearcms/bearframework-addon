@@ -109,7 +109,9 @@ class Controller
                 }
                 $data = Internal\Server::call('fileupload', ['tempFilename' => $tempFilename, 'requestData' => json_encode($temp)]);
                 if (isset($data['result'])) {
-                    return new App\Response\JSON($data['result']);
+                    $result = json_decode($data['result'], true);
+                    $result = Internal\Server::updateAssetsUrls($result, true);
+                    return new App\Response\JSON(json_encode($result));
                 } else {
                     return new App\Response\TemporaryUnavailable();
                 }

@@ -29,12 +29,6 @@ class Data2
 
     function __construct()
     {
-        //        $this->defineProperty('addons', [
-        //            'init' => function() {
-        //                return new \BearCMS\Internal\Data2\Addons();
-        //            },
-        //            'readonly' => true
-        //        ]);
         $this->defineProperty('blogCategories', [
             'init' => function () {
                 return new \BearCMS\Internal\Data2\BlogCategories();
@@ -53,24 +47,6 @@ class Data2
             },
             'readonly' => true
         ]);
-        //        $this->defineProperty('forumCategories', [
-        //            'init' => function() {
-        //                return new \BearCMS\Internal\Data2\ForumCategories();
-        //            },
-        //            'readonly' => true
-        //        ]);
-        //        $this->defineProperty('forumPosts', [
-        //            'init' => function() {
-        //                return new \BearCMS\Internal\Data2\ForumPosts();
-        //            },
-        //            'readonly' => true
-        //        ]);
-        //        $this->defineProperty('forumPostsReplies', [
-        //            'init' => function() {
-        //                return new \BearCMS\Internal\Data2\ForumPostsReplies();
-        //            },
-        //            'readonly' => true
-        //        ]);
         $this->defineProperty('themes', [
             'init' => function () {
                 return new \BearCMS\Internal\Data2\Themes();

@@ -760,17 +760,6 @@ class BearCMS
         }
 
         $response->content = $document->saveHTML();
-
-        if ($this->app->currentUser->exists()) {
-            $addUserBadge = true;
-            $serverCookies = Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER);
-            if (!empty($serverCookies['tmcs']) || !empty($serverCookies['tmpr']) || !empty($serverCookies['wspr'])) {
-                $addUserBadge = false;
-            }
-            if ($addUserBadge) {
-                $this->app->users->applyUI($response);
-            }
-        }
     }
 
     /**
@@ -786,37 +775,21 @@ class BearCMS
         if (!$currentUserExists) {
             return;
         }
+        if (Config::getVariable('disableAdminUI')) {
+            return;
+        }
 
         $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
-
-        $settings = $this->data->settings->get();
-
-        $serverCookies = Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER);
-
-        if (!empty($serverCookies['tmcs']) || !empty($serverCookies['tmpr']) || !empty($serverCookies['wspr'])) {
-            Internal\ElementsHelper::$editorData = [];
-        }
-
-        $requestArguments = [];
-        $requestArguments['hasEditableElements'] = empty(Internal\ElementsHelper::$editorData) ? '0' : '1';
-        $requestArguments['hasEditableContainers'] = '0';
-        $requestArguments['isDisabled'] = $settings->disabled ? '1' : '0';
-        foreach (Internal\ElementsHelper::$editorData as $itemData) {
-            if ($itemData[0] === 'container') {
-                $requestArguments['hasEditableContainers'] = '1';
-            }
-        }
 
         $cacheKey = json_encode([
             'adminUI',
             $this->app->request->base,
             $this->currentUser->getSessionKey(),
             $this->currentUser->getPermissions(),
-            get_class_vars('\BearCMS\Internal\Config'),
-            $serverCookies
+            get_class_vars('\BearCMS\Internal\Config')
         ]);
 
-        $adminUIData = Internal\Server::call('adminui', $requestArguments, true, $cacheKey);
+        $adminUIData = Internal\Server::call('adminui', [], true, $cacheKey);
         if (is_array($adminUIData) && isset($adminUIData['result'])) {
             if ($adminUIData['result'] === 'noUser') { // The user does not exists on the server
                 $this->currentUser->logout();

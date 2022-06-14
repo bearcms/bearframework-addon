@@ -35,9 +35,6 @@ class Server
         $send = function () use ($name, $arguments, $sendCookies) {
             $url = Config::$serverUrl . '?name=' . $name;
             $response = self::sendRequest($url, $arguments, $sendCookies);
-            if ($sendCookies && self::isRetryResponse($response)) {
-                $response = self::sendRequest($url, $arguments, $sendCookies);
-            }
             return $response;
         };
         if ($cacheKey !== null) {
@@ -80,9 +77,6 @@ class Server
             $temp[$formDataItem->name] = $formDataItem->value;
         }
         $response = self::sendRequest(Config::$serverUrl . '-aj/', $temp, true);
-        if (self::isRetryResponse($response)) {
-            return json_encode(['js' => 'window.location.reload(true);'], JSON_UNESCAPED_UNICODE);
-        }
 
         if (is_array($response['value']) && isset($response['value']['error'])) {
             return json_encode(['js' => 'alert("' . (isset($response['value']['errorMessage']) ? $response['value']['errorMessage'] : 'An error occurred! Please, try again later and contact the administrator if the problem persists!') . '");'], JSON_UNESCAPED_UNICODE);
@@ -118,20 +112,6 @@ class Server
             }
         }
         return $response1;
-    }
-
-    /**
-     *
-     * @param array $response
-     * @return bool
-     */
-    public static function isRetryResponse(array $response): bool
-    {
-        $responseHeaders = strtolower($response['headers']);
-        return strpos($responseHeaders, 'x-app-sr: qyi') > 0 ||
-            strpos($responseHeaders, 'x-app-sr: pkr') > 0 ||
-            strpos($responseHeaders, 'x-app-sr: jke') > 0 ||
-            strpos($responseHeaders, 'x-app-sr: wpr') > 0;
     }
 
     /**
@@ -360,10 +340,6 @@ class Server
             $data = [];
         }
 
-        if (isset($data['_ajaxreferer'])) {
-            $data['_ajaxreferer'] = str_replace($app->request->base . '/', Config::$serverUrl, $data['_ajaxreferer']);
-        }
-
         $cookies = $sendCookies ? Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER) : [];
 
         $send = function ($requestData = [], $counter = 1) use (&$send, $app, $url, $data, $cookies) {
@@ -371,9 +347,6 @@ class Server
                 throw new \Exception('Too much requests');
             }
             $requestResponse = self::makeRequest($url, array_merge($data, $requestData, ['requestNumber' => $counter]), $cookies, Config::getVariable('logServerRequests') === true);
-            if (self::isRetryResponse($requestResponse)) {
-                return $requestResponse;
-            }
             $requestResponseBody = json_decode($requestResponse['body'], true);
             if (!is_array($requestResponseBody) || !array_key_exists('response', $requestResponseBody)) {
                 throw new \Exception('Invalid response. Body: ' . $requestResponse['body']);
