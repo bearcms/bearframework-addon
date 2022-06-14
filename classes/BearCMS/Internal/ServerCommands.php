@@ -442,20 +442,6 @@ class ServerCommands
     /**
      * 
      * @param array $data
-     * @return array
-     */
-    static function dataSchema(array $data): array
-    {
-        $app = App::get();
-        $dataSchema = new Internal\DataSchema($data['id']);
-        $eventDetails = new \BearCMS\Internal\PrepareDataSchemaEventDetails($dataSchema);
-        $app->bearCMS->dispatchEvent('internalPrepareDataSchema', $eventDetails);
-        return $eventDetails->dataSchema->fields;
-    }
-
-    /**
-     * 
-     * @param array $data
      * @return string
      */
     static function dataUrl(array $data): string
