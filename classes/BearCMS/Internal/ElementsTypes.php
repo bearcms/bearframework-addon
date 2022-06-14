@@ -873,7 +873,7 @@ class ElementsTypes
                 'onDelete' => function ($data) {
                     $app = App::get();
                     if (isset($data['threadID'])) {
-                        $app->data->delete('bearcms/comments/thread/' . md5($data['threadID']) . '.json');
+                        Internal\Data\Comments::deleteThread($data['threadID']);
                     }
                 },
                 'onDuplicate' => function ($data) {

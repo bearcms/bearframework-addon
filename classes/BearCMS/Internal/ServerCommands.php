@@ -16,6 +16,7 @@ use BearCMS\Internal2;
 use BearCMS\Internal\Data\BlogPosts as InternalDataBlogPosts;
 use BearCMS\Internal\Data\Elements as InternalDataElements;
 use BearCMS\Internal\Data\Pages as InternalDataPages;
+use BearCMS\Internal\Data\Comments as InternalDataComments;
 use BearCMS\Internal\Data\Settings as InternalDataSettings;
 use BearCMS\Internal\Pages as InternalPages;
 use BearCMS\Internal\Blog as InternalBlog;
@@ -255,36 +256,12 @@ class ServerCommands
 
     /**
      * 
-     * @return \IvoPetkov\DataList
-     */
-    static private function _commentsGetList(): \IvoPetkov\DataList
-    {
-        if (!isset(self::$cache['commentsList'])) {
-            self::$cache['commentsList'] = Internal2::$data2->comments->getList();
-        }
-        return clone (self::$cache['commentsList']);
-    }
-
-    /**
-     * 
-     * @return void
-     */
-    static private function _commentsClearCache(): void
-    {
-        if (isset(self::$cache['commentsList'])) {
-            unset(self::$cache['commentsList']);
-        }
-    }
-
-    /**
-     * 
      * @param array $data
      * @return void
      */
     static function commentDelete(array $data): void
     {
-        Internal\Data\Comments::deleteComment($data['threadID'], $data['commentID']);
-        self::_commentsClearCache();
+        InternalDataComments::deleteComment($data['threadID'], $data['commentID']);
     }
 
     /**
@@ -294,8 +271,7 @@ class ServerCommands
      */
     static function commentSetStatus(array $data): void
     {
-        Internal\Data\Comments::setStatus($data['threadID'], $data['commentID'], $data['status']);
-        self::_commentsClearCache();
+        InternalDataComments::setStatus($data['threadID'], $data['commentID'], $data['status']);
     }
 
     /**
@@ -305,7 +281,7 @@ class ServerCommands
      */
     static function commentsCount(array $data): int
     {
-        $result = self::_commentsGetList();
+        $result = InternalDataComments::getList();
         if ($data['type'] !== 'all') {
             $result->filterBy('status', $data['type']);
         }
@@ -319,24 +295,34 @@ class ServerCommands
      */
     static function commentsList(array $data): array
     {
-        $app = App::get();
-        $appURLs = $app->urls;
-        $result = self::_commentsGetList();
+        $result = InternalDataComments::getList();
         $result->sortBy('createdTime', 'desc');
         if ($data['type'] !== 'all') {
             $result->filterBy('status', $data['type']);
         }
         $result = $result->slice($data['limit'] * ($data['page'] - 1), $data['limit']);
-        $locations = Internal\CommentsLocations::get();
-        foreach ($result as $i => $item) {
-            if (isset($locations[$item->threadID])) {
-                $result[$i]->location = $appURLs->get($locations[$item->threadID]);
-            } else {
-                $result[$i]->location = '';
-            }
-            $result[$i]->author = Internal\PublicProfile::getFromAuthor($item->author)->toArray();
+        foreach ($result as $i => $comment) {
+            $comment = InternalDataComments::setCommentLocation($comment);
+            $comment = InternalDataComments::updateCommentAuthor($comment);
+            $result[$i] = $comment;
         }
         return $result->toArray();
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function commentsGet(array $data): ?array
+    {
+        $comment = Internal2::$data2->comments->get($data['threadID'], $data['commentID']);
+        if ($comment !== null) {
+            $comment = InternalDataComments::setCommentLocation($comment);
+            $comment = InternalDataComments::updateCommentAuthor($comment);
+            return $comment->toArray();
+        }
+        return null;
     }
 
     /**

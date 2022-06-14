@@ -10,6 +10,8 @@
 namespace BearCMS\Internal\Data2;
 
 use BearCMS\Internal;
+use BearFramework\App;
+use BearCMS\Internal2;
 
 /**
  * @internal
@@ -35,5 +37,22 @@ class Comments
             }
         }
         return $result;
+    }
+
+    /**
+     * 
+     * @param string $threadID
+     * @param string $commentID
+     * @return \BearCMS\Internal\Data2\Comment|null
+     */
+    public function get(string $threadID, string $commentID): ?\BearCMS\Internal\Data2\Comment
+    {
+        $thread = Internal2::$data2->commentsThreads->get($threadID);
+        foreach ($thread->comments as $comment) {
+            if ($comment->id === $commentID) {
+                return $comment;
+            }
+        }
+        return null;
     }
 }

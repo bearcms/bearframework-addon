@@ -10,9 +10,10 @@
 namespace BearCMS\Internal\Data;
 
 use BearFramework\App;
-use BearCMS\Internal;
+use BearCMS\Internal\CommentsLocations as InternalCommentsLocations;
+use BearCMS\Internal\PublicProfile as InternalPublicProfile;
 use BearCMS\Internal\Config;
-use BearCMS\Internal\Data\Elements as InternalDataElements;
+use BearCMS\Internal2;
 
 /**
  * @internal
@@ -20,6 +21,9 @@ use BearCMS\Internal\Data\Elements as InternalDataElements;
  */
 class Comments
 {
+
+    static private $commentsListCache = null;
+    static private $commentsLocationsCache = null;
 
     /**
      * 
@@ -61,6 +65,7 @@ class Comments
         }
         $eventDetails = new \BearCMS\Internal\AddCommentEventDetails($threadID, $commentID);
         $app->bearCMS->dispatchEvent('internalAddComment', $eventDetails);
+        self::$commentsListCache = null;
     }
 
     /**
@@ -94,7 +99,19 @@ class Comments
         }
         if ($hasChange) {
             $app->data->set($app->data->make($dataKey, json_encode($threadData)));
+            self::$commentsListCache = null;
         }
+    }
+
+    /**
+     * 
+     * @param string $threadID
+     * @return void
+     */
+    static function deleteThread(string $threadID): void
+    {
+        $app = App::get();
+        $app->data->delete('bearcms/comments/thread/' . md5($threadID) . '.json');
     }
 
     /**
@@ -125,6 +142,7 @@ class Comments
             $threadData['comments'] = array_values($threadData['comments']);
             $app->data->set($app->data->make($dataKey, json_encode($threadData)));
         }
+        self::$commentsListCache = null;
     }
 
     /**
@@ -189,5 +207,49 @@ class Comments
             $newData['comments'][$index]['id'] = base_convert(md5(uniqid()), 16, 36) . 'cc';
         }
         $app->data->setValue($newDataKey, json_encode($newData));
+    }
+
+    /**
+     * Retrieves a list of all comments
+     * 
+     * @return \IvoPetkov\DataList|\BearCMS\Internal\Data2\Comment[] List containing all comments data
+     */
+    static function getList()
+    {
+        if (self::$commentsListCache === null) {
+            self::$commentsListCache = Internal2::$data2->comments->getList();
+        }
+        return clone (self::$commentsListCache);
+    }
+
+    /**
+     * 
+     * @param \BearCMS\Internal\Data2\Comment $comment
+     * @return \BearCMS\Internal\Data2\Comment
+     */
+    static function setCommentLocation(\BearCMS\Internal\Data2\Comment $comment): \BearCMS\Internal\Data2\Comment
+    {
+        $app = App::get();
+        if (self::$commentsLocationsCache === null) {
+            self::$commentsLocationsCache = InternalCommentsLocations::get();
+        }
+        $locations = self::$commentsLocationsCache;
+        if (isset($locations[$comment->threadID])) {
+            $comment->location = $app->urls->get($locations[$comment->threadID]);
+        } else {
+            $comment->location = '';
+        }
+        return $comment;
+    }
+
+    /**
+     * 
+     * @param \BearCMS\Internal\Data2\Comment $comment
+     * @return \BearCMS\Internal\Data2\Comment
+     */
+    static function updateCommentAuthor(\BearCMS\Internal\Data2\Comment $comment): \BearCMS\Internal\Data2\Comment
+    {
+        $comment->author = InternalPublicProfile::getFromAuthor($comment->author)->toArray();
+        return $comment;
     }
 }

@@ -256,6 +256,7 @@ class Server
             '7a2f', // new structural elements data format (no data key), new flexible box element and elements combinations,
             'n4aj', // new data access api (specific server commands instead of direct data access)
             'bz49', // URL redirects support
+            'm4a9', // has commentsGet server command
         ];
         $settings = $app->bearCMS->data->settings->get();
         $clientData['contentLanguages'] = $settings->languages;
