@@ -1211,4 +1211,70 @@ class ServerCommands
         }
         return $result;
     }
+
+    /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function userProfileGetData(array $data): ?array
+    {
+        $app = App::get();
+        $providerID = $data['providerID'];
+        $userID = $data['id'];
+        $imageSize = isset($data['imageSize']) && is_numeric($data['imageSize']) ? (int)$data['imageSize'] : null;
+        $user = $app->users->getUser($providerID, $userID);
+        $result = [];
+        $result['data'] = $app->users->getUserData($providerID, $userID);
+        $result['name'] = $user->name;
+        $result['imageURL'] = $imageSize !== null ? $user->getImageUrl($imageSize) : null;
+        return $result;
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function userProfileSetData(array $data): void
+    {
+        $app = App::get();
+        $providerID = $data['providerID'];
+        $userID = $data['id'];
+        $userData = $app->users->getUserData($providerID, $userID);
+        if (empty($userData)) {
+            $userData = [];
+        }
+        foreach ($data['data'] as $key => $value) {
+            $userData[$key] = $value;
+        }
+        $app->users->saveUserData($providerID, $userID, $userData);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return string
+     */
+    static function userProfileUserFileSet(array $data): string
+    {
+        $app = App::get();
+        $providerID = $data['providerID'];
+        $sourceFileName = $data['source'];
+        $extension = strtolower(pathinfo($sourceFileName, PATHINFO_EXTENSION));
+        return $app->users->saveUserFile($providerID, $sourceFileName, $extension);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function userProfileUserFileDelete(array $data): void
+    {
+        $app = App::get();
+        $providerID = $data['providerID'];
+        $fileKey = $data['key'];
+        $app->users->deleteUserFile($providerID, $fileKey);
+    }
 }
