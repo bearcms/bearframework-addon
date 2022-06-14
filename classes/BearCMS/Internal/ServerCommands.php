@@ -642,6 +642,7 @@ class ServerCommands
     }
 
     /**
+     * DEPRECATED
      * 
      * @param array $data
      * @param \ArrayObject $response
