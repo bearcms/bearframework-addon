@@ -712,14 +712,9 @@ class BearCMS
         $html .= '</head><body>';
 
         if ($response instanceof App\Response\HTML) { // is not temporary disabled
-            $externalLinksAreEnabled = $settings->externalLinks;
-            if ($externalLinksAreEnabled || $currentUserExists) {
-                if ($currentUserExists) {
-                    $html .= '<script src="' . htmlentities($this->context->assets->getURL('assets/externalLinks.min.js', ['cacheMaxAge' => 999999999, 'version' => 6])) . '" async onload="bearCMS.externalLinks.initialize(' . ($externalLinksAreEnabled ? 1 : 0) . ',' . ($currentUserExists ? 1 : 0) . ');"></script>';
-                } else {
-                    // taken from dev/externalLinksNoUser.min.js
-                    $html .= '<script>for(var links=document.getElementsByTagName("a"),host=location.host,i=0;i<links.length;i++){var link=links[i],href=link.getAttribute("href");null===href||-1===href.indexOf("//")||-1!==href.indexOf("//"+host)||0===href.indexOf("#")||0===href.indexOf("javascript:")||null!==link.target&&""!==link.target||(link.target="_blank")};</script>';
-                }
+            if ($settings->externalLinks) {
+                // taken from dev/externalLinksNoUser.min.js
+                $html .= '<script>(function(){var f=location.host,e=function(){for(var d=document.getElementsByTagName("a"),c=0;c<d.length;c++){var b=d[c],a=b.getAttribute("href");null===a||-1===a.indexOf("//")||-1!==a.indexOf("//"+f)||0===a.indexOf("#")||0===a.indexOf("javascript:")||null!==b.target&&""!==b.target||(b.target="_blank")}};e();window.setInterval(e,999)})();</script>';
             }
         }
         $html .= '</body></html>';
