@@ -512,6 +512,7 @@ class ElementsCombinations
                                 ],
                                 'style' => [
                                     'ImageCSS' => '{"border-top-left-radius":"50%","border-top-right-radius":"50%","border-bottom-left-radius":"50%","border-bottom-right-radius":"50%"}',
+                                    'elementContainerCSS' => '{"max-width":"150px"}',
                                 ],
                             ],
                         ],
@@ -583,7 +584,7 @@ class ElementsCombinations
                             'style' => [
                                 'direction' => 'row',
                                 'rowAlignment' => 'center',
-                                'autoVerticalWidth' => '500px',
+                                'autoVerticalWidth' => 'none',
                             ],
                         ],
                         [
@@ -630,7 +631,7 @@ class ElementsCombinations
                             'style' => [
                                 'direction' => 'row',
                                 'rowAlignment' => 'center',
-                                'autoVerticalWidth' => '500px',
+                                'autoVerticalWidth' => 'none',
                             ],
                         ],
                         [
@@ -647,7 +648,7 @@ class ElementsCombinations
                             'style' => [
                                 'direction' => 'row',
                                 'rowAlignment' => 'center',
-                                'autoVerticalWidth' => '500px',
+                                'autoVerticalWidth' => 'none',
                             ],
                         ],
                         [
@@ -766,7 +767,7 @@ class ElementsCombinations
                             'style' => [
                                 'direction' => 'row',
                                 'rowAlignment' => 'center',
-                                'autoVerticalWidth' => '500px',
+                                'autoVerticalWidth' => 'none',
                             ],
                         ],
                         [
@@ -792,7 +793,7 @@ class ElementsCombinations
                             'style' => [
                                 'direction' => 'row',
                                 'rowAlignment' => 'center',
-                                'autoVerticalWidth' => '500px',
+                                'autoVerticalWidth' => 'none',
                             ],
                         ],
                     ]
@@ -831,7 +832,7 @@ class ElementsCombinations
                             'style' => [
                                 'direction' => 'row',
                                 'rowAlignment' => 'center',
-                                'autoVerticalWidth' => '500px',
+                                'autoVerticalWidth' => 'none',
                             ],
                         ],
                         [
@@ -861,7 +862,7 @@ class ElementsCombinations
                             'style' => [
                                 'direction' => 'row',
                                 'rowAlignment' => 'center',
-                                'autoVerticalWidth' => '500px',
+                                'autoVerticalWidth' => 'none',
                             ],
                         ],
                     ],
@@ -907,6 +908,7 @@ class ElementsCombinations
                                         ],
                                         'style' => [
                                             'ImageCSS' => '{"border-top-left-radius":"50%","border-top-right-radius":"50%","border-bottom-left-radius":"50%","border-bottom-right-radius":"50%"}',
+                                            'elementContainerCSS' => '{"max-width":"90px"}',
                                         ],
                                     ],
                                 ],
