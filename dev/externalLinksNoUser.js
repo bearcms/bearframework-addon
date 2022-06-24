@@ -13,8 +13,8 @@
             var link = links[i];
             var href = link.getAttribute("href");
             if (href !== null && href.indexOf('//') !== -1 && href.indexOf('//' + host) === -1 && href.indexOf("#") !== 0 && href.indexOf("javascript:") !== 0) {
-                if (link.target === null || link.target === '') {
-                    link.target = "_blank";
+                if (link.getAttribute('target') === null) {
+                    link.setAttribute('target', '_blank');
                 }
             }
         }
