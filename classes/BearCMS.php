@@ -755,6 +755,10 @@ class BearCMS
         }
 
         $response->content = $document->saveHTML();
+
+        if ($this->app->currentUser->exists() && !(int)$this->currentUser->exists()) {
+            $this->app->users->applyUI($response);
+        }
     }
 
     /**
