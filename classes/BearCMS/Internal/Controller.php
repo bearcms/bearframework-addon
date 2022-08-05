@@ -27,27 +27,28 @@ class Controller
      */
     static function handleAdminPage(): \BearFramework\App\Response
     {
-        $app = App::get();
-        $path = (string) $app->request->path;
-        if ($path === Config::$adminPagesPathPrefix) {
-            if (!$app->bearCMS->data->users->hasUsers()) {
-                return new App\Response\TemporaryRedirect($app->request->base . Config::$adminPagesPathPrefix . 'firstrun/');
-            }
-        } elseif ($path === Config::$adminPagesPathPrefix . 'firstrun/') {
-            if ($app->bearCMS->data->users->hasUsers()) {
-                return new App\Response\TemporaryRedirect($app->request->base . Config::$adminPagesPathPrefix);
-            }
-        }
+        //$app = App::get();
+        // $path = (string) $app->request->path;
+        // if ($path === Config::$adminPagesPathPrefix) {
+        //     if (!$app->bearCMS->data->users->hasUsers()) {
+        //         return new App\Response\TemporaryRedirect($app->request->base . Config::$adminPagesPathPrefix . 'firstrun/');
+        //     }
+        // } elseif ($path === Config::$adminPagesPathPrefix . 'firstrun/') {
+        //     if ($app->bearCMS->data->users->hasUsers()) {
+        //         return new App\Response\TemporaryRedirect($app->request->base . Config::$adminPagesPathPrefix);
+        //     }
+        // }
         $arguments = [];
-        $arguments['path'] = $path;
+        //$arguments['path'] = $path;
         $data = Internal\Server::call('adminpage', $arguments, true);
         if (isset($data['error'])) {
             return new App\Response\TemporaryUnavailable(isset($data['errorMessage']) ? $data['errorMessage'] : 'Unknown error!');
         }
         if (isset($data['result'])) {
-            if ($data['result'] === 'notFound') {
-                return new App\Response\NotFound();
-            } elseif (is_array($data['result']) && isset($data['result']['content'])) {
+            // if ($data['result'] === 'notFound') {
+            //     return new App\Response\NotFound();
+            //} else
+            if (is_array($data['result']) && isset($data['result']['content'])) {
                 $content = $data['result']['content'];
                 $content = Internal\Server::updateAssetsUrls($content, false);
                 $response = new App\Response\HTML($content);
