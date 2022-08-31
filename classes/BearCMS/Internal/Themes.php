@@ -603,6 +603,9 @@ class Themes
     {
         $result = [];
         foreach ($values as $value) {
+            if (!is_string($value) || strlen($value) === 0) {
+                continue;
+            }
             $matches = [];
             preg_match_all('/url\((.*?)\)/', $value, $matches);
             if (!empty($matches[1])) {
@@ -637,9 +640,15 @@ class Themes
                 $replace[] = trim(json_encode('url(' . $newKey . ')'), '"');
             }
             foreach ($values as $name => $value) {
+                if (!is_string($value) || strlen($value) === 0) {
+                    continue;
+                }
                 $values[$name] = str_replace($search, $replace, $values[$name]);
             }
             foreach ($values as $name => $value) {
+                if (!is_string($value) || strlen($value) === 0) {
+                    continue;
+                }
                 if (isset($keysToUpdate[$value])) {
                     $values[$name] = $keysToUpdate[$value];
                 }
