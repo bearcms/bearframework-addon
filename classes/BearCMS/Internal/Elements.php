@@ -37,7 +37,7 @@ class Elements
                     'content' => $content,
                     'editorContent' => (isset($editorContent[0]) ? $editorContent : ''),
                     'nextLazyLoadData' => (string) Internal\ElementsHelper::$lastLoadMoreServerData
-                ]);
+                ], JSON_THROW_ON_ERROR);
             }
         }
         return null;

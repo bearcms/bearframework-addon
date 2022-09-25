@@ -37,7 +37,7 @@ class Elements
      */
     static function encodeElementData(array $data): string
     {
-        return json_encode($data);
+        return json_encode($data, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -216,7 +216,7 @@ class Elements
     static function setContainer(string $containerID, array $data): void
     {
         $app = App::get();
-        $app->data->setValue(self::getContainerDataKey($containerID), json_encode($data));
+        $app->data->setValue(self::getContainerDataKey($containerID), json_encode($data, JSON_THROW_ON_ERROR));
     }
 
     /**
@@ -331,7 +331,7 @@ class Elements
                 $updatedContainerData['elements'] = $walkElementsResult[1];
                 if (!$preview) {
                     $app->data->duplicate($dataKey, '.recyclebin/bearcms/update-' . str_replace('.', '-', microtime(true)) . '-' . str_replace('/', '-', $dataKey));
-                    $app->data->setValue($dataKey, json_encode($updatedContainerData));
+                    $app->data->setValue($dataKey, json_encode($updatedContainerData, JSON_THROW_ON_ERROR));
                 }
                 $result['new'] = $updatedContainerData;
                 $result['old'] = $containerData;

@@ -38,7 +38,7 @@ class Server
             return $response;
         };
         if ($cacheKey !== null) {
-            $cacheKey = md5($cacheKey) . md5($name) . md5(json_encode($arguments));
+            $cacheKey = md5($cacheKey) . md5($name) . md5(json_encode($arguments, JSON_THROW_ON_ERROR));
             $data = $app->cache->getValue($cacheKey);
             if (is_array($data)) {
                 return $data['value'];
@@ -79,7 +79,7 @@ class Server
         $response = self::sendRequest(Config::$serverUrl . '-aj/', $temp, true);
 
         if (is_array($response['value']) && isset($response['value']['error'])) {
-            return json_encode(['js' => 'alert("' . (isset($response['value']['errorMessage']) ? $response['value']['errorMessage'] : 'An error occurred! Please, try again later and contact the administrator if the problem persists!') . '");'], JSON_UNESCAPED_UNICODE);
+            return json_encode(['js' => 'alert("' . (isset($response['value']['errorMessage']) ? $response['value']['errorMessage'] : 'An error occurred! Please, try again later and contact the administrator if the problem persists!') . '");'], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
         }
 
         if (isset($response['previousValues'])) {
@@ -90,7 +90,7 @@ class Server
             }
         }
         $response['value'] = self::updateAssetsUrls($response['value'], true);
-        return json_encode($response['value']);
+        return json_encode($response['value'], JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -269,7 +269,7 @@ class Server
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, gzcompress(json_encode($data)));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, gzcompress(json_encode($data, JSON_THROW_ON_ERROR)));
         curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Bear CMS Bear Framework Addon');
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: bearcms/jsongz', 'Content-Type: bearcms/jsongz']);

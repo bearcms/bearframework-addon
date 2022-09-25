@@ -50,7 +50,7 @@ if ($thread !== null) {
             $loadMoreData = [
                 'serverData' => \BearCMS\Internal\TempClientData::set(['threadID' => $threadID])
             ];
-            $onClick = 'bearCMS.commentsElementList.loadMore(this,' . json_encode($loadMoreData) . ');';
+            $onClick = 'bearCMS.commentsElementList.loadMore(this,' . json_encode($loadMoreData, JSON_THROW_ON_ERROR) . ');';
             echo '<a class="bearcms-comments-show-more-button" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">' . __('bearcms.comments.Show more') . '</a>';
             echo '</div>';
         }

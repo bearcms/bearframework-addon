@@ -87,7 +87,7 @@ if (!$isMissing) {
                 if (isset($options['updateDataFromComponent'])) {
                     $data = call_user_func($options['updateDataFromComponent'], clone ($component), $data);
                 }
-                return json_encode(['id' => $component->id, 'type' => ElementsHelper::$elementsTypesCodes[$componentName], 'data' => $data]);
+                return json_encode(['id' => $component->id, 'type' => ElementsHelper::$elementsTypesCodes[$componentName], 'data' => $data], JSON_THROW_ON_ERROR);
             };
             if ($editable) {
                 $componentContextData['rawData'] = $getRawDataFromComponent($component);

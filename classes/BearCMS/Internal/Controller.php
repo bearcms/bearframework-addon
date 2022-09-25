@@ -108,11 +108,11 @@ class Controller
                 foreach ($queryList as $queryListItem) {
                     $temp[$queryListItem->name] = $queryListItem->value;
                 }
-                $data = Internal\Server::call('fileupload', ['tempFilename' => $tempFilename, 'requestData' => json_encode($temp)]);
+                $data = Internal\Server::call('fileupload', ['tempFilename' => $tempFilename, 'requestData' => json_encode($temp, JSON_THROW_ON_ERROR)]);
                 if (isset($data['result'])) {
                     $result = json_decode($data['result'], true);
                     $result = Internal\Server::updateAssetsUrls($result, true);
-                    return new App\Response\JSON(json_encode($result));
+                    return new App\Response\JSON(json_encode($result, JSON_THROW_ON_ERROR));
                 } else {
                     return new App\Response\TemporaryUnavailable();
                 }

@@ -85,7 +85,7 @@ class BlogPosts
     static function set(string $blogPostID, array $data): void
     {
         $app = App::get();
-        $app->data->setValue(self::getDataKey($blogPostID), json_encode($data));
+        $app->data->setValue(self::getDataKey($blogPostID), json_encode($data, JSON_THROW_ON_ERROR));
     }
 
     /**

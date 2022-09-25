@@ -101,7 +101,7 @@ if (isset($itemsHtml[0])) {
     $componentItems = (string)$component->items;
     $items = strlen($componentItems) > 0 ? explode(';', $componentItems) : [];
 
-    $dataKey = md5(json_encode([$source, $sourceParentPageID, $itemsType, $items]));
+    $dataKey = md5(json_encode([$source, $sourceParentPageID, $itemsType, $items], JSON_THROW_ON_ERROR));
 
     $optimizedPages = null;
 
@@ -162,11 +162,11 @@ if (isset($itemsHtml[0])) {
             $pages = \BearCMS\Internal\Data\Pages::getChildrenList($sourceParentPageID); // Used instead of $app->bearCMS->data->pages->getList() for better performance
         }
         $optimizedPages = $pages !== null ? $optimizePages($pages, $source === 'allPages' || $source === 'pageAllChildren') : [];
-        $app->data->setValue($tempDataKey, json_encode($optimizedPages));
+        $app->data->setValue($tempDataKey, json_encode($optimizedPages, JSON_THROW_ON_ERROR));
         $updateCache = true;
     }
     if ($updateCache) {
-        $app->cache->set($app->cache->make($cacheKey, json_encode($optimizedPages)));
+        $app->cache->set($app->cache->make($cacheKey, json_encode($optimizedPages, JSON_THROW_ON_ERROR)));
     }
     if ($showHomeLink) {
         array_unshift($optimizedPages, [0 => '/', 1 => '<a href="/">' . htmlspecialchars($homeLinkText) . '</a>']);

@@ -836,14 +836,14 @@ class ElementsHelper
         $html = '';
         if ((Config::hasFeature('ELEMENTS') || Config::hasFeature('ELEMENTS_*')) && !empty(self::$editorData)) {
             $requestArguments = [];
-            $requestArguments['data'] = json_encode(self::$editorData);
+            $requestArguments['data'] = json_encode(self::$editorData, JSON_THROW_ON_ERROR);
             $cacheKey = json_encode([
                 'elementsEditor',
                 $app->request->base,
                 $app->bearCMS->currentUser->getSessionKey(),
                 $app->bearCMS->currentUser->getPermissions(),
                 get_class_vars('\BearCMS\Internal\Config')
-            ]);
+            ], JSON_THROW_ON_ERROR);
             $elementsEditorData = Server::call('elementseditor', $requestArguments, true, $cacheKey);
             if (is_array($elementsEditorData) && isset($elementsEditorData['result']) && is_array($elementsEditorData['result']) && isset($elementsEditorData['result']['content'])) {
                 $html = $elementsEditorData['result']['content'];

@@ -194,7 +194,7 @@ class Pages
     static function set(string $pageID, array $data): void
     {
         $app = App::get();
-        $app->data->setValue(self::getPageDataKey($pageID), json_encode($data));
+        $app->data->setValue(self::getPageDataKey($pageID), json_encode($data, JSON_THROW_ON_ERROR));
     }
 
     /**
@@ -220,7 +220,7 @@ class Pages
         if (empty($data)) {
             $app->data->delete($structureDataKey);
         } else {
-            $app->data->setValue($structureDataKey, json_encode($data));
+            $app->data->setValue($structureDataKey, json_encode($data, JSON_THROW_ON_ERROR));
         }
     }
 

@@ -50,7 +50,7 @@ class Addons
     {
         $data = self::getData($addonID);
         if ($data !== null) {
-            return self::makeFromRawData(json_encode($data));
+            return self::makeFromRawData(json_encode($data, JSON_THROW_ON_ERROR));
         }
         return null;
     }
@@ -118,7 +118,7 @@ class Addons
     {
         $app = App::get();
         $dataKey = 'bearcms/addons/addon/' . md5($addonID) . '.json';
-        $app->data->setValue($dataKey, json_encode($data));
+        $app->data->setValue($dataKey, json_encode($data, JSON_THROW_ON_ERROR));
         self::onChange();
     }
 

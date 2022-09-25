@@ -140,9 +140,9 @@ if ($list->count() > 0) {
                         'inElementsContainer' => true
                     ], true, $outputType);
                 } elseif ($hasImage) {
-                    $content .= '<component output-type="' . $outputType . '" src="bearcms-image-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($imageElementData)) . '"/>';
+                    $content .= '<component output-type="' . $outputType . '" src="bearcms-image-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($imageElementData, JSON_THROW_ON_ERROR)) . '"/>';
                 } elseif ($hasText) {
-                    $content .= '<component output-type="' . $outputType . '" src="bearcms-text-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($textElementData)) . '"/>';
+                    $content .= '<component output-type="' . $outputType . '" src="bearcms-text-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($textElementData, JSON_THROW_ON_ERROR)) . '"/>';
                 }
                 if ($showSummaryReadMoreButton && ($hasImage || $hasText)) {
                     $readMoreText = '<a href="' . htmlentities($url) . '">' . __('bearcms.blogPosts.Read more') . '</a>';
@@ -165,7 +165,7 @@ if ($list->count() > 0) {
         $loadMoreData = [
             'serverData' => \BearCMS\Internal\TempClientData::set(['componentHTML' => (string) $component])
         ];
-        $onClick = 'bearCMS.blogPostsElement.loadMore(event,' . json_encode($loadMoreData) . ');';
+        $onClick = 'bearCMS.blogPostsElement.loadMore(event,' . json_encode($loadMoreData, JSON_THROW_ON_ERROR) . ');';
         $content .= '<a class="bearcms-blog-posts-element-show-more-button" href="javascript:void(0);" onclick="' . htmlentities($onClick) . '">' . __('bearcms.blogPosts.Show more posts') . '</a>';
         $content .= '</div>';
     }

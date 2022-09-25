@@ -91,7 +91,7 @@ class UploadsSize
         if (empty($data)) {
             $app->data->delete($dataKey);
         } else {
-            $app->data->set($app->data->make($dataKey, json_encode($data)));
+            $app->data->set($app->data->make($dataKey, json_encode($data, JSON_THROW_ON_ERROR)));
         }
         $app->bearCMS->dispatchEvent('internalChangeUploadsSize');
     }

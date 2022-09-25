@@ -131,7 +131,7 @@ class BearCMS
             $this->app->clientPackages
                 ->add('-bearcms-elements-lazy-load', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
                     $package->addJSFile($this->context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 6]));
-                    $package->get = 'bearCMS.elementsLazyLoad.initialize(' . json_encode([__('bearcms.elements.LoadingMore')]) . ');';
+                    $package->get = 'bearCMS.elementsLazyLoad.initialize(' . json_encode([__('bearcms.elements.LoadingMore'), JSON_THROW_ON_ERROR]) . ');';
                 });
         }
 
@@ -422,12 +422,13 @@ class BearCMS
                             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
                             $response = (string)curl_exec($ch);
                             $valid = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200 && strlen($response) > 0;
+                            $error = curl_error($ch);
                             curl_close($ch);
                             if ($valid) {
                                 $this->app->data->set($this->app->data->make($tempFileKey, $response));
                                 return $tempFilename;
                             } else {
-                                throw new \Exception('Cannot download file from URL (' . $url . ')');
+                                throw new \Exception('Cannot download file from URL (' . $url . ', ' . $error . ')');
                             }
                         }
                     };
@@ -787,7 +788,7 @@ class BearCMS
             $this->currentUser->getSessionKey(),
             $this->currentUser->getPermissions(),
             get_class_vars('\BearCMS\Internal\Config')
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $adminUIData = Internal\Server::call('adminui', [], true, $cacheKey);
         if (is_array($adminUIData) && isset($adminUIData['result'])) {
@@ -804,7 +805,7 @@ class BearCMS
                     $content = str_replace('{body}', (string) $document->createInsertTarget('body'), $content);
                     $htmlToInsert[] = ['source' => $response->content, 'target' => 'body'];
                 } elseif (strpos($content, '{jsonEncodedBody}')) {
-                    $content = str_replace('{jsonEncodedBody}', json_encode($this->app->clientPackages->process($this->app->components->process($response->content))), $content);
+                    $content = str_replace('{jsonEncodedBody}', json_encode($this->app->clientPackages->process($this->app->components->process($response->content)), JSON_THROW_ON_ERROR), $content);
                 }
                 $document->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
                 $elementsHTML = Internal\ElementsHelper::getEditableElementsHTML();

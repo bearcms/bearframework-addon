@@ -56,7 +56,7 @@ class Themes
     static function setActiveThemeID(string $id): void
     {
         $app = App::get();
-        $app->data->setValue('bearcms/themes/active.json', json_encode(['id' => $id]));
+        $app->data->setValue('bearcms/themes/active.json', json_encode(['id' => $id], JSON_THROW_ON_ERROR));
     }
 
     /**
@@ -390,10 +390,10 @@ class Themes
             }
             if ($useCache) {
                 if ($saveToCache) {
-                    $app->cache->set($app->cache->make($cacheKey, json_encode($resultData)));
+                    $app->cache->set($app->cache->make($cacheKey, json_encode($resultData, JSON_THROW_ON_ERROR)));
                 }
                 if ($saveToTempData) {
-                    $app->data->setValue($tempDataKey, json_encode($resultData));
+                    $app->data->setValue($tempDataKey, json_encode($resultData, JSON_THROW_ON_ERROR));
                 }
             }
             $values = $resultData[0];
@@ -445,8 +445,8 @@ class Themes
         $tempArchiveFilename = sys_get_temp_dir() . '/bearcms-theme-export-' . uniqid() . '.zip';
         $zip = new \ZipArchive();
         if ($zip->open($tempArchiveFilename, \ZipArchive::CREATE) === true) {
-            $zip->addFromString('manifest.json', json_encode($manifest));
-            $zip->addFromString('values.json', json_encode($values));
+            $zip->addFromString('manifest.json', json_encode($manifest, JSON_THROW_ON_ERROR));
+            $zip->addFromString('values.json', json_encode($values, JSON_THROW_ON_ERROR));
             foreach ($filesToAttach as $attachmentName => $filename) {
                 $filename = Internal2::$data2->fixFilename($filename);
                 $zip->addFromString($attachmentName, file_get_contents($filename));
@@ -636,8 +636,8 @@ class Themes
             foreach ($keysToUpdate as $oldKey => $newKey) {
                 $search[] = 'url(' . $oldKey . ')';
                 $replace[] = 'url(' . $newKey . ')';
-                $search[] = trim(json_encode('url(' . $oldKey . ')'), '"');
-                $replace[] = trim(json_encode('url(' . $newKey . ')'), '"');
+                $search[] = trim(json_encode('url(' . $oldKey . ')', JSON_THROW_ON_ERROR), '"');
+                $replace[] = trim(json_encode('url(' . $newKey . ')', JSON_THROW_ON_ERROR), '"');
             }
             foreach ($values as $name => $value) {
                 if (!is_string($value) || strlen($value) === 0) {

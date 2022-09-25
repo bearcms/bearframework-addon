@@ -135,7 +135,7 @@ $app->bearCMS->themes
                     }
                     $textCSS['font-family'] = 'Arial';
                     $textCSS['line-height'] = '180%';
-                    $values['textCSS'] = json_encode($textCSS);
+                    $values['textCSS'] = json_encode($textCSS, JSON_THROW_ON_ERROR);
                 }
                 if (isset($values['accentColor'])) {
                     $defaultFontSize = '16px';
@@ -150,7 +150,7 @@ $app->bearCMS->themes
                     $accentTextCSS['color'] = $values['accentColor'];
                     $accentTextCSS['font-size'] = $defaultFontSize;
                     $accentTextCSS['line-height'] = '170%';
-                    $values['accentTextCSS'] = json_encode($accentTextCSS);
+                    $values['accentTextCSS'] = json_encode($accentTextCSS, JSON_THROW_ON_ERROR);
                     unset($values['accentColor']);
                 }
                 if (isset($values['headerLogoImage'])) {
@@ -163,7 +163,7 @@ $app->bearCMS->themes
                     unset($values['headerTitleVisibility']);
                 }
                 if (isset($values['backgroundColor'])) {
-                    $values['backgroundCSS'] = json_encode(['background-color' => $values['backgroundColor']]);
+                    $values['backgroundCSS'] = json_encode(['background-color' => $values['backgroundColor']], JSON_THROW_ON_ERROR);
                     unset($values['backgroundColor']);
                 }
             }

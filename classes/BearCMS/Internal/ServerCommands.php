@@ -571,7 +571,7 @@ class ServerCommands
     {
         if (!empty(Internal\ElementsHelper::$editorData)) {
             $requestArguments = [];
-            $requestArguments['data'] = json_encode(Internal\ElementsHelper::$editorData);
+            $requestArguments['data'] = json_encode(Internal\ElementsHelper::$editorData, JSON_THROW_ON_ERROR);
             $requestArguments['jsMode'] = 1;
             $elementsEditorData = Internal\Server::call('elementseditor', $requestArguments, true);
             if (is_array($elementsEditorData) && isset($elementsEditorData['result'], $elementsEditorData['result']['content'])) {
@@ -817,7 +817,7 @@ class ServerCommands
     static function replaceContent(array $data, \ArrayObject $response): void
     {
         $app = App::get();
-        $value = json_encode($response['value']);
+        $value = json_encode($response['value'], JSON_THROW_ON_ERROR);
         $content = $app->components->process($data['content']);
         $content = $app->clientPackages->process($content);
         // $domDocument = new HTML5DOMDocument();
@@ -839,7 +839,7 @@ class ServerCommands
         $singleQuoteSlashesCount = strlen($parts[0]);
         $doubleQuoteSlashesCount = strlen($parts[1]) - 1;
         for ($i = 0; $i < $doubleQuoteSlashesCount; $i += 2) {
-            $content = substr(json_encode($content), 1, -1);
+            $content = substr(json_encode($content, JSON_THROW_ON_ERROR), 1, -1);
         }
         for ($i = 0; $i < $singleQuoteSlashesCount; $i += 2) {
             $content = addslashes($content);

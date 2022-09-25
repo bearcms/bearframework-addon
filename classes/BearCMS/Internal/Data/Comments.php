@@ -53,7 +53,7 @@ class Comments
             'text' => $text,
             'createdTime' => time()
         ];
-        $app->data->set($app->data->make($dataKey, json_encode($data)));
+        $app->data->set($app->data->make($dataKey, json_encode($data, JSON_THROW_ON_ERROR)));
 
         if (Config::hasFeature('NOTIFICATIONS')) {
             if (!$app->tasks->exists('bearcms-send-new-comment-notification')) {
@@ -98,7 +98,7 @@ class Comments
             }
         }
         if ($hasChange) {
-            $app->data->set($app->data->make($dataKey, json_encode($threadData)));
+            $app->data->set($app->data->make($dataKey, json_encode($threadData, JSON_THROW_ON_ERROR)));
             self::$commentsListCache = null;
         }
     }
@@ -140,7 +140,7 @@ class Comments
         }
         if ($hasChange) {
             $threadData['comments'] = array_values($threadData['comments']);
-            $app->data->set($app->data->make($dataKey, json_encode($threadData)));
+            $app->data->set($app->data->make($dataKey, json_encode($threadData, JSON_THROW_ON_ERROR)));
         }
         self::$commentsListCache = null;
     }
@@ -206,7 +206,7 @@ class Comments
         foreach ($newData['comments'] as $index => $comment) {
             $newData['comments'][$index]['id'] = base_convert(md5(uniqid()), 16, 36) . 'cc';
         }
-        $app->data->setValue($newDataKey, json_encode($newData));
+        $app->data->setValue($newDataKey, json_encode($newData, JSON_THROW_ON_ERROR));
     }
 
     /**

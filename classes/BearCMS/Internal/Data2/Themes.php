@@ -143,7 +143,7 @@ class Themes
             if (!$hasUser && empty($values)) { // use default theme values
                 $app->data->delete($dataKey);
             } else {
-                $app->data->setValue($dataKey, json_encode($dataToSet));
+                $app->data->setValue($dataKey, json_encode($dataToSet, JSON_THROW_ON_ERROR));
             }
         }
 

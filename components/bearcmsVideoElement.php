@@ -123,7 +123,7 @@ if (strlen($componentURL) > 0) {
                 $videoExists = false;
             }
             if ($videoExists) {
-                $app->data->set($app->data->make($tempDataKey, json_encode($getData())));
+                $app->data->set($app->data->make($tempDataKey, json_encode($getData(), JSON_THROW_ON_ERROR)));
             }
         }
 

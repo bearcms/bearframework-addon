@@ -35,9 +35,7 @@ class Comments
             if (is_array($serverData) && isset($serverData['threadID'])) {
                 $threadID = $serverData['threadID'];
                 $html = $app->components->process('<component src="file:' . $context->dir . '/components/bearcmsCommentsElement/commentsList.php" count="' . htmlentities($count) . '" threadID="' . htmlentities($threadID) . '" />');
-                return json_encode([
-                    'html' => $html
-                ]);
+                return json_encode(['html' => $html], JSON_THROW_ON_ERROR);
             }
         }
         return null;

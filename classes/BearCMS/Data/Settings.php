@@ -53,7 +53,7 @@ class Settings
     public function set(\BearCMS\Data\Settings\Settings $settings): void
     {
         $app = App::get();
-        $app->data->setValue('bearcms/settings.json', json_encode($settings->toArray()));
+        $app->data->setValue('bearcms/settings.json', json_encode($settings->toArray(), JSON_THROW_ON_ERROR));
         $cacheKey = 'settings';
         if (isset(Internal\Data::$cache[$cacheKey])) {
             unset(Internal\Data::$cache[$cacheKey]);

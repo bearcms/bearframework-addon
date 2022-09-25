@@ -91,7 +91,7 @@ class CommentsLocations
     static private function setTempData(array $data): void
     {
         $app = App::get();
-        $app->data->setValue(self::getTempDataKey(), json_encode($data));
+        $app->data->setValue(self::getTempDataKey(), json_encode($data, JSON_THROW_ON_ERROR));
     }
 
     /**

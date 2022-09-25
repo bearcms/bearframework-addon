@@ -50,7 +50,7 @@ class TempClientData
     static function set($data): string
     {
         $app = App::get();
-        $encodedData = json_encode(['bearcms', $data]);
+        $encodedData = json_encode(['bearcms', $data], JSON_THROW_ON_ERROR);
         return md5($encodedData) . base64_encode($app->encryption->encrypt(gzcompress($encodedData)));
     }
 

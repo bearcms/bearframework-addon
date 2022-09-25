@@ -63,7 +63,7 @@ class CanvasElementHelper
             if (isset($parsedValue['background']) && is_array($parsedValue['background']) && isset($parsedValue['background']['style']) && is_array($parsedValue['background']['style'])) {
                 $parsedValue['background']['style'] = Themes::updateFilesInValues($parsedValue['background']['style'], $filesToUpdate);
             }
-            return json_encode($parsedValue);
+            return json_encode($parsedValue, JSON_THROW_ON_ERROR);
         }
         return '';
     }

@@ -52,7 +52,7 @@ $addStyleCSS = function (string $selector, string $type, array $style) use (&$cs
     if (isset($cssTypesOptionsDetails[$type])) {
         $options = new \BearCMS\Themes\Theme\Options();
         $options->addOption("css", "css", '', $cssTypesOptionsDetails[$type]);
-        $options->setValues(['css' => json_encode($style)]);
+        $options->setValues(['css' => json_encode($style, JSON_THROW_ON_ERROR)]);
         $htmlData = Internal\Themes::getOptionsHTMLData($options->getList());
         $html = Internal\Themes::processOptionsHTMLData($htmlData);
         $html = str_replace(['<html><head><style>', '</style></head></html>'], '', $html);
