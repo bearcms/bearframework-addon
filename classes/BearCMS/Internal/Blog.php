@@ -165,6 +165,7 @@ class Blog
 
         $groupTitle = $group->addGroup(__("bearcms.themes.options.Title"));
         $groupTitle->addOption("blogPostPageTitleCSS", "css", '', [
+            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-title", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                 ["selector", ".bearcms-blogpost-page-title"]
@@ -174,6 +175,7 @@ class Blog
         $groupTitleContainer = $groupTitle->addGroup(__("bearcms.themes.options.Container"));
         $groupTitleContainer->addOption("blogPostPageTitleContainerCSS", "css", '', [
             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-title-container", "box-sizing:border-box;"],
                 ["selector", ".bearcms-blogpost-page-title-container"]
@@ -192,10 +194,11 @@ class Blog
                     "name" => __('bearcms.themes.options.Hidden')
                 ]
             ],
-            "value" => "1"
+            "defaultValue" => "1"
         ]);
         $groupDate->addOption("blogPostPageDateCSS", "css", '', [
             "cssTypes" => ["cssText", "cssTextShadow"],
+            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
             "cssOutput" => [
                 ["selector", ".bearcms-blogpost-page-date"]
             ]
@@ -203,6 +206,7 @@ class Blog
         $groupDateContainer = $groupDate->addGroup(__("bearcms.themes.options.Container"));
         $groupDateContainer->addOption("blogPostPageDateContainerCSS", "css", '', [
             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-date-container", "box-sizing:border-box;"],
                 ["selector", ".bearcms-blogpost-page-date-container"]
@@ -212,6 +216,7 @@ class Blog
         $groupContent = $group->addGroup(__("bearcms.themes.options.Content"));
         $groupContent->addOption("blogPostPageContentCSS", "css", '', [
             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-content", "box-sizing:border-box;"],
                 ["selector", ".bearcms-blogpost-page-content"]
@@ -222,6 +227,7 @@ class Blog
         $groupCommentsSeparator = $groupComments->addGroup(__("bearcms.themes.options.Separator"));
         $groupCommentsSeparator->addOption("blogPostPageCommentsBlockSeparatorCSS", "css", '', [
             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-comments-block-separator", "box-sizing:border-box;"],
                 ["selector", ".bearcms-blogpost-page-comments-block-separator"]
@@ -230,6 +236,7 @@ class Blog
         $groupCommentsTitle = $groupComments->addGroup(__("bearcms.themes.options.Title"));
         $groupCommentsTitle->addOption("blogPostPageCommentsTitleContainerCSS", "css", '', [
             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-comments-title-container", "box-sizing:border-box;"],
                 ["selector", ".bearcms-blogpost-page-comments-title-container"]
@@ -238,6 +245,7 @@ class Blog
         $groupCommentsContainer = $groupComments->addGroup(__("bearcms.themes.options.Comments"));
         $groupCommentsContainer->addOption("blogPostPageCommentsContainerCSS", "css", '', [
             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-comments-container", "box-sizing:border-box;"],
                 ["selector", ".bearcms-blogpost-page-comments-container"]
@@ -248,6 +256,7 @@ class Blog
         $groupRelatedSeparator = $groupRelated->addGroup(__("bearcms.themes.options.Separator"));
         $groupRelatedSeparator->addOption("blogPostPageRelatedBlockSeparatorCSS", "css", '', [
             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-related-block-separator", "box-sizing:border-box;"],
                 ["selector", ".bearcms-blogpost-page-related-block-separator"]
@@ -256,6 +265,7 @@ class Blog
         $groupRelatedTitle = $groupRelated->addGroup(__("bearcms.themes.options.Title"));
         $groupRelatedTitle->addOption("blogPostPageRelatedTitleContainerCSS", "css", '', [
             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-related-title-container", "box-sizing:border-box;"],
                 ["selector", ".bearcms-blogpost-page-related-title-container"]
@@ -264,6 +274,7 @@ class Blog
         $groupRelatedContainer = $groupRelated->addGroup(__("bearcms.themes.options.Related list"));
         $groupRelatedContainer->addOption("blogPostPageRelatedContainerCSS", "css", '', [
             "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-related-container", "box-sizing:border-box;"],
                 ["selector", ".bearcms-blogpost-page-related-container"]
