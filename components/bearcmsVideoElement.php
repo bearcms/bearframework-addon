@@ -10,6 +10,7 @@
 use BearFramework\App;
 use BearCMS\Internal2;
 use BearCMS\Internal\Config;
+use BearCMS\Internal;
 
 $app = App::get();
 $context = $app->contexts->get(__DIR__);
@@ -161,11 +162,13 @@ if (strlen($componentURL) > 0) {
         $content = '';
     }
 } elseif ($component->filename !== null && strlen($component->filename) > 0) {
-    $filename = Internal2::$data2->fixFilename($component->filename);
+    $filename = Internal\Data::getRealFilename($component->filename, true);
     $content = '<div' . ($isFullHtmlOutputType ? ' class="bearcms-video-element"' : '') . '>' . $innerContainerStartTag;
-    $content .= '<video style="width:100%;" controls>';
-    $content .= '<source src="' . $app->assets->getURL($filename) . '" type="video/mp4">';
-    $content .= '</video>';
+    if ($filename !== null) {
+        $content .= '<video style="width:100%;" controls>';
+        $content .= '<source src="' . $app->assets->getURL($filename) . '" type="video/mp4">';
+        $content .= '</video>';
+    }
     $content .= $innerContainerEndTag . '</div>';
 }
 echo '<html>';

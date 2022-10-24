@@ -9,6 +9,7 @@
 use BearFramework\App;
 use BearCMS\Internal2;
 use BearCMS\Internal\Config;
+use BearCMS\Internal;
 
 $app = App::get();
 
@@ -94,12 +95,7 @@ if (strlen($width) === 0) {
     }
 }
 
-$fixFilename = function ($filename): ?string {
-    if (isset($filename[0])) {
-        return Internal2::$data2->fixFilename($filename);
-    }
-    return null;
-};
+$fixedFilename = Internal\Data::getRealFilename($filename, true);
 
 $content = '';
 if ($isFullHtmlOutputType) {
@@ -107,7 +103,6 @@ if ($isFullHtmlOutputType) {
     if (isset($innerContainerStyle[0])) {
         $content .= '<div style="' . $innerContainerStyle . '">';
     }
-    $fixedFilename = $fixFilename($filename);
     if ($fixedFilename !== null) {
         $content .= '<component src="image-gallery" columnsCount="1"' . $attributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
         $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' ? ' url="' . htmlentities($component->url) . '"' : '') . ' title="' . htmlentities((string)$component->title) . '" alt="' . htmlentities((string)$component->alt) . '" filename="' . $fixedFilename . '" quality="' . $component->quality . '" fileWidth="' . $component->fileWidth . '" fileHeight="' . $component->fileHeight . '" minImageWidth="' . $minImageWidth . '" minImageHeight="' . $minImageHeight . '" maxImageWidth="' . $maxImageWidth . '" maxImageHeight="' . $maxImageHeight . '"/>';
@@ -119,7 +114,6 @@ if ($isFullHtmlOutputType) {
     $content .= '</div>';
 } else {
     echo '<div>';
-    $fixedFilename = $fixFilename($filename);
     if ($fixedFilename !== null) {
         $content = '<img src="' . htmlentities($app->assets->getURL($fixedFilename, ['cacheMaxAge' => 999999999])) . '" style="max-width:100%;">';
     }

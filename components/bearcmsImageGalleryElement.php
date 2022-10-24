@@ -9,6 +9,7 @@
 use BearFramework\App;
 use BearCMS\Internal2;
 use BearCMS\Internal\Config;
+use BearCMS\Internal;
 use IvoPetkov\HTML5DOMDocument;
 
 $app = App::get();
@@ -26,12 +27,6 @@ if (strlen($component->innerHTML) > 0) {
 
 $spacing = $component->spacing;
 
-$fixFilename = function ($filename): ?string {
-    if (isset($filename[0])) {
-        return Internal2::$data2->fixFilename($filename);
-    }
-    return null;
-};
 $content = '';
 if ($isFullHtmlOutputType) {
     $content = '<div class="bearcms-image-gallery-element">';
@@ -74,7 +69,7 @@ if ($isFullHtmlOutputType) {
     $content .= '<component src="image-gallery" spacing="' . $spacing . '"' . $attributes . '>';
     if ($files !== null) {
         foreach ($files as $file) {
-            $fixedFilename = $fixFilename($file->getAttribute('filename'));
+            $fixedFilename = Internal\Data::getRealFilename($file->getAttribute('filename'), true);
             if ($fixedFilename !== null) {
                 $maxImageWidth = (string)$file->getAttribute('maximagewidth');
                 if (!isset($maxImageWidth[0])) {
@@ -105,7 +100,7 @@ if ($isFullHtmlOutputType) {
     echo '<div>';
     if ($files !== null) {
         foreach ($files as $file) {
-            $fixedFilename = $fixFilename($file->getAttribute('filename'));
+            $fixedFilename = Internal\Data::getRealFilename($file->getAttribute('filename'), true);
             if ($fixedFilename !== null) {
                 $assetOptions = ['cacheMaxAge' => 999999999];
                 $quality = (string)$file->getAttribute('quality');
