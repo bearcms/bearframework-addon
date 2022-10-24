@@ -762,21 +762,21 @@ class ElementsHelper
 
     /**
      * 
-     * @param array $fileKeys
+     * @param array $filenames
      * @return void
      */
-    static private function deleteElementStyleFiles(array $fileKeys): void
+    static private function deleteElementStyleFiles(array $filenames): void
     {
-        if (!empty($fileKeys)) {
+        if (!empty($filenames)) {
             $app = App::get();
             $recycleBinPrefix = '.recyclebin/bearcms/element-style-changes-' . str_replace('.', '-', microtime(true)) . '/';
-            foreach ($fileKeys as $fileKey) {
-                if (substr($fileKey, 0, 5) === 'data:') {
-                    $dataKay = substr($fileKey, 5);
-                    if ($app->data->exists($dataKay)) {
-                        $app->data->rename($dataKay, $recycleBinPrefix . $dataKay);
+            foreach ($filenames as $filename) {
+                $dataKey = Internal\Data::getFilenameDataKey($filename);
+                if ($dataKey !== null && (strpos($dataKey, '.temp/bearcms/files/elementstyleimage/') === 0 || strpos($dataKey, 'bearcms/files/elementstyleimage/') === 0)) {
+                    if ($app->data->exists($dataKey)) {
+                        $app->data->rename($dataKey, $recycleBinPrefix . $dataKey);
                     }
-                    UploadsSize::remove($dataKay);
+                    UploadsSize::remove($dataKey);
                 }
             }
         }
@@ -1392,10 +1392,11 @@ class ElementsHelper
                 }
             }
             if (isset($elementData['style'])) {
-                $fileKeys = Themes::getFilesInValues($elementData['style']);
-                foreach ($fileKeys as $fileKey) {
-                    if (substr($fileKey, 0, 5) === 'data:') {
-                        $result[] = substr($fileKey, 5);
+                $filenames = Themes::getFilesInValues($elementData['style']);
+                foreach ($filenames as $filename) {
+                    $dataKey = Internal\Data::getFilenameDataKey($filename);
+                    if ($dataKey !== null) {
+                        $result[] = $dataKey;
                     }
                 }
             }

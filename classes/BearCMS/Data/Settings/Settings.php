@@ -132,7 +132,7 @@ class Settings extends \BearFramework\Models\Model
             $data['icons'] = [];
         }
         if (isset($data['icon']) && strlen($data['icon']) > 0) {
-            $icon = Internal2::$data2->getRealFilename($data['icon']);
+            $icon = \BearCMS\Internal\Data::getRealFilename($data['icon'], true);
             if ($icon !== null) {
                 $data['icon'] = $icon;
             }

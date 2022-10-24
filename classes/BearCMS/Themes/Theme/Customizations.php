@@ -90,7 +90,7 @@ class Customizations
         $result = [];
         foreach ($details as $detail) {
             if ($detail === 'filename') {
-                $result[$detail] = Internal2::$data2->fixFilename($key);
+                $result[$detail] = Internal\Data::getRealFilename($key);
             } else {
                 $result[$detail] = isset($this->assetsDetails[$key], $this->assetsDetails[$key][$detail]) ? $this->assetsDetails[$key][$detail] : null;
             }

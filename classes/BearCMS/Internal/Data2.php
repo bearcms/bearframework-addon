@@ -60,37 +60,4 @@ class Data2
             'readonly' => true
         ]);
     }
-
-    /**
-     * Converts data:, addon:id: filenames to real filenames
-     * 
-     * @param string $filename
-     * @return ?string The real filename or null if not found
-     */
-    public function getRealFilename(string $filename): ?string
-    {
-        if (substr($filename, 0, 10) === 'appdata://') {
-            return $filename;
-        } elseif (substr($filename, 0, 5) === 'data:') {
-            return 'appdata://' . substr($filename, 5);
-        } elseif (substr($filename, 0, 6) === 'addon:') {
-            $temp = explode(':', $filename, 3);
-            if (sizeof($temp) === 3) {
-                $addon = \BearFramework\Addons::get($temp[1]);
-                if ($addon !== null) {
-                    return $addon->dir . '/' . $temp[2];
-                }
-            }
-        }
-        return null;
-    }
-
-    public function fixFilename(string $filename): ?string
-    {
-        $newFilename = $this->getRealFilename($filename);
-        if ($newFilename !== null) {
-            return $newFilename;
-        }
-        return $filename;
-    }
 }

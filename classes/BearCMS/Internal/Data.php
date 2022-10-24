@@ -288,6 +288,11 @@ class Data
         Localization::restoreLocale();
     }
 
+    /**
+     * 
+     * @param string $filename
+     * @return string
+     */
     static function generateNewFilename(string $filename): string
     {
         $path = pathinfo($filename, PATHINFO_DIRNAME);
@@ -301,11 +306,121 @@ class Data
         throw new \Exception('Too many reties');
     }
 
-    static function filenameToDataKey(string $filename)
+    /**
+     * 
+     * @param string $filename
+     * @return string|null
+     */
+    static function getFilenameDataKey(string $filename): ?string
     {
+        $filename = self::removeFilenameOptions($filename);
+        if (strpos($filename, 'data:') === 0) {
+            return substr($filename, 5);
+        }
         if (strpos($filename, 'appdata://') === 0) {
             return substr($filename, 10);
         }
-        throw new \Exception('The filename provided (' . $filename . ') is not a valid data key');
+        return null;
+        //throw new \Exception('The filename provided (' . $filename . ') is not a valid data key!');
+    }
+
+    /**
+     * Converts filenames that start with "data:" or "addon:id:" to real/absolute ones.
+     * 
+     * @param string $filename The filename to convert.
+     * @param boolean $isLocal If TRUE the result filename will be required to be in the data repository or in an addon.
+     * @return string|null The real filename or NULL if $isLocal is TRUE.
+     */
+    static function getRealFilename(string $filename, bool $isLocal = false): ?string
+    {
+        if (substr($filename, 0, 10) === 'appdata://') {
+            return $filename;
+        }
+        if (substr($filename, 0, 5) === 'data:') {
+            return 'appdata://' . substr($filename, 5);
+        }
+        if (substr($filename, 0, 6) === 'addon:') {
+            $temp = explode(':', $filename, 3);
+            if (sizeof($temp) === 3) {
+                $addon = \BearFramework\Addons::get($temp[1]);
+                if ($addon !== null) {
+                    return $addon->dir . '/' . $temp[2];
+                }
+            }
+        }
+        if ($isLocal) {
+            return null;
+        }
+        return $filename;
+    }
+
+    /**
+     * Converts real/absolute filenames to ones that start with "data:" or "addon:id:".
+     * 
+     * @param string $filename The filename to convert.
+     * @param boolean $isLocal If TRUE the result filename will be required to be in the data repository or in an addon.
+     * @return string|null The short filename or NULL if $isLocal is TRUE.
+     */
+    static function getShortFilename(string $filename, bool $isLocal = false): ?string
+    {
+        if (substr($filename, 0, 5) === 'data:') {
+            return $filename;
+        }
+        if (substr($filename, 0, 10) === 'appdata://') {
+            return 'data:' . substr($filename, 10);
+        }
+        $addonsList = \BearFramework\Addons::getList();
+        foreach ($addonsList as $addon) {
+            if (strpos($filename, $addon->dir) === 0) {
+                return 'addon:' . $addon->id . substr($filename, strlen($addon->dir));
+            }
+        }
+        if ($isLocal) {
+            return null;
+        }
+        return $filename;
+    }
+
+    /**
+     * 
+     * @param string $filename Filename in format appdata://file.png?opt1=value1&opt2=value2
+     * @return array
+     */
+    static function getFilenameOptions(string $filename): array
+    {
+        $query = parse_url($filename, PHP_URL_QUERY);
+        if ($query === null) {
+            return [];
+        }
+        $result = [];
+        parse_str($query, $result);
+        return $result;
+    }
+
+    /**
+     * 
+     * @param string $filename Filename in format appdata://file.png?opt1=value1&opt2=value2
+     * @return string Returns the updated filename
+     */
+    static function removeFilenameOptions(string $filename): string
+    {
+        $index = strpos($filename, '?');
+        return $index !== false ? substr($filename, 0, $index) : $filename;
+    }
+
+    /**
+     * 
+     * @param string $filename
+     * @param array $options
+     * @return string
+     */
+    static function setFilenameOptions(string $filename, array $options): string
+    {
+        $currentOptions = self::getFilenameOptions($filename);
+        if (!empty($currentOptions)) {
+            $options = array_merge($currentOptions, $options);
+            $filename = self::removeFilenameOptions($filename);
+        }
+        return $filename . (empty($options) ? '' : '?' . http_build_query($options));
     }
 }

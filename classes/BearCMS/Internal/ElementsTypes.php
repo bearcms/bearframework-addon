@@ -299,28 +299,28 @@ class ElementsTypes
                 'onDelete' => function ($data) use ($app) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
-                        $filename = Internal2::$data2->fixFilename($filename);
-                        $dataKey = Internal\Data::filenameToDataKey($filename);
-                        $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                        $dataKey = Internal\Data::getFilenameDataKey($filename);
+                        if ($dataKey !== null && $app->data->exists($dataKey)) {
+                            $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                        }
                         UploadsSize::remove($dataKey);
                     }
                 },
                 'onDuplicate' => function ($data) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
-                        $filename = Internal2::$data2->fixFilename($filename);
-                        $newFilename = Internal\Data::generateNewFilename($filename);
-                        copy($filename, $newFilename);
-                        UploadsSize::add(Internal\Data::filenameToDataKey($newFilename), filesize($newFilename));
-                        $data['filename'] = $newFilename;
+                        $realFilename = Internal\Data::getRealFilename($filename);
+                        $newRealFilename = Internal\Data::generateNewFilename($realFilename);
+                        copy($realFilename, $newRealFilename);
+                        UploadsSize::add(Internal\Data::getFilenameDataKey($newRealFilename), filesize($newRealFilename));
+                        $data['filename'] = Internal\Data::getShortFilename($newRealFilename);
                     }
                     return $data;
                 },
                 'getUploadsSizeItems' => function ($data) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
-                        $filename = Internal2::$data2->fixFilename($filename);
-                        return [Internal\Data::filenameToDataKey($filename)];
+                        return [Internal\Data::getFilenameDataKey($filename)];
                     }
                     return [];
                 },
@@ -329,7 +329,7 @@ class ElementsTypes
                     $hasChange = false;
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
-                        $filename = Internal2::$data2->fixFilename($filename);
+                        $filename = Internal\Data::getRealFilename($filename);
                         if (strpos($filename, 'appdata://') === 0) {
                             if ($filename !== $data['filename']) {
                                 $data['filename'] = $filename;
@@ -447,9 +447,10 @@ class ElementsTypes
                             if (isset($file['filename'])) {
                                 $filename = (string)$file['filename'];
                                 if (strlen($filename) > 0) {
-                                    $filename = Internal2::$data2->fixFilename($filename);
-                                    $dataKey = Internal\Data::filenameToDataKey($filename);
-                                    $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                                    $dataKey = Internal\Data::getFilenameDataKey($filename);
+                                    if ($dataKey !== null && $app->data->exists($dataKey)) {
+                                        $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                                    }
                                     UploadsSize::remove($dataKey);
                                 }
                             }
@@ -462,11 +463,11 @@ class ElementsTypes
                             if (isset($file['filename'])) {
                                 $filename = (string)$file['filename'];
                                 if (strlen($filename) > 0) {
-                                    $filename = Internal2::$data2->fixFilename($filename);
-                                    $newFilename = Internal\Data::generateNewFilename($filename);
-                                    copy($filename, $newFilename);
-                                    UploadsSize::add(Internal\Data::filenameToDataKey($newFilename), filesize($newFilename));
-                                    $data['files'][$index]['filename'] = $newFilename;
+                                    $realFilename = Internal\Data::getRealFilename($filename);
+                                    $newRealFilename = Internal\Data::generateNewFilename($realFilename);
+                                    copy($realFilename, $newRealFilename);
+                                    UploadsSize::add(Internal\Data::getFilenameDataKey($newRealFilename), filesize($newRealFilename));
+                                    $data['files'][$index]['filename'] = Internal\Data::getShortFilename($newRealFilename);
                                 }
                             }
                         }
@@ -480,8 +481,7 @@ class ElementsTypes
                             if (isset($file['filename'])) {
                                 $filename = (string)$file['filename'];
                                 if (strlen($filename) > 0) {
-                                    $filename = Internal2::$data2->fixFilename($filename);
-                                    $result[] = Internal\Data::filenameToDataKey($filename);
+                                    $result[] = Internal\Data::getFilenameDataKey($filename);
                                 }
                             }
                         }
@@ -496,7 +496,7 @@ class ElementsTypes
                             if (isset($file['filename'])) {
                                 $filename = (string)$file['filename'];
                                 if (strlen($filename) > 0) {
-                                    $filename = Internal2::$data2->fixFilename($filename);
+                                    $filename = Internal\Data::getRealFilename($filename);
                                     if (strpos($filename, 'appdata://') === 0) {
                                         if ($filename !== $file['filename']) {
                                             $file['filename'] = $filename;
@@ -578,20 +578,21 @@ class ElementsTypes
                 'onDelete' => function ($data) use ($app) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
-                        $filename = Internal2::$data2->fixFilename($filename);
-                        $dataKey = Internal\Data::filenameToDataKey($filename);
-                        $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                        $dataKey = Internal\Data::getFilenameDataKey($filename);
+                        if ($dataKey !== null && $app->data->exists($dataKey)) {
+                            $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                        }
                         UploadsSize::remove($dataKey);
                     }
                 },
                 'onDuplicate' => function ($data) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
-                        $filename = Internal2::$data2->fixFilename($filename);
-                        $newFilename = Internal\Data::generateNewFilename($filename);
-                        copy($filename, $newFilename);
-                        UploadsSize::add(Internal\Data::filenameToDataKey($newFilename), filesize($newFilename));
-                        $data['filename'] = $newFilename;
+                        $realFilename = Internal\Data::getRealFilename($filename);
+                        $newRealFilename = Internal\Data::generateNewFilename($realFilename);
+                        copy($realFilename, $newRealFilename);
+                        UploadsSize::add(Internal\Data::getFilenameDataKey($newRealFilename), filesize($newRealFilename));
+                        $data['filename'] = Internal\Data::getShortFilename($newRealFilename);
                     }
                     return $data;
                 },
@@ -1127,9 +1128,8 @@ class ElementsTypes
                     if (isset($data['value'])) {
                         $files = CanvasElementHelper::getFilesInValue((string)$data['value']);
                         foreach ($files as $filename) {
-                            $filename = Internal2::$data2->fixFilename($filename);
-                            $dataKey = Internal\Data::filenameToDataKey($filename);
-                            if ($app->data->exists($dataKey)) {
+                            $dataKey = Internal\Data::getFilenameDataKey($filename);
+                            if ($dataKey !== null && $app->data->exists($dataKey)) {
                                 $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
                             }
                             UploadsSize::remove($dataKey);
@@ -1160,8 +1160,7 @@ class ElementsTypes
                     if (isset($data['value'])) {
                         $files = CanvasElementHelper::getFilesInValue((string)$data['value']);
                         foreach ($files as $filename) {
-                            $filename = Internal2::$data2->fixFilename($filename);
-                            $result[] = Internal\Data::filenameToDataKey($filename);
+                            $result[] = Internal\Data::getFilenameDataKey($filename);
                         }
                     }
                     return $result;

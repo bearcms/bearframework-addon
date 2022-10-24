@@ -236,8 +236,10 @@ class Pages
             $filename = isset($data['image']) ? (string)$data['image'] : '';
             if (strlen($filename) > 0) {
                 $app = App::get();
-                $dataKey = Internal\Data::filenameToDataKey($filename);
-                $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                $dataKey = Internal\Data::getFilenameDataKey($filename);
+                if ($dataKey !== null && $app->data->exists($dataKey)) {
+                    $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+                }
                 UploadsSize::remove($dataKey);
             }
             if ($updateData) {

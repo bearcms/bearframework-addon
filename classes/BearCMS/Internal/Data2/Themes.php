@@ -111,26 +111,26 @@ class Themes
             $currentValues = $this->getValues($id);
         }
         $filesInCurrentValues = Internal\Themes::getFilesInValues($currentValues);
-        foreach ($filesInCurrentValues as $key) {
-            if (strpos($key, 'data:') === 0) {
-                $dataKay = substr($key, 5);
-                if ($hasUser && strpos($dataKay, 'bearcms/files/themeimage/') === 0) {
+        foreach ($filesInCurrentValues as $filename) {
+            $dataKey = Internal\Data::getFilenameDataKey($filename);
+            if ($dataKey !== null && (strpos($dataKey, '.temp/bearcms/files/themeimage/') === 0 || strpos($dataKey, 'bearcms/files/themeimage/') === 0)) {
+                if ($hasUser && strpos($dataKey, 'bearcms/files/themeimage/') === 0) {
                     // Do not delete theme files when changes to the user values are made
                 } else {
-                    $dataKeysToDelete[] = $dataKay;
+                    $dataKeysToDelete[] = $dataKey;
                 }
             }
         }
 
-        $dataKey = $hasUser ? '.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json' : 'bearcms/themes/theme/' . md5($id) . '.json';
+        $themeDataKey = $hasUser ? '.temp/bearcms/userthemeoptions/' . md5($userID) . '/' . md5($id) . '.json' : 'bearcms/themes/theme/' . md5($id) . '.json';
         if ($values === null) {
-            $app->data->delete($dataKey);
+            $app->data->delete($themeDataKey);
         } else {
             $filesInNewValues = Internal\Themes::getFilesInValues($values);
-            foreach ($filesInNewValues as $key) {
-                if (strpos($key, 'data:') === 0) {
-                    $dataKay = substr($key, 5);
-                    $dataKeysToDelete = array_diff($dataKeysToDelete, [$dataKay]); // Keeps the file if it's in the new values
+            foreach ($filesInNewValues as $filename) {
+                $dataKey = Internal\Data::getFilenameDataKey($filename);
+                if ($dataKey !== null) {
+                    $dataKeysToDelete = array_diff($dataKeysToDelete, [$dataKey]); // Keeps the file if it's in the new values
                 }
             }
 
@@ -141,9 +141,9 @@ class Themes
             }
             $dataToSet['options'] = $values;
             if (!$hasUser && empty($values)) { // use default theme values
-                $app->data->delete($dataKey);
+                $app->data->delete($themeDataKey);
             } else {
-                $app->data->setValue($dataKey, json_encode($dataToSet, JSON_THROW_ON_ERROR));
+                $app->data->setValue($themeDataKey, json_encode($dataToSet, JSON_THROW_ON_ERROR));
             }
         }
 
