@@ -587,7 +587,7 @@ class ElementsHelper
                 if (is_array($callback)) {
                     $callback = $callback[1];
                 }
-                call_user_func($callback, $options, 'ElementStyle', '#' . $htmlElementID . '.bearcms-elements-element-style-' . md5($elementID), Internal\Themes::OPTIONS_CONTEXT_ELEMENT);
+                call_user_func($callback, $options, 'ElementStyle', '#' . $htmlElementID . '.bearcms-elements-element-style-' . md5($elementID), Internal\Themes::OPTIONS_CONTEXT_ELEMENT, []);
                 $values = [];
                 foreach ($elementStyle as $name => $value) {
                     $values['ElementStyle' . $name] = $value;
@@ -628,7 +628,6 @@ class ElementsHelper
         if ($elementType !== null) {
             $filesInOldStyle = Internal\Themes::getFilesInValues($oldElementStyle);
             $filesToDelete = [];
-
             $newElementStyle = [];
             foreach ($values as $key => $value) {
                 $value = trim($value);
@@ -639,22 +638,30 @@ class ElementsHelper
                     }
                 }
             }
-            $filesInNewStyle = Internal\Themes::getFilesInValues($newElementStyle);
-            $filesKeysToUpdate = [];
-            foreach ($filesInNewStyle as $key) {
-                if (strpos($key, 'data:') === 0) {
-                    $dataKay = substr($key, 5);
-                    if (strpos($dataKay, '.temp/bearcms/files/elementstyleimage/') === 0) {
-                        $newDataKey = 'bearcms/files/elementstyleimage/' . pathinfo($dataKay, PATHINFO_BASENAME);
-                        $app->data->duplicate($dataKay, $newDataKey);
+            $filesInNewStyle = Internal\Themes::getFilesInValues($newElementStyle, true);
+            $filesToUpdate = [];
+            $duplicatedDataKeys = [];
+            $filesToKeep = [];
+            foreach ($filesInNewStyle as $filename) {
+                $filenameOptions = Internal\Data::getFilenameOptions($filename);
+                $filenameWithoutOptions = Internal\Data::removeFilenameOptions($filename);
+                $dataKey = Internal\Data::getFilenameDataKey($filenameWithoutOptions);
+                if ($dataKey !== null && strpos($dataKey, '.temp/bearcms/files/elementstyleimage/') === 0) {
+                    $newDataKey = 'bearcms/files/elementstyleimage/' . pathinfo($dataKey, PATHINFO_BASENAME);
+                    if (!isset($duplicatedDataKeys[$dataKey])) {
+                        $app->data->duplicate($dataKey, $newDataKey);
                         UploadsSize::add($newDataKey, filesize($app->data->getFilename($newDataKey)));
-                        $filesKeysToUpdate['data:' . $dataKay] = 'data:' . $newDataKey;
-                        $filesToDelete[] = $key;
+                        $duplicatedDataKeys[$dataKey] = true;
                     }
+                    $newFilenameWithOptions = Internal\Data::setFilenameOptions('data:' . $newDataKey, $filenameOptions);
+                    $filesToUpdate[$filename] = $newFilenameWithOptions;
+                    $filesToDelete[] = $filenameWithoutOptions;
+                } else {
+                    $filesToKeep[] = $filenameWithoutOptions;
                 }
             }
-            $filesToDelete = array_merge($filesToDelete, array_diff($filesInOldStyle, $filesInNewStyle));
-            $newElementStyle = Internal\Themes::updateFilesInValues($newElementStyle, $filesKeysToUpdate);
+            $filesToDelete = array_merge($filesToDelete, array_diff($filesInOldStyle, $filesToKeep));
+            $newElementStyle = Internal\Themes::updateFilesInValues($newElementStyle, $filesToUpdate);
             if ($isStructural) {
 
                 if ($elementType === 'columns') { // Move elements to the last column if theirs is removed
@@ -711,7 +718,7 @@ class ElementsHelper
             if (is_array($callback)) {
                 $callback = $callback[1];
             }
-            call_user_func($callback, $options, '', $cssSelector, Internal\Themes::OPTIONS_CONTEXT_ELEMENT);
+            call_user_func($callback, $options, '', $cssSelector, Internal\Themes::OPTIONS_CONTEXT_ELEMENT, []);
             $options->setValues($elementStyleData);
             $htmlData = Internal\Themes::getOptionsHTMLData($options->getList());
             $html = Internal\Themes::processOptionsHTMLData($htmlData);
@@ -1246,21 +1253,27 @@ class ElementsHelper
             }
         }
         if (isset($elementData['style'])) {
-            $fileKeys = Themes::getFilesInValues($elementData['style']);
-            if (!empty($fileKeys)) {
-                $filesKeysToUpdate = [];
-                foreach ($fileKeys as $fileKey) {
-                    if (substr($fileKey, 0, 5) === 'data:') {
-                        $dataKey = substr($fileKey, 5);
-                        if ($app->data->exists($dataKey)) {
-                            $newDataKey = \BearCMS\Internal\Data::generateNewFilename($dataKey);
-                            $filesKeysToUpdate[$fileKey] = 'data:' . $newDataKey;
+            $filenames = Themes::getFilesInValues($elementData['style'], true);
+            if (!empty($filenames)) {
+                $duplicatedDataKeys = [];
+                $filesToUpdate = [];
+                foreach ($filenames as $filename) {
+                    $filenameOptions = Internal\Data::getFilenameOptions($filename);
+                    $dataKey = Internal\Data::getFilenameDataKey($filename);
+                    if ($dataKey !== null && $app->data->exists($dataKey)) {
+                        if (isset($duplicatedDataKeys[$dataKey])) {
+                            $newDataKey = $duplicatedDataKeys[$dataKey];
+                        } else {
+                            $newDataKey = Internal\Data::generateNewFilename($dataKey);
                             $app->data->duplicate($dataKey, $newDataKey);
                             UploadsSize::add($newDataKey, filesize($app->data->getFilename($newDataKey)));
+                            $duplicatedDataKeys[$dataKey] = $newDataKey;
                         }
+                        $newFilenameWithOptions = Internal\Data::setFilenameOptions('data:' . $newDataKey, $filenameOptions);
+                        $filesToUpdate[$filename] = $newFilenameWithOptions;
                     }
                 }
-                $elementData['style'] = Themes::updateFilesInValues($elementData['style'], $filesKeysToUpdate);
+                $elementData['style'] = Themes::updateFilesInValues($elementData['style'], $filesToUpdate);
             }
         }
         InternalDataElements::setElement($targetElementID, $elementData, $targetContainerID);

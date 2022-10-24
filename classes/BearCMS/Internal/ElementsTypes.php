@@ -98,10 +98,11 @@ class ElementsTypes
                 'canStyle' => true
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['heading'] = function ($options, $idPrefix, $parentSelector, $context) {
+                Internal\Themes::$elementsOptions['heading'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
 
                     if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
                         $options->addOption($idPrefix . "HeadingCSS", "css", '', [
+                            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element-large", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                 ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
@@ -118,6 +119,7 @@ class ElementsTypes
 
                         $groupLarge = $group->addGroup(__("bearcms.themes.options.Large"));
                         $groupLarge->addOption($idPrefix . "HeadingLargeCSS", "css", '', [
+                            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element-large", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                 ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-large"]
@@ -127,6 +129,7 @@ class ElementsTypes
 
                         $groupMedium = $group->addGroup(__("bearcms.themes.options.Medium"));
                         $groupMedium->addOption($idPrefix . "HeadingMediumCSS", "css", '', [
+                            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                 ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-medium"]
@@ -136,6 +139,7 @@ class ElementsTypes
 
                         $groupSmall = $group->addGroup(__("bearcms.themes.options.Small"));
                         $groupSmall->addOption($idPrefix . "HeadingSmallCSS", "css", '', [
+                            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element-small", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                 ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-small"]
@@ -159,7 +163,7 @@ class ElementsTypes
                 'canStyle' => true
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['text'] = function ($options, $idPrefix, $parentSelector, $context) {
+                Internal\Themes::$elementsOptions['text'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
                         $optionsGroup = $options;
                         $customStyleSelector = '';
@@ -168,6 +172,7 @@ class ElementsTypes
                         $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"]) >';
                     }
                     $optionsGroup->addOption($idPrefix . "TextCSS", "css", '', [
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-text-element", "box-sizing:border-box;"],
                             ["rule", $parentSelector . " .bearcms-text-element ul", "list-style-position:inside;margin:0;padding:0;"],
@@ -182,6 +187,7 @@ class ElementsTypes
 
                     $groupLinks = $optionsGroup->addGroup(__("bearcms.themes.options.Links"));
                     $groupLinks->addOption($idPrefix . "TextLinkCSS", "css", '', [
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssTypes" => ["cssText", "cssTextShadow"],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-text-element a", "text-decoration:none;"],
@@ -213,7 +219,7 @@ class ElementsTypes
                 'canStyle' => true
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['link'] = function ($options, $idPrefix, $parentSelector, $context) {
+                Internal\Themes::$elementsOptions['link'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
                         $optionsGroup = $options;
                         $customStyleSelector = '';
@@ -223,6 +229,7 @@ class ElementsTypes
                     }
 
                     $optionsGroup->addOption($idPrefix . "LinkCSS", "css", '', [
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-link-element a", "text-decoration:none;box-sizing:border-box;display:inline-block;"],
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element a"]
@@ -233,6 +240,7 @@ class ElementsTypes
                     $groupContainer = $optionsGroup->addGroup(__("bearcms.themes.options.Container"));
                     $groupContainer->addOption($idPrefix . "LinkContainerCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTextAlign"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-link-element", "box-sizing:border-box;"],
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element"]
@@ -350,7 +358,7 @@ class ElementsTypes
                 'canStyle' => true
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['image'] = function ($options, $idPrefix, $parentSelector, $context) {
+                Internal\Themes::$elementsOptions['image'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $isElementContext = $context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
@@ -362,6 +370,7 @@ class ElementsTypes
 
                     $optionsGroup->addOption($idPrefix . "ImageCSS", "css", '', [
                         "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-image-element", "overflow:hidden;"],
                             ["rule", $parentSelector . " .bearcms-image-element img", "border:0;"],
@@ -372,6 +381,7 @@ class ElementsTypes
                     if ($isElementContext) {
                         $optionsGroup->addOption($idPrefix . "elementContainerCSS", "css", '', [
                             "cssTypes" => ["cssSize"],
+                            "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                             "cssOutput" => [
                                 ["selector", $parentSelector . $customStyleSelector]
                             ],
@@ -520,10 +530,11 @@ class ElementsTypes
                 },
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['imageGallery'] = function ($options, $idPrefix, $parentSelector) {
+                Internal\Themes::$elementsOptions['imageGallery'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupImageGallery = $options->addGroup(__("bearcms.themes.options.Image gallery"));
                     $groupImageGallery->addOption($idPrefix . "ImageGalleryCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-image-gallery-element"]
                         ]
@@ -532,6 +543,7 @@ class ElementsTypes
                     $groupImage = $groupImageGallery->addGroup(__("bearcms.themes.options.Image"));
                     $groupImage->addOption($idPrefix . "ImageGalleryImageCSS", "css", '', [
                         "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-image-gallery-element-image", "overflow:hidden;"],
                             ["rule", $parentSelector . " .bearcms-image-gallery-element-image img", "border:0;"],
@@ -599,17 +611,17 @@ class ElementsTypes
                 'getUploadsSizeItems' => function ($data) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
-                        $filename = Internal2::$data2->fixFilename($filename);
-                        return [Internal\Data::filenameToDataKey($filename)];
+                        return [Internal\Data::getFilenameDataKey($filename)];
                     }
                     return [];
                 }
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['video'] = function ($options, $idPrefix, $parentSelector) {
+                Internal\Themes::$elementsOptions['video'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $group = $options->addGroup(__("bearcms.themes.options.Video"));
                     $group->addOption($idPrefix . "VideoCSS", "css", '', [
                         "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-video-element", "overflow:hidden;"],
                             ["selector", $parentSelector . " .bearcms-video-element"]
@@ -658,10 +670,11 @@ class ElementsTypes
                 ]
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['navigation'] = function ($options, $idPrefix, $parentSelector) {
+                Internal\Themes::$elementsOptions['navigation'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupNavigation = $options->addGroup(__("bearcms.themes.options.Navigation"));
                     $groupNavigation->addOption($idPrefix . "NavigationCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBorder", "cssBackground"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-navigation-element", "margin:0;padding:0;"],
                             ["rule", $parentSelector . " .bearcms-navigation-element ul", "margin:0;padding:0;"],
@@ -672,6 +685,7 @@ class ElementsTypes
                     $groupElements = $groupNavigation->addGroup(__("bearcms.themes.options.Elements"));
                     $groupElements->addOption($idPrefix . "NavigationItemLinkCSS", "css", '', [
                         "cssTypes" => ["cssText", "cssTextShadow"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-navigation-element-item a", "text-decoration:none;"], // treat as text link // no max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
                             ["selector", $parentSelector . " .bearcms-navigation-element-item a"]
@@ -681,6 +695,7 @@ class ElementsTypes
                     $groupElementsContainer = $groupElements->addGroup(__("bearcms.themes.options.Container"));
                     $groupElementsContainer->addOption($idPrefix . "NavigationItemLinkContainerCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-navigation-element-item", "box-sizing:border-box;"],
                             ["selector", $parentSelector . " .bearcms-navigation-element-item"]
@@ -709,9 +724,10 @@ class ElementsTypes
                 ]
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['html'] = function ($options, $idPrefix, $parentSelector) {
+                Internal\Themes::$elementsOptions['html'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupHTMLCode = $options->addGroup(__("bearcms.themes.options.HTML code"));
                     $groupHTMLCode->addOption($idPrefix . "HtmlCSS", "css", '', [
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-html-element ul", "list-style-position:inside;margin:0;padding:0;"],
                             ["rule", $parentSelector . " .bearcms-html-element ol", "list-style-position:inside;margin:0;padding:0;"],
@@ -725,6 +741,7 @@ class ElementsTypes
                     $groupLinks = $groupHTMLCode->addGroup(__("bearcms.themes.options.Links"));
                     $groupLinks->addOption($idPrefix . "HtmlLinkCSS", "css", '', [
                         "cssTypes" => ["cssText", "cssTextShadow"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-html-element a", "text-decoration:none;"],
                             ["selector", $parentSelector . " .bearcms-html-element a"]
@@ -769,10 +786,11 @@ class ElementsTypes
                 ]
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['blogPosts'] = function ($options, $idPrefix, $parentSelector) {
+                Internal\Themes::$elementsOptions['blogPosts'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupBlogPosts = $options->addGroup(__("bearcms.themes.options.Blog posts"));
                     $groupBlogPosts->addOption($idPrefix . "BlogPostsCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-blog-posts-element"]
                         ]
@@ -789,6 +807,7 @@ class ElementsTypes
                     $groupPost = $groupBlogPosts->addGroup(__("bearcms.themes.options.Post"));
                     $groupPost->addOption($idPrefix . "BlogPostsPostCSS", "css", '', [
                         "cssTypes" => ["cssBorder", "cssBackground", "cssShadow"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-blog-posts-element-post"]
                         ]
@@ -797,6 +816,7 @@ class ElementsTypes
                     $groupPostTitle = $groupPost->addGroup(__("bearcms.themes.options.Title"));
                     $groupPostTitle->addOption($idPrefix . "BlogPostsPostTitleCSS", "css", '', [
                         "cssTypes" => ["cssText", "cssTextShadow"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-blog-posts-element-post-title", "text-decoration:none;"],
                             ["selector", $parentSelector . " .bearcms-blog-posts-element-post-title"]
@@ -806,6 +826,7 @@ class ElementsTypes
                     $groupPostTitleContainer = $groupPostTitle->addGroup(__("bearcms.themes.options.Container"));
                     $groupPostTitleContainer->addOption($idPrefix . "BlogPostsPostTitleContainerCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-blog-posts-element-post-title-container", "box-sizing:border-box;"],
                             ["selector", $parentSelector . " .bearcms-blog-posts-element-post-title-container"]
@@ -815,6 +836,7 @@ class ElementsTypes
                     $groupPostDate = $groupPost->addGroup(__("bearcms.themes.options.Date"));
                     $groupPostDate->addOption($idPrefix . "BlogPostsPostDateCSS", "css", '', [
                         "cssTypes" => ["cssText", "cssTextShadow"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-blog-posts-element-post-date"]
                         ]
@@ -823,6 +845,7 @@ class ElementsTypes
                     $groupPostDateContainer = $groupPostDate->addGroup(__("bearcms.themes.options.Container"));
                     $groupPostDateContainer->addOption($idPrefix . "BlogPostsPostDateContainerCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-blog-posts-element-post-date-container", "box-sizing:border-box;"],
                             ["selector", $parentSelector . " .bearcms-blog-posts-element-post-date-container"]
@@ -832,6 +855,7 @@ class ElementsTypes
                     $groupPostContent = $groupPost->addGroup(__("bearcms.themes.options.Content"));
                     $groupPostContent->addOption($idPrefix . "BlogPostsPostContentCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-blog-posts-element-post-content", "box-sizing:border-box;"],
                             ["selector", $parentSelector . " .bearcms-blog-posts-element-post-content"]
@@ -840,6 +864,7 @@ class ElementsTypes
 
                     $groupShowMoreButton = $groupBlogPosts->addGroup(__('bearcms.themes.options.blogPosts.Show more button'));
                     $groupShowMoreButton->addOption($idPrefix . "BlogPostsShowMoreButtonCSS", "css", '', [
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-blog-posts-element-show-more-button", "box-sizing:border-box;display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                             ["selector", $parentSelector . " .bearcms-blog-posts-element-show-more-button"]
@@ -849,6 +874,7 @@ class ElementsTypes
                     $groupShowMoreButtonContainer = $groupShowMoreButton->addGroup(__("bearcms.themes.options.Container"));
                     $groupShowMoreButtonContainer->addOption($idPrefix . "BlogPostsShowMoreButtonContainerCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-blog-posts-element-show-more-button-container", "box-sizing:border-box;"],
                             ["selector", $parentSelector . " .bearcms-blog-posts-element-show-more-button-container"]
@@ -887,12 +913,13 @@ class ElementsTypes
                 }
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['comments'] = function ($options, $idPrefix, $parentSelector) {
+                Internal\Themes::$elementsOptions['comments'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupComments = $options->addGroup(__("bearcms.themes.options.Comments"));
 
                     $groupComment = $groupComments->addGroup(__("bearcms.themes.options.comments.Comment"));
                     $groupComment->addOption($idPrefix . "CommentsCommentCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-comments-comment", "box-sizing:border-box;"],
                             ["selector", $parentSelector . " .bearcms-comments-comment"]
@@ -902,6 +929,7 @@ class ElementsTypes
                     $groupCommentAuthorName = $groupComment->addGroup(__("bearcms.themes.options.comments.Author name"));
                     $groupCommentAuthorName->addOption($idPrefix . "CommentsAuthorNameCSS", "css", '', [
                         "cssTypes" => ["cssText", "cssTextShadow"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-comments-comment-author-name"]
                         ]
@@ -910,6 +938,7 @@ class ElementsTypes
                     $groupCommentAuthorImage = $groupComment->addGroup(__("bearcms.themes.options.comments.Author image"));
                     $groupCommentAuthorImage->addOption($idPrefix . "CommentsAuthorImageCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-comments-comment-author-image", "box-sizing:border-box;"],
                             ["selector", $parentSelector . " .bearcms-comments-comment-author-image"]
@@ -919,6 +948,7 @@ class ElementsTypes
                     $groupCommentDate = $groupComment->addGroup(__("bearcms.themes.options.comments.Date"));
                     $groupCommentDate->addOption($idPrefix . "CommentsDateCSS", "css", '', [
                         "cssTypes" => ["cssText", "cssTextShadow"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-comments-comment-date"]
                         ]
@@ -927,6 +957,7 @@ class ElementsTypes
                     $groupCommentText = $groupComment->addGroup(__("bearcms.themes.options.comments.Text"));
                     $groupCommentText->addOption($idPrefix . "CommentsTextCSS", "css", '', [
                         "cssTypes" => ["cssText", "cssTextShadow"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-comments-comment-text"]
                         ]
@@ -935,6 +966,7 @@ class ElementsTypes
                     $groupCommentTextLinks = $groupComment->addGroup(__("bearcms.themes.options.comments.Text links"));
                     $groupCommentTextLinks->addOption($idPrefix . "CommentsTextLinksCSS", "css", '', [
                         "cssTypes" => ["cssText", "cssTextShadow"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-comments-comment-text a"]
                         ]
@@ -943,6 +975,7 @@ class ElementsTypes
                     $groupTextInput = $groupComments->addGroup(__("bearcms.themes.options.comments.Text input"));
                     $groupTextInput->addOption($idPrefix . "CommentsTextInputCSS", "css", '', [
                         "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-comments-element-text-input", "box-sizing:border-box;border:0;margin:0;padding:0;"],
                             ["selector", $parentSelector . " .bearcms-comments-element-text-input"]
@@ -951,6 +984,7 @@ class ElementsTypes
 
                     $groupSendButton = $groupComments->addGroup(__("bearcms.themes.options.comments.Send button"));
                     $groupSendButton->addOption($idPrefix . "CommentsSendButtonCSS", "css", '', [
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-comments-element-send-button", "box-sizing:border-box;display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                             ["selector", $parentSelector . " .bearcms-comments-element-send-button"]
@@ -959,6 +993,7 @@ class ElementsTypes
 
                     $groupSendButtonWaiting = $groupSendButton->addGroup(__("bearcms.themes.options.comments.Send button waiting"));
                     $groupSendButtonWaiting->addOption($idPrefix . "CommentsSendButtonWaitingCSS", "css", '', [
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-comments-element-send-button-waiting", "box-sizing:border-box;display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                             ["selector", $parentSelector . " .bearcms-comments-element-send-button-waiting"]
@@ -967,6 +1002,7 @@ class ElementsTypes
 
                     $groupShowMoreButton = $groupComments->addGroup(__("bearcms.themes.options.comments.Show more button"));
                     $groupShowMoreButton->addOption($idPrefix . "CommentsShowMoreButtonCSS", "css", '', [
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-comments-show-more-button", "box-sizing:border-box;display:inline-block;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;"],
                             ["selector", $parentSelector . " .bearcms-comments-show-more-button"]
@@ -976,6 +1012,7 @@ class ElementsTypes
                     $groupShowMoreButtonContainer = $groupShowMoreButton->addGroup(__("bearcms.themes.options.comments.Container"));
                     $groupShowMoreButtonContainer->addOption($idPrefix . "CommentsShowMoreButtonContainerCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-comments-show-more-button-container", "box-sizing:border-box;"],
                             ["selector", $parentSelector . " .bearcms-comments-show-more-button-container"]
@@ -1008,40 +1045,43 @@ class ElementsTypes
                 ]
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['separator'] = function ($options, $idPrefix, $parentSelector) {
+                Internal\Themes::$elementsOptions['separator'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $group = $options->addGroup(__("bearcms.themes.options.Separator"));
 
                     $groupLarge = $group->addGroup(__("bearcms.themes.options.Separator.Large"));
                     $groupLarge->addOption($idPrefix . "SeparatorLargeCSS", "css", '', [
                         "cssTypes" => ["cssBackground", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssSize"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-separator-element-large"]
                         ],
-                        "value" => '{"background-color":"#555","height":"1px","margin-left":"auto","margin-right":"auto","margin-top":"2rem","margin-bottom":"2rem","width":"90%"}'
+                        "defaultValue" => '{"background-color":"#555","height":"1px","margin-left":"auto","margin-right":"auto","margin-top":"2rem","margin-bottom":"2rem","width":"90%"}'
                     ]);
 
                     $groupMedium = $group->addGroup(__("bearcms.themes.options.Separator.Medium"));
                     $groupMedium->addOption($idPrefix . "SeparatorMediumCSS", "css", '', [
                         "cssTypes" => ["cssBackground", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssSize"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-separator-element-medium"]
                         ],
-                        "value" => '{"background-color":"#555","height":"1px","margin-left":"auto","margin-right":"auto","margin-top":"2rem","margin-bottom":"2rem","width":"60%"}'
+                        "defaultValue" => '{"background-color":"#555","height":"1px","margin-left":"auto","margin-right":"auto","margin-top":"2rem","margin-bottom":"2rem","width":"60%"}'
                     ]);
 
                     $groupSmall = $group->addGroup(__("bearcms.themes.options.Separator.Small"));
                     $groupSmall->addOption($idPrefix . "SeparatorSmallCSS", "css", '', [
                         "cssTypes" => ["cssBackground", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssSize"],
+                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-separator-element-small"]
                         ],
-                        "value" => '{"background-color":"#555","height":"1px","margin-left":"auto","margin-right":"auto","margin-top":"2rem","margin-bottom":"2rem","width":"30%"}'
+                        "defaultValue" => '{"background-color":"#555","height":"1px","margin-left":"auto","margin-right":"auto","margin-top":"2rem","margin-bottom":"2rem","width":"30%"}'
                     ]);
                 };
             }
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_COLUMNS')) {
-            Internal\Themes::$elementsOptions['columns'] = function ($options, $idPrefix, $parentSelector, $context) {
+            Internal\Themes::$elementsOptions['columns'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                 if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
                     $optionsGroup = $options;
                 } else {
@@ -1061,7 +1101,7 @@ class ElementsTypes
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_FLOATING_BOX')) {
-            Internal\Themes::$elementsOptions['floatingBox'] = function ($options, $idPrefix, $parentSelector, $context) {
+            Internal\Themes::$elementsOptions['floatingBox'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                 if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
                     $optionsGroup = $options;
                 } else {
@@ -1085,7 +1125,7 @@ class ElementsTypes
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_FLEXIBLE_BOX')) {
-            Internal\Themes::$elementsOptions['flexibleBox'] = function ($options, $idPrefix, $parentSelector, $context) {
+            Internal\Themes::$elementsOptions['flexibleBox'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                 if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
                     $optionsGroup = $options;
                 } else {
@@ -1108,6 +1148,7 @@ class ElementsTypes
                 ]);
                 $optionsGroup->addOption($idPrefix . "css", "css", '', [
                     "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"], // cssMargin conflicts with the elements spacing margin-bottom
+                    "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                     "cssOutput" => [
                         ["selector", $parentSelector]
                     ]
@@ -1139,15 +1180,18 @@ class ElementsTypes
                 'onDuplicate' => function ($data) {
                     if (isset($data['value'])) {
                         $value = (string)$data['value'];
-                        $files = CanvasElementHelper::getFilesInValue($value);
+                        $files = CanvasElementHelper::getFilesInValue($value, true);
                         $filesToUpdate = [];
                         foreach ($files as $filename) {
-                            $oldFilename = Internal2::$data2->fixFilename($filename);
+                            $filenameWithoutOptions = Internal\Data::removeFilenameOptions($filename);
+                            $filenameOptions = Internal\Data::getFilenameOptions($filename);
+                            $oldFilename = Internal\Data::getRealFilename($filenameWithoutOptions);
                             $newFilename = Internal\Data::generateNewFilename($oldFilename);
                             copy($oldFilename, $newFilename);
-                            $newFilenameDataKey = Internal\Data::filenameToDataKey($newFilename);
+                            $newFilenameDataKey = Internal\Data::getFilenameDataKey($newFilename);
                             UploadsSize::add($newFilenameDataKey, filesize($newFilename));
-                            $filesToUpdate[$filename] = 'data:' . $newFilenameDataKey;
+                            $newFilenameWithOptions = Internal\Data::setFilenameOptions($newFilename, $filenameOptions);
+                            $filesToUpdate[$filename] = Internal\Data::getShortFilename($newFilenameWithOptions);
                         }
                         if (!empty($filesToUpdate)) {
                             $data['value'] = CanvasElementHelper::updateFilesInValue($value, $filesToUpdate);

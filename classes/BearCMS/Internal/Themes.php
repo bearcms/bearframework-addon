@@ -344,7 +344,7 @@ class Themes
             foreach (self::$pagesOptions as $key => $value) {
                 $pagesOptionsEnvKeyData[] = $key . (is_array($value) ? '$' . $value[0] : '');
             }
-            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v8'));
+            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v9'));
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID);
@@ -383,10 +383,14 @@ class Themes
                     $htmlData = [];
                 } else {
                     $themeOptions->setValues($currentValues);
-                    $values = $themeOptions->getValues();
+                    $values = $themeOptions->getValues(true);
                     $htmlData = self::getOptionsHTMLData($themeOptions->getList(), true);
                 }
                 $resultData = [$values, $htmlData, $envKey];
+                if ($useCache) {
+                    $saveToCache = true;
+                    $saveToTempData = true;
+                }
             }
             if ($useCache) {
                 if ($saveToCache) {
@@ -398,15 +402,9 @@ class Themes
             }
             $values = $resultData[0];
             $htmlData = $resultData[1];
-            $assetsDetails = [];
-            if (isset($htmlData['updates'], $htmlData['updates']['assets'])) {
-                foreach ($htmlData['updates']['assets'] as $key => $details) {
-                    $assetsDetails[$key] = $details;
-                }
-            }
             $html = self::processOptionsHTMLData($htmlData);
 
-            self::$cache[$localCacheKey] = new \BearCMS\Themes\Theme\Customizations($values, $html, $assetsDetails);
+            self::$cache[$localCacheKey] = new \BearCMS\Themes\Theme\Customizations($values, $html, isset($htmlData['details']) ? $htmlData['details'] : []);
         }
         return self::$cache[$localCacheKey];
     }
@@ -426,14 +424,22 @@ class Themes
         $customizations = self::getCustomizations($id);
         $values = $customizations->getValues();
         $filesToAttach = [];
-        $filesInValues = self::getFilesInValues($values);
-        $filesKeysToUpdate = [];
+        $filesInValues = self::getFilesInValues($values, true);
+        $filesToUpdate = [];
         foreach ($filesInValues as $filename) {
-            $attachmentName = 'files/' . (sizeof($filesToAttach) + 1) . '.' . pathinfo($filename, PATHINFO_EXTENSION); // the slash helps in import (shows if the value is encoded)
-            $filesToAttach[$attachmentName] = $filename;
-            $filesKeysToUpdate[$filename] = 'data:' . $attachmentName;
+            $filenameOptions = Internal\Data::getFilenameOptions($filename);
+            $filenameWithoutOptions = Internal\Data::removeFilenameOptions($filename);
+            $realFilename = Internal\Data::getRealFilename($filenameWithoutOptions);
+            if (isset($filesToAttach[$realFilename])) {
+                $attachmentName = $filesToAttach[$realFilename];
+            } else {
+                $attachmentName = 'files/' . (sizeof($filesToAttach) + 1) . '.' . pathinfo($filenameWithoutOptions, PATHINFO_EXTENSION); // the slash helps in import (shows if the value is encoded)
+                $filesToAttach[$realFilename] = $attachmentName;
+            }
+            $newFilenameWithOptions = Internal\Data::setFilenameOptions('data:' . $attachmentName, $filenameOptions);
+            $filesToUpdate[$filename] = $newFilenameWithOptions;
         }
-        $values = self::updateFilesInValues($values, $filesKeysToUpdate);
+        $values = self::updateFilesInValues($values, $filesToUpdate);
 
         $manifest = [
             'themeID' => $id,
@@ -447,8 +453,7 @@ class Themes
         if ($zip->open($tempArchiveFilename, \ZipArchive::CREATE) === true) {
             $zip->addFromString('manifest.json', json_encode($manifest, JSON_THROW_ON_ERROR));
             $zip->addFromString('values.json', json_encode($values, JSON_THROW_ON_ERROR));
-            foreach ($filesToAttach as $attachmentName => $filename) {
-                $filename = Internal2::$data2->fixFilename($filename);
+            foreach ($filesToAttach as $filename => $attachmentName) {
                 $zip->addFromString($attachmentName, file_get_contents($filename));
             }
             $zip->close();
@@ -511,44 +516,55 @@ class Themes
             };
             $values = $getValues();
 
-            $filesInValues = self::getFilesInValues($values);
-            $filesKeysToUpdate = [];
-            foreach ($filesInValues as $key) {
-                if (strpos($key, 'data:files/') !== 0) {
-                    throw new \Exception('Invalid file (' . $key . ')!', 6);
+            $filesInValues = self::getFilesInValues($values, true);
+            $filesToUpdate = [];
+            $importedDataKeys = [];
+            foreach ($filesInValues as $filename) {
+                if (strpos($filename, 'data:files/') !== 0) {
+                    throw new \Exception('Invalid file (' . $filename . ')!', 6);
                 }
-                $filename = substr($key, 5);
-                $data = $zip->getFromName($filename);
+                $filenameOptions = Internal\Data::getFilenameOptions($filename);
+                $filenameWithoutOptions = Internal\Data::removeFilenameOptions($filename);
+                $filenameInArchive = substr($filenameWithoutOptions, 5); // remove data:
+                $data = $zip->getFromName($filenameInArchive);
                 if ($data !== false) {
-                    $extension = pathinfo($filename, PATHINFO_EXTENSION);
-                    if (array_search($extension, ['jpg', 'jpeg', 'gif', 'png']) === false) {
-                        throw new \Exception('Invalid file (' . $filename . ')!', 9);
+                    $extension = pathinfo($filenameInArchive, PATHINFO_EXTENSION);
+                    if (isset($importedDataKeys[$filenameInArchive])) {
+                        $dataKey = $importedDataKeys[$filenameInArchive];
+                    } else {
+                        if (array_search($extension, ['jpg', 'jpeg', 'gif', 'png', 'svg']) === false) {
+                            throw new \Exception('Invalid file (' . $filenameInArchive . ')!', 9);
+                        }
+                        $dataKey = ($hasUser ? '.temp/bearcms/files/themeimage/' : 'bearcms/files/themeimage/') . md5($filenameInArchive . '-' . uniqid()) . '.' . $extension;
+                        $app->data->setValue($dataKey, $data);
+                        $importedDataKeys[$filenameInArchive] = $dataKey;
                     }
-                    $dataKey = ($hasUser ? '.temp/bearcms/files/themeimage/' : 'bearcms/files/themeimage/') . md5($filename . '-' . uniqid()) . '.' . $extension;
-                    $app->data->setValue($dataKey, $data);
-                    $filesKeysToUpdate[$key] = 'data:' . $dataKey;
+                    $newFilenameWithOptions = Internal\Data::setFilenameOptions('data:' . $dataKey, $filenameOptions);
+                    $filesToUpdate[$filename] = $newFilenameWithOptions;
                     $isInvalid = false;
-                    try {
-                        $details = $app->assets->getDetails($app->data->getFilename($dataKey), ['width', 'height']);
-                        $size = [$details['width'], $details['height']];
-                        if ($size[0] <= 0 || $size[1] <= 0) {
+                    if ($extension !== 'svg') {
+                        try {
+                            $assetDetails = $app->assets->getDetails($app->data->getFilename($dataKey), ['width', 'height']);
+                            $size = [$assetDetails['width'], $assetDetails['height']];
+                            if ($size[0] <= 0 || $size[1] <= 0) {
+                                $isInvalid = true;
+                            }
+                        } catch (\Exception $e) {
                             $isInvalid = true;
                         }
-                    } catch (\Exception $e) {
-                        $isInvalid = true;
                     }
 
                     if ($isInvalid) {
-                        foreach ($filesKeysToUpdate as $dataKeyWithPrefix) { // remove previously added files
-                            $app->data->delete(substr($dataKeyWithPrefix, 5));
+                        foreach ($filesToUpdate as $newFilename) { // remove previously added files
+                            $newFilenameDataKey = Internal\Data::getFilenameDataKey($newFilename);
+                            $app->data->delete($newFilenameDataKey);
                         }
-                        throw new \Exception('Invalid file (' . $key . ')!', 7);
+                        throw new \Exception('Invalid file (' . $filename . ')!', 7);
                     }
-                    //$app->data->makePublic($dataKey);
                 }
             }
 
-            $values = self::updateFilesInValues($values, $filesKeysToUpdate);
+            $values = self::updateFilesInValues($values, $filesToUpdate);
             if ($hasUser) {
                 Internal2::$data2->themes->setUserOptions($id, $userID, $values);
             } else {
@@ -575,19 +591,23 @@ class Themes
         $app = App::get();
         $values = Internal2::$data2->themes->getUserOptions($id, $userID);
         if (is_array($values)) {
-            $filesInValues = self::getFilesInValues($values);
-            $filesKeysToUpdate = [];
-            foreach ($filesInValues as $key) {
-                if (strpos($key, 'data:') === 0) {
-                    $dataKay = substr($key, 5);
-                    if (strpos($dataKay, '.temp/bearcms/files/themeimage/') === 0) {
-                        $newDataKey = 'bearcms/files/themeimage/' . pathinfo($dataKay, PATHINFO_BASENAME);
-                        $app->data->duplicate($dataKay, $newDataKey); // setValues() will remove the files in the user options 
-                        $filesKeysToUpdate['data:' . $dataKay] = 'data:' . $newDataKey;
+            $duplicatedDataKeys = [];
+            $filesInValues = self::getFilesInValues($values, true);
+            $filesToUpdate = [];
+            foreach ($filesInValues as $filename) {
+                $filenameOptions = Internal\Data::getFilenameOptions($filename);
+                $dataKey = Internal\Data::getFilenameDataKey($filename);
+                if ($dataKey !== null && strpos($dataKey, '.temp/bearcms/files/themeimage/') === 0) {
+                    $newDataKey = 'bearcms/files/themeimage/' . pathinfo($dataKey, PATHINFO_BASENAME);
+                    if (!isset($duplicatedDataKeys[$dataKey])) {
+                        $app->data->duplicate($dataKey, $newDataKey); // setValues() will remove the files in the user options 
+                        $duplicatedDataKeys[$dataKey] = true;
                     }
+                    $newFilenameWithOptions = Internal\Data::setFilenameOptions('data:' . $newDataKey, $filenameOptions);
+                    $filesToUpdate[$filename] = $newFilenameWithOptions;
                 }
             }
-            $values = self::updateFilesInValues($values, $filesKeysToUpdate);
+            $values = self::updateFilesInValues($values, $filesToUpdate);
             Internal2::$data2->themes->setOptions($id, $values);
             Internal2::$data2->themes->discardUserOptions($id, $userID);
             self::$cache = [];
@@ -597,27 +617,21 @@ class Themes
     /**
      * 
      * @param array $values
+     * @param boolean $includeOptions If TRUE the filenames will be in format FILENAME?options, else the ?options will be removed.
      * @return array
      */
-    static public function getFilesInValues(array $values): array
+    static public function getFilesInValues(array $values, bool $includeOptions = false): array
     {
         $result = [];
         foreach ($values as $value) {
-            if (!is_string($value) || strlen($value) === 0) {
-                continue;
-            }
-            $matches = [];
-            preg_match_all('/url\((.*?)\)/', $value, $matches);
-            if (!empty($matches[1])) {
-                $matches[1] = array_unique($matches[1]);
-                foreach ($matches[1] as $key) {
-                    $jsJsonEncoded = is_array(json_decode($value, true));
-                    $result[] = $jsJsonEncoded ? json_decode('"' . $key . '"') : $key;
+            $valueDetails = self::getValueDetails($value, true);
+            $files = $valueDetails['files'];
+            if (!$includeOptions) {
+                foreach ($files as $index => $filename) {
+                    $files[$index] = Internal\Data::removeFilenameOptions($filename);
                 }
             }
-            if (strpos($value, 'appdata://') === 0 || strpos($value, 'data:') === 0 || strpos($value, 'addon:') === 0) { //strpos($value, 'app:') === 0 || 
-                $result[] = $value;
-            }
+            $result = array_merge($result, $files);
         }
         return array_values(array_unique($result));
     }
@@ -625,7 +639,7 @@ class Themes
     /**
      * 
      * @param array $values
-     * @param array $keysToUpdate
+     * @param array $keysToUpdate [oldKey=>newKey, oldKey=>newKey]
      * @return array
      */
     static public function updateFilesInValues(array $values, array $keysToUpdate): array
@@ -659,34 +673,168 @@ class Themes
 
     /**
      * 
-     * @param array $options
-     * @param boolean $includeAssetsDetails
+     * @param mixed $value Assumes that if the value is a JSON, it's in the following formats: ['color':'','color:hover':''], [value=>..., states=>...]. JSON in other options is not allowed (lists, etc.), only in [value=>...].
+     * @param boolean $includeFiles
      * @return array
      */
-    static public function getOptionsHTMLData(array $options, bool $includeAssetsDetails = false): array
+    static function getValueDetails($value, bool $includeFiles = false): array
+    {
+        $result = ['value' => null, 'states' => []];
+        if ($includeFiles) {
+            $result['files'] = [];
+        }
+        if ($value === null || !is_string($value) || !isset($value[0])) {
+            $result['value'] = $value;
+            return $result;
+        }
+        $decodedValue = json_decode($value, true);
+        if (!is_array($decodedValue)) {
+            $result['value'] = $value;
+            return $result;
+        }
+        $hasValue = isset($decodedValue['value']);
+        $hasStates = isset($decodedValue['states']);
+        if ($hasValue || $hasStates) { // Format: [value=>..., states=>...]
+            if ($hasValue) {
+                $result['value'] = $decodedValue['value'];
+            }
+            if ($hasStates) {
+                $result['states'] = $decodedValue['states'];
+            }
+        } else { // Old CSS format: ['color':'','color:hover':'']
+            $newValue = [];
+            $newStates = [];
+            foreach ($decodedValue as $_key => $_value) {
+                $colonIndex = strpos($_key, ':');
+                if ($colonIndex !== false) {
+                    $state = substr($_key, $colonIndex);
+                    $propertyName = substr($_key, 0, $colonIndex);
+                    if (!isset($newStates[$state])) {
+                        $newStates[$state] = [];
+                    }
+                    $newStates[$state][$propertyName] = $_value;
+                } else {
+                    $newValue[$_key] = $_value;
+                }
+            }
+            $result['value'] = $newValue;
+            foreach ($newStates as $state => $stateValue) {
+                $result['states'][] = [$state, $stateValue];
+            }
+        }
+
+        if ($includeFiles) {
+            $addFiles = function ($value) use (&$result) {
+                $isFilename = function ($value) {
+                    return strpos($value, 'appdata://') === 0 || strpos($value, 'data:') === 0 || strpos($value, 'addon:') === 0;
+                };
+                if (is_array($value)) {
+                    foreach ($value as $_value) {
+                        if (is_string($_value)) {
+                            if ($isFilename($_value)) {
+                                $result['files'] = $_value;
+                            } else {
+                                $matches = [];
+                                preg_match_all('/url\((.*?)\)/', $_value, $matches);
+                                if (!empty($matches[1])) {
+                                    $result['files'] = array_merge($result['files'], $matches[1]);
+                                }
+                            }
+                        }
+                    }
+                } elseif (is_string($value)) {
+                    if ($isFilename($value)) {
+                        $result['files'] = $value;
+                    }
+                }
+            };
+            $addFiles($result['value']);
+            foreach ($result['states'] as $stateData) {
+                $addFiles($stateData[1]);
+            }
+            $result['files'] = array_values(array_unique($result['files']));
+        }
+        return $result;
+    }
+
+    /**
+     * 
+     * @param string $state
+     * @return array
+     */
+    static function parseStateCombination(string $state): array
+    {
+        $result = [];
+        $parts = explode(':', trim($state, ':'));
+        foreach ($parts as $part) {
+            $matches = [];
+            preg_match('/^([a-zA-Z0-9\-]*)\((.*?)\)$/', $part, $matches);
+            if (isset($matches[1], $matches[2])) {
+                $args = [];
+                $argTexts = explode(',', $matches[2]);
+                foreach ($argTexts as $argText) {
+                    $argText = trim($argText);
+                    $argTextParts = explode('=', $argText, 2);
+                    if (sizeof($argTextParts) === 2) {
+                        $args[trim($argTextParts[0])] = $argTextParts[1];
+                    } else {
+                        $args[$argText] = true;
+                    }
+                }
+                $result[$matches[1]] = $args;
+            } else {
+                $matches = [];
+                preg_match('/^[a-zA-Z0-9\-]*$/', $part, $matches);
+                if (isset($matches[0])) {
+                    $result[$matches[0]] = [];
+                }
+            }
+        }
+        return $result;
+    }
+
+    //static function 
+
+    /**
+     * 
+     * @param array $options
+     * @param boolean $includeDetails
+     * @return array
+     */
+    static public function getOptionsHTMLData(array $options, bool $includeDetails = false): array
     {
         $app = App::get();
 
         $cssRules = [];
         $cssCode = '';
-        $updates = [];
+        $details = [];
         $linkTags = [];
 
-        $addAssetUpdate = function (string $value) use ($app, &$updates, $includeAssetsDetails) {
-            if (!isset($updates['assets'])) {
-                $updates['assets'] = [];
+        $addAssetDetails = function (string $filename) use ($app, &$details, $includeDetails) {
+            if (!isset($details['assets'])) {
+                $details['assets'] = [];
             }
-            if ($includeAssetsDetails) {
-                $filename = Internal2::$data2->getRealFilename($value);
-                if ($filename === null) {
+            if ($includeDetails) {
+                $realFilename = \BearCMS\Internal\Data::getRealFilename($filename, true);
+                if ($realFilename === null) {
                     $assetDetails = ['width' => null, 'height' => null];
                 } else {
-                    $assetDetails = $app->assets->getDetails($filename, ['width', 'height']);
+                    $assetDetails = $app->assets->getDetails($realFilename, ['width', 'height']);
                 }
-                $updates['assets'][$value] = ['width' => $assetDetails['width'], 'height' => $assetDetails['height']];
+                $details['assets'][$filename] = ['width' => $assetDetails['width'], 'height' => $assetDetails['height']];
             } else {
-                $updates['assets'][$value] = [];
+                $details['assets'][$filename] = [];
             }
+        };
+
+        $addValueDetails = function (string $id, string $name, $value) use (&$details) {
+            if (!isset($details['values'])) {
+                $details['values'] = [];
+            }
+            if (!isset($details['values'][$id])) {
+                $details['values'][$id] = [];
+            }
+            $details['values'][$id][$name] = $value;
         };
 
         $webSafeFonts = [
@@ -705,22 +853,17 @@ class Themes
             'Verdana' => 'Verdana,Geneva,sans-serif'
         ];
 
-        $updateFontFamily = function (string $fontName) use ($webSafeFonts, &$updates, &$linkTags) {
-            // $matches = [];
-            // preg_match_all('/font\-family\:(.*?);/', $text, $matches);
-            // foreach ($matches[0] as $i => $match) {
-            //    $fontName = $matches[1][$i];
-            // }
+        $updateFontFamily = function (string $fontName) use ($webSafeFonts, &$details, &$linkTags) {
             if (isset($webSafeFonts[$fontName])) {
                 return $webSafeFonts[$fontName];
             } elseif (strpos($fontName, 'googlefonts:') === 0) {
                 $googleFontName = substr($fontName, strlen('googlefonts:'));
-                if (!isset($updates['googleFonts'])) {
-                    $updates['googleFonts'] = [];
+                if (!isset($details['googleFonts'])) {
+                    $details['googleFonts'] = [];
                 }
-                $updateKey = 'googlefont:' . md5($googleFontName);
-                if (!isset($updates['googleFonts'][$updateKey])) {
-                    $updates['googleFonts'][$updateKey] = $googleFontName;
+                if (!isset($details['googleFonts'][$googleFontName])) {
+                    $updateKey = 'googlefont:' . md5($googleFontName);
+                    $details['googleFonts'][$googleFontName] = [];
                     $linkTags[] = '<link href="' . htmlentities($updateKey) . '" rel="preload" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"><noscript><link href="' . htmlentities($updateKey) . '" rel="stylesheet"></noscript>';
                 }
                 return $googleFontName;
@@ -728,103 +871,246 @@ class Themes
             return $fontName;
         };
 
-        $walkOptions = function ($options) use (&$cssRules, &$cssCode, &$walkOptions, &$addAssetUpdate, $updateFontFamily) {
+        $getStateOutputCode = function (string $state, array $statesTypes, string $selector): array {
+            $cssMediaQueries = []; // array of strings
+            $additionalCSSSelectors = []; // array of strings
+            $responsiveAttributesRules = [];
+            $unsupportedStates = '';
+            $result = ['cssRules' => [], 'responsiveAttributes' => []];
+            $parts = self::parseStateCombination($state);
+            foreach ($parts as $name => $args) {
+                if (isset($statesTypes[$name])) {
+                    $stateType = $statesTypes[$name];
+                    if ($stateType === 'screenSize') {
+                        $tempCssValue = [];
+                        $tempResponsiveAttributesValue = [];
+                        if (isset($args['small'])) {
+                            $tempCssValue[] = '(max-width:600px)';
+                            $tempResponsiveAttributesValue[] = 'vw<=600';
+                        } elseif (isset($args['medium'])) {
+                            $tempCssValue[] = '(min-width:600px)';
+                            $tempCssValue[] = '(max-width:1000px)';
+                            $tempResponsiveAttributesValue[] = 'vw>600';
+                            $tempResponsiveAttributesValue[] = 'vw<=1000';
+                        } elseif (isset($args['large'])) {
+                            $tempCssValue[] = '(min-width:1000px)';
+                            $tempResponsiveAttributesValue[] = 'vw>1000';
+                        } else {
+                            if (isset($args['minWidth'])) {
+                                $tempCssValue[] = '(min-width:' . $args['minWidth'] . 'px)';
+                                $tempResponsiveAttributesValue[] = 'vw>' . $args['minWidth'];
+                            }
+                            if (isset($args['maxWidth'])) {
+                                $tempCssValue[] = '(max-width:' . $args['maxWidth'] . 'px)';
+                                $tempResponsiveAttributesValue[] = 'vw<=' . $args['maxWidth'];
+                            }
+                            if (isset($args['minHeight'])) {
+                                $tempCssValue[] = '(min-height:' . $args['minHeight'] . 'px)';
+                                $tempResponsiveAttributesValue[] = 'vh>' . $args['minHeight'];
+                            }
+                            if (isset($args['maxHeight'])) {
+                                $tempCssValue[] = '(max-height:' . $args['maxHeight'] . 'px)';
+                                $tempResponsiveAttributesValue[] = 'vh<=' . $args['maxHeight'];
+                            }
+                        }
+                        if (!empty($tempCssValue)) {
+                            $cssMediaQueries[] = [implode(' and ', $tempCssValue)];
+                        }
+                        if (!empty($tempResponsiveAttributesValue)) {
+                            $responsiveAttributesRules[] = [implode('&&', $tempResponsiveAttributesValue)];
+                        }
+                    } else if ($stateType === 'pageType') {
+                        $tempCssValue = [];
+                        $tempResponsiveAttributesValue = [];
+                        foreach ($args as $argName => $argValue) {
+                            $tempCssValue[] = 'html[data-bearcms-page-type="' . $argName . '"]';
+                            $tempResponsiveAttributesValue[] = 'q(html[data-bearcms-page-type="' . $argName . '"])';
+                        }
+                        if (!empty($tempCssValue)) {
+                            $additionalCSSSelectors[] = $tempCssValue;
+                        }
+                        if (!empty($tempResponsiveAttributesValue)) {
+                            $responsiveAttributesRules[] = $tempResponsiveAttributesValue;
+                        }
+                    }
+                } else {
+                    $unsupportedStates .= ':' . $name;
+                }
+            }
+
+            $getCombinations = function (array $list) { // combines arrays of strings
+                $result = [];
+                foreach ($list as $items) {
+                    $resultCount = sizeof($result);
+                    $itemsCount = sizeof($items);
+                    if ($itemsCount > 1) {
+                        $resultClone = $result;
+                        for ($i = 1; $i < $itemsCount; $i++) {
+                            $result = array_merge($result, $resultClone);
+                        }
+                    }
+                    for ($i = 0; $i < $itemsCount * ($resultCount > 0 ? $resultCount : 1); $i++) {
+                        $itemIndex = $resultCount > 0 ? floor($i / $resultCount) : $i;
+                        if (!isset($result[$i])) {
+                            $result[$i] = [];
+                        }
+                        $result[$i][] = $items[$itemIndex];
+                    }
+                }
+                return $result;
+            };
+
+            // cssRules
+            $cssMediaQueriesCombinations = $getCombinations($cssMediaQueries);
+            if (empty($cssMediaQueriesCombinations)) {
+                $cssMediaQueriesCombinations[] = [];
+            }
+            $additionalCSSSelectorsCombinations = $getCombinations($additionalCSSSelectors);
+            if (empty($additionalCSSSelectorsCombinations)) {
+                $additionalCSSSelectorsCombinations[] = [];
+            }
+            foreach ($cssMediaQueriesCombinations as $cssMediaQueryCombinations) {
+                foreach ($additionalCSSSelectorsCombinations as $additionalCssSelectorCombinations) {
+                    $result['cssRules'][] = [implode(' and ', $cssMediaQueryCombinations), (!empty($additionalCssSelectorCombinations) ? implode(' ', $additionalCssSelectorCombinations) . ' ' : '') . $selector . $unsupportedStates];
+                }
+            }
+
+            // responsiveAttributes
+            $responsiveAttributesRulesCombinations = $getCombinations($responsiveAttributesRules);
+            foreach ($responsiveAttributesRulesCombinations as $responsiveAttributesRulesCombination) {
+                $result['responsiveAttributes'][] = implode('&&', $responsiveAttributesRulesCombination);
+            }
+
+            return $result;
+        };
+
+        $addCSSRule = function (string $mediaQuery, string $selector, string $value) use (&$cssRules) {
+            if (!isset($cssRules[$mediaQuery])) {
+                $cssRules[$mediaQuery] = [];
+            }
+            if (!isset($cssRules[$mediaQuery][$selector])) {
+                $cssRules[$mediaQuery][$selector] = '';
+            }
+            $cssRules[$mediaQuery][$selector] .= $value;
+        };
+
+        $walkOptions = function ($options) use (&$addCSSRule, &$cssCode, &$walkOptions, &$addAssetDetails, &$addValueDetails, $updateFontFamily, $getStateOutputCode, $includeDetails) {
             foreach ($options as $option) {
                 if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
-                    $value = isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value']) : $option->details['value']) : null;
+                    //$value = isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value'], JSON_THROW_ON_ERROR) : $option->details['value']) : null; // array not used ???
+                    $value = isset($option->details['value']) ? $option->details['value'] : (isset($option->details['defaultValue']) ? $option->details['defaultValue'] : null);
+                    $valueDetails = self::getValueDetails($value, true);
                     $optionType = $option->type;
                     if ($optionType === 'cssCode') {
-                        $cssCode .= $value;
+                        $cssCode .= $valueDetails['value'];
                     } else {
-                        if ($value !== null && strlen($value) > 0) {
-                            if ($optionType === 'image') {
-                                $addAssetUpdate($value);
-                            } elseif ($optionType === 'css' || $optionType === 'cssBackground') {
-                                if (strpos($value, 'url') !== false) {
-                                    $temp = json_decode($value, true);
-                                    if (is_array($temp)) {
-                                        $hasChange = false;
-                                        foreach ($temp as $_key => $_value) {
-                                            $matches = [];
-                                            preg_match_all('/url\((.*?)\)/', $_value, $matches);
-                                            if (!empty($matches[1])) {
-                                                $temp2 = array_unique($matches[1]);
-                                                foreach ($temp2 as $_value2) {
-                                                    $addAssetUpdate($_value2);
-                                                }
-                                                $hasChange = true;
-                                            }
-                                        }
-                                        if ($hasChange) {
-                                            $value = json_encode($temp);
-                                        }
+                        $isCssOptionType = strpos($optionType, 'css') === 0;
+                        if ($optionType === 'image' || $optionType === 'css' || $optionType === 'cssBackground') {
+                            foreach ($valueDetails['files'] as $filename) {
+                                $addAssetDetails($filename);
+                            }
+                        }
+                        $statesTypes = [];
+                        if (isset($option->details['cssOptions'])) {
+                            $cssOptions = $option->details['cssOptions'];
+                            $addNonCssState = function (string $id, string $type) use ($cssOptions, &$statesTypes) {
+                                foreach ($cssOptions as $cssOption) {
+                                    if (strpos($cssOption, '/' . $type . 'State') !== false) {
+                                        $statesTypes[$id] = $type;
+                                        return;
+                                    }
+                                }
+                            };
+                            $addNonCssState('screen-size', 'screenSize');
+                            $addNonCssState('page-type', 'pageType');
+                        }
+                        if (isset($option->details['states'])) {
+                            foreach ($option->details['states'] as $stateData) {
+                                if (isset($stateData['id'], $stateData['type'])) {
+                                    if (array_search($stateData['type'], ['screenSize', 'pageType']) !== false) {
+                                        $statesTypes[$stateData['id']] = $stateData['type'];
                                     }
                                 }
                             }
+                        }
+                        if ($includeDetails && !$isCssOptionType && !empty($statesTypes)) {
+                            $statesResponsiveAttributes = [];
+                            foreach ($valueDetails['states'] as $stateIndex => $stateData) {
+                                $stateOutputCode = $getStateOutputCode($stateData[0], $statesTypes, '');
+                                if (!empty($stateOutputCode['responsiveAttributes'])) {
+                                    $statesResponsiveAttributes[$stateIndex] = $stateOutputCode['responsiveAttributes'];
+                                }
+                            }
+                            $addValueDetails($option->id, 'statesResponsiveAttributes', $statesResponsiveAttributes);
                         }
                         if (isset($option->details['cssOutput'])) {
                             foreach ($option->details['cssOutput'] as $outputDefinition) {
                                 if (is_array($outputDefinition)) {
                                     if (isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
                                         $selector = $outputDefinition[1];
-                                        $selectorStates = [];
-                                        $addSelectorState = function (string $cssSelector, string $rule) use (&$selectorStates) {
-                                            if (!isset($selectorStates[$cssSelector])) {
-                                                $selectorStates[$cssSelector] = '';
-                                            }
-                                            $selectorStates[$cssSelector] .= $rule;
-                                        };
-                                        if ($optionType === 'css' || $optionType === 'cssText' || $optionType === 'cssTextShadow' || $optionType === 'cssBackground' || $optionType === 'cssPadding' || $optionType === 'cssMargin' || $optionType === 'cssBorder' || $optionType === 'cssRadius' || $optionType === 'cssShadow' || $optionType === 'cssSize' || $optionType === 'cssTextAlign' || $optionType === 'cssOpacity' || $optionType === 'cssRotation') {
-                                            $temp = isset($value[0]) ? json_decode($value, true) : [];
-                                            if (is_array($temp)) {
-                                                if (isset($outputDefinition[2])) { // has selector value specified
-                                                    $ruleValue = $outputDefinition[2];
-                                                    $valuesToSearch = [];
-                                                    $valuesToReplace = [];
-                                                    $matches = [];
-                                                    preg_match_all('/{cssPropertyValue\((.*?)\)}/', $ruleValue, $matches);
-                                                    foreach ($matches[0] as $i => $match) {
-                                                        $valuesToSearch[] = $match;
-                                                        $cssPropertyName = $matches[1][$i];
-                                                        $valueToSet = isset($temp[$cssPropertyName]) ? $temp[$cssPropertyName] : '';
-                                                        if ($cssPropertyName === 'font-family') {
-                                                            $valueToSet = $updateFontFamily($valueToSet);
-                                                        }
-                                                        $valuesToReplace[] = $valueToSet;
+                                        if ($isCssOptionType) {
+                                            if (isset($outputDefinition[2])) { // has selector value specified
+                                                $ruleValue = $outputDefinition[2];
+                                                $valuesToSearch = [];
+                                                $valuesToReplace = [];
+                                                $matches = [];
+                                                preg_match_all('/{cssPropertyValue\((.*?)\)}/', $ruleValue, $matches);
+                                                foreach ($matches[0] as $i => $match) {
+                                                    $valuesToSearch[] = $match;
+                                                    $cssPropertyName = $matches[1][$i];
+                                                    $valueToSet = isset($valueDetails['value'][$cssPropertyName]) ? $valueDetails['value'][$cssPropertyName] : '';
+                                                    if ($cssPropertyName === 'font-family') {
+                                                        $valueToSet = $updateFontFamily($valueToSet);
                                                     }
-                                                    $matches = [];
-                                                    preg_match_all('/' . rawurlencode('{cssPropertyValue(') . '(.*?)' . rawurlencode(')}') . '/', $ruleValue, $matches);
-                                                    foreach ($matches[0] as $i => $match) {
-                                                        $valuesToSearch[] = $match;
-                                                        $cssPropertyName = $matches[1][$i];
-                                                        $valueToSet = isset($temp[$cssPropertyName]) ? $temp[$cssPropertyName] : '';
-                                                        if ($cssPropertyName === 'font-family') {
-                                                            $valueToSet = $updateFontFamily($valueToSet);
-                                                        }
-                                                        $valuesToReplace[] = rawurlencode($valueToSet);
+                                                    $valuesToReplace[] = $valueToSet;
+                                                }
+                                                $matches = [];
+                                                preg_match_all('/' . rawurlencode('{cssPropertyValue(') . '(.*?)' . rawurlencode(')}') . '/', $ruleValue, $matches);
+                                                foreach ($matches[0] as $i => $match) {
+                                                    $valuesToSearch[] = $match;
+                                                    $cssPropertyName = $matches[1][$i];
+                                                    $valueToSet = isset($valueDetails['value'][$cssPropertyName]) ? $valueDetails['value'][$cssPropertyName] : '';
+                                                    if ($cssPropertyName === 'font-family') {
+                                                        $valueToSet = $updateFontFamily($valueToSet);
                                                     }
-                                                    $addSelectorState('', str_replace($valuesToSearch, $valuesToReplace, $ruleValue));
-                                                } else {
-                                                    foreach ($temp as $key => $_value) {
-                                                        if ($key === 'font-family') {
-                                                            $_value = $updateFontFamily($_value);
+                                                    $valuesToReplace[] = rawurlencode($valueToSet);
+                                                }
+                                                $addCSSRule('', $selector, str_replace($valuesToSearch, $valuesToReplace, $ruleValue));
+                                            } else {
+                                                $getStateValueAsString = function ($values) use ($updateFontFamily): string {
+                                                    if ($values === null || $values === '') {
+                                                        return '';
+                                                    }
+                                                    $result = '';
+                                                    foreach ($values as $name => $value) {
+                                                        if ($name === 'font-family') {
+                                                            $value = $updateFontFamily($value);
                                                         }
-                                                        $colonIndex = strpos($key, ':');
-                                                        if ($colonIndex !== false) {
-                                                            $addSelectorState(substr($key, $colonIndex), substr($key, 0, $colonIndex) . ':' . $_value . ';');
-                                                        } else {
-                                                            $addSelectorState('', $key . ':' . $_value . ';');
+                                                        $result .= $name . ':' . $value . ';';
+                                                    }
+                                                    return $result;
+                                                };
+                                                $stateValueAsString = $getStateValueAsString($valueDetails['value']);
+                                                if ($stateValueAsString !== '') {
+                                                    $addCSSRule('', $selector, $stateValueAsString);
+                                                }
+                                                foreach ($valueDetails['states'] as $stateData) {
+                                                    $stateValueAsString = $getStateValueAsString($stateData[1]);
+                                                    if ($stateValueAsString !== '') {
+                                                        $stateOutputCode = $getStateOutputCode($stateData[0], $statesTypes, $selector);
+                                                        foreach ($stateOutputCode['cssRules'] as $cssRuleToAdd) {
+                                                            $addCSSRule($cssRuleToAdd[0], $cssRuleToAdd[1], $stateValueAsString);
                                                         }
                                                     }
                                                 }
                                             }
                                         } else {
                                             if (isset($outputDefinition[2])) { // has selector value specified
-                                                $defaultValue = '';
-                                                if ($optionType === 'htmlUnit') {
-                                                    $defaultValue = '0';
-                                                }
-                                                $valueToSet = $value !== null && strlen($value) > 0 ? $value : $defaultValue;
+                                                //$defaultValue = '';
+                                                // if ($optionType === 'htmlUnit') {
+                                                //     $defaultValue = '0';
+                                                // }
+                                                $valueToSet = $value !== null && strlen($value) > 0 ? $value : '';
                                                 $valuesToSearch = ['{value}', rawurlencode('{value}')];
                                                 $valuesToReplace = [$valueToSet, rawurlencode($valueToSet)];
                                                 if ($optionType === 'font') {
@@ -834,22 +1120,26 @@ class Themes
                                                     $valuesToSearch[] = rawurlencode('{valueAsFontName}');
                                                     $valuesToReplace[] = rawurlencode($valueAsFontName);
                                                 }
-                                                $addSelectorState('', str_replace($valuesToSearch, $valuesToReplace, $outputDefinition[2]));
+                                                $addCSSRule('', $selector, str_replace($valuesToSearch, $valuesToReplace, $outputDefinition[2]));
                                             }
-                                        }
-                                        foreach ($selectorStates as $cssSelector => $stateValue) {
-                                            $ruleName = $selector . $cssSelector;
-                                            if (!isset($cssRules[$ruleName])) {
-                                                $cssRules[$ruleName] = '';
-                                            }
-                                            $cssRules[$ruleName] .= $stateValue;
                                         }
                                     } elseif (isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'rule') {
-                                        $selector = $outputDefinition[1];
-                                        if (!isset($cssRules[$selector])) {
-                                            $cssRules[$selector] = '';
+                                        $addCSSRule('', $outputDefinition[1], $outputDefinition[2]);
+                                    }
+                                }
+                            }
+                        }
+                        if ($optionType === 'list') {
+                            if (isset($option->details['values']) && is_array($option->details['values'])) {
+                                foreach ($option->details['values'] as $listItemData) {
+                                    if (is_array($listItemData) && isset($listItemData['cssRules'], $listItemData['value']) && is_array($listItemData['cssRules'])) {
+                                        if ($listItemData['value'] === $valueDetails['value']) {
+                                            foreach ($listItemData['cssRules'] as $cssRuleSelector => $cssRuleValue) {
+                                                if (is_string($cssRuleSelector) && is_string($cssRuleValue)) {
+                                                    $addCSSRule('', $cssRuleSelector, $cssRuleValue);
+                                                }
+                                            }
                                         }
-                                        $cssRules[$selector] .= $outputDefinition[2];
                                     }
                                 }
                             }
@@ -863,11 +1153,19 @@ class Themes
         $walkOptions($options);
 
         $style = '';
-        foreach ($cssRules as $key => $value) {
-            if (strpos($value, '--rotation') !== false) {
-                $value = 'transform:rotate(var(--rotation));' . $value;
+        foreach ($cssRules as $mediaQuery => $mediaQueryRules) {
+            if ($mediaQuery !== '') {
+                $style .= '@media ' . $mediaQuery . '{';
             }
-            $style .= $key . '{' . $value . '}';
+            foreach ($mediaQueryRules as $key => $value) {
+                if (strpos($value, '--rotation') !== false) {
+                    $value = 'transform:rotate(var(--rotation));' . $value;
+                }
+                $style .= $key . '{' . $value . '}';
+            }
+            if ($mediaQuery !== '') {
+                $style .= '}';
+            }
         }
 
         $cssCode = trim($cssCode); // Positioned in different style tag just in case it's invalid
@@ -877,9 +1175,10 @@ class Themes
         } else {
             $html = '';
         }
+
         return [
             'html' => $html,
-            'updates' => $updates
+            'details' => $details
         ];
     }
 
@@ -895,31 +1194,47 @@ class Themes
             return '';
         }
         $html = $data['html'];
-        $updates = isset($data['updates']) ? $data['updates'] : [];
-        if (!empty($updates)) {
+        $details = isset($data['details']) ? $data['details'] : [];
+        if (!empty($details)) {
             $app = App::get();
             $search = [];
             $replace = [];
-            if (isset($updates['assets'])) {
+            if (isset($details['assets'])) {
                 $appAssets = $app->assets;
-                foreach ($updates['assets'] as $updateKey => $assetDetails) {
+                foreach ($details['assets'] as $filename => $assetDetails) {
                     try {
-                        $filename = Internal2::$data2->getRealFilename($updateKey);
-                        $search[] = $updateKey;
-                        $replace[] = $appAssets->getURL($filename, ['cacheMaxAge' => 999999999]);
+                        $filenameOptions = Internal\Data::getFilenameOptions($filename);
+                        $filenameWithoutOptions = Internal\Data::removeFilenameOptions($filename);
+                        $realFilename = \BearCMS\Internal\Data::getRealFilename($filenameWithoutOptions, true);
+                        $search[] = $filename;
+                        $options = ['cacheMaxAge' => 999999999];
+                        if (!empty($filenameOptions)) {
+                            $options = array_merge($options, Internal\Assets::convertFileOptionsToAssetOptions($filenameOptions));
+                        }
+                        $replace[] = $appAssets->getURL($realFilename, $options);
                     } catch (\Exception $e) { // May be file in an invalid dir
-                        $search[] = $updateKey;
+                        $search[] = $filename;
                         $replace[] = '';
                     }
                 }
             }
-            if (isset($updates['googleFonts'])) {
+            if (isset($details['googleFonts'])) {
                 $googleFontsEmbed = $app->googleFontsEmbed;
-                foreach ($updates['googleFonts'] as $updateKey => $fontName) {
+                foreach ($details['googleFonts'] as $googleFontName => $googleFontDetails) {
+                    $updateKey = 'googlefont:' . md5($googleFontName);
                     $search[] = $updateKey;
-                    $replace[] = htmlentities($googleFontsEmbed->getURL($fontName));
+                    $replace[] = htmlentities($googleFontsEmbed->getURL($googleFontName));
                 }
             }
+            uasort($search, function ($a, $b) { // prevents replacing menu.svg before menu.svg?f=123456
+                return strlen($b) - strlen($a);
+            });
+            $temp = [];
+            foreach ($search as $index => $text) {
+                $temp[] = $replace[$index];
+            }
+            $search = array_values($search);
+            $replace = $temp;
             $html = str_replace($search, $replace, $html);
         }
         return $html;

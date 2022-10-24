@@ -19,9 +19,10 @@ class CanvasElementHelper
     /**
      * 
      * @param string $value
+     * @param boolean $includeOptions
      * @return array
      */
-    static function getFilesInValue(string $value): array
+    static function getFilesInValue(string $value, bool $includeOptions = false): array
     {
         $result = [];
         $parsedValue = json_decode($value, true);
@@ -29,13 +30,13 @@ class CanvasElementHelper
             if (isset($parsedValue['elements']) && is_array($parsedValue['elements'])) {
                 foreach ($parsedValue['elements'] as $elementData) {
                     if (is_array($elementData) && isset($elementData['type'], $elementData['style']) && is_string($elementData['type']) && is_array($elementData['style'])) {
-                        $files = Themes::getFilesInValues($elementData['style']);
+                        $files = Themes::getFilesInValues($elementData['style'], $includeOptions);
                         $result = array_merge($result, $files);
                     }
                 }
             }
             if (isset($parsedValue['background']) && is_array($parsedValue['background']) && isset($parsedValue['background']['style']) && is_array($parsedValue['background']['style'])) {
-                $files = Themes::getFilesInValues($parsedValue['background']['style']);
+                $files = Themes::getFilesInValues($parsedValue['background']['style'], $includeOptions);
                 $result = array_merge($result, $files);
             }
         }

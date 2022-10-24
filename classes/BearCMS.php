@@ -284,8 +284,8 @@ class BearCMS
                 });
 
             if ($hasThemes) {
-                Internal\Themes::$pagesOptions['blog'] = function (\BearCMS\Internal\ThemeOptionsGroupInterface $options) {
-                    Blog::addThemesPageOptions($options);
+                Internal\Themes::$pagesOptions['blog'] = function (\BearCMS\Internal\ThemeOptionsGroupInterface $options, array $details = []) {
+                    Blog::addThemesPageOptions($options, $details);
                 };
             }
             $this->app->clientPackages

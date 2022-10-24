@@ -17,7 +17,7 @@ $group2
         ]
     ])
     ->addOption("logoImageWidth", "htmlUnit", __("bearcms.themes.themeone.options.Logo.Image.Width"), [
-        "value" => "200px",
+        "defaultValue" => "200px",
         "onHighlight" => [
             ["cssSelector", ".bearcms-template-logo"]
         ]
@@ -33,7 +33,7 @@ $group2
                 "name" => __("bearcms.themes.themeone.options.Logo.Image.Effect.Circle")
             ]
         ],
-        "value" => "0",
+        "defaultValue" => "0",
         "onHighlight" => [
             ["cssSelector", ".bearcms-template-logo"]
         ]
@@ -50,16 +50,16 @@ $group2 = $group->addGroup(__("bearcms.themes.themeone.options.Logo.Text"))
                 "name" => __("bearcms.themes.themeone.options.Hidden")
             ]
         ],
-        "value" => "1"
+        "defaultValue" => "1"
     ])
     ->addOption("logoTextCSS", "cssText", __("bearcms.themes.themeone.options.Logo.Text.Style"), [
-        "cssOptions" => ["cssTextStateDefault", "cssTextFontFamily", "cssTextColor", "cssTextFontWeight", "cssTextFontStyle", "cssTextFontSize", "cssTextLineHeight", "cssTextLetterSpacing"],
+        "cssOptions" => ["cssText/defaultState", "cssText/fontFamilyProperty", "cssText/colorProperty", "cssText/fontWeightProperty", "cssText/fontStyleProperty", "cssText/fontSizeProperty", "cssText/lineHeightProperty", "cssText/letterSpacingProperty"],
         "cssOutput" => [
             ["rule", ".bearcms-template-logo-text", "text-decoration:none;"],
             ["selector", ".bearcms-template-logo-text"],
             ["selector", ".bearcms-template-inner-page-logo-text", "font-size:calc({cssPropertyValue(font-size)} * 6/8);"]
         ],
-        "value" => '{"color":"#000000","font-size":"26px","font-family":"Arial"}'
+        "defaultValue" => '{"color":"#000000","font-size":"26px","font-family":"Arial"}'
     ]);
 
 $group2 = $options->addGroup(__("bearcms.themes.themeone.options.Navigation"));
@@ -75,7 +75,7 @@ $group2
                 "name" => __("bearcms.themes.themeone.options.Hidden2")
             ]
         ],
-        "value" => "1",
+        "defaultValue" => "1",
         "onHighlight" => [
             ["cssSelector", ".bearcms-template-navigation"]
         ]
@@ -94,7 +94,7 @@ $group3
                 "name" => __("bearcms.themes.themeone.options.Hidden")
             ]
         ],
-        "value" => "1",
+        "defaultValue" => "1",
         "onHighlight" => [
             ["cssSelector", ".bearcms-template-navigation-custom-item-search"]
         ]
@@ -113,7 +113,7 @@ $group3
                 "name" => __("bearcms.themes.themeone.options.Hidden")
             ]
         ],
-        "value" => "1",
+        "defaultValue" => "1",
         "onHighlight" => [
             ["cssSelector", ".bearcms-template-navigation-custom-item-store-cart"]
         ]
@@ -121,7 +121,7 @@ $group3
 
 $options
     ->addOption("textCSS", "cssText", __("bearcms.themes.themeone.options.DefaultText"), [
-        "cssOptions" => ["cssTextStateDefault", "cssTextFontFamily", "cssTextColor", "cssTextFontWeight", "cssTextFontStyle", "cssTextFontSize", "cssTextLineHeight", "cssTextLetterSpacing"],
+        "cssOptions" => ["cssText/defaultState", "cssText/fontFamilyProperty", "cssText/colorProperty", "cssText/fontWeightProperty", "cssText/fontStyleProperty", "cssText/fontSizeProperty", "cssText/lineHeightProperty", "cssText/letterSpacingProperty"],
         "cssOutput" => [
             ["selector", ":root", "--bearcms-template-text-font-family:{cssPropertyValue(font-family)};"],
             ["selector", ":root", "--bearcms-template-text-color:{cssPropertyValue(color)};"],
@@ -138,12 +138,12 @@ $options
             ["selector", ".bearcms-template-context .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type=\"radio-list\"] [data-form-element-component=\"radio-list-option-input\"]:checked", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="90.708664" height="90.708664" viewBox="0 0 24 24" fill="{cssPropertyValue(color)}"><circle cx="12" cy="12" r="4.276312"/></svg>') . '\');'],
             ["selector", ".bearcms-template-context .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type=\"checkbox-list\"] [data-form-element-component=\"checkbox-list-option-input\"]:checked", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{cssPropertyValue(color)}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 13l5 5L20 7"/></svg>') . '\');'],
         ],
-        "value" => '{"color":"#000000","font-size":"16px","font-family":"Arial","line-height":"180%"}'
+        "defaultValue" => '{"color":"#000000","font-size":"16px","font-family":"Arial","line-height":"180%"}'
     ]);
 
 $options
     ->addOption("accentTextCSS", "cssText", __("bearcms.themes.themeone.options.AccentText"), [
-        "cssOptions" => ["cssTextStateDefault", "cssTextFontFamily", "cssTextColor", "cssTextFontWeight", "cssTextFontStyle", "cssTextFontSize", "cssTextLineHeight", "cssTextLetterSpacing"],
+        "cssOptions" => ["cssText/defaultState", "cssText/fontFamilyProperty", "cssText/colorProperty", "cssText/fontWeightProperty", "cssText/fontStyleProperty", "cssText/fontSizeProperty", "cssText/lineHeightProperty", "cssText/letterSpacingProperty"],
         "cssOutput" => [
             ["selector", ":root", "--bearcms-template-accent-text-font-family:{cssPropertyValue(font-family)};"],
             ["selector", ":root", "--bearcms-template-accent-text-color:{cssPropertyValue(color)};"],
@@ -153,16 +153,16 @@ $options
             ["selector", ":root", "--bearcms-template-accent-text-line-height:{cssPropertyValue(line-height)};"],
             ["selector", ":root", "--bearcms-template-accent-text-letter-spacing:{cssPropertyValue(letter-spacing)};"],
         ],
-        "value" => '{"color":"#000000","font-size":"16px","font-family":"Arial","line-height":"170%"}'
+        "defaultValue" => '{"color":"#000000","font-size":"16px","font-family":"Arial","line-height":"170%"}'
     ]);
 
 $options
     ->addOption("backgroundCSS", "cssBackground", __("bearcms.themes.themeone.options.Background"), [
-        "cssOptions" => ["cssBackgroundStateDefault"],
+        "cssOptions" => ["cssBackground/defaultState"],
         "cssOutput" => [
             ["selector", ".bearcms-template-container"]
         ],
-        "value" => '{"background-color":"#ffffff"}'
+        "defaultValue" => '{"background-color":"#ffffff"}'
     ])
     ->addOption("contentWidth", "list", __("bearcms.themes.themeone.options.ContentWidth"), [
         "values" => [
@@ -179,7 +179,7 @@ $options
                 "name" => __("bearcms.themes.themeone.options.ContentWidth.Large")
             ]
         ],
-        "value" => "2"
+        "defaultValue" => "2"
     ]);
 
 $options->addGroup(__("bearcms.themes.themeone.options.Footer"))
@@ -194,21 +194,21 @@ $options->addGroup(__("bearcms.themes.themeone.options.Footer"))
                 "name" => __("bearcms.themes.themeone.options.Hidden")
             ]
         ],
-        "value" => "1"
+        "defaultValue" => "1"
     ])
     ->addOption("footerBackgroundCSS", "cssBackground", __("bearcms.themes.themeone.options.Background"), [
-        "cssOptions" => ["cssBackgroundStateDefault"],
+        "cssOptions" => ["cssBackground/defaultState"],
         "cssOutput" => [
             ["selector", ".bearcms-template-footer"],
             ["selector", ":root", "--bearcms-template-footer-background-color:{cssPropertyValue(background-color)};"]
         ],
-        "value" => '{"background-color":"#111111"}'
+        "defaultValue" => '{"background-color":"#111111"}'
     ])
     ->addOption("footerTextColor", "color", __("bearcms.themes.themeone.options.Text color"), [
-        "value" => '#ffffff',
         "cssOutput" => [
             ["selector", ":root", "--bearcms-template-footer-text-color:{value};"],
             ["selector", ".bearcms-template-footer .bearcms-search-box-element-button", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{value}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14.412112 14.412112L20 20"/><circle cx="10" cy="10" r="6"/></svg>') . '\');'],
             ["selector", ".bearcms-template-footer .allebg-poll-element-answer-checked", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{value}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 13l5 5L20 7"/></svg>') . '\');'] // Temp (remove in the future)
-        ]
+        ],
+        "defaultValue" => '#ffffff'
     ]);

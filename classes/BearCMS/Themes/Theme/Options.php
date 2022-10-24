@@ -40,40 +40,42 @@ class Options implements \BearCMS\Internal\ThemeOptionsGroupInterface
     {
         $valuesSetCount = 0;
         $valuesCount = sizeof($values);
-
-        $walkOptions = function ($options) use (&$walkOptions, &$valuesSetCount, $valuesCount, $values) {
-            foreach ($options as $option) {
-                if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
-                    if (isset($values[$option->id])) {
-                        $value = $values[$option->id];
-                        $option->details['value'] = $value;
-                        $valuesSetCount++;
-                        if ($valuesSetCount === $valuesCount) {
-                            return true;
+        if ($valuesCount > 0) {
+            $walkOptions = function ($options) use (&$walkOptions, &$valuesSetCount, $valuesCount, $values) {
+                foreach ($options as $option) {
+                    if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
+                        if (isset($values[$option->id])) {
+                            $value = $values[$option->id];
+                            $option->details['value'] = $value;
+                            $valuesSetCount++;
+                            if ($valuesSetCount === $valuesCount) {
+                                return true;
+                            }
+                        }
+                    } elseif ($option instanceof \BearCMS\Themes\Theme\Options\Group) {
+                        if ($walkOptions($option->getList())) {
+                            return;
                         }
                     }
-                } elseif ($option instanceof \BearCMS\Themes\Theme\Options\Group) {
-                    if ($walkOptions($option->getList())) {
-                        return;
-                    }
                 }
-            }
-        };
-        $walkOptions($this->options);
+            };
+            $walkOptions($this->options);
+        }
         return $this;
     }
 
     /**
      * 
+     * @param boolean $useDefaultValues
      * @return array
      */
-    public function getValues(): array
+    public function getValues(bool $useDefaultValues = false): array
     {
         $result = [];
-        $walkOptions = function ($options) use (&$walkOptions, &$result) {
+        $walkOptions = function ($options) use (&$walkOptions, &$result, $useDefaultValues) {
             foreach ($options as $option) {
                 if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
-                    $result[$option->id] = isset($option->details['value']) ? $option->details['value'] : null;
+                    $result[$option->id] = isset($option->details['value']) ? $option->details['value'] : ($useDefaultValues && isset($option->details['defaultValue']) ? $option->details['defaultValue'] : null);
                 } elseif ($option instanceof \BearCMS\Themes\Theme\Options\Group) {
                     if ($walkOptions($option->getList())) {
                         return;

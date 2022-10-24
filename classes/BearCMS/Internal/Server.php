@@ -244,6 +244,7 @@ class Server
             $maxUploadSize = $getSystemMaxUploadSize();
             $clientData['maxUploadSize'] = $maxUploadSize;
         }
+        $clientData['assetsFileOptions'] = Internal\Assets::$supportedFileOptions;
         $clientData['appSpecific'] = Config::$appSpecificServerData;
         $clientData['flags'] = [
             'sbpc', // allow comments in blog posts
