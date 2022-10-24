@@ -52,9 +52,11 @@ class Pages
 
             $settings = $bearCMS->data->settings->get();
             $applyContext = $bearCMS->makeApplyContext();
-            $potentialLanguage = (string)$request->path->getSegment(0);
-            if (strlen($potentialLanguage) > 0 && array_search($potentialLanguage, $settings->languages) !== false) {
-                $applyContext->language = $potentialLanguage;
+            $contextLanguage = (string)$request->path->getSegment(0);
+            if (isset($contextLanguage[0]) && array_search($contextLanguage, $settings->languages) !== false) {
+                $applyContext->language = $contextLanguage;
+            } else {
+                $contextLanguage = '';
             }
 
             $title = '';
@@ -87,7 +89,14 @@ class Pages
                 $status = 'public';
             }
             if ($found) {
-                $content = '<html><head>';
+                if ($pageID === 'home') {
+                    $pageType = 'home';
+                } elseif ($contextLanguage !== '' && $request->path->getSegment(1) === null) {
+                    $pageType = 'languageHome';
+                } else {
+                    $pageType = 'other';
+                }
+                $content = '<html data-bearcms-page-type="' . $pageType . '"><head>';
                 if (isset($title[0])) {
                     $content .= '<title>' . htmlspecialchars($title) . '</title>';
                 }
@@ -106,7 +115,6 @@ class Pages
                     $eventDetails = new \BearCMS\Internal\MakePageResponseEventDetails($response, $pageID);
                     $bearCMS->dispatchEvent('internalMakePageResponse', $eventDetails);
                 }
-
                 $bearCMS->apply($response, $applyContext);
                 if ($status !== 'public') {
                     $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
