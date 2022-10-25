@@ -23,7 +23,7 @@ if (strlen($componentSelectedPath) > 0) {
 
 $menuType = 'list-vertical';
 $componentMenuType = (string)$component->menuType;
-if (array_search($componentMenuType, ['horizontal-down', 'vertical-left', 'vertical-right', 'list-vertical']) !== false) {
+if (array_search($componentMenuType, ['horizontal-down', 'vertical-left', 'vertical-right', 'list-vertical', 'responsive']) !== false) {
     $menuType = $componentMenuType;
 }
 
