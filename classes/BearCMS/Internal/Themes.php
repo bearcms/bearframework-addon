@@ -344,7 +344,7 @@ class Themes
             foreach (self::$pagesOptions as $key => $value) {
                 $pagesOptionsEnvKeyData[] = $key . (is_array($value) ? '$' . $value[0] : '');
             }
-            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v9'));
+            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v10'));
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID);
@@ -685,41 +685,41 @@ class Themes
         }
         if ($value === null || !is_string($value) || !isset($value[0])) {
             $result['value'] = $value;
-            return $result;
-        }
-        $decodedValue = json_decode($value, true);
-        if (!is_array($decodedValue)) {
-            $result['value'] = $value;
-            return $result;
-        }
-        $hasValue = isset($decodedValue['value']);
-        $hasStates = isset($decodedValue['states']);
-        if ($hasValue || $hasStates) { // Format: [value=>..., states=>...]
-            if ($hasValue) {
-                $result['value'] = $decodedValue['value'];
-            }
-            if ($hasStates) {
-                $result['states'] = $decodedValue['states'];
-            }
-        } else { // Old CSS format: ['color':'','color:hover':'']
-            $newValue = [];
-            $newStates = [];
-            foreach ($decodedValue as $_key => $_value) {
-                $colonIndex = strpos($_key, ':');
-                if ($colonIndex !== false) {
-                    $state = substr($_key, $colonIndex);
-                    $propertyName = substr($_key, 0, $colonIndex);
-                    if (!isset($newStates[$state])) {
-                        $newStates[$state] = [];
+        } else {
+            $decodedValue = json_decode($value, true);
+            if (!is_array($decodedValue)) {
+                $result['value'] = $value;
+            } else {
+                $hasValue = isset($decodedValue['value']);
+                $hasStates = isset($decodedValue['states']);
+                if ($hasValue || $hasStates) { // Format: [value=>..., states=>...]
+                    if ($hasValue) {
+                        $result['value'] = $decodedValue['value'];
                     }
-                    $newStates[$state][$propertyName] = $_value;
-                } else {
-                    $newValue[$_key] = $_value;
+                    if ($hasStates) {
+                        $result['states'] = $decodedValue['states'];
+                    }
+                } else { // Old CSS format: ['color':'','color:hover':'']
+                    $newValue = [];
+                    $newStates = [];
+                    foreach ($decodedValue as $_key => $_value) {
+                        $colonIndex = strpos($_key, ':');
+                        if ($colonIndex !== false) {
+                            $state = substr($_key, $colonIndex);
+                            $propertyName = substr($_key, 0, $colonIndex);
+                            if (!isset($newStates[$state])) {
+                                $newStates[$state] = [];
+                            }
+                            $newStates[$state][$propertyName] = $_value;
+                        } else {
+                            $newValue[$_key] = $_value;
+                        }
+                    }
+                    $result['value'] = $newValue;
+                    foreach ($newStates as $state => $stateValue) {
+                        $result['states'][] = [$state, $stateValue];
+                    }
                 }
-            }
-            $result['value'] = $newValue;
-            foreach ($newStates as $state => $stateValue) {
-                $result['states'][] = [$state, $stateValue];
             }
         }
 
@@ -732,7 +732,7 @@ class Themes
                     foreach ($value as $_value) {
                         if (is_string($_value)) {
                             if ($isFilename($_value)) {
-                                $result['files'] = $_value;
+                                $result['files'][] = $_value;
                             } else {
                                 $matches = [];
                                 preg_match_all('/url\((.*?)\)/', $_value, $matches);
@@ -744,7 +744,7 @@ class Themes
                     }
                 } elseif (is_string($value)) {
                     if ($isFilename($value)) {
-                        $result['files'] = $value;
+                        $result['files'][] = $value;
                     }
                 }
             };
