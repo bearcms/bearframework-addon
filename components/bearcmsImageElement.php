@@ -95,7 +95,7 @@ if (strlen($width) === 0) {
     }
 }
 
-$fixedFilename = Internal\Data::getRealFilename($filename, true);
+$fixedFilename = Internal\Data::getRealFilename($filename);
 
 $content = '';
 if ($isFullHtmlOutputType) {

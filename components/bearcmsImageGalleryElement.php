@@ -69,7 +69,7 @@ if ($isFullHtmlOutputType) {
     $content .= '<component src="image-gallery" spacing="' . $spacing . '"' . $attributes . '>';
     if ($files !== null) {
         foreach ($files as $file) {
-            $fixedFilename = Internal\Data::getRealFilename($file->getAttribute('filename'), true);
+            $fixedFilename = Internal\Data::getRealFilename($file->getAttribute('filename'));
             if ($fixedFilename !== null) {
                 $maxImageWidth = (string)$file->getAttribute('maximagewidth');
                 if (!isset($maxImageWidth[0])) {
@@ -100,7 +100,7 @@ if ($isFullHtmlOutputType) {
     echo '<div>';
     if ($files !== null) {
         foreach ($files as $file) {
-            $fixedFilename = Internal\Data::getRealFilename($file->getAttribute('filename'), true);
+            $fixedFilename = Internal\Data::getRealFilename($file->getAttribute('filename'));
             if ($fixedFilename !== null) {
                 $assetOptions = ['cacheMaxAge' => 999999999];
                 $quality = (string)$file->getAttribute('quality');

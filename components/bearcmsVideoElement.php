@@ -162,7 +162,7 @@ if (strlen($componentURL) > 0) {
         $content = '';
     }
 } elseif ($component->filename !== null && strlen($component->filename) > 0) {
-    $filename = Internal\Data::getRealFilename($component->filename, true);
+    $filename = Internal\Data::getRealFilename($component->filename);
     $content = '<div' . ($isFullHtmlOutputType ? ' class="bearcms-video-element"' : '') . '>' . $innerContainerStartTag;
     if ($filename !== null) {
         $content .= '<video style="width:100%;" controls>';
