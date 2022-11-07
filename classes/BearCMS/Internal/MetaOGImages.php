@@ -75,7 +75,7 @@ class MetaOGImages
             $slug = rtrim(substr($path, strlen(Config::$blogPagesPathPrefix)), '/');
             $blogPosts = $app->bearCMS->data->blogPosts->getList();
             foreach ($blogPosts as $blogPost) {
-                if ($blogPost->status === 'published' && $blogPost->slug === $slug) {
+                if ($blogPost->slug === $slug && ($blogPost->status === 'published' || $blogPost->status === 'draft')) {
                     $blogPostImage = (string)$blogPost->image;
                     if (strlen($blogPostImage) > 0) {
                         $filename = $blogPostImage;
@@ -88,7 +88,7 @@ class MetaOGImages
         } else {
             $pages = $app->bearCMS->data->pages->getList();
             foreach ($pages as $page) {
-                if ($page->status === 'public' && $page->path === $path) {
+                if ($page->path === $path && ($page->status === 'public' || $page->status === 'secret')) {
                     $pageImage = (string)$page->image;
                     if (strlen($pageImage) > 0) {
                         $filename = $pageImage;
