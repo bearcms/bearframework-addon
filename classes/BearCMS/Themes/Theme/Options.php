@@ -23,30 +23,32 @@ class Options implements \BearCMS\Internal\ThemeOptionsGroupInterface
      * 
      * @param string $id
      * @param mixed $value
+     * @param boolean $setDefaultValue
      * @return self
      */
-    public function setValue(string $id, $value): self
+    public function setValue(string $id, $value, bool $setDefaultValue = false): self
     {
-        $this->setValues([$id => $value]);
+        $this->setValues([$id => $value], $setDefaultValue);
         return $this;
     }
 
     /**
      * 
      * @param array $values
+     * @param boolean $setDefaultValues
      * @return self
      */
-    public function setValues(array $values): self
+    public function setValues(array $values, bool $setDefaultValues = false): self
     {
         $valuesSetCount = 0;
         $valuesCount = sizeof($values);
         if ($valuesCount > 0) {
-            $walkOptions = function ($options) use (&$walkOptions, &$valuesSetCount, $valuesCount, $values) {
+            $walkOptions = function ($options) use (&$walkOptions, &$valuesSetCount, $valuesCount, $values, $setDefaultValues) {
                 foreach ($options as $option) {
                     if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                         if (isset($values[$option->id])) {
                             $value = $values[$option->id];
-                            $option->details['value'] = $value;
+                            $option->details[$setDefaultValues ? 'defaultValue' : 'value'] = $value;
                             $valuesSetCount++;
                             if ($valuesSetCount === $valuesCount) {
                                 return true;
