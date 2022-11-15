@@ -405,7 +405,7 @@ class BearCMS
                     $details->filename = $originalFilename !== null ? $originalFilename : '';
                 }
             })
-            ->addEventListener('prepare', function (\BearFramework\App\Assets\PrepareEventDetails $details) {
+            ->addEventListener('beforePrepare', function (\BearFramework\App\Assets\BeforePrepareEventDetails $details) {
                 $filename = $details->filename;
                 $addonAssetsDir = $this->context->dir . '/assets/';
                 if (strpos($filename, $addonAssetsDir) === 0) {
@@ -436,11 +436,11 @@ class BearCMS
                     // Proxy
                     $matchingDir = $addonAssetsDir . 'p/';
                     if (strpos($filename, $matchingDir) === 0) {
-                        $details->returnValue = null;
+                        $details->filename = '';
                         $pathParts = explode('/', substr($filename, strlen($matchingDir)), 3);
                         if (isset($pathParts[0], $pathParts[1], $pathParts[2])) {
                             $url = $pathParts[0] . '://' . $pathParts[1] . '/' . str_replace('\\', '/', $pathParts[2]);
-                            $details->returnValue = $downloadUrl($url);
+                            $details->filename = $downloadUrl($url);
                         }
                         return;
                     }
@@ -448,9 +448,9 @@ class BearCMS
                     // Download the server files
                     $matchingDir = $addonAssetsDir . 's/';
                     if (strpos($filename, $matchingDir) === 0) {
-                        $details->returnValue = null;
+                        $details->filename = '';
                         $url = Config::$serverUrl . str_replace('\\', '/', substr($filename, strlen($matchingDir)));
-                        $details->returnValue = $downloadUrl($url);
+                        $details->filename = $downloadUrl($url);
                     }
                 }
             });
