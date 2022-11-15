@@ -1152,12 +1152,12 @@ class Themes
                         $filenameOptions = Internal\Data::getFilenameOptions($filename);
                         $filenameWithoutOptions = Internal\Data::removeFilenameOptions($filename);
                         $realFilename = \BearCMS\Internal\Data::getRealFilename($filenameWithoutOptions, true);
-                        $search[] = $filename;
                         $options = ['cacheMaxAge' => 999999999];
                         if (!empty($filenameOptions)) {
                             $options = array_merge($options, Internal\Assets::convertFileOptionsToAssetOptions($filenameOptions));
                         }
                         $replace[] = $appAssets->getURL($realFilename, $options);
+                        $search[] = $filename; // Must be after getURL, because there may be an exception
                     } catch (\Exception $e) { // May be file in an invalid dir
                         $search[] = $filename;
                         $replace[] = '';
