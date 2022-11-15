@@ -345,11 +345,14 @@ class Server
 
         $cookies = $sendCookies ? Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER) : [];
 
-        $send = function ($requestData = [], $counter = 1) use (&$send, $app, $url, $data, $cookies) {
+        $commandsResultsCache = [];
+
+        $send = function ($requestData = [], $counter = 1) use (&$send, $app, $url, $data, $cookies, &$commandsResultsCache) {
             if ($counter > 10) {
                 throw new \Exception('Too much requests');
             }
-            $requestResponse = self::makeRequest($url, array_merge($data, $requestData, ['requestNumber' => $counter]), $cookies, Config::getVariable('logServerRequests') === true);
+            $logServerRequests = Config::getVariable('logServerRequests') === true;
+            $requestResponse = self::makeRequest($url, array_merge($data, $requestData, ['requestNumber' => $counter]), $cookies, $logServerRequests);
             $requestResponseBody = json_decode($requestResponse['body'], true);
             if (!is_array($requestResponseBody) || !array_key_exists('response', $requestResponseBody)) {
                 throw new \Exception('Invalid response. Body: ' . $requestResponse['body']);
@@ -365,43 +368,67 @@ class Server
 
             $requestResponseMeta = isset($requestResponseData['meta']) ? $requestResponseData['meta'] : [];
 
-            if (Config::getVariable('logServerRequests') === true) {
-                $logData = $requestResponse['logData'];
-                $logData['response']['data'] = [
-                    'value' => $response['value'],
-                    'meta' => $requestResponseMeta,
-                    'cache' => $response['cache'],
-                    'cacheTTL' => $response['cacheTTL'],
-                ];
-                $app->logs->log('bearcms-server-requests', print_r($logData, true));
-            }
-
             $resend = isset($requestResponseMeta['resend']) && (int) $requestResponseMeta['resend'] > 0;
             $resendData = [];
+            if ($logServerRequests) {
+                $timing = [];
+            }
 
             if (isset($requestResponseMeta['commands']) && is_array($requestResponseMeta['commands'])) {
                 $commandsResults = [];
                 foreach ($requestResponseMeta['commands'] as $commandData) {
                     if (isset($commandData['name']) && isset($commandData['data'])) {
-                        $commmandName = $commandData['name'];
-                        $commandResult = '';
-                        $callable = ['\BearCMS\Internal\ServerCommands', $commmandName];
-                        if (is_callable($callable)) {
-                            $commandResult = call_user_func($callable, $commandData['data'], $response);
-                        } else if (isset(\BearCMS\Internal\ServerCommands::$external[$commmandName])) {
-                            $callable = \BearCMS\Internal\ServerCommands::$external[$commmandName];
+                        $key = isset($commandData['key']) ? $commandData['key'] : null;
+                        $useCache = $key && isset($commandData['cache']) && (int)$commandData['cache'] === 1;
+                        if ($logServerRequests) {
+                            $executeStartTime = microtime(true);
+                            $resultIsCached = false;
+                        }
+                        if ($useCache && array_key_exists($key, $commandsResultsCache)) {
+                            $commandResult = $commandsResultsCache[$key];
+                            if ($logServerRequests) {
+                                $resultIsCached = true;
+                            }
+                        } else {
+                            $commmandName = $commandData['name'];
+                            $commandResult = '';
+                            $callable = ['\BearCMS\Internal\ServerCommands', $commmandName];
                             if (is_callable($callable)) {
                                 $commandResult = call_user_func($callable, $commandData['data'], $response);
+                            } else if (isset(\BearCMS\Internal\ServerCommands::$external[$commmandName])) {
+                                $callable = \BearCMS\Internal\ServerCommands::$external[$commmandName];
+                                if (is_callable($callable)) {
+                                    $commandResult = call_user_func($callable, $commandData['data'], $response);
+                                }
+                            }
+                            if ($useCache) {
+                                $commandsResultsCache[$key] = $commandResult;
                             }
                         }
-                        if (isset($commandData['key'])) {
-                            $commandsResults[$commandData['key']] = $commandResult;
+                        if ($logServerRequests) {
+                            $executeTotalTime = microtime(true) - $executeStartTime;
+                            $timing[] = ['command' => $commandData, 'total' => $executeTotalTime, 'cached' => $resultIsCached];
+                        }
+                        if ($key !== null) {
+                            $commandsResults[$key] = $commandResult;
                         }
                     }
                 }
                 if ($resend) {
                     $resendData['commandsResults'] = $commandsResults;
                 }
+            }
+
+            if ($logServerRequests) {
+                $logData = $requestResponse['logData'];
+                $logData['response']['data'] = [
+                    'value' => $response['value'],
+                    'meta' => $requestResponseMeta,
+                    'cache' => $response['cache'],
+                    'cacheTTL' => $response['cacheTTL'],
+                    'timing' => $timing
+                ];
+                $app->logs->log('bearcms-server-requests', print_r($logData, true));
             }
 
             if (isset($requestResponseMeta['clientEvents'])) {
