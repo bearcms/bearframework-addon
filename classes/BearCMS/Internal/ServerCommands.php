@@ -962,7 +962,6 @@ class ServerCommands
                 $themeData = $themeManifest;
                 $themeData['id'] = $id;
                 $themeData['hasOptions'] = !empty($optionsAsArray);
-                $themeData['stylesCount'] = sizeof(Internal\Themes::getStyles($id));
                 if ($includeOptions) {
                     $themeData['options'] = [
                         'definition' => $optionsAsArray
@@ -1017,6 +1016,41 @@ class ServerCommands
     /**
      * 
      * @param array $data
+     * @return array
+     */
+    static function themeExtractExport(array $data): array
+    {
+        $app = App::get();
+        $downloadURL = function ($url) use ($app) {
+            $tempFileKey = '.temp/bearcms/theme-extract-export/' . md5($url . uniqid()) . '.' . pathinfo($url, PATHINFO_EXTENSION);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            $response = (string)curl_exec($ch);
+            $valid = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200 && strlen($response) > 0;
+            $error = curl_error($ch);
+            curl_close($ch);
+            if ($valid) {
+                $app->data->set($app->data->make($tempFileKey, $response));
+                return $tempFileKey;
+            } else {
+                throw new \Exception('Cannot download file from URL (' . $url . ', ' . $error . ')');
+            }
+        };
+        $url = $data['url'];
+        $tempFileKey = $downloadURL($url);
+        try {
+            $data = Internal\Themes::extractExport($tempFileKey);
+            return ['status' => 'ok', 'result' => $data];
+        } catch (\Exception $e) {
+            return ['status' => 'error', 'errorCode' => $e->getCode()];
+        }
+    }
+
+    /**
+     * 
+     * @param array $data
      * @return void
      */
     static function themeSetUserOptions(array $data): void
@@ -1025,17 +1059,6 @@ class ServerCommands
         $userID = $data['userID'];
         $values = $data['values'];
         Internal2::$data2->themes->setUserOptions($themeID, $userID, $values);
-    }
-
-    /**
-     * 
-     * @param array $data
-     * @return array|null
-     */
-    static function themeStylesGet(array $data): ?array
-    {
-        $themeID = $data['id'];
-        return Internal\Themes::getStyles($themeID, true);
     }
 
     /**
@@ -1052,7 +1075,6 @@ class ServerCommands
             $themeData = $themeManifest;
             $themeData['id'] = $id;
             $themeData['hasOptions'] = Internal\Themes::getOptions($id) !== null;
-            $themeData['stylesCount'] = sizeof(Internal\Themes::getStyles($id));
             $result[] = $themeData;
         }
         Localization::restoreLocale();

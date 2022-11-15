@@ -87,29 +87,6 @@ $app->bearCMS->themes
             return $options;
         };
 
-        $theme->styles = function () use ($app, $context, $theme) {
-            $styles = [];
-            for ($i = 1; $i <= 5; $i++) {
-                $style = $theme->makeStyle();
-                $style->media = [
-                    [
-                        'filename' => $context->dir . '/themes/themeone/assets/s' . $i . '.jpg',
-                        'width' => 1500,
-                        'height' => 1125,
-                    ]
-                ];
-                $style->values = require $context->dir . '/themes/themeone/styles/' . $i . '.php';
-                $styles[] = $style;
-            }
-            if ($app->bearCMS->hasEventListeners('internalBearCMSUniversalThemeStyles')) {
-                $eventDetails = new stdClass();
-                $eventDetails->styles = $styles;
-                $app->bearCMS->dispatchEvent('internalBearCMSUniversalThemeStyles', $eventDetails);
-                $styles = $eventDetails->styles;
-            }
-            return $styles;
-        };
-
         $theme->updateValues = function (array $values = null) {
             if (is_array($values)) {
                 if (isset($values['textColor']) || isset($values['textSize'])) {

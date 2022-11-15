@@ -228,76 +228,6 @@ class Themes
     /**
      * 
      * @param string $id
-     * @param boolean $updateMediaFilenames
-     * @return array|null
-     * @throws \Exception
-     */
-    static function getStyles(string $id, bool $updateMediaFilenames = true): ?array
-    {
-        $theme = self::get($id);
-        if ($theme === null) {
-            return null;
-        }
-        if (is_callable($theme->styles)) {
-            $styles = call_user_func($theme->styles);
-            if (!is_array($styles)) {
-                throw new \Exception('Invalid theme styles value for theme ' . $id . '!');
-            }
-            $result = [];
-            foreach ($styles as $j => $style) {
-                if (!($style instanceof \BearCMS\Themes\Theme\Style)) {
-                    throw new \Exception('Invalid theme style at index ' . $j . '!');
-                }
-                if ($style->id === null || strlen($style->id) === 0) {
-                    $style->id = 'style' . $j;
-                }
-                if ($style->name == null) {
-                    $style->name = '';
-                }
-                $result[] = $style->toArray();
-            }
-            if ($updateMediaFilenames) {
-                $app = App::get();
-                $context = $app->contexts->get(__DIR__);
-                foreach ($result as $j => $style) {
-                    if (isset($style['media']) && is_array($style['media'])) {
-                        foreach ($style['media'] as $i => $mediaItem) {
-                            if (is_array($mediaItem) && isset($mediaItem['filename']) && is_string($mediaItem['filename'])) {
-                                $result[$j]['media'][$i]['filename'] = $context->dir . '/assets/tm/' . md5($id) . '/' . md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION);
-                            }
-                        }
-                    }
-                }
-            }
-            return $result;
-        }
-        return [];
-    }
-
-    /**
-     * 
-     * @param string $id
-     * @return ?array
-     */
-    static public function getStyleValues(string $id, string $styleID): ?array
-    {
-        if (!isset(self::$registrations[$id])) {
-            return null;
-        }
-        $styles = self::getStyles($id);
-        foreach ($styles as $style) {
-            if ($style['id'] === $styleID) {
-                if (isset($style['values'])) {
-                    return $style['values'];
-                }
-            }
-        }
-        return [];
-    }
-
-    /**
-     * 
-     * @param string $id
      * @param string $userID
      * @return string|null
      */
@@ -477,11 +407,34 @@ class Themes
         if (!isset(self::$registrations[$id])) {
             throw new \Exception('Theme does not exists!', 1);
         }
+        $hasUser = $userID !== null && strlen($userID) > 0;
+        $extractResult = self::extractExport($fileDataKey, !$hasUser);
+        if ($extractResult['id'] !== $id) { // cannot import options to different theme
+            throw new \Exception('The import file is for different theme (' . $extractResult['themeID'] . ')', 4);
+        }
+        $values = $extractResult['values'];
+        if ($hasUser) {
+            Internal2::$data2->themes->setUserOptions($id, $userID, $values);
+        } else {
+            Internal2::$data2->themes->setOptions($id, $values);
+        }
+        self::$cache = [];
+    }
+
+    /**
+     * 
+     * @param string $fileDataKey File to extract
+     * @param boolean $extractFilesInActiveDir
+     * @throws \Exception
+     * @return array
+     */
+    static public function extractExport(string $fileDataKey, bool $extractFilesInActiveDir = false): array
+    {
+        $result = [];
         $app = App::get();
         if (!$app->data->exists($fileDataKey)) {
             throw new \Exception('Import file not found!', 2);
         }
-        $hasUser = $userID !== null && strlen($userID) > 0;
         $archiveFilename = $app->data->getFilename($fileDataKey);
         $tempArchiveFilename = sys_get_temp_dir() . '/bearcms-theme-import-' . uniqid() . '.zip';
         copy($archiveFilename, $tempArchiveFilename);
@@ -499,10 +452,7 @@ class Themes
                 throw new \Exception('The manifest file is not valid!', 3);
             };
             $manifest = $getManifest();
-
-            if ($manifest['themeID'] !== $id) { // cannot import options to different theme
-                throw new \Exception('The import file is for different theme (' . $manifest['themeID'] . ')', 4);
-            }
+            $result['id'] = $manifest['themeID'];
 
             $getValues = function () use ($zip) {
                 $data = $zip->getFromName('values.json');
@@ -535,7 +485,7 @@ class Themes
                         if (array_search($extension, ['jpg', 'jpeg', 'gif', 'png', 'svg']) === false) {
                             throw new \Exception('Invalid file (' . $filenameInArchive . ')!', 9);
                         }
-                        $dataKey = ($hasUser ? '.temp/bearcms/files/themeimage/' : 'bearcms/files/themeimage/') . md5($filenameInArchive . '-' . uniqid()) . '.' . $extension;
+                        $dataKey = (!$extractFilesInActiveDir ? '.temp/bearcms/files/themeimage/' : 'bearcms/files/themeimage/') . md5($filenameInArchive . '-' . uniqid()) . '.' . $extension;
                         $app->data->setValue($dataKey, $data);
                         $importedDataKeys[$filenameInArchive] = $dataKey;
                     }
@@ -565,15 +515,11 @@ class Themes
             }
 
             $values = self::updateFilesInValues($values, $filesToUpdate);
-            if ($hasUser) {
-                Internal2::$data2->themes->setUserOptions($id, $userID, $values);
-            } else {
-                Internal2::$data2->themes->setOptions($id, $values);
-            }
-            self::$cache = [];
+            $result['values'] = $values;
 
             $zip->close();
             unlink($tempArchiveFilename);
+            return $result;
         } else {
             unlink($tempArchiveFilename);
             throw new \Exception('Cannot open zip archive (' . $tempArchiveFilename . ')', 8);

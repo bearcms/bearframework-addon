@@ -17,7 +17,7 @@ namespace BearCMS\Themes;
  * @property callable|null $get A function to be called to retrieve the theme template.
  * @property callable|null $manifest A function to be called to retrieve the theme manifest (name, description, etc.).
  * @property callable|null $options A function to be called to retrieve the theme options.
- * @property callable|null $styles A function to be called to retrieve the theme styles.
+ * @property callable|null $styles DEPRECATED A function to be called to retrieve the theme styles.
  * @property callable|null $updateValues A function to be called to update the saved values.
  * @property bool $canStyleElements Enable/disable element styling.
  * @property bool $useDefaultElementsCombinations Enable/disable default elements combinations.
@@ -59,7 +59,7 @@ class Theme
             ->defineProperty('options', [
                 'type' => '?callable'
             ])
-            ->defineProperty('styles', [
+            ->defineProperty('styles', [ // DEPRECATED
                 'type' => '?callable'
             ])
             ->defineProperty('updateValues', [

@@ -381,19 +381,6 @@ class BearCMS
                                         }
                                     }
                                 }
-                                $themeStyles = Internal\Themes::getStyles($id, false);
-                                foreach ($themeStyles as $themeStyle) {
-                                    if (isset($themeStyle['media'])) {
-                                        foreach ($themeStyle['media'] as $mediaItem) {
-                                            if (isset($mediaItem['filename'])) {
-                                                if ($mediaFilenameMD5 === md5($mediaItem['filename']) . '.' . pathinfo($mediaItem['filename'], PATHINFO_EXTENSION)) {
-                                                    $details->filename = $mediaItem['filename'];
-                                                    return;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
                             }
                         }
                     }
