@@ -115,6 +115,24 @@ class Server
     }
 
     /**
+     * Returns the proxy URL for the server resource.
+     * 
+     * @param string $url
+     * @return string|null
+     */
+    static function getAssetFilename(string $url): ?string
+    {
+        $serverUrl = Config::$serverUrl;
+        if (isset($url[0]) && strpos($url, $serverUrl) === 0) {
+            if (strpos($url, '?') !== false) {
+                $url = explode('?', $url)[0];
+            }
+            return 'assets/s/' . str_replace($serverUrl, '', $url);
+        }
+        return null;
+    }
+
+    /**
      *
      * @param mixed $content
      * @param bool $ajaxMode
@@ -122,23 +140,25 @@ class Server
      */
     public static function updateAssetsUrls($content, bool $ajaxMode)
     {
-        $serverUrl = Config::$serverUrl;
         $app = App::get();
         $context = $app->contexts->get(__DIR__);
-        $updateUrl = function ($url) use ($context, $serverUrl) {
-            if (strpos($url, '?') !== false) {
-                $url = explode('?', $url)[0];
+
+        $updateAssetURL = function (string $url) use ($context): string {
+            $filename = self::getAssetFilename($url);
+            if ($filename !== null) {
+                return $context->assets->getURL($filename, ['cacheMaxAge' => 999999999, 'version' => 1]);
             }
-            return $context->assets->getURL('assets/s/' . str_replace($serverUrl, '', $url), ['cacheMaxAge' => 999999999, 'version' => 1]);
+            return $url;
         };
 
         if ($ajaxMode) {
             $hasChange = false;
             $contentData = $content;
             if (isset($contentData['jsFiles'])) {
-                foreach ($contentData['jsFiles'] as $i => $src) {
-                    if (isset($src[0]) && strpos($src, $serverUrl) === 0) {
-                        $contentData['jsFiles'][$i] = $updateUrl($src);
+                foreach ($contentData['jsFiles'] as $i => $url) {
+                    $updatedURL = $updateAssetURL($url);
+                    if ($url !== $updatedURL) {
+                        $contentData['jsFiles'][$i] = $updatedURL;
                         $hasChange = true;
                     }
                 }
@@ -152,10 +172,11 @@ class Server
             $dom->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
             $scripts = $dom->querySelectorAll('script');
             foreach ($scripts as $script) {
-                $src = (string) $script->getAttribute('src');
-                if (isset($src[0]) && strpos($src, $serverUrl) === 0) {
-                    $script->setAttribute('src', $updateUrl($src));
-                    $script->setAttribute('id', md5($src));
+                $url = (string) $script->getAttribute('src');
+                $updatedURL = $updateAssetURL($url);
+                if ($url !== $updatedURL) {
+                    $script->setAttribute('src', $updatedURL);
+                    $script->setAttribute('id', md5($url)); // Is this needed ???
                     $hasChange = true;
                 }
             }

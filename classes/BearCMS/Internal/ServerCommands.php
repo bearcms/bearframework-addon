@@ -175,6 +175,19 @@ class ServerCommands
 
     /**
      * 
+     * @param array $data
+     * @return string
+     */
+    static function serverAssetUrl(array $data): string
+    {
+        $app = App::get();
+        $context = $app->contexts->get(__DIR__);
+        $filename = Internal\Server::getAssetFilename($data['url']);
+        return $context->assets->getURL($filename, $data['options']);
+    }
+
+    /**
+     * 
      * @return array
      */
     static function blogCategories(): array
