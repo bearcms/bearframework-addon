@@ -376,7 +376,7 @@ class Themes
             'exportDate' => date('c')
         ];
 
-        $archiveFileDataKey = '.temp/bearcms/themeexport/theme-export-' . md5(uniqid()) . '.zip';
+        $archiveFileDataKey = '.temp/bearcms/themeexport/theme-export-' . str_replace('/', '-', $id) . '-' . date('Ymd-His') . '.zip';
         $archiveFilename = $app->data->getFilename($archiveFileDataKey);
         $tempArchiveFilename = sys_get_temp_dir() . '/bearcms-theme-export-' . uniqid() . '.zip';
         $zip = new \ZipArchive();
