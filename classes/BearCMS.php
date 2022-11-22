@@ -397,47 +397,24 @@ class BearCMS
                 $addonAssetsDir = $this->context->dir . '/assets/';
                 if (strpos($filename, $addonAssetsDir) === 0) {
 
-                    $downloadUrl = function ($url) {
-                        $tempFileKey = '.temp/bearcms/urlassets/' . md5($url) . '.' . pathinfo($url, PATHINFO_EXTENSION);
-                        $tempFilename = $this->app->data->getFilename($tempFileKey);
-                        if ($this->app->data->exists($tempFileKey)) {
-                            return $tempFilename;
-                        } else {
-                            $ch = curl_init();
-                            curl_setopt($ch, CURLOPT_URL, $url);
-                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                            $response = (string)curl_exec($ch);
-                            $valid = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200 && strlen($response) > 0;
-                            $error = curl_error($ch);
-                            curl_close($ch);
-                            if ($valid) {
-                                $this->app->data->set($this->app->data->make($tempFileKey, $response));
-                                return $tempFilename;
-                            } else {
-                                throw new \Exception('Cannot download file from URL (' . $url . ', ' . $error . ')');
-                            }
-                        }
-                    };
-
-                    // Proxy
+                    // Proxy (used in video element)
                     $matchingDir = $addonAssetsDir . 'p/';
                     if (strpos($filename, $matchingDir) === 0) {
                         $details->filename = '';
                         $pathParts = explode('/', substr($filename, strlen($matchingDir)), 3);
                         if (isset($pathParts[0], $pathParts[1], $pathParts[2])) {
                             $url = $pathParts[0] . '://' . $pathParts[1] . '/' . str_replace('\\', '/', $pathParts[2]);
-                            $details->filename = $downloadUrl($url);
+                            $details->filename = Internal\Downloads::download($url, true);
                         }
                         return;
                     }
 
-                    // Download the server files
+                    // Download a server file
                     $matchingDir = $addonAssetsDir . 's/';
                     if (strpos($filename, $matchingDir) === 0) {
                         $details->filename = '';
-                        $url = Config::$serverUrl . str_replace('\\', '/', substr($filename, strlen($matchingDir)));
-                        $details->filename = $downloadUrl($url);
+                        $path = str_replace('\\', '/', substr($filename, strlen($matchingDir)));
+                        $details->filename = Internal\Server::download($path, true);
                     }
                 }
             });

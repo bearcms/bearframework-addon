@@ -497,4 +497,17 @@ class Server
         }
         return (array) $response;
     }
+
+    /**
+     * Downlaods a server file and returns a temp filename
+     *
+     * @param string $path
+     * @param bool $useCached
+     * @return string
+     */
+    static function download(string $path, bool $useCached = false): string
+    {
+        $url =  Config::$serverUrl . ltrim($path, '/');
+        return Internal\Downloads::download($url, $useCached);
+    }
 }
