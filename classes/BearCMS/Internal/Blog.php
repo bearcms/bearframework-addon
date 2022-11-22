@@ -294,7 +294,7 @@ class Blog
             $sitemap->addItem(Config::$blogPagesPathPrefix . $slug . '/', function () use ($blogPostID) {
                 $app = App::get();
                 $dates = [];
-                $date = ElementsHelper::getLastChangeTime('bearcms-blogpost-' . $blogPostID);
+                $date = ElementsDataHelper::getLastChangeTime('bearcms-blogpost-' . $blogPostID);
                 if ($date !== null) {
                     $dates[] = $date;
                 }

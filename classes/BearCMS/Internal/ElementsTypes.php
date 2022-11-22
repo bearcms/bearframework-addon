@@ -10,9 +10,10 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
-use BearCMS\Internal;
-use BearCMS\Internal2;
-use BearCMS\Internal\Data\UploadsSize;
+use BearCMS\Internal\ElementsHelper as ElementsHelper;
+use BearCMS\Internal\Themes as InternalThemes;
+use BearCMS\Internal\Data as InternalData;
+use BearCMS\Internal\ImportExport\ImportContext;
 use IvoPetkov\HTML5DOMDocument;
 
 /**
@@ -45,9 +46,9 @@ class ElementsTypes
         $app->components
             ->addAlias($name, 'file:' . self::$contextDir . '/components/bearcmsElement.php')
             ->addTag($name, 'file:' . self::$contextDir . '/components/bearcmsElement.php');
-        Internal\ElementsHelper::$elementsTypesCodes[$name] = $typeCode;
-        Internal\ElementsHelper::$elementsTypesFilenames[$name] = $options['componentFilename'];
-        Internal\ElementsHelper::$elementsTypesOptions[$name] = $options;
+        ElementsHelper::$elementsTypesCodes[$name] = $typeCode;
+        ElementsHelper::$elementsTypesFilenames[$name] = $options['componentFilename'];
+        ElementsHelper::$elementsTypesOptions[$name] = $options;
     }
 
     /**
@@ -98,9 +99,9 @@ class ElementsTypes
                 'canStyle' => true
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['heading'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['heading'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
 
-                    if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+                    if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
                         $options->addOption($idPrefix . "HeadingCSS", "css", '', [
                             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
                             "cssOutput" => [
@@ -163,8 +164,8 @@ class ElementsTypes
                 'canStyle' => true
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['text'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
-                    if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+                InternalThemes::$elementsOptions['text'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                    if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
                         $optionsGroup = $options;
                         $customStyleSelector = '';
                     } else {
@@ -219,8 +220,8 @@ class ElementsTypes
                 'canStyle' => true
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['link'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
-                    if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+                InternalThemes::$elementsOptions['link'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                    if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
                         $optionsGroup = $options;
                         $customStyleSelector = '';
                     } else {
@@ -304,31 +305,35 @@ class ElementsTypes
                         ]
                     ],
                 ],
-                'onDelete' => function ($data) use ($app) {
+                'onDelete' => function ($data) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
-                    if (strlen($filename) > 0) {
-                        $dataKey = Internal\Data::getFilenameDataKey($filename);
-                        if ($dataKey !== null && $app->data->exists($dataKey)) {
-                            $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
-                        }
-                        UploadsSize::remove($dataKey);
-                    }
+                    InternalData::deleteElementAsset($filename);
                 },
                 'onDuplicate' => function ($data) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
-                        $realFilename = Internal\Data::getRealFilename($filename);
-                        $newRealFilename = Internal\Data::generateNewFilename($realFilename);
-                        copy($realFilename, $newRealFilename);
-                        UploadsSize::add(Internal\Data::getFilenameDataKey($newRealFilename), filesize($newRealFilename));
-                        $data['filename'] = Internal\Data::getShortFilename($newRealFilename);
+                        $data['filename'] = InternalData::duplicateElementAsset($filename);
+                    }
+                    return $data;
+                },
+                'onExport' => function ($data, $add) {
+                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                    if (strlen($filename) > 0) {
+                        $data['filename'] = InternalData::exportElementAsset($filename, 'file', $add);
+                    }
+                    return $data;
+                },
+                'onImport' => function (array $data, ImportContext $context) {
+                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                    if (strlen($filename) > 0) {
+                        $data['filename'] = InternalData::importElementAsset($filename, 'bearcms/files/image/', $context);
                     }
                     return $data;
                 },
                 'getUploadsSizeItems' => function ($data) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
-                        return [Internal\Data::getFilenameDataKey($filename)];
+                        return [InternalData::getFilenameDataKey($filename)];
                     }
                     return [];
                 },
@@ -337,14 +342,16 @@ class ElementsTypes
                     $hasChange = false;
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
-                        $filename = Internal\Data::getRealFilename($filename);
-                        if (strpos($filename, 'appdata://') === 0) {
-                            if ($filename !== $data['filename']) {
-                                $data['filename'] = $filename;
+                        $realFilenameWithOptions = InternalData::getRealFilename($filename);
+                        $realFilenameWithoutOptions = InternalData::removeFilenameOptions($realFilenameWithOptions);
+                        $shortFilenameWithOptions = InternalData::getShortFilename($realFilenameWithOptions);
+                        if (strpos($realFilenameWithoutOptions, 'appdata://') === 0) {
+                            if ($data['filename'] !== $shortFilenameWithOptions) {
+                                $data['filename'] = $shortFilenameWithOptions;
                                 $hasChange = true;
                             }
                             if (!isset($data['fileWidth']) || !isset($data['fileHeight'])) {
-                                $details = $app->assets->getDetails($filename, ['width', 'height']);
+                                $details = $app->assets->getDetails($realFilenameWithoutOptions, ['width', 'height']);
                                 $data['fileWidth'] = $details['width'] !== null ? $details['width'] : 0;
                                 $data['fileHeight'] = $details['height'] !== null ? $details['height'] : 0;
                                 $hasChange = true;
@@ -358,8 +365,8 @@ class ElementsTypes
                 'canStyle' => true
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['image'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
-                    $isElementContext = $context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT;
+                InternalThemes::$elementsOptions['image'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                    $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
                         $customStyleSelector = '';
@@ -453,32 +460,40 @@ class ElementsTypes
                 },
                 'onDelete' => function ($data) use ($app) {
                     if (isset($data['files']) && is_array($data['files'])) {
-                        foreach ($data['files'] as $index => $file) {
-                            if (isset($file['filename'])) {
-                                $filename = (string)$file['filename'];
-                                if (strlen($filename) > 0) {
-                                    $dataKey = Internal\Data::getFilenameDataKey($filename);
-                                    if ($dataKey !== null && $app->data->exists($dataKey)) {
-                                        $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
-                                    }
-                                    UploadsSize::remove($dataKey);
-                                }
-                            }
+                        foreach ($data['files'] as $file) {
+                            $filename = isset($file['filename']) ? (string)$file['filename'] : '';
+                            InternalData::deleteElementAsset($filename);
                         }
                     }
                 },
                 'onDuplicate' => function ($data) {
                     if (isset($data['files']) && is_array($data['files'])) {
                         foreach ($data['files'] as $index => $file) {
-                            if (isset($file['filename'])) {
-                                $filename = (string)$file['filename'];
-                                if (strlen($filename) > 0) {
-                                    $realFilename = Internal\Data::getRealFilename($filename);
-                                    $newRealFilename = Internal\Data::generateNewFilename($realFilename);
-                                    copy($realFilename, $newRealFilename);
-                                    UploadsSize::add(Internal\Data::getFilenameDataKey($newRealFilename), filesize($newRealFilename));
-                                    $data['files'][$index]['filename'] = Internal\Data::getShortFilename($newRealFilename);
-                                }
+                            $filename = isset($file['filename']) ? (string)$file['filename'] : '';
+                            if ($filename !== '') {
+                                $data['files'][$index]['filename'] = InternalData::duplicateElementAsset($filename);
+                            }
+                        }
+                    }
+                    return $data;
+                },
+                'onExport' => function ($data, $add) {
+                    if (isset($data['files']) && is_array($data['files'])) {
+                        foreach ($data['files'] as $index => $file) {
+                            $filename = isset($file['filename']) ? (string)$file['filename'] : '';
+                            if ($filename !== '') {
+                                $data['files'][$index]['filename'] = InternalData::exportElementAsset($filename, 'file' . ($index + 1), $add);
+                            }
+                        }
+                    }
+                    return $data;
+                },
+                'onImport' => function (array $data, ImportContext $context) {
+                    if (isset($data['files']) && is_array($data['files'])) {
+                        foreach ($data['files'] as $index => $file) {
+                            $filename = isset($file['filename']) ? (string)$file['filename'] : '';
+                            if ($filename !== '') {
+                                $data['files'][$index]['filename'] = InternalData::importElementAsset($filename, 'bearcms/files/imagegallery/', $context);
                             }
                         }
                     }
@@ -487,11 +502,11 @@ class ElementsTypes
                 'getUploadsSizeItems' => function ($data) {
                     $result = [];
                     if (isset($data['files']) && is_array($data['files'])) {
-                        foreach ($data['files'] as $index => $file) {
+                        foreach ($data['files'] as $file) {
                             if (isset($file['filename'])) {
-                                $filename = (string)$file['filename'];
+                                $filename = isset($file['filename']) ? (string)$file['filename'] : '';
                                 if (strlen($filename) > 0) {
-                                    $result[] = Internal\Data::getFilenameDataKey($filename);
+                                    $result[] = InternalData::getFilenameDataKey($filename);
                                 }
                             }
                         }
@@ -504,16 +519,18 @@ class ElementsTypes
                     if (isset($data['files']) && is_array($data['files'])) {
                         foreach ($data['files'] as $index => $file) {
                             if (isset($file['filename'])) {
-                                $filename = (string)$file['filename'];
+                                $filename = isset($file['filename']) ? (string)$file['filename'] : '';
                                 if (strlen($filename) > 0) {
-                                    $filename = Internal\Data::getRealFilename($filename);
-                                    if (strpos($filename, 'appdata://') === 0) {
-                                        if ($filename !== $file['filename']) {
-                                            $file['filename'] = $filename;
+                                    $realFilenameWithOptions = InternalData::getRealFilename($filename);
+                                    $realFilenameWithoutOptions = InternalData::removeFilenameOptions($realFilenameWithOptions);
+                                    $shortFilenameWithOptions = InternalData::getShortFilename($realFilenameWithOptions);
+                                    if (strpos($realFilenameWithoutOptions, 'appdata://') === 0) {
+                                        if ($file['filename'] !== $shortFilenameWithOptions) {
+                                            $file['filename'] = $shortFilenameWithOptions;
                                             $hasChange = true;
                                         }
                                         if (!isset($file['width']) || !isset($file['height'])) {
-                                            $details = $app->assets->getDetails($filename, ['width', 'height']);
+                                            $details = $app->assets->getDetails($realFilenameWithoutOptions, ['width', 'height']);
                                             $file['width'] = $details['width'] !== null ? $details['width'] : 0;
                                             $file['height'] = $details['height'] !== null ? $details['height'] : 0;
                                             $hasChange = true;
@@ -530,7 +547,7 @@ class ElementsTypes
                 },
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['imageGallery'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['imageGallery'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupImageGallery = $options->addGroup(__("bearcms.themes.options.Image gallery"));
                     $groupImageGallery->addOption($idPrefix . "ImageGalleryCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
@@ -589,35 +606,39 @@ class ElementsTypes
                 ],
                 'onDelete' => function ($data) use ($app) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
-                    if (strlen($filename) > 0) {
-                        $dataKey = Internal\Data::getFilenameDataKey($filename);
-                        if ($dataKey !== null && $app->data->exists($dataKey)) {
-                            $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
-                        }
-                        UploadsSize::remove($dataKey);
-                    }
+                    InternalData::deleteElementAsset($filename);
                 },
                 'onDuplicate' => function ($data) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
-                        $realFilename = Internal\Data::getRealFilename($filename);
-                        $newRealFilename = Internal\Data::generateNewFilename($realFilename);
-                        copy($realFilename, $newRealFilename);
-                        UploadsSize::add(Internal\Data::getFilenameDataKey($newRealFilename), filesize($newRealFilename));
-                        $data['filename'] = Internal\Data::getShortFilename($newRealFilename);
+                        $data['filename'] = InternalData::duplicateElementAsset($filename);
+                    }
+                    return $data;
+                },
+                'onExport' => function ($data, $add) {
+                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                    if (strlen($filename) > 0) {
+                        $data['filename'] = InternalData::exportElementAsset($filename, 'file', $add);
+                    }
+                    return $data;
+                },
+                'onImport' => function (array $data, ImportContext $context) {
+                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                    if (strlen($filename) > 0) {
+                        $data['filename'] = InternalData::importElementAsset($filename, 'bearcms/files/video/', $context);
                     }
                     return $data;
                 },
                 'getUploadsSizeItems' => function ($data) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
-                        return [Internal\Data::getFilenameDataKey($filename)];
+                        return [InternalData::getFilenameDataKey($filename)];
                     }
                     return [];
                 }
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['video'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['video'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $group = $options->addGroup(__("bearcms.themes.options.Video"));
                     $group->addOption($idPrefix . "VideoCSS", "css", '', [
                         "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
@@ -670,7 +691,7 @@ class ElementsTypes
                 ]
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['navigation'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['navigation'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupNavigation = $options->addGroup(__("bearcms.themes.options.Navigation"));
                     $groupNavigation->addOption($idPrefix . "NavigationCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBorder", "cssBackground"],
@@ -724,7 +745,7 @@ class ElementsTypes
                 ]
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['html'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['html'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupHTMLCode = $options->addGroup(__("bearcms.themes.options.HTML code"));
                     $groupHTMLCode->addOption($idPrefix . "HtmlCSS", "css", '', [
                         "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
@@ -786,7 +807,7 @@ class ElementsTypes
                 ]
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['blogPosts'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['blogPosts'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupBlogPosts = $options->addGroup(__("bearcms.themes.options.Blog posts"));
                     $groupBlogPosts->addOption($idPrefix . "BlogPostsCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
@@ -898,22 +919,21 @@ class ElementsTypes
                     ]
                 ],
                 'onDelete' => function ($data) {
-                    $app = App::get();
                     if (isset($data['threadID'])) {
-                        Internal\Data\Comments::deleteThread($data['threadID']);
+                        InternalData\Comments::deleteThread($data['threadID']);
                     }
                 },
                 'onDuplicate' => function ($data) {
                     if (isset($data['threadID'])) {
-                        $newThreadID = Internal\Data\Comments::generateNewThreadID();
-                        Internal\Data\Comments::copyThread($data['threadID'], $newThreadID);
+                        $newThreadID = InternalData\Comments::generateNewThreadID();
+                        InternalData\Comments::copyThread($data['threadID'], $newThreadID);
                         $data['threadID'] = $newThreadID;
                     }
                     return $data;
                 }
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['comments'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['comments'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupComments = $options->addGroup(__("bearcms.themes.options.Comments"));
 
                     $groupComment = $groupComments->addGroup(__("bearcms.themes.options.comments.Comment"));
@@ -1045,7 +1065,7 @@ class ElementsTypes
                 ]
             ]);
             if ($hasThemes) {
-                Internal\Themes::$elementsOptions['separator'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['separator'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $group = $options->addGroup(__("bearcms.themes.options.Separator"));
 
                     $groupLarge = $group->addGroup(__("bearcms.themes.options.Separator.Large"));
@@ -1081,8 +1101,8 @@ class ElementsTypes
             }
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_COLUMNS')) {
-            Internal\Themes::$elementsOptions['columns'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
-                if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+            InternalThemes::$elementsOptions['columns'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
                     $optionsGroup = $options;
                 } else {
                     throw new \Exception('Not supported in other contexts!');
@@ -1101,8 +1121,8 @@ class ElementsTypes
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_FLOATING_BOX')) {
-            Internal\Themes::$elementsOptions['floatingBox'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
-                if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+            InternalThemes::$elementsOptions['floatingBox'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
                     $optionsGroup = $options;
                 } else {
                     throw new \Exception('Not supported in other contexts!');
@@ -1125,8 +1145,8 @@ class ElementsTypes
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_FLEXIBLE_BOX')) {
-            Internal\Themes::$elementsOptions['flexibleBox'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
-                if ($context === Internal\Themes::OPTIONS_CONTEXT_ELEMENT) {
+            InternalThemes::$elementsOptions['flexibleBox'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
                     $optionsGroup = $options;
                 } else {
                     throw new \Exception('Not supported in other contexts!');
@@ -1169,11 +1189,7 @@ class ElementsTypes
                     if (isset($data['value'])) {
                         $files = CanvasElementHelper::getFilesInValue((string)$data['value']);
                         foreach ($files as $filename) {
-                            $dataKey = Internal\Data::getFilenameDataKey($filename);
-                            if ($dataKey !== null && $app->data->exists($dataKey)) {
-                                $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
-                            }
-                            UploadsSize::remove($dataKey);
+                            InternalData::deleteElementAsset($filename);
                         }
                     }
                 },
@@ -1183,15 +1199,35 @@ class ElementsTypes
                         $files = CanvasElementHelper::getFilesInValue($value, true);
                         $filesToUpdate = [];
                         foreach ($files as $filename) {
-                            $filenameWithoutOptions = Internal\Data::removeFilenameOptions($filename);
-                            $filenameOptions = Internal\Data::getFilenameOptions($filename);
-                            $oldFilename = Internal\Data::getRealFilename($filenameWithoutOptions);
-                            $newFilename = Internal\Data::generateNewFilename($oldFilename);
-                            copy($oldFilename, $newFilename);
-                            $newFilenameDataKey = Internal\Data::getFilenameDataKey($newFilename);
-                            UploadsSize::add($newFilenameDataKey, filesize($newFilename));
-                            $newFilenameWithOptions = Internal\Data::setFilenameOptions($newFilename, $filenameOptions);
-                            $filesToUpdate[$filename] = Internal\Data::getShortFilename($newFilenameWithOptions);
+                            $filesToUpdate[$filename] = InternalData::duplicateElementAsset($filename);
+                        }
+                        if (!empty($filesToUpdate)) {
+                            $data['value'] = CanvasElementHelper::updateFilesInValue($value, $filesToUpdate);
+                        }
+                    }
+                    return $data;
+                },
+                'onExport' => function ($data, $add) {
+                    if (isset($data['value'])) {
+                        $value = (string)$data['value'];
+                        $files = CanvasElementHelper::getFilesInValue($value, true);
+                        $filesToUpdate = [];
+                        foreach ($files as $i => $filename) {
+                            $filesToUpdate[$filename] = InternalData::exportElementAsset($filename, 'file' . ($i + 1), $add);
+                        }
+                        if (!empty($filesToUpdate)) {
+                            $data['value'] = CanvasElementHelper::updateFilesInValue($value, $filesToUpdate);
+                        }
+                    }
+                    return $data;
+                },
+                'onImport' => function (array $data, ImportContext $context) {
+                    if (isset($data['value'])) {
+                        $value = (string)$data['value'];
+                        $files = CanvasElementHelper::getFilesInValue($value, true);
+                        $filesToUpdate = [];
+                        foreach ($files as $filename) {
+                            $filesToUpdate[$filename] = InternalData::importElementAsset($filename, 'bearcms/files/canvasstyleimage/', $context);
                         }
                         if (!empty($filesToUpdate)) {
                             $data['value'] = CanvasElementHelper::updateFilesInValue($value, $filesToUpdate);
@@ -1204,7 +1240,7 @@ class ElementsTypes
                     if (isset($data['value'])) {
                         $files = CanvasElementHelper::getFilesInValue((string)$data['value']);
                         foreach ($files as $filename) {
-                            $result[] = Internal\Data::getFilenameDataKey($filename);
+                            $result[] = InternalData::getFilenameDataKey($filename);
                         }
                     }
                     return $result;

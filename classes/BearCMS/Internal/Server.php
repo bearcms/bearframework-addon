@@ -280,6 +280,7 @@ class Server
             'n4aj', // new data access api (specific server commands instead of direct data access)
             'bz49', // URL redirects support
             'm4a9', // has commentsGet server command
+            '78va', // new elements commands
         ];
         $settings = $app->bearCMS->data->settings->get();
         $clientData['contentLanguages'] = $settings->languages;
@@ -395,49 +396,54 @@ class Server
                 $timing = [];
             }
 
-            if (isset($requestResponseMeta['commands']) && is_array($requestResponseMeta['commands'])) {
-                $commandsResults = [];
-                foreach ($requestResponseMeta['commands'] as $commandData) {
-                    if (isset($commandData['name']) && isset($commandData['data'])) {
-                        $key = isset($commandData['key']) ? $commandData['key'] : null;
-                        $useCache = $key && isset($commandData['cache']) && (int)$commandData['cache'] === 1;
-                        if ($logServerRequests) {
-                            $executeStartTime = microtime(true);
-                            $resultIsCached = false;
-                        }
-                        if ($useCache && array_key_exists($key, $commandsResultsCache)) {
-                            $commandResult = $commandsResultsCache[$key];
+            $exceptionToThrow = null;
+            try {
+                if (isset($requestResponseMeta['commands']) && is_array($requestResponseMeta['commands'])) {
+                    $commandsResults = [];
+                    foreach ($requestResponseMeta['commands'] as $commandData) {
+                        if (isset($commandData['name']) && isset($commandData['data'])) {
+                            $key = isset($commandData['key']) ? $commandData['key'] : null;
+                            $useCache = $key && isset($commandData['cache']) && (int)$commandData['cache'] === 1;
                             if ($logServerRequests) {
-                                $resultIsCached = true;
+                                $executeStartTime = microtime(true);
+                                $resultIsCached = false;
                             }
-                        } else {
-                            $commmandName = $commandData['name'];
-                            $commandResult = '';
-                            $callable = ['\BearCMS\Internal\ServerCommands', $commmandName];
-                            if (is_callable($callable)) {
-                                $commandResult = call_user_func($callable, $commandData['data'], $response);
-                            } else if (isset(\BearCMS\Internal\ServerCommands::$external[$commmandName])) {
-                                $callable = \BearCMS\Internal\ServerCommands::$external[$commmandName];
+                            if ($useCache && array_key_exists($key, $commandsResultsCache)) {
+                                $commandResult = $commandsResultsCache[$key];
+                                if ($logServerRequests) {
+                                    $resultIsCached = true;
+                                }
+                            } else {
+                                $commmandName = $commandData['name'];
+                                $commandResult = '';
+                                $callable = ['\BearCMS\Internal\ServerCommands', $commmandName];
                                 if (is_callable($callable)) {
                                     $commandResult = call_user_func($callable, $commandData['data'], $response);
+                                } else if (isset(\BearCMS\Internal\ServerCommands::$external[$commmandName])) {
+                                    $callable = \BearCMS\Internal\ServerCommands::$external[$commmandName];
+                                    if (is_callable($callable)) {
+                                        $commandResult = call_user_func($callable, $commandData['data'], $response);
+                                    }
+                                }
+                                if ($useCache) {
+                                    $commandsResultsCache[$key] = $commandResult;
                                 }
                             }
-                            if ($useCache) {
-                                $commandsResultsCache[$key] = $commandResult;
+                            if ($logServerRequests) {
+                                $executeTotalTime = microtime(true) - $executeStartTime;
+                                $timing[] = ['command' => $commandData, 'total' => $executeTotalTime, 'cached' => $resultIsCached];
+                            }
+                            if ($key !== null) {
+                                $commandsResults[$key] = $commandResult;
                             }
                         }
-                        if ($logServerRequests) {
-                            $executeTotalTime = microtime(true) - $executeStartTime;
-                            $timing[] = ['command' => $commandData, 'total' => $executeTotalTime, 'cached' => $resultIsCached];
-                        }
-                        if ($key !== null) {
-                            $commandsResults[$key] = $commandResult;
-                        }
+                    }
+                    if ($resend) {
+                        $resendData['commandsResults'] = $commandsResults;
                     }
                 }
-                if ($resend) {
-                    $resendData['commandsResults'] = $commandsResults;
-                }
+            } catch (\Exception $e) {
+                $exceptionToThrow = $e;
             }
 
             if ($logServerRequests) {
@@ -449,7 +455,14 @@ class Server
                     'cacheTTL' => $response['cacheTTL'],
                     'timing' => $timing
                 ];
+                if ($exceptionToThrow !== null) {
+                    $logData['exception'] = $exceptionToThrow->getMessage();
+                }
                 $app->logs->log('bearcms-server-requests', print_r($logData, true));
+            }
+
+            if ($exceptionToThrow !== null) {
+                throw $exceptionToThrow;
             }
 
             if (isset($requestResponseMeta['clientEvents'])) {

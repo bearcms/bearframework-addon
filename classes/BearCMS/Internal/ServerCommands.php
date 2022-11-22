@@ -244,7 +244,7 @@ class ServerCommands
         $blogPostID = $data['id'];
         InternalDataBlogPosts::deleteImage($blogPostID, false);
         InternalDataBlogPosts::delete($blogPostID);
-        ElementsHelper::deleteContainer('bearcms-blogpost-' . $blogPostID);
+        ElementsDataHelper::deleteContainer('bearcms-blogpost-' . $blogPostID);
     }
 
     /**
@@ -455,11 +455,17 @@ class ServerCommands
      */
     static function elementSet(array $data): void
     {
-        $elementID = $data['id'];
-        $containerID = isset($data['containerID']) ? $data['containerID'] : null;
-        InternalDataElements::setElement($elementID, $data['data'], $containerID);
-        InternalDataElements::optimizeElement($elementID, $containerID);
-        InternalDataElements::dispatchElementChangeEvent($elementID, $containerID);
+        ElementsDataHelper::setElement($data['data'], isset($data['containerID']) ? $data['containerID'] : null);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return string
+     */
+    static function elementAdd(array $data): string
+    {
+        return ElementsDataHelper::addElement($data['data'], $data['containerID'], $data['target']);
     }
 
     /**
@@ -469,7 +475,6 @@ class ServerCommands
      */
     static function elementGet(array $data): ?array
     {
-        //$containerID = isset($data['containerID']) ? $data['containerID'] : null;
         return InternalDataElements::getElement($data['id']);
     }
 
@@ -482,7 +487,7 @@ class ServerCommands
     {
         $elementID = $data['id'];
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
-        ElementsHelper::deleteElement($elementID, $containerID);
+        ElementsDataHelper::deleteElement($elementID, $containerID);
     }
 
     /**
@@ -490,13 +495,53 @@ class ServerCommands
      * @param array $data
      * @return void
      */
-    static function elementCopy(array $data): void
+    static function elementMove(array $data): void
+    {
+        $elementID = isset($data['elementID']) ? $data['elementID'] : null;
+        $sourceContainerID = isset($data['sourceContainerID']) ? $data['sourceContainerID'] : null;
+        $targetContainerID = isset($data['targetContainerID']) ? $data['targetContainerID'] : null;
+        $target = isset($data['target']) ? $data['target'] : null;
+        ElementsDataHelper::moveElement($elementID, $sourceContainerID, $targetContainerID, $target);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return string
+     */
+    static function elementDuplicate(array $data)
+    {
+        $elementID = $data['elementID'];
+        $containerID = $data['containerID'];
+        return ElementsDataHelper::duplicateElement($elementID, $containerID);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementCopy(array $data): void // DEPRECATED
     {
         $sourceElementID = $data['sourceID'];
         $targetElementID = $data['targetID'];
         $sourceContainerID = isset($data['sourceContainerID']) ? $data['sourceContainerID'] : null;
         $targetContainerID = isset($data['targetContainerID']) ? $data['targetContainerID'] : null;
-        ElementsHelper::copyElement($sourceElementID, $targetElementID, $sourceContainerID, $targetContainerID);
+        ElementsDataHelper::duplicateElement($sourceElementID, $targetElementID, $sourceContainerID, $targetContainerID);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function elementExport(array $data): array
+    {
+        $app = App::get();
+        $elementID = $data['elementID'];
+        $containerID = $data['containerID'];
+        $filename = ImportExport::export([['type' => 'element', 'elementID' => $elementID, 'containerID' => $containerID]]);
+        return ['downloadURL' => $app->assets->getURL($filename, ['download' => true])];
     }
 
     /**
@@ -509,8 +554,12 @@ class ServerCommands
         $result = [];
         $result['size'] = 0;
         $elementsIDs = $data['ids'];
-        foreach ($elementsIDs as $elementID) {
-            $result['size'] += ElementsHelper::getElementUploadsSize($elementID);
+        foreach ($elementsIDs as $elementIDData) {
+            if (is_array($elementIDData)) {
+                $result['size'] += ElementsDataHelper::getElementUploadsSize($elementIDData['elementID'], isset($elementIDData['containerID']) ? $elementIDData['containerID'] : null);
+            } else {
+                $result['size'] += ElementsDataHelper::getElementUploadsSize($elementIDData); // deprecated
+            }
         }
         return $result;
     }
@@ -526,7 +575,7 @@ class ServerCommands
         $result['size'] = 0;
         $containersIDs = $data['ids'];
         foreach ($containersIDs as $containerID) {
-            $result['size'] += ElementsHelper::getContainerUploadsSize($containerID);
+            $result['size'] += ElementsDataHelper::getContainerUploadsSize($containerID);
         }
         return $result;
     }
@@ -560,7 +609,7 @@ class ServerCommands
      */
     static function elementsContainerDelete(array $data): void
     {
-        ElementsHelper::deleteContainer($data['id']);
+        ElementsDataHelper::deleteContainer($data['id']);
     }
 
     /**
@@ -568,9 +617,19 @@ class ServerCommands
      * @param array $data
      * @return void
      */
-    static function elementsContainerCopy(array $data): void
+    static function elementsContainerCopy(array $data): void // DEPRECATED
     {
-        ElementsHelper::copyContainer($data['sourceID'], $data['targetID']);
+        self::elementsContainerDuplicate($data);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementsContainerDuplicate(array $data): void
+    {
+        ElementsDataHelper::duplicateContainer($data['sourceID'], $data['targetID']);
     }
 
     /**
@@ -606,7 +665,7 @@ class ServerCommands
         $result = [];
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
         $elementID = isset($data['elementID']) ? $data['elementID'] : null;
-        $styleOptions = ElementsHelper::getElementStyleOptions($containerID, $elementID);
+        $styleOptions = ElementsHelper::getElementStyleOptions($elementID, $containerID);
         if ($styleOptions !== null) {
             list($options, $values, $themeID, $themeOptionsSelectors, $elementType) = $styleOptions;
             $result['options'] = [];
@@ -629,7 +688,7 @@ class ServerCommands
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
         $elementID = isset($data['elementID']) ? $data['elementID'] : null;
         $value = isset($data['value']) ? $data['value'] : null;
-        ElementsHelper::setElementStyleValues($containerID, $elementID, $value);
+        ElementsHelper::setElementStyleValues($elementID, $containerID, $value);
     }
 
     /**
@@ -780,7 +839,7 @@ class ServerCommands
         $pageID = $data['id'];
         InternalDataPages::deleteImage($pageID, false);
         InternalDataPages::delete($pageID);
-        ElementsHelper::deleteContainer('bearcms-page-' . $pageID);
+        ElementsDataHelper::deleteContainer('bearcms-page-' . $pageID);
     }
 
     /**
@@ -833,12 +892,6 @@ class ServerCommands
         $value = json_encode($response['value'], JSON_THROW_ON_ERROR);
         $content = $app->components->process($data['content']);
         $content = $app->clientPackages->process($content);
-        // $domDocument = new HTML5DOMDocument();
-        // $domDocument->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
-        // $bodyElement = $domDocument->querySelector('body');
-        // $content = $bodyElement->innerHTML;
-        // $bodyElement->parentNode->removeChild($bodyElement);
-        // $allButBody = $app->clientPackages->process($domDocument->saveHTML());
         $prefix = '{bearcms-replace-content-' . $data['id'] . '-';
         $startPosition = strpos($value, $prefix);
         if ($startPosition === false) {
@@ -858,10 +911,6 @@ class ServerCommands
             $content = addslashes($content);
         }
         $value = str_replace(substr($value, $startPosition, $endPosition - $startPosition + 1), $content, $value);
-        //todo optimize
-        // $response1 = ['js' => 'clientPackages.get(\'html5DOMDocument\').then(function(html5DOMDocument){html5DOMDocument.insert(' . json_encode($allButBody, true) . ');});'];
-        // $response2 = json_decode($value, true);
-        // $response['value'] = Internal\Server::mergeAjaxResponses($response1, $response2);
         $response['value'] = json_decode($value, true);
     }
 
@@ -938,9 +987,8 @@ class ServerCommands
     {
         $app = App::get();
         $themeID = $data['id'];
-        $dataKey = Internal\Themes::export($themeID);
-        //$app->data->makePublic($dataKey);
-        return ['downloadUrl' => $app->assets->getURL($app->data->getFilename($dataKey), ['download' => true])];
+        $filename = Internal\Themes::export($themeID);
+        return ['downloadUrl' => $app->assets->getURL($filename, ['download' => true])];
     }
 
     /**
@@ -1002,11 +1050,12 @@ class ServerCommands
      */
     static function themeImport(array $data): array
     {
+        $app = App::get();
         $sourceDataKey = $data['sourceDataKey'];
         $themeID = $data['id'];
         $userID = $data['userID'];
         try {
-            Internal\Themes::import($sourceDataKey, $themeID, $userID);
+            Internal\Themes::import($app->data->getFilename($sourceDataKey), $themeID, $userID);
             return ['status' => 'ok'];
         } catch (\Exception $e) {
             return ['status' => 'error', 'errorCode' => $e->getCode()];
@@ -1020,28 +1069,9 @@ class ServerCommands
      */
     static function themeExtractExport(array $data): array
     {
-        $app = App::get();
-        $downloadURL = function ($url) use ($app) {
-            $tempFileKey = '.temp/bearcms/theme-extract-export/' . md5($url . uniqid()) . '.' . pathinfo($url, PATHINFO_EXTENSION);
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            $response = (string)curl_exec($ch);
-            $valid = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200 && strlen($response) > 0;
-            $error = curl_error($ch);
-            curl_close($ch);
-            if ($valid) {
-                $app->data->set($app->data->make($tempFileKey, $response));
-                return $tempFileKey;
-            } else {
-                throw new \Exception('Cannot download file from URL (' . $url . ', ' . $error . ')');
-            }
-        };
-        $url = $data['url'];
-        $tempFileKey = $downloadURL($url);
+        $tempFilename = Server::download($data['path'], true);
         try {
-            $data = Internal\Themes::extractExport($tempFileKey);
+            $data = Internal\Themes::extractExport($tempFilename);
             return ['status' => 'ok', 'result' => $data];
         } catch (\Exception $e) {
             return ['status' => 'error', 'errorCode' => $e->getCode()];

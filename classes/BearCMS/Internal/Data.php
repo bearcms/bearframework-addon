@@ -10,6 +10,8 @@
 namespace BearCMS\Internal;
 
 use BearFramework\App;
+use BearCMS\Internal\Data\UploadsSize;
+use BearCMS\Internal\ImportExport\ImportContext;
 
 /**
  * @internal
@@ -291,12 +293,20 @@ class Data
     /**
      * 
      * @param string $filename
+     * @param mixed|null $context If provided it will be used to create a persistent filename, but it will generate error if the file exists
      * @return string
      */
-    static function generateNewFilename(string $filename): string
+    static function generateNewFilename(string $filename, $context = null): string
     {
         $path = pathinfo($filename, PATHINFO_DIRNAME);
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        if ($context !== null) {
+            $newFilename = $path . '/' . md5(serialize($context)) . (strlen($extension) > 0 ? '.' . $extension : '');
+            if (is_file($newFilename)) {
+                throw new \Exception('The filename generated is taken (' . $newFilename . ')');
+            }
+            return $newFilename;
+        }
         for ($i = 0; $i < 100; $i++) {
             $newFilename = $path . '/' . md5(uniqid()) . (strlen($extension) > 0 ? '.' . $extension : '');
             if (!is_file($newFilename)) {
@@ -322,6 +332,17 @@ class Data
         }
         return null;
         //throw new \Exception('The filename provided (' . $filename . ') is not a valid data key!');
+    }
+
+    /**
+     * 
+     * @param string $filename
+     * @return string|null
+     */
+    static function getFilenameExtension(string $filename): ?string
+    {
+        $filename = self::removeFilenameOptions($filename);
+        return pathinfo($filename, PATHINFO_EXTENSION);
     }
 
     /**
@@ -422,5 +443,93 @@ class Data
             $filename = self::removeFilenameOptions($filename);
         }
         return $filename . (empty($options) ? '' : '?' . http_build_query($options));
+    }
+
+    /**
+     * Will be moved to the recycle bin and removed from UploadsSize
+     * 
+     * @param string $filename Can start with appdata:// or data: and can have options
+     * @return void
+     */
+    static function deleteElementAsset(string $filename): void
+    {
+        if (strlen($filename) === 0) {
+            return;
+        }
+        $app = App::get();
+        $dataKey = self::getFilenameDataKey($filename);
+        if ($dataKey !== null && $app->data->exists($dataKey)) {
+            $app->data->rename($dataKey, '.recyclebin/' . $dataKey . '-' . str_replace('.', '-', microtime(true)));
+        }
+        UploadsSize::remove($dataKey);
+    }
+
+    /**
+     * Will make a copy and add to UploadsSize
+     *
+     * @param string $filename Can start with appdata:// or data: and can have options
+     * @return string Returns the new filename
+     */
+    static function duplicateElementAsset(string $filename): string
+    {
+        $filenameOptions = self::getFilenameOptions($filename);
+        $filenameWithoutOptions = self::removeFilenameOptions($filename);
+        $realFilenameWithoutOptions = self::getRealFilename($filenameWithoutOptions);
+        $newRealFilenameWithoutOptions = self::generateNewFilename($realFilenameWithoutOptions);
+        $newRealFilenameWithOptions = self::setFilenameOptions($newRealFilenameWithoutOptions, $filenameOptions);
+        $newFilenameDataKey = self::getFilenameDataKey($newRealFilenameWithoutOptions);
+        $newFilenameWithOptions = self::getShortFilename($newRealFilenameWithOptions);
+        copy($realFilenameWithoutOptions, $newRealFilenameWithoutOptions);
+        UploadsSize::add($newFilenameDataKey, filesize($newRealFilenameWithoutOptions));
+        return $newFilenameWithOptions;
+    }
+
+    /**
+     * 
+     * @param string $filename Can start with appdata:// or data: and can have options
+     * @param string $newBasename The filename (without extension)
+     * @param callable $exportAddCallback
+     * @return string Returns the new filename
+     */
+    static function exportElementAsset(string $filename, string $newFilenamePrefix, callable $exportAddCallback): string
+    {
+        $filenameOptions = self::getFilenameOptions($filename);
+        $filenameWithoutOptions = self::removeFilenameOptions($filename);
+        $realFilenameWithoutOptions = self::getRealFilename($filenameWithoutOptions);
+        $newFilenameWithoutOptions = $newFilenamePrefix . '.' . self::getFilenameExtension($filename);
+        $newFilenameWithOptions = self::setFilenameOptions($newFilenameWithoutOptions, $filenameOptions);
+        $exportAddCallback($newFilenameWithoutOptions, file_get_contents($realFilenameWithoutOptions));
+        return $newFilenameWithOptions;
+    }
+
+    /**
+     * 
+     * @param string $filename Can start with appdata:// or data: and can have options
+     * @param string $dataKeyPrefix
+     * @param ImportContext $context
+     * @return string|null Returns the new filename
+     */
+    static function importElementAsset(string $filename, string $dataKeyPrefix, ImportContext $context): ?string
+    {
+        $app = App::get();
+        $content = $context->getValue($filename);
+        if ($content !== null) {
+            $filenameOptions = self::getFilenameOptions($filename);
+            $newRealFilename = self::generateNewFilename($app->data->getFilename($dataKeyPrefix . 'file.' . self::getFilenameExtension($filename)));
+            $newRealFilenameWithOptions = self::setFilenameOptions($newRealFilename, $filenameOptions);
+            $newRealFilenameDataKey = self::getFilenameDataKey($newRealFilename);
+            $newRealFilenameFileSize = strlen($content);
+            $newFilenameWithOptions = self::getShortFilename($newRealFilenameWithOptions);
+            if ($context->isExecuteMode()) {
+                file_put_contents($newRealFilename, $content);
+                UploadsSize::add($newRealFilenameDataKey, $newRealFilenameFileSize);
+            }
+            $context->logChange('elementFilesAdd', ['dataKey' => $newRealFilenameDataKey]);
+            $context->logChange('uploadsSizeAdd', ['key' => $newRealFilenameDataKey, 'size' => $newRealFilenameFileSize]);
+            return $newFilenameWithOptions;
+        } else {
+            $context->logWarning('File not found in archive (' . $filename . ')');
+            return null;
+        }
     }
 }

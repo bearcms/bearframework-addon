@@ -23,7 +23,7 @@ class ElementTest extends BearCMSTestCase
         $this->createAndLoginUser();
 
         $result = $app->components->process($html);
-        $this->assertTrue(strpos($result, '<div id="brelc') !== false);
+        $this->assertTrue(strpos($result, '<div id="brelb') !== false);
     }
 
     /**
@@ -36,11 +36,11 @@ class ElementTest extends BearCMSTestCase
         $this->logoutUser();
 
         $result = $app->components->process($html);
-        if (!(strpos($result, '<div id="brelc') === false)) {
+        if (!(strpos($result, '<div id="brelb') === false)) {
             echo $result . "\n\n";
             exit;
         }
-        $this->assertTrue(strpos($result, '<div id="brelc') === false);
+        $this->assertTrue(strpos($result, '<div id="brelb') === false);
     }
 
     /**

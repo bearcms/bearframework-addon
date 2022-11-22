@@ -141,7 +141,7 @@ class Pages
             $sitemap->addItem($path, function () use ($pageID) {
                 $app = App::get();
                 $dates = [];
-                $date = ElementsHelper::getLastChangeTime('bearcms-page-' . $pageID);
+                $date = ElementsDataHelper::getLastChangeTime('bearcms-page-' . $pageID);
                 if ($date !== null) {
                     $dates[] = $date;
                 }
@@ -167,27 +167,17 @@ class Pages
             return;
         }
         $containerID = 'bearcms-page-' . $pageID;
-        $containerData = InternalDataElements::getContainer($containerID);
+        $containerData = InternalDataElements::getContainer($containerID, true);
         if (empty($containerData['elements'])) {
             $containerData['id'] = $containerID;
-
-            $elementID = ElementsHelper::generateElementID('np');
-            $containerData['elements'][] = ['id' => $elementID];
-
             $elementData = [
-                'id' => $elementID,
                 'type' => 'heading',
                 'data' => [
                     'text' => $page->name,
                     'size' => 'large'
-                ],
+                ]
             ];
-            $containerData['lastChangeTime'] = time();
-
-            InternalDataElements::setElement($elementID, $elementData, $containerID);
-            InternalDataElements::setContainer($containerID, $containerData);
-            InternalDataElements::dispatchElementChangeEvent($elementID, $containerID);
-            InternalDataElements::dispatchContainerChangeEvent($containerID);
+            ElementsDataHelper::addElement($elementData, $containerID, ['insideContainer'], ['containerData' => $containerData]);
         }
     }
 
@@ -210,7 +200,7 @@ class Pages
         foreach ($list as $page) {
             $urlPath = $page->path;
             $containerID = 'bearcms-page-' . $page->id;
-            $containerElementIDs = Internal\ElementsHelper::getContainerElementsIDs($containerID);
+            $containerElementIDs = Internal\ElementsDataHelper::getContainerElementsIDs($containerID, 'nonStructural');
             $elementsRawData = InternalDataElements::getElementsRawData($containerElementIDs);
             foreach ($elementsRawData as $elementRawData) {
                 if ($elementRawData === null) {

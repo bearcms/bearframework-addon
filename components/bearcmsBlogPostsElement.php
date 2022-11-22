@@ -9,6 +9,7 @@
 use BearFramework\App;
 use BearCMS\Internal2;
 use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal\ElementsDataHelper;
 use BearCMS\Internal\Data\Elements as InternalDataElements;
 
 $app = App::get();
@@ -97,7 +98,7 @@ if ($list->count() > 0) {
             $containerID = 'bearcms-blogpost-' . $blogPost->id;
             $content .= '<div' . ($isFullHtmlOutputType ? '  class="bearcms-blog-posts-element-post-content"' : '') . '>';
             if ($type === 'summary') {
-                $elementsIDs = ElementsHelper::getContainerElementsIDs($containerID);
+                $elementsIDs = ElementsDataHelper::getContainerElementsIDs($containerID, 'nonStructural');
                 $textElementData = null;
                 $imageElementData = null;
                 foreach ($elementsIDs as $elementID) {

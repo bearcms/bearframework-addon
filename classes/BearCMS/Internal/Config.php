@@ -56,7 +56,7 @@ class Config
             } else {
                 throw new \Exception('The appSecretKey is required for bearcms/bearframework-addon');
             }
-            self::$serverUrl = $data['serverUrl'];
+            self::$serverUrl = rtrim($data['serverUrl'], '/') . '/';
         }
 
         $app = App::get();

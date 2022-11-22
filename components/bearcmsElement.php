@@ -121,7 +121,7 @@ if ($containerType === 'none') {
     $attributes = '';
     $hasElementStyle = $canStyle && $elementStyleData !== null;
     if ($editable || $hasElementStyle) {
-        $htmlElementID = 'brelc' . md5($component->id);
+        $htmlElementID = ElementsHelper::getHTMLElementID($component->id);
         $attributes .= ' id="' . $htmlElementID . '"';
         if ($editable) {
             ElementsHelper::$editorData[] = ['element', $component->id, $componentContextData, $typeCode];

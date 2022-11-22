@@ -33,7 +33,7 @@ $app->assets
     ->addDir('appdata://.temp/bearcms/files/themeimage/')
     ->addDir('appdata://.temp/bearcms/files/elementstyleimage/')
     ->addDir('appdata://.temp/bearcms/files/canvasstyleimage/')
-    ->addDir('appdata://.temp/bearcms/themeexport/');
+    ->addDir('appdata://.temp/bearcms/export/');
 
 $app->localization
     ->addDictionary('en', function () use ($context) {

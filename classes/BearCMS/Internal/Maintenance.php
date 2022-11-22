@@ -79,7 +79,7 @@ class Maintenance
         // Elements
 
         foreach ($elementsContainersToCheck as $elementsContainerID) {
-            $files = array_merge($files, ElementsHelper::getContainerUploadsSizeItems($elementsContainerID));
+            $files = array_merge($files, ElementsDataHelper::getContainerUploadsSizeItems($elementsContainerID));
         }
 
         // Items from addons

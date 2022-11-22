@@ -372,12 +372,12 @@ class Themes
         $values = self::updateFilesInValues($values, $filesToUpdate);
 
         $manifest = [
+            'type' => 'theme',
             'themeID' => $id,
             'exportDate' => date('c')
         ];
 
-        $archiveFileDataKey = '.temp/bearcms/themeexport/theme-export-' . str_replace('/', '-', $id) . '-' . date('Ymd-His') . '.zip';
-        $archiveFilename = $app->data->getFilename($archiveFileDataKey);
+        $archiveFilename = $app->data->getFilename('.temp/bearcms/export/theme-export-' . str_replace('/', '-', $id) . '-' . date('Ymd-His') . '.zip');
         $tempArchiveFilename = sys_get_temp_dir() . '/bearcms-theme-export-' . uniqid() . '.zip';
         $zip = new \ZipArchive();
         if ($zip->open($tempArchiveFilename, \ZipArchive::CREATE) === true) {
@@ -392,23 +392,23 @@ class Themes
         }
         copy($tempArchiveFilename, $archiveFilename);
         unlink($tempArchiveFilename);
-        return $archiveFileDataKey;
+        return $archiveFilename;
     }
 
     /**
      * 
-     * @param string $fileDataKey The import file data key
+     * @param string $filename The import file data key
      * @param string $id The theme ID
      * @param string $userID The user ID
      * @throws \Exception
      */
-    static public function import(string $fileDataKey, string $id, string $userID = null): void
+    static public function import(string $filename, string $id, string $userID = null): void
     {
         if (!isset(self::$registrations[$id])) {
             throw new \Exception('Theme does not exists!', 1);
         }
         $hasUser = $userID !== null && strlen($userID) > 0;
-        $extractResult = self::extractExport($fileDataKey, !$hasUser);
+        $extractResult = self::extractExport($filename, !$hasUser);
         if ($extractResult['id'] !== $id) { // cannot import options to different theme
             throw new \Exception('The import file is for different theme (' . $extractResult['themeID'] . ')', 4);
         }
@@ -423,103 +423,109 @@ class Themes
 
     /**
      * 
-     * @param string $fileDataKey File to extract
+     * @param string $filename File to extract
      * @param boolean $extractFilesInActiveDir
      * @throws \Exception
      * @return array
      */
-    static public function extractExport(string $fileDataKey, bool $extractFilesInActiveDir = false): array
+    static public function extractExport(string $filename, bool $extractFilesInActiveDir = false): array
     {
         $result = [];
         $app = App::get();
-        if (!$app->data->exists($fileDataKey)) {
+        if (!is_file($filename)) {
             throw new \Exception('Import file not found!', 2);
         }
-        $archiveFilename = $app->data->getFilename($fileDataKey);
         $tempArchiveFilename = sys_get_temp_dir() . '/bearcms-theme-import-' . uniqid() . '.zip';
-        copy($archiveFilename, $tempArchiveFilename);
+        copy($filename, $tempArchiveFilename);
+        $filename = null; // safe to use below
         $zip = new \ZipArchive();
         if ($zip->open($tempArchiveFilename) === true) {
 
-            $getManifest = function () use ($zip) {
-                $data = $zip->getFromName('manifest.json');
-                if (strlen($data) > 0) {
-                    $data = json_decode($data, true);
-                    if (is_array($data) && isset($data['themeID']) && is_string($data['themeID'])) {
-                        return $data;
-                    }
-                }
-                throw new \Exception('The manifest file is not valid!', 3);
-            };
-            $manifest = $getManifest();
-            $result['id'] = $manifest['themeID'];
+            try {
 
-            $getValues = function () use ($zip) {
-                $data = $zip->getFromName('values.json');
-                if (strlen($data) > 0) {
-                    $data = json_decode($data, true);
-                    if (is_array($data)) {
-                        return $data;
-                    }
-                }
-                throw new \Exception('The values file is not valid!', 5);
-            };
-            $values = $getValues();
-
-            $filesInValues = self::getFilesInValues($values, true);
-            $filesToUpdate = [];
-            $importedDataKeys = [];
-            foreach ($filesInValues as $filename) {
-                if (strpos($filename, 'data:files/') !== 0) {
-                    throw new \Exception('Invalid file (' . $filename . ')!', 6);
-                }
-                $filenameOptions = Internal\Data::getFilenameOptions($filename);
-                $filenameWithoutOptions = Internal\Data::removeFilenameOptions($filename);
-                $filenameInArchive = substr($filenameWithoutOptions, 5); // remove data:
-                $data = $zip->getFromName($filenameInArchive);
-                if ($data !== false) {
-                    $extension = pathinfo($filenameInArchive, PATHINFO_EXTENSION);
-                    if (isset($importedDataKeys[$filenameInArchive])) {
-                        $dataKey = $importedDataKeys[$filenameInArchive];
-                    } else {
-                        if (array_search($extension, ['jpg', 'jpeg', 'gif', 'png', 'svg']) === false) {
-                            throw new \Exception('Invalid file (' . $filenameInArchive . ')!', 9);
+                $getManifest = function () use ($zip) {
+                    $data = $zip->getFromName('manifest.json');
+                    if (strlen($data) > 0) {
+                        $data = json_decode($data, true);
+                        if (is_array($data) && isset($data['themeID']) && is_string($data['themeID'])) {
+                            return $data;
                         }
-                        $dataKey = (!$extractFilesInActiveDir ? '.temp/bearcms/files/themeimage/' : 'bearcms/files/themeimage/') . md5($filenameInArchive . '-' . uniqid()) . '.' . $extension;
-                        $app->data->setValue($dataKey, $data);
-                        $importedDataKeys[$filenameInArchive] = $dataKey;
                     }
-                    $newFilenameWithOptions = Internal\Data::setFilenameOptions('data:' . $dataKey, $filenameOptions);
-                    $filesToUpdate[$filename] = $newFilenameWithOptions;
-                    $isInvalid = false;
-                    if ($extension !== 'svg') {
-                        try {
-                            $assetDetails = $app->assets->getDetails($app->data->getFilename($dataKey), ['width', 'height']);
-                            $size = [$assetDetails['width'], $assetDetails['height']];
-                            if ($size[0] <= 0 || $size[1] <= 0) {
+                    throw new \Exception('The manifest file is not valid!', 3);
+                };
+                $manifest = $getManifest();
+                $result['id'] = $manifest['themeID'];
+
+                $getValues = function () use ($zip) {
+                    $data = $zip->getFromName('values.json');
+                    if (strlen($data) > 0) {
+                        $data = json_decode($data, true);
+                        if (is_array($data)) {
+                            return $data;
+                        }
+                    }
+                    throw new \Exception('The values file is not valid!', 5);
+                };
+                $values = $getValues();
+
+                $filesInValues = self::getFilesInValues($values, true);
+                $filesToUpdate = [];
+                $importedDataKeys = [];
+                foreach ($filesInValues as $filename) {
+                    if (strpos($filename, 'data:files/') !== 0) {
+                        throw new \Exception('Invalid file (' . $filename . ')!', 6);
+                    }
+                    $filenameOptions = Internal\Data::getFilenameOptions($filename);
+                    $filenameWithoutOptions = Internal\Data::removeFilenameOptions($filename);
+                    $filenameInArchive = substr($filenameWithoutOptions, 5); // remove data:
+                    $data = $zip->getFromName($filenameInArchive);
+                    if ($data !== false) {
+                        $extension = pathinfo($filenameInArchive, PATHINFO_EXTENSION);
+                        if (isset($importedDataKeys[$filenameInArchive])) {
+                            $dataKey = $importedDataKeys[$filenameInArchive];
+                        } else {
+                            if (array_search($extension, ['jpg', 'jpeg', 'gif', 'png', 'svg']) === false) {
+                                throw new \Exception('Invalid file (' . $filenameInArchive . ')!', 9);
+                            }
+                            $dataKey = (!$extractFilesInActiveDir ? '.temp/bearcms/files/themeimage/' : 'bearcms/files/themeimage/') . md5($filenameInArchive . '-' . uniqid()) . '.' . $extension;
+                            $app->data->setValue($dataKey, $data);
+                            $importedDataKeys[$filenameInArchive] = $dataKey;
+                        }
+                        $newFilenameWithOptions = Internal\Data::setFilenameOptions('data:' . $dataKey, $filenameOptions);
+                        $filesToUpdate[$filename] = $newFilenameWithOptions;
+                        $isInvalid = false;
+                        if ($extension !== 'svg') {
+                            try {
+                                $assetDetails = $app->assets->getDetails($app->data->getFilename($dataKey), ['width', 'height']);
+                                $size = [$assetDetails['width'], $assetDetails['height']];
+                                if ($size[0] <= 0 || $size[1] <= 0) {
+                                    $isInvalid = true;
+                                }
+                            } catch (\Exception $e) {
                                 $isInvalid = true;
                             }
-                        } catch (\Exception $e) {
-                            $isInvalid = true;
                         }
-                    }
 
-                    if ($isInvalid) {
-                        foreach ($filesToUpdate as $newFilename) { // remove previously added files
-                            $newFilenameDataKey = Internal\Data::getFilenameDataKey($newFilename);
-                            $app->data->delete($newFilenameDataKey);
+                        if ($isInvalid) {
+                            foreach ($filesToUpdate as $newFilename) { // remove previously added files
+                                $newFilenameDataKey = Internal\Data::getFilenameDataKey($newFilename);
+                                $app->data->delete($newFilenameDataKey);
+                            }
+                            throw new \Exception('Invalid file (' . $filename . ')!', 7);
                         }
-                        throw new \Exception('Invalid file (' . $filename . ')!', 7);
                     }
                 }
+
+                $values = self::updateFilesInValues($values, $filesToUpdate);
+                $result['values'] = $values;
+                $zip->close();
+                unlink($tempArchiveFilename);
+                return $result;
+            } catch (\Exception $e) {
+                $zip->close();
+                unlink($tempArchiveFilename);
+                throw $e;
             }
-
-            $values = self::updateFilesInValues($values, $filesToUpdate);
-            $result['values'] = $values;
-
-            $zip->close();
-            unlink($tempArchiveFilename);
-            return $result;
         } else {
             unlink($tempArchiveFilename);
             throw new \Exception('Cannot open zip archive (' . $tempArchiveFilename . ')', 8);

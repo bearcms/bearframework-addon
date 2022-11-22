@@ -11,6 +11,7 @@ namespace BearCMS\Internal\Data;
 
 use BearCMS\Internal\Data as InternalData;
 use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal\ElementsDataHelper;
 use BearFramework\App;
 
 /**
@@ -89,33 +90,33 @@ class Elements
      * @param string $elementID
      * @return array|null
      */
-    static function getElement(string $elementID): ?array // todo add $containerID
+    static function getElement(string $elementID): ?array // todo later add $containerID when element data is in the container
     {
         $data = self::getElementRawData($elementID);
         return $data !== null ? self::decodeElementRawData($data) : null;
     }
 
     /**
+     * Sets the elements data in external data item.
      * 
      * @param string $elementID
      * @param array $data
      * @param string|null $containerID
      * @return void
      */
-    static function setElement(string $elementID, array $data, string $containerID = null): void
+    static function setElement(string $elementID, array $data): void
     {
         $app = App::get();
         $app->data->setValue(self::getElementDataKey($elementID), self::encodeElementData($data));
     }
 
     /**
-     * Delete only the element's data. Use ElementsHelper::deleteElement() to delete artifacts.
+     * Delete only the element's data when in external data item. Use ElementsHelper::deleteElement() to delete artifacts.
      *
      * @param string $elementID
-     * @param string|null $containerID
      * @return void
      */
-    static function deleteElement(string $elementID, string $containerID = null): void
+    static function deleteElement(string $elementID): void
     {
         $app = App::get();
         $app->data->delete(self::getElementDataKey($elementID));
@@ -150,7 +151,7 @@ class Elements
         if ($data !== null) {
             $optimizedData = self::getOptimizedElementData($data);
             if (is_array($optimizedData)) {
-                self::setElement($elementID, $optimizedData, $containerID);
+                self::setElement($elementID, $optimizedData);
             }
         }
     }
@@ -164,15 +165,12 @@ class Elements
     static function getOptimizedElementData(array $elementData): ?array
     {
         if (isset($elementData['type'], $elementData['data'])) {
-            $componentName = array_search($elementData['type'], ElementsHelper::$elementsTypesCodes);
-            if ($componentName !== false) {
-                $options = ElementsHelper::$elementsTypesOptions[$componentName];
-                if (isset($options['optimizeData']) && is_callable($options['optimizeData'])) {
-                    $newData = call_user_func($options['optimizeData'], $elementData['data']);
-                    if (is_array($newData)) {
-                        $elementData['data'] = $newData;
-                        return $elementData;
-                    }
+            $options = ElementsHelper::getElementTypeOptions($elementData['type']);
+            if ($options !== null && isset($options['optimizeData']) && is_callable($options['optimizeData'])) {
+                $newData = call_user_func($options['optimizeData'], $elementData['data']);
+                if (is_array($newData)) {
+                    $elementData['data'] = $newData;
+                    return $elementData;
                 }
             }
         }
@@ -192,15 +190,21 @@ class Elements
     /**
      * 
      * @param string $containerID
-     * @return array
+     * @param boolean $createIfMissing
+     * @return array|null
      * @throws \Exception
      */
-    static function getContainer(string $containerID): array
+    static function getContainer(string $containerID, bool $createIfMissing = false): ?array
     {
+        $app = App::get();
         $container = InternalData::getValue(self::getContainerDataKey($containerID));
+        if (!$createIfMissing && $container === null) {
+            return null;
+        }
         $data = $container !== null ? json_decode($container, true) : [];
         if (!isset($data['elements'])) {
             $data['elements'] = [];
+        } else {
         }
         if (!is_array($data['elements'])) {
             throw new \Exception('');
@@ -227,8 +231,7 @@ class Elements
     static function deleteContainer(string $containerID): void
     {
         $app = App::get();
-        $containerDataKey = self::getContainerDataKey($containerID);
-        $app->data->delete($containerDataKey);
+        $app->data->delete(self::getContainerDataKey($containerID));
     }
 
     /**
@@ -264,7 +267,7 @@ class Elements
             $hasChange = false;
             $updatedElements = [];
             foreach ($elements as $elementData) {
-                $structuralElementData = ElementsHelper::getUpdatedStructuralElementData($elementData);
+                $structuralElementData = ElementsDataHelper::getUpdatedStructuralElementData($elementData);
                 if ($structuralElementData !== null) {
                     $_hasChange = false;
                     if (isset($elementData['elements']) && isset($elementData['data']) && !isset($elementData['type'])) { // Has 'elements' and 'data' keys, but no 'type' key

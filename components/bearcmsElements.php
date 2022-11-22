@@ -8,6 +8,7 @@
 
 use BearCMS\Internal\Config;
 use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal\ElementsDataHelper;
 use BearCMS\Internal\Data\Elements as InternalDataElements;
 
 $app = BearFramework\App::get();
@@ -18,7 +19,7 @@ $contextData = ElementsHelper::getComponentContextData($component);
 $editable = $component->editable === 'true';
 $group = $component->group;
 
-$containerData = InternalDataElements::getContainer($component->id);
+$containerData = InternalDataElements::getContainer($component->id, true);
 
 $elements = $containerData['elements'];
 $hasLazyLoading = sizeof($elements) > $lazyLimit;
@@ -39,13 +40,13 @@ $lazyLoadServerData = '';
 
 if (!empty($elements)) {
     if (isset($columnID[0])) {
-        $columnsElement = ElementsHelper::getStructuralElement($containerData, $columnID);
+        $columnsElement = ElementsDataHelper::getContainerDataElement($containerData, $columnID, 'columns');
         $elements = $columnsElement !== null ? [$columnsElement] : [];
     } elseif (isset($floatingBoxID[0])) {
-        $floatingBoxElement = ElementsHelper::getStructuralElement($containerData, $floatingBoxID);
+        $floatingBoxElement = ElementsDataHelper::getContainerDataElement($containerData, $floatingBoxID, 'floatingBox');
         $elements = $floatingBoxElement !== null ? [$floatingBoxElement] : [];
     } elseif (isset($flexibleBoxID[0])) {
-        $flexibleBoxElement = ElementsHelper::getStructuralElement($containerData, $flexibleBoxID);
+        $flexibleBoxElement = ElementsDataHelper::getContainerDataElement($containerData, $flexibleBoxID, 'flexibleBox');
         $elements = $flexibleBoxElement !== null ? [$flexibleBoxElement] : [];
     } else if ($hasLazyLoading) {
         $remainingLazyLoadElements = (string) $component->getAttribute('bearcms-internal-attribute-remaining-lazy-load-elements');
