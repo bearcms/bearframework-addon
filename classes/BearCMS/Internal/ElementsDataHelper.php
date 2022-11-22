@@ -1322,7 +1322,7 @@ class ElementsDataHelper
      */
     static function importElement(string $elementID, string $containerID = null, ImportContext $context, array $options = []): ?string
     {
-        //$app = App::get();
+        $app = App::get();
         //$app->logs->log('debug', 'ElementsDataHelper::importElement - ' . $elementID . ' - ' . $containerID . ' - ' . print_r($options, true));
 
         $isExecuteMode = $context->isExecuteMode();

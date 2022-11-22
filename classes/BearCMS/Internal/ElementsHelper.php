@@ -792,11 +792,7 @@ class ElementsHelper
                     $component->group = 'default';
                 }
                 if ($component->getAttribute('canStyle', '') === '') {
-                    $currentThemeID = Internal\CurrentTheme::getID();
-                    $theme = InternalThemes::get($currentThemeID);
-                    if ($theme !== null && $theme->canStyleElements) { // just in case it's registered later or other
-                        $component->setAttribute('canStyle', 'true');
-                    }
+                    $component->setAttribute('canStyle', 'true');
                 }
             } elseif (isset(self::$elementsTypesFilenames[$name])) {
                 $component->setAttribute('bearcms-internal-attribute-type', self::$elementsTypesCodes[$name]);

@@ -696,21 +696,22 @@ class ServerCommands
      * @param array $data
      * @return array
      */
-    static function elementsCombinationsGetList(array $data): array
+    static function elementGetImportFromFileUploadsSize(array $data): array
     {
-        return ElementsCombinations::getList();
+        $filename = Server::download($data['path'], true);
+        $size = ElementsDataHelper::getImportElementFromFileUploadsSize($filename);
+        return ['size' => $size];
     }
 
     /**
      * 
      * @param array $data
-     * @return array
+     * @return string|null
      */
-    static function elementsCombinationGet(array $data): array
+    static function elementImportFromFile(array $data): ?string
     {
-        $combinationData = ElementsCombinations::get($data['id']);
-        $result = $combinationData;
-        return $result;
+        $filename = Server::download($data['path'], true);
+        return ElementsDataHelper::importElementFromFile($filename, $data['containerID'], $data['target']);
     }
 
     /**

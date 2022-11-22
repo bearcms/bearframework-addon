@@ -15,7 +15,6 @@ use IvoPetkov\HTML5DOMDocument;
 use BearCMS\Internal\Blog;
 use BearCMS\Internal\Comments;
 use BearCMS\Internal\Elements;
-use BearCMS\Internal\ElementsCombinations;
 use BearCMS\Internal\ElementsHelper;
 use BearCMS\Internal\ElementsTypes;
 use BearCMS\Internal\Pages;
@@ -386,12 +385,6 @@ class BearCMS
                         }
                     }
                 }
-                // Element combination media file
-                $matchingDir = $this->context->dir . '/assets/ec/';
-                if (strpos($filename, $matchingDir) === 0) {
-                    $originalFilename = ElementsCombinations::getOriginalMediaFilename($filename);
-                    $details->filename = $originalFilename !== null ? $originalFilename : '';
-                }
             })
             ->addEventListener('beforePrepare', function (\BearFramework\App\Assets\BeforePrepareEventDetails $details) {
                 $filename = $details->filename;
@@ -491,15 +484,6 @@ class BearCMS
         // Initialize to add asset dirs
         $currentThemeID = Internal\CurrentTheme::getID();
         Internal\Themes::initialize($currentThemeID);
-
-        $theme = Internal\Themes::get($currentThemeID);
-        if ($theme !== null) { // just in case it's registered later or other
-            if ($theme->useDefaultElementsCombinations) {
-                if ($hasElements) {
-                    ElementsCombinations::addDefault(); // Todo lazy add
-                }
-            }
-        }
 
         Config::$initialized = true;
     }

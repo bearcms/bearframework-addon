@@ -19,8 +19,6 @@ namespace BearCMS\Themes;
  * @property callable|null $options A function to be called to retrieve the theme options.
  * @property callable|null $styles DEPRECATED A function to be called to retrieve the theme styles.
  * @property callable|null $updateValues A function to be called to update the saved values.
- * @property bool $canStyleElements Enable/disable element styling.
- * @property bool $useDefaultElementsCombinations Enable/disable default elements combinations.
  */
 class Theme
 {
@@ -64,18 +62,6 @@ class Theme
             ])
             ->defineProperty('updateValues', [
                 'type' => '?callable'
-            ])
-            ->defineProperty('canStyleElements', [
-                'type' => 'bool',
-                'init' => function () {
-                    return false;
-                }
-            ])
-            ->defineProperty('useDefaultElementsCombinations', [
-                'type' => 'bool',
-                'init' => function () {
-                    return false;
-                }
             ]);
     }
 

@@ -29,9 +29,6 @@ $app->bearCMS->themes
 
         $theme->version = '1.12';
 
-        $theme->canStyleElements = true;
-        $theme->useDefaultElementsCombinations = true;
-
         $theme->get = function (\BearCMS\Themes\Theme\Customizations $customizations, array $cntx) use ($app, $context) {
             $language = isset($cntx['language']) ? $cntx['language'] : null;
             $languages = isset($cntx['languages']) ? $cntx['languages'] : [];
