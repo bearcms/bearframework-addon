@@ -117,6 +117,7 @@ class BearCMS
                 ->addAlias('bearcms-elements', 'file:' . $this->context->dir . '/components/bearcmsElements.php')
                 ->addTag('bearcms-elements', 'file:' . $this->context->dir . '/components/bearcmsElements.php')
                 ->addAlias('bearcms-missing-element', 'file:' . $this->context->dir . '/components/bearcmsElement.php')
+                ->addAlias('bearcms-unknown-element', 'file:' . $this->context->dir . '/components/bearcmsUnknownElement.php')
                 ->addEventListener('makeComponent', function ($details) {
                     ElementsHelper::updateComponent($details->component);
                 });
