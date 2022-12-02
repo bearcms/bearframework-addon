@@ -33,14 +33,17 @@ class Downloads
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_HEADER, true);
             $response = (string)curl_exec($ch);
             $valid = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200 && strlen($response) > 0;
             $error = curl_error($ch);
+            $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $body = substr($response, $headerSize);
             curl_close($ch);
             if ($valid) {
-                file_put_contents($filename, $response);
+                file_put_contents($filename, $body);
             } else {
-                throw new \Exception('Cannot download file from URL (' . $url . ', ' . $error . ')');
+                throw new \Exception('Cannot download file from URL (' . $url . ', ' . $error . $response . ')');
             }
         }
         return $filename;
