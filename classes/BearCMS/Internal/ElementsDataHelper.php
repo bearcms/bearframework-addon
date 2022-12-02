@@ -604,7 +604,7 @@ class ElementsDataHelper
             throw new \Exception('Cannot find source container (' . $sourceContainerID . ')!');
         }
         if (!$isSameTarget) {
-            $targetContainerData = $targetContainerID !== null ? InternalDataElements::getContainer($targetContainerID) : null;
+            $targetContainerData = $targetContainerID !== null ? InternalDataElements::getContainer($targetContainerID, true) : null;
             if ($targetContainerData === null) {
                 throw new \Exception('Cannot find source container (' . $targetContainerID . ')!');
             }
