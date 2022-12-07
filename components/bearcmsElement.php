@@ -35,8 +35,8 @@ $elementStyleData = null;
 if (!$isMissing) {
     $rawData = $component->getAttribute('bearcms-internal-attribute-raw-data');
     if ($rawData !== null && strlen($rawData) > 0) {
-        $rawData = json_decode($rawData, true);
-        $data = $rawData['data'];
+        $elementData = \BearCMS\Internal\Data\Elements::decodeElementRawData($rawData);
+        $data = $elementData['data'];
         $options = ElementsHelper::$elementsTypesOptions[$componentName];
         if (isset($options['fields'])) {
             foreach ($options['fields'] as $field) {

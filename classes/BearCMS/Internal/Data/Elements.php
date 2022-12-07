@@ -53,8 +53,11 @@ class Elements
             is_array($data) &&
             isset($data['id']) && is_string($data['id']) && strlen($data['id']) > 0 &&
             isset($data['type']) && is_string($data['type']) && strlen($data['type']) > 0 &&
-            isset($data['data']) && is_array($data['data'])
+            ((isset($data['data']) && is_array($data['data'])) || !isset($data['data']))
         ) {
+            if (!isset($data['data'])) {
+                $data['data'] = [];
+            }
             return $data;
         }
         return null;
