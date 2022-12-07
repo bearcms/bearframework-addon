@@ -54,14 +54,15 @@ if (!$isMissing) {
         if (isset($options['updateComponentFromData'])) {
             $component = call_user_func($options['updateComponentFromData'], clone ($component), $data);
         }
-        if (isset($rawData['type'])) {
-            $elementType = $rawData['type'];
+        if (isset($elementData['type'])) {
+            $elementType = $elementData['type'];
         }
-        if (isset($rawData['style']) && !empty($rawData['style'])) {
-            $elementStyleData = $rawData['style'];
+        if (isset($elementData['style']) && !empty($elementData['style'])) {
+            $elementStyleData = $elementData['style'];
         }
 
         unset($rawData);
+        unset($elementData);
         unset($data);
         unset($options);
     } else {
