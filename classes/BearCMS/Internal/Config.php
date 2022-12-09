@@ -123,7 +123,14 @@ class Config
      */
     static function getVariable(string $name)
     {
-        return isset(self::$data[$name]) ? self::$data[$name] : null;
+        if (isset(self::$data[$name])) {
+            return self::$data[$name];
+        }
+        $defaults = [
+            'uiColor' => '#0b83c8',
+            'logServerRequests' => false
+        ];
+        return isset($defaults[$name]) ? $defaults[$name] : null;
     }
 
     /**
