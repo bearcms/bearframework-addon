@@ -698,20 +698,40 @@ class ServerCommands
      */
     static function elementGetImportFromFileUploadsSize(array $data): array
     {
-        $filename = Server::download($data['path'], true);
-        $size = ElementsDataHelper::getImportElementFromFileUploadsSize($filename);
+        if (isset($data['filename'])) {
+            $filename = $data['filename'];
+        } elseif (isset($data['path'])) {
+            $filename = Server::download($data['path'], true);
+        } else {
+            throw new \Exception('Not supported!');
+        }
+        try {
+            $size = ElementsDataHelper::getImportElementFromFileUploadsSize($filename);
+        } catch (\Exception $e) {
+            return ['error' => 1];
+        }
         return ['size' => $size];
     }
 
     /**
      * 
      * @param array $data
-     * @return string|null
+     * @return string|null|array
      */
-    static function elementImportFromFile(array $data): ?string
+    static function elementImportFromFile(array $data)
     {
-        $filename = Server::download($data['path'], true);
-        return ElementsDataHelper::importElementFromFile($filename, $data['containerID'], $data['target']);
+        if (isset($data['filename'])) {
+            $filename = $data['filename'];
+        } elseif (isset($data['path'])) {
+            $filename = Server::download($data['path'], true);
+        } else {
+            throw new \Exception('Not supported!');
+        }
+        try {
+            return ElementsDataHelper::importElementFromFile($filename, $data['containerID'], $data['target']);
+        } catch (\Exception $e) {
+            return ['error' => 1];
+        }
     }
 
     /**
