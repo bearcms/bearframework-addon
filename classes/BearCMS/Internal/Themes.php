@@ -771,7 +771,8 @@ class Themes
                 if ($realFilename === null) {
                     $assetDetails = ['width' => null, 'height' => null];
                 } else {
-                    $assetDetails = $app->assets->getDetails($realFilename, ['width', 'height']);
+                    $realFilenameWithoutOptions = \BearCMS\Internal\Data::removeFilenameOptions($realFilename);
+                    $assetDetails = $app->assets->getDetails($realFilenameWithoutOptions, ['width', 'height']);
                 }
                 $details['assets'][$filename] = ['width' => $assetDetails['width'], 'height' => $assetDetails['height']];
             } else {
