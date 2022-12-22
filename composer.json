@@ -21,7 +21,7 @@
         "bearframework/tasks-addon": "1.*",
         "bearframework/models-addon": "1.*",
         "ivopetkov/html-server-components-bearframework-addon": "1.*",
-        "ivopetkov/image-gallery-bearframework-addon": "1.*",
+        "ivopetkov/image-gallery-bearframework-addon": "2.*",
         "ivopetkov/navigation-menu-bearframework-addon": "1.*",
         "ivopetkov/users-bearframework-addon": "1.*",
         "ivopetkov/server-requests-bearframework-addon": "1.*",

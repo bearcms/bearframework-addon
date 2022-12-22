@@ -7,15 +7,26 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal2;
 use BearCMS\Internal\Config;
 use BearCMS\Internal;
+use BearCMS\Internal\Assets as InternalAssets;
 
 $app = App::get();
 
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
 $isFullHtmlOutputType = $outputType === 'full-html';
+
+$defaultAssetOptions = [
+    'cacheMaxAge' => 999999999
+];
+$filename = Internal\Data::getRealFilename((string) $component->filename);
+$filenameOptions = Internal\Data::getFilenameOptions($filename);
+$filename = Internal\Data::removeFilenameOptions($filename);
+if (!empty($filenameOptions)) {
+    $defaultAssetOptions = array_merge($defaultAssetOptions, InternalAssets::convertFileOptionsToAssetOptions($filenameOptions));
+}
+$assetOptions = InternalAssets::getAssetOptionsFromHTMLAttributes($component->getAttributes(), $defaultAssetOptions);
 
 $onClick = 'none';
 if ($component->onClick === 'fullscreen') {
@@ -35,26 +46,26 @@ if ($align !== 'left' && $align !== 'center' && $align !== 'right') {
     $align = 'left';
 }
 
-$minImageWidth = (int)$component->minImageWidth;
-if ($minImageWidth === 0) {
-    $minImageWidth = null;
+$minAssetWidth = (int)$component->minImageWidth;
+if ($minAssetWidth === 0) {
+    $minAssetWidth = null;
 }
-$minImageHeight = (int)$component->minImageHeight;
-if ($minImageHeight === 0) {
-    $minImageHeight = null;
+$minAssetHeight = (int)$component->minImageHeight;
+if ($minAssetHeight === 0) {
+    $minAssetHeight = null;
 }
-$maxImageWidth = (int)$component->maxImageWidth;
-if ($maxImageWidth === 0) {
-    $maxImageWidth = 4000;
+$maxAssetWidth = (int)$component->maxImageWidth;
+if ($maxAssetWidth === 0) {
+    $maxAssetWidth = 4000;
 }
-$maxImageHeight = (int)$component->maxImageHeight;
-if ($maxImageHeight === 0) {
-    $maxImageHeight = 4000;
+$maxAssetHeight = (int)$component->maxImageHeight;
+if ($maxAssetHeight === 0) {
+    $maxAssetHeight = 4000;
 }
 
 $attributes = '';
 
-$attributes .= ' onClick="' . $onClick . '"';
+$attributes .= ' onclick="' . $onClick . '"';
 
 $class = (string) $component->class;
 $classAttributeValue = isset($class[0]) ? ' ' . htmlentities($class) : '';
@@ -67,17 +78,15 @@ if ($imageLoadingBackground === '') {
     }
 }
 if ($imageLoadingBackground !== '') {
-    $attributes .= ' imageLoadingBackground="' . htmlentities($imageLoadingBackground) . '"';
+    $attributes .= ' image-loading-background="' . htmlentities($imageLoadingBackground) . '"';
 }
 
 $previewImageLoadingBackground = (string)Config::getVariable('lazyImagePreviewLoadingBackground');
 if ($previewImageLoadingBackground !== '') {
-    $attributes .= ' previewImageLoadingBackground="' . htmlentities($previewImageLoadingBackground) . '"';
+    $attributes .= ' preview-image-loading-background="' . htmlentities($previewImageLoadingBackground) . '"';
 }
 
-$attributes .= ' lazyLoadImages="' . $lazyLoad . '"';
-
-$filename = (string) $component->filename;
+$attributes .= ' lazy-load="' . $lazyLoad . '"';
 
 $innerContainerStyle = '';
 if (strlen($width) === 0) {
@@ -95,17 +104,15 @@ if (strlen($width) === 0) {
     }
 }
 
-$fixedFilename = Internal\Data::getRealFilename($filename);
-
 $content = '';
 if ($isFullHtmlOutputType) {
     $content = '<div class="bearcms-image-element' . $classAttributeValue . '">';
     if (isset($innerContainerStyle[0])) {
         $content .= '<div style="' . $innerContainerStyle . '">';
     }
-    if ($fixedFilename !== null) {
-        $content .= '<component src="image-gallery" columnsCount="1"' . $attributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
-        $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' ? ' url="' . htmlentities($component->url) . '"' : '') . ' title="' . htmlentities((string)$component->title) . '" alt="' . htmlentities((string)$component->alt) . '" filename="' . $fixedFilename . '" quality="' . $component->quality . '" fileWidth="' . $component->fileWidth . '" fileHeight="' . $component->fileHeight . '" minImageWidth="' . $minImageWidth . '" minImageHeight="' . $minImageHeight . '" maxImageWidth="' . $maxImageWidth . '" maxImageHeight="' . $maxImageHeight . '"/>';
+    if ($filename !== '') {
+        $content .= '<component src="image-gallery" columns-count="1"' . $attributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
+        $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' ? ' url="' . htmlentities($component->url) . '"' : '') . ' title="' . htmlentities((string)$component->title) . '" alt="' . htmlentities((string)$component->alt) . '" filename="' . $filename . '" file-width="' . $component->fileWidth . '" file-height="' . $component->fileHeight . '" min-asset-width="' . $minAssetWidth . '" min-asset-height="' . $minAssetHeight . '" max-asset-width="' . $maxAssetWidth . '" max-asset-height="' . $maxAssetHeight . '"' . InternalAssets::convertAssetOptionsToHTMLAttributes($assetOptions) . '/>';
         $content .= '</component>';
     }
     if (isset($innerContainerStyle[0])) {
@@ -113,11 +120,11 @@ if ($isFullHtmlOutputType) {
     }
     $content .= '</div>';
 } else {
-    echo '<div>';
-    if ($fixedFilename !== null) {
-        $content = '<img src="' . htmlentities($app->assets->getURL($fixedFilename, ['cacheMaxAge' => 999999999])) . '" style="max-width:100%;">';
+    $content .= '<div>';
+    if ($filename !== '') {
+        $content .= '<img src="' . htmlentities($app->assets->getURL($filename, $assetOptions)) . '" style="max-width:100%;">';
     }
-    echo '</div>';
+    $content .= '</div>';
 }
 echo '<html>';
 if ($isFullHtmlOutputType) {
