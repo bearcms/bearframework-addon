@@ -451,21 +451,34 @@ class ServerCommands
     /**
      * 
      * @param array $data
-     * @return void
+     * @return string
      */
-    static function elementSet(array $data): void
+    static function elementAdd(array $data): string
     {
-        ElementsDataHelper::setElement($data['data'], isset($data['containerID']) ? $data['containerID'] : null);
+        return ElementsDataHelper::addElement($data['type'], $data['data'], $data['containerID'], $data['target']);
     }
 
     /**
      * 
      * @param array $data
-     * @return string
+     * @return void
      */
-    static function elementAdd(array $data): string
+    static function elementDataSet(array $data): void
     {
-        return ElementsDataHelper::addElement($data['data'], $data['containerID'], $data['target']);
+        $elementID = $data['id'];
+        $containerID = isset($data['containerID']) ? $data['containerID'] : null;
+        $elementData = ElementsDataHelper::getElement($elementID, $containerID);
+        if ($elementData === null) {
+            throw new \Exception('Cannot find element to set ' . print_r($data));
+        }
+        if ($elementData['id'] !== $elementID) {
+            throw new \Exception('Cannot IDs do not match ' . print_r($data) . print_r($elementData));
+        }
+        $elementData['data'] = $data['data'];
+        if (empty($elementData['data'])) {
+            unset($elementData['data']);
+        }
+        ElementsDataHelper::setElement($elementData, $containerID);
     }
 
     /**
@@ -473,9 +486,17 @@ class ServerCommands
      * @param array $data
      * @return array|null
      */
-    static function elementGet(array $data): ?array
+    static function elementDataGet(array $data): ?array
     {
-        return InternalDataElements::getElement($data['id']);
+        $elementData = ElementsDataHelper::getElement($data['id'], isset($data['containerID']) ? $data['containerID'] : null);
+        if ($elementData === null) {
+            return null;
+        }
+        return [
+            'id' => $elementData['id'],
+            'type' => $elementData['type'],
+            'data' => isset($elementData['data']) ? $elementData['data'] : []
+        ];
     }
 
     /**

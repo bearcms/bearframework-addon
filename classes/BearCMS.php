@@ -764,7 +764,8 @@ class BearCMS
                 if (!empty(Internal\ElementsHelper::$editorData)) {
                     $app = App::get();
                     $context = $app->contexts->get(__DIR__);
-                    $htmlToInsert[] = ['source' => '<html><head><script src="' . $context->assets->getURL('assets/elementsEditor.min.js', ['cacheMaxAge' => 999999999, 'version' => 3]) . '"></head></html>'];
+                    //$htmlToInsert[] = ['source' => '<html><head><script>' . $context->assets->getContent('assets/elementsEditor.js') . '</script></head></html>']; // dev mode
+                    $htmlToInsert[] = ['source' => '<html><head><script src="' . $context->assets->getURL('assets/elementsEditor.min.js', ['cacheMaxAge' => 999999999, 'version' => 4]) . '"></head></html>'];
                 }
                 $htmlToInsert[] = ['source' => '<html><head><link rel="client-packages"></head></html>']; // used by ServerCommands to update content
                 $document->insertHTMLMulti($htmlToInsert);
@@ -824,13 +825,10 @@ class BearCMS
             if ($theme->get !== null) {
                 if ($response instanceof App\Response\HTML) {
                     $templateContent = call_user_func($theme->get, $currentCustomizations, $callContext);
-                    $template = new \BearFramework\HTMLTemplate($templateContent);
                     if ($currentCustomizations !== null) {
-                        $html = $currentCustomizations->getHTML();
-                        if (isset($html[0])) {
-                            $template->insert($html);
-                        }
+                        $templateContent = $currentCustomizations->apply($templateContent);
                     }
+                    $template = new \BearFramework\HTMLTemplate($templateContent);
                     $template->insert($response->content, 'body');
                     $response->content = $template->get();
                 }

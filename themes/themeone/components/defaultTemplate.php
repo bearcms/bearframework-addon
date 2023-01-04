@@ -85,7 +85,7 @@ echo '<style>';
 echo 'html,body{padding:0;margin:0;min-height:100%;}';
 echo 'body{background-color:var(--bearcms-template-footer-background-color);}';
 echo '*{outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);}';
-echo 'body .bearcms-template-container{min-height:100vh;display:flex;flex-direction:column;}'; // body fixes collisions
+echo '.bearcms-template-container{min-height:100vh;display:flex;flex-direction:column;}';
 echo '.bearcms-template-header{box-sizing:border-box;width:100%;max-width:calc(' . $contentWidth . ' + var(--bearcms-template-text-font-size) * 2.2);margin:0 auto;padding:' . $windowPadding . ' ' . $windowPadding . ' 0 ' . $windowPadding . ';}'; // 2.2 = twice the nav buttons padding
 if ($hasLanguagesPicker) {
     echo '.bearcms-template-languages{position:absolute;top:0;right:' . ($app->currentUser->exists() ? '74px' : '10px') . ';}';
@@ -104,7 +104,7 @@ if ($hasLogoText) {
     echo '.bearcms-template-logo-text-container{margin-top:' . ($hasLogoImage ? 'calc(' . $mainElementsVerticalSpacing . ' * 1/2)' : $mainElementsVerticalSpacing) . ';text-align:center;}';
 }
 echo '.bearcms-template-main{box-sizing:border-box;width:100%;min-height:400px;max-width:' . $contentWidth . ';margin:0 auto;padding:calc(' . $mainElementsVerticalSpacing . ' + ' . $windowPadding . ') ' . $windowPadding . ' ' . $mainElementsVerticalSpacing . ' ' . $windowPadding . ';flex:1 0 auto;}';
-echo 'body .bearcms-template-footer{box-sizing:border-box;width:100%;background-color:var(--bearcms-template-footer-background-color);}'; // body fixes collisions
+echo '.bearcms-template-footer{box-sizing:border-box;width:100%;background-color:var(--bearcms-template-footer-background-color);}';
 echo '.bearcms-template-footer > div{box-sizing:border-box;max-width:' . $contentWidth . ';margin:0 auto;padding:' . $mainElementsVerticalSpacing . ' ' . $windowPadding . ';}';
 
 if ($hasNavigation) {

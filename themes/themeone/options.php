@@ -13,13 +13,13 @@ $group2 = $group->addGroup(__("bearcms.themes.themeone.options.Logo.Image"));
 $group2
     ->addOption("logoImage", "image", __("bearcms.themes.themeone.options.Logo.Image.File"), [
         "onHighlight" => [
-            ["cssSelector", ".bearcms-template-logo"]
+            ["cssSelector", "body .bearcms-template-logo"]
         ]
     ])
     ->addOption("logoImageWidth", "htmlUnit", __("bearcms.themes.themeone.options.Logo.Image.Width"), [
         "defaultValue" => "200px",
         "onHighlight" => [
-            ["cssSelector", ".bearcms-template-logo"]
+            ["cssSelector", "body .bearcms-template-logo"]
         ]
     ])
     ->addOption("logoImageEffect", "list", __("bearcms.themes.themeone.options.Logo.Image.Effect"), [
@@ -35,7 +35,7 @@ $group2
         ],
         "defaultValue" => "0",
         "onHighlight" => [
-            ["cssSelector", ".bearcms-template-logo"]
+            ["cssSelector", "body .bearcms-template-logo"]
         ]
     ]);
 $group2 = $group->addGroup(__("bearcms.themes.themeone.options.Logo.Text"))
@@ -55,9 +55,9 @@ $group2 = $group->addGroup(__("bearcms.themes.themeone.options.Logo.Text"))
     ->addOption("logoTextCSS", "cssText", __("bearcms.themes.themeone.options.Logo.Text.Style"), [
         "cssOptions" => ["cssText/defaultState", "cssText/fontFamilyProperty", "cssText/colorProperty", "cssText/fontWeightProperty", "cssText/fontStyleProperty", "cssText/fontSizeProperty", "cssText/lineHeightProperty", "cssText/letterSpacingProperty"],
         "cssOutput" => [
-            ["rule", ".bearcms-template-logo-text", "text-decoration:none;"],
-            ["selector", ".bearcms-template-logo-text"],
-            ["selector", ".bearcms-template-inner-page-logo-text", "font-size:calc({cssPropertyValue(font-size)} * 6/8);"]
+            ["rule", "body .bearcms-template-logo-text", "text-decoration:none;"],
+            ["selector", "body .bearcms-template-logo-text"],
+            ["selector", "body .bearcms-template-inner-page-logo-text", "font-size:calc({cssPropertyValue(font-size)} * 6/8);"]
         ],
         "defaultValue" => '{"color":"#000000","font-size":"26px","font-family":"Arial"}'
     ]);
@@ -77,7 +77,7 @@ $group2
         ],
         "defaultValue" => "1",
         "onHighlight" => [
-            ["cssSelector", ".bearcms-template-navigation"]
+            ["cssSelector", "body .bearcms-template-navigation"]
         ]
     ]);
 
@@ -96,7 +96,7 @@ $group3
         ],
         "defaultValue" => "1",
         "onHighlight" => [
-            ["cssSelector", ".bearcms-template-navigation-custom-item-search"]
+            ["cssSelector", "body .bearcms-template-navigation-custom-item-search"]
         ]
     ]);
 
@@ -115,7 +115,7 @@ $group3
         ],
         "defaultValue" => "1",
         "onHighlight" => [
-            ["cssSelector", ".bearcms-template-navigation-custom-item-store-cart"]
+            ["cssSelector", "body .bearcms-template-navigation-custom-item-store-cart"]
         ]
     ]);
 
@@ -130,13 +130,13 @@ $options
             ["selector", ":root", "--bearcms-template-text-font-size:{cssPropertyValue(font-size)};"],
             ["selector", ":root", "--bearcms-template-text-line-height:{cssPropertyValue(line-height)};"],
             ["selector", ":root", "--bearcms-template-text-letter-spacing:{cssPropertyValue(letter-spacing)};"],
-            ["selector", ".bearcms-template-navigation-menu-button-icon", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{cssPropertyValue(color)}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 7h12M6 12h12M6 17h12"/></svg>') . '\');'],
-            ["selector", ".bearcms-template-navigation-custom-item-search-icon", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{cssPropertyValue(color)}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14.412112 14.412112L20 20"/><circle cx="10" cy="10" r="6"/></svg>') . '\');'],
-            ["selector", ".bearcms-template-navigation-custom-item-store-cart-icon", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{cssPropertyValue(color)}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="19" r="1"/><circle cx="18" cy="19" r="1"/><path d="M6 6H3"/></svg>') . '\');'],
-            ["selector", ".bearcms-template-context .bearcms-search-box-element-button", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{cssPropertyValue(color)}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14.412112 14.412112L20 20"/><circle cx="10" cy="10" r="6"/></svg>') . '\');'],
-            ["selector", ".bearcms-template-context .allebg-poll-element-answer-checked", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{cssPropertyValue(color)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 13l5 5L20 7"/></svg>') . '\');'], // Temp (remove in the future)
-            ["selector", ".bearcms-template-context .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type=\"radio-list\"] [data-form-element-component=\"radio-list-option-input\"]:checked", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="90.708664" height="90.708664" viewBox="0 0 24 24" fill="{cssPropertyValue(color)}"><circle cx="12" cy="12" r="4.276312"/></svg>') . '\');'],
-            ["selector", ".bearcms-template-context .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type=\"checkbox-list\"] [data-form-element-component=\"checkbox-list-option-input\"]:checked", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{cssPropertyValue(color)}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 13l5 5L20 7"/></svg>') . '\');'],
+            ["selector", "body .bearcms-template-navigation-menu-button-icon", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{cssPropertyValue(color)}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 7h12M6 12h12M6 17h12"/></svg>') . '\');'],
+            ["selector", "body .bearcms-template-navigation-custom-item-search-icon", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{cssPropertyValue(color)}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14.412112 14.412112L20 20"/><circle cx="10" cy="10" r="6"/></svg>') . '\');'],
+            ["selector", "body .bearcms-template-navigation-custom-item-store-cart-icon", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{cssPropertyValue(color)}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="19" r="1"/><circle cx="18" cy="19" r="1"/><path d="M6 6H3"/></svg>') . '\');'],
+            ["selector", "body .bearcms-template-context .bearcms-search-box-element-button", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{cssPropertyValue(color)}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14.412112 14.412112L20 20"/><circle cx="10" cy="10" r="6"/></svg>') . '\');'],
+            ["selector", "body .bearcms-template-context .allebg-poll-element-answer-checked", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{cssPropertyValue(color)}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 13l5 5L20 7"/></svg>') . '\');'], // Temp (remove in the future)
+            ["selector", "body .bearcms-template-context .bearcms-form-element-field-opened-list-single-select-container [data-form-element-type=\"radio-list\"] [data-form-element-component=\"radio-list-option-input\"]:checked", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="90.708664" height="90.708664" viewBox="0 0 24 24" fill="{cssPropertyValue(color)}"><circle cx="12" cy="12" r="4.276312"/></svg>') . '\');'],
+            ["selector", "body .bearcms-template-context .bearcms-form-element-field-opened-list-multi-select-container [data-form-element-type=\"checkbox-list\"] [data-form-element-component=\"checkbox-list-option-input\"]:checked", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{cssPropertyValue(color)}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 13l5 5L20 7"/></svg>') . '\');'],
         ],
         "defaultValue" => '{"color":"#000000","font-size":"16px","font-family":"Arial","line-height":"180%"}'
     ]);
@@ -160,7 +160,7 @@ $options
     ->addOption("backgroundCSS", "cssBackground", __("bearcms.themes.themeone.options.Background"), [
         "cssOptions" => ["cssBackground/defaultState"],
         "cssOutput" => [
-            ["selector", ".bearcms-template-container"]
+            ["selector", "body .bearcms-template-container"]
         ],
         "defaultValue" => '{"background-color":"#ffffff"}'
     ])
@@ -199,7 +199,7 @@ $options->addGroup(__("bearcms.themes.themeone.options.Footer"))
     ->addOption("footerBackgroundCSS", "cssBackground", __("bearcms.themes.themeone.options.Background"), [
         "cssOptions" => ["cssBackground/defaultState"],
         "cssOutput" => [
-            ["selector", ".bearcms-template-footer"],
+            ["selector", "body .bearcms-template-footer"],
             ["selector", ":root", "--bearcms-template-footer-background-color:{cssPropertyValue(background-color)};"]
         ],
         "defaultValue" => '{"background-color":"#111111"}'
@@ -207,8 +207,8 @@ $options->addGroup(__("bearcms.themes.themeone.options.Footer"))
     ->addOption("footerTextColor", "color", __("bearcms.themes.themeone.options.Text color"), [
         "cssOutput" => [
             ["selector", ":root", "--bearcms-template-footer-text-color:{value};"],
-            ["selector", ".bearcms-template-footer .bearcms-search-box-element-button", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{value}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14.412112 14.412112L20 20"/><circle cx="10" cy="10" r="6"/></svg>') . '\');'],
-            ["selector", ".bearcms-template-footer .allebg-poll-element-answer-checked", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{value}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 13l5 5L20 7"/></svg>') . '\');'] // Temp (remove in the future)
+            ["selector", "body .bearcms-template-footer .bearcms-search-box-element-button", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{value}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14.412112 14.412112L20 20"/><circle cx="10" cy="10" r="6"/></svg>') . '\');'],
+            ["selector", "body .bearcms-template-footer .allebg-poll-element-answer-checked", 'background-image:url(\'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke="{value}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 13l5 5L20 7"/></svg>') . '\');'] // Temp (remove in the future)
         ],
         "defaultValue" => '#ffffff'
     ]);

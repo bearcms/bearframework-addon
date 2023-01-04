@@ -281,6 +281,7 @@ class Server
             'bz49', // URL redirects support
             'm4a9', // has commentsGet server command
             '78va', // new elements commands
+            'k85a', // new elements commands (elementDataGet, elementDataSet)
         ];
         $settings = $app->bearCMS->data->settings->get();
         $clientData['contentLanguages'] = $settings->languages;

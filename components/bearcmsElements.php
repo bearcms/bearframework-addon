@@ -86,8 +86,14 @@ if (!empty($elements)) {
 $styles = '';
 
 if ($renderElementsContainer) {
-    $spacing = $component->spacing;
-    $width = $component->width;
+    $spacing = (string)$component->spacing;
+    if ($spacing === '') {
+        $spacing = '1rem';
+    }
+    $width = (string)$component->width;
+    if ($width === '') {
+        $width = '100%';
+    }
     $className = 'bre' . md5($spacing . '$' . $width);
     $attributes = '';
     if ($editable) {
@@ -96,8 +102,7 @@ if ($renderElementsContainer) {
         $attributes .= ' id="' . $htmlElementID . '"';
     }
 
-    $styles .= '.' . $className . '{width:' . $width . ';text-align:left;' . ($editable ? '--bearcms-elements-spacing:' . $spacing . ';' : '') . '}';
-    $styles .= '.' . $className . '>div:not(:last-child){margin-bottom:' . ($editable ? 'var(--bearcms-elements-spacing)' : $spacing) . ';}';
+    $styles .= '.' . $className . '{--bearcms-elements-spacing:' . $spacing . ';width:' . $width . ';text-align:left;display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}';
 
     if ($outputType === 'full-html') {
         $componentClass = (string)$component->class;
@@ -132,11 +137,7 @@ if ($renderElementsContainer) {
 
 if (!empty($elements)) {
     $childrenContextData = $contextData;
-    $childrenContextData['width'] = '100%';
     $childrenContextData['inElementsContainer'] = '1';
-    if ($editable) {
-        $childrenContextData['spacing'] = 'var(--bearcms-elements-spacing)';
-    }
     if (isset($columnID[0])) {
         echo ElementsHelper::renderColumns($elements[0], $editable, $childrenContextData, $inContainer, $outputType);
     } elseif (isset($floatingBoxID[0])) {

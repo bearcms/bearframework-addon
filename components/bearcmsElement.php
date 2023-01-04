@@ -128,24 +128,30 @@ if ($containerType === 'none') {
             ElementsHelper::$editorData[] = ['element', $component->id, $componentContextData, $typeCode];
         }
     }
+    $applyCustomizations = false;
     if ($outputType === 'full-html') {
         $classAttributeValue .= ' bearcms-elements-element-container';
         if ($hasElementStyle) {
             $styleClassName = 'bearcms-elements-element-style-' . md5($component->id);
             $classAttributeValue .= ' ' . $styleClassName;
-            echo ElementsHelper::getElementStyleHTML($elementType, $elementStyleData, '#' . $htmlElementID . '.' . $styleClassName);
+            $applyCustomizations = true;
         }
     }
     if ($classAttributeValue !== '') {
         $attributes .= ' class="' . trim($classAttributeValue) . '"';
     }
+    $outputHTML = '';
     if ($editable && !$inElementsContainer) {
-        echo '<div>';
+        $outputHTML .= '<div>';
     }
-    echo '<div' . $attributes . '>';
-    echo $componentHTML;
-    echo '</div>';
+    $outputHTML .= '<div' . $attributes . '>';
+    $outputHTML .= $componentHTML;
+    $outputHTML .= '</div>';
     if ($editable && !$inElementsContainer) {
-        echo '</div>';
+        $outputHTML .= '</div>';
     }
+    if ($applyCustomizations) {
+        echo ElementsHelper::applyCustomizations($outputHTML, $elementType, $elementStyleData, '.' . $styleClassName);
+    }
+    echo $outputHTML;
 }

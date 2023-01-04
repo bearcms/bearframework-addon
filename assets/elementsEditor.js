@@ -30,7 +30,8 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
     };
 
     var isHorizontalFlexibleBoxElement = function (element) {
-        return element.getAttribute('data-flexible-box-direction') === 'row' && element.getAttribute('data-flexible-box-auto-vertical') !== '1';
+        var direction = element.getAttribute('data-flexible-box-direction');
+        return direction === 'horizontal' || direction === 'horizontalReverse';
     };
 
     var isColumnsElement = function (element) {
@@ -183,10 +184,7 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
     };
 
     var setStructuralElementElementsSpacing = function (element, value) {
-        var children = element.childNodes;
-        for (var i = 0; i < children.length; i++) {
-            children[i].style.setProperty("--bearcms-elements-spacing", value === null || value.length === 0 ? 'inherit' : value);
-        }
+        element.style.setProperty("--bearcms-elements-spacing", value === null || value.length === 0 ? 'inherit' : value);
     };
 
     var setColumnsWidths = function (element, value) {
@@ -200,14 +198,6 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
 
     var setFloatingBoxAutoVerticalWidth = function (element, value) {
         setStructuralElementAutoVerticalWidth(element, value, 'data-floating-box-auto-vertical');
-    };
-
-    var setFlexibleBoxAutoVerticalWidth = function (element, value) {
-        setStructuralElementAutoVerticalWidth(element, value, 'data-flexible-box-auto-vertical');
-    };
-
-    var setFlexibleBoxDirection = function (element, value) {
-        element.setAttribute('data-flexible-box-direction', value);
     };
 
     var setFloatingBoxPosition = function (element, value) {
@@ -227,14 +217,6 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
 
     var setFloatingBoxElementsSpacing = function (element, value) {
         setStructuralElementElementsSpacing(element, value);
-    };
-
-    var setFlexibleBoxElementsSpacing = function (element, value) {
-        setStructuralElementElementsSpacing(element, value);
-    };
-
-    var setFlexibleBoxRowAlignment = function (element, value) {
-        element.setAttribute('data-flexible-box-row-alignment', value);
     };
 
     var onExitEditor = function () {
@@ -258,10 +240,6 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
         'setFloatingBoxWidth': setFloatingBoxWidth,
         'setFloatingBoxAutoVerticalWidth': setFloatingBoxAutoVerticalWidth,
         'setFloatingBoxElementsSpacing': setFloatingBoxElementsSpacing,
-        'setFlexibleBoxDirection': setFlexibleBoxDirection,
-        'setFlexibleBoxAutoVerticalWidth': setFlexibleBoxAutoVerticalWidth,
-        'setFlexibleBoxElementsSpacing': setFlexibleBoxElementsSpacing,
-        'setFlexibleBoxRowAlignment': setFlexibleBoxRowAlignment,
         'onExitEditor': onExitEditor
     };
 

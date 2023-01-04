@@ -48,8 +48,6 @@ if ($filesElements !== null) {
     }
 }
 
-$spacing = $component->spacing;
-
 $content = '';
 if ($isFullHtmlOutputType) {
     $content = '<div class="bearcms-image-gallery-element">';
@@ -89,7 +87,7 @@ if ($isFullHtmlOutputType) {
         $attributes .= ' lazy-load="true"';
     }
 
-    $content .= '<component src="image-gallery" spacing="' . $spacing . '"' . $attributes . '>';
+    $content .= '<component src="image-gallery" spacing="var(--bearcms-elements-spacing)"' . $attributes . '>';
     foreach ($filesData as $fileData) {
         $file = $fileData['fileElement'];
         $maxAssetWidth = (string)$file->getAttribute('max-asset-width');

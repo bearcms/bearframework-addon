@@ -170,14 +170,12 @@ class Pages
         $containerData = InternalDataElements::getContainer($containerID, true);
         if (empty($containerData['elements'])) {
             $containerData['id'] = $containerID;
+            $elementType = 'heading';
             $elementData = [
-                'type' => 'heading',
-                'data' => [
-                    'text' => $page->name,
-                    'size' => 'large'
-                ]
+                'text' => $page->name,
+                'size' => 'large'
             ];
-            ElementsDataHelper::addElement($elementData, $containerID, ['insideContainer'], ['containerData' => $containerData]);
+            ElementsDataHelper::addElement($elementType, $elementData, $containerID, ['insideContainer'], ['containerData' => $containerData]);
         }
     }
 

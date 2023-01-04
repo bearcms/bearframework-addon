@@ -1151,23 +1151,33 @@ class ElementsTypes
                 } else {
                     throw new \Exception('Not supported in other contexts!');
                 }
-                $optionsGroup->addOption($idPrefix . "direction", "flexibleBoxDirection", __('bearcms.themes.options.flexibleBox.Direction'), [
-                    "defaultValue" => "column",
-                    "onHighlight" => [['cssSelector', $parentSelector]]
-                ]);
-                $optionsGroup->addOption($idPrefix . "rowAlignment", "flexibleBoxRowAlignment",  __('bearcms.themes.options.flexibleBox.RowAlignment'), [
-                    "defaultValue" => "left",
-                    "onHighlight" => [['cssSelector', $parentSelector]]
-                ]);
-                $optionsGroup->addOption($idPrefix . "autoVerticalWidth", "flexibleBoxAutoVerticalWidth",  __('bearcms.themes.options.flexibleBox.AutoVertical'), [
-                    "defaultValue" => "500px",
-                    "onHighlight" => [['cssSelector', $parentSelector]]
-                ]);
-                $optionsGroup->addOption($idPrefix . "elementsSpacing", "flexibleBoxElementsSpacing",  __('bearcms.themes.options.flexibleBox.ElementsSpacing'), [
+                $optionsGroup->addOption($idPrefix . "layout", "flexibleBoxLayout", '', [
+                    "states" => [
+                        [
+                            "id" => "element-size",
+                            "type" => "elementSize"
+                        ],
+                        [
+                            "id" => "screen-size",
+                            "type" => "screenSize"
+                        ]
+                    ],
+                    "attributesOutput" => [
+                        ["selector", $parentSelector, 'data-responsive-attributes-layout', [
+                            '*' => [
+                                'data-flexible-box-direction' => '{cssPropertyValue(direction,vertical)}',
+                                'data-flexible-box-alignment' => '{cssPropertyValue(alignment,start)}'
+                            ]
+                        ]]
+                    ],
+                    "cssOutput" => [
+                        ["selector", $parentSelector, '--bearcms-elements-spacing:{cssPropertyValue(elementsSpacing,inherit)};'],
+                    ],
+                    "defaultValue" => json_encode(['value' => ['direction' => 'vertical', 'alignment' => 'start']]),
                     "onHighlight" => [['cssSelector', $parentSelector]]
                 ]);
                 $optionsGroup->addOption($idPrefix . "css", "css", '', [
-                    "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"], // cssMargin conflicts with the elements spacing margin-bottom
+                    "cssTypes" => ["cssMargin", "cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                     "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
                     "cssOutput" => [
                         ["selector", $parentSelector]

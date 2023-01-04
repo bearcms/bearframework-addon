@@ -93,6 +93,30 @@ class ElementsDataHelper
 
     /**
      * 
+     * @param string $elementID
+     * @param string|null $containerID
+     * @return array|null
+     */
+    static function getElement(string $elementID, string $containerID = null): ?array
+    {
+        $elementData = InternalDataElements::getElement($elementID);
+        if ($elementData !== null) {
+            return $elementData;
+        }
+        if ($containerID !== null) {
+            $containerData = InternalDataElements::getContainer($containerID);
+            if ($containerData !== null) {
+                $elementData = self::getContainerDataElement($containerData, $elementID);
+                if ($elementData !== null && self::isStructuralElementData($elementData)) { // non structural items cannot be in the container
+                    return $elementData;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 
      * @param array $elementData
      * @param string|null $containerID
      * @return void
@@ -120,14 +144,18 @@ class ElementsDataHelper
 
     /**
      * 
-     * @param array $elementData
+     * @param array $type
+     * @param array $data
      * @param string $containerID
      * @param array $target
      * @param array $options
      * @return string
      */
-    static function addElement(array $elementData, string $containerID, array $target, array $options = []): string
+    static function addElement(string $type, array $data, string $containerID, array $target, array $options = []): string
     {
+        $elementData = [];
+        $elementData['type'] = $type;
+        $elementData['data'] = $data;
         $elementID = self::generateElementID();
         $elementData['id'] = $elementID;
         $containerData = isset($options['containerData']) ? $options['containerData'] : InternalDataElements::getContainer($containerID, true);
@@ -478,6 +506,14 @@ class ElementsDataHelper
             return null;
         }
 
+        $getAutoVerticalWidthState = function (string $autoVerticalWidth, $value) {
+            $autoVerticalWidthInPx = strpos($autoVerticalWidth, 'px') !== false ? (int)str_replace('px', '', $autoVerticalWidth) : null;
+            if ($autoVerticalWidthInPx !== null) {
+                return [':element-size(maxWidth=' . $autoVerticalWidthInPx . ')', $value];
+            }
+            return null;
+        };
+
         if ($result['type'] === 'columns') {
             if (isset($elementContainerData['elements'])) {
                 $result['elements'] = $elementContainerData['elements'];
@@ -547,12 +583,56 @@ class ElementsDataHelper
 
             if (isset($elementContainerData['style'])) {
                 $result['style'] = $elementContainerData['style'];
-            } else {
-                $result['style'] = []; // there is no old format
+            }
+
+            if (isset($result['style']) && is_array($result['style'])) {
+                if (!isset($result['style']['layout'])) {
+                    $layout = ['value' => [], 'states' => []];
+                    if (isset($result['style']['direction'])) {
+                        $direction = 'vertical';
+                        if ($result['style']['direction'] === 'row') { // old values: row, column
+                            $direction = 'horizontal';
+                        }
+                        $layout['value']['direction'] = $direction;
+                        unset($result['style']['direction']);
+
+                        if (isset($result['style']['rowAlignment']) && strlen($result['style']['rowAlignment']) > 0) { // left, center, right
+                            $layout['value']['alignment'] = $result['style']['rowAlignment'];
+                            if ($layout['value']['alignment'] === 'left') {
+                                $layout['value']['alignment'] = 'start';
+                            } elseif ($layout['value']['alignment'] === 'right') {
+                                $layout['value']['alignment'] = 'end';
+                            }
+                            unset($result['style']['rowAlignment']);
+                        }
+
+                        if (isset($result['style']['elementsSpacing']) && strlen($result['style']['elementsSpacing']) > 0) {
+                            $layout['value']['elements-spacing'] = $result['style']['elementsSpacing'];
+                            unset($result['style']['elementsSpacing']);
+                        }
+
+                        if (isset($result['style']['autoVerticalWidth']) && strlen($result['style']['autoVerticalWidth']) > 0) {
+                            $state = $getAutoVerticalWidthState($result['style']['autoVerticalWidth'], ['direction' => 'vertical']);
+                            if ($state !== null) {
+                                $layout['states'][] = $state;
+                            }
+                            unset($result['style']['autoVerticalWidth']);
+                        }
+                    }
+                    if (!empty($layout['value']) || !empty($layout['states'])) {
+                        $result['style']['layout'] = InternalThemes::valueDetailsToString($layout);
+                    }
+                }
             }
         }
         if (isset($result['style']) && empty($result['style'])) {
             unset($result['style']);
+        }
+        if (isset($elementContainerData['data'])) { // added for the flexibleBox url option
+            $result['data'] = $elementContainerData['data'];
+        }
+        if (isset($result['data']) && empty($result['data'])) {
+            unset($result['data']);
         }
         return $result;
     }

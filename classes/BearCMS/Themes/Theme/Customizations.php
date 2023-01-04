@@ -9,7 +9,6 @@
 
 namespace BearCMS\Themes\Theme;
 
-use BearCMS\Internal2;
 use BearCMS\Internal\Themes;
 use BearCMS\Internal;
 
@@ -34,23 +33,29 @@ class Customizations
 
     /**
      * 
-     * @param array $values
-     * @param string $html
-     * @param array $details
+     * @param array
      */
     private $details = [];
+
+    /**
+     * 
+     * @param array
+     */
+    private $attributes = [];
 
     /**
      * 
      * @param array $values
      * @param string $html
      * @param array $details
+     * @param array $attributes
      */
-    public function __construct(array $values = [], string $html = '', array $details = [])
+    public function __construct(array $values = [], string $html = '', array $details = [], array $attributes = [])
     {
         $this->values = $values;
         $this->html = $html;
         $this->details = $details;
+        $this->attributes = $attributes;
     }
 
     /**
@@ -72,7 +77,7 @@ class Customizations
     public function getValueDetails(string $name, array $details = []): array
     {
         $valueDetails = Themes::getValueDetails($this->getValue($name));
-        foreach ($details as $detailKey => $detail) {
+        foreach ($details as $detail) {
             if ($detail === 'defaultValue') {
                 $result[$detail] = $valueDetails['value'];
             } else if ($detail === 'states') {
@@ -81,41 +86,6 @@ class Customizations
                     $states[] = ['name' => $stateData[0], 'value' => $stateData[1]];
                 }
                 $result[$detail] = $states;
-            } else if ($detailKey === 'responsiveAttributes') {
-                $getValue = function ($attributesCallback) use ($valueDetails, $name): string {
-                    if (isset($this->details['values'], $this->details['values'][$name], $this->details['values'][$name]['statesResponsiveAttributes'])) {
-                        $statesResponsiveAttributes = $this->details['values'][$name]['statesResponsiveAttributes'];
-                    } else {
-                        return '';
-                    }
-                    $states = $valueDetails['states'];
-                    $responiveAttributeValue = [];
-                    $getAttributesToSet = function (string $value) use ($attributesCallback): array { // $value is array for css options ????
-                        if (!isset($value[0])) {
-                            return [];
-                        }
-                        $attributesToSet = $attributesCallback($value);
-                        return is_array($attributesToSet) ? $attributesToSet : [];
-                    };
-                    $attributesToSet = $getAttributesToSet($valueDetails['value']);
-                    foreach ($attributesToSet as $attributeName => $attributeValue) {
-                        $responiveAttributeValue[] = '1=>' . $attributeName . '=' . $attributeValue;
-                    }
-                    foreach ($states as $stateIndex => $stateData) {
-                        if (!isset($statesResponsiveAttributes[$stateIndex])) {
-                            continue;
-                        }
-                        $stateResponsiveAttributes = $statesResponsiveAttributes[$stateIndex];
-                        $attributesToSet = $getAttributesToSet((string)$stateData[1]);
-                        foreach ($attributesToSet as $attributeName => $attributeValue) {
-                            foreach ($stateResponsiveAttributes as $expression) {
-                                $responiveAttributeValue[] = $expression . '=>' . $attributeName . '=' . $attributeValue;
-                            }
-                        }
-                    }
-                    return implode(',', $responiveAttributeValue);
-                };
-                $result[$detailKey] = $getValue($detail);
             }
         }
         return $result;
@@ -156,5 +126,20 @@ class Customizations
             }
         }
         return $result;
+    }
+
+    /**
+     * 
+     * @param string $content
+     * @return string
+     */
+    public function apply(string $content): string
+    {
+        $htmlData = [
+            'html' => $this->html,
+            'attributes' => $this->attributes,
+            'details' => $this->details
+        ];
+        return Themes::processOptionsHTMLData($htmlData, $content);
     }
 }

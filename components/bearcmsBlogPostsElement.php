@@ -53,12 +53,6 @@ if (strlen($componentType) > 0 && array_search($componentType, ['summary', 'full
     $type = $componentType;
 }
 
-$spacing = '';
-$componentSpacing = (string)$component->spacing;
-if (strlen($componentSpacing) > 0) {
-    $spacing = $componentSpacing;
-}
-
 $showDate = $component->showDate === 'true';
 $limit = (int) $component->limit;
 if ($limit < 1) {
@@ -135,8 +129,6 @@ if ($list->count() > 0) {
                             'width' => '33%',
                         ]
                     ], false, [
-                        'spacing' => $spacing,
-                        'width' => '100%',
                         'color' => '#000',
                         'inElementsContainer' => true
                     ], true, $outputType);
