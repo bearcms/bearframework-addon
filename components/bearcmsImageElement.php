@@ -34,6 +34,7 @@ if ($component->onClick === 'fullscreen') {
 } elseif ($component->onClick === 'openUrl') {
     $onClick = 'url';
 }
+$onClickURL = $component->url;
 
 $lazyLoad = 'true';
 if ($component->lazyLoad === 'false') {
@@ -65,6 +66,13 @@ if ($maxAssetHeight === 0) {
 
 $attributes = '';
 
+if ($onClick === 'url') {
+    list($onClickURL, $onClickValue, $onClickHTML) = \BearCMS\Internal\Links::updateURL($onClickURL);
+    if ($onClickValue !== null) {
+        $onClick = 'script';
+        $onClickScript = $onClickValue;
+    }
+}
 $attributes .= ' onclick="' . $onClick . '"';
 
 $class = (string) $component->class;
@@ -112,7 +120,7 @@ if ($isFullHtmlOutputType) {
     }
     if ($filename !== '') {
         $content .= '<component src="image-gallery" columns-count="1"' . $attributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
-        $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' ? ' url="' . htmlentities($component->url) . '"' : '') . ' title="' . htmlentities((string)$component->title) . '" alt="' . htmlentities((string)$component->alt) . '" filename="' . $filename . '" file-width="' . $component->fileWidth . '" file-height="' . $component->fileHeight . '" min-asset-width="' . $minAssetWidth . '" min-asset-height="' . $minAssetHeight . '" max-asset-width="' . $maxAssetWidth . '" max-asset-height="' . $maxAssetHeight . '"' . InternalAssets::convertAssetOptionsToHTMLAttributes($assetOptions) . '/>';
+        $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' ? ' url="' . htmlentities($onClickURL) . '"' : '') . '' . ($onClick === 'script' ? ' script="' . htmlentities($onClickScript) . '"' : '') . ' title="' . htmlentities((string)$component->title) . '" alt="' . htmlentities((string)$component->alt) . '" filename="' . $filename . '" file-width="' . $component->fileWidth . '" file-height="' . $component->fileHeight . '" min-asset-width="' . $minAssetWidth . '" min-asset-height="' . $minAssetHeight . '" max-asset-width="' . $maxAssetWidth . '" max-asset-height="' . $maxAssetHeight . '"' . InternalAssets::convertAssetOptionsToHTMLAttributes($assetOptions) . '/>';
         $content .= '</component>';
     }
     if (isset($innerContainerStyle[0])) {
