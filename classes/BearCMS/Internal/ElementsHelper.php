@@ -403,7 +403,7 @@ class ElementsHelper
         $content = '<html>';
         if ($outputType === 'full-html' && $inContainer) {
             $styles = '';
-            $styles .= '.bearcms-elements-flexible-box{position:relative;}';
+            $styles .= '.bearcms-elements-flexible-box{position:relative;box-sizing:border-box;}';
             $styles .= '.bearcms-elements-flexible-box>div{display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}'; // Must be here when canStyle=false
             $styles .= '.bearcms-elements-flexible-box[data-flexible-box-direction="verticalReverse"]>div{flex-direction:column-reverse;}';
             $styles .= '.bearcms-elements-flexible-box[data-flexible-box-direction="horizontal"]>div{flex-direction:row;flex-wrap:wrap;align-items:flex-start;}';
