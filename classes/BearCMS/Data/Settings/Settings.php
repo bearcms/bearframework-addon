@@ -9,8 +9,6 @@
 
 namespace BearCMS\Data\Settings;
 
-use BearCMS\Internal2;
-
 /**
  * 
  * @property string|null $title
@@ -31,6 +29,7 @@ use BearCMS\Internal2;
  * @property array $translations
  * @property string|null $globalHTML
  * @property array $redirects
+ * @property array $fonts
  */
 class Settings extends \BearFramework\Models\Model
 {
@@ -118,6 +117,9 @@ class Settings extends \BearFramework\Models\Model
             ])
             ->defineProperty('redirects', [
                 'type' => 'array',
+            ])
+            ->defineProperty('fonts', [
+                'type' => 'array'
             ]);
     }
 

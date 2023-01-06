@@ -660,6 +660,17 @@ class BearCMS
         $html .= '<meta property="og:image" content="' . htmlentities($url) . '-meta-og-image' . '?' . time() . '">';
         $html .= '<meta property="og:type" content="website">';
         $html .= '<meta property="og:url" content="' . htmlentities($url) . '">';
+        if (!empty($settings->fonts)) {
+            $fontFacesCSS = '';
+            foreach ($settings->fonts as $fontData) {
+                if (isset($fontData['name'], $fontData['filename'])) {
+                    $fontFacesCSS .= '@font-face {font-family:\'' . str_replace(['"', "'"], '', trim($fontData['name'])) . '\';src:url(' . $this->app->assets->getURL($fontData['filename'], ['cacheMaxAge' => 999999999, 'version' => 1]) . ');}'; // format(\'' . pathinfo($fontData['filename'], PATHINFO_EXTENSION) . '\')
+                }
+            }
+            if ($fontFacesCSS !== '') {
+                $html .= '<style>' . $fontFacesCSS . '</style>';
+            }
+        }
         $html .= '</head><body>';
 
         if ($response instanceof App\Response\HTML) { // is not temporary disabled
