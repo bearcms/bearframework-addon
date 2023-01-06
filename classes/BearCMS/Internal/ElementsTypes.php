@@ -100,10 +100,10 @@ class ElementsTypes
             ]);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['heading'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
-
-                    if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
+                    $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
+                    if ($isElementContext) {
                         $options->addOption($idPrefix . "HeadingCSS", "css", '', [
-                            "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
+                            "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/elementSizeState", "*/screenSizeState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))),
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element-large", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                 ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
@@ -165,7 +165,8 @@ class ElementsTypes
             ]);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['text'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
-                    if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
+                    $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
+                    if ($isElementContext) {
                         $optionsGroup = $options;
                         $customStyleSelector = '';
                     } else {
@@ -173,7 +174,7 @@ class ElementsTypes
                         $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"]) >';
                     }
                     $optionsGroup->addOption($idPrefix . "TextCSS", "css", '', [
-                        "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
+                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/elementSizeState", "*/screenSizeState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))),
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-text-element", "box-sizing:border-box;"],
                             ["rule", $parentSelector . " .bearcms-text-element ul", "list-style-position:inside;margin:0;padding:0;"],
@@ -221,7 +222,8 @@ class ElementsTypes
             ]);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['link'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
-                    if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
+                    $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
+                    if ($isElementContext) {
                         $optionsGroup = $options;
                         $customStyleSelector = '';
                     } else {
@@ -230,7 +232,7 @@ class ElementsTypes
                     }
 
                     $optionsGroup->addOption($idPrefix . "LinkCSS", "css", '', [
-                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
+                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/elementSizeState", "*/screenSizeState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-link-element a", "text-decoration:none;box-sizing:border-box;display:inline-block;"],
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element a"]
@@ -377,7 +379,7 @@ class ElementsTypes
 
                     $optionsGroup->addOption($idPrefix . "ImageCSS", "css", '', [
                         "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
-                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
+                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/elementSizeState", "*/screenSizeState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-image-element", "overflow:hidden;"],
                             ["rule", $parentSelector . " .bearcms-image-element img", "border:0;"],
