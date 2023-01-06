@@ -12,7 +12,9 @@ $isFullHtmlOutputType = $outputType === 'full-html';
 
 $attributes = $isFullHtmlOutputType ? ' class="bearcms-text-element"' : '';
 
-$content = '<div' . $attributes . '>' . $component->text . '</div>';
+$text = $component->text;
+
+$content = '<div' . $attributes . '>' . $text . '</div>';
 
 echo '<html>';
 if ($isFullHtmlOutputType) {

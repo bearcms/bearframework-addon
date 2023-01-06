@@ -371,6 +371,7 @@ class ElementsHelper
             $innerContent .= self::renderContainerElements($elementsContainerData, $editable, $contextData, $outputType);
         }
         $innerContent .= '</div>';
+        $linkHTML = null;
         if ($linkURL !== null) {
             list($linkURL, $linkOnClick, $linkHTML) = \BearCMS\Internal\Links::updateURL($linkURL);
             $innerContent .= '<a href="' . htmlentities($linkURL) . '"' . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '"' : '') . ($linkTitle !== null ? ' title="' . htmlentities($linkTitle) . '"' : '') . ' style="width:100%;height:100%;position:absolute;top:0;left:0;display:block;"></a>';
@@ -422,6 +423,9 @@ class ElementsHelper
 
         if ($customizationsSelector !== null) {
             $content = self::applyCustomizations($content, 'flexibleBox', $elementStyle, $customizationsSelector);
+        }
+        if ($linkHTML !== null) {
+            $content .= $linkHTML;
         }
 
         return '<component src="data:base64,' . base64_encode($content) . '" />';

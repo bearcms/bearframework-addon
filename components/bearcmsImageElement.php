@@ -66,6 +66,7 @@ if ($maxAssetHeight === 0) {
 
 $attributes = '';
 
+$onClickHTML = null;
 if ($onClick === 'url') {
     list($onClickURL, $onClickValue, $onClickHTML) = \BearCMS\Internal\Links::updateURL($onClickURL);
     if ($onClickValue !== null) {
@@ -140,4 +141,7 @@ if ($isFullHtmlOutputType) {
 }
 echo '<body>';
 echo $content;
+if ($onClickHTML !== null) {
+    echo $onClickHTML;
+}
 echo '</body></html>';

@@ -33,6 +33,6 @@ class Links
             }
             $url = "javascript:void(0);";
         }
-        return [$url, $onClick, $html];
+        return [$url, $onClick, $html !== null ? '<component src="data:base64,' . base64_encode($html) . '" />' : null];
     }
 }

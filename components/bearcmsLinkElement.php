@@ -14,7 +14,7 @@ $url = $component->url;
 $text = $component->text;
 $title = $component->title;
 
-list($url, $onClick, $html) = \BearCMS\Internal\Links::updateURL($url);
+list($url, $onClick, $linkHTML) = \BearCMS\Internal\Links::updateURL($url);
 
 echo '<html>';
 if ($isFullHtmlOutputType) {
@@ -25,5 +25,9 @@ echo '<body>';
 echo '<div' . ($isFullHtmlOutputType ? ' class="bearcms-link-element"' : '') . '>';
 echo '<a title="' . htmlentities($title) . '" href="' . htmlentities($url) . '"' . ($onClick !== null ? ' onclick="' . htmlentities($onClick) . '"' : '') . '>' . htmlspecialchars($text) . '</a>'; // htmlspecialchars(isset($text[0]) ? $text : $url)
 echo '</div>';
+
+if ($linkHTML !== null) {
+    echo $linkHTML;
+}
 
 echo '</body></html>';
