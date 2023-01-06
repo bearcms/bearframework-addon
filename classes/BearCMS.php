@@ -133,6 +133,12 @@ class BearCMS
                     $package->addJSFile($this->context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 6]));
                     $package->get = 'bearCMS.elementsLazyLoad.initialize(' . json_encode([__('bearcms.elements.LoadingMore'), JSON_THROW_ON_ERROR]) . ');';
                 });
+            $this->app->clientPackages
+                ->add('-bearcms-visibility-observer', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                    //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/visibilityObserver.js')); // dev mode
+                    $package->addJSCode(include $this->context->dir . '/components/visibilityObserver.js.min.php');
+                    $package->get = 'bearCMS.visibilityObserver.initialize();';
+                });
         }
 
         // Load the CMS managed addons

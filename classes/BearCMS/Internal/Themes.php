@@ -917,6 +917,7 @@ class Themes
         $linkTags = [];
 
         $hasResponsiveAttributes = false;
+        $hasVisibilityEvent = false;
 
         $addAssetDetails = function (string $filename) use ($app, &$details, $includeDetails): void {
             if (!isset($details['assets'])) {
@@ -1033,7 +1034,7 @@ class Themes
             return $result;
         };
 
-        $walkOptions = function ($options) use (&$addCSSRule, &$cssCode, &$addAttribute, &$walkOptions, &$addAssetDetails, &$hasResponsiveAttributes, &$replaceVariables, &$getCSSRuleValue) {
+        $walkOptions = function ($options) use (&$addCSSRule, &$cssCode, &$addAttribute, &$walkOptions, &$addAssetDetails, &$hasResponsiveAttributes, &$hasVisibilityEvent, &$replaceVariables, &$getCSSRuleValue) {
             foreach ($options as $option) {
                 if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                     //$value = isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value'], JSON_THROW_ON_ERROR) : $option->details['value']) : null; // array not used ???
@@ -1066,7 +1067,7 @@ class Themes
                         if (isset($option->details['states'])) {
                             foreach ($option->details['states'] as $stateData) {
                                 if (isset($stateData['id'], $stateData['type'])) {
-                                    if (array_search($stateData['type'], ['elementSize', 'screenSize', 'pageType']) !== false) {
+                                    if (array_search($stateData['type'], ['elementSize', 'screenSize', 'pageType', 'viewportEnter', 'viewportLeave', 'viewportPresent']) !== false) {
                                         $statesTypes[$stateData['id']] = $stateData['type'];
                                     }
                                 }
@@ -1126,6 +1127,36 @@ class Themes
                                 }
                                 return implode(',', $result);
                             };
+                            $getVisibilityEventAttributes = function ($attributeName) use ($valueDetails, $statesTypes, $replaceVariables) {
+
+                                $attributeSuffixes = [
+                                    'viewportEnter' => 'enter',
+                                    'viewportLeave' => 'leave',
+                                    'viewportPresent' => 'present'
+                                ];
+
+                                $result = [];
+
+                                $addAttribute = function (string $name, $value) use (&$result) {
+                                    $value = trim((string)$value);
+                                    if (isset($value[0])) {
+                                        $result[$name] = $value;
+                                    }
+                                };
+
+                                $addAttribute($attributeName . '-load', $valueDetails['value']);
+                                foreach ($valueDetails['states'] as $stateData) {
+                                    $stateName = trim($stateData[0], ':');
+                                    $stateValue = $stateData[1];
+                                    if (isset($statesTypes[$stateName])) {
+                                        $stateType = $statesTypes[$stateName];
+                                        if (isset($attributeSuffixes[$stateType])) {
+                                            $addAttribute($attributeName . '-' . $attributeSuffixes[$stateType], $stateValue);
+                                        }
+                                    }
+                                }
+                                return $result;
+                            };
                             foreach ($option->details['attributesOutput'] as $outputDefinition) {
                                 if (is_array($outputDefinition) && isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'selector') {
                                     $selector = $outputDefinition[1];
@@ -1140,8 +1171,17 @@ class Themes
                                         $addAttribute($selector, $attributeName, $getResponsiveAttributeValue($valueDefinition));
                                         $hasResponsiveAttributes = true;
                                     } else {
-                                        // $valueDefinition must be null or variable ({value}, {cssPropertyValue()}, etc.)
-                                        $addAttribute($selector, $attributeName, $replaceVariables($valueDefinition, $valueDetails['value']));
+                                        $isVisibilityEventAttribute = strpos($attributeName, 'data-visibility-event') === 0;
+                                        if ($isVisibilityEventAttribute) {
+                                            $attributesToAdd = $getVisibilityEventAttributes($attributeName);
+                                            foreach ($attributesToAdd as $attributeToAddName => $attributeToAddValue) {
+                                                $addAttribute($selector, $attributeToAddName, $attributeToAddValue);
+                                            }
+                                            $hasVisibilityEvent = true;
+                                        } else {
+                                            // $valueDefinition must be null or variable ({value}, {cssPropertyValue()}, etc.)
+                                            $addAttribute($selector, $attributeName, $replaceVariables($valueDefinition, $valueDetails['value']));
+                                        }
                                     }
                                 }
                             }
@@ -1197,6 +1237,9 @@ class Themes
         }
         if ($hasResponsiveAttributes) {
             $html .= '<link rel="client-packages-embed" name="responsiveAttributes">';
+        }
+        if ($hasVisibilityEvent) {
+            $html .= '<link rel="client-packages-embed" name="-bearcms-visibility-observer">'; // todo
         }
 
         if ($html !== '') {
