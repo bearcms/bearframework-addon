@@ -359,6 +359,8 @@ class ElementsHelper
             return '';
         }
 
+        $attributes = '';
+
         $canStyle = isset($contextData['canStyle']) && $contextData['canStyle'] === 'true';
         $elementStyle = isset($elementContainerData['style']) && is_array($elementContainerData['style']) ? $elementContainerData['style'] : [];
 
@@ -373,6 +375,7 @@ class ElementsHelper
         $innerContent .= '</div>';
         $linkHTML = null;
         if ($linkURL !== null) {
+            $attributes .= ' data-data-flexible-box-link';
             list($linkURL, $linkOnClick, $linkHTML) = \BearCMS\Internal\Links::updateURL($linkURL);
             $innerContent .= '<a href="' . htmlentities($linkURL) . '"' . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '"' : '') . ($linkTitle !== null ? ' title="' . htmlentities($linkTitle) . '"' : '') . '></a>';
         }
@@ -380,8 +383,6 @@ class ElementsHelper
         $classAttributeValue = null;
         $customizationsSelector = null;
         if ($inContainer) {
-
-            $attributes = '';
 
             $hasStyle = $canStyle && !empty($elementStyle);
 
@@ -406,6 +407,7 @@ class ElementsHelper
             $styles = '';
             $styles .= '.bearcms-elements-flexible-box{width:100%;position:relative;box-sizing:border-box;display:flex;flex-direction:column;}';
             $styles .= '.bearcms-elements-flexible-box>a{width:100%;height:100%;position:absolute;top:0;left:0;display:block;}';
+            $styles .= '.bearcms-elements-flexible-box[data-data-flexible-box-link]:not([data-rvr-editable])>div{pointer-events:none;}';
             $styles .= '.bearcms-elements-flexible-box>div{flex:1 1 auto;display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}'; // Must be here when canStyle=false
             $styles .= '.bearcms-elements-flexible-box[data-flexible-box-direction="vertical-reverse"]>div{flex-direction:column-reverse;}';
             $styles .= '.bearcms-elements-flexible-box[data-flexible-box-direction="horizontal"]>div{flex-direction:row;flex-wrap:wrap;align-items:flex-start;}';
