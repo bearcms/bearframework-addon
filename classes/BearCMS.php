@@ -136,7 +136,7 @@ class BearCMS
             $this->app->clientPackages
                 ->add('-bearcms-element-events', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/elementEvents.js')); // dev mode
-                    $package->addJSCode(include $this->context->dir . '/components/elementEvents.js.min.php');
+                    $package->addJSCode(include $this->context->dir . '/resources/elementEvents.js.min.php');
                     $package->get = 'bearCMS.elementEvents.initialize();';
                 });
         }
