@@ -607,7 +607,7 @@ class ElementsDataHelper
                         }
 
                         if (isset($result['style']['elementsSpacing']) && strlen($result['style']['elementsSpacing']) > 0) {
-                            $layout['value']['elements-spacing'] = $result['style']['elementsSpacing'];
+                            $layout['value']['elementsSpacing'] = $result['style']['elementsSpacing'];
                             unset($result['style']['elementsSpacing']);
                         }
 
