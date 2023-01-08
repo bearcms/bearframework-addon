@@ -1155,14 +1155,8 @@ class ElementsTypes
                 }
                 $optionsGroup->addOption($idPrefix . "layout", "flexibleBoxLayout", '', [
                     "states" => [
-                        [
-                            "id" => "element-size",
-                            "type" => "elementSize"
-                        ],
-                        [
-                            "id" => "screen-size",
-                            "type" => "screenSize"
-                        ]
+                        ["type" => "elementSize"],
+                        ["type" => "screenSize"]
                     ],
                     "attributesOutput" => [
                         ["selector", $parentSelector, 'data-responsive-attributes-layout', [
@@ -1180,10 +1174,23 @@ class ElementsTypes
                 ]);
                 $optionsGroup->addOption($idPrefix . "css", "css", '', [
                     "cssTypes" => ["cssMargin", "cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                    "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
+                    "cssOptions" => ["*/hoverState", "*/activeState", "*/viewportEnterState", "*/presentState"], // , "*/elementSizeState", "*/screenSizeState"
                     "cssOutput" => [
                         ["selector", $parentSelector]
                     ]
+                ]);
+                $options->addOption($idPrefix . "code", "code", '', [
+                    "states" => [
+                        ["type" => "hover"],
+                        ["type" => "active"],
+                        ["type" => "viewportEnter"],
+                        ["type" => "viewportLeave"],
+                        ["type" => "present"]
+                    ],
+                    "attributesOutput" => [
+                        ["selector", $parentSelector, 'data-bearcms-event']
+                    ],
+                    "elementType" => "heading"
                 ]);
             };
         }

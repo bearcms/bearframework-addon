@@ -134,10 +134,10 @@ class BearCMS
                     $package->get = 'bearCMS.elementsLazyLoad.initialize(' . json_encode([__('bearcms.elements.LoadingMore'), JSON_THROW_ON_ERROR]) . ');';
                 });
             $this->app->clientPackages
-                ->add('-bearcms-visibility-observer', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
-                    //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/visibilityObserver.js')); // dev mode
-                    $package->addJSCode(include $this->context->dir . '/components/visibilityObserver.js.min.php');
-                    $package->get = 'bearCMS.visibilityObserver.initialize();';
+                ->add('-bearcms-element-events', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                    //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/elementEvents.js')); // dev mode
+                    $package->addJSCode(include $this->context->dir . '/components/elementEvents.js.min.php');
+                    $package->get = 'bearCMS.elementEvents.initialize();';
                 });
         }
 
@@ -782,7 +782,7 @@ class BearCMS
                     $app = App::get();
                     $context = $app->contexts->get(__DIR__);
                     //$htmlToInsert[] = ['source' => '<html><head><script>' . $context->assets->getContent('assets/elementsEditor.js') . '</script></head></html>']; // dev mode
-                    $htmlToInsert[] = ['source' => '<html><head><script src="' . $context->assets->getURL('assets/elementsEditor.min.js', ['cacheMaxAge' => 999999999, 'version' => 4]) . '"></head></html>'];
+                    $htmlToInsert[] = ['source' => '<html><head><script src="' . $context->assets->getURL('assets/elementsEditor.min.js', ['cacheMaxAge' => 999999999, 'version' => 5]) . '"></head></html>'];
                 }
                 $htmlToInsert[] = ['source' => '<html><head><link rel="client-packages"></head></html>']; // used by ServerCommands to update content
                 $document->insertHTMLMulti($htmlToInsert);

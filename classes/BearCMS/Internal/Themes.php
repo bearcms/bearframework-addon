@@ -774,6 +774,7 @@ class Themes
         $cssMediaQueries = []; // array of strings
         $additionalCSSSelectors = []; // array of strings
         $responsiveAttributesRules = [];
+        $cssStates = '';
         $unsupportedStates = '';
         $result = ['cssRules' => [], 'responsiveAttributes' => []];
         $parts = self::getStateCombinationDetails($state);
@@ -848,6 +849,8 @@ class Themes
                     if (!empty($tempResponsiveAttributesValue)) {
                         $responsiveAttributesRules[] = $tempResponsiveAttributesValue;
                     }
+                } else if (array_search($stateType, ['hover', 'focus', 'active', 'firstChild', 'lastChild', 'checked']) !== false) {
+                    $cssStates .= ':' . $name;
                 }
             } else {
                 $unsupportedStates .= ':' . $name;
@@ -887,7 +890,7 @@ class Themes
         }
         foreach ($cssMediaQueriesCombinations as $cssMediaQueryCombinations) {
             foreach ($additionalCSSSelectorsCombinations as $additionalCssSelectorCombinations) {
-                $result['cssRules'][] = [implode(' and ', $cssMediaQueryCombinations), (!empty($additionalCssSelectorCombinations) ? implode(' ', $additionalCssSelectorCombinations) . ' ' : '') . $selector . $unsupportedStates];
+                $result['cssRules'][] = [implode(' and ', $cssMediaQueryCombinations), (!empty($additionalCssSelectorCombinations) ? implode(' ', $additionalCssSelectorCombinations) . ' ' : '') . $selector . $cssStates . $unsupportedStates];
             }
         }
 
@@ -917,7 +920,7 @@ class Themes
         $linkTags = [];
 
         $hasResponsiveAttributes = false;
-        $hasVisibilityEvent = false;
+        $hasEventAttributes = false;
 
         $addAssetDetails = function (string $filename) use ($app, &$details, $includeDetails): void {
             if (!isset($details['assets'])) {
@@ -951,6 +954,21 @@ class Themes
             'Times New Roman' => '"Times New Roman",Times,serif',
             'Trebuchet' => '"Trebuchet MS",Helvetica,sans-serif',
             'Verdana' => 'Verdana,Geneva,sans-serif'
+        ];
+
+        $supportedStates = [ // type => default id
+            'elementSize' => 'element-size',
+            'screenSize' => 'screen-size',
+            'pageType' => 'page-type',
+            'hover' => 'hover',
+            'focus' => 'focus',
+            'active' => 'active',
+            'firstChild' => 'first-child',
+            'lastChild' => 'last-child',
+            'checked' => 'checked',
+            'viewportEnter' => 'viewport-enter',
+            'viewportLeave' => 'viewport-leave',
+            'present' => 'present', // visible for first time
         ];
 
         $updateFontFamily = function (string $fontName) use ($webSafeFonts, &$details, &$linkTags): string {
@@ -1034,7 +1052,7 @@ class Themes
             return $result;
         };
 
-        $walkOptions = function ($options) use (&$addCSSRule, &$cssCode, &$addAttribute, &$walkOptions, &$addAssetDetails, &$hasResponsiveAttributes, &$hasVisibilityEvent, &$replaceVariables, &$getCSSRuleValue) {
+        $walkOptions = function ($options) use (&$addCSSRule, &$cssCode, &$addAttribute, &$walkOptions, &$addAssetDetails, &$hasResponsiveAttributes, &$hasEventAttributes, &$replaceVariables, &$getCSSRuleValue, $supportedStates) {
             foreach ($options as $option) {
                 if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                     //$value = isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value'], JSON_THROW_ON_ERROR) : $option->details['value']) : null; // array not used ???
@@ -1049,27 +1067,22 @@ class Themes
                                 $addAssetDetails($filename);
                             }
                         }
+
                         $statesTypes = [];
                         if (isset($option->details['cssOptions'])) {
                             $cssOptions = $option->details['cssOptions'];
-                            $addNonCssState = function (string $id, string $type) use ($cssOptions, &$statesTypes) {
+                            foreach ($supportedStates as $supportedStateType => $supportedStateDefaultID) {
                                 foreach ($cssOptions as $cssOption) {
-                                    if (strpos($cssOption, '/' . $type . 'State') !== false) {
-                                        $statesTypes[$id] = $type;
-                                        return;
+                                    if (strpos($cssOption, '/' . $supportedStateType . 'State') !== false) {
+                                        $statesTypes[$supportedStateDefaultID] = $supportedStateType;
                                     }
                                 }
-                            };
-                            $addNonCssState('element-size', 'elementSize');
-                            $addNonCssState('screen-size', 'screenSize');
-                            $addNonCssState('page-type', 'pageType');
+                            }
                         }
                         if (isset($option->details['states'])) {
                             foreach ($option->details['states'] as $stateData) {
-                                if (isset($stateData['id'], $stateData['type'])) {
-                                    if (array_search($stateData['type'], ['elementSize', 'screenSize', 'pageType', 'viewportEnter', 'viewportLeave', 'viewportPresent']) !== false) {
-                                        $statesTypes[$stateData['id']] = $stateData['type'];
-                                    }
+                                if (isset($stateData['type'], $supportedStates[$stateData['type']])) {
+                                    $statesTypes[isset($stateData['id']) ? $stateData['id'] : $supportedStates[$stateData['type']]] = $stateData['type'];
                                 }
                             }
                         }
@@ -1127,12 +1140,12 @@ class Themes
                                 }
                                 return implode(',', $result);
                             };
-                            $getVisibilityEventAttributes = function ($attributeName) use ($valueDetails, $statesTypes, $replaceVariables) {
+                            $getEventAttributes = function ($attributeName) use ($valueDetails, $statesTypes, $replaceVariables) {
 
                                 $attributeSuffixes = [
-                                    'viewportEnter' => 'enter',
-                                    'viewportLeave' => 'leave',
-                                    'viewportPresent' => 'present'
+                                    'viewportEnter' => 'viewport-enter',
+                                    'viewportLeave' => 'viewport-leave',
+                                    'present' => 'present'
                                 ];
 
                                 $result = [];
@@ -1171,13 +1184,13 @@ class Themes
                                         $addAttribute($selector, $attributeName, $getResponsiveAttributeValue($valueDefinition));
                                         $hasResponsiveAttributes = true;
                                     } else {
-                                        $isVisibilityEventAttribute = strpos($attributeName, 'data-visibility-event') === 0;
-                                        if ($isVisibilityEventAttribute) {
-                                            $attributesToAdd = $getVisibilityEventAttributes($attributeName);
+                                        $isEventAttribute = strpos($attributeName, 'data-bearcms-event') === 0;
+                                        if ($isEventAttribute) {
+                                            $attributesToAdd = $getEventAttributes($attributeName);
                                             foreach ($attributesToAdd as $attributeToAddName => $attributeToAddValue) {
                                                 $addAttribute($selector, $attributeToAddName, $attributeToAddValue);
                                             }
-                                            $hasVisibilityEvent = true;
+                                            $hasEventAttributes = true;
                                         } else {
                                             // $valueDefinition must be null or variable ({value}, {cssPropertyValue()}, etc.)
                                             $addAttribute($selector, $attributeName, $replaceVariables($valueDefinition, $valueDetails['value']));
@@ -1238,8 +1251,8 @@ class Themes
         if ($hasResponsiveAttributes) {
             $html .= '<link rel="client-packages-embed" name="responsiveAttributes">';
         }
-        if ($hasVisibilityEvent) {
-            $html .= '<link rel="client-packages-embed" name="-bearcms-visibility-observer">'; // todo
+        if ($hasEventAttributes) {
+            $html .= '<link rel="client-packages-embed" name="-bearcms-element-events">'; // todo
         }
 
         if ($html !== '') {

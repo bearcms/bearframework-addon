@@ -8,7 +8,7 @@
 /* global clientPackages */
 
 var bearCMS = bearCMS || {};
-bearCMS.visibilityObserver = bearCMS.visibilityObserver || (function () {
+bearCMS.elementEvents = bearCMS.elementEvents || (function () {
 
     if (typeof window.addEventListener !== 'undefined' && typeof document.querySelectorAll !== 'undefined' && typeof IntersectionObserver !== 'undefined') { // Check for old browsers
 
@@ -17,7 +17,7 @@ bearCMS.visibilityObserver = bearCMS.visibilityObserver || (function () {
         var presentDispatchedElements = [];
 
         var dispatchEvent = function (element, eventName) {
-            var handler = element.getAttribute('data-visibility-event-' + eventName);
+            var handler = element.getAttribute('data-bearcms-event-' + eventName);
             if (handler !== null && handler !== null) {
                 try {
                     var f = new Function(handler);
@@ -29,10 +29,10 @@ bearCMS.visibilityObserver = bearCMS.visibilityObserver || (function () {
         };
 
         var attributesToObserve = [
-            'data-visibility-event-load',
-            'data-visibility-event-enter',
-            'data-visibility-event-leave',
-            'data-visibility-event-present',
+            'data-bearcms-event-load',
+            'data-bearcms-event-viewport-enter',
+            'data-bearcms-event-viewport-leave',
+            'data-bearcms-event-present',
         ];
         var attributesToObserveCount = attributesToObserve.length;
 
@@ -45,10 +45,10 @@ bearCMS.visibilityObserver = bearCMS.visibilityObserver || (function () {
                         presentDispatchedElements.push(element);
                         dispatchEvent(element, 'present');
                     }
-                    dispatchEvent(element, 'enter');
+                    dispatchEvent(element, 'viewport-enter');
                 } else {
                     if (presentDispatchedElements.indexOf(element) !== -1) {
-                        dispatchEvent(element, 'leave');
+                        dispatchEvent(element, 'viewport-leave');
                     }
                 }
             }
