@@ -374,7 +374,7 @@ class ElementsHelper
         $linkHTML = null;
         if ($linkURL !== null) {
             list($linkURL, $linkOnClick, $linkHTML) = \BearCMS\Internal\Links::updateURL($linkURL);
-            $innerContent .= '<a href="' . htmlentities($linkURL) . '"' . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '"' : '') . ($linkTitle !== null ? ' title="' . htmlentities($linkTitle) . '"' : '') . ' style="width:100%;height:100%;position:absolute;top:0;left:0;display:block;"></a>';
+            $innerContent .= '<a href="' . htmlentities($linkURL) . '"' . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '"' : '') . ($linkTitle !== null ? ' title="' . htmlentities($linkTitle) . '"' : '') . '></a>';
         }
 
         $classAttributeValue = null;
@@ -404,16 +404,20 @@ class ElementsHelper
         $content = '<html>';
         if ($outputType === 'full-html' && $inContainer) {
             $styles = '';
-            $styles .= '.bearcms-elements-flexible-box{position:relative;box-sizing:border-box;}';
-            $styles .= '.bearcms-elements-flexible-box>div{display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}'; // Must be here when canStyle=false
-            $styles .= '.bearcms-elements-flexible-box[data-flexible-box-direction="verticalReverse"]>div{flex-direction:column-reverse;}';
+            $styles .= '.bearcms-elements-flexible-box{width:100%;position:relative;box-sizing:border-box;display:flex;flex-direction:column;}';
+            $styles .= '.bearcms-elements-flexible-box>a{width:100%;height:100%;position:absolute;top:0;left:0;display:block;}';
+            $styles .= '.bearcms-elements-flexible-box>div{flex:1 1 auto;display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}'; // Must be here when canStyle=false
+            $styles .= '.bearcms-elements-flexible-box[data-flexible-box-direction="vertical-reverse"]>div{flex-direction:column-reverse;}';
             $styles .= '.bearcms-elements-flexible-box[data-flexible-box-direction="horizontal"]>div{flex-direction:row;flex-wrap:wrap;align-items:flex-start;}';
-            $styles .= '.bearcms-elements-flexible-box[data-flexible-box-direction="horizontalReverse"]>div{flex-direction:row-reverse;flex-wrap:wrap;align-items:flex-start;}';
+            $styles .= '.bearcms-elements-flexible-box[data-flexible-box-direction="horizontal-reverse"]>div{flex-direction:row-reverse;flex-wrap:wrap;align-items:flex-start;}';
             $styles .= '.bearcms-elements-flexible-box[data-flexible-box-direction="horizontal"]>div>div{min-width:15px;}';
-            $styles .= '.bearcms-elements-flexible-box[data-flexible-box-direction="horizontalReverse"]>div>div{min-width:15px;}';
+            $styles .= '.bearcms-elements-flexible-box[data-flexible-box-direction="horizontal-reverse"]>div>div{min-width:15px;}';
             $styles .= '.bearcms-elements-flexible-box[data-flexible-box-alignment="start"]>div{justify-content:flex-start;}';
             $styles .= '.bearcms-elements-flexible-box[data-flexible-box-alignment="center"]>div{justify-content:center;}';
             $styles .= '.bearcms-elements-flexible-box[data-flexible-box-alignment="end"]>div{justify-content:flex-end;}';
+            $styles .= '.bearcms-elements-flexible-box[data-flexible-box-alignment="space-between"]>div{justify-content:space-between;}';
+            $styles .= '.bearcms-elements-flexible-box[data-flexible-box-alignment="space-around"]>div{justify-content:space-around;}';
+            $styles .= '.bearcms-elements-flexible-box[data-flexible-box-alignment="space-evenly"]>div{justify-content:space-evenly;}';
             $content .= '<head><style>' . $styles . '</style></head>';
         }
         $content .= '<body>'

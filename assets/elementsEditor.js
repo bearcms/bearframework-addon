@@ -31,7 +31,7 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
 
     var isHorizontalFlexibleBoxElement = function (element) {
         var direction = element.getAttribute('data-flexible-box-direction');
-        return direction === 'horizontal' || direction === 'horizontalReverse';
+        return direction === 'horizontal' || direction === 'horizontal-reverse';
     };
 
     var isColumnsElement = function (element) {

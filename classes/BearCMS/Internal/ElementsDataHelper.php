@@ -623,6 +623,28 @@ class ElementsDataHelper
                         $result['style']['layout'] = InternalThemes::valueDetailsToString($layout);
                     }
                 }
+                if (isset($result['style']['layout'])) {
+                    $layout = InternalThemes::getValueDetails($result['style']['layout']);
+                    $updateDirection = function (array $value): array {
+                        if (isset($value['direction'])) {
+                            if ($value['direction'] === 'verticalReverse') {
+                                $value['direction'] = 'vertical-reverse';
+                            } elseif ($value['direction'] === 'horizontalReverse') {
+                                $value['direction'] = 'horizontal-reverse';
+                            }
+                        }
+                        return $value;
+                    };
+                    if (is_array($layout['value'])) {
+                        $layout['value'] = $updateDirection($layout['value']);
+                    }
+                    foreach ($layout['states'] as $i => $stateData) {
+                        if (is_array($stateData[1])) {
+                            $layout['states'][$i][1] = $updateDirection($stateData[1]);
+                        }
+                    }
+                    $result['style']['layout'] = InternalThemes::valueDetailsToString($layout);
+                }
             }
         }
         if (isset($result['style']) && empty($result['style'])) {
