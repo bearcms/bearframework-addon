@@ -133,6 +133,28 @@ class BearCMS
                     $package->addJSFile($this->context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 6]));
                     $package->get = 'bearCMS.elementsLazyLoad.initialize(' . json_encode([__('bearcms.elements.LoadingMore'), JSON_THROW_ON_ERROR]) . ');';
                 });
+
+            $this->app->serverRequests
+                ->add('-bearcms-lightbox-content', function ($data) {
+                    $id = isset($data['id']) ? trim($data['id']) : '';
+                    if (strlen($id) === 0 || preg_match('/^[0-9a-f\-]*$/', $id) !== 1) {
+                        return 'error';
+                    }
+                    $style = '';
+                    $style .= '.bearcms-lightbox-content{min-width:300px}';
+                    $content = '<html><head><style>' . $style . '</style></head><body><div class="bearcms-lightbox-content"><bearcms-elements id="bearcms-lightbox-' . $id . '" editable="true"/></div></body></html>';
+                    $content = $this->app->components->process($content);
+                    $content = $this->app->clientPackages->process($content);
+                    $editorContent = Internal\ElementsHelper::getEditableElementsHTML();
+                    if ($editorContent !== '') {
+                        $domDocument = new HTML5DOMDocument();
+                        $domDocument->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
+                        $domDocument->insertHTML($editorContent);
+                        $content = $domDocument->saveHTML();
+                    }
+                    return $content;
+                });
+
             $this->app->clientPackages
                 ->add('-bearcms-element-events', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/elementEvents.js')); // dev mode
