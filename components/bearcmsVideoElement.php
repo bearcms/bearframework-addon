@@ -163,10 +163,26 @@ if (strlen($componentURL) > 0) {
     }
 } elseif ($component->filename !== null && strlen($component->filename) > 0) {
     $filename = Internal\Data::getRealFilename($component->filename);
+    $filenameURL = $app->assets->getURL($filename, ['cacheMaxAge' => 999999999, 'version' => 1]);
+    $posterFilename = Internal\Data::getRealFilename((string)$component->posterFilename);
+    $posterURL = $posterFilename !== '' ? $app->assets->getURL($posterFilename, ['cacheMaxAge' => 999999999, 'version' => 1]) : '';
     $content = '<div' . ($isFullHtmlOutputType ? ' class="bearcms-video-element"' : '') . '>' . $innerContainerStartTag;
     if ($filename !== null) {
-        $content .= '<video style="width:100%;" controls>';
-        $content .= '<source src="' . $app->assets->getURL($filename) . '" type="video/mp4">';
+        $mimeTypes = [
+            'mp4' => 'video/mp4',
+            'mpg' => 'video/mpeg',
+            'mpeg' => 'video/mpeg',
+            'avi' => 'video/x-msvideo',
+            'wmv' => 'video/x-ms-wmv',
+            'mov' => 'video/quicktime',
+            'ogg' => 'audio/ogg',
+            'webm' => 'video/webm',
+            'avif' => 'image/avif',
+        ];
+        $filenameExtension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $filenameMimeType = isset($mimeTypes[$filenameExtension]) ? $mimeTypes[$filenameExtension] : null;
+        $content .= '<video style="width:100%;" controls preload="none"' . ($posterURL !== '' ? ' poster="' . htmlentities($posterURL) . '"' : '') . ($component->autoplay === 'true' ? ' autoplay' : '') . ($component->muted === 'true' ? ' muted' : '') . ($component->loop === 'true' ? ' loop' : '') . '>';
+        $content .= '<source src="' . htmlentities($filenameURL) . '"' . ($filenameMimeType !== null ? ' type="' . $filenameMimeType . '"' : '') . '>';
         $content .= '</video>';
     }
     $content .= $innerContainerEndTag . '</div>';

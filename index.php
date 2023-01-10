@@ -26,6 +26,7 @@ $app->assets
     ->addDir('appdata://bearcms/files/canvasstyleimage/')
     ->addDir('appdata://bearcms/files/blog/')
     ->addDir('appdata://bearcms/files/video/')
+    ->addDir('appdata://bearcms/files/videoposter/')
     ->addDir('appdata://bearcms/files/image/')
     ->addDir('appdata://bearcms/files/imagegallery/')
     ->addDir('appdata://bearcms/files/icon/')

@@ -586,6 +586,22 @@ class ElementsTypes
                         'type' => 'textbox'
                     ],
                     [
+                        'id' => 'posterFilename',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'autoplay',
+                        'type' => 'checkbox'
+                    ],
+                    [
+                        'id' => 'muted',
+                        'type' => 'checkbox'
+                    ],
+                    [
+                        'id' => 'loop',
+                        'type' => 'checkbox'
+                    ],
+                    [
                         'id' => 'width',
                         'type' => 'textbox'
                     ],
@@ -609,11 +625,17 @@ class ElementsTypes
                 'onDelete' => function ($data) use ($app) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     InternalData::deleteElementAsset($filename);
+                    $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
+                    InternalData::deleteElementAsset($posterFilename);
                 },
                 'onDuplicate' => function ($data) {
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
                         $data['filename'] = InternalData::duplicateElementAsset($filename);
+                    }
+                    $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
+                    if (strlen($posterFilename) > 0) {
+                        $data['posterFilename'] = InternalData::duplicateElementAsset($posterFilename);
                     }
                     return $data;
                 },
@@ -622,6 +644,10 @@ class ElementsTypes
                     if (strlen($filename) > 0) {
                         $data['filename'] = InternalData::exportElementAsset($filename, 'file', $add);
                     }
+                    $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
+                    if (strlen($posterFilename) > 0) {
+                        $data['posterFilename'] = InternalData::exportElementAsset($posterFilename, 'file', $add);
+                    }
                     return $data;
                 },
                 'onImport' => function (array $data, ImportContext $context) {
@@ -629,14 +655,23 @@ class ElementsTypes
                     if (strlen($filename) > 0) {
                         $data['filename'] = InternalData::importElementAsset($filename, 'bearcms/files/video/', $context);
                     }
+                    $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
+                    if (strlen($posterFilename) > 0) {
+                        $data['posterFilename'] = InternalData::importElementAsset($posterFilename, 'bearcms/files/videoposter/', $context);
+                    }
                     return $data;
                 },
                 'getUploadsSizeItems' => function ($data) {
+                    $keys = [];
                     $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                     if (strlen($filename) > 0) {
-                        return [InternalData::getFilenameDataKey($filename)];
+                        $keys[] = InternalData::getFilenameDataKey($filename);
                     }
-                    return [];
+                    $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
+                    if (strlen($posterFilename) > 0) {
+                        $keys[] = InternalData::getFilenameDataKey($posterFilename);
+                    }
+                    return $keys;
                 }
             ]);
             if ($hasThemes) {
