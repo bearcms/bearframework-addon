@@ -166,7 +166,13 @@ if (strlen($componentURL) > 0) {
     $filenameURL = $app->assets->getURL($filename, ['cacheMaxAge' => 999999999, 'version' => 1]);
     $posterFilename = Internal\Data::getRealFilename((string)$component->posterFilename);
     $posterURL = $posterFilename !== '' ? $app->assets->getURL($posterFilename, ['cacheMaxAge' => 999999999, 'version' => 1]) : '';
-    $content = '<div' . ($isFullHtmlOutputType ? ' class="bearcms-video-element"' : '') . '>' . $innerContainerStartTag;
+    $aspectRatio = '';
+    $posterWidth = (string)$component->posterWidth;
+    $posterHeight = (string)$component->posterHeight;
+    if ($posterWidth !== '' && $posterHeight !== '') {
+        $aspectRatio = $posterWidth . '/' . $posterHeight;
+    }
+    $content = '<div' . ($isFullHtmlOutputType ? ' class="bearcms-video-element"' . ($aspectRatio !== '' ? ' style="aspect-ratio:' . $aspectRatio . ';"' : '') : '') . '>' . $innerContainerStartTag;
     if ($filename !== null) {
         $mimeTypes = [
             'mp4' => 'video/mp4',
@@ -181,7 +187,7 @@ if (strlen($componentURL) > 0) {
         ];
         $filenameExtension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         $filenameMimeType = isset($mimeTypes[$filenameExtension]) ? $mimeTypes[$filenameExtension] : null;
-        $content .= '<video style="width:100%;" controls preload="none"' . ($posterURL !== '' ? ' poster="' . htmlentities($posterURL) . '"' : '') . ($component->autoplay === 'true' ? ' autoplay' : '') . ($component->muted === 'true' ? ' muted' : '') . ($component->loop === 'true' ? ' loop' : '') . '>';
+        $content .= '<video onclick="try{if(this.readyState===0){this.play();}}catch(e){}" style="width:100%;" controls preload="none"' . ($posterURL !== '' ? ' poster="' . htmlentities($posterURL) . '"' : '') . ($component->autoplay === 'true' ? ' autoplay' : '') . ($component->muted === 'true' ? ' muted' : '') . ($component->loop === 'true' ? ' loop' : '') . '>';
         $content .= '<source src="' . htmlentities($filenameURL) . '"' . ($filenameMimeType !== null ? ' type="' . $filenameMimeType . '"' : '') . '>';
         $content .= '</video>';
     }

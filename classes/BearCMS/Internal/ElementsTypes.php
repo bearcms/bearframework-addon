@@ -590,6 +590,14 @@ class ElementsTypes
                         'type' => 'textbox'
                     ],
                     [
+                        'id' => 'posterWidth',
+                        'type' => 'textbox'
+                    ],
+                    [
+                        'id' => 'posterHeight',
+                        'type' => 'textbox'
+                    ],
+                    [
                         'id' => 'autoplay',
                         'type' => 'checkbox'
                     ],
@@ -672,7 +680,32 @@ class ElementsTypes
                         $keys[] = InternalData::getFilenameDataKey($posterFilename);
                     }
                     return $keys;
-                }
+                },
+                'optimizeData' => function ($data) {
+                    $app = App::get();
+                    $hasChange = false;
+                    $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
+                    if (strlen($posterFilename) > 0) {
+                        $realFilenameWithOptions = InternalData::getRealFilename($posterFilename);
+                        $realFilenameWithoutOptions = InternalData::removeFilenameOptions($realFilenameWithOptions);
+                        $shortFilenameWithOptions = InternalData::getShortFilename($realFilenameWithOptions);
+                        if (strpos($realFilenameWithoutOptions, 'appdata://') === 0) {
+                            if ($data['posterFilename'] !== $shortFilenameWithOptions) {
+                                $data['posterFilename'] = $shortFilenameWithOptions;
+                                $hasChange = true;
+                            }
+                            if (!isset($data['posterWidth']) || !isset($data['posterHeight'])) {
+                                $details = $app->assets->getDetails($realFilenameWithoutOptions, ['width', 'height']);
+                                $data['posterWidth'] = $details['width'] !== null ? $details['width'] : 0;
+                                $data['posterHeight'] = $details['height'] !== null ? $details['height'] : 0;
+                                $hasChange = true;
+                            }
+                        }
+                    }
+                    if ($hasChange) {
+                        return $data;
+                    }
+                },
             ]);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['video'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
