@@ -1162,7 +1162,8 @@ class ElementsTypes
                         ["selector", $parentSelector, 'data-responsive-attributes-layout', [
                             '*' => [
                                 'data-flexible-box-direction' => '{cssPropertyValue(direction,vertical)}',
-                                'data-flexible-box-alignment' => '{cssPropertyValue(alignment,start)}'
+                                'data-flexible-box-alignment' => '{cssPropertyValue(alignment,start)}',
+                                'data-flexible-box-cross-alignment' => '{cssPropertyValue(cross-alignment)}'
                             ]
                         ]]
                     ],
