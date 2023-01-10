@@ -137,7 +137,7 @@ class BearCMS
             $this->app->serverRequests
                 ->add('-bearcms-lightbox-content', function ($data) {
                     $id = isset($data['id']) ? trim($data['id']) : '';
-                    if (strlen($id) === 0 || preg_match('/^[0-9a-f\-]*$/', $id) !== 1) {
+                    if (strlen($id) === 0 || preg_match('/^[0-9a-z\-]*$/', $id) !== 1) {
                         return 'error';
                     }
                     $style = '';
