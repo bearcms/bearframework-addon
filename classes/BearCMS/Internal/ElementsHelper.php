@@ -405,7 +405,7 @@ class ElementsHelper
         $content = '<html>';
         if ($outputType === 'full-html' && $inContainer) {
             $styles = '';
-            $styles .= '.bearcms-elements-flexible-box{width:100%;position:relative;box-sizing:border-box;display:flex;flex-direction:column;}';
+            $styles .= '.bearcms-elements-flexible-box{position:relative;box-sizing:border-box;display:flex;flex-direction:column;}';
             $styles .= '.bearcms-elements-flexible-box>a{width:100%;height:100%;position:absolute;top:0;left:0;display:block;}';
             $styles .= '.bearcms-elements-flexible-box[data-data-flexible-box-link]:not([data-rvr-editable])>div{pointer-events:none;}';
             $styles .= '.bearcms-elements-flexible-box>div{flex:1 1 auto;display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}'; // Must be here when canStyle=false
@@ -420,18 +420,19 @@ class ElementsHelper
             $styles .= '.bearcms-elements-flexible-box[data-flexible-box-alignment="space-between"]>div{justify-content:space-between;}';
             $styles .= '.bearcms-elements-flexible-box[data-flexible-box-alignment="space-around"]>div{justify-content:space-around;}';
             $styles .= '.bearcms-elements-flexible-box[data-flexible-box-alignment="space-evenly"]>div{justify-content:space-evenly;}';
+            $styles .= '.bearcms-elements-flexible-box[data-flexible-box-cross-alignment="start"]>div{align-items:flex-start;}';
+            $styles .= '.bearcms-elements-flexible-box[data-flexible-box-cross-alignment="center"]>div{align-items:center;}';
+            $styles .= '.bearcms-elements-flexible-box[data-flexible-box-cross-alignment="end"]>div{align-items:flex-end;}';
             $content .= '<head><style>' . $styles . '</style></head>';
         }
         $content .= '<body>'
             . ($inContainer ? '<div' . $attributes . '>' . $innerContent . '</div>' : $innerContent)
+            . ($linkHTML !== null ? $linkHTML : '') // todo why cant be outsite the html??
             . '</body>'
             . '</html>';
 
         if ($customizationsSelector !== null) {
             $content = self::applyCustomizations($content, 'flexibleBox', $elementStyle, $customizationsSelector);
-        }
-        if ($linkHTML !== null) {
-            $content .= $linkHTML;
         }
 
         return '<component src="data:base64,' . base64_encode($content) . '" />';
