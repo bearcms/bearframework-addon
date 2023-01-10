@@ -1175,7 +1175,7 @@ class ElementsTypes
                 ]);
                 $optionsGroup->addOption($idPrefix . "css", "css", '', [
                     "cssTypes" => ["cssMargin", "cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                    "cssOptions" => ["*/hoverState", "*/activeState", "*/viewportEnterState", "*/presentState"], // , "*/elementSizeState", "*/screenSizeState"
+                    "cssOptions" => ["*/hoverState", "*/activeState", "*/viewportEnterState", "*/presentState", "*/screenSizeState"], // , "*/elementSizeState", 
                     "cssOutput" => [
                         ["selector", $parentSelector]
                     ]
