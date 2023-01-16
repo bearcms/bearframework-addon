@@ -61,7 +61,7 @@ class Blog
                 if (isset($blogPostLanguage[0])) {
                     $applyContext->language = $blogPostLanguage;
                 }
-                $content = '<html data-bearcms-page-type="blogPost"><head>';
+                $content = '<html data-bearcms-page-type="blog-post"><head>';
                 $title = isset($blogPost->titleTagContent) ? trim($blogPost->titleTagContent) : '';
                 if (!isset($title[0])) {
                     $title = isset($blogPost->title) ? trim($blogPost->title) : '';
