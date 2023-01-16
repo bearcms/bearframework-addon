@@ -803,7 +803,7 @@ class BearCMS
                 if (!empty(Internal\ElementsHelper::$editorData)) {
                     $app = App::get();
                     $context = $app->contexts->get(__DIR__);
-                    //$htmlToInsert[] = ['source' => '<html><head><script>' . $context->assets->getContent('assets/elementsEditor.js') . '</script></head></html>']; // dev mode
+                    //$htmlToInsert[] = ['source' => '<html><head><script>' . file_get_contents(__DIR__ . '/../dev/elementsEditor.js') . '</script></head></html>']; // dev mode
                     $htmlToInsert[] = ['source' => '<html><head><script src="' . $context->assets->getURL('assets/elementsEditor.min.js', ['cacheMaxAge' => 999999999, 'version' => 5]) . '"></head></html>'];
                 }
                 $htmlToInsert[] = ['source' => '<html><head><link rel="client-packages"></head></html>']; // used by ServerCommands to update content

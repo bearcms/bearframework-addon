@@ -10,53 +10,35 @@
 var bearCMS = bearCMS || {};
 bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
 
+    var addedCSS = [];
     var addCSS = function (code) {
+        if (addedCSS.indexOf(code) !== -1) {
+            return;
+        }
+        addedCSS.push(code);
         var style = document.createElement('style');
         style.innerHTML = code;
         document.getElementsByTagName('head')[0].appendChild(style);
     };
 
-    var removeClassByPrefix = function (element, prefix) {
-        var classes = element.classList;
-        var classesToRemove = [];
-        for (var i = 0; i < classes.length; i++) {
-            if (classes[i].indexOf(prefix) === 0) {
-                classesToRemove.push(classes[i]);
-            }
-        }
-        for (var i = 0; i < classesToRemove.length; i++) {
-            classes.remove(classesToRemove[i]);
-        }
-    };
-
-    var isHorizontalFlexibleBoxElement = function (element) {
-        var direction = element.getAttribute('data-flexible-box-direction');
-        return direction === 'horizontal' || direction === 'horizontal-reverse';
-    };
-
     var isColumnsElement = function (element) {
         var value = element.getAttribute('class');
-        return value !== null ? value.indexOf('bearcms-elements-columns') !== -1 : false;
+        return value !== null ? value.indexOf('bearcms-columns-element') !== -1 : false;
     };
 
     var isFloatingBoxElement = function (element) {
         var value = element.getAttribute('class');
-        return value !== null ? value.indexOf('bearcms-elements-floating-box') !== -1 : false;
+        return value !== null ? value.indexOf('bearcms-floating-box-element') !== -1 : false;
     };
 
-    var isFlexibleBoxElement = function (element) {
-        var value = element.getAttribute('class');
-        return value !== null ? value.indexOf('bearcms-elements-flexible-box') !== -1 : false;
-    };
+    var updateColumnsStyle = function (element) {
 
-    var updateColumnsStyle = function (element, widths) {
-
-        var widths = element.getAttribute('data-columns-elements-editor-widths');
+        var widths = element.getAttribute('data-bearcms-columns-widths');
         if (widths === null || widths.length === 0) {
-            widths = ',';
+            widths = ';';
         }
 
-        var columnsWidths = widths.split(',');
+        var columnsWidths = widths.split(';');
         var columnsCount = columnsWidths.length;
 
         var columnsStyles = [];
@@ -78,38 +60,26 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
             if (columnWidth.length === 0) {
                 columnWidth = (notEmptyColumnsWidthsCalc.length === 0 ? '100%' : '(100% - (' + notEmptyColumnsWidthsCalc + '))') + '/' + emptyColumnsWidths;
             }
-            columnsStyles[i] = 'flex:1 0 auto;min-width:15px;max-width:' + (isFixedWidth ? columnWidth : 'calc(' + columnWidth + ' - (var(--bearcms-elements-spacing)*' + (columnsCount - 1) + '/' + columnsCount + '))') + ';margin-right:' + (columnsCount > i + 1 ? 'var(--bearcms-elements-spacing)' : '0') + ';';
+            columnsStyles[i] = (isFixedWidth ? 'flex:0 0 auto;width:' + columnWidth + ';' : 'flex:1 0 auto;max-width:calc(' + columnWidth + ' - (var(--bearcms-elements-spacing)*' + (columnsCount - 1) + '/' + columnsCount + '))') + ';';
         }
 
-        var className = 'bre' + (new Date()).getTime();
+        var selector = '.bearcms-columns-element[data-bearcms-columns-direction="horizontal"][data-bearcms-columns-widths="' + widths + '"]';
 
         var styles = '';
-        styles += '.' + className + '{display:flex !important;flex-direction:row;}';
-        styles += '.' + className + '>div>div:not(:last-child){margin-bottom:var(--bearcms-elements-spacing);}';
+        styles += selector + '{display:flex;flex-direction:row;gap:var(--bearcms-elements-spacing);}';
         for (var i = 0; i < columnsCount; i++) {
-            styles += '.' + className + '>div:nth-child(' + (i + 1) + '){' + columnsStyles[i] + '}';
+            styles += selector + '>div:nth-child(' + (i + 1) + '){' + columnsStyles[i] + '}';
         }
-        styles += '.' + className + '[data-columns-auto-vertical="1"]{flex-direction:column;}';
-        for (var i = 0; i < columnsCount; i++) {
-            styles += '.' + className + '[data-columns-auto-vertical="1"]>div:nth-child(' + (i + 1) + '){width:100%;max-width:100%;margin-right:0;}';
-        }
-        styles += '.' + className + '[data-columns-auto-vertical="1"]>div:not(:empty):not(:last-child){margin-bottom:var(--bearcms-elements-spacing);}';
-        styles += '.' + className + '[data-rvr-editable][data-columns-auto-vertical="1"]>div:not(:last-child){margin-bottom:var(--bearcms-elements-spacing);}';
 
         addCSS(styles);
 
-        removeClassByPrefix(element, 'bre');
-        element.classList.add(className);
-
-        var originalColumnKey = 'data-original-column-index';
+        var originalColumnKey = 'data-bearcms-columns-original-column-index';
 
         var columnsElements = element.childNodes;
 
         // add new columns
         while (columnsElements.length < columnsCount) {
             var newColumn = document.createElement('div');
-            newColumn.setAttribute('class', 'bearcms-elements-columns-column');
-            newColumn.style.setProperty('--bearcms-elements-spacing', getComputedStyle(element.firstChild).getPropertyValue('--bearcms-elements-spacing'));
             element.appendChild(newColumn);
         }
 
@@ -151,96 +121,52 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
 
     };
 
-    var setStructuralElementAutoVerticalWidth = function (element, value, attributeName) {
-        var currentValue = element.getAttribute('data-responsive-attributes');
-        if (currentValue === null) {
-            currentValue = '';
+    var updateFloatingBoxStyle = function (element) {
+        var width = element.getAttribute('data-bearcms-floating-box-width');
+        if (width === null || width.length === 0) {
+            width = '50%';
         }
-        var newValue = currentValue;
-        var match = currentValue.match("w(.*?)=>" + attributeName + "=1");
-        if (match !== null) {
-            newValue = currentValue.replace(match[0], '');
-            if (newValue.length > 0 && newValue[0] === ',') {
-                newValue = newValue.substring(1, newValue.length);
+        var styles = '';
+        var positions = ['left', 'right'];
+        for (var i = 0; i < positions.length; i++) {
+            var position = positions[i];
+            var selector = '.bearcms-floating-box-element[data-bearcms-floating-box-position="' + position + '"][data-bearcms-floating-box-width="' + width + '"]>div:first-child';
+            if (width.match(/^[0-9\.]*%$/) !== null && width !== '100%') {
+                styles += selector + '{width:calc(' + width + ' - var(--bearcms-elements-spacing)/2);}';
+            } else {
+                styles += selector + '{width:' + width + ';}';
             }
         }
-        if (value.indexOf('px') !== -1) {
-            var valueInPx = parseInt(value.replace('px', ''), 10);
-            newValue = 'w<=' + valueInPx + '=>' + attributeName + '=1' + (newValue.length > 0 ? ',' + newValue : '');
-        } else {
-            element.removeAttribute(attributeName);
-        }
-        if (newValue !== '') {
-            element.setAttribute('data-responsive-attributes', newValue);
-        } else {
-            element.removeAttribute('data-responsive-attributes');
-        }
-        if (typeof clientPackages !== 'undefined') {
-            clientPackages.get('responsiveAttributes')
-                .then(function (responsiveAttributes) {
-                    responsiveAttributes.run();
-                })
+        addCSS(styles);
+    };
+
+    var styleEditorOpen = function (element) { // called by the CMS
+    };
+
+    var styleEditorChange = function (element) { // called by the CMS
+        if (isColumnsElement(element)) {
+            updateColumnsStyle(element);
+        } else if (isFloatingBoxElement(element)) {
+            updateFloatingBoxStyle(element);
         }
     };
 
-    var setStructuralElementElementsSpacing = function (element, value) {
-        element.style.setProperty("--bearcms-elements-spacing", value === null || value.length === 0 ? 'inherit' : value);
-    };
+    var styleEditorClose = function (element) { // called by the CMS
 
-    var setColumnsWidths = function (element, value) {
-        element.setAttribute('data-columns-elements-editor-widths', value);
-        updateColumnsStyle(element);
-    };
-
-    var setColumnsAutoVerticalWidth = function (element, value) {
-        setStructuralElementAutoVerticalWidth(element, value, 'data-columns-auto-vertical');
-    };
-
-    var setFloatingBoxAutoVerticalWidth = function (element, value) {
-        setStructuralElementAutoVerticalWidth(element, value, 'data-floating-box-auto-vertical');
-    };
-
-    var setFloatingBoxPosition = function (element, value) {
-        element.setAttribute('data-floating-box-position', value);
-    };
-
-    var setFloatingBoxWidth = function (element, value) {
-        if (value === null || value.length === 0) {
-            value = '50%';
-        }
-        element.style.setProperty("--bearcms-floating-box-width", value.substr(value.length - 1) === '%' && value !== '100%' ? 'calc(' + value + ' - var(--bearcms-elements-spacing)/2)' : value);
-    };
-
-    var setColumnsElementsSpacing = function (element, value) {
-        setStructuralElementElementsSpacing(element, value);
-    };
-
-    var setFloatingBoxElementsSpacing = function (element, value) {
-        setStructuralElementElementsSpacing(element, value);
-    };
-
-    var onExitEditor = function () {
-        // clean up original column indexes
-        var originalColumnKey = 'data-original-column-index';
-        var elements = document.querySelectorAll('[' + originalColumnKey + ']');
-        for (var i = 0; i < elements.length; i++) {
-            elements[i].removeAttribute(originalColumnKey);
+        if (isColumnsElement(element)) {
+            // Remove original column indexes
+            var originalColumnKey = 'data-bearcms-columns-original-column-index';
+            var elements = element.querySelectorAll('[' + originalColumnKey + ']');
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].removeAttribute(originalColumnKey);
+            }
         }
     };
 
     return {
-        'isHorizontalFlexibleBoxElement': isHorizontalFlexibleBoxElement,
-        'isColumnsElement': isColumnsElement,
-        'isFloatingBoxElement': isFloatingBoxElement,
-        'isFlexibleBoxElement': isFlexibleBoxElement,
-        'setColumnsWidths': setColumnsWidths,
-        'setColumnsAutoVerticalWidth': setColumnsAutoVerticalWidth,
-        'setColumnsElementsSpacing': setColumnsElementsSpacing,
-        'setFloatingBoxPosition': setFloatingBoxPosition,
-        'setFloatingBoxWidth': setFloatingBoxWidth,
-        'setFloatingBoxAutoVerticalWidth': setFloatingBoxAutoVerticalWidth,
-        'setFloatingBoxElementsSpacing': setFloatingBoxElementsSpacing,
-        'onExitEditor': onExitEditor
+        'styleEditorOpen': styleEditorOpen,
+        'styleEditorChange': styleEditorChange,
+        'styleEditorClose': styleEditorClose,
     };
 
 }());

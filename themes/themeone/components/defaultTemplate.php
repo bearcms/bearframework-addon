@@ -186,14 +186,14 @@ $elementSeparator = 'background-color:var(--bearcms-template-context-text-color)
 
 // bearcms-tc fixes collistions with the theme options
 
-$customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"]) >';
+$customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
 
 echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-heading-element-large{' . $elementHeadingLarge . 'padding-top:calc(' . $elementsSpacing . ' / 2);}';
-echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-large{padding-top:0;}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-element:first-child > .bearcms-heading-element-large{padding-top:0;}';
 echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-heading-element-medium{' . $elementHeadingMedium . 'padding-top:calc(' . $elementsSpacing . ' / 2);}';
-echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-medium{padding-top:0;}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-element:first-child > .bearcms-heading-element-medium{padding-top:0;}';
 echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-heading-element-small{' . $elementHeadingSmall . 'padding-top:calc(' . $elementsSpacing . ' / 2);}';
-echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-elements-element-container:first-child > .bearcms-heading-element-small{padding-top:0;}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-element:first-child > .bearcms-heading-element-small{padding-top:0;}';
 echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-text-element{' . $elementText . '}';
 echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-text-element a{' . $elementLink . '}';
 echo '.bearcms-tc .bearcms-html-element{' . $elementText . '}';

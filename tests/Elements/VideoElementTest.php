@@ -35,7 +35,7 @@ class VideoElementTest extends BearCMSTestCase
 //        $this->assertTrue(strpos($result, '<div class="bearcms-video-element"') !== false);
 
         $result = $app->components->process('<component src="bearcms-video-element" url="https://wrong.url/" />');
-        $this->assertTrue(strpos($result, '<div class="bearcms-elements-element-container"></div></body>') !== false);
+        $this->assertTrue(strpos($result, '<div class="bearcms-element"></div></body>') !== false);
     }
 
 }

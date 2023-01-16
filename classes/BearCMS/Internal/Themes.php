@@ -275,7 +275,7 @@ class Themes
             foreach (self::$pagesOptions as $key => $value) {
                 $pagesOptionsEnvKeyData[] = $key . (is_array($value) ? '$' . $value[0] : '');
             }
-            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v10'));
+            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v11'));
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID);
@@ -1098,7 +1098,7 @@ class Themes
                                         }
                                         foreach ($valueDetails['states'] as $stateData) {
                                             $stateValue = $stateData[1];
-                                            $cssRuleValue = $valueDefinition !== null ? $replaceVariables($valueDefinition, $stateValue) : $getCSSRuleValue($stateValue);
+                                            $cssRuleValue = $valueDefinition !== null ? $replaceVariables($valueDefinition, $stateValue, $valueDetails['value']) : $getCSSRuleValue($stateValue);
                                             if ($cssRuleValue !== '') {
                                                 $stateOutputCode = self::getStateOutputCode($stateData[0], $statesTypes, $selector);
                                                 foreach ($stateOutputCode['cssRules'] as $cssRuleToAdd) {

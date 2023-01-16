@@ -128,13 +128,12 @@ if ($containerType === 'none') {
             ElementsHelper::$editorData[] = ['element', $component->id, $componentContextData, $typeCode];
         }
     }
-    $applyCustomizations = false;
+    $customizationsSelector = null;
     if ($outputType === 'full-html') {
-        $classAttributeValue .= ' bearcms-elements-element-container';
+        $classAttributeValue .= ' bearcms-element';
         if ($hasElementStyle) {
-            $styleClassName = 'bearcms-elements-element-style-' . md5($component->id);
-            $classAttributeValue .= ' ' . $styleClassName;
-            $applyCustomizations = true;
+            $classAttributeValue .= ' ' . ElementsHelper::getCustomizationsClassName($component->id);
+            $customizationsSelector = ElementsHelper::getCustomizationsSelector($component->id);
         }
     }
     if ($classAttributeValue !== '') {
@@ -150,8 +149,8 @@ if ($containerType === 'none') {
     if ($editable && !$inElementsContainer) {
         $outputHTML .= '</div>';
     }
-    if ($applyCustomizations) {
-        echo ElementsHelper::applyCustomizations($outputHTML, $elementType, $elementStyleData, '.' . $styleClassName);
+    if ($customizationsSelector !== null) {
+        echo ElementsHelper::applyCustomizations($outputHTML, $elementType, $elementStyleData, $customizationsSelector);
     }
     echo $outputHTML;
 }

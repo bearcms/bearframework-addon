@@ -22,7 +22,7 @@ bearCMS.elementsLazyLoad = bearCMS.elementsLazyLoad || (function () {
         } catch (e) {
         }
         var loadingElement = document.createElement('div');
-        loadingElement.className = 'bearcms-elements-element-container';
+        loadingElement.className = 'bearcms-element';
         loadingElement.innerHTML = '<div class="bearcms-text-element">' + loadingText + '</div>';
         container.appendChild(loadingElement);
         clientPackages.get('serverRequests').then(function (serverRequests) {

@@ -116,7 +116,7 @@ class ElementsTypes
                         ]);
                     } else {
                         $group = $options->addGroup(__("bearcms.themes.options.Heading"));
-                        $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"]) >';
+                        $customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
 
                         $groupLarge = $group->addGroup(__("bearcms.themes.options.Large"));
                         $groupLarge->addOption($idPrefix . "HeadingLargeCSS", "css", '', [
@@ -171,7 +171,7 @@ class ElementsTypes
                         $customStyleSelector = '';
                     } else {
                         $optionsGroup = $options->addGroup(__("bearcms.themes.options.Text"));
-                        $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"]) >';
+                        $customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
                     }
                     $optionsGroup->addOption($idPrefix . "TextCSS", "css", '', [
                         "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/elementSizeState", "*/screenSizeState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))),
@@ -228,7 +228,7 @@ class ElementsTypes
                         $customStyleSelector = '';
                     } else {
                         $optionsGroup = $options->addGroup(__("bearcms.themes.options.Link"));
-                        $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"]) >';
+                        $customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
                     }
 
                     $optionsGroup->addOption($idPrefix . "LinkCSS", "css", '', [
@@ -374,7 +374,7 @@ class ElementsTypes
                         $customStyleSelector = '';
                     } else {
                         $optionsGroup = $options->addGroup(__("bearcms.themes.options.Image"));
-                        $customStyleSelector = ' .bearcms-elements-element-container:not([class*="bearcms-elements-element-style-"]) >';
+                        $customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
                     }
 
                     $optionsGroup->addOption($idPrefix . "ImageCSS", "css", '', [
@@ -1177,15 +1177,24 @@ class ElementsTypes
                 } else {
                     throw new \Exception('Not supported in other contexts!');
                 }
-                $optionsGroup->addOption($idPrefix . "widths", "columnsWidths", __('bearcms.themes.options.columns.ColumnsCount'), [
-                    "defaultValue" => ",",
-                    "onHighlight" => [['cssSelector', $parentSelector]]
-                ]);
-                $optionsGroup->addOption($idPrefix . "autoVerticalWidth", "columnsAutoVerticalWidth",  __('bearcms.themes.options.columns.AutoVertical'), [
-                    "defaultValue" => "500px",
-                    "onHighlight" => [['cssSelector', $parentSelector]]
-                ]);
-                $optionsGroup->addOption($idPrefix . "elementsSpacing", "columnsElementsSpacing",  __('bearcms.themes.options.columns.ElementsSpacing'), [
+                $defaultValue = ElementsDataHelper::getDefaultElementStyle('columns');
+                $optionsGroup->addOption($idPrefix . "layout", "columnsLayout", '', [
+                    "states" => [
+                        ["type" => "elementSize"],
+                        ["type" => "screenSize"]
+                    ],
+                    "attributesOutput" => [
+                        ["selector", $parentSelector, 'data-responsive-attributes-layout', [
+                            '*' => [
+                                'data-bearcms-columns-widths' => '{cssPropertyValue(widths,;)}',
+                                'data-bearcms-columns-direction' => '{cssPropertyValue(direction,horizontal)}',
+                            ]
+                        ]]
+                    ],
+                    "cssOutput" => [
+                        ["selector", $parentSelector, '--bearcms-elements-spacing:{cssPropertyValue(spacing,inherit)};'],
+                    ],
+                    "defaultValue" => isset($defaultValue['layout']) ? $defaultValue['layout'] : '',
                     "onHighlight" => [['cssSelector', $parentSelector]]
                 ]);
             };
@@ -1197,19 +1206,24 @@ class ElementsTypes
                 } else {
                     throw new \Exception('Not supported in other contexts!');
                 }
-                $optionsGroup->addOption($idPrefix . "position", "floatingBoxPosition", __('bearcms.themes.options.floatingBox.Position'), [
-                    "defaultValue" => "left",
-                    "onHighlight" => [['cssSelector', $parentSelector]]
-                ]);
-                $optionsGroup->addOption($idPrefix . "width", "floatingBoxWidth", __('bearcms.themes.options.floatingBox.Width'), [
-                    "defaultValue" => "50%",
-                    "onHighlight" => [['cssSelector', $parentSelector]]
-                ]);
-                $optionsGroup->addOption($idPrefix . "autoVerticalWidth", "floatingBoxAutoVerticalWidth",  __('bearcms.themes.options.floatingBox.AutoVertical'), [
-                    "defaultValue" => "500px",
-                    "onHighlight" => [['cssSelector', $parentSelector]]
-                ]);
-                $optionsGroup->addOption($idPrefix . "elementsSpacing", "floatingBoxElementsSpacing",  __('bearcms.themes.options.floatingBox.ElementsSpacing'), [
+                $defaultValue = ElementsDataHelper::getDefaultElementStyle('floatingBox');
+                $optionsGroup->addOption($idPrefix . "layout", "floatingBoxLayout", '', [
+                    "states" => [
+                        ["type" => "elementSize"],
+                        ["type" => "screenSize"]
+                    ],
+                    "attributesOutput" => [
+                        ["selector", $parentSelector, 'data-responsive-attributes-layout', [
+                            '*' => [
+                                'data-bearcms-floating-box-position' => '{cssPropertyValue(position,left)}',
+                                'data-bearcms-floating-box-width' => '{cssPropertyValue(width,50%)}',
+                            ]
+                        ]]
+                    ],
+                    "cssOutput" => [
+                        ["selector", $parentSelector, '--bearcms-elements-spacing:{cssPropertyValue(spacing,inherit)};'],
+                    ],
+                    "defaultValue" => isset($defaultValue['layout']) ? $defaultValue['layout'] : '',
                     "onHighlight" => [['cssSelector', $parentSelector]]
                 ]);
             };
@@ -1221,6 +1235,7 @@ class ElementsTypes
                 } else {
                     throw new \Exception('Not supported in other contexts!');
                 }
+                $defaultValue = ElementsDataHelper::getDefaultElementStyle('flexibleBox');
                 $optionsGroup->addOption($idPrefix . "layout", "flexibleBoxLayout", '', [
                     "states" => [
                         ["type" => "elementSize"],
@@ -1229,16 +1244,16 @@ class ElementsTypes
                     "attributesOutput" => [
                         ["selector", $parentSelector, 'data-responsive-attributes-layout', [
                             '*' => [
-                                'data-flexible-box-direction' => '{cssPropertyValue(direction,vertical)}',
-                                'data-flexible-box-alignment' => '{cssPropertyValue(alignment,start)}',
-                                'data-flexible-box-cross-alignment' => '{cssPropertyValue(cross-alignment)}'
+                                'data-bearcms-flexible-box-direction' => '{cssPropertyValue(direction,vertical)}',
+                                'data-bearcms-flexible-box-alignment' => '{cssPropertyValue(alignment,start)}',
+                                'data-bearcms-flexible-box-cross-alignment' => '{cssPropertyValue(cross-alignment)}'
                             ]
                         ]]
                     ],
                     "cssOutput" => [
-                        ["selector", $parentSelector, '--bearcms-elements-spacing:{cssPropertyValue(elementsSpacing,inherit)};'],
+                        ["selector", $parentSelector, '--bearcms-elements-spacing:{cssPropertyValue(spacing,inherit)};'],
                     ],
-                    "defaultValue" => json_encode(['value' => ['direction' => 'vertical', 'alignment' => 'start']]),
+                    "defaultValue" => isset($defaultValue['layout']) ? $defaultValue['layout'] : '',
                     "onHighlight" => [['cssSelector', $parentSelector]]
                 ]);
                 $optionsGroup->addOption($idPrefix . "css", "css", '', [

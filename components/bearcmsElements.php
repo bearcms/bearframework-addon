@@ -103,6 +103,7 @@ if ($renderElementsContainer) {
     }
 
     $styles .= '.' . $className . '{--bearcms-elements-spacing:' . $spacing . ';width:' . $width . ';text-align:left;display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}';
+    $styles .= '.' . $className . '>*{width:100%;}'; // the default size when elements have margin-left/right=auto;
 
     if ($outputType === 'full-html') {
         $componentClass = (string)$component->class;
