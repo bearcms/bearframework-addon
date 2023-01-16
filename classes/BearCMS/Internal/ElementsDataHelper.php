@@ -769,8 +769,6 @@ class ElementsDataHelper
      */
     static function moveElement(string $elementID, string $sourceContainerID, string $targetContainerID, array $target): void
     {
-        //$app = App::get();
-        //$app->logs->log('debug', 'ElementsDataHelper::moveElement - ' . $elementID . ' - ' . $sourceContainerID . ' - ' . $targetContainerID . "\n" . print_r($target, true));
         $isSameTarget = $sourceContainerID === $targetContainerID;
         $sourceContainerData = $sourceContainerID !== null ? InternalDataElements::getContainer($sourceContainerID) : null;
         if ($sourceContainerData === null) {
@@ -951,8 +949,6 @@ class ElementsDataHelper
      */
     static function duplicateElement(string $elementID, string $containerID): string
     {
-        //$app = App::get();
-        //$app->logs->log('debug', 'ElementsDataHelper::duplicateElement - ' . $elementID . ' - ' . $containerID);
         $elementData = InternalDataElements::getElement($elementID);
         $containerData = $containerID !== null ? (isset($options['containerData']) ? $options['containerData'] : InternalDataElements::getContainer($containerID)) : null;
         $elementDataInContainer = null;
@@ -1029,8 +1025,6 @@ class ElementsDataHelper
      */
     static function duplicateContainer(string $sourceContainerID, string $targetContainerID): void
     {
-        //$app = App::get();
-        //$app->logs->log('debug', 'ElementsDataHelper::duplicateContainer - ' . $sourceContainerID . ' - ' . $targetContainerID);
         if ($sourceContainerID === $targetContainerID) {
             throw new \Exception('The targetContainerID must be different from sourceContainerID!');
         }
@@ -1288,8 +1282,6 @@ class ElementsDataHelper
      */
     static function getContainerUploadsSizeItems(string $containerID, array $options = []): array
     {
-        //$app = App::get();
-        //$app->logs->log('debug', 'ElementsDataHelper::getContainerUploadsSizeItems - ' . $containerID . ' - ' . print_r($options, true));
         $elementsIDs = isset($options['elementsIDs']) ? $options['elementsIDs'] : null;
         $containerData = $containerID !== null ? InternalDataElements::getContainer($containerID) : null;
         if ($containerData === null) {
@@ -1325,7 +1317,6 @@ class ElementsDataHelper
             $addElementUploadsSizeItems($elementData);
         });
 
-        //$app->logs->log('debug', 'ElementsDataHelper::getContainerUploadsSizeItems - ' . print_r($result, true));
         return array_values(array_unique($result));
     }
 
@@ -1353,8 +1344,6 @@ class ElementsDataHelper
      */
     static function getElementUploadsSizeItems(string $elementID, string $containerID = null): array
     {
-        //$app = App::get();
-        //$app->logs->log('debug', 'ElementsDataHelper::getElementUploadsSizeItems - ' . $elementID . ' - ' . $containerID);
         $elementData = InternalDataElements::getElement($elementID);
         if ($elementData !== null) {
             return self::getElementDataUploadsSizeItems($elementData);
@@ -1496,7 +1485,6 @@ class ElementsDataHelper
     static function importElement(string $elementID, string $containerID = null, ImportContext $context, array $options = []): ?string
     {
         $app = App::get();
-        //$app->logs->log('debug', 'ElementsDataHelper::importElement - ' . $elementID . ' - ' . $containerID . ' - ' . print_r($options, true));
 
         $isExecuteMode = $context->isExecuteMode();
 
@@ -1660,8 +1648,6 @@ class ElementsDataHelper
      */
     static function importElementFromFile(string $filename, string $containerID, array $target = null): ?string
     {
-        //$app = App::get();
-        //$app->logs->log('debug', 'ElementsDataHelper::importElementFromFile - ' . $containerID);
         $result = self::executeImportElementFromFile($filename, false, $containerID, $target);
         if (isset($result['results'], $result['results'][0], $result['results'][0]['result']) && is_string($result['results'][0]['result'])) {
             return $result['results'][0]['result'];

@@ -486,8 +486,6 @@ class ElementsHelper
      */
     static function getElementStyleOptions(string $elementID, string $containerID): ?array
     {
-        //$app = App::get();
-        //$app->logs->log('debug', 'ElementsHelper::getElementStyleOptions - ' . $elementID . ' - ' . $containerID);
         $elementType = null;
         $elementData = InternalDataElements::getElement($elementID);
         if (is_array($elementData) && isset($elementData['type'])) {
@@ -543,7 +541,6 @@ class ElementsHelper
     static function setElementStyleValues(string $elementID, string $containerID, array $values): void
     {
         $app = App::get();
-        //$app->logs->log('debug', 'ElementsHelper::setElementStyleValues - ' . $elementID . ' - ' . $containerID . "\n" . print_r($values, true));
         $elementType = null;
         $isStructural = false;
         $elementData = InternalDataElements::getElement($elementID);

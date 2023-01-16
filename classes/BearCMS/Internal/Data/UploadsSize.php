@@ -26,8 +26,6 @@ class UploadsSize
      */
     static function add(string $key, int $size): void
     {
-        //$app = App::get();
-        //$app->logs->log('debug', 'UploadsSize::add - ' . $key . ' - ' . $size);
         $data = self::getData();
         $data[$key] = $size;
         self::setData($data);
@@ -41,8 +39,6 @@ class UploadsSize
      */
     static function remove(string $key): void
     {
-        //$app = App::get();
-        //$app->logs->log('debug', 'UploadsSize::remove - ' . $key);
         $data = self::getData();
         if (isset($data[$key])) {
             unset($data[$key]);

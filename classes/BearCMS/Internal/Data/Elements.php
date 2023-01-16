@@ -199,7 +199,6 @@ class Elements
      */
     static function getContainer(string $containerID, bool $createIfMissing = false): ?array
     {
-        $app = App::get();
         $container = InternalData::getValue(self::getContainerDataKey($containerID));
         if (!$createIfMissing && $container === null) {
             return null;
@@ -207,7 +206,6 @@ class Elements
         $data = $container !== null ? json_decode($container, true) : [];
         if (!isset($data['elements'])) {
             $data['elements'] = [];
-        } else {
         }
         if (!is_array($data['elements'])) {
             throw new \Exception('');
