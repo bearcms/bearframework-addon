@@ -92,7 +92,7 @@ class Pages
                 if ($pageID === 'home') {
                     $pageType = 'home';
                 } elseif ($contextLanguage !== '' && $request->path->getSegment(1) === null) {
-                    $pageType = 'languageHome';
+                    $pageType = 'language-home';
                 } else {
                     $pageType = 'other';
                 }
