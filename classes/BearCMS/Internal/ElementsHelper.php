@@ -150,7 +150,12 @@ class ElementsHelper
 
         $attributes = '';
 
+        $defaultElementStyle = ElementsDataHelper::getDefaultElementStyle('columns');
         $elementStyle = isset($elementContainerData['style']) && is_array($elementContainerData['style']) ? $elementContainerData['style'] : [];
+        if (serialize($defaultElementStyle) === serialize($elementStyle)) {
+            $elementStyle = []; // no need to render customizations code
+        }
+        $hasStyle = !empty($elementStyle);
 
         $layout = isset($elementStyle['layout']) ? $elementStyle['layout'] : null;
         $layoutValueDetails = $layout !== null ? Themes::getValueDetails($layout) : null;
@@ -187,7 +192,6 @@ class ElementsHelper
                 self::$editorData[] = ['columns', $elementContainerData['id'], $contextData];
             }
             if ($outputType === 'full-html') {
-                $hasStyle = !empty($elementStyle);
                 $classAttributeValue = 'bearcms-element bearcms-columns-element';
                 if ($hasStyle) {
                     $classAttributeValue .= ' ' . ElementsHelper::getCustomizationsClassName($elementContainerData['id']);
@@ -261,7 +265,12 @@ class ElementsHelper
 
         $attributes = '';
 
+        $defaultElementStyle = ElementsDataHelper::getDefaultElementStyle('floatingBox');
         $elementStyle = isset($elementContainerData['style']) && is_array($elementContainerData['style']) ? $elementContainerData['style'] : [];
+        if (serialize($defaultElementStyle) === serialize($elementStyle)) {
+            $elementStyle = []; // no need to render customizations code
+        }
+        $hasStyle = !empty($elementStyle);
 
         $layout = isset($elementStyle['layout']) ? $elementStyle['layout'] : null;
         $layoutValueDetails = $layout !== null ? Themes::getValueDetails($layout) : null;
@@ -294,7 +303,6 @@ class ElementsHelper
                 self::$editorData[] = ['floatingBox', $elementContainerData['id'], $contextData];
             }
             if ($outputType === 'full-html') {
-                $hasStyle = !empty($elementStyle);
                 $classAttributeValue = 'bearcms-element bearcms-floating-box-element';
                 if ($hasStyle) {
                     $classAttributeValue .= ' ' . ElementsHelper::getCustomizationsClassName($elementContainerData['id']);
@@ -359,7 +367,12 @@ class ElementsHelper
         $attributes = '';
 
         $canStyle = isset($contextData['canStyle']) && $contextData['canStyle'] === 'true';
+        $defaultElementStyle = ElementsDataHelper::getDefaultElementStyle('flexibleBox');
         $elementStyle = isset($elementContainerData['style']) && is_array($elementContainerData['style']) ? $elementContainerData['style'] : [];
+        if (serialize($defaultElementStyle) === serialize($elementStyle)) {
+            $elementStyle = []; // no need to render customizations code
+        }
+        $hasStyle = $canStyle && !empty($elementStyle);
 
         $linkURL = isset($elementContainerData['data'], $elementContainerData['data']['url']) ? $elementContainerData['data']['url'] : null;
         $linkTitle = $linkURL !== null && isset($elementContainerData['data'], $elementContainerData['data']['title']) ? $elementContainerData['data']['title'] : null;
@@ -385,7 +398,6 @@ class ElementsHelper
                 self::$editorData[] = ['flexibleBox', $elementContainerData['id'], $contextData];
             }
             if ($outputType === 'full-html') {
-                $hasStyle = $canStyle && !empty($elementStyle);
                 $classAttributeValue = 'bearcms-element bearcms-flexible-box-element';
                 if ($hasStyle) {
                     $classAttributeValue .= ' ' . ElementsHelper::getCustomizationsClassName($elementContainerData['id']);

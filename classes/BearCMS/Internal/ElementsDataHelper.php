@@ -524,7 +524,6 @@ class ElementsDataHelper
             } else {
                 $result['elements'] = isset($elementContainerData['data'], $elementContainerData['data']['elements']) ? $elementContainerData['data']['elements'] : [];
             }
-
             if (isset($elementContainerData['style'])) {
                 $result['style'] = $elementContainerData['style'];
             } else {
