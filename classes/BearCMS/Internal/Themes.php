@@ -782,23 +782,47 @@ class Themes
             if (isset($statesTypes[$name])) {
                 $stateType = $statesTypes[$name];
                 if ($stateType === 'size') {
+                    $deprecated = [
+                        'minWidth' => 'min-width',
+                        'maxWidth' => 'max-width',
+                        'minHeight' => 'min-height',
+                        'maxHeight' => 'max-height',
+                    ];
+                    foreach ($deprecated as $oldKey => $newKey) {
+                        if (isset($args[$oldKey])) {
+                            $args[$newKey] = $args[$oldKey];
+                            unset($args[$oldKey]);
+                        }
+                    }
                     $tempResponsiveAttributesValue = [];
-                    if (isset($args['minWidth'])) {
-                        $tempResponsiveAttributesValue[] = 'w>' . $args['minWidth'];
+                    if (isset($args['min-width'])) {
+                        $tempResponsiveAttributesValue[] = 'w>' . $args['min-width'];
                     }
-                    if (isset($args['maxWidth'])) {
-                        $tempResponsiveAttributesValue[] = 'w<=' . $args['maxWidth'];
+                    if (isset($args['max-width'])) {
+                        $tempResponsiveAttributesValue[] = 'w<=' . $args['max-width'];
                     }
-                    if (isset($args['minHeight'])) {
-                        $tempResponsiveAttributesValue[] = 'h>' . $args['minHeight'];
+                    if (isset($args['min-height'])) {
+                        $tempResponsiveAttributesValue[] = 'h>' . $args['min-height'];
                     }
-                    if (isset($args['maxHeight'])) {
-                        $tempResponsiveAttributesValue[] = 'h<=' . $args['maxHeight'];
+                    if (isset($args['max-height'])) {
+                        $tempResponsiveAttributesValue[] = 'h<=' . $args['max-height'];
                     }
                     if (!empty($tempResponsiveAttributesValue)) {
                         $responsiveAttributesRules[] = [implode('&&', $tempResponsiveAttributesValue)];
                     }
                 } else if ($stateType === 'screenSize') {
+                    $deprecated = [
+                        'minWidth' => 'min-width',
+                        'maxWidth' => 'max-width',
+                        'minHeight' => 'min-height',
+                        'maxHeight' => 'max-height',
+                    ];
+                    foreach ($deprecated as $oldKey => $newKey) {
+                        if (isset($args[$oldKey])) {
+                            $args[$newKey] = $args[$oldKey];
+                            unset($args[$oldKey]);
+                        }
+                    }
                     $tempCssValue = [];
                     $tempResponsiveAttributesValue = [];
                     if (isset($args['small'])) {
@@ -813,21 +837,21 @@ class Themes
                         $tempCssValue[] = '(min-width:1000px)';
                         $tempResponsiveAttributesValue[] = 'vw>1000';
                     } else {
-                        if (isset($args['minWidth'])) {
-                            $tempCssValue[] = '(min-width:' . $args['minWidth'] . 'px)';
-                            $tempResponsiveAttributesValue[] = 'vw>' . $args['minWidth'];
+                        if (isset($args['min-width'])) {
+                            $tempCssValue[] = '(min-width:' . $args['min-width'] . 'px)';
+                            $tempResponsiveAttributesValue[] = 'vw>' . $args['min-width'];
                         }
-                        if (isset($args['maxWidth'])) {
-                            $tempCssValue[] = '(max-width:' . $args['maxWidth'] . 'px)';
-                            $tempResponsiveAttributesValue[] = 'vw<=' . $args['maxWidth'];
+                        if (isset($args['max-width'])) {
+                            $tempCssValue[] = '(max-width:' . $args['max-width'] . 'px)';
+                            $tempResponsiveAttributesValue[] = 'vw<=' . $args['max-width'];
                         }
-                        if (isset($args['minHeight'])) {
-                            $tempCssValue[] = '(min-height:' . $args['minHeight'] . 'px)';
-                            $tempResponsiveAttributesValue[] = 'vh>' . $args['minHeight'];
+                        if (isset($args['min-height'])) {
+                            $tempCssValue[] = '(min-height:' . $args['min-height'] . 'px)';
+                            $tempResponsiveAttributesValue[] = 'vh>' . $args['min-height'];
                         }
-                        if (isset($args['maxHeight'])) {
-                            $tempCssValue[] = '(max-height:' . $args['maxHeight'] . 'px)';
-                            $tempResponsiveAttributesValue[] = 'vh<=' . $args['maxHeight'];
+                        if (isset($args['max-height'])) {
+                            $tempCssValue[] = '(max-height:' . $args['max-height'] . 'px)';
+                            $tempResponsiveAttributesValue[] = 'vh<=' . $args['max-height'];
                         }
                     }
                     if (!empty($tempCssValue)) {
