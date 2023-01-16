@@ -63,13 +63,15 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
             columnsStyles[i] = (isFixedWidth ? 'flex:0 0 auto;width:' + columnWidth + ';' : 'flex:1 0 auto;max-width:calc(' + columnWidth + ' - (var(--bearcms-elements-spacing)*' + (columnsCount - 1) + '/' + columnsCount + '))') + ';';
         }
 
-        var selector = '.bearcms-columns-element[data-bearcms-columns-direction="horizontal"][data-bearcms-columns-widths="' + widths + '"]';
-
         var styles = '';
-        styles += selector + '{display:flex;flex-direction:row;gap:var(--bearcms-elements-spacing);}';
+        var emptySelectorPart = '';
         for (var i = 0; i < columnsCount; i++) {
-            styles += selector + '>div:nth-child(' + (i + 1) + '){' + columnsStyles[i] + '}';
+            styles += '.bearcms-columns-element[data-bearcms-columns-direction="horizontal"][data-bearcms-columns-widths="' + widths + '"]>div:nth-child(' + (i + 1) + '){' + columnsStyles[i] + '}';
+            styles += '.bearcms-columns-element[data-bearcms-columns-direction="vertical"]:not([data-rvr-editable])>div:nth-child(' + (i + 1) + '):empty{display:none;}';
+            styles += '.bearcms-columns-element[data-bearcms-columns-direction="vertical-reverse"]:not([data-rvr-editable])>div:nth-child(' + (i + 1) + '):empty{display:none;}';
+            emptySelectorPart += ':has(> div:nth-child(' + (i + 1) + '):empty)';
         }
+        styles += '.bearcms-columns-element[data-bearcms-columns-widths="' + widths + '"]:not([data-rvr-editable])' + emptySelectorPart + '{display:none;}';
 
         addCSS(styles);
 

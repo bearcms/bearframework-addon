@@ -227,10 +227,14 @@ class ElementsHelper
                     $columnsStyles[$i] = ($isFixedWidth ? 'flex:0 0 auto;width:' . $columnWidth . ';' : 'flex:1 0 auto;max-width:calc(' . $columnWidth . ' - (var(--bearcms-elements-spacing)*' . ($columnsCount - 1) . '/' . $columnsCount . '))') . ';';
                 }
 
-                $selector = '.bearcms-columns-element[data-bearcms-columns-direction="horizontal"][data-bearcms-columns-widths="' . htmlentities($widths) . '"]';
+                $emptySelectorPart = '';
                 foreach ($columnsStyles as $index => $columnStyle) {
-                    $styles .= $selector . '>div:nth-child(' . ($index + 1) . '){' . $columnStyle . '}';
+                    $styles .= '.bearcms-columns-element[data-bearcms-columns-direction="horizontal"][data-bearcms-columns-widths="' . htmlentities($widths) . '"]>div:nth-child(' . ($index + 1) . '){' . $columnStyle . '}';
+                    $styles .= '.bearcms-columns-element[data-bearcms-columns-direction="vertical"]:not([data-rvr-editable])>div:nth-child(' . ($index + 1) . '):empty{display:none;}';
+                    $styles .= '.bearcms-columns-element[data-bearcms-columns-direction="vertical-reverse"]:not([data-rvr-editable])>div:nth-child(' . ($index + 1) . '):empty{display:none;}';
+                    $emptySelectorPart .= ':has(> div:nth-child(' . ($index + 1) . '):empty)';
                 }
+                $styles .= '.bearcms-columns-element[data-bearcms-columns-widths="' . htmlentities($widths) . '"]:not([data-rvr-editable])' . $emptySelectorPart . '{display:none;}';
             }
         }
         $content = '<html>';
@@ -312,7 +316,10 @@ class ElementsHelper
                 $attributes .= ' data-bearcms-floating-box-width="' . htmlentities($width) . '"';
                 $attributes .= ' class="' . $classAttributeValue . '"';
 
+                $styles .= '.bearcms-floating-box-element:not([data-rvr-editable]):has(> div:first-child:empty):has(> div:last-child:empty){display:none;}';
                 $styles .= '.bearcms-floating-box-element>div:first-child{max-width:100%;}';
+                $styles .= '.bearcms-floating-box-element:not([data-rvr-editable])>div:first-child:empty{display:none;}';
+                $styles .= '.bearcms-floating-box-element:not([data-rvr-editable])>div:last-child:empty{display:none;}';
                 $styles .= '.bearcms-floating-box-element[data-bearcms-floating-box-position="left"]>div:first-child{float:left;margin-right:var(--bearcms-elements-spacing);margin-left:0;}';
                 $styles .= '.bearcms-floating-box-element[data-bearcms-floating-box-position="right"]>div:first-child{float:right;margin-left:var(--bearcms-elements-spacing);margin-right:0;}';
                 $styles .= '.bearcms-floating-box-element[data-bearcms-floating-box-position="above"]{display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}';
@@ -405,10 +412,11 @@ class ElementsHelper
                 }
                 $attributes .= ' class="' . $classAttributeValue . '"';
 
-                $styles = '.bearcms-flexible-box-element{position:relative;box-sizing:border-box;display:flex;flex-direction:column;}';
+                $styles .= '.bearcms-flexible-box-element{position:relative;box-sizing:border-box;display:flex;flex-direction:column;}';
+                $styles .= '.bearcms-flexible-box-element:not([data-rvr-editable]):has(> div:empty){display:none;}';
                 $styles .= '.bearcms-flexible-box-element>a{width:100%;height:100%;position:absolute;top:0;left:0;display:block;}';
                 $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-link]:not([data-rvr-editable])>div{pointer-events:none;}';
-                $styles .= '.bearcms-flexible-box-element>div{flex:1 1 auto;display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}'; // Must be here when canStyle=false
+                $styles .= '.bearcms-flexible-box-element>div{display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}'; // Must be here when canStyle=false
                 $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="vertical-reverse"]>div{flex-direction:column-reverse;}';
                 $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="horizontal"]>div{flex-direction:row;flex-wrap:wrap;align-items:flex-start;}';
                 $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="horizontal-reverse"]>div{flex-direction:row-reverse;flex-wrap:wrap;align-items:flex-start;}';
