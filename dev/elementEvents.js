@@ -18,7 +18,7 @@ bearCMS.elementEvents = bearCMS.elementEvents || (function () {
 
         var dispatchEvent = function (element, eventName) {
             var handler = element.getAttribute('data-bearcms-event-' + eventName);
-            if (handler !== null && handler !== null) {
+            if (handler !== null && handler !== '') {
                 try {
                     var f = new Function(handler);
                     f.apply(element);
@@ -72,19 +72,26 @@ bearCMS.elementEvents = bearCMS.elementEvents || (function () {
             }
         };
 
+        var initialized = false;
         var initialize = function () {
+            if (initialized) {
+                return;
+            }
+            initialized = true;
             if (typeof MutationObserver !== 'undefined') {
                 var observer = new MutationObserver(function () {
                     run();
                 });
                 observer.observe(document.querySelector('body'), { childList: true, subtree: true });
             }
-            run();
         };
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initialize);
-        } else {
+        document.addEventListener('readystatechange', () => { // interactive or complete
             initialize();
+            run();
+        });
+        if (document.readyState === 'complete') {
+            initialize();
+            run();
         }
     } else {
         var run = function () { };
