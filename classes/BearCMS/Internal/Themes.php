@@ -781,7 +781,7 @@ class Themes
         foreach ($parts as $name => $args) {
             if (isset($statesTypes[$name])) {
                 $stateType = $statesTypes[$name];
-                if ($stateType === 'elementSize') {
+                if ($stateType === 'size') {
                     $tempResponsiveAttributesValue = [];
                     if (isset($args['minWidth'])) {
                         $tempResponsiveAttributesValue[] = 'w>' . $args['minWidth'];
@@ -957,7 +957,7 @@ class Themes
         ];
 
         $supportedStates = [ // type => default id
-            'elementSize' => 'element-size',
+            'size' => 'size',
             'screenSize' => 'screen-size',
             'pageType' => 'page-type',
             'hover' => 'hover',

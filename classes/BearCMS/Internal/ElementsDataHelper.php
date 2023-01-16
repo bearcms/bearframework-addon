@@ -513,7 +513,7 @@ class ElementsDataHelper
         $getAutoVerticalWidthState = function (string $autoVerticalWidth, $value) {
             $autoVerticalWidthInPx = strpos($autoVerticalWidth, 'px') !== false ? (int)str_replace('px', '', $autoVerticalWidth) : null;
             if ($autoVerticalWidthInPx !== null) {
-                return [':element-size(maxWidth=' . $autoVerticalWidthInPx . ')', $value];
+                return [':size(maxWidth=' . $autoVerticalWidthInPx . ')', $value];
             }
             return null;
         };
@@ -551,7 +551,7 @@ class ElementsDataHelper
                         $result['style']['autoVerticalWidth'] = 'none';
                     }
                 } else {
-                    $result['style']['layout'] = "{\"value\":{\"direction\":\"horizontal\",\"widths\":\";\"},\"states\":[[\":element-size(maxWidth=500)\",{\"direction\":\"vertical\"}]]}";
+                    $result['style']['layout'] = "{\"value\":{\"direction\":\"horizontal\",\"widths\":\";\"},\"states\":[[\":size(maxWidth=500)\",{\"direction\":\"vertical\"}]]}";
                 }
             }
             if (!isset($result['style']['layout'])) {
@@ -602,7 +602,7 @@ class ElementsDataHelper
                         $result['style']['autoVerticalWidth'] = 'none';
                     }
                 } else {
-                    $result['style']['layout'] = "{\"value\":{\"position\":\"left\",\"width\":\"50%\"},\"states\":[[\":element-size(maxWidth=500)\",{\"position\":\"above\"}]]}";
+                    $result['style']['layout'] = "{\"value\":{\"position\":\"left\",\"width\":\"50%\"},\"states\":[[\":size(maxWidth=500)\",{\"position\":\"above\"}]]}";
                 }
             }
             if (!isset($result['style']['layout'])) {

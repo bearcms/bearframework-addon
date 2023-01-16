@@ -103,7 +103,7 @@ class ElementsTypes
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $options->addOption($idPrefix . "HeadingCSS", "css", '', [
-                            "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/elementSizeState", "*/screenSizeState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))),
+                            "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/sizeState", "*/screenSizeState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))),
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element-large", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                 ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
@@ -174,7 +174,7 @@ class ElementsTypes
                         $customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
                     }
                     $optionsGroup->addOption($idPrefix . "TextCSS", "css", '', [
-                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/elementSizeState", "*/screenSizeState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))),
+                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/sizeState", "*/screenSizeState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))),
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-text-element", "box-sizing:border-box;"],
                             ["rule", $parentSelector . " .bearcms-text-element ul", "list-style-position:inside;margin:0;padding:0;"],
@@ -232,7 +232,7 @@ class ElementsTypes
                     }
 
                     $optionsGroup->addOption($idPrefix . "LinkCSS", "css", '', [
-                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/elementSizeState", "*/screenSizeState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
+                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/sizeState", "*/screenSizeState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-link-element a", "text-decoration:none;box-sizing:border-box;display:inline-block;"],
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element a"]
@@ -379,7 +379,7 @@ class ElementsTypes
 
                     $optionsGroup->addOption($idPrefix . "ImageCSS", "css", '', [
                         "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
-                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/elementSizeState", "*/screenSizeState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
+                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/sizeState", "*/screenSizeState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-image-element", "overflow:hidden;"],
                             ["rule", $parentSelector . " .bearcms-image-element img", "border:0;"],
@@ -1180,7 +1180,7 @@ class ElementsTypes
                 $defaultValue = ElementsDataHelper::getDefaultElementStyle('columns');
                 $optionsGroup->addOption($idPrefix . "layout", "columnsLayout", '', [
                     "states" => [
-                        ["type" => "elementSize"],
+                        ["type" => "size"],
                         ["type" => "screenSize"]
                     ],
                     "attributesOutput" => [
@@ -1209,7 +1209,7 @@ class ElementsTypes
                 $defaultValue = ElementsDataHelper::getDefaultElementStyle('floatingBox');
                 $optionsGroup->addOption($idPrefix . "layout", "floatingBoxLayout", '', [
                     "states" => [
-                        ["type" => "elementSize"],
+                        ["type" => "size"],
                         ["type" => "screenSize"]
                     ],
                     "attributesOutput" => [
@@ -1238,7 +1238,7 @@ class ElementsTypes
                 $defaultValue = ElementsDataHelper::getDefaultElementStyle('flexibleBox');
                 $optionsGroup->addOption($idPrefix . "layout", "flexibleBoxLayout", '', [
                     "states" => [
-                        ["type" => "elementSize"],
+                        ["type" => "size"],
                         ["type" => "screenSize"]
                     ],
                     "attributesOutput" => [
@@ -1258,7 +1258,7 @@ class ElementsTypes
                 ]);
                 $optionsGroup->addOption($idPrefix . "css", "css", '', [
                     "cssTypes" => ["cssMargin", "cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                    "cssOptions" => ["*/hoverState", "*/activeState", "*/viewportEnterState", "*/presentState", "*/screenSizeState"], // , "*/elementSizeState", 
+                    "cssOptions" => ["*/hoverState", "*/activeState", "*/viewportEnterState", "*/presentState", "*/screenSizeState"], // , "*/sizeState", 
                     "cssOutput" => [
                         ["selector", $parentSelector]
                     ]
