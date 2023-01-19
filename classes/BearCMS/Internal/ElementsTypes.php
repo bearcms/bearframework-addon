@@ -103,7 +103,7 @@ class ElementsTypes
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $options->addOption($idPrefix . "HeadingCSS", "css", '', [
-                            "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/sizeState", "*/screenSizeState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))),
+                            "cssOptions" => ["*/hoverState", "*/activeState", "*/sizeState", "*/screenSizeState"],
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element-large", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                 ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
