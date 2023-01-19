@@ -1258,23 +1258,21 @@ class ElementsTypes
                 ]);
                 $optionsGroup->addOption($idPrefix . "css", "css", '', [
                     "cssTypes" => ["cssMargin", "cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
-                    "cssOptions" => ["*/hoverState", "*/activeState", "*/viewportEnterState", "*/presentState", "*/screenSizeState"], // , "*/sizeState", 
+                    "cssOptions" => ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState"],
                     "cssOutput" => [
                         ["selector", $parentSelector]
-                    ]
+                    ],
+                    "attributesOutput" => [
+                        ["selector", $parentSelector]
+                    ],
                 ]);
                 $options->addOption($idPrefix . "code", "code", '', [
                     "states" => [
-                        ["type" => "hover"],
-                        ["type" => "active"],
-                        ["type" => "viewportEnter"],
-                        ["type" => "viewportLeave"],
-                        ["type" => "present"]
+                        ["type" => "visibility"],
                     ],
                     "attributesOutput" => [
-                        ["selector", $parentSelector, 'data-bearcms-event']
-                    ],
-                    "elementType" => "heading"
+                        ["selector", $parentSelector],
+                    ]
                 ]);
             };
         }

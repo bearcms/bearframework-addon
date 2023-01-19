@@ -767,16 +767,19 @@ class Themes
      * @param string $state
      * @param array $statesTypes
      * @param string $selector
+     * @param int $optionIndex
+     * @param int|null $stateIndex
      * @return array
      */
-    static function getStateOutputCode(string $state, array $statesTypes, string $selector): array
+    static function getStateOutputCode(string $state, array $statesTypes, string $selector, int $optionIndex, int $stateIndex = null): array
     {
-        $cssMediaQueries = []; // array of strings
-        $additionalCSSSelectors = []; // array of strings
+        $cssMediaQueries = []; // array of array of strings
+        $additionalCSSSelectors = []; // array of array of strings
         $responsiveAttributesRules = [];
+        $attributes = [];
         $cssStates = '';
         $unsupportedStates = '';
-        $result = ['cssRules' => [], 'responsiveAttributes' => []];
+        $result = ['cssRules' => [], 'responsiveAttributes' => [], 'attributes' => []];
         $parts = self::getStateCombinationDetails($state);
         foreach ($parts as $name => $args) {
             if (isset($statesTypes[$name])) {
@@ -794,21 +797,26 @@ class Themes
                             unset($args[$oldKey]);
                         }
                     }
-                    $tempResponsiveAttributesValue = [];
+                    $responsiveAttributeRule = [];
                     if (isset($args['min-width'])) {
-                        $tempResponsiveAttributesValue[] = 'w>' . $args['min-width'];
+                        $responsiveAttributeRule[] = 'w>' . $args['min-width'];
                     }
                     if (isset($args['max-width'])) {
-                        $tempResponsiveAttributesValue[] = 'w<=' . $args['max-width'];
+                        $responsiveAttributeRule[] = 'w<=' . $args['max-width'];
                     }
                     if (isset($args['min-height'])) {
-                        $tempResponsiveAttributesValue[] = 'h>' . $args['min-height'];
+                        $responsiveAttributeRule[] = 'h>' . $args['min-height'];
                     }
                     if (isset($args['max-height'])) {
-                        $tempResponsiveAttributesValue[] = 'h<=' . $args['max-height'];
+                        $responsiveAttributeRule[] = 'h<=' . $args['max-height'];
                     }
-                    if (!empty($tempResponsiveAttributesValue)) {
-                        $responsiveAttributesRules[] = [implode('&&', $tempResponsiveAttributesValue)];
+                    if (!empty($responsiveAttributeRule)) {
+                        $responsiveAttributeRule = implode('&&', $responsiveAttributeRule);
+                        $attributeKey = 'bearcms-' . $optionIndex . '-' . $stateIndex . '-sz';
+                        $cssStates .= '[data-' . $attributeKey . ']';
+                        $responsiveAttributesRules[] = [$responsiveAttributeRule];
+                        $attributes['data-responsive-attributes'] = '*';
+                        $attributes['data-responsive-attributes-' . $attributeKey] = $responsiveAttributeRule . '=>data-' . $attributeKey;
                     }
                 } else if ($stateType === 'screenSize') {
                     $deprecated = [
@@ -823,55 +831,67 @@ class Themes
                             unset($args[$oldKey]);
                         }
                     }
-                    $tempCssValue = [];
-                    $tempResponsiveAttributesValue = [];
+                    $cssMediaQuery = [];
+                    $responsiveAttributeRule = [];
                     if (isset($args['small'])) {
-                        $tempCssValue[] = '(max-width:600px)';
-                        $tempResponsiveAttributesValue[] = 'vw<=600';
+                        $cssMediaQuery[] = '(max-width:600px)';
+                        $responsiveAttributeRule[] = 'vw<=600';
                     } elseif (isset($args['medium'])) {
-                        $tempCssValue[] = '(min-width:600px)';
-                        $tempCssValue[] = '(max-width:1000px)';
-                        $tempResponsiveAttributesValue[] = 'vw>600';
-                        $tempResponsiveAttributesValue[] = 'vw<=1000';
+                        $cssMediaQuery[] = '(min-width:600px)';
+                        $cssMediaQuery[] = '(max-width:1000px)';
+                        $responsiveAttributeRule[] = 'vw>600';
+                        $responsiveAttributeRule[] = 'vw<=1000';
                     } elseif (isset($args['large'])) {
-                        $tempCssValue[] = '(min-width:1000px)';
-                        $tempResponsiveAttributesValue[] = 'vw>1000';
+                        $cssMediaQuery[] = '(min-width:1000px)';
+                        $responsiveAttributeRule[] = 'vw>1000';
                     } else {
                         if (isset($args['min-width'])) {
-                            $tempCssValue[] = '(min-width:' . $args['min-width'] . 'px)';
-                            $tempResponsiveAttributesValue[] = 'vw>' . $args['min-width'];
+                            $cssMediaQuery[] = '(min-width:' . $args['min-width'] . 'px)';
+                            $responsiveAttributeRule[] = 'vw>' . $args['min-width'];
                         }
                         if (isset($args['max-width'])) {
-                            $tempCssValue[] = '(max-width:' . $args['max-width'] . 'px)';
-                            $tempResponsiveAttributesValue[] = 'vw<=' . $args['max-width'];
+                            $cssMediaQuery[] = '(max-width:' . $args['max-width'] . 'px)';
+                            $responsiveAttributeRule[] = 'vw<=' . $args['max-width'];
                         }
                         if (isset($args['min-height'])) {
-                            $tempCssValue[] = '(min-height:' . $args['min-height'] . 'px)';
-                            $tempResponsiveAttributesValue[] = 'vh>' . $args['min-height'];
+                            $cssMediaQuery[] = '(min-height:' . $args['min-height'] . 'px)';
+                            $responsiveAttributeRule[] = 'vh>' . $args['min-height'];
                         }
                         if (isset($args['max-height'])) {
-                            $tempCssValue[] = '(max-height:' . $args['max-height'] . 'px)';
-                            $tempResponsiveAttributesValue[] = 'vh<=' . $args['max-height'];
+                            $cssMediaQuery[] = '(max-height:' . $args['max-height'] . 'px)';
+                            $responsiveAttributeRule[] = 'vh<=' . $args['max-height'];
                         }
                     }
-                    if (!empty($tempCssValue)) {
-                        $cssMediaQueries[] = [implode(' and ', $tempCssValue)];
+                    if (!empty($cssMediaQuery)) {
+                        $cssMediaQueries[] = [implode(' and ', $cssMediaQuery)];
                     }
-                    if (!empty($tempResponsiveAttributesValue)) {
-                        $responsiveAttributesRules[] = [implode('&&', $tempResponsiveAttributesValue)];
+                    if (!empty($responsiveAttributeRule)) {
+                        $responsiveAttributesRules[] = [implode('&&', $responsiveAttributeRule)];
                     }
                 } else if ($stateType === 'pageType') {
-                    $tempCssValue = [];
-                    $tempResponsiveAttributesValue = [];
+                    $cssSelectors = [];
+                    $responsiveAttributeRule = [];
                     foreach ($args as $argName => $argValue) {
-                        $tempCssValue[] = 'html[data-bearcms-page-type="' . $argName . '"]';
-                        $tempResponsiveAttributesValue[] = 'q(html[data-bearcms-page-type="' . $argName . '"])';
+                        $cssSelectors[] = 'html[data-bearcms-page-type="' . $argName . '"]';
+                        $responsiveAttributeRule[] = 'q(html[data-bearcms-page-type="' . $argName . '"])';
                     }
-                    if (!empty($tempCssValue)) {
-                        $additionalCSSSelectors[] = $tempCssValue;
+                    if (!empty($cssSelectors)) {
+                        $additionalCSSSelectors[] = $cssSelectors;
                     }
-                    if (!empty($tempResponsiveAttributesValue)) {
-                        $responsiveAttributesRules[] = $tempResponsiveAttributesValue;
+                    if (!empty($responsiveAttributeRule)) {
+                        $responsiveAttributesRules[] = $responsiveAttributeRule;
+                    }
+                } else if ($stateType === 'visibility') {
+                    $cssSelectors = [];
+                    foreach ($args as $argName => $argValue) {
+                        $cssSelectors[] = '[data-bearcms-vs-' . $argName . ']';
+                    }
+                    if (!empty($cssSelectors)) {
+                        $cssSelectors = implode('', $cssSelectors);
+                        $cssStates .= $cssSelectors;
+                        $responsiveAttributesRules[] = ['q(' . $selector . $cssSelectors . ')'];
+                        $attributes['data-bearcms-visibility-change'] = '*';
+                        $attributes['data-bearcms-visibility-change-' . $optionIndex . '-' . $stateIndex] = 'bearCMS.elementEvents.updateVisibilityAttributes(this,event,' . json_encode(array_keys($args)) . ')';
                     }
                 } else if (array_search($stateType, ['hover', 'focus', 'active', 'firstChild', 'lastChild', 'checked']) !== false) {
                     $cssStates .= ':' . $name;
@@ -912,7 +932,7 @@ class Themes
         if (empty($additionalCSSSelectorsCombinations)) {
             $additionalCSSSelectorsCombinations[] = [];
         }
-        foreach ($cssMediaQueriesCombinations as $cssMediaQueryCombinations) {
+        foreach ($cssMediaQueriesCombinations as $cssMediaQueryCombinations) { // todo use is() someday when there is more support
             foreach ($additionalCSSSelectorsCombinations as $additionalCssSelectorCombinations) {
                 $result['cssRules'][] = [implode(' and ', $cssMediaQueryCombinations), (!empty($additionalCssSelectorCombinations) ? implode(' ', $additionalCssSelectorCombinations) . ' ' : '') . $selector . $cssStates . $unsupportedStates];
             }
@@ -923,6 +943,8 @@ class Themes
         foreach ($responsiveAttributesRulesCombinations as $responsiveAttributesRulesCombination) {
             $result['responsiveAttributes'][] = implode('&&', $responsiveAttributesRulesCombination);
         }
+
+        $result['attributes'] = $attributes;
 
         return $result;
     }
@@ -990,9 +1012,7 @@ class Themes
             'firstChild' => 'first-child',
             'lastChild' => 'last-child',
             'checked' => 'checked',
-            'viewportEnter' => 'viewport-enter',
-            'viewportLeave' => 'viewport-leave',
-            'present' => 'present', // visible for first time
+            'visibility' => 'visibility'
         ];
 
         $updateFontFamily = function (string $fontName) use ($webSafeFonts, &$details, &$linkTags): string {
@@ -1023,9 +1043,15 @@ class Themes
             $cssRules[$mediaQuery][$selector] .= $value;
         };
 
-        $addAttribute = function (string $selector, string $name, string $value) use (&$attributes): void {
+        $addAttribute = function (string $selector, string $name, string $value) use (&$attributes, &$hasResponsiveAttributes, &$hasEventAttributes): void {
             if (!isset($attributes[$selector])) {
                 $attributes[$selector] = [];
+            }
+            if ($name === 'data-responsive-attributes') {
+                $hasResponsiveAttributes = true;
+            }
+            if ($name === 'data-bearcms-visibility-change' || $name === 'data-bearcms-load') {
+                $hasEventAttributes = true;
             }
             $attributes[$selector][$name] = $value;
         };
@@ -1076,8 +1102,8 @@ class Themes
             return $result;
         };
 
-        $walkOptions = function ($options) use (&$addCSSRule, &$cssCode, &$addAttribute, &$walkOptions, &$addAssetDetails, &$hasResponsiveAttributes, &$hasEventAttributes, &$replaceVariables, &$getCSSRuleValue, $supportedStates) {
-            foreach ($options as $option) {
+        $walkOptions = function ($options) use (&$addCSSRule, &$cssCode, &$addAttribute, &$walkOptions, &$addAssetDetails, &$replaceVariables, &$getCSSRuleValue, $supportedStates) {
+            foreach ($options as $optionIndex => $option) {
                 if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                     //$value = isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value'], JSON_THROW_ON_ERROR) : $option->details['value']) : null; // array not used ???
                     $value = isset($option->details['value']) ? $option->details['value'] : (isset($option->details['defaultValue']) ? $option->details['defaultValue'] : null);
@@ -1086,6 +1112,9 @@ class Themes
                     if ($optionType === 'cssCode') {
                         $cssCode .= trim($valueDetails['value']);
                     } else {
+                        $isCssOptionType = substr($optionType, 0, 3) === 'css';
+                        $isCodeOptionType = $optionType === 'code';
+
                         if ($optionType === 'image' || $optionType === 'css' || $optionType === 'cssBackground') {
                             foreach ($valueDetails['files'] as $filename) {
                                 $addAssetDetails($filename);
@@ -1120,11 +1149,11 @@ class Themes
                                         if ($cssRuleValue !== '') {
                                             $addCSSRule('', $selector, $cssRuleValue);
                                         }
-                                        foreach ($valueDetails['states'] as $stateData) {
+                                        foreach ($valueDetails['states'] as $stateIndex => $stateData) {
                                             $stateValue = $stateData[1];
                                             $cssRuleValue = $valueDefinition !== null ? $replaceVariables($valueDefinition, $stateValue, $valueDetails['value']) : $getCSSRuleValue($stateValue);
                                             if ($cssRuleValue !== '') {
-                                                $stateOutputCode = self::getStateOutputCode($stateData[0], $statesTypes, $selector);
+                                                $stateOutputCode = self::getStateOutputCode($stateData[0], $statesTypes, $selector, $optionIndex, $stateIndex);
                                                 foreach ($stateOutputCode['cssRules'] as $cssRuleToAdd) {
                                                     $addCSSRule($cssRuleToAdd[0], $cssRuleToAdd[1], $cssRuleValue);
                                                 }
@@ -1137,7 +1166,7 @@ class Themes
                             }
                         }
                         if (isset($option->details['attributesOutput'])) {
-                            $getResponsiveAttributeValue = function ($attributes) use ($valueDetails, $statesTypes, $replaceVariables) {
+                            $getResponsiveAttributeValue = function ($attributes) use ($valueDetails, $statesTypes, $replaceVariables, $optionIndex) {
                                 $result = [];
                                 $getAttributesToSet = function ($value) use ($attributes): array {
                                     if (!is_array($attributes)) {
@@ -1152,70 +1181,85 @@ class Themes
                                 foreach ($attributesToSet as $attributeName => $attributeValue) {
                                     $result[] = '1=>' . $attributeName . '=' . $replaceVariables($attributeValue, $valueDetails['value']);
                                 }
-                                foreach ($valueDetails['states'] as $stateData) {
-                                    $stateOutputCode = self::getStateOutputCode($stateData[0], $statesTypes, '');
+                                foreach ($valueDetails['states'] as $stateIndex => $stateData) {
                                     $stateValue = $stateData[1];
                                     $attributesToSet = $getAttributesToSet($stateValue);
-                                    foreach ($attributesToSet as $attributeName => $attributeValue) {
-                                        foreach ($stateOutputCode['responsiveAttributes'] as $expression) {
-                                            $result[] = $expression . '=>' . $attributeName . '=' . $replaceVariables($attributeValue, $stateValue, $valueDetails['value']);
+                                    if (!empty($attributesToSet)) {
+                                        $stateOutputCode = self::getStateOutputCode($stateData[0], $statesTypes, '', $optionIndex, $stateIndex);
+                                        foreach ($attributesToSet as $attributeName => $attributeValue) {
+                                            foreach ($stateOutputCode['responsiveAttributes'] as $expression) {
+                                                $result[] = $expression . '=>' . $attributeName . '=' . $replaceVariables($attributeValue, $stateValue, $valueDetails['value']);
+                                            }
                                         }
                                     }
                                 }
                                 return implode(',', $result);
                             };
-                            $getEventAttributes = function ($attributeName) use ($valueDetails, $statesTypes, $replaceVariables) {
-
-                                $attributeSuffixes = [
-                                    'viewportEnter' => 'viewport-enter',
-                                    'viewportLeave' => 'viewport-leave',
-                                    'present' => 'present'
-                                ];
-
+                            $getCodeEventsAttributes = function () use ($valueDetails, $statesTypes, $optionIndex) {
                                 $result = [];
-
-                                $addAttribute = function (string $name, $value) use (&$result) {
-                                    $value = trim((string)$value);
-                                    if (isset($value[0])) {
-                                        $result[$name] = $value;
-                                    }
-                                };
-
-                                $addAttribute($attributeName . '-load', $valueDetails['value']);
+                                $loadCode = trim($valueDetails['value']);
+                                if (isset($loadCode[0])) {
+                                    $result['data-bearcms-load'] = '*';
+                                    $result['data-bearcms-load-' . $optionIndex] = $loadCode;
+                                }
+                                $visibilityData = [];
                                 foreach ($valueDetails['states'] as $stateData) {
-                                    $stateName = trim($stateData[0], ':');
-                                    $stateValue = $stateData[1];
-                                    if (isset($statesTypes[$stateName])) {
-                                        $stateType = $statesTypes[$stateName];
-                                        if (isset($attributeSuffixes[$stateType])) {
-                                            $addAttribute($attributeName . '-' . $attributeSuffixes[$stateType], $stateValue);
+                                    $stateDetails = self::getStateCombinationDetails($stateData[0]);
+                                    foreach ($stateDetails as $stateName => $stateArgs) {
+                                        $stateValue = trim($stateData[1]);
+                                        if (isset($stateValue[0], $statesTypes[$stateName])) {
+                                            $stateType = $statesTypes[$stateName];
+                                            if ($stateType === 'visibility') {
+                                                $visibilityData[] = [array_keys($stateArgs), $stateValue];
+                                            }
                                         }
                                     }
+                                }
+                                if (!empty($visibilityData)) {
+                                    $visibilityDataAsJSON = json_encode($visibilityData);
+                                    $result['data-bearcms-visibility-change'] = '*';
+                                    $result['data-bearcms-visibility-change-' . $optionIndex] = "bearCMS.elementEvents.executeVisibilityCode(this,event," . $visibilityDataAsJSON . ");";
                                 }
                                 return $result;
                             };
                             foreach ($option->details['attributesOutput'] as $outputDefinition) {
-                                if (is_array($outputDefinition) && isset($outputDefinition[0], $outputDefinition[1], $outputDefinition[2]) && $outputDefinition[0] === 'selector') {
+                                if (is_array($outputDefinition) && isset($outputDefinition[0], $outputDefinition[1]) && $outputDefinition[0] === 'selector') {
                                     $selector = $outputDefinition[1];
-                                    $attributeName = $outputDefinition[2];
+                                    $attributeName = isset($outputDefinition[2]) ? $outputDefinition[2] : null;
                                     $valueDefinition = isset($outputDefinition[3]) ? $outputDefinition[3] : '{value}';
-                                    $isResponsiveAttribute = strpos($attributeName, 'data-responsive-attributes') === 0;
-                                    if ($isResponsiveAttribute) {
-                                        // $valueDefinition must be an array in the format: [value=>[attribute1=>value1, attribute2=>value2]], value can be * to match any value
-                                        if (strpos($attributeName, 'data-responsive-attributes-') === 0) {
-                                            $addAttribute($selector, 'data-responsive-attributes', '*');
-                                        }
-                                        $addAttribute($selector, $attributeName, $getResponsiveAttributeValue($valueDefinition));
-                                        $hasResponsiveAttributes = true;
-                                    } else {
-                                        $isEventAttribute = strpos($attributeName, 'data-bearcms-event') === 0;
-                                        if ($isEventAttribute) {
-                                            $attributesToAdd = $getEventAttributes($attributeName);
+
+                                    if ($attributeName === null) {
+                                        if ($isCssOptionType) {
+                                            foreach ($valueDetails['states'] as $stateIndex => $stateData) {
+                                                $stateValue = $stateData[1];
+                                                if (empty($stateValue)) {
+                                                    continue;
+                                                }
+                                                $stateOutputCode = self::getStateOutputCode($stateData[0], $statesTypes, $selector, $optionIndex, $stateIndex);
+                                                foreach ($stateOutputCode['attributes'] as $attributeName => $attributeValue) {
+                                                    $addAttribute($selector, $attributeName, $attributeValue);
+                                                }
+                                            }
+                                        } elseif ($isCodeOptionType) {
+                                            $attributesToAdd = $getCodeEventsAttributes();
                                             foreach ($attributesToAdd as $attributeToAddName => $attributeToAddValue) {
                                                 $addAttribute($selector, $attributeToAddName, $attributeToAddValue);
                                             }
-                                            $hasEventAttributes = true;
+                                        }
+                                    } else {
+                                        if (strpos($attributeName, 'data-responsive-attributes') === 0) {
+                                            if ($isCssOptionType || $isCodeOptionType) {
+                                                throw new \Exception('Not supported yet!');
+                                            }
+                                            // $valueDefinition must be an array in the format: [value=>[attribute1=>value1, attribute2=>value2]], value can be * to match any value
+                                            if (strpos($attributeName, 'data-responsive-attributes-') === 0) {
+                                                $addAttribute($selector, 'data-responsive-attributes', '*');
+                                            }
+                                            $addAttribute($selector, $attributeName, $getResponsiveAttributeValue($valueDefinition));
                                         } else {
+                                            if ($isCodeOptionType) {
+                                                throw new \Exception('Not supported yet!');
+                                            }
                                             // $valueDefinition must be null or variable ({value}, {cssPropertyValue()}, etc.)
                                             $addAttribute($selector, $attributeName, $replaceVariables($valueDefinition, $valueDetails['value']));
                                         }
@@ -1276,7 +1320,7 @@ class Themes
             $html .= '<link rel="client-packages-embed" name="responsiveAttributes">';
         }
         if ($hasEventAttributes) {
-            $html .= '<link rel="client-packages-embed" name="-bearcms-element-events">'; // todo
+            $html .= '<link rel="client-packages-embed" name="-bearcms-element-events">';
         }
 
         if ($html !== '') {

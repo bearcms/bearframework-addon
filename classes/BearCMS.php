@@ -803,8 +803,12 @@ class BearCMS
                 if (!empty(Internal\ElementsHelper::$editorData)) {
                     $app = App::get();
                     $context = $app->contexts->get(__DIR__);
-                    //$htmlToInsert[] = ['source' => '<html><head><script>' . file_get_contents(__DIR__ . '/../dev/elementsEditor.js') . '</script></head></html>']; // dev mode
-                    $htmlToInsert[] = ['source' => '<html><head><script src="' . $context->assets->getURL('assets/elementsEditor.min.js', ['cacheMaxAge' => 999999999, 'version' => 5]) . '"></head></html>'];
+                    $html = '';
+                    //$html .= '<script>' . file_get_contents(__DIR__ . '/../dev/elementsEditor.js') . '</script>'; // dev mode
+                    $html .= '<script src="' . $context->assets->getURL('assets/elementsEditor.min.js', ['cacheMaxAge' => 999999999, 'version' => 5]) . '">';
+                    $html .= '<link rel="client-packages-embed" name="responsiveAttributes">'; // may be needed when customizing elements
+                    $html .= '<link rel="client-packages-embed" name="-bearcms-element-events">'; // may be needed when customizing elements
+                    $htmlToInsert[] = ['source' => '<html><head>' . $html . '</head></html>'];
                 }
                 $htmlToInsert[] = ['source' => '<html><head><link rel="client-packages"></head></html>']; // used by ServerCommands to update content
                 $document->insertHTMLMulti($htmlToInsert);
