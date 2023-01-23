@@ -1197,7 +1197,7 @@ class Themes
                             };
                             $getCodeEventsAttributes = function () use ($valueDetails, $statesTypes, $optionIndex) {
                                 $result = [];
-                                $loadCode = trim($valueDetails['value']);
+                                $loadCode = trim((string)$valueDetails['value']);
                                 if (isset($loadCode[0])) {
                                     $result['data-bearcms-load'] = '*';
                                     $result['data-bearcms-load-' . $optionIndex] = $loadCode;
@@ -1206,7 +1206,7 @@ class Themes
                                 foreach ($valueDetails['states'] as $stateData) {
                                     $stateDetails = self::getStateCombinationDetails($stateData[0]);
                                     foreach ($stateDetails as $stateName => $stateArgs) {
-                                        $stateValue = trim($stateData[1]);
+                                        $stateValue = trim((string)$stateData[1]);
                                         if (isset($stateValue[0], $statesTypes[$stateName])) {
                                             $stateType = $statesTypes[$stateName];
                                             if ($stateType === 'visibility') {
