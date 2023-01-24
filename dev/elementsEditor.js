@@ -145,17 +145,31 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
     var styleEditorOpen = function (element) { // called by the CMS
     };
 
+    var forceUpdateAttributes = function () {
+        try {
+            responsiveAttributes.run();
+        } catch (e) {
+
+        }
+        try {
+            bearCMS.elementEvents.run();
+        } catch (e) {
+
+        }
+    };
     var styleEditorChange = function (element) { // called by the CMS
         if (isColumnsElement(element)) {
+            forceUpdateAttributes();
             updateColumnsStyle(element);
         } else if (isFloatingBoxElement(element)) {
+            forceUpdateAttributes();
             updateFloatingBoxStyle(element);
         }
     };
 
     var styleEditorClose = function (element) { // called by the CMS
-
         if (isColumnsElement(element)) {
+            forceUpdateAttributes();
             // Remove original column indexes
             var originalColumnKey = 'data-bearcms-columns-original-column-index';
             var elements = element.querySelectorAll('[' + originalColumnKey + ']');
