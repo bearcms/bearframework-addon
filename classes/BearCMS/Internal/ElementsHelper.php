@@ -416,7 +416,7 @@ class ElementsHelper
                 $styles .= '.bearcms-flexible-box-element:not([data-rvr-editable]):has(> div:empty){display:none;}';
                 $styles .= '.bearcms-flexible-box-element>a{width:100%;height:100%;position:absolute;top:0;left:0;display:block;}';
                 $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-link]:not([data-rvr-editable])>div{pointer-events:none;}';
-                $styles .= '.bearcms-flexible-box-element>div{display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}'; // Must be here when canStyle=false
+                $styles .= '.bearcms-flexible-box-element>div{display:flex;flex:1 1 auto;flex-direction:column;gap:var(--bearcms-elements-spacing);}'; // Must be here when canStyle=false // flex:1 1 auto; is needed to fill the container when there is height specified
                 $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="vertical-reverse"]>div{flex-direction:column-reverse;}';
                 $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="horizontal"]>div{flex-direction:row;flex-wrap:wrap;align-items:flex-start;}';
                 $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="horizontal-reverse"]>div{flex-direction:row-reverse;flex-wrap:wrap;align-items:flex-start;}';
