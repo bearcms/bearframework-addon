@@ -123,7 +123,7 @@ $options
     ->addOption("textCSS", "cssText", __("bearcms.themes.themeone.options.DefaultText"), [
         "cssOptions" => ["cssText/defaultState", "cssText/fontFamilyProperty", "cssText/colorProperty", "cssText/fontWeightProperty", "cssText/fontStyleProperty", "cssText/fontSizeProperty", "cssText/lineHeightProperty", "cssText/letterSpacingProperty"],
         "cssOutput" => [
-            ["selector", ":root", "--bearcms-template-text-font-family:{cssPropertyValue(font-family)};"],
+            ["selector", ":root", "--bearcms-template-text-font-family:{cssPropertyValue(font-family,Arial,fontName)};"],
             ["selector", ":root", "--bearcms-template-text-color:{cssPropertyValue(color)};"],
             ["selector", ":root", "--bearcms-template-text-font-weight:{cssPropertyValue(font-weight)};"],
             ["selector", ":root", "--bearcms-template-text-font-style:{cssPropertyValue(font-style)};"],
@@ -145,7 +145,7 @@ $options
     ->addOption("accentTextCSS", "cssText", __("bearcms.themes.themeone.options.AccentText"), [
         "cssOptions" => ["cssText/defaultState", "cssText/fontFamilyProperty", "cssText/colorProperty", "cssText/fontWeightProperty", "cssText/fontStyleProperty", "cssText/fontSizeProperty", "cssText/lineHeightProperty", "cssText/letterSpacingProperty"],
         "cssOutput" => [
-            ["selector", ":root", "--bearcms-template-accent-text-font-family:{cssPropertyValue(font-family)};"],
+            ["selector", ":root", "--bearcms-template-accent-text-font-family:{cssPropertyValue(font-family,Arial,fontName)};"],
             ["selector", ":root", "--bearcms-template-accent-text-color:{cssPropertyValue(color)};"],
             ["selector", ":root", "--bearcms-template-accent-text-font-weight:{cssPropertyValue(font-weight)};"],
             ["selector", ":root", "--bearcms-template-accent-text-font-style:{cssPropertyValue(font-style)};"],

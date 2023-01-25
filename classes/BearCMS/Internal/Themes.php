@@ -275,7 +275,7 @@ class Themes
             foreach (self::$pagesOptions as $key => $value) {
                 $pagesOptionsEnvKeyData[] = $key . (is_array($value) ? '$' . $value[0] : '');
             }
-            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v11'));
+            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v12'));
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID);
@@ -1056,7 +1056,7 @@ class Themes
             $attributes[$selector][$name] = $value;
         };
 
-        $replaceVariables = function (string $content, $value, $defaultValue = '') {
+        $replaceVariables = function (string $content, $value, $defaultValue = '') use ($updateFontFamily) {
             $search = [];
             $replace = [];
             for ($mode = 0; $mode < 2; $mode++) {
@@ -1079,8 +1079,17 @@ class Themes
                         $args = explode(',', $isEncodedMode ? rawurldecode($args) : $args);
                         $propertyName = trim($args[0]);
                         $propertyDefaultValue = isset($args[1]) ? trim($args[1]) : '';
+                        $propertyOptions = isset($args[2]) ? trim($args[2]) : '';
                         $search[] = $match;
                         $valueToSet = isset($valueAsArray[$propertyName]) ? $valueAsArray[$propertyName] : (isset($defaultValueAsArray[$propertyName]) ? $defaultValueAsArray[$propertyName] : $propertyDefaultValue);
+                        if (isset($propertyOptions[0])) {
+                            $propertyOptions = explode('|', $propertyOptions);
+                            foreach ($propertyOptions as $propertyOption) {
+                                if ($propertyOption === 'fontName') {
+                                    $valueToSet = $updateFontFamily($valueToSet);
+                                }
+                            }
+                        }
                         $replace[] = $isEncodedMode ? rawurlencode($valueToSet) : $valueToSet;
                     }
                 }
