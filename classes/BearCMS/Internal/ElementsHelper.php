@@ -202,6 +202,7 @@ class ElementsHelper
                 $attributes .= ' class="' . $classAttributeValue . '"';
 
                 $styles .= '.bearcms-columns-element{display:flex;flex-direction:row;gap:var(--bearcms-elements-spacing);}';
+                $styles .= '.bearcms-columns-element>div{display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}';
                 $styles .= '.bearcms-columns-element[data-bearcms-columns-direction="horizontal"]{flex-direction:row;}';
                 $styles .= '.bearcms-columns-element[data-bearcms-columns-direction="vertical"]{flex-direction:column;}';
                 $styles .= '.bearcms-columns-element[data-bearcms-columns-direction="vertical-reverse"]{flex-direction:column-reverse;}';
