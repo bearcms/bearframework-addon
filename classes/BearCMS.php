@@ -130,6 +130,7 @@ class BearCMS
 
             $this->app->clientPackages
                 ->add('-bearcms-elements-lazy-load', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                    // $package->addJSCode(file_get_contents(__DIR__ . '/../dev/elementsLazyLoad.js')); // dev mode
                     $package->addJSFile($this->context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 6]));
                     $package->get = 'bearCMS.elementsLazyLoad.initialize(' . json_encode([__('bearcms.elements.LoadingMore'), JSON_THROW_ON_ERROR]) . ');';
                 });
