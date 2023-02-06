@@ -10,6 +10,8 @@
 var bearCMS = bearCMS || {};
 bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
 
+    var actionsDone = [];
+
     var addedCSS = [];
     var addCSS = function (code) {
         if (addedCSS.indexOf(code) !== -1) {
@@ -41,41 +43,49 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
         var columnsWidths = widths.split(';');
         var columnsCount = columnsWidths.length;
 
-        var columnsStyles = [];
+        var actionID = 'css-columns-widths-' + widths;
+        if (actionsDone.indexOf(actionID) === -1) {
 
-        var notEmptyColumnsWidthsCalc = [];
-        var emptyColumnsWidths = 0;
-        for (var i = 0; i < columnsCount; i++) {
-            if (columnsWidths[i].length === 0) {
-                emptyColumnsWidths++;
-            } else {
-                notEmptyColumnsWidthsCalc.push(columnsWidths[i]);
+            var columnsStyles = [];
+
+            var notEmptyColumnsWidthsCalc = [];
+            var emptyColumnsWidths = 0;
+            for (var i = 0; i < columnsCount; i++) {
+                if (columnsWidths[i].length === 0) {
+                    emptyColumnsWidths++;
+                } else {
+                    notEmptyColumnsWidthsCalc.push(columnsWidths[i]);
+                }
             }
-        }
-        notEmptyColumnsWidthsCalc = notEmptyColumnsWidthsCalc.join(' + ');
+            notEmptyColumnsWidthsCalc = notEmptyColumnsWidthsCalc.join(' + ');
 
-        for (var i = 0; i < columnsCount; i++) {
-            var columnWidth = columnsWidths[i];
-            var isFixedWidth = columnWidth.indexOf('px') !== -1;
-            if (columnWidth.length === 0) {
-                columnWidth = (notEmptyColumnsWidthsCalc.length === 0 ? '100%' : '(100% - (' + notEmptyColumnsWidthsCalc + '))') + '/' + emptyColumnsWidths;
+            for (var i = 0; i < columnsCount; i++) {
+                var columnWidth = columnsWidths[i];
+                var isFixedWidth = columnWidth.indexOf('px') !== -1;
+                if (columnWidth.length === 0) {
+                    columnWidth = (notEmptyColumnsWidthsCalc.length === 0 ? '100%' : '(100% - (' + notEmptyColumnsWidthsCalc + '))') + '/' + emptyColumnsWidths;
+                }
+                columnsStyles[i] = isFixedWidth ? 'flex:0 0 auto;width:' + columnWidth + ';' : 'flex:1 0 auto;max-width:calc(' + columnWidth + ' - (var(--bearcms-elements-spacing)*' + (columnsCount - 1) + '/' + columnsCount + '));';
             }
-            columnsStyles[i] = (isFixedWidth ? 'flex:0 0 auto;width:' + columnWidth + ';' : 'flex:1 0 auto;max-width:calc(' + columnWidth + ' - (var(--bearcms-elements-spacing)*' + (columnsCount - 1) + '/' + columnsCount + '))') + ';';
+
+            var selectorPrefix = '.bearcms-columns-element[data-bearcms-columns-widths="' + widths + '"]';
+            var notEditableSelector = ':not([data-rvr-editable])';
+
+            var styles = '';
+            var emptySelectorPart = '';
+            for (var i = 0; i < columnsCount; i++) {
+                styles += selectorPrefix + '[data-bearcms-columns-direction="horizontal"]>div:nth-child(' + (i + 1) + '){' + columnsStyles[i] + '}';
+                styles += selectorPrefix + '[data-bearcms-columns-direction="vertical"]' + notEditableSelector + '>div:nth-child(' + (i + 1) + '):empty{display:none;}';
+                styles += selectorPrefix + '[data-bearcms-columns-direction="vertical-reverse"]' + notEditableSelector + '>div:nth-child(' + (i + 1) + '):empty{display:none;}';
+                emptySelectorPart += ':has(> div:nth-child(' + (i + 1) + '):empty)';
+            }
+            styles += selectorPrefix + notEditableSelector + emptySelectorPart + '{display:none;}';
+
+            addCSS(styles);
+            actionsDone.push(actionID);
         }
 
-        var styles = '';
-        var emptySelectorPart = '';
-        for (var i = 0; i < columnsCount; i++) {
-            styles += '.bearcms-columns-element[data-bearcms-columns-direction="horizontal"][data-bearcms-columns-widths="' + widths + '"]>div:nth-child(' + (i + 1) + '){' + columnsStyles[i] + '}';
-            styles += '.bearcms-columns-element[data-bearcms-columns-direction="vertical"]:not([data-rvr-editable])>div:nth-child(' + (i + 1) + '):empty{display:none;}';
-            styles += '.bearcms-columns-element[data-bearcms-columns-direction="vertical-reverse"]:not([data-rvr-editable])>div:nth-child(' + (i + 1) + '):empty{display:none;}';
-            emptySelectorPart += ':has(> div:nth-child(' + (i + 1) + '):empty)';
-        }
-        styles += '.bearcms-columns-element[data-bearcms-columns-widths="' + widths + '"]:not([data-rvr-editable])' + emptySelectorPart + '{display:none;}';
-
-        addCSS(styles);
-
-        var originalColumnKey = 'data-bearcms-columns-original-column-index';
+        var originalColumnKey = 'data-bearcms-columns-element-original-column-index';
 
         var columnsElements = element.childNodes;
 
@@ -128,6 +138,10 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
         if (width === null || width.length === 0) {
             width = '50%';
         }
+        var actionID = 'css-floating-box-width-' + width;
+        if (actionsDone.indexOf(actionID) !== -1) {
+            return;
+        }
         var styles = '';
         var positions = ['left', 'right'];
         for (var i = 0; i < positions.length; i++) {
@@ -140,12 +154,26 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
             }
         }
         addCSS(styles);
+        actionsDone.push(actionID);
     };
 
-    var styleEditorOpen = function (element) { // called by the CMS
-    };
+    var forceUpdateAttributesIfNeeded = function (elements) {
+        var update = false;
+        for (var i = 0; i < elements.length; i++) {
+            var element = elements[i];
+            if (isColumnsElement(element) || isFloatingBoxElement(element)) {
+                update = true;
+                break;
+            }
+        }
+        if (!update) {
+            return;
+        }
+        try {
+            cssToAttributes.run();
+        } catch (e) {
 
-    var forceUpdateAttributes = function () {
+        }
         try {
             responsiveAttributes.run();
         } catch (e) {
@@ -157,30 +185,35 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
 
         }
     };
-    var styleEditorChange = function (element) { // called by the CMS
-        if (isColumnsElement(element)) {
-            forceUpdateAttributes();
-            updateColumnsStyle(element);
-        } else if (isFloatingBoxElement(element)) {
-            forceUpdateAttributes();
-            updateFloatingBoxStyle(element);
+
+    var styleEditorChange = function (elements) { // called by the CMS
+        forceUpdateAttributesIfNeeded(elements);
+        for (var i = 0; i < elements.length; i++) {
+            var element = elements[i];
+            if (isColumnsElement(element)) {
+                updateColumnsStyle(element);
+            } else if (isFloatingBoxElement(element)) {
+                updateFloatingBoxStyle(element);
+            }
         }
     };
 
-    var styleEditorClose = function (element) { // called by the CMS
-        if (isColumnsElement(element)) {
-            forceUpdateAttributes();
-            // Remove original column indexes
-            var originalColumnKey = 'data-bearcms-columns-original-column-index';
-            var elements = element.querySelectorAll('[' + originalColumnKey + ']');
-            for (var i = 0; i < elements.length; i++) {
-                elements[i].removeAttribute(originalColumnKey);
+    var styleEditorClose = function (elements) { // called by the CMS
+        forceUpdateAttributesIfNeeded(elements);
+        for (var i = 0; i < elements.length; i++) {
+            var element = elements[i];
+            if (isColumnsElement(element)) {
+                // Remove original column indexes
+                var originalColumnKey = 'data-bearcms-columns-element-original-column-index';
+                var elements = element.querySelectorAll('[' + originalColumnKey + ']');
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].removeAttribute(originalColumnKey);
+                }
             }
         }
     };
 
     return {
-        'styleEditorOpen': styleEditorOpen,
         'styleEditorChange': styleEditorChange,
         'styleEditorClose': styleEditorClose,
     };

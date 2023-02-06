@@ -11,6 +11,7 @@ namespace BearCMS\Themes\Theme;
 
 use BearCMS\Internal\Themes;
 use BearCMS\Internal;
+use IvoPetkov\HTML5DOMDocument;
 
 /**
  * 
@@ -39,23 +40,15 @@ class Customizations
 
     /**
      * 
-     * @param array
-     */
-    private $attributes = [];
-
-    /**
-     * 
      * @param array $values
      * @param string $html
      * @param array $details
-     * @param array $attributes
      */
-    public function __construct(array $values = [], string $html = '', array $details = [], array $attributes = [])
+    public function __construct(array $values = [], string $html = '', array $details = [])
     {
         $this->values = $values;
         $this->html = $html;
         $this->details = $details;
-        $this->attributes = $attributes;
     }
 
     /**
@@ -137,9 +130,12 @@ class Customizations
     {
         $htmlData = [
             'html' => $this->html,
-            'attributes' => $this->attributes,
             'details' => $this->details
         ];
-        return Themes::processOptionsHTMLData($htmlData, $content);
+        $html = Internal\Themes::processOptionsHTMLData($htmlData);
+        $document = new HTML5DOMDocument();
+        $document->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
+        $document->insertHTML($html);
+        return $document->saveHTML();
     }
 }

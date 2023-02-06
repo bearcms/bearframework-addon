@@ -11,9 +11,7 @@ namespace BearCMS\Internal;
 
 use BearFramework\App;
 use BearCMS\Internal\Themes as InternalThemes;
-use BearCMS\Internal\Data as InternalData;
 use BearCMS\Internal\Data\Elements as InternalDataElements;
-use BearCMS\Internal\Data\UploadsSize;
 
 /**
  * @internal
@@ -150,104 +148,125 @@ class ElementsHelper
 
         $attributes = '';
 
-        $defaultElementStyle = ElementsDataHelper::getDefaultElementStyle('columns');
-        $elementStyle = isset($elementContainerData['style']) && is_array($elementContainerData['style']) ? $elementContainerData['style'] : [];
-        if (serialize($defaultElementStyle) === serialize($elementStyle)) {
-            $elementStyle = []; // no need to render customizations code
-        }
-        $hasStyle = !empty($elementStyle);
+        $elementID = $elementContainerData['id'];
+        $elementStyleID = isset($elementContainerData['styleID']) ? $elementContainerData['styleID'] : null;
+        $elementStyleValue = isset($elementContainerData['style']) ? $elementContainerData['style'] : null;
+        $defaultLayoutValue = ElementsDataHelper::getDefaultElementStyle('columns', true)['layout']['value'];
+        list($styleID, $styleValue) = ElementStylesHelper::getElementRealStyleData($elementStyleID, $elementStyleValue, ElementsDataHelper::getDefaultElementStyle('columns'));
 
-        $layout = isset($elementStyle['layout']) ? $elementStyle['layout'] : null;
-        $layoutValueDetails = $layout !== null ? Themes::getValueDetails($layout) : null;
-        $direction = $layout !== null && is_array($layoutValueDetails['value']) && isset($layoutValueDetails['value']['direction']) ? trim($layoutValueDetails['value']['direction']) : '';
-        if (!isset($direction[0])) {
-            $direction = 'horizontal';
-        }
-        $widths = $layout !== null && is_array($layoutValueDetails['value']) && isset($layoutValueDetails['value']['widths']) ? trim($layoutValueDetails['value']['widths']) : '';
-        if (!isset($widths[0])) {
-            $widths = ';';
-        }
+        $widths = ';';
+        if (is_array($styleValue) && isset($styleValue['layout'])) {
+            $widthsValues = InternalThemes::getValueCSSPropertyValues($styleValue['layout'], 'widths'); // must be only one
+            if (isset($widthsValues[0])) {
+                $widths = $widthsValues[0];
+            }
+        };
 
         $columnsWidths = explode(';', $widths);
         $columnsCount = sizeof($columnsWidths);
 
         $innerContent = '';
         $columnsElements = isset($elementContainerData['elements']) ? $elementContainerData['elements'] : [];
+        $extraColumns = array_filter(array_keys($columnsElements), function ($index) use ($columnsCount) {
+            return $index >= $columnsCount;
+        });
+        sort($extraColumns);
+        $lastColumnIndex = $columnsCount - 1;
         for ($i = 0; $i < $columnsCount; $i++) {
             $columnContent = '';
+            $addColumnsContent = function ($columnElementsData) use (&$columnContent, $editable, $contextData, $outputType) {
+                if (!empty($columnElementsData)) {
+                    $columnContent .= self::renderContainerElements($columnElementsData, $editable, $contextData, $outputType);
+                }
+            };
             if (isset($columnsElements[$i])) {
-                $elementsInColumnContainerData = $columnsElements[$i];
-                if (!empty($elementsInColumnContainerData)) {
-                    $columnContent .= self::renderContainerElements($elementsInColumnContainerData, $editable, $contextData, $outputType);
+                $addColumnsContent($columnsElements[$i]);
+            }
+            if ($lastColumnIndex === $i && !empty($extraColumns)) {
+                foreach ($extraColumns as $extraColumnIndex) {
+                    $addColumnsContent($columnsElements[$extraColumnIndex]);
                 }
             }
             $innerContent .= '<div>' . $columnContent . '</div>';
         }
 
-        $styles = '';
-        $customizationsSelector = null;
+        $content = '<html>'
+            . '<head>';
+
+        $styleSelector = null;
         if ($inContainer) {
             if ($editable) {
-                $attributes .= ' id="' . self::getHTMLElementID($elementContainerData['id']) . '"';
-                self::$editorData[] = ['columns', $elementContainerData['id'], $contextData];
+                $attributes .= ' id="' . self::getHTMLElementID($elementID) . '"';
+                self::$editorData[] = ['columns', $elementID, $contextData];
             }
             if ($outputType === 'full-html') {
                 $classAttributeValue = 'bearcms-element bearcms-columns-element';
-                if ($hasStyle) {
-                    $classAttributeValue .= ' ' . ElementsHelper::getCustomizationsClassName($elementContainerData['id']);
-                    $customizationsSelector = ElementsHelper::getCustomizationsSelector($elementContainerData['id']);
+                $styleSelector = ElementStylesHelper::getElementStyleSelector($elementID, $styleID);
+                if ($styleSelector !== null) {
+                    $classAttributeValue .= ' ' . ElementStylesHelper::getElementStyleClassName($elementID, $styleID);
                 }
-                $attributes .= ' data-bearcms-columns-direction="' . htmlentities($direction) . '"';
-                $attributes .= ' data-bearcms-columns-widths="' . htmlentities($widths) . '"';
                 $attributes .= ' class="' . $classAttributeValue . '"';
 
-                $styles .= '.bearcms-columns-element{display:flex;flex-direction:row;gap:var(--bearcms-elements-spacing);}';
-                $styles .= '.bearcms-columns-element>div{display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}';
-                $styles .= '.bearcms-columns-element[data-bearcms-columns-direction="horizontal"]{flex-direction:row;}';
-                $styles .= '.bearcms-columns-element[data-bearcms-columns-direction="vertical"]{flex-direction:column;}';
-                $styles .= '.bearcms-columns-element[data-bearcms-columns-direction="vertical-reverse"]{flex-direction:column-reverse;}';
-                $styles .= '.bearcms-columns-element[data-rvr-editable]>div{min-width:15px;}';
+                $content .= '<style>'
+                    . '.bearcms-columns-element{display:flex;flex-direction:row;gap:var(--bearcms-elements-spacing);--css-to-attribute-data-bearcms-columns-widths:' . InternalThemes::escapeCSSValue($defaultLayoutValue['widths']) . ';--css-to-attribute-data-bearcms-columns-direction:' . $defaultLayoutValue['direction'] . ';}'
+                    . '.bearcms-columns-element>div{display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}'
+                    . '.bearcms-columns-element[data-bearcms-columns-direction="horizontal"]{flex-direction:row;}'
+                    . '.bearcms-columns-element[data-bearcms-columns-direction="vertical"]{flex-direction:column;}'
+                    . '.bearcms-columns-element[data-bearcms-columns-direction="vertical-reverse"]{flex-direction:column-reverse;}'
+                    . ($editable ? '.bearcms-columns-element[data-rvr-editable]>div{min-width:15px;}' : '')
+                    . '</style>';
 
-                $columnsStyles = [];
-                $notEmptyColumnsWidthsCalc = [];
-                $emptyColumnsWidths = 0;
-                for ($i = 0; $i < $columnsCount; $i++) {
-                    if (strlen($columnsWidths[$i]) === 0) {
-                        $emptyColumnsWidths++;
-                    } else {
-                        $notEmptyColumnsWidthsCalc[] = $columnsWidths[$i];
+                $getWidthsCSS = function (string $widths) use ($editable): string {
+                    $result = '';
+                    $columnsWidths = explode(';', $widths);
+                    $columnsCount = sizeof($columnsWidths);
+                    $columnsStyles = [];
+                    $notEmptyColumnsWidthsCalc = [];
+                    $emptyColumnsWidths = 0;
+                    for ($i = 0; $i < $columnsCount; $i++) {
+                        if (strlen($columnsWidths[$i]) === 0) {
+                            $emptyColumnsWidths++;
+                        } else {
+                            $notEmptyColumnsWidthsCalc[] = $columnsWidths[$i];
+                        }
                     }
-                }
-                $notEmptyColumnsWidthsCalc = implode(' + ', $notEmptyColumnsWidthsCalc);
-                for ($i = 0; $i < $columnsCount; $i++) {
-                    $columnWidth = $columnsWidths[$i];
-                    $isFixedWidth = strpos($columnWidth, 'px') !== false;
-                    if (strlen($columnWidth) === 0) {
-                        $columnWidth = (strlen($notEmptyColumnsWidthsCalc) === 0 ? '100%' : '(100% - (' . $notEmptyColumnsWidthsCalc . '))') . '/' . $emptyColumnsWidths;
+                    $notEmptyColumnsWidthsCalc = implode(' + ', $notEmptyColumnsWidthsCalc);
+                    for ($i = 0; $i < $columnsCount; $i++) {
+                        $columnWidth = $columnsWidths[$i];
+                        $isFixedWidth = strpos($columnWidth, 'px') !== false;
+                        if (strlen($columnWidth) === 0) {
+                            $columnWidth = (strlen($notEmptyColumnsWidthsCalc) === 0 ? '100%' : '(100% - (' . $notEmptyColumnsWidthsCalc . '))') . '/' . $emptyColumnsWidths;
+                        }
+                        $columnsStyles[$i] = $isFixedWidth ? 'flex:0 0 auto;width:' . $columnWidth . ';' : 'flex:1 0 auto;max-width:calc(' . $columnWidth . ' - (var(--bearcms-elements-spacing)*' . ($columnsCount - 1) . '/' . $columnsCount . '));';
                     }
-                    $columnsStyles[$i] = ($isFixedWidth ? 'flex:0 0 auto;width:' . $columnWidth . ';' : 'flex:1 0 auto;max-width:calc(' . $columnWidth . ' - (var(--bearcms-elements-spacing)*' . ($columnsCount - 1) . '/' . $columnsCount . '))') . ';';
-                }
 
-                $emptySelectorPart = '';
-                foreach ($columnsStyles as $index => $columnStyle) {
-                    $styles .= '.bearcms-columns-element[data-bearcms-columns-direction="horizontal"][data-bearcms-columns-widths="' . htmlentities($widths) . '"]>div:nth-child(' . ($index + 1) . '){' . $columnStyle . '}';
-                    $styles .= '.bearcms-columns-element[data-bearcms-columns-direction="vertical"]:not([data-rvr-editable])>div:nth-child(' . ($index + 1) . '):empty{display:none;}';
-                    $styles .= '.bearcms-columns-element[data-bearcms-columns-direction="vertical-reverse"]:not([data-rvr-editable])>div:nth-child(' . ($index + 1) . '):empty{display:none;}';
-                    $emptySelectorPart .= ':has(> div:nth-child(' . ($index + 1) . '):empty)';
-                }
-                $styles .= '.bearcms-columns-element[data-bearcms-columns-widths="' . htmlentities($widths) . '"]:not([data-rvr-editable])' . $emptySelectorPart . '{display:none;}';
+                    $selectorPrefix = '.bearcms-columns-element[data-bearcms-columns-widths="' . InternalThemes::escapeCSSValue($widths, true) . '"]';
+                    $notEditableSelector = $editable ? ':not([data-rvr-editable])' : '';
+
+                    $emptySelectorPart = '';
+                    foreach ($columnsStyles as $index => $columnStyle) {
+                        $result .= $selectorPrefix . '[data-bearcms-columns-direction="horizontal"]>div:nth-child(' . ($index + 1) . '){' . $columnStyle . '}';
+                        $result .= $selectorPrefix . '[data-bearcms-columns-direction="vertical"]' . $notEditableSelector . '>div:nth-child(' . ($index + 1) . '):empty{display:none;}';
+                        $result .= $selectorPrefix . '[data-bearcms-columns-direction="vertical-reverse"]' . $notEditableSelector . '>div:nth-child(' . ($index + 1) . '):empty{display:none;}';
+                        $emptySelectorPart .= ':has(> div:nth-child(' . ($index + 1) . '):empty)';
+                    }
+                    $result .= $selectorPrefix . $notEditableSelector . $emptySelectorPart . '{display:none;}'; // if all columns are empty
+                    return $result;
+                };
+
+                $content .= '<style>'
+                    . $getWidthsCSS($widths)
+                    . '</style>';
             }
         }
-        $content = '<html>';
-        $content .= '<head><style>' . $styles . '</style></head>';
-        $content .= '<body>'
+        if ($styleSelector !== null) {
+            $content .= self::getStyleHTML('columns', $styleValue, $styleSelector, true);
+        }
+        $content .= '</head>'
+            . '<body>'
             . ($inContainer ? '<div' . $attributes . '>' . $innerContent . '</div>' : $innerContent)
             . '</body>'
             . '</html>';
-
-        if ($customizationsSelector !== null) {
-            $content = self::applyCustomizations($content, 'columns', $elementStyle, $customizationsSelector);
-        }
 
         return '<component src="data:base64,' . base64_encode($content) . '" />';
     }
@@ -270,23 +289,16 @@ class ElementsHelper
 
         $attributes = '';
 
-        $defaultElementStyle = ElementsDataHelper::getDefaultElementStyle('floatingBox');
-        $elementStyle = isset($elementContainerData['style']) && is_array($elementContainerData['style']) ? $elementContainerData['style'] : [];
-        if (serialize($defaultElementStyle) === serialize($elementStyle)) {
-            $elementStyle = []; // no need to render customizations code
-        }
-        $hasStyle = !empty($elementStyle);
+        $elementID = $elementContainerData['id'];
+        $elementStyleID = isset($elementContainerData['styleID']) ? $elementContainerData['styleID'] : null;
+        $elementStyleValue = isset($elementContainerData['style']) ? $elementContainerData['style'] : null;
+        $defaultLayoutValue = ElementsDataHelper::getDefaultElementStyle('floatingBox', true)['layout']['value'];
+        list($styleID, $styleValue) = ElementStylesHelper::getElementRealStyleData($elementStyleID, $elementStyleValue, ElementsDataHelper::getDefaultElementStyle('floatingBox'));
 
-        $layout = isset($elementStyle['layout']) ? $elementStyle['layout'] : null;
-        $layoutValueDetails = $layout !== null ? Themes::getValueDetails($layout) : null;
-        $position = $layout !== null && is_array($layoutValueDetails['value']) && isset($layoutValueDetails['value']['position']) ? trim($layoutValueDetails['value']['position']) : '';
-        if (!isset($position[0])) {
-            $position = 'left';
-        }
-        $width = $layout !== null && is_array($layoutValueDetails['value']) && isset($layoutValueDetails['value']['width']) ? trim($layoutValueDetails['value']['width']) : '';
-        if (!isset($width[0])) {
-            $width = '50%';
-        }
+        $widths = ['50%'];
+        if (is_array($styleValue) && isset($styleValue['layout'])) {
+            $widths = InternalThemes::getValueCSSPropertyValues($styleValue['layout'], 'width');
+        };
 
         $getElementsContent = function (string $location) use ($elementContainerData, $contextData, $editable, $outputType) {
             $content = '';
@@ -300,58 +312,70 @@ class ElementsHelper
         $innerContent = '<div>' . $getElementsContent('inside') . '</div>';
         $innerContent .= '<div>' . $getElementsContent('outside') . '</div>';
 
-        $styles = '';
-        $customizationsSelector = null;
+        $content = '<html>'
+            . '<head>';
+
+        $styleSelector = null;
         if ($inContainer) {
             if ($editable) {
-                $attributes .= ' id="' . self::getHTMLElementID($elementContainerData['id']) . '"';
-                self::$editorData[] = ['floatingBox', $elementContainerData['id'], $contextData];
+                $attributes .= ' id="' . self::getHTMLElementID($elementID) . '"';
+                self::$editorData[] = ['floatingBox', $elementID, $contextData];
             }
             if ($outputType === 'full-html') {
                 $classAttributeValue = 'bearcms-element bearcms-floating-box-element';
-                if ($hasStyle) {
-                    $classAttributeValue .= ' ' . ElementsHelper::getCustomizationsClassName($elementContainerData['id']);
-                    $customizationsSelector = ElementsHelper::getCustomizationsSelector($elementContainerData['id']);
+                $styleSelector = ElementStylesHelper::getElementStyleSelector($elementID, $styleID);
+                if ($styleSelector !== null) {
+                    $classAttributeValue .= ' ' . ElementStylesHelper::getElementStyleClassName($elementID, $styleID);
                 }
-                $attributes .= ' data-bearcms-floating-box-position="' . htmlentities($position) . '"';
-                $attributes .= ' data-bearcms-floating-box-width="' . htmlentities($width) . '"';
                 $attributes .= ' class="' . $classAttributeValue . '"';
 
-                $styles .= '.bearcms-floating-box-element:not([data-rvr-editable]):has(> div:first-child:empty):has(> div:last-child:empty){display:none;}';
-                $styles .= '.bearcms-floating-box-element>div:first-child{max-width:100%;}';
-                $styles .= '.bearcms-floating-box-element:not([data-rvr-editable])>div:first-child:empty{display:none;}';
-                $styles .= '.bearcms-floating-box-element:not([data-rvr-editable])>div:last-child:empty{display:none;}';
-                $styles .= '.bearcms-floating-box-element[data-bearcms-floating-box-position="left"]>div:first-child{float:left;margin-right:var(--bearcms-elements-spacing);margin-left:0;}';
-                $styles .= '.bearcms-floating-box-element[data-bearcms-floating-box-position="right"]>div:first-child{float:right;margin-left:var(--bearcms-elements-spacing);margin-right:0;}';
-                $styles .= '.bearcms-floating-box-element[data-bearcms-floating-box-position="above"]{display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}';
-                $styles .= '.bearcms-floating-box-element[data-bearcms-floating-box-position="above"]>div{width:100%;}';
-                $styles .= '.bearcms-floating-box-element[data-bearcms-floating-box-position="below"]{display:flex;flex-direction:column-reverse;gap:var(--bearcms-elements-spacing);}';
-                $styles .= '.bearcms-floating-box-element[data-bearcms-floating-box-position="below"]>div{width:100%;}';
-                $styles .= '.bearcms-floating-box-element>div:last-child{display:block;}';
-                $styles .= '.bearcms-floating-box-element[data-rvr-editable]>div:first-child{min-width:15px;}';
-                $styles .= '.bearcms-floating-box-element[data-bearcms-floating-box-position="left"]:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
-                $styles .= '.bearcms-floating-box-element[data-bearcms-floating-box-position="right"]:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
+                $notEditableSelector = $editable ? ':not([data-rvr-editable])' : '';
+                $content .= '<style>'
+                    . '.bearcms-floating-box-element{--css-to-attribute-data-bearcms-floating-box-position:' . $defaultLayoutValue['position'] . ';--css-to-attribute-data-bearcms-floating-box-width:' . $defaultLayoutValue['width'] . ';}'
+                    . '.bearcms-floating-box-element' . $notEditableSelector . ':has(> div:first-child:empty):has(> div:last-child:empty){display:none;}'
+                    . '.bearcms-floating-box-element>div:first-child{max-width:100%;}'
+                    . '.bearcms-floating-box-element' . $notEditableSelector . '>div:first-child:empty{display:none;}'
+                    . '.bearcms-floating-box-element' . $notEditableSelector . '>div:last-child:empty{display:none;}'
+                    . '.bearcms-floating-box-element[data-bearcms-floating-box-position="left"]>div:first-child{float:left;margin-right:var(--bearcms-elements-spacing);margin-left:0;}'
+                    . '.bearcms-floating-box-element[data-bearcms-floating-box-position="right"]>div:first-child{float:right;margin-left:var(--bearcms-elements-spacing);margin-right:0;}'
+                    . '.bearcms-floating-box-element[data-bearcms-floating-box-position="above"]{display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}'
+                    . '.bearcms-floating-box-element[data-bearcms-floating-box-position="above"]>div{width:100%;}'
+                    . '.bearcms-floating-box-element[data-bearcms-floating-box-position="below"]{display:flex;flex-direction:column-reverse;gap:var(--bearcms-elements-spacing);}'
+                    . '.bearcms-floating-box-element[data-bearcms-floating-box-position="below"]>div{width:100%;}'
+                    . '.bearcms-floating-box-element>div:last-child{display:block;}'
+                    . ($editable ? '.bearcms-floating-box-element[data-rvr-editable]>div:first-child{min-width:15px;}' : '')
+                    . '.bearcms-floating-box-element[data-bearcms-floating-box-position="left"]:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}'
+                    . '.bearcms-floating-box-element[data-bearcms-floating-box-position="right"]:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}'
+                    . '</style>';
 
-                foreach (['left', 'right'] as $selectorPosition) {
-                    $selector = '.bearcms-floating-box-element[data-bearcms-floating-box-position="' . $selectorPosition . '"][data-bearcms-floating-box-width="' . htmlentities($width) . '"]>div:first-child';
-                    if (preg_match("/^[0-9\.]*%$/", $width) === 1 && $width !== '100%') {
-                        $styles .= $selector . '{width:calc(' . $width . ' - var(--bearcms-elements-spacing)/2);}';
-                    } else {
-                        $styles .= $selector . '{width:' . $width . ';}';
+                $getWidthCSS = function (string $width) use ($editable): string {
+                    $result = '';
+                    foreach (['left', 'right'] as $selectorPosition) {
+                        $selector = '.bearcms-floating-box-element[data-bearcms-floating-box-position="' . $selectorPosition . '"][data-bearcms-floating-box-width="' . htmlentities($width) . '"]>div:first-child';
+                        if (preg_match("/^[0-9\.]*%$/", $width) === 1 && $width !== '100%') {
+                            $result .= $selector . '{width:calc(' . $width . ' - var(--bearcms-elements-spacing)/2);}';
+                        } else {
+                            $result .= $selector . '{width:' . $width . ';}';
+                        }
                     }
+                    return $result;
+                };
+
+                foreach ($widths as $width) {
+                    $content .= '<style>'
+                        . $getWidthCSS($width)
+                        . '</style>';
                 }
             }
         }
-        $content = '<html>';
-        $content .= '<head><style>' . $styles . '</style></head>';
-        $content .= '<body>'
+        if ($styleSelector !== null) {
+            $content .= self::getStyleHTML('floatingBox', $styleValue, $styleSelector, true);
+        }
+        $content .= '</head>'
+            . '<body>'
             . ($inContainer ? '<div' . $attributes . '>' . $innerContent . '</div>' : $innerContent)
             . '</body>'
             . '</html>';
-
-        if ($customizationsSelector !== null) {
-            $content = self::applyCustomizations($content, 'floatingBox', $elementStyle, $customizationsSelector);
-        }
 
         return '<component src="data:base64,' . base64_encode($content) . '" />';
     }
@@ -374,13 +398,12 @@ class ElementsHelper
 
         $attributes = '';
 
+        $elementID = $elementContainerData['id'];
         $canStyle = isset($contextData['canStyle']) && $contextData['canStyle'] === 'true';
-        $defaultElementStyle = ElementsDataHelper::getDefaultElementStyle('flexibleBox');
-        $elementStyle = isset($elementContainerData['style']) && is_array($elementContainerData['style']) ? $elementContainerData['style'] : [];
-        if (serialize($defaultElementStyle) === serialize($elementStyle)) {
-            $elementStyle = []; // no need to render customizations code
-        }
-        $hasStyle = $canStyle && !empty($elementStyle);
+        $elementStyleID = isset($elementContainerData['styleID']) ? $elementContainerData['styleID'] : null;
+        $elementStyleValue = isset($elementContainerData['style']) ? $elementContainerData['style'] : null;
+        $defaultLayoutValue = ElementsDataHelper::getDefaultElementStyle('flexibleBox', true)['layout']['value'];
+        list($styleID, $styleValue) = ElementStylesHelper::getElementRealStyleData($elementStyleID, $elementStyleValue, ElementsDataHelper::getDefaultElementStyle('flexibleBox'));
 
         $linkURL = isset($elementContainerData['data'], $elementContainerData['data']['url']) ? $elementContainerData['data']['url'] : null;
         $linkTitle = $linkURL !== null && isset($elementContainerData['data'], $elementContainerData['data']['title']) ? $elementContainerData['data']['title'] : null;
@@ -398,55 +421,60 @@ class ElementsHelper
             $innerContent .= '<a href="' . htmlentities($linkURL) . '"' . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '"' : '') . ($linkTitle !== null ? ' title="' . htmlentities($linkTitle) . '"' : '') . '></a>';
         }
 
-        $styles = '';
-        $customizationsSelector = null;
+        $content = '<html>'
+            . '<head>';
+
+        $styleSelector = null;
         if ($inContainer) {
             if ($editable) {
-                $attributes .= ' id="' . self::getHTMLElementID($elementContainerData['id']) . '"';
-                self::$editorData[] = ['flexibleBox', $elementContainerData['id'], $contextData];
+                $attributes .= ' id="' . self::getHTMLElementID($elementID) . '"';
+                self::$editorData[] = ['flexibleBox', $elementID, $contextData];
             }
             if ($outputType === 'full-html') {
                 $classAttributeValue = 'bearcms-element bearcms-flexible-box-element';
-                if ($hasStyle) {
-                    $classAttributeValue .= ' ' . ElementsHelper::getCustomizationsClassName($elementContainerData['id']);
-                    $customizationsSelector = ElementsHelper::getCustomizationsSelector($elementContainerData['id']);
+                if ($canStyle) {
+                    $styleSelector = ElementStylesHelper::getElementStyleSelector($elementID, $styleID);
+                    if ($styleSelector !== null) {
+                        $classAttributeValue .= ' ' . ElementStylesHelper::getElementStyleClassName($elementID, $styleID);
+                    }
                 }
                 $attributes .= ' class="' . $classAttributeValue . '"';
 
-                $styles .= '.bearcms-flexible-box-element{position:relative;box-sizing:border-box;display:flex;flex-direction:column;}';
-                $styles .= '.bearcms-flexible-box-element:not([data-rvr-editable]):has(> div:empty){display:none;}';
-                $styles .= '.bearcms-flexible-box-element>a{width:100%;height:100%;position:absolute;top:0;left:0;display:block;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-link]:not([data-rvr-editable])>div{pointer-events:none;}';
-                $styles .= '.bearcms-flexible-box-element>div{display:flex;flex:1 1 auto;flex-direction:column;gap:var(--bearcms-elements-spacing);}'; // Must be here when canStyle=false // flex:1 1 auto; is needed to fill the container when there is height specified
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="vertical-reverse"]>div{flex-direction:column-reverse;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="horizontal"]>div{flex-direction:row;flex-wrap:wrap;align-items:flex-start;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="horizontal-reverse"]>div{flex-direction:row-reverse;flex-wrap:wrap;align-items:flex-start;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="horizontal"]>div>div{min-width:15px;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="horizontal-reverse"]>div>div{min-width:15px;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="vertical"]>div>*{width:100%}'; // the default size when elements have margin-left/right=auto;
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="vertical-reverse"]>div>*{width:100%}'; // the default size when elements have margin-left/right=auto;
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-alignment="start"]>div{justify-content:flex-start;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-alignment="center"]>div{justify-content:center;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-alignment="end"]>div{justify-content:flex-end;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-alignment="space-between"]>div{justify-content:space-between;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-alignment="space-around"]>div{justify-content:space-around;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-alignment="space-evenly"]>div{justify-content:space-evenly;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-cross-alignment="start"]>div{align-items:flex-start;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-cross-alignment="center"]>div{align-items:center;}';
-                $styles .= '.bearcms-flexible-box-element[data-bearcms-flexible-box-cross-alignment="end"]>div{align-items:flex-end;}';
+                $notEditableSelector = $editable ? ':not([data-rvr-editable])' : '';
+                $content .= '<style>'
+                    . '.bearcms-flexible-box-element{position:relative;box-sizing:border-box;display:flex;flex-direction:column;--css-to-attribute-data-bearcms-flexible-box-direction:' . $defaultLayoutValue['direction'] . ';--css-to-attribute-data-bearcms-flexible-box-alignment:' . $defaultLayoutValue['alignment'] . ';}'
+                    . '.bearcms-flexible-box-element' . $notEditableSelector . ':has(> div:empty){display:none;}'
+                    . '.bearcms-flexible-box-element>a{width:100%;height:100%;position:absolute;top:0;left:0;display:block;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-link]' . $notEditableSelector . '>div{pointer-events:none;}'
+                    . '.bearcms-flexible-box-element>div{display:flex;flex:1 1 auto;flex-direction:column;gap:var(--bearcms-elements-spacing);}' // Must be here when canStyle=false // flex:1 1 auto; is needed to fill the container when there is height specified
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="vertical-reverse"]>div{flex-direction:column-reverse;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="horizontal"]>div{flex-direction:row;flex-wrap:wrap;align-items:flex-start;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="horizontal-reverse"]>div{flex-direction:row-reverse;flex-wrap:wrap;align-items:flex-start;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="horizontal"]>div>div{min-width:15px;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="horizontal-reverse"]>div>div{min-width:15px;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="vertical"]>div>*{width:100%}' // the default size when elements have margin-left/right=auto;
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="vertical-reverse"]>div>*{width:100%}' // the default size when elements have margin-left/right=auto;
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-alignment="start"]>div{justify-content:flex-start;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-alignment="center"]>div{justify-content:center;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-alignment="end"]>div{justify-content:flex-end;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-alignment="space-between"]>div{justify-content:space-between;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-alignment="space-around"]>div{justify-content:space-around;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-alignment="space-evenly"]>div{justify-content:space-evenly;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-cross-alignment="start"]>div{align-items:flex-start;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-cross-alignment="center"]>div{align-items:center;}'
+                    . '.bearcms-flexible-box-element[data-bearcms-flexible-box-cross-alignment="end"]>div{align-items:flex-end;}'
+                    . '</style>';
             }
         }
-        $content = '<html>';
-        $content .= '<head><style>' . $styles . '</style></head>';
-        $content .= '<body>'
+        if ($styleSelector !== null) {
+            $content .= self::getStyleHTML('flexibleBox', $styleValue, $styleSelector, true);
+        }
+        $content .= '</head>'
+            . '<body>'
             . ($inContainer ? '<div' . $attributes . '>' . $innerContent . '</div>' : $innerContent)
             . ($linkHTML !== null ? $linkHTML : '') // todo why cant be outsite the html??
             . '</body>'
             . '</html>';
-
-        if ($customizationsSelector !== null) {
-            $content = self::applyCustomizations($content, 'flexibleBox', $elementStyle, $customizationsSelector);
-        }
 
         return '<component src="data:base64,' . base64_encode($content) . '" />';
     }
@@ -489,180 +517,13 @@ class ElementsHelper
 
     /**
      * 
-     * @param string $elementID
-     * @param string $containerID
-     * @return array|null
-     */
-    static function getElementStyleOptions(string $elementID, string $containerID): ?array
-    {
-        $elementType = null;
-        $elementData = InternalDataElements::getElement($elementID);
-        if (is_array($elementData) && isset($elementData['type'])) {
-            $elementType = $elementData['type'];
-            $elementStyle = isset($elementData['style']) ? $elementData['style'] : [];
-            //$htmlElementID = self::getHTMLElementID($elementData['id']);
-        }
-        if ($elementType === null) {
-            $containerData = InternalDataElements::getContainer($containerID);
-            if (is_array($containerData)) {
-                $elementData = ElementsDataHelper::getContainerDataElement($containerData, $elementID, 'structural');
-                if (is_array($elementData)) {
-                    $elementType = $elementData['type'];
-                    $elementStyle = isset($elementData['style']) ? $elementData['style'] : [];
-                    //$htmlElementID = self::getHTMLElementID($elementData['id']);
-                }
-            }
-        }
-        if ($elementType !== null) {
-            if (isset(InternalThemes::$elementsOptions[$elementType])) {
-                Localization::setAdminLocale();
-                if ($elementType === 'flexibleBox') { // todo maybe add other structural here ???
-                    $themeID = null;
-                    $themeOptionsSelectors = null;
-                } else {
-                    $themeID = InternalThemes::getActiveThemeID();
-                    $themeOptionsSelectors = InternalThemes::getElementsOptionsSelectors($themeID, $elementType);
-                }
-                $options = new \BearCMS\Themes\Theme\Options();
-                $callback = InternalThemes::$elementsOptions[$elementType];
-                if (is_array($callback)) {
-                    $callback = $callback[1];
-                }
-                call_user_func($callback, $options, 'ElementStyle', self::getCustomizationsSelector($elementID), InternalThemes::OPTIONS_CONTEXT_ELEMENT, []);
-                $values = [];
-                foreach ($elementStyle as $name => $value) {
-                    $values['ElementStyle' . $name] = $value;
-                }
-                Localization::restoreLocale();
-                return [$options, $values, $themeID, $themeOptionsSelectors, $elementType];
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 
-     * @param string $elementID
-     * @param string $containerID
-     * @param array $values
-     * @return void
-     */
-    static function setElementStyleValues(string $elementID, string $containerID, array $values): void
-    {
-        $app = App::get();
-        $elementType = null;
-        $isStructural = false;
-        $elementData = InternalDataElements::getElement($elementID);
-        if (is_array($elementData) && isset($elementData['type'])) {
-            $elementType = $elementData['type'];
-            $oldElementStyle = isset($elementData['style']) ? $elementData['style'] : [];
-        }
-        if ($elementType === null) {
-            $containerData = InternalDataElements::getContainer($containerID);
-            if (is_array($containerData)) {
-                $elementData = ElementsDataHelper::getContainerDataElement($containerData, $elementID, 'structural');
-                if (is_array($elementData)) {
-                    $elementType = $elementData['type'];
-                    $oldElementStyle = isset($elementData['style']) ? $elementData['style'] : [];
-                    $isStructural = true;
-                }
-            }
-        }
-        if ($elementType !== null) {
-            $filesInOldStyle = InternalThemes::getFilesInValues($oldElementStyle);
-            $filesToDelete = [];
-            $newElementStyle = [];
-            foreach ($values as $key => $value) {
-                $value = trim($value);
-                if (strpos($key, 'ElementStyle') === 0 && strlen($value) > 0) {
-                    $optionKey = substr($key, strlen('ElementStyle'));
-                    if (!isset($newElementStyle[$optionKey]) || $newElementStyle[$optionKey] !== $value) {
-                        $newElementStyle[$optionKey] = $value;
-                    }
-                }
-            }
-            $filesInNewStyle = InternalThemes::getFilesInValues($newElementStyle, true);
-            $filesToUpdate = [];
-            $duplicatedDataKeys = [];
-            $filesToKeep = [];
-            foreach ($filesInNewStyle as $filename) {
-                $filenameOptions = InternalData::getFilenameOptions($filename);
-                $filenameWithoutOptions = InternalData::removeFilenameOptions($filename);
-                $dataKey = InternalData::getFilenameDataKey($filenameWithoutOptions);
-                if ($dataKey !== null && strpos($dataKey, '.temp/bearcms/files/elementstyleimage/') === 0) {
-                    $newDataKey = 'bearcms/files/elementstyleimage/' . pathinfo($dataKey, PATHINFO_BASENAME);
-                    if (!isset($duplicatedDataKeys[$dataKey])) {
-                        $app->data->duplicate($dataKey, $newDataKey);
-                        UploadsSize::add($newDataKey, filesize($app->data->getFilename($newDataKey)));
-                        $duplicatedDataKeys[$dataKey] = true;
-                    }
-                    $newFilenameWithOptions = InternalData::setFilenameOptions('data:' . $newDataKey, $filenameOptions);
-                    $filesToUpdate[$filename] = $newFilenameWithOptions;
-                    $filesToDelete[] = $filenameWithoutOptions;
-                } else {
-                    $filesToKeep[] = $filenameWithoutOptions;
-                }
-            }
-            $filesToDelete = array_merge($filesToDelete, array_diff($filesInOldStyle, $filesToKeep));
-            $newElementStyle = InternalThemes::updateFilesInValues($newElementStyle, $filesToUpdate);
-            if ($isStructural) {
-                if ($elementType === 'columns') { // Move elements to the last column if theirs is removed
-                    $getColumnsCount = function (array $elementStyle): int {
-                        $layout = isset($elementStyle['layout']) ? $elementStyle['layout'] : null;
-                        $layoutValueDetails = Themes::getValueDetails($layout);
-                        $widths = is_array($layoutValueDetails['value']) && isset($layoutValueDetails['value']['widths']) ? trim($layoutValueDetails['value']['widths']) : '';
-                        if (!isset($widths[0])) {
-                            $widths = ';';
-                        }
-                        return sizeof(explode(';', $widths));
-                    };
-                    $oldColumnsCount = $getColumnsCount($oldElementStyle);
-                    $newColumnsCount = $getColumnsCount($newElementStyle);
-                    if ($newColumnsCount < $oldColumnsCount) {
-                        if (!isset($elementData['elements'])) {
-                            $elementData['elements'] = [];
-                        }
-                        if (!isset($elementData['elements'][$newColumnsCount - 1])) {
-                            $elementData['elements'][$newColumnsCount - 1] = [];
-                        }
-                        for ($i = $newColumnsCount; $i < $oldColumnsCount; $i++) {
-                            if (isset($elementData['elements'][$i])) {
-                                $elementData['elements'][$newColumnsCount - 1] = array_merge($elementData['elements'][$newColumnsCount - 1], $elementData['elements'][$i]);
-                                unset($elementData['elements'][$i]);
-                            }
-                        }
-                    }
-                }
-
-                $elementData['style'] = $newElementStyle;
-                if (empty($elementData['style'])) {
-                    unset($elementData['style']);
-                }
-
-                $containerData = ElementsDataHelper::setContainerDataElement($containerData, $elementData);
-                InternalDataElements::setContainer($containerID, $containerData);
-                InternalDataElements::dispatchContainerChangeEvent($containerID);
-            } else {
-                $elementData['style'] = $newElementStyle;
-                if (empty($elementData['style'])) {
-                    unset($elementData['style']);
-                }
-                InternalDataElements::setElement($elementID, $elementData);
-                InternalDataElements::dispatchElementChangeEvent($elementID, $containerID);
-            }
-            ElementsDataHelper::deleteElementStyleFiles($filesToDelete);
-        }
-    }
-
-    /**
-     * 
-     * @param string $content
      * @param string $elementType
-     * @param array $elementStyleData
+     * @param array|null $styleValue
      * @param string $selector
+     * @param boolean $returnHeadContentOnly
      * @return string
      */
-    static function applyCustomizations(string $content, string $elementType, array $elementStyleData, string $selector): string
+    static function getStyleHTML(string $elementType, array $styleValue = null, string $selector, bool $returnHeadContentOnly = false): string
     {
         if (isset(InternalThemes::$elementsOptions[$elementType])) {
             $options = new \BearCMS\Themes\Theme\Options();
@@ -671,9 +532,16 @@ class ElementsHelper
                 $callback = $callback[1];
             }
             call_user_func($callback, $options, '', $selector, InternalThemes::OPTIONS_CONTEXT_ELEMENT, []);
-            $options->setValues($elementStyleData);
+            if (is_array($styleValue)) {
+                $options->setValues($styleValue);
+            }
             $htmlData = InternalThemes::getOptionsHTMLData($options->getList());
-            return InternalThemes::processOptionsHTMLData($htmlData, $content);
+            $content = InternalThemes::processOptionsHTMLData($htmlData);
+            if ($returnHeadContentOnly) {
+                $content = substr($content, strpos($content, '<head>') + 6);
+                $content = substr($content, 0, strpos($content, '</head>'));
+            }
+            return $content;
         }
         return '';
     }
@@ -795,26 +663,5 @@ class ElementsHelper
     static function getHTMLElementID(string $elementID): string
     {
         return 'brelb' . md5($elementID);
-    }
-
-    /**
-     * 
-     * @param string $elementID
-     * @return string
-     */
-    static function getCustomizationsClassName(string $elementID): string
-    {
-        return 'bearcms-element-style-' . md5($elementID);
-    }
-
-    /**
-     * 
-     * @param string $elementID
-     * @return string
-     */
-    static function getCustomizationsSelector(string $elementID): string
-    {
-        $className = '.' . self::getCustomizationsClassName($elementID);
-        return str_repeat($className, 3); // todo improve. Maybe use @layer; increase $times if conflicts
     }
 }

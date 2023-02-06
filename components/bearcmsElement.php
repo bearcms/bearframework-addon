@@ -9,7 +9,10 @@
 
 use BearFramework\App;
 use BearCMS\Internal\ElementsHelper;
+use BearCMS\Internal\ElementStylesHelper;
 
+$elementID = (string)$component->id;
+$elementID = isset($elementID[0]) ? $elementID : null;
 $editable = $component->editable === 'true';
 $typeCode = $component->getAttribute('bearcms-internal-attribute-type');
 $containerType = $component->getAttribute('bearcms-internal-attribute-container');
@@ -31,7 +34,8 @@ $componentName = strlen($componentSrc) > 0 ? $componentSrc : ($component->tagNam
 $isMissing = $componentName === 'bearcms-missing-element';
 
 $elementType = null;
-$elementStyleData = null;
+$elementStyleID = null;
+$elementStyleValue = null;
 if (!$isMissing) {
     $rawData = $component->getAttribute('bearcms-internal-attribute-raw-data');
     if ($rawData !== null && strlen($rawData) > 0) {
@@ -57,8 +61,11 @@ if (!$isMissing) {
         if (isset($elementData['type'])) {
             $elementType = $elementData['type'];
         }
-        if (isset($elementData['style']) && !empty($elementData['style'])) {
-            $elementStyleData = $elementData['style'];
+        if (isset($elementData['styleID'])) {
+            $elementStyleID = $elementData['styleID'];
+        }
+        if (isset($elementData['style'])) {
+            $elementStyleValue = $elementData['style'];
         }
 
         unset($rawData);
@@ -66,8 +73,8 @@ if (!$isMissing) {
         unset($data);
         unset($options);
     } else {
-        if ($component->id !== null && strlen($component->id) > 0 && $component->editable === 'true') {
-            $getRawDataFromComponent = function ($component) {
+        if ($elementID !== null && $component->editable === 'true') {
+            $getRawDataFromComponent = function ($component) use ($elementID) {
                 $componentSrc = (string)$component->src;
                 $componentName = strlen($componentSrc) > 0 ? $componentSrc : ($component->tagName !== 'component' ? $component->tagName : null);
                 $options = ElementsHelper::$elementsTypesOptions[$componentName];
@@ -88,7 +95,7 @@ if (!$isMissing) {
                 if (isset($options['updateDataFromComponent'])) {
                     $data = call_user_func($options['updateDataFromComponent'], clone ($component), $data);
                 }
-                return json_encode(['id' => $component->id, 'type' => ElementsHelper::$elementsTypesCodes[$componentName], 'data' => $data], JSON_THROW_ON_ERROR);
+                return json_encode(['id' => $elementID, 'type' => ElementsHelper::$elementsTypesCodes[$componentName], 'data' => $data], JSON_THROW_ON_ERROR);
             };
             if ($editable) {
                 $componentContextData['rawData'] = $getRawDataFromComponent($component);
@@ -120,37 +127,41 @@ if ($containerType === 'none') {
 } else {
     $classAttributeValue = '';
     $attributes = '';
-    $hasElementStyle = $canStyle && $elementStyleData !== null;
-    if ($editable || $hasElementStyle) {
-        $htmlElementID = ElementsHelper::getHTMLElementID($component->id);
+    if ($editable) {
+        $htmlElementID = ElementsHelper::getHTMLElementID($elementID);
         $attributes .= ' id="' . $htmlElementID . '"';
         if ($editable) {
-            ElementsHelper::$editorData[] = ['element', $component->id, $componentContextData, $typeCode];
+            ElementsHelper::$editorData[] = ['element', $elementID, $componentContextData, $typeCode];
         }
     }
-    $customizationsSelector = null;
+    $styleSelector = null;
     if ($outputType === 'full-html') {
         $classAttributeValue .= ' bearcms-element';
-        if ($hasElementStyle) {
-            $classAttributeValue .= ' ' . ElementsHelper::getCustomizationsClassName($component->id);
-            $customizationsSelector = ElementsHelper::getCustomizationsSelector($component->id);
+        if ($canStyle) {
+            list($styleID, $styleValue) = ElementStylesHelper::getElementRealStyleData($elementStyleID, $elementStyleValue);
+            $styleSelector = ElementStylesHelper::getElementStyleSelector($elementID, $styleID);
+            if ($styleSelector !== null) {
+                $classAttributeValue .= ' ' . ElementStylesHelper::getElementStyleClassName($elementID, $styleID);
+            }
         }
     }
     if ($classAttributeValue !== '') {
         $attributes .= ' class="' . trim($classAttributeValue) . '"';
     }
-    $outputHTML = '';
+    $content = '<html><head>';
+    if ($styleSelector !== null) {
+        $content .= ElementsHelper::getStyleHTML($elementType, $styleValue, $styleSelector, true);
+    }
+    $content .= '</head><body>';
     if ($editable && !$inElementsContainer) {
-        $outputHTML .= '<div>';
+        $content .= '<div>';
     }
-    $outputHTML .= '<div' . $attributes . '>';
-    $outputHTML .= $componentHTML;
-    $outputHTML .= '</div>';
+    $content .= '<div' . $attributes . '>';
+    $content .= $componentHTML;
+    $content .= '</div>';
     if ($editable && !$inElementsContainer) {
-        $outputHTML .= '</div>';
+        $content .= '</div>';
     }
-    if ($customizationsSelector !== null) {
-        echo ElementsHelper::applyCustomizations($outputHTML, $elementType, $elementStyleData, $customizationsSelector);
-    }
-    echo $outputHTML;
+    $content .= '</body></html>';
+    echo $content;
 }

@@ -20,6 +20,7 @@ use BearCMS\Internal\Data\Comments as InternalDataComments;
 use BearCMS\Internal\Data\Settings as InternalDataSettings;
 use BearCMS\Internal\Pages as InternalPages;
 use BearCMS\Internal\Blog as InternalBlog;
+use BearCMS\Internal\Data\ElementsSharedStyles;
 use BearCMS\Internal\Data\UploadsSize;
 
 /**
@@ -679,24 +680,93 @@ class ServerCommands
     /**
      * 
      * @param array $data
-     * @return array
+     * @return array|null
      */
-    static function elementStyleGet(array $data): array
+    static function elementStylesGet(array $data): ?array
     {
         $result = [];
+
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
         $elementID = isset($data['elementID']) ? $data['elementID'] : null;
-        $styleOptions = ElementsHelper::getElementStyleOptions($elementID, $containerID);
-        if ($styleOptions !== null) {
-            list($options, $values, $themeID, $themeOptionsSelectors, $elementType) = $styleOptions;
-            $result['options'] = [];
-            $result['options']['definition'] = Internal\Themes::optionsToArray($options);
-            $result['options']['values'] = $values;
-            $result['options']['themeID'] = $themeID;
-            $result['options']['themeOptionsSelectors'] = $themeOptionsSelectors;
-            $result['options']['elementType'] = $elementType;
+        $elementData = ElementsDataHelper::getElement($elementID, $containerID);
+        if ($elementData === null) {
+            return null;
         }
+        $elementType = $elementData['type'];
+        $result['type'] = $elementType;
+
+        $elementStyleID = isset($elementData['styleID']) ? $elementData['styleID'] : null;
+        $elementStyleValue = isset($elementData['style']) ? $elementData['style'] : null;
+        $elementRealStyleID = ElementStylesHelper::getElementRealStyleID($elementStyleID, $elementStyleValue, ElementsDataHelper::getDefaultElementStyle($elementType));
+
+        $result['styleID'] = $elementRealStyleID;
+
+        $getOutputHTML = function ($values, $selector) use ($elementType): string {
+            return ElementsHelper::getStyleHTML($elementType, $values, $selector);
+        };
+
+        $styles = [];
+        $styles[] = [
+            'id' => 'custom',
+            'className' => ElementStylesHelper::getElementStyleClassName($elementID, 'custom'),
+            'outputHTML' => $getOutputHTML($elementStyleValue, ElementStylesHelper::getElementStyleSelector($elementID, 'custom'))
+        ];
+        $sharedStyles = ElementStylesHelper::getSharedStylesList($elementType);
+        foreach ($sharedStyles as $sharedStyle) {
+            $sharedStyleID = $sharedStyle['id'];
+            $styles[] = [
+                'id' => $sharedStyleID,
+                'name' => $sharedStyle['name'],
+                'className' => ElementStylesHelper::getElementStyleClassName($elementID, $sharedStyleID),
+                'outputHTML' => $getOutputHTML(isset($sharedStyle['style']) ? $sharedStyle['style'] : [], ElementStylesHelper::getElementStyleSelector($elementID, $sharedStyleID))
+            ];
+        }
+        if ($elementRealStyleID !== 'default') {
+            $selectedFound = false;
+            foreach ($styles as $styleData) {
+                if ($styleData['id'] === $elementRealStyleID) {
+                    $selectedFound = true;
+                }
+            }
+            if (!$selectedFound) {
+                $styles[] = [
+                    'id' => $elementRealStyleID,
+                    'name' => __('bearcms.elementStyle.UnknownStyle'),
+                    'type' => 'unknown',
+                    'className' => ElementStylesHelper::getElementStyleClassName($elementID, $elementRealStyleID)
+                ];
+            }
+        }
+        $result['styles'] = $styles;
+
         return $result;
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function elementStyleOptionsGet(array $data): ?array
+    {
+        $containerID = isset($data['containerID']) ? $data['containerID'] : null;
+        $elementID = isset($data['elementID']) ? $data['elementID'] : null;
+        $styleID = isset($data['styleID']) ? $data['styleID'] : null;
+        $elementData = ElementsDataHelper::getElement($elementID, $containerID);
+        if ($elementData === null) {
+            return null;
+        }
+        $elementType = $elementData['type'];
+        $styleValues = [];
+        if ($styleID === 'custom') {
+            $styleValues = isset($elementData['style']) ? $elementData['style'] : [];
+        } else {
+            $sharedStyleData = ElementsSharedStyles::get($styleID);
+            if (is_array($sharedStyleData) && isset($sharedStyleData['style'])) {
+                $styleValues = $sharedStyleData['style'];
+            }
+        }
+        return ElementStylesHelper::getOptions($elementType, $styleValues, ElementStylesHelper::getElementStyleSelector($elementID, $styleID));
     }
 
     /**
@@ -704,12 +774,118 @@ class ServerCommands
      * @param array $data
      * @return void
      */
-    static function elementStyleSet(array $data): void
+    static function elementStyleSetID(array $data): void
     {
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
-        $elementID = isset($data['elementID']) ? $data['elementID'] : null;
-        $value = isset($data['value']) ? $data['value'] : null;
-        ElementsHelper::setElementStyleValues($elementID, $containerID, $value);
+        $elementID = $data['elementID'];
+        $styleID = $data['styleID'];
+        ElementStylesHelper::setElementStyleID($elementID, $containerID, $styleID);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementStyleSetValues(array $data): void
+    {
+        $elementID = $data['elementID'];
+        $containerID = isset($data['containerID']) ? $data['containerID'] : null;
+        $styleID = $data['styleID'];
+        $values = $data['values'];
+        ElementStylesHelper::setElementStyleValues($elementID, $containerID, $styleID, $values);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function elementStyleUploadsSize(array $data): array
+    {
+        $elementID = $data['elementID'];
+        $containerID = isset($data['containerID']) ? $data['containerID'] : null;
+        $elementData = ElementsDataHelper::getElement($elementID, $containerID);
+        if ($elementData === null) {
+            return 0;
+        }
+        $result = [];
+        $result['size'] = UploadsSize::getItemsSize(ElementsDataHelper::getElementDataStyleUploadsSizeItems($elementData));
+        return $result;
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function elementsSharedStylesGet(array $data): ?array
+    {
+        return ElementsSharedStyles::get($data['id']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return string
+     */
+    static function elementsSharedStylesAdd(array $data): string
+    {
+        return ElementStylesHelper::addSharedStyle($data['type'], $data['name']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementsSharedStylesSetName(array $data): void
+    {
+        ElementStylesHelper::setSharedStyleName($data['id'], $data['name']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return string
+     */
+    static function elementsSharedStylesDuplicate(array $data): string
+    {
+        return ElementStylesHelper::duplicateSharedStyle($data['id']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementsSharedStylesDelete(array $data): void
+    {
+        ElementStylesHelper::deleteSharedStyle($data['id']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return string
+     */
+    static function elementsSharedStylesCreateFromCustom(array $data): string
+    {
+        $elementID = $data['elementID'];
+        $containerID = isset($data['containerID']) ? $data['containerID'] : null;
+        return ElementStylesHelper::createSharedStyleFromCustom($elementID, $containerID);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function elementsSharedStylesUploadsSize(array $data): array
+    {
+        $result = [];
+        $result['size'] = UploadsSize::getItemsSize(ElementStylesHelper::getSharedStyleUploadsSizeItems($data['id']));
+        return $result;
     }
 
     /**

@@ -144,7 +144,7 @@ class ElementsDataHelper
 
     /**
      * 
-     * @param array $type
+     * @param string $type
      * @param array $data
      * @param string $containerID
      * @param array $target
@@ -724,6 +724,9 @@ class ElementsDataHelper
         if (isset($elementContainerData['data'])) { // added for the flexibleBox url option
             $result['data'] = $elementContainerData['data'];
         }
+        if (isset($elementContainerData['styleID'])) {
+            $result['styleID'] = $elementContainerData['styleID'];
+        }
         if (isset($result['data']) && empty($result['data'])) {
             unset($result['data']);
         }
@@ -907,7 +910,6 @@ class ElementsDataHelper
      */
     static private function duplicateElementData(array $elementData): array
     {
-        $app = App::get();
         if (isset($elementData['type'])) {
             $elementTypeOptions = ElementsHelper::getElementTypeOptions($elementData['type']);
             if ($elementTypeOptions !== null && isset($elementTypeOptions['onDuplicate']) && is_callable($elementTypeOptions['onDuplicate'])) {
@@ -915,28 +917,7 @@ class ElementsDataHelper
             }
         }
         if (isset($elementData['style'])) {
-            $filenames = InternalThemes::getFilesInValues($elementData['style'], true);
-            if (!empty($filenames)) {
-                $duplicatedDataKeys = [];
-                $filesToUpdate = [];
-                foreach ($filenames as $filename) {
-                    $filenameOptions = InternalData::getFilenameOptions($filename);
-                    $filenameDataKey = InternalData::getFilenameDataKey($filename);
-                    if ($filenameDataKey !== null && $app->data->exists($filenameDataKey)) {
-                        if (isset($duplicatedDataKeys[$filenameDataKey])) {
-                            $newDataKey = $duplicatedDataKeys[$filenameDataKey];
-                        } else {
-                            $newDataKey = InternalData::generateNewFilename($filenameDataKey);
-                            $app->data->duplicate($filenameDataKey, $newDataKey);
-                            UploadsSize::add($newDataKey, filesize($app->data->getFilename($newDataKey)));
-                            $duplicatedDataKeys[$filenameDataKey] = $newDataKey;
-                        }
-                        $newFilenameWithOptions = InternalData::setFilenameOptions('data:' . $newDataKey, $filenameOptions);
-                        $filesToUpdate[$filename] = $newFilenameWithOptions;
-                    }
-                }
-                $elementData['style'] = InternalThemes::updateFilesInValues($elementData['style'], $filesToUpdate);
-            }
+            $elementData['style'] = ElementStylesHelper::duplicateStyleValues($elementData['style']);
         }
         return $elementData;
     }
@@ -1247,6 +1228,18 @@ class ElementsDataHelper
                 $result = array_merge($result, call_user_func($elementTypeOptions['getUploadsSizeItems'], isset($elementData['data']) ? $elementData['data'] : []));
             }
         }
+        $result = array_merge($result, self::getElementDataStyleUploadsSizeItems($elementData));
+        return $result;
+    }
+
+    /**
+     * 
+     * @param array $elementData
+     * @return array
+     */
+    static function getElementDataStyleUploadsSizeItems(array $elementData): array
+    {
+        $result = [];
         if (isset($elementData['style'])) {
             $filenames = InternalThemes::getFilesInValues($elementData['style']);
             foreach ($filenames as $filename) {
@@ -1266,12 +1259,7 @@ class ElementsDataHelper
      */
     static function getContainerUploadsSize(string $containerID): int
     {
-        $size = 0;
-        $items = self::getContainerUploadsSizeItems($containerID);
-        foreach ($items as $key) {
-            $size += (int) UploadsSize::getItemSize($key);
-        }
-        return $size;
+        return UploadsSize::getItemsSize(self::getContainerUploadsSizeItems($containerID));
     }
 
     /**
@@ -1328,12 +1316,7 @@ class ElementsDataHelper
      */
     static function getElementUploadsSize(string $elementID, string $containerID = null): int
     {
-        $size = 0;
-        $items = self::getElementUploadsSizeItems($elementID, $containerID);
-        foreach ($items as $key) {
-            $size += (int) UploadsSize::getItemSize($key);
-        }
-        return $size;
+        return UploadsSize::getItemsSize(self::getElementUploadsSizeItems($elementID, $containerID));
     }
 
     /**
@@ -1678,16 +1661,20 @@ class ElementsDataHelper
     /**
      * 
      * @param string $elementType
-     * @return array
+     * @param boolean $returnAsArray
+     * @return array|null
      */
-    static function getDefaultElementStyle(string $elementType): array
+    static function getDefaultElementStyle(string $elementType, bool $returnAsArray = false): ?array
     {
         if ($elementType === 'columns') {
-            return ['layout' => json_encode(['value' => ['direction' => 'horizontal', 'widths' => ';']])];
+            $layout = ['value' => ['direction' => 'horizontal', 'widths' => ';']];
+            return ['layout' => $returnAsArray ? $layout : json_encode($layout)];
         } elseif ($elementType === 'floatingBox') {
-            return ['layout' => json_encode(['value' => ['position' => 'left', 'width' => '50%']])];
+            $layout = ['value' => ['position' => 'left', 'width' => '50%']];
+            return ['layout' => $returnAsArray ? $layout : json_encode($layout)];
         } elseif ($elementType === 'flexibleBox') {
-            return ['layout' => json_encode(['value' => ['direction' => 'vertical', 'alignment' => 'start']])];
+            $layout = ['value' => ['direction' => 'vertical', 'alignment' => 'start']];
+            return ['layout' => $returnAsArray ? $layout : json_encode($layout)];
         }
         return [];
     }

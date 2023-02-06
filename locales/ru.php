@@ -26,5 +26,8 @@ return [
     'bearcms.element.HTMLCodeTemporaryDisabled.title' => 'HTML code element temporary disabled!', // todo
     'bearcms.element.HTMLCodeTemporaryDisabled.description' => 'This message is visible to you only, because of the "disable-html-elements" in the URL.', // todo
     'bearcms.element.HTMLCodeUnavailableSecurityMode.title' => 'The HTML code cannot be shown in the selected security mode!', // todo
-    'bearcms.element.HTMLCodeUnavailableSecurityMode.description' => 'This message is visible to administrators only.' // todo
+    'bearcms.element.HTMLCodeUnavailableSecurityMode.description' => 'This message is visible to administrators only.', // todo
+    'bearcms.elementStyle.CopyOfStyle' => 'Копия %s',
+    'bearcms.elementStyle.CopyOfCustom' => 'Копия стиля',
+    'bearcms.elementStyle.UnknownStyle' => 'Неизвестный стиль',
 ];

@@ -60,6 +60,20 @@ class UploadsSize
 
     /**
      * 
+     * @param array $keys
+     * @return integer
+     */
+    static function getItemsSize(array $keys): int
+    {
+        $size = 0;
+        foreach ($keys as $key) {
+            $size += (int) self::getItemSize($key);
+        }
+        return $size;
+    }
+
+    /**
+     * 
      * @return int
      */
     static function getSize(): int
