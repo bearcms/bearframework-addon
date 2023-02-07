@@ -105,12 +105,8 @@ class ElementsTypes
                         $options->addOption($idPrefix . "HeadingCSS", "css", '', [
                             "cssOptions" => ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState"],
                             "cssOutput" => [
-                                ["rule", $parentSelector . " .bearcms-heading-element-large", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
-                                ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
-                                ["rule", $parentSelector . " .bearcms-heading-element-small", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
-                                ["selector", $parentSelector . " .bearcms-heading-element-large"],
-                                ["selector", $parentSelector . " .bearcms-heading-element-medium"],
-                                ["selector", $parentSelector . " .bearcms-heading-element-small"]
+                                ["rule", $parentSelector . " .bearcms-heading-element", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
+                                ["selector", $parentSelector . " .bearcms-heading-element"],
                             ],
                             "elementType" => "heading"
                         ]);

@@ -19,13 +19,13 @@ $isFullHtmlOutputType = $outputType === 'full-html';
 
 if ($size === 'large') {
     $tagName = 'h1';
-    $className = 'bearcms-heading-element-large';
+    $className = 'bearcms-heading-element bearcms-heading-element-large';
 } elseif ($size === 'medium') {
     $tagName = 'h2';
-    $className = 'bearcms-heading-element-medium';
+    $className = 'bearcms-heading-element bearcms-heading-element-medium';
 } else {
     $tagName = 'h3';
-    $className = 'bearcms-heading-element-small';
+    $className = 'bearcms-heading-element bearcms-heading-element-small';
 }
 
 $attributes = $isFullHtmlOutputType ? ' class="' . $className . '"' : '';
