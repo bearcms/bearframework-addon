@@ -688,6 +688,7 @@ class ServerCommands
 
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
         $elementID = isset($data['elementID']) ? $data['elementID'] : null;
+        $defaultOptionsValues = isset($data['defaultOptionsValues']) ? $data['defaultOptionsValues'] : null;
         $elementData = ElementsDataHelper::getElement($elementID, $containerID);
         if ($elementData === null) {
             return null;
@@ -709,7 +710,7 @@ class ServerCommands
         $styles[] = [
             'id' => 'custom',
             'className' => ElementStylesHelper::getElementStyleClassName($elementID, 'custom'),
-            'outputHTML' => $getOutputHTML($elementStyleValue, ElementStylesHelper::getElementStyleSelector($elementID, 'custom'))
+            'outputHTML' => $getOutputHTML($elementStyleValue !== null ? $elementStyleValue : $defaultOptionsValues, ElementStylesHelper::getElementStyleSelector($elementID, 'custom'))
         ];
         $sharedStyles = ElementStylesHelper::getSharedStylesList($elementType);
         foreach ($sharedStyles as $sharedStyle) {
@@ -766,7 +767,11 @@ class ServerCommands
                 $styleValues = $sharedStyleData['style'];
             }
         }
-        return ElementStylesHelper::getOptions($elementType, $styleValues, ElementStylesHelper::getElementStyleSelector($elementID, $styleID));
+        $options = ElementStylesHelper::getOptions($elementType, $styleValues, ElementStylesHelper::getElementStyleSelector($elementID, $styleID));
+        if ($options !== null) {
+            $options['elementType'] = $elementType;
+        }
+        return $options;
     }
 
     /**
@@ -779,7 +784,16 @@ class ServerCommands
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
         $elementID = $data['elementID'];
         $styleID = $data['styleID'];
+        $defaultOptionsValues = isset($data['defaultOptionsValues']) ? $data['defaultOptionsValues'] : null;
         ElementStylesHelper::setElementStyleID($elementID, $containerID, $styleID);
+        if ($styleID === 'custom' && !empty($defaultOptionsValues)) {
+            $elementData = ElementsDataHelper::getElement($elementID, $containerID);
+            if ($elementData !== null) {
+                if (!isset($elementData['style']) || empty($elementData['style'])) {
+                    ElementStylesHelper::setElementStyleValues($elementID, $containerID, $styleID, $defaultOptionsValues);
+                }
+            }
+        }
     }
 
     /**
@@ -831,7 +845,7 @@ class ServerCommands
      */
     static function elementsSharedStylesAdd(array $data): string
     {
-        return ElementStylesHelper::addSharedStyle($data['type'], $data['name']);
+        return ElementStylesHelper::addSharedStyle($data['type'], $data['name'], $data['values']);
     }
 
     /**

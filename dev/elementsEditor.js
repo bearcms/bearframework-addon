@@ -213,9 +213,219 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
         }
     };
 
+    var getElementDefaultStyleOptionsValues = function (element) {
+        if (element === null) {
+            return null;
+        }
+        var firstChild = element.firstChild;
+        if (firstChild === null) {
+            return null;
+        }
+
+        var defaultCssTypes = ['cssText', 'cssTextShadow', 'cssBackground', 'cssPadding', 'cssMargin', 'cssBorder', 'cssRadius', 'cssShadow', 'cssSize'];
+
+        var webSafeFonts = {
+            'Arial': 'Arial',
+            'Arial Black': 'Arial Black',
+            'Comic Sans': 'Comic Sans',
+            'Courier': 'Courier',
+            'Georgia': 'Georgia',
+            'Impact': 'Impact',
+            'Lucida': 'Lucida Sans',
+            'Lucida Console': 'Lucida Console',
+            'Palatino': 'Palatino',
+            'Tahoma': 'Tahoma',
+            'Times New Roman': 'Times New Roman',
+            'Trebuchet': 'Trebuchet',
+            'Verdana': 'Verdana'
+        };
+
+        var cssTypesProperties = {
+            "cssText": {
+                "font-family": "", // convert
+                "color": "",
+                "font-size": "",
+                "font-weight": "400",
+                "font-style": "normal",
+                "text-decoration": "none",
+                "text-align": "left",
+                "line-height": "",
+                "letter-spacing": "normal",
+            },
+            "cssTextShadow": {
+                "text-shadow": "none",
+            },
+            "cssBackground": {
+                "background-color": "rgba(0, 0, 0, 0)",
+                // "background-image":"", // not supported for now
+                // "background-position":"",
+                // "background-repeat":"",
+                // "background-attachment":"",
+                // "background-size":"",
+            },
+            "cssPadding": {
+                "padding-top": "0px",
+                "padding-right": "0px",
+                "padding-bottom": "0px",
+                "padding-left": "0px",
+            },
+            "cssMargin": {
+                "margin-top": "0px",
+                "margin-right": "0px",
+                "margin-bottom": "0px",
+                "margin-left": "0px",
+            },
+            "cssBorder": {
+                "border-top": "none",
+                "border-right": "none",
+                "border-bottom": "none",
+                "border-left": "none",
+            },
+            "cssRadius": {
+                "border-top-left-radius": "0px",
+                "border-top-right-radius": "0px",
+                "border-bottom-left-radius": "0px",
+                "border-bottom-right-radius": "0px",
+            },
+            "cssShadow": {
+                "box-shadow": "none",
+            },
+            "cssPosition": {
+                "top": "",
+                "right": "",
+                "bottom": "",
+                "left": "",
+            },
+            "cssSize": {
+                // "width": "0px", // not supported
+                // "height": "0px",
+                // "min-width": "0px",
+                // "min-height": "0px",
+                // "max-width": "none",
+                // "max-height": "none",
+            },
+            "cssTextAlign": {
+                "text-align": "left",
+            },
+            "cssOpacity": {
+                "opacity": "",
+            }
+        };
+
+        var updatePropertyValue = function (name, value, defaultValue) {
+            if (name === 'text-decoration') {
+                if (value.indexOf('underline') !== -1) {
+                    value = 'underline';
+                }
+            }
+            if (name === 'font-weight') {
+                if (isNaN(parseInt(value)) || parseInt(value) <= 400) {
+                    value = '';
+                } else {
+                    value = 'bold';
+                }
+            }
+            if (name === 'font-family') {
+                var isWebSafeFont = false;
+                for (var fontName in webSafeFonts) {
+                    if (value.indexOf(webSafeFonts[fontName]) !== -1) {
+                        value = fontName;
+                        isWebSafeFont = true;
+                        break;
+                    }
+                }
+                // todo may be custom font, check for google font <link>
+                if (!isWebSafeFont) {
+                    value = 'googlefonts:' + value.split('"').join('');
+                }
+            }
+            if (defaultValue !== '' && value.indexOf(defaultValue) !== -1) {
+                return '';
+            }
+            return value;
+        };
+
+        var getValues = function (tempElement, valuesDefinition) {
+            var result = {};
+            element.insertBefore(tempElement, firstChild);
+            for (var i = 0; i < valuesDefinition.length; i++) {
+                var valueDefinition = valuesDefinition[i];
+                var optionID = valueDefinition[0];
+                var optionValues = {};
+                var targetElement = valueDefinition[1];
+                var computedStyle = getComputedStyle(targetElement);
+                var cssTypes = valueDefinition[2];
+                for (var j = 0; j < cssTypes.length; j++) {
+                    var cssTypeProperties = cssTypesProperties[cssTypes[j]];
+                    for (var propertyName in cssTypeProperties) {
+                        var propertyValue = updatePropertyValue(propertyName, computedStyle.getPropertyValue(propertyName), cssTypeProperties[propertyName]);
+                        if (propertyValue !== '') {
+                            optionValues[propertyName] = propertyValue;
+                        }
+                    }
+                }
+                result[optionID] = JSON.stringify(optionValues);
+            }
+            element.removeChild(tempElement);
+            return result;
+        };
+
+        var result = null;
+
+        var createTempElement = function (className, innerHTML) {
+            if (typeof innerHTML === 'undefined') {
+                innerHTML = '';
+            }
+            var tempElement = document.createElement('div');
+            tempElement.setAttribute('class', className);
+            if (innerHTML !== '') {
+                tempElement.innerHTML = innerHTML;
+            }
+            return tempElement;
+        };
+
+        var firstChildClassList = firstChild.classList;
+        if (firstChildClassList.contains('bearcms-link-element')) {
+            var tempElement = createTempElement('bearcms-link-element', '<a></a>');
+            result = getValues(tempElement, [
+                ['LinkCSS', tempElement.firstChild, defaultCssTypes],
+                ['LinkContainerCSS', tempElement, ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTextAlign"]],
+            ]);
+        } else if (firstChildClassList.contains('bearcms-heading-element-large')) {
+            var tempElement = createTempElement('bearcms-heading-element-large');
+            result = getValues(tempElement, [
+                ['HeadingCSS', tempElement, defaultCssTypes],
+            ]);
+        } else if (firstChildClassList.contains('bearcms-heading-element-medium')) {
+            var tempElement = createTempElement('bearcms-heading-element-medium');
+            result = getValues(tempElement, [
+                ['HeadingCSS', tempElement, defaultCssTypes],
+            ]);
+        } else if (firstChildClassList.contains('bearcms-heading-element-small')) {
+            var tempElement = createTempElement('bearcms-heading-element-small');
+            result = getValues(tempElement, [
+                ['HeadingCSS', tempElement, defaultCssTypes],
+            ]);
+        } else if (firstChildClassList.contains('bearcms-text-element')) {
+            var tempElement = createTempElement('bearcms-text-element', '<a></a>');
+            result = getValues(tempElement, [
+                ['TextCSS', tempElement, defaultCssTypes],
+                ['TextLinkCSS', tempElement.firstChild, ["cssText", "cssTextShadow"]],
+            ]);
+        } else if (firstChildClassList.contains('bearcms-image-element')) {
+            var tempElement = createTempElement('bearcms-image-element');
+            result = getValues(tempElement, [
+                ['ImageCSS', tempElement, ["cssBorder", "cssRadius", "cssShadow"]],
+            ]);
+        }
+
+        return result;
+    };
+
     return {
         'styleEditorChange': styleEditorChange,
         'styleEditorClose': styleEditorClose,
+        'getElementDefaultStyleOptionsValues': getElementDefaultStyleOptionsValues
     };
 
 }());
