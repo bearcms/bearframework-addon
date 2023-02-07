@@ -257,14 +257,13 @@ class ElementStylesHelper
             if (is_array($callback)) {
                 $callback = $callback[1];
             }
-            call_user_func($callback, $options, 'ElementStyle', $selector, InternalThemes::OPTIONS_CONTEXT_ELEMENT, []);
+            call_user_func($callback, $options, '', $selector, InternalThemes::OPTIONS_CONTEXT_ELEMENT, []);
             $editorValues = [];
             foreach ($values as $name => $value) {
-                $editorValues['ElementStyle' . $name] = $value;
+                $editorValues[$name] = $value;
             }
             Localization::restoreLocale();
             return [
-                'elementType' => $elementType,
                 'definition' => InternalThemes::optionsToArray($options),
                 'values' => $editorValues
             ];
@@ -311,12 +310,11 @@ class ElementStylesHelper
             $app = App::get();
             $filesInOldStyle = InternalThemes::getFilesInValues($oldValues);
             $newElementStyle = [];
-            foreach ($newValues as $key => $value) {
-                $value = trim($value);
-                if (strpos($key, 'ElementStyle') === 0 && strlen($value) > 0) {
-                    $optionKey = substr($key, strlen('ElementStyle'));
-                    if (!isset($newElementStyle[$optionKey]) || $newElementStyle[$optionKey] !== $value) {
-                        $newElementStyle[$optionKey] = $value;
+            foreach ($newValues as $name => $value) {
+                $value = trim((string)$value);
+                if (strlen($value) > 0) {
+                    if (!isset($newElementStyle[$name]) || $newElementStyle[$name] !== $value) {
+                        $newElementStyle[$name] = $value;
                     }
                 }
             }
