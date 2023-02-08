@@ -90,6 +90,16 @@ class ElementsSharedStyles
     /**
      * 
      * @param string $styleID
+     * @return boolean
+     */
+    static function exists(string $styleID): bool
+    {
+        return self::getRawData($styleID) !== null;
+    }
+
+    /**
+     * 
+     * @param string $styleID
      * @return array|null
      */
     static function get(string $styleID): ?array

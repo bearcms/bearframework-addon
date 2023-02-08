@@ -13,6 +13,7 @@ use BearFramework\App;
 use BearCMS\Internal\Themes as InternalThemes;
 use BearCMS\Internal\Data as InternalData;
 use BearCMS\Internal\Data\Elements as InternalDataElements;
+use BearCMS\Internal\Data\ElementsSharedStyles;
 use BearCMS\Internal\Data\UploadsSize;
 use BearCMS\Internal\ImportExport\ImportContext;
 
@@ -1404,10 +1405,10 @@ class ElementsDataHelper
                     $add('bearcms/elements/element/' . md5($elementID) . '/data/' . $key, $content);
                 });
             }
-            if (isset($elementData['style'])) {
-                $filenames = InternalThemes::getFilesInValues($elementData['style'], true);
+            $updateStyleValues = function (array $styleValues, string $filenamePrefix) use ($app, $add) {
+                $addedDataKeys = [];
+                $filenames = InternalThemes::getFilesInValues($styleValues, true);
                 if (!empty($filenames)) {
-                    $addedDataKeys = [];
                     $filesToUpdate = [];
                     foreach ($filenames as $filename) {
                         $filenameOptions = InternalData::getFilenameOptions($filename);
@@ -1417,14 +1418,33 @@ class ElementsDataHelper
                                 $newFilename = $addedDataKeys[$dataKey];
                             } else {
                                 $newFilename = 'file' . (sizeof($addedDataKeys) + 1) . '.' . InternalData::getFilenameExtension($filename);
-                                $add('bearcms/elements/element/' . md5($elementID) . '/style/' . $newFilename, file_get_contents($app->data->getFilename($dataKey)));
+                                $add($filenamePrefix . $newFilename, file_get_contents($app->data->getFilename($dataKey)));
                                 $addedDataKeys[$dataKey] = $newFilename;
                             }
                             $newFilenameWithOptions = InternalData::setFilenameOptions($newFilename, $filenameOptions);
                             $filesToUpdate[$filename] = $newFilenameWithOptions;
                         }
                     }
-                    $elementData['style'] = InternalThemes::updateFilesInValues($elementData['style'], $filesToUpdate);
+                    $styleValues = InternalThemes::updateFilesInValues($styleValues, $filesToUpdate);
+                }
+                return $styleValues;
+            };
+            if (isset($elementData['style'])) {
+                $elementData['style'] = $updateStyleValues($elementData['style'], 'bearcms/elements/element/' . md5($elementID) . '/style/');
+            }
+            if (isset($elementData['styleID'])) {
+                if (array_search($elementData['styleID'], ['default', 'custom']) === false) {
+                    $sharedStyleData = ElementsSharedStyles::get($elementData['styleID']);
+                    if ($sharedStyleData !== null) {
+                        if (isset($sharedStyleData['style'])) {
+                            $sharedStyleData['id'] = 's' . md5(serialize($sharedStyleData['style'])); // serial old value because the filenames are more unique
+                            $sharedStyleData['style'] = $updateStyleValues($sharedStyleData['style'], 'bearcms/elements/style/' . md5($sharedStyleData['id']) . '/style/');
+                        }
+                        $elementData['styleID'] = $sharedStyleData['id'];
+                        if ($addData) {
+                            $add('bearcms/elements/style/' . md5($sharedStyleData['id']) . '/value.json', json_encode($sharedStyleData, JSON_THROW_ON_ERROR));
+                        }
+                    }
                 }
             }
             if ($addData) {
@@ -1479,21 +1499,21 @@ class ElementsDataHelper
                 });
                 $elementData['data'] = call_user_func($elementTypeOptions['onImport'], isset($elementData['data']) ? $elementData['data'] : [], $elementContext);
             }
-            if (isset($elementData['style'])) {
-                $filenames = InternalThemes::getFilesInValues($elementData['style'], true);
+            $updateStyleValues = function (array $styleValues, string $filenamePrefix, string $dataKeyPrefix, string $logType, $errorContextData) use ($app, $context, $isExecuteMode) {
+                $filenames = InternalThemes::getFilesInValues($styleValues, true);
                 if (!empty($filenames)) {
                     $addedFiles = [];
                     $filesToUpdate = [];
                     foreach ($filenames as $filename) {
                         $filenameOptions = InternalData::getFilenameOptions($filename);
                         $filenameWithoutOptions = InternalData::removeFilenameOptions($filename);
-                        $filenameInArchive = 'bearcms/elements/element/' . md5($oldElementID) . '/style/' . $filenameWithoutOptions;
+                        $filenameInArchive = $filenamePrefix . $filenameWithoutOptions;
                         $content = $context->getValue($filenameInArchive);
                         if ($content !== null) {
                             if (isset($addedFiles[$filenameWithoutOptions])) {
                                 $newFilename = $addedFiles[$filenameWithoutOptions];
                             } else {
-                                $newFilename = InternalData::generateNewFilename($app->data->getFilename('bearcms/files/elementstyleimage/' . $filenameWithoutOptions)); // , $context->id !== null ? [$containerID, $newElementID, $oldElementID, $filename, $context->id] : null
+                                $newFilename = InternalData::generateNewFilename($app->data->getFilename($dataKeyPrefix . $filenameWithoutOptions)); // , $context->id !== null ? [$containerID, $newElementID, $oldElementID, $filename, $context->id] : null
                                 $newFilenameDataKey = InternalData::getFilenameDataKey($newFilename);
                                 $newFilenameFileSize = strlen($content);
                                 if ($isExecuteMode) {
@@ -1501,17 +1521,35 @@ class ElementsDataHelper
                                     UploadsSize::add($newFilenameDataKey, $newFilenameFileSize);
                                 }
                                 $addedFiles[$filenameWithoutOptions] = $newFilename;
-                                $context->logChange('elementStyleFilesAdd', ['dataKey' => $newFilenameDataKey]);
+                                $context->logChange($logType, ['dataKey' => $newFilenameDataKey]);
                                 $context->logChange('uploadsSizeAdd', ['key' => $newFilenameDataKey, 'size' => $newFilenameFileSize]);
                             }
                             $newFilenameWithOptions = InternalData::setFilenameOptions($newFilename, $filenameOptions);
                             $filesToUpdate[$filename] = InternalData::getShortFilename($newFilenameWithOptions);
                         } else {
-                            $context->logWarning('Style file not found in archive (' . $filenameInArchive . ')', $elementData);
+                            $context->logWarning('Style file not found in archive (' . $filenameInArchive . ')', $errorContextData);
                             $filesToUpdate[$filename] = '';
                         }
                     }
-                    $elementData['style'] = InternalThemes::updateFilesInValues($elementData['style'], $filesToUpdate);
+                    $styleValues = InternalThemes::updateFilesInValues($styleValues, $filesToUpdate);
+                }
+                return $styleValues;
+            };
+            if (isset($elementData['style'])) {
+                $elementData['style'] = $updateStyleValues($elementData['style'], 'bearcms/elements/element/' . md5($oldElementID) . '/style/', 'bearcms/files/elementstyleimage/', 'elementStyleFilesAdd', $elementData);
+            }
+            if (isset($elementData['styleID'])) {
+                $sharedStyleData = $context->getValue('bearcms/elements/style/' . md5($elementData['styleID']) . '/value.json');
+                if ($sharedStyleData !== null) {
+                    $sharedStyleData = json_decode($sharedStyleData, true);
+                    if (is_array($sharedStyleData)) {
+                        if (!ElementsSharedStyles::exists($sharedStyleData['id'])) {
+                            $sharedStyleData['style'] = $updateStyleValues($sharedStyleData['style'], 'bearcms/elements/style/' . md5($sharedStyleData['id']) . '/style/', 'bearcms/files/elementstyleimage/', 'sharedStyleFilesAdd', $sharedStyleData);
+                            if ($isExecuteMode) {
+                                ElementsSharedStyles::set($sharedStyleData['id'], $sharedStyleData);
+                            }
+                        }
+                    }
                 }
             }
             return $elementData;
