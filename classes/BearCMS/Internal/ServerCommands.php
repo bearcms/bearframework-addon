@@ -710,7 +710,8 @@ class ServerCommands
         $styles[] = [
             'id' => 'custom',
             'className' => ElementStylesHelper::getElementStyleClassName($elementID, 'custom'),
-            'outputHTML' => $getOutputHTML($elementStyleValue !== null ? $elementStyleValue : $defaultOptionsValues, ElementStylesHelper::getElementStyleSelector($elementID, 'custom'))
+            'outputHTML' => $getOutputHTML($elementStyleValue !== null ? $elementStyleValue : $defaultOptionsValues, ElementStylesHelper::getElementStyleSelector($elementID, 'custom')),
+            'hasValues' => $elementStyleValue !== null
         ];
         $sharedStyles = ElementStylesHelper::getSharedStylesList($elementType);
         foreach ($sharedStyles as $sharedStyle) {
