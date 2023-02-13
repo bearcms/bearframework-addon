@@ -374,7 +374,7 @@ class ElementsTypes
                     }
 
                     $optionsGroup->addOption($idPrefix . "ImageCSS", "css", '', [
-                        "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
+                        "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow"],
                         "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-image-element", "overflow:hidden;"],
@@ -388,7 +388,7 @@ class ElementsTypes
                             "cssTypes" => ["cssSize"],
                             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                             "cssOutput" => [
-                                ["selector", $parentSelector . $customStyleSelector]
+                                ["selector", $parentSelector . $customStyleSelector . " .bearcms-image-element"]
                             ],
                             "elementType" => "image"
                         ]);
