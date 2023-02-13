@@ -107,8 +107,7 @@ class ElementsTypes
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                 ["selector", $parentSelector . " .bearcms-heading-element"],
-                            ],
-                            "elementType" => "heading"
+                            ]
                         ]);
                     } else {
                         $group = $options->addGroup(__("bearcms.themes.options.Heading"));
@@ -120,8 +119,7 @@ class ElementsTypes
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element-large", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                 ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-large"]
-                            ],
-                            "elementType" => "heading"
+                            ]
                         ]);
 
                         $groupMedium = $group->addGroup(__("bearcms.themes.options.Medium"));
@@ -130,8 +128,7 @@ class ElementsTypes
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                 ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-medium"]
-                            ],
-                            "elementType" => "heading"
+                            ]
                         ]);
 
                         $groupSmall = $group->addGroup(__("bearcms.themes.options.Small"));
@@ -140,8 +137,7 @@ class ElementsTypes
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element-small", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                 ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-small"]
-                            ],
-                            "elementType" => "heading"
+                            ]
                         ]);
                     }
                 };
@@ -179,8 +175,7 @@ class ElementsTypes
                             ["rule", $parentSelector . " .bearcms-text-element p", "margin:0;padding:0;"],
                             ["rule", $parentSelector . " .bearcms-text-element input", "margin:0;padding:0;"],
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-text-element"]
-                        ],
-                        "elementType" => "text"
+                        ]
                     ]);
 
                     $groupLinks = $optionsGroup->addGroup(__("bearcms.themes.options.Links"));
@@ -190,8 +185,7 @@ class ElementsTypes
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-text-element a", "text-decoration:none;"],
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-text-element a"]
-                        ],
-                        "elementType" => "text"
+                        ]
                     ]);
                 };
             }
@@ -232,8 +226,7 @@ class ElementsTypes
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-link-element a", "text-decoration:none;box-sizing:border-box;display:inline-block;"],
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element a"]
-                        ],
-                        "elementType" => "link"
+                        ]
                     ]);
 
                     $groupContainer = $optionsGroup->addGroup(__("bearcms.themes.options.Container"));
@@ -243,8 +236,7 @@ class ElementsTypes
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-link-element", "box-sizing:border-box;"],
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element"]
-                        ],
-                        "elementType" => "link"
+                        ]
                     ]);
                 };
             }
@@ -380,8 +372,7 @@ class ElementsTypes
                             ["rule", $parentSelector . " .bearcms-image-element", "overflow:hidden;"],
                             ["rule", $parentSelector . " .bearcms-image-element img", "border:0;"],
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-image-element"]
-                        ],
-                        "elementType" => "image"
+                        ]
                     ]);
                     if ($isElementContext) {
                         $optionsGroup->addOption($idPrefix . "elementContainerCSS", "css", '', [
@@ -389,8 +380,7 @@ class ElementsTypes
                             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                             "cssOutput" => [
                                 ["selector", $parentSelector . $customStyleSelector . " .bearcms-image-element"]
-                            ],
-                            "elementType" => "image"
+                            ]
                         ]);
                     }
                 };
