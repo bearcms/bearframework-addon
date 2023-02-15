@@ -1397,7 +1397,7 @@ class ElementsDataHelper
     {
         $app = App::get();
 
-        $export = function (array $elementData, bool $addData) use ($app, $add): array {
+        $export = function (array $elementData, bool $addElementData) use ($app, $add): array {
             $elementID = $elementData['id'];
             $elementTypeOptions = ElementsHelper::getElementTypeOptions($elementData['type']);
             if ($elementTypeOptions !== null && isset($elementTypeOptions['onExport']) && is_callable($elementTypeOptions['onExport'])) {
@@ -1441,13 +1441,11 @@ class ElementsDataHelper
                             $sharedStyleData['style'] = $updateStyleValues($sharedStyleData['style'], 'bearcms/elements/style/' . md5($sharedStyleData['id']) . '/style/');
                         }
                         $elementData['styleID'] = $sharedStyleData['id'];
-                        if ($addData) {
-                            $add('bearcms/elements/style/' . md5($sharedStyleData['id']) . '/value.json', json_encode($sharedStyleData, JSON_THROW_ON_ERROR));
-                        }
+                        $add('bearcms/elements/style/' . md5($sharedStyleData['id']) . '/value.json', json_encode($sharedStyleData, JSON_THROW_ON_ERROR));
                     }
                 }
             }
-            if ($addData) {
+            if ($addElementData) {
                 $add('bearcms/elements/element/' . md5($elementID) . '/value.json', json_encode($elementData, JSON_THROW_ON_ERROR));
             }
             return $elementData;

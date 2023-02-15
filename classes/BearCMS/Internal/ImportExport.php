@@ -119,9 +119,10 @@ class ImportExport
                 $keys = [];
                 $handler->export($itemArgs, function (string $key, string $content) use ($index, &$keys, $zip) {
                     $zip->addFromString('items/' . $index . '/' . md5($key), $content);
-                    $keys[] = $key;
+                    $keys[$key] = $key; // may have duplicates (shared styles for example)
                 });
-                $manifest['files'][$index] = $keys;
+                ksort($keys);
+                $manifest['files'][$index] = array_keys($keys);
             }
             $zip->addFromString('manifest.json', json_encode($manifest, JSON_THROW_ON_ERROR));
             $zip->close();
