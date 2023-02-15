@@ -512,9 +512,10 @@ class Data
     static function importElementAsset(string $filename, string $dataKeyPrefix, ImportContext $context): ?string
     {
         $app = App::get();
-        $content = $context->getValue($filename);
+        $filenameOptions = self::getFilenameOptions($filename);
+        $filenameWithoutOptions = self::removeFilenameOptions($filename);
+        $content = $context->getValue($filenameWithoutOptions);
         if ($content !== null) {
-            $filenameOptions = self::getFilenameOptions($filename);
             $newRealFilename = self::generateNewFilename($app->data->getFilename($dataKeyPrefix . 'file.' . self::getFilenameExtension($filename)));
             $newRealFilenameWithOptions = self::setFilenameOptions($newRealFilename, $filenameOptions);
             $newRealFilenameDataKey = self::getFilenameDataKey($newRealFilename);
@@ -528,7 +529,7 @@ class Data
             $context->logChange('uploadsSizeAdd', ['key' => $newRealFilenameDataKey, 'size' => $newRealFilenameFileSize]);
             return $newFilenameWithOptions;
         } else {
-            $context->logWarning('File not found in archive (' . $filename . ')');
+            $context->logWarning('File not found in archive (' . $filenameWithoutOptions . ')');
             return null;
         }
     }
