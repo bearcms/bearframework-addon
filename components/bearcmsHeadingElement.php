@@ -19,16 +19,16 @@ $isFullHtmlOutputType = $outputType === 'full-html';
 
 if ($size === 'large') {
     $tagName = 'h1';
-    $className = 'bearcms-heading-element bearcms-heading-element-large';
+    $classNames = 'bearcms-heading-element bearcms-heading-element-large';
 } elseif ($size === 'medium') {
     $tagName = 'h2';
-    $className = 'bearcms-heading-element bearcms-heading-element-medium';
+    $classNames = 'bearcms-heading-element bearcms-heading-element-medium';
 } else {
     $tagName = 'h3';
-    $className = 'bearcms-heading-element bearcms-heading-element-small';
+    $classNames = 'bearcms-heading-element bearcms-heading-element-small';
 }
 
-$attributes = $isFullHtmlOutputType ? ' class="' . $className . '"' : '';
+$attributes = $isFullHtmlOutputType ? ' class="' . $classNames . '"' : '';
 if ($isFullHtmlOutputType) {
     $componentLinkTargetID = (string)$component->linkTargetID;
     if (strlen($componentLinkTargetID) > 0) {
@@ -39,7 +39,7 @@ if ($isFullHtmlOutputType) {
 $content = '<' . $tagName . $attributes . '>' . htmlspecialchars($text) . '</' . $tagName . '>';
 echo '<html>';
 if ($isFullHtmlOutputType) {
-    echo '<head><style>.' . $className . '{word-break:break-word;}</style></head>';
+    echo '<head><style>.bearcms-heading-element{word-break:break-word;}</style></head>';
 }
 echo '<body>';
 echo $content;

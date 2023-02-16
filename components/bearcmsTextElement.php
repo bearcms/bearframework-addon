@@ -19,7 +19,7 @@ $content = '<div' . $attributes . '>' . $text . '</div>';
 echo '<html>';
 if ($isFullHtmlOutputType) {
     echo '<head><style>';
-    echo '.bearcms-text-element{display:block;zoom:1;word-break:break-word;}'; // no clear:both - breaks floating box
+    echo '.bearcms-text-element{display:block;word-break:break-word;}'; // no clear:both - breaks floating box
     echo '.bearcms-text-element:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
     echo '</style></head>';
 }
