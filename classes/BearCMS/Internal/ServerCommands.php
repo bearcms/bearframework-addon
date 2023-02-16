@@ -470,10 +470,10 @@ class ServerCommands
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
         $elementData = ElementsDataHelper::getElement($elementID, $containerID);
         if ($elementData === null) {
-            throw new \Exception('Cannot find element to set ' . print_r($data));
+            throw new \Exception('Cannot find element to set ' . print_r($data, true));
         }
         if ($elementData['id'] !== $elementID) {
-            throw new \Exception('Cannot IDs do not match ' . print_r($data) . print_r($elementData));
+            throw new \Exception('Cannot IDs do not match ' . print_r($data, true) . print_r($elementData, true));
         }
         $elementData['data'] = $data['data'];
         if (empty($elementData['data'])) {
