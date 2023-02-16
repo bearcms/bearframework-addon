@@ -666,13 +666,13 @@ class BearCMS
         foreach ($settings->languages as $otherLanguage) {
             if ($otherLanguage !== $language) {
                 $otherLanguageURL = $this->app->urls->get($isFirstLanguage ? '/' : '/' . $otherLanguage . '/');
-                $html .= '<link rel="alternate" hreflang="' . htmlentities($otherLanguage) . '" href="' . htmlentities($otherLanguageURL) . '" />';
+                $html .= '<link rel="alternate" hreflang="' . htmlentities($otherLanguage) . '" href="' . htmlentities($otherLanguageURL) . '">';
             }
             $isFirstLanguage = false;
         }
         $url = rtrim($this->app->request->getURL(), '/') . '/';
         $url = explode('?', $url)[0]; // remove the query string
-        $html .= '<link rel="canonical" href="' . htmlentities($url) . '"/>';
+        $html .= '<link rel="canonical" href="' . htmlentities($url) . '">';
         if ($settings->enableRSS) {
             $rssKeys = $settings->languages;
             if (empty($rssKeys)) {
@@ -683,7 +683,7 @@ class BearCMS
             foreach ($rssKeys as $rssKey) {
                 $rssTitle = (string)$settings->getTitle($rssKey);
                 $rssURL = $this->app->urls->get('/rss' . ($rssKey === '' ? '' : '.' . $rssKey) . '.xml');
-                $html .= '<link rel="alternate" type="application/rss+xml" title="' . htmlentities(trim($rssTitle)) . '" href="' . htmlentities($rssURL) . '" />';
+                $html .= '<link rel="alternate" type="application/rss+xml" title="' . htmlentities(trim($rssTitle)) . '" href="' . htmlentities($rssURL) . '">';
             }
         }
         $html .= '<meta property="og:image" content="' . htmlentities($url) . '-meta-og-image' . '?' . time() . '">';
@@ -802,11 +802,10 @@ class BearCMS
                     $htmlToInsert[] = ['source' => $elementsHTML];
                 }
                 if (!empty(Internal\ElementsHelper::$editorData)) {
-                    $app = App::get();
-                    $context = $app->contexts->get(__DIR__);
+                    $context = $this->app->contexts->get(__DIR__);
                     $html = '';
                     //$html .= '<script>' . file_get_contents(__DIR__ . '/../dev/elementsEditor.js') . '</script>'; // dev mode
-                    $html .= '<script src="' . $context->assets->getURL('assets/elementsEditor.min.js', ['cacheMaxAge' => 999999999, 'version' => 8]) . '">';
+                    $html .= '<script src="' . $context->assets->getURL('assets/elementsEditor.min.js', ['cacheMaxAge' => 999999999, 'version' => 8]) . '" />';
                     $html .= '<link rel="client-packages-embed" name="cssToAttributes">'; // may be needed when customizing elements
                     $html .= '<link rel="client-packages-embed" name="responsiveAttributes">'; // may be needed when customizing elements
                     $html .= '<link rel="client-packages-embed" name="-bearcms-element-events">'; // may be needed when customizing elements
