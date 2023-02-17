@@ -468,9 +468,16 @@ class ServerCommands
     {
         $elementID = $data['id'];
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
+        $createIfNotFound = isset($data['createIfNotFound']) && (int)$data['createIfNotFound'] > 0;
         $elementData = ElementsDataHelper::getElement($elementID, $containerID);
         if ($elementData === null) {
-            throw new \Exception('Cannot find element to set ' . print_r($data, true));
+            if ($createIfNotFound) {
+                $elementData = [];
+                $elementData['id'] = $elementID;
+                $elementData['type'] = $data['type'];
+            } else {
+                throw new \Exception('Cannot find element to set ' . print_r($data, true));
+            }
         }
         if ($elementData['id'] !== $elementID) {
             throw new \Exception('Cannot IDs do not match ' . print_r($data, true) . print_r($elementData, true));
@@ -688,16 +695,16 @@ class ServerCommands
 
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
         $elementID = isset($data['elementID']) ? $data['elementID'] : null;
+        $elementType = isset($data['elementType']) ? $data['elementType'] : null;
         $defaultOptionsValues = isset($data['defaultOptionsValues']) ? $data['defaultOptionsValues'] : null;
         $elementData = ElementsDataHelper::getElement($elementID, $containerID);
-        if ($elementData === null) {
-            return null;
+        $hasElementData = $elementData !== null;
+        if ($hasElementData && $elementData['type'] !== $elementType) {
+            throw new \Exception('Element types do not match! (' . $elementType . ', ' . print_r($elementData, true) . ')');
         }
-        $elementType = $elementData['type'];
-        $result['type'] = $elementType;
 
-        $elementStyleID = isset($elementData['styleID']) ? $elementData['styleID'] : null;
-        $elementStyleValue = isset($elementData['style']) ? $elementData['style'] : null;
+        $elementStyleID = $hasElementData && isset($elementData['styleID']) ? $elementData['styleID'] : null;
+        $elementStyleValue = $hasElementData && isset($elementData['style']) ? $elementData['style'] : null;
         $elementRealStyleID = ElementStylesHelper::getElementRealStyleID($elementStyleID, $elementStyleValue, ElementsDataHelper::getDefaultElementStyle($elementType));
 
         $result['styleID'] = $elementRealStyleID;
@@ -754,11 +761,12 @@ class ServerCommands
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
         $elementID = isset($data['elementID']) ? $data['elementID'] : null;
         $styleID = isset($data['styleID']) ? $data['styleID'] : null;
+        $elementType = isset($data['elementType']) ? $data['elementType'] : null;
         $elementData = ElementsDataHelper::getElement($elementID, $containerID);
-        if ($elementData === null) {
-            return null;
+        $hasElementData = $elementData !== null;
+        if ($hasElementData && $elementData['type'] !== $elementType) {
+            throw new \Exception('Element types do not match! (' . $elementType . ', ' . print_r($elementData, true) . ')');
         }
-        $elementType = $elementData['type'];
         $styleValues = [];
         if ($styleID === 'custom') {
             $styleValues = isset($elementData['style']) ? $elementData['style'] : [];
@@ -768,11 +776,7 @@ class ServerCommands
                 $styleValues = $sharedStyleData['style'];
             }
         }
-        $options = ElementStylesHelper::getOptions($elementType, $styleValues, ElementStylesHelper::getElementStyleSelector($elementID, $styleID));
-        if ($options !== null) {
-            $options['elementType'] = $elementType;
-        }
-        return $options;
+        return ElementStylesHelper::getOptions($elementType, $styleValues, ElementStylesHelper::getElementStyleSelector($elementID, $styleID));
     }
 
     /**
