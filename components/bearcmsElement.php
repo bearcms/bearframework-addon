@@ -130,14 +130,12 @@ if ($containerType === 'none') {
     if ($editable) {
         $htmlElementID = ElementsHelper::getHTMLElementID($elementID);
         $attributes .= ' id="' . $htmlElementID . '"';
-        if ($editable) {
-            ElementsHelper::$editorData[] = ['element', $elementID, $componentContextData, $typeCode];
-        }
+        ElementsHelper::$editorData[] = ['element', $elementID, $componentContextData, $typeCode];
     }
     $styleSelector = null;
     if ($outputType === 'full-html') {
         $classAttributeValue .= ' bearcms-element';
-        if ($canStyle) {
+        if ($canStyle && $elementID !== null) {
             list($styleID, $styleValue) = ElementStylesHelper::getElementRealStyleData($elementStyleID, $elementStyleValue);
             $styleSelector = ElementStylesHelper::getElementStyleSelector($elementID, $styleID);
             if ($styleSelector !== null) {

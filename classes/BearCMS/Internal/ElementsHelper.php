@@ -609,6 +609,19 @@ class ElementsHelper
                 $component->color = $componentColor;
             };
 
+            $updateIDAttributeFromRawData = function ($component, bool $setRawAttributeIfMissing) {
+                $rawData = (string)$component->getAttribute('bearcms-internal-attribute-raw-data');
+                if (strlen($rawData) > 0) {
+                    $elementData = InternalDataElements::decodeElementRawData($rawData);
+                    if (is_array($elementData)) {
+                        $component->id = $elementData['id'];
+                    }
+                } elseif ($setRawAttributeIfMissing && $component->id !== null && strlen($component->id) > 0) {
+                    $elementRawData = InternalDataElements::getElementRawData($component->id);
+                    $component->setAttribute('bearcms-internal-attribute-raw-data', $elementRawData);
+                }
+            };
+
             if ($name === 'bearcms-elements') {
                 if ($component->id === null || strlen($component->id) === 0) {
                     throw new \Exception('The ID attribute is required for <bearcms-elements>');
@@ -624,17 +637,7 @@ class ElementsHelper
             } elseif (isset(self::$elementsTypesFilenames[$name])) {
                 $component->setAttribute('bearcms-internal-attribute-type', self::$elementsTypesCodes[$name]);
                 $component->setAttribute('bearcms-internal-attribute-filename', self::$elementsTypesFilenames[$name]);
-                $rawData = (string)$component->getAttribute('bearcms-internal-attribute-raw-data');
-                $elementData = null;
-                if (strlen($rawData) > 0) {
-                    $elementData = InternalDataElements::decodeElementRawData($rawData);
-                    if (is_array($elementData)) {
-                        $component->id = $elementData['id'];
-                    }
-                } elseif ($component->id !== null && strlen($component->id) > 0) {
-                    $elementRawData = InternalDataElements::getElementRawData($component->id);
-                    $component->setAttribute('bearcms-internal-attribute-raw-data', $elementRawData);
-                }
+                $updateIDAttributeFromRawData($component, true);
                 $updateEditableAttribute($component);
                 $updateContextAttributes($component);
                 if ($component->canStyle === 'true' && isset(self::$elementsTypesOptions[$component->src])) { // Check if element supports styling
@@ -649,6 +652,7 @@ class ElementsHelper
                 }
             } elseif ($name === 'bearcms-missing-element') {
                 $component->setAttribute('bearcms-internal-attribute-type', 'missing');
+                $updateIDAttributeFromRawData($component, false);
                 $updateEditableAttribute($component);
                 $updateContextAttributes($component);
             }
