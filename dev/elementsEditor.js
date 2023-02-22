@@ -222,7 +222,7 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
             return null;
         }
 
-        var defaultCssTypes = ['cssText', 'cssTextShadow', 'cssBackground', 'cssPadding', 'cssMargin', 'cssBorder', 'cssRadius', 'cssShadow', 'cssSize'];
+        var defaultCssTypes = ['cssText', 'cssTextShadow', 'cssBackground', 'cssPadding', 'cssMargin', 'cssBorder', 'cssRadius', 'cssShadow', 'cssSize', 'cssTransform'];
 
         var webSafeFonts = {
             'Arial': 'Arial',
@@ -303,6 +303,12 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
                 // "min-height": "0px",
                 // "max-width": "none",
                 // "max-height": "none",
+            },
+            "cssTransform": {
+                "scale": "none",
+                "translate": "none",
+                "rotate": "none",
+                "opacity": "1",
             },
             "cssTextAlign": {
                 "text-align": "left",

@@ -971,11 +971,19 @@ class Themes
                 return '';
             }
             $result = '';
+            $transitionProperties = [];
             foreach ($value as $propertyName => $propertyValue) {
                 if ($propertyName === 'font-family') {
                     $propertyValue = $updateFontFamily($propertyValue);
                 }
+                if (strpos($propertyName, 'transition--') === 0) {
+                    $transitionProperties[] = substr($propertyName, 12) . ' ' . $propertyValue;
+                    continue;
+                }
                 $result .= $propertyName . ':' . self::escapeCSSValue($propertyValue) . ';';
+            }
+            if (!empty($transitionProperties)) {
+                $result .= 'transition:' . implode(',', $transitionProperties) . ';';
             }
             return $result;
         };

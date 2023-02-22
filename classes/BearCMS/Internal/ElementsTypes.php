@@ -231,7 +231,7 @@ class ElementsTypes
 
                     $groupContainer = $optionsGroup->addGroup(__("bearcms.themes.options.Container"));
                     $groupContainer->addOption($idPrefix . "LinkContainerCSS", "css", '', [
-                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTextAlign"],
+                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssTextAlign", "cssSize", "cssTransform"],
                         "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-link-element", "box-sizing:border-box;"],
@@ -376,7 +376,7 @@ class ElementsTypes
                     ]);
                     if ($isElementContext) {
                         $optionsGroup->addOption($idPrefix . "elementContainerCSS", "css", '', [
-                            "cssTypes" => ["cssSize"],
+                            "cssTypes" => ["cssSize", "cssTransform"],
                             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                             "cssOutput" => [
                                 ["selector", $parentSelector . $customStyleSelector . " .bearcms-image-element"]
@@ -771,7 +771,7 @@ class ElementsTypes
 
                     $groupElementsContainer = $groupElements->addGroup(__("bearcms.themes.options.Container"));
                     $groupElementsContainer->addOption($idPrefix . "NavigationItemLinkContainerCSS", "css", '', [
-                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                         "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-navigation-element-item", "box-sizing:border-box;"],
@@ -902,7 +902,7 @@ class ElementsTypes
 
                     $groupPostTitleContainer = $groupPostTitle->addGroup(__("bearcms.themes.options.Container"));
                     $groupPostTitleContainer->addOption($idPrefix . "BlogPostsPostTitleContainerCSS", "css", '', [
-                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                         "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-blog-posts-element-post-title-container", "box-sizing:border-box;"],
@@ -921,7 +921,7 @@ class ElementsTypes
 
                     $groupPostDateContainer = $groupPostDate->addGroup(__("bearcms.themes.options.Container"));
                     $groupPostDateContainer->addOption($idPrefix . "BlogPostsPostDateContainerCSS", "css", '', [
-                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                         "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-blog-posts-element-post-date-container", "box-sizing:border-box;"],
@@ -931,7 +931,7 @@ class ElementsTypes
 
                     $groupPostContent = $groupPost->addGroup(__("bearcms.themes.options.Content"));
                     $groupPostContent->addOption($idPrefix . "BlogPostsPostContentCSS", "css", '', [
-                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                         "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-blog-posts-element-post-content", "box-sizing:border-box;"],
@@ -950,7 +950,7 @@ class ElementsTypes
 
                     $groupShowMoreButtonContainer = $groupShowMoreButton->addGroup(__("bearcms.themes.options.Container"));
                     $groupShowMoreButtonContainer->addOption($idPrefix . "BlogPostsShowMoreButtonContainerCSS", "css", '', [
-                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                         "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-blog-posts-element-show-more-button-container", "box-sizing:border-box;"],
@@ -994,7 +994,7 @@ class ElementsTypes
 
                     $groupComment = $groupComments->addGroup(__("bearcms.themes.options.comments.Comment"));
                     $groupComment->addOption($idPrefix . "CommentsCommentCSS", "css", '', [
-                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                         "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-comments-comment", "box-sizing:border-box;"],
@@ -1013,7 +1013,7 @@ class ElementsTypes
 
                     $groupCommentAuthorImage = $groupComment->addGroup(__("bearcms.themes.options.comments.Author image"));
                     $groupCommentAuthorImage->addOption($idPrefix . "CommentsAuthorImageCSS", "css", '', [
-                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                         "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-comments-comment-author-image", "box-sizing:border-box;"],
@@ -1050,7 +1050,7 @@ class ElementsTypes
 
                     $groupTextInput = $groupComments->addGroup(__("bearcms.themes.options.comments.Text input"));
                     $groupTextInput->addOption($idPrefix . "CommentsTextInputCSS", "css", '', [
-                        "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssTypes" => ["cssText", "cssTextShadow", "cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                         "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-comments-element-text-input", "box-sizing:border-box;border:0;margin:0;padding:0;"],
@@ -1087,7 +1087,7 @@ class ElementsTypes
 
                     $groupShowMoreButtonContainer = $groupShowMoreButton->addGroup(__("bearcms.themes.options.comments.Container"));
                     $groupShowMoreButtonContainer->addOption($idPrefix . "CommentsShowMoreButtonContainerCSS", "css", '', [
-                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                         "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-comments-show-more-button-container", "box-sizing:border-box;"],
@@ -1126,7 +1126,7 @@ class ElementsTypes
 
                     $groupLarge = $group->addGroup(__("bearcms.themes.options.Separator.Large"));
                     $groupLarge->addOption($idPrefix . "SeparatorLargeCSS", "css", '', [
-                        "cssTypes" => ["cssBackground", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssSize"],
+                        "cssTypes" => ["cssBackground", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssSize", "cssTransform"],
                         "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-separator-element-large"]
@@ -1136,7 +1136,7 @@ class ElementsTypes
 
                     $groupMedium = $group->addGroup(__("bearcms.themes.options.Separator.Medium"));
                     $groupMedium->addOption($idPrefix . "SeparatorMediumCSS", "css", '', [
-                        "cssTypes" => ["cssBackground", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssSize"],
+                        "cssTypes" => ["cssBackground", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssSize", "cssTransform"],
                         "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-separator-element-medium"]
@@ -1146,7 +1146,7 @@ class ElementsTypes
 
                     $groupSmall = $group->addGroup(__("bearcms.themes.options.Separator.Small"));
                     $groupSmall->addOption($idPrefix . "SeparatorSmallCSS", "css", '', [
-                        "cssTypes" => ["cssBackground", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssSize"],
+                        "cssTypes" => ["cssBackground", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssSize", "cssTransform"],
                         "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                         "cssOutput" => [
                             ["selector", $parentSelector . " .bearcms-separator-element-small"]
@@ -1228,7 +1228,7 @@ class ElementsTypes
                     "onHighlight" => [['cssSelector', $parentSelector]]
                 ]);
                 $optionsGroup->addOption($idPrefix . "css", "css", '', [
-                    "cssTypes" => ["cssMargin", "cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                    "cssTypes" => ["cssMargin", "cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                     "cssOptions" => ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState"],
                     "cssOutput" => [
                         ["selector", $parentSelector]
