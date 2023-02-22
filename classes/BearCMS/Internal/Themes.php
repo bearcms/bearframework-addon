@@ -1255,9 +1255,6 @@ class Themes
                 $style .= '@media ' . $mediaQuery . '{';
             }
             foreach ($mediaQueryRules as $selector => $value) {
-                if (strpos($value, '--rotation') !== false) {
-                    $value = 'transform:rotate(var(--rotation));' . $value;
-                }
                 if (strpos($value, '--css-to-attribute-data-responsive-attributes') !== false) {
                     $value .= '--css-to-attribute-data-responsive-attributes:*;';
                     $hasResponsiveAttributes = true;
