@@ -17,19 +17,19 @@ $outputType = isset($outputType[0]) ? $outputType : 'full-html';
 $isFullHtmlOutputType = $outputType === 'full-html';
 
 if ($size === 'large') {
-    $className = 'bearcms-separator-element-large';
+    $classNames = 'bearcms-separator-element bearcms-separator-element-large';
 } elseif ($size === 'medium') {
-    $className = 'bearcms-separator-element-medium';
+    $classNames = 'bearcms-separator-element bearcms-separator-element-medium';
 } else {
-    $className = 'bearcms-separator-element-small';
+    $classNames = 'bearcms-separator-element bearcms-separator-element-small';
 }
 
-$attributes = $isFullHtmlOutputType ? ' class="' . $className . '"' : '';
+$attributes = $isFullHtmlOutputType ? ' class="' . $classNames . '"' : '';
 
 $content = '<div' . $attributes . '></div>';
 echo '<html>';
 if ($isFullHtmlOutputType) {
-    echo '<head><style>.' . $className . '{font-size:0;line-height:0;}</style></head>';
+    echo '<head><style>.bearcms-separator-element{font-size:0;line-height:0;}</style></head>';
 }
 echo '<body>';
 echo $content;
