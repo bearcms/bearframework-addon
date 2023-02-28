@@ -145,6 +145,7 @@ class Blog
             $serverData = Internal\TempClientData::get($data['serverData']);
             if (is_array($serverData) && isset($serverData['componentHTML'])) {
                 $content = $app->components->process($serverData['componentHTML']);
+                $content = $app->clientPackages->process($content);
                 return json_encode([
                     'content' => $content
                 ]);

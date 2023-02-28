@@ -552,7 +552,7 @@ class BearCMS
      */
     public function process(\BearFramework\App\Response $response): void
     {
-        $response->content = $this->app->components->process($response->content);
+        $response->content = $this->app->clientPackages->process($this->app->components->process($response->content));
     }
 
     /**
