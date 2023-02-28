@@ -175,7 +175,7 @@ class Blog
 
         $groupTitleContainer = $groupTitle->addGroup(__("bearcms.themes.options.Container"));
         $groupTitleContainer->addOption("blogPostPageTitleContainerCSS", "css", '', [
-            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-title-container", "box-sizing:border-box;"],
@@ -206,7 +206,7 @@ class Blog
         ]);
         $groupDateContainer = $groupDate->addGroup(__("bearcms.themes.options.Container"));
         $groupDateContainer->addOption("blogPostPageDateContainerCSS", "css", '', [
-            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-date-container", "box-sizing:border-box;"],
@@ -216,7 +216,7 @@ class Blog
 
         $groupContent = $group->addGroup(__("bearcms.themes.options.Content"));
         $groupContent->addOption("blogPostPageContentCSS", "css", '', [
-            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-content", "box-sizing:border-box;"],
@@ -227,7 +227,7 @@ class Blog
         $groupComments = $group->addGroup(__("bearcms.themes.options.Comments"));
         $groupCommentsSeparator = $groupComments->addGroup(__("bearcms.themes.options.Separator"));
         $groupCommentsSeparator->addOption("blogPostPageCommentsBlockSeparatorCSS", "css", '', [
-            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-comments-block-separator", "box-sizing:border-box;"],
@@ -236,7 +236,7 @@ class Blog
         ]);
         $groupCommentsTitle = $groupComments->addGroup(__("bearcms.themes.options.Title"));
         $groupCommentsTitle->addOption("blogPostPageCommentsTitleContainerCSS", "css", '', [
-            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-comments-title-container", "box-sizing:border-box;"],
@@ -245,7 +245,7 @@ class Blog
         ]);
         $groupCommentsContainer = $groupComments->addGroup(__("bearcms.themes.options.Comments"));
         $groupCommentsContainer->addOption("blogPostPageCommentsContainerCSS", "css", '', [
-            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-comments-container", "box-sizing:border-box;"],
@@ -256,7 +256,7 @@ class Blog
         $groupRelated = $group->addGroup(__("bearcms.themes.options.Related posts"));
         $groupRelatedSeparator = $groupRelated->addGroup(__("bearcms.themes.options.Separator"));
         $groupRelatedSeparator->addOption("blogPostPageRelatedBlockSeparatorCSS", "css", '', [
-            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-related-block-separator", "box-sizing:border-box;"],
@@ -265,7 +265,7 @@ class Blog
         ]);
         $groupRelatedTitle = $groupRelated->addGroup(__("bearcms.themes.options.Title"));
         $groupRelatedTitle->addOption("blogPostPageRelatedTitleContainerCSS", "css", '', [
-            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-related-title-container", "box-sizing:border-box;"],
@@ -274,7 +274,7 @@ class Blog
         ]);
         $groupRelatedContainer = $groupRelated->addGroup(__("bearcms.themes.options.Related list"));
         $groupRelatedContainer->addOption("blogPostPageRelatedContainerCSS", "css", '', [
-            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+            "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]),
             "cssOutput" => [
                 ["rule", ".bearcms-blogpost-page-related-container", "box-sizing:border-box;"],
