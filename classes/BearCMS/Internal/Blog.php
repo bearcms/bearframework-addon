@@ -54,7 +54,9 @@ class Blog
                 $path = $request->path->get();
                 $hasSlash = substr($path, -1) === '/';
                 if (!$hasSlash) {
-                    return new App\Response\PermanentRedirect($request->getURL() . '/');
+                    $tempRequest = clone ($request);
+                    $tempRequest->path->set($path . '/');
+                    return new App\Response\PermanentRedirect($tempRequest->getURL());
                 }
                 $applyContext = $bearCMS->makeApplyContext();
                 $blogPostLanguage = (string)$blogPost->language;

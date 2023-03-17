@@ -44,7 +44,9 @@ class Pages
             } else {
                 $pageID = array_search($path . '/', $pathsList);
                 if ($pageID !== false) {
-                    return new App\Response\PermanentRedirect($request->getURL() . '/');
+                    $tempRequest = clone ($request);
+                    $tempRequest->path->set($path . '/');
+                    return new App\Response\PermanentRedirect($tempRequest->getURL());
                 }
             }
         }
