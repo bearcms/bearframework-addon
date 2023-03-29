@@ -1176,7 +1176,7 @@ class Themes
                     $valueDetails = self::getValueDetails($value, true);
                     $optionType = $option->type;
                     if ($optionType === 'cssCode') {
-                        $cssCode .= trim($valueDetails['value']);
+                        $cssCode .= trim((string)$valueDetails['value']);
                     } else {
                         $isCodeOptionType = $optionType === 'code';
 
