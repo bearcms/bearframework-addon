@@ -231,7 +231,11 @@ class Server
         $maxUploadSize = Config::getVariable('maxUploadSize');
         if ($maxUploadSize === null) {
             $getSystemMaxUploadSize = function () { // todo move to other class and cache result
-                $sizeToBytes = function ($size) {
+                $sizeToBytes = function ($size): int {
+                    if (is_int($size)) {
+                        return $size;
+                    }
+                    $size = (string)$size;
                     $suffix = strtolower(substr($size, -1));
                     if (!in_array($suffix, ['t', 'g', 'm', 'k'])) {
                         return (int) $size;
