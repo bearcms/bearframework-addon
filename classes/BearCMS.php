@@ -201,13 +201,11 @@ class BearCMS
         if (Config::hasFeature('FILES')) {
             $this->app->routes
                 ->add('/files/preview/*', [
-                    $disabledCheck,
                     function (App\Request $request) {
                         return Internal\Controller::handleFilePreview($request);
                     }
                 ])
                 ->add('/files/download/?', [
-                    $disabledCheck,
                     function (App\Request $request) {
                         return Internal\Controller::handleFileDownload($request);
                     }
