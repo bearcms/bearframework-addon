@@ -262,7 +262,8 @@ class ElementsHelper
         if ($styleSelector !== null) {
             $content .= self::getStyleHTML('columns', $styleValue, $styleSelector, true);
         }
-        $content .= '</head>'
+        $content .= '<link rel="client-packages-embed" name="cssToAttributes">'
+            . '</head>'
             . '<body>'
             . ($inContainer ? '<div' . $attributes . '>' . $innerContent . '</div>' : $innerContent)
             . '</body>'
@@ -371,7 +372,8 @@ class ElementsHelper
         if ($styleSelector !== null) {
             $content .= self::getStyleHTML('floatingBox', $styleValue, $styleSelector, true);
         }
-        $content .= '</head>'
+        $content .= '<link rel="client-packages-embed" name="cssToAttributes">'
+            . '</head>'
             . '<body>'
             . ($inContainer ? '<div' . $attributes . '>' . $innerContent . '</div>' : $innerContent)
             . '</body>'
@@ -469,7 +471,8 @@ class ElementsHelper
         if ($styleSelector !== null) {
             $content .= self::getStyleHTML('flexibleBox', $styleValue, $styleSelector, true);
         }
-        $content .= '</head>'
+        $content .= '<link rel="client-packages-embed" name="cssToAttributes">'
+            . '</head>'
             . '<body>'
             . ($inContainer ? '<div' . $attributes . '>' . $innerContent . '</div>' : $innerContent)
             . ($linkHTML !== null ? $linkHTML : '') // todo why cant be outsite the html??
