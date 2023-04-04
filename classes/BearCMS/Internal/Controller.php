@@ -153,8 +153,9 @@ class Controller
                 if ($preview) {
                     $previewName = $request->path->getSegment(3);
                     if ($previewName === null) {
-                        $newURL = $request->getURL();
-                        $newURL = trim($newURL, '/') . '/' . rawurlencode($fileData['name']);
+                        $tempRequest = clone ($request);
+                        $tempRequest->path->set(rtrim($tempRequest->path->get(), '/') . '/' . $fileData['name']);
+                        $newURL = $tempRequest->getURL();
                         $response = new App\Response\TemporaryRedirect($newURL);
                         if ($noCache) {
                             $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
