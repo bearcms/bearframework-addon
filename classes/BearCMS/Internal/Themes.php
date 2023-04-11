@@ -274,7 +274,7 @@ class Themes
             foreach (self::$pagesOptions as $key => $value) {
                 $pagesOptionsEnvKeyData[] = $key . (is_array($value) ? '$' . $value[0] : '');
             }
-            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v13'));
+            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v14'));
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID);
@@ -1012,15 +1012,40 @@ class Themes
             return $result;
         };
 
-        $getStateCSSRules = function (string $state, string $value, array $statesTypes, string $selector, int $optionIndex, int $stateIndex = null): array {
+        $replaceStateSelectorsInSelector = function (string $selector, array $statesNames, array &$replacedStateSelectors): string {
+            if (strpos($selector, 'stateSelector') !== false) {
+                $matches = [];
+                $search = [];
+                $replace = [];
+                preg_match_all('/{stateSelector\((.*?)\)}/', $selector, $matches);
+                foreach ($matches[0] as $i => $match) {
+                    $stateName = $matches[1][$i];
+                    $search[] = $match;
+                    if (array_search($stateName, $statesNames) !== false) {
+                        $replace[] = ':' . $stateName;
+                        $replacedStateSelectors[] = $stateName;
+                    } else {
+                        $replace[] = '';
+                    }
+                }
+                return str_replace($search, $replace, $selector);
+            }
+            return $selector;
+        };
+
+        $getStateCSSRules = function (string $state, string $value, array $statesTypes, string $selector, int $optionIndex, int $stateIndex = null) use ($replaceStateSelectorsInSelector): array {
             $cssMediaQueries = []; // array of array of strings
             $additionalCSSSelectors = []; // array of array of strings
             $attributes = [];
             $cssStates = '';
             $unsupportedStates = '';
             $result = [];
-            $parts = self::getStateCombinationDetails($state);
-            foreach ($parts as $name => $args) {
+            $stateParts = self::getStateCombinationDetails($state);
+
+            $replacedStateSelectors = [];
+            $selector = $replaceStateSelectorsInSelector($selector, array_keys($stateParts), $replacedStateSelectors);
+
+            foreach ($stateParts as $name => $args) {
                 if (isset($statesTypes[$name])) {
                     $stateType = $statesTypes[$name];
                     if ($stateType === 'size') {
@@ -1115,7 +1140,9 @@ class Themes
                             $cssStates .= implode('', $cssSelectors);
                         }
                     } else if (array_search($stateType, ['hover', 'focus', 'active', 'firstChild', 'lastChild', 'checked']) !== false) {
-                        $cssStates .= ':' . $name;
+                        if (array_search($name, $replacedStateSelectors) === false) {
+                            $cssStates .= ':' . $name;
+                        }
                     }
                 } else {
                     $unsupportedStates .= ':' . $name;
@@ -1168,7 +1195,7 @@ class Themes
             return $result;
         };
 
-        $walkOptions = function ($options) use (&$addCSSRule, &$cssCode, &$walkOptions, &$addAssetDetails, &$replaceVariables, &$getCSSRuleValue, $supportedStates, $getCodeOptionCssRule, $getCodeOptionStatesCssRules, $getStateCSSRules) {
+        $walkOptions = function ($options) use (&$addCSSRule, &$cssCode, &$walkOptions, &$addAssetDetails, &$replaceVariables, &$getCSSRuleValue, &$replaceStateSelectorsInSelector, $supportedStates, $getCodeOptionCssRule, $getCodeOptionStatesCssRules, $getStateCSSRules) {
             foreach ($options as $optionIndex => $option) {
                 if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                     //$value = isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value'], JSON_THROW_ON_ERROR) : $option->details['value']) : null; // array not used ???
@@ -1210,17 +1237,19 @@ class Themes
                                 if (is_array($outputDefinition) && isset($outputDefinition[0])) {
                                     if ($outputDefinition[0] === 'selector' && isset($outputDefinition[1])) {
                                         $selector = $outputDefinition[1];
+                                        $replacedStateSelectors = [];
+                                        $replacedStatesSelector = $replaceStateSelectorsInSelector($selector, [], $replacedStateSelectors);
                                         $valueDefinition = isset($outputDefinition[2]) ? $outputDefinition[2] : null;
                                         if ($isCodeOptionType) {
                                             $cssRuleValue = $getCodeOptionCssRule(['load'], $valueDetails['value'], $optionIndex);
-                                            $addCSSRule('', $selector, $cssRuleValue);
+                                            $addCSSRule('', $replacedStatesSelector, $cssRuleValue);
                                             $codeOptionCssRules = $getCodeOptionStatesCssRules($valueDetails['states'], $statesTypes, $optionIndex);
                                             foreach ($codeOptionCssRules as $cssRuleValue) {
                                                 $addCSSRule('', $selector, $cssRuleValue);
                                             }
                                         } else {
                                             $cssRuleValue = $valueDefinition !== null ? $replaceVariables($valueDefinition, $valueDetails['value']) : $getCSSRuleValue($valueDetails['value']);
-                                            $addCSSRule('', $selector, $cssRuleValue);
+                                            $addCSSRule('', $replacedStatesSelector, $cssRuleValue);
                                             foreach ($valueDetails['states'] as $stateIndex => $stateData) {
                                                 $stateValue = $stateData[1];
                                                 $cssRuleValue = $valueDefinition !== null ? $replaceVariables($valueDefinition, $stateValue, $valueDetails['value']) : $getCSSRuleValue($stateValue);
