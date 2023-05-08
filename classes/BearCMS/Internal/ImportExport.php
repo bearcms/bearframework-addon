@@ -58,6 +58,61 @@ class ImportExport
                     }
                 );
             };
+            self::$handlers['data'] = function () {
+                return self::makeHandler(
+                    function (array $args, callable $add): void {
+                        $keys = [];
+                        $skipPrefixes = isset($args['skipPrefixes']) ? $args['skipPrefixes'] : [];
+                        $skipKeys = isset($args['skipKeys']) ? $args['skipKeys'] : [];
+                        $app = App::get();
+                        $appData = $app->data;
+                        $list = $appData->getList()
+                            ->sliceProperties(['key']);
+                        foreach ($skipPrefixes as $skipPrefix) {
+                            $list->filterBy('key', $skipPrefix, 'notStartWith');
+                        }
+                        foreach ($list as $item) {
+                            $dataKey = $item->key;
+                            if (array_search($dataKey, $skipKeys) !== false) {
+                                continue;
+                            }
+                            $dataItem = $app->data->get($dataKey);
+                            $add('values/' . $dataKey, $dataItem->value);
+                            $dataItemMetadata = $dataItem->metadata->toArray();
+                            if (!empty($dataItemMetadata)) {
+                                $add('metadata/' . $dataKey, json_encode($dataItemMetadata));
+                            }
+                            $keys[] = $dataKey;
+                        }
+                        $add('keys.json', json_encode($keys));
+                    },
+                    function (array $args, ImportContext $context, $options) {
+                        $app = App::get();
+                        $appData = $app->data;
+                        $keys = json_decode($context->getValue('keys.json'), true);
+                        foreach ($keys as $key) {
+                            $value = $context->getValue('values/' . $key);
+                            $metadata = $context->getValue('metadata/' . $key);
+                            $dataItemExists = $appData->exists($key);
+                            if ($dataItemExists) {
+                                $context->logWarning('The data key ' . $key . ' already exists!', ['dataKey' => $key]);
+                            } else {
+                                $context->logChange('setDataItem', ['dataKey' => $key]);
+                            }
+                            if (!$dataItemExists && $context->isExecuteMode()) {
+                                $dataItem = $appData->make($key, $value);
+                                if ($metadata !== null) {
+                                    $metadata = json_decode($metadata, true);
+                                    foreach ($metadata as $metadataName => $metadataValue) {
+                                        $dataItem->metadata[$metadataName] = $metadataValue;
+                                    }
+                                }
+                                $appData->set($dataItem);
+                            }
+                        }
+                    }
+                );
+            };
             self::$defaultHandlersInitialized = true;
         }
     }
@@ -92,43 +147,84 @@ class ImportExport
 
     /**
      * 
-     * @param array $items [[type=element, id=key1], [type=activeTheme], [type=elementsContainer, id=>key1], ...] Available types: elementsContainer, element, theme, activeTheme
+     * @param array $items [[type=>element, args=>[elementID=>key1, containerID=>key2], exportArgs=>false], [type=>activeTheme], [type=>data], [type=>elementsContainer, args=>[containerID=>key1]], ...] Available types: elementsContainer, element, theme, activeTheme
+     * @param array $options Available values: memoryLimit
      * @return string
      */
-    static function export(array $items): string
+    static function export(array $items, array $options = []): string
     {
         $app = App::get();
         $items = array_values($items);
         $archiveFilename = $app->data->getFilename('.temp/bearcms/export/export-' . date('Ymd-His') . '.zip');
         $tempArchiveFilename = sys_get_temp_dir() . '/bearcms-export-' . uniqid() . '.zip';
-        $zip = new \ZipArchive();
-        if ($zip->open($tempArchiveFilename, \ZipArchive::CREATE) === true) {
-            $manifest = [
-                'type' => 'items',
-                'items' => $items,
-                'exportDate' => date('c'),
-                'files' => []
-            ];
-            foreach ($items as $index => $item) {
-                if (!isset($item['type'])) {
-                    throw new \Exception('Not found type for ' . print_r($item, true) . '!');
-                }
-                $itemArgs = $item;
-                unset($itemArgs['type']);
-                $handler = self::getHandler($item['type']);
-                $keys = [];
-                $handler->export($itemArgs, function (string $key, string $content) use ($index, &$keys, $zip) {
-                    $zip->addFromString('items/' . $index . '/' . md5($key), $content);
-                    $keys[$key] = $key; // may have duplicates (shared styles for example)
-                });
-                ksort($keys);
-                $manifest['files'][$index] = array_keys($keys);
+
+        $getConfigMemoryLimit = function (): int {
+            $limit = trim(ini_get('memory_limit'));
+            $letter = strtolower(substr($limit, -1));
+            $number = substr($limit, 0, -1);
+            if ($letter === 'g') {
+                return (int) $number * 1024 * 1024 * 1024;
+            } elseif ($letter === 'm') {
+                return (int) $number * 1024 * 1024;
+            } elseif ($letter === 'k') {
+                return (int) $number * 1024;
             }
-            $zip->addFromString('manifest.json', json_encode($manifest, JSON_THROW_ON_ERROR));
-            $zip->close();
-        } else {
-            throw new \Exception('Cannot open zip archive (' . $tempArchiveFilename . ')');
+            return (int) $limit;
+        };
+
+        $startMemoryUsage = memory_get_usage();
+        $memoryLimit = isset($options['memoryLimit']) ? (int) $options['memoryLimit'] : ($getConfigMemoryLimit() - $startMemoryUsage) / 2;
+
+        $zip = null;
+        $openZip = function () use (&$zip, $tempArchiveFilename) {
+            if ($zip === null) {
+                $zip = new \ZipArchive();
+                if (!$zip->open($tempArchiveFilename, \ZipArchive::CREATE)) {
+                    throw new \Exception('Cannot open zip file for writing (' . $tempArchiveFilename . ')!');
+                }
+            }
+        };
+        $closeZip = function () use (&$zip) {
+            if ($zip !== null) {
+                $zip->close();
+                $zip = null;
+            }
+        };
+
+        $manifest = [
+            'type' => 'items',
+            'items' => [],
+            'date' => date('c'),
+            'files' => []
+        ];
+        foreach ($items as $index => $item) {
+            if (!isset($item['type'])) {
+                throw new \Exception('Not found type for ' . print_r($item, true) . '!');
+            }
+            $itemType = $item['type'];
+            $itemArgs = isset($item['args']) ? $item['args'] : [];
+            $exportArgs = !(isset($item['exportArgs']) && $item['exportArgs'] === false);
+            $handler = self::getHandler($itemType);
+            $files = [];
+            $handler->export($itemArgs, function (string $key, string $content) use ($index, &$files, &$zip, $openZip, $closeZip, $startMemoryUsage, $memoryLimit) {
+                $openZip();
+                $zip->addFromString('items/' . $index . '/' . md5($key), $content);
+                $files[$key] = 1; // may have duplicates (shared styles for example)
+                if (memory_get_usage() - $startMemoryUsage > $memoryLimit) {
+                    $closeZip();
+                }
+            });
+            ksort($files);
+            $manifest['items'][$index] = ['type' => $itemType];
+            if ($exportArgs) {
+                $manifest['items'][$index]['args'] = $itemArgs;
+            }
+            $manifest['files'][$index] = array_keys($files);
         }
+        $openZip();
+        $zip->addFromString('manifest.json', json_encode($manifest, JSON_THROW_ON_ERROR));
+        $closeZip();
+
         copy($tempArchiveFilename, $archiveFilename);
         unlink($tempArchiveFilename);
         return $archiveFilename;
@@ -179,8 +275,12 @@ class ImportExport
                         }
                         return null;
                     });
-                    $itemArgs = $item;
-                    unset($itemArgs['type']);
+                    if (isset($item['args'])) {
+                        $itemArgs = $item['args'];
+                    } else { // old format
+                        $itemArgs = $item;
+                        unset($itemArgs['type']);
+                    }
                     $handler = self::getHandler($item['type']);
                     $importResult = $handler->import($itemArgs, $itemContext, isset($item['importOptions']) && is_array($item['importOptions']) ? $item['importOptions'] : []);
                     $result['results'][$index] = [
@@ -191,6 +291,12 @@ class ImportExport
                 $zip->close();
                 unlink($tempArchiveFilename);
                 $result['changes'] = $context->getChanges();
+                if (isset($result['changes']['_warnings'])) {
+                    $result['warnings'] = $result['changes']['_warnings'];
+                    unset($result['changes']['_warnings']);
+                } else {
+                    $result['warnings'] = [];
+                }
             } catch (\Exception $e) {
                 $zip->close();
                 unlink($tempArchiveFilename);

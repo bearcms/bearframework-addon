@@ -569,7 +569,7 @@ class ServerCommands
         $app = App::get();
         $elementID = $data['elementID'];
         $containerID = $data['containerID'];
-        $filename = ImportExport::export([['type' => 'element', 'elementID' => $elementID, 'containerID' => $containerID]]);
+        $filename = ImportExport::export([['type' => 'element', 'args' => ['elementID' => $elementID, 'containerID' => $containerID]]]);
         return ['downloadURL' => $app->assets->getURL($filename, ['download' => true])];
     }
 
