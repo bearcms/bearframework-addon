@@ -1687,7 +1687,10 @@ class ElementsDataHelper
         return \BearCMS\Internal\ImportExport::import($filename, $preview, function ($manifest) use ($containerID, $insertTarget) {
             if (sizeof($manifest['items']) === 1 && $manifest['items'][0]['type'] === 'element') {
                 $manifest['items'][0]['importOptions'] = ['generateNewElementID' => true, 'insertTarget' => $insertTarget];
-                $manifest['items'][0]['containerID'] = $containerID;
+                if (!isset($manifest['items'][0]['args'])) {
+                    $manifest['items'][0]['args'] = [];
+                }
+                $manifest['items'][0]['args']['containerID'] = $containerID;
                 return $manifest;
             }
             throw new \Exception('This is not a valid element export file!');
