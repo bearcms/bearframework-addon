@@ -1690,6 +1690,9 @@ class ElementsDataHelper
                 if (!isset($manifest['items'][0]['args'])) {
                     $manifest['items'][0]['args'] = [];
                 }
+                if (isset($manifest['items'][0]['elementID'])) {
+                    $manifest['items'][0]['args']['elementID'] = $manifest['items'][0]['elementID'];
+                }
                 $manifest['items'][0]['args']['containerID'] = $containerID;
                 return $manifest;
             }
