@@ -44,14 +44,14 @@ class Sitemap
         $pathsToUpdate = [];
         $sitemap = self::getSitemap();
         $list = $sitemap->getList()->sortBy('locationPath');
-        $code = [];
+        $items = [];
         $tempData = null;
         foreach ($list as $item) {
-            $code[] = '<url>';
+            $code = '<url>';
             $locationPath = $item->locationPath;
-            $code[] = '<loc>' . $appURLs->get($locationPath) . '</loc>';
+            $code .= '<loc>' . $appURLs->get($locationPath) . '</loc>';
             if ($item->changeFrequency !== null) {
-                $code[] =  '<changefreq>' . $item->changeFrequency . '</changefreq>';
+                $code .=  '<changefreq>' . $item->changeFrequency . '</changefreq>';
             }
             if ($item->lastModified !== null) {
                 $lastModified = null;
@@ -69,18 +69,20 @@ class Sitemap
                     $lastModified = $item->lastModified;
                 }
                 if ($lastModified !== null) {
-                    $code[] =  '<lastmod>' . date('c', $lastModified) . '</lastmod>';
+                    $code .=  '<lastmod>' . date('c', $lastModified) . '</lastmod>';
                 }
             }
             if ($item->priority !== null) {
-                $code[] =  '<priority>' . $item->priority . '</priority>';
+                $code .=  '<priority>' . $item->priority . '</priority>';
             }
-            $code[] =  '</url>';
+            $code .= '</url>';
+            $items[$locationPath] = $code;
         }
+        ksort($items);
         if (!empty($pathsToUpdate)) {
             self::addUpdateDatesTasks($pathsToUpdate);
         }
-        return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">' . implode('', $code) . '</urlset>';
+        return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">' . implode('', $items) . '</urlset>';
     }
 
     /**
