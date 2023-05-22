@@ -25,7 +25,7 @@ $app->bearCMS->themes
             });
 
         $context->assets
-            ->addDir('themes/themeone/assets');
+            ->addDir('themes/themeone/assets'); // todo: move files in assets/s5 to the cms server (used in old style 5)
 
         $theme->version = '1.12';
 
