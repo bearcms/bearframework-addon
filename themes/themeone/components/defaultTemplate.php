@@ -182,7 +182,7 @@ $elementButton = $elementTextStyle . 'background-color:transparent;border:1px so
 $elementButtonOver = 'background-color:rgba(0,0,0,0.04);';
 $elementButtonActive = 'background-color:rgba(0,0,0,0.08);';
 $elementUserImage = 'box-sizing:border-box;width:50px;height:50px;margin-right:calc(' . $elementsSpacing . ' / 2);border-radius:' . $borderRadius . ';';
-$elementSeparator = 'background-color:var(--bearcms-template-context-text-color);height:2px;margin:calc(' . $elementsSpacing . ' * 3) auto calc(' . $elementsSpacing . ' * 3) auto;';
+$elementSeparator = 'background-color:var(--bearcms-template-context-text-color);height:2px;margin:calc(' . $elementsSpacing . ' * 3) auto calc(' . $elementsSpacing . ' * 3) auto;opacity:0.3;';
 
 // bearcms-tc fixes collistions with the theme options
 
@@ -199,8 +199,8 @@ echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-text-element a{' . $eleme
 echo '.bearcms-tc .bearcms-html-element{' . $elementText . '}';
 echo '.bearcms-tc .bearcms-html-element a{' . $elementLink . '}';
 echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-link-element a{' . $elementLink . '}';
-echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-image-element-image{border-radius:' . $borderRadius . ';}';
-echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-image-gallery-element-image{border-radius:' . $borderRadius . ';}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-image-element .bearcms-image-element-image{border-radius:' . $borderRadius . ';}';
+echo '.bearcms-tc' . $customStyleSelector . ' .bearcms-image-gallery-element .bearcms-image-gallery-element-image{border-radius:' . $borderRadius . ';}';
 echo '.bearcms-tc .bearcms-video-element{border-radius:' . $borderRadius . ';}';
 echo '.bearcms-tc .bearcms-navigation-element-item a{' . $elementLink . '}';
 
@@ -223,11 +223,12 @@ echo '.bearcms-tc .bearcms-comments-element-send-button:not(.bearcms-comments-el
 echo '.bearcms-tc .bearcms-comments-element-send-button:not(.bearcms-comments-element-send-button-waiting):active{' . $elementButtonActive . '}';
 
 echo '.bearcms-tc .bearcms-blog-posts-element-show-more-button{' . $elementLink . '}';
-echo '.bearcms-tc .bearcms-blog-posts-element-post-title{' . $elementHeadingMedium . 'color:var(--bearcms-template-context-text-color);text-decoration:underline;}';
+echo '.bearcms-tc .bearcms-blog-posts-element-post-title{' . $elementHeadingSmall . 'font-size:calc(var(--bearcms-template-accent-text-font-size) * 1.2);color:var(--bearcms-template-context-text-color);text-decoration:underline;}';
 echo '.bearcms-tc .bearcms-blog-posts-element-post-date-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
 echo '.bearcms-tc .bearcms-blog-posts-element-post-date{' . $elementText . 'font-size:calc(var(--bearcms-template-text-font-size) * 0.8);}';
 echo '.bearcms-tc .bearcms-blog-posts-element-post-content{padding-top:calc(' . $elementsSpacing . ' / 2);}';
-echo '.bearcms-tc .bearcms-blog-posts-element-post:not(:last-child) .bearcms-blog-posts-element-post-content{padding-bottom:' . $elementsSpacing . ';}';
+echo '.bearcms-tc .bearcms-blog-posts-element-post:not(:last-child){margin-bottom:' . $elementsSpacing . ';}';
+echo '.bearcms-tc .bearcms-blog-posts-element-show-more-button-container{margin-top:' . $elementsSpacing . ';}';
 
 echo '.bearcms-tc .bearcms-forum-posts-post-title{' . $elementText . 'text-decoration:underline;}';
 echo '.bearcms-tc .bearcms-forum-posts-post-replies-count{' . $elementText . 'font-size:calc(var(--bearcms-template-text-font-size) * 0.8);}';
@@ -287,7 +288,7 @@ if ($hasSearchSupport) {
 
 if ($hasStoreSupport) {
     echo '.bearcms-tc .bearcms-store-items-element-item-image{border-radius:' . $borderRadius . ';}';
-    echo '.bearcms-tc .bearcms-store-items-element-item-name{' . $elementHeadingMedium . 'color:var(--bearcms-template-context-text-color);text-decoration:underline;}';
+    echo '.bearcms-tc .bearcms-store-items-element-item-name{' . $elementHeadingSmall . 'font-size:calc(var(--bearcms-template-accent-text-font-size) * 1.2);color:var(--bearcms-template-context-text-color);text-decoration:underline;}';
     echo '.bearcms-tc .bearcms-store-items-element-item-description{' . $elementText . '}';
     echo '.bearcms-tc .bearcms-store-items-element-item-price-container{padding-top:calc(' . $elementsSpacing . ' / 2);}';
     echo '.bearcms-tc .bearcms-store-items-element-item-price{' . $elementText . '}';
