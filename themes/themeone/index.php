@@ -70,9 +70,9 @@ $app->bearCMS->themes
             ];
             $manifest->media = [
                 [
-                    'filename' => $context->dir . '/themes/themeone/assets/cover.jpg',
-                    'width' => 1500,
-                    'height' => 1125,
+                    'filename' => $context->dir . '/themes/themeone/assets/c1.jpg',
+                    'width' => 1416,
+                    'height' => 1062,
                 ]
             ];
             return $manifest;
