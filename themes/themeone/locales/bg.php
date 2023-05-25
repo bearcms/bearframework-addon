@@ -27,6 +27,7 @@ return [
     'bearcms.themes.themeone.options.Hidden' => 'Скрит',
     'bearcms.themes.themeone.options.Visible2' => 'Видима',
     'bearcms.themes.themeone.options.Hidden2' => 'Скрита',
+    'bearcms.themes.themeone.options.Auto' => 'Автоматична',
     'bearcms.themes.themeone.options.DefaultText' => 'Основен текст',
     'bearcms.themes.themeone.options.AccentText' => 'Акцентен текст',
     'bearcms.themes.themeone.options.Footer' => 'Футър (долна част)',

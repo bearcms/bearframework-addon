@@ -27,6 +27,7 @@ return [
     'bearcms.themes.themeone.options.Hidden' => 'Hidden',
     'bearcms.themes.themeone.options.Visible2' => 'Visible',
     'bearcms.themes.themeone.options.Hidden2' => 'Hidden',
+    'bearcms.themes.themeone.options.Auto' => 'Auto',
     'bearcms.themes.themeone.options.DefaultText' => 'Default text',
     'bearcms.themes.themeone.options.AccentText' => 'Accent text',
     'bearcms.themes.themeone.options.Footer' => 'Footer',

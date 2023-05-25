@@ -42,8 +42,19 @@ $hasSearchSupport = $app->bearCMS->addons->exists('bearcms/search-box-element-ad
 $hasStoreSupport = $app->bearCMS->addons->exists('bearcms/store-addon');
 $hasFormsSupport = $app->bearCMS->addons->exists('bearcms/forms-addon');
 
-$showSearchButton = $hasSearchSupport && $customizations->getValue('searchButtonVisibility') === '1';
-$showStoreCartButton = $hasStoreSupport && $customizations->getValue('storeCartButtonVisibility') === '1';
+$searchButtonVisibility = (string)$customizations->getValue('searchButtonVisibility');
+if ($searchButtonVisibility === 'auto') {
+    $showSearchButton = $app->bearCMS->addons->exists('bearcms/search-box-element-addon') && isset($app->searchBoxElement) && $app->searchBoxElement->isEnabled();
+} else {
+    $showSearchButton = $searchButtonVisibility === '1';
+}
+
+$storeCartButtonVisibility = (string)$customizations->getValue('storeCartButtonVisibility');
+if ($storeCartButtonVisibility === 'auto') {
+    $showStoreCartButton = $app->bearCMS->addons->exists('bearcms/store-addon') && isset($app->store) && $app->store->isEnabled();
+} else {
+    $showStoreCartButton = $storeCartButtonVisibility === '1';
+}
 
 $hasLogoImage = isset($logoImage[0]);
 if ($hasLogoImage) {

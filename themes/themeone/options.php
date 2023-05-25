@@ -86,6 +86,10 @@ $group3
     ->addOption("searchButtonVisibility", "list", __("bearcms.themes.themeone.options.Visibility"), [
         "values" => [
             [
+                "value" => "auto",
+                "name" => __("bearcms.themes.themeone.options.Auto")
+            ],
+            [
                 "value" => "1",
                 "name" => __("bearcms.themes.themeone.options.Visible")
             ],
@@ -94,7 +98,7 @@ $group3
                 "name" => __("bearcms.themes.themeone.options.Hidden")
             ]
         ],
-        "defaultValue" => "1",
+        "defaultValue" => "auto",
         "onHighlight" => [
             ["cssSelector", "body .bearcms-template-navigation-custom-item-search"]
         ]
@@ -105,6 +109,10 @@ $group3
     ->addOption("storeCartButtonVisibility", "list", __("bearcms.themes.themeone.options.Visibility"), [
         "values" => [
             [
+                "value" => "auto",
+                "name" => __("bearcms.themes.themeone.options.Auto")
+            ],
+            [
                 "value" => "1",
                 "name" => __("bearcms.themes.themeone.options.Visible")
             ],
@@ -113,7 +121,7 @@ $group3
                 "name" => __("bearcms.themes.themeone.options.Hidden")
             ]
         ],
-        "defaultValue" => "1",
+        "defaultValue" => "auto",
         "onHighlight" => [
             ["cssSelector", "body .bearcms-template-navigation-custom-item-store-cart"]
         ]
