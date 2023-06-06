@@ -263,12 +263,12 @@ class BearCMS
                 ->add('-bearcms-comments-element-form', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
                     $package->addJSCode(include $this->context->dir . '/components/bearcmsCommentsElement/commentsElementForm.min.js.php');
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/commentsElementForm.js'));
-                    $package->embedPackage('lightbox');
+                    $package->embedPackage('users');
                 })
                 ->add('-bearcms-comments-element-list', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
                     $package->addJSCode(include $this->context->dir . '/components/bearcmsCommentsElement/commentsElementList.min.js.php');
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/commentsElementList.js'));
-                    $package->embedPackage('lightbox'); // for the preview
+                    $package->embedPackage('users');
                 });
             CommentsLocations::addSource(function () use ($hasPages, $hasBlog) {
                 if ($hasPages) {
@@ -436,6 +436,13 @@ class BearCMS
                         $details->filename = '';
                         $path = str_replace('\\', '/', substr($filename, strlen($matchingDir)));
                         $details->filename = Internal\Server::download($path, true);
+                    }
+
+                    // Handle comments thread file
+                    $matchingDir = $addonAssetsDir . 'c/';
+                    if (strpos($filename, $matchingDir) === 0) {
+                        $path = str_replace('\\', '/', substr($filename, strlen($this->context->dir)));
+                        $details->filename = (string)Internal\Data\Comments::getFilenameFromURL($path);
                     }
                 }
             });

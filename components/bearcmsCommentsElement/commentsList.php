@@ -101,7 +101,19 @@ if ($thread !== null) {
             echo '<a class="bearcms-comments-comment-author-image"' . $linkAttributes . (strlen($profile->imageSmall) > 0 ? ' style="background-image:url(' . htmlentities($profile->imageSmall) . ');background-size:cover;"' : ' style="background-color:rgba(0,0,0,0.2);"') . '></a>';
         }
         echo '<a' . ($isFullHtmlOutputType ? ' class="bearcms-comments-comment-author-name"' : '') . '' . $linkAttributes . '>' . htmlspecialchars($profile->name) . '</a> <span' . ($isFullHtmlOutputType ? ' class="bearcms-comments-comment-date"' : '') . '>' . $statusText . $app->localization->formatDate($comment->createdTime, ['timeAgo']) . '</span>';
-        echo '<div' . ($isFullHtmlOutputType ? ' class="bearcms-comments-comment-text"' : '') . '>' . nl2br($urlsToHTML(htmlspecialchars($comment->text))) . '</div>';
+        $filesHTML = [];
+        $files = $comment->files;
+        if (is_array($files)) {
+            usort($files, function ($a, $b) {
+                return strcmp($a['name'], $b['name']);
+            });
+            foreach ($files as $fileData) {
+                $filesHTML[] = '<a class="bearcms-comments-comment-file" href="' . Internal\Data\Comments::getFileURL($threadID, $fileData['id']) . '">' . htmlspecialchars($fileData['name']) . '</a>';
+            }
+        }
+        $textHTML = nl2br($urlsToHTML(htmlspecialchars($comment->text)));
+        $filesHTML = empty($filesHTML) ? '' : (strlen($textHTML) > 0 ? '<br>' : '') . implode('<br>', $filesHTML);
+        echo '<div' . ($isFullHtmlOutputType ? ' class="bearcms-comments-comment-text"' : '') . '>' . $textHTML . $filesHTML . '</div>';
         echo '</div>';
     }
 }

@@ -12,6 +12,7 @@ namespace BearCMS\Internal;
 /**
  * @property array $author
  * @property string $text
+ * @property array $files
  * @property string $status
  * @property bool $cancel
  * @property string $cancelMessage
@@ -28,8 +29,9 @@ class BeforeAddCommentEventDetails
      * @param array $author
      * @param string $text
      * @param string $status
+     * @param array $files
      */
-    public function __construct(array $author, string $text, string $status)
+    public function __construct(array $author, string $text, string $status, array $files = [])
     {
         $this
             ->defineProperty('author', [
@@ -37,6 +39,9 @@ class BeforeAddCommentEventDetails
             ])
             ->defineProperty('text', [
                 'type' => 'string'
+            ])
+            ->defineProperty('files', [
+                'type' => 'array'
             ])
             ->defineProperty('status', [
                 'type' => 'string'
@@ -52,6 +57,7 @@ class BeforeAddCommentEventDetails
             ]);
         $this->author = $author;
         $this->text = $text;
+        $this->files = $files;
         $this->status = $status;
     }
 }

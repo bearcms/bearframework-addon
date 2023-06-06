@@ -6,7 +6,7 @@ $app = App::get();
 $providerID = 'bearcms';
 $userID = $app->currentUser->id;
 
-$getUserData = function() use ($app, $providerID, $userID) {
+$getUserData = function () use ($app, $providerID, $userID) {
     $data = $app->users->getUserData($providerID, $userID);
     if (empty($data)) {
         $data = [];
@@ -23,7 +23,7 @@ $getUserData = function() use ($app, $providerID, $userID) {
     return $data;
 };
 
-$form->onSubmit = function($values) use ($app, $providerID, $userID, $getUserData) {
+$form->onSubmit = function ($values) use ($app, $providerID, $userID, $getUserData) {
     $data = $getUserData();
     $data['name'] = isset($values['name']) ? trim((string) $values['name']) : '';
     $data['description'] = isset($values['description']) ? trim((string) $values['description']) : '';
@@ -31,8 +31,8 @@ $form->onSubmit = function($values) use ($app, $providerID, $userID, $getUserDat
     $removeOldImageIfExists = isset($values['image']) && strlen($values['image']) === 0;
 
     $newImageKey = null;
-    if (isset($values['image_files'])) {
-        $files = json_decode($values['image_files'], true);
+    if (isset($values['image'])) {
+        $files = json_decode($values['image'], true);
         if (isset($files[0])) {
             $newImageKey = $app->users->saveUserFile($providerID, $files[0]['filename'], pathinfo($files[0]['value'], PATHINFO_EXTENSION));
             $removeOldImageIfExists = true;

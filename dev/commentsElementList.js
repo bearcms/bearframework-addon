@@ -28,11 +28,8 @@ bearCMS.commentsElementList = bearCMS.commentsElementList || (function () {
     };
 
     var previewUser = function (provider, id) {
-        clientPackages.get('lightbox').then(function (lightbox) {
-            lightbox.make();
-            clientPackages.get("users").then(function (users) {
-                users.openPreview(provider, id);
-            });
+        clientPackages.get("users").then(function (users) {
+            users.openPreview(provider, id);
         });
     };
 

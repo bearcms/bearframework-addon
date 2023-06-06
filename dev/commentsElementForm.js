@@ -56,13 +56,10 @@ bearCMS.commentsElementForm = bearCMS.commentsElementForm || (function () {
     };
 
     var openLogin = function (event) {
-        clientPackages.get('lightbox').then(function (lightbox) {
-            lightbox.make();
-            var formID = event.target.closest('form').id;
-            clientPackages.get('users').then(function (users) {
-                prepareForUserAction(formID);
-                users.openLogin();
-            });
+        var formID = event.target.closest('form').id;
+        clientPackages.get('users').then(function (users) {
+            prepareForUserAction(formID);
+            users.openLogin();
         });
     };
 
@@ -79,7 +76,11 @@ bearCMS.commentsElementForm = bearCMS.commentsElementForm || (function () {
         var form = event.target;
         var result = event.result;
         if (typeof result.success !== 'undefined') {
-            form.querySelector('[name="cfcomment"]').value = '';
+            form.querySelector('[name="cfcomment"]').getFormElementContainer().setValue('');
+            var filesInput = form.querySelector('[name="cffiles"]');
+            if (filesInput !== null) {
+                filesInput.getFormElementContainer().setValue('');
+            }
             clientPackages.get('html5DOMDocument').then(function (html5DOMDocument) {
                 var listElement = document.getElementById(result.listElementID);
                 html5DOMDocument.insert(result.listContent, [listElement, 'outerHTML']);

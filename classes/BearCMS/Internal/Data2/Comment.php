@@ -41,6 +41,9 @@ class Comment
             ])
             ->defineProperty('createdTime', [
                 'type' => '?int'
+            ])
+            ->defineProperty('files', [
+                'type' => '?array'
             ]);
     }
 }
