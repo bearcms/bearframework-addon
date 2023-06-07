@@ -286,6 +286,7 @@ class Server
             'm4a9', // has commentsGet server command
             '78va', // new elements commands
             'k85a', // new elements commands (elementDataGet, elementDataSet)
+            'm48a', // element tags
         ];
         $settings = $app->bearCMS->data->settings->get();
         $clientData['contentLanguages'] = $settings->languages;

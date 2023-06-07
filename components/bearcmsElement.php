@@ -36,6 +36,7 @@ $isMissing = $componentName === 'bearcms-missing-element';
 $elementType = null;
 $elementStyleID = null;
 $elementStyleValue = null;
+$elementTags = [];
 if (!$isMissing) {
     $rawData = $component->getAttribute('bearcms-internal-attribute-raw-data');
     if ($rawData !== null && strlen($rawData) > 0) {
@@ -66,6 +67,9 @@ if (!$isMissing) {
         }
         if (isset($elementData['style'])) {
             $elementStyleValue = $elementData['style'];
+        }
+        if (isset($elementData['tags'])) {
+            $elementTags = $elementData['tags'];
         }
 
         unset($rawData);
@@ -145,6 +149,9 @@ if ($containerType === 'none') {
     }
     if ($classAttributeValue !== '') {
         $attributes .= ' class="' . trim($classAttributeValue) . '"';
+    }
+    if (!empty($elementTags)) {
+        $attributes .= ElementsHelper::getTagsHTMLAttributes($elementTags);
     }
     $content = '<html><head>';
     if ($styleSelector !== null) {

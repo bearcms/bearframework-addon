@@ -728,6 +728,9 @@ class ElementsDataHelper
         if (isset($elementContainerData['styleID'])) {
             $result['styleID'] = $elementContainerData['styleID'];
         }
+        if (isset($elementContainerData['tags'])) {
+            $result['tags'] = $elementContainerData['tags'];
+        }
         if (isset($result['data']) && empty($result['data'])) {
             unset($result['data']);
         }

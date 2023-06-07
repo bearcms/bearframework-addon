@@ -480,7 +480,7 @@ class ServerCommands
             }
         }
         if ($elementData['id'] !== $elementID) {
-            throw new \Exception('Cannot IDs do not match ' . print_r($data, true) . print_r($elementData, true));
+            throw new \Exception('IDs do not match ' . print_r($data, true) . print_r($elementData, true));
         }
         $elementData['data'] = $data['data'];
         if (empty($elementData['data'])) {
@@ -505,6 +505,44 @@ class ServerCommands
             'type' => $elementData['type'],
             'data' => isset($elementData['data']) ? $elementData['data'] : []
         ];
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementTagsSet(array $data): void
+    {
+        $elementID = $data['id'];
+        $containerID = isset($data['containerID']) ? $data['containerID'] : null;
+        $tags = isset($data['tags']) ? $data['tags'] : [];
+        $elementData = ElementsDataHelper::getElement($elementID, $containerID);
+        if ($elementData === null) {
+            throw new \Exception('Cannot find element to set tags ' . print_r($data, true));
+        }
+        if ($elementData['id'] !== $elementID) {
+            throw new \Exception('IDs do not match ' . print_r($data, true) . print_r($elementData, true));
+        }
+        $elementData['tags'] = $tags;
+        if (empty($elementData['tags'])) {
+            unset($elementData['tags']);
+        }
+        ElementsDataHelper::setElement($elementData, $containerID);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function elementTagsGet(array $data): ?array
+    {
+        $elementData = ElementsDataHelper::getElement($data['id'], isset($data['containerID']) ? $data['containerID'] : null);
+        if ($elementData === null) {
+            return null;
+        }
+        return isset($elementData['tags']) ? $elementData['tags'] : [];
     }
 
     /**

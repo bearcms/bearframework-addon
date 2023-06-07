@@ -151,6 +151,7 @@ class ElementsHelper
         $elementID = $elementContainerData['id'];
         $elementStyleID = isset($elementContainerData['styleID']) ? $elementContainerData['styleID'] : null;
         $elementStyleValue = isset($elementContainerData['style']) ? $elementContainerData['style'] : null;
+        $elementTags = isset($elementContainerData['tags']) ? $elementContainerData['tags'] : [];
         $defaultLayoutValue = ElementsDataHelper::getDefaultElementStyle('columns', true)['layout']['value'];
         list($styleID, $styleValue) = ElementStylesHelper::getElementRealStyleData($elementStyleID, $elementStyleValue, ElementsDataHelper::getDefaultElementStyle('columns'));
 
@@ -262,6 +263,9 @@ class ElementsHelper
         if ($styleSelector !== null) {
             $content .= self::getStyleHTML('columns', $styleValue, $styleSelector, true);
         }
+        if (!empty($elementTags)) {
+            $attributes .= self::getTagsHTMLAttributes($elementTags);
+        }
         $content .= '<link rel="client-packages-embed" name="cssToAttributes">'
             . '</head>'
             . '<body>'
@@ -293,6 +297,7 @@ class ElementsHelper
         $elementID = $elementContainerData['id'];
         $elementStyleID = isset($elementContainerData['styleID']) ? $elementContainerData['styleID'] : null;
         $elementStyleValue = isset($elementContainerData['style']) ? $elementContainerData['style'] : null;
+        $elementTags = isset($elementContainerData['tags']) ? $elementContainerData['tags'] : [];
         $defaultLayoutValue = ElementsDataHelper::getDefaultElementStyle('floatingBox', true)['layout']['value'];
         list($styleID, $styleValue) = ElementStylesHelper::getElementRealStyleData($elementStyleID, $elementStyleValue, ElementsDataHelper::getDefaultElementStyle('floatingBox'));
 
@@ -375,6 +380,9 @@ class ElementsHelper
         if ($styleSelector !== null) {
             $content .= self::getStyleHTML('floatingBox', $styleValue, $styleSelector, true);
         }
+        if (!empty($elementTags)) {
+            $attributes .= self::getTagsHTMLAttributes($elementTags);
+        }
         $content .= '<link rel="client-packages-embed" name="cssToAttributes">'
             . '</head>'
             . '<body>'
@@ -407,6 +415,7 @@ class ElementsHelper
         $canStyle = isset($contextData['canStyle']) && $contextData['canStyle'] === 'true';
         $elementStyleID = isset($elementContainerData['styleID']) ? $elementContainerData['styleID'] : null;
         $elementStyleValue = isset($elementContainerData['style']) ? $elementContainerData['style'] : null;
+        $elementTags = isset($elementContainerData['tags']) ? $elementContainerData['tags'] : [];
         $defaultLayoutValue = ElementsDataHelper::getDefaultElementStyle('flexibleBox', true)['layout']['value'];
         list($styleID, $styleValue) = ElementStylesHelper::getElementRealStyleData($elementStyleID, $elementStyleValue, ElementsDataHelper::getDefaultElementStyle('flexibleBox'));
 
@@ -473,6 +482,9 @@ class ElementsHelper
         }
         if ($styleSelector !== null) {
             $content .= self::getStyleHTML('flexibleBox', $styleValue, $styleSelector, true);
+        }
+        if (!empty($elementTags)) {
+            $attributes .= self::getTagsHTMLAttributes($elementTags);
         }
         $content .= '<link rel="client-packages-embed" name="cssToAttributes">'
             . '</head>'
@@ -673,5 +685,18 @@ class ElementsHelper
     static function getHTMLElementID(string $elementID): string
     {
         return 'brelb' . md5($elementID);
+    }
+
+    /**
+     * 
+     * @param array $tags
+     * @return string
+     */
+    static function getTagsHTMLAttributes(array $tags): string
+    {
+        if (empty($tags)) {
+            return '';
+        }
+        return ' data-bearcms-tags="' . htmlentities(implode(' ', $tags)) . '"';
     }
 }
