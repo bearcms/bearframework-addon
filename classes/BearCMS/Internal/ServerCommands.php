@@ -998,11 +998,13 @@ class ServerCommands
         if (isset($data['type'])) {
             $elementType = $data['type'];
             $componentName = array_search($elementType, ElementsHelper::$elementsTypeComponents);
-            $elementTypeDefinition = ElementsHelper::$elementsTypeDefinitions[$componentName];
-            return [
-                'name' => $elementTypeDefinition->name,
-                'properties' => $elementTypeDefinition->properties
-            ];
+            if ($componentName !== false) {
+                $elementTypeDefinition = ElementsHelper::$elementsTypeDefinitions[$componentName];
+                return [
+                    'name' => $elementTypeDefinition->name,
+                    'properties' => $elementTypeDefinition->properties
+                ];
+            }
         }
         return null;
     }
