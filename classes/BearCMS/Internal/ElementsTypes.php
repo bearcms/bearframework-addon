@@ -497,6 +497,7 @@ class ElementsTypes
                 if ($hasChange) {
                     return $data;
                 }
+                return null;
             };
             self::add($type);
             if ($hasThemes) {
