@@ -31,24 +31,22 @@ class ElementsTypes
 
     /**
      * 
-     * @param string $typeCode
-     * @param array $options
+     * @param ElementType $type
      * @return void
      */
-    public static function add(string $typeCode, array $options = []): void
+    public static function add(ElementType $type): void
     {
         $app = App::get();
         if (self::$contextDir === null) {
             $context = $app->contexts->get(__DIR__);
             self::$contextDir = $context->dir;
         }
-        $name = $options['componentSrc'];
+        $name = $type->componentName;
         $app->components
             ->addAlias($name, 'file:' . self::$contextDir . '/components/bearcmsElement.php')
             ->addTag($name, 'file:' . self::$contextDir . '/components/bearcmsElement.php');
-        ElementsHelper::$elementsTypesCodes[$name] = $typeCode;
-        ElementsHelper::$elementsTypesFilenames[$name] = $options['componentFilename'];
-        ElementsHelper::$elementsTypesOptions[$name] = $options;
+        ElementsHelper::$elementsTypeComponents[$name] = $type->type;
+        ElementsHelper::$elementsTypeDefinitions[$name] = $type;
     }
 
     /**
@@ -67,37 +65,23 @@ class ElementsTypes
         $hasThemes = Config::hasFeature('THEMES');
 
         if ($hasElements || Config::hasFeature('ELEMENTS_HEADING')) {
-            self::add('heading', [
-                'componentSrc' => 'bearcms-heading-element',
-                'componentFilename' => self::$contextDir . '/components/bearcmsHeadingElement.php',
-                'fields' => [
-                    [
-                        'id' => 'size',
-                        'type' => 'list',
-                        'defaultValue' => 'large',
-                        'options' => [
-                            [
-                                'value' => 'large'
-                            ],
-                            [
-                                'value' => 'medium'
-                            ],
-                            [
-                                'value' => 'small'
-                            ]
-                        ]
-                    ],
-                    [
-                        'id' => 'text',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'linkTargetID',
-                        'type' => 'textbox'
-                    ]
+            $type = new ElementType('heading', 'bearcms-heading-element', self::$contextDir . '/components/bearcmsHeadingElement.php');
+            $type->properties = [
+                [
+                    'id' => 'size',
+                    'type' => 'string'
                 ],
-                'canStyle' => true
-            ]);
+                [
+                    'id' => 'text',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'linkTargetID',
+                    'type' => 'string'
+                ]
+            ];
+            $type->canStyle = true;
+            self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['heading'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
@@ -144,17 +128,15 @@ class ElementsTypes
             }
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_TEXT')) {
-            self::add('text', [
-                'componentSrc' => 'bearcms-text-element',
-                'componentFilename' => self::$contextDir . '/components/bearcmsTextElement.php',
-                'fields' => [
-                    [
-                        'id' => 'text',
-                        'type' => 'textbox'
-                    ]
-                ],
-                'canStyle' => true
-            ]);
+            $type = new ElementType('text', 'bearcms-text-element', self::$contextDir . '/components/bearcmsTextElement.php');
+            $type->properties = [
+                [
+                    'id' => 'text',
+                    'type' => 'string'
+                ]
+            ];
+            $type->canStyle = true;
+            self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['text'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
@@ -191,25 +173,23 @@ class ElementsTypes
             }
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_LINK')) {
-            self::add('link', [
-                'componentSrc' => 'bearcms-link-element',
-                'componentFilename' => self::$contextDir . '/components/bearcmsLinkElement.php',
-                'fields' => [
-                    [
-                        'id' => 'url',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'text',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'title',
-                        'type' => 'textbox'
-                    ]
+            $type = new ElementType('link', 'bearcms-link-element', self::$contextDir . '/components/bearcmsLinkElement.php');
+            $type->properties = [
+                [
+                    'id' => 'url',
+                    'type' => 'string'
                 ],
-                'canStyle' => true
-            ]);
+                [
+                    'id' => 'text',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'title',
+                    'type' => 'string'
+                ]
+            ];
+            $type->canStyle = true;
+            self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['link'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
@@ -242,118 +222,105 @@ class ElementsTypes
             }
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_IMAGE')) {
-            self::add('image', [
-                'componentSrc' => 'bearcms-image-element',
-                'componentFilename' => self::$contextDir . '/components/bearcmsImageElement.php',
-                'fields' => [
-                    [
-                        'id' => 'filename',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'title',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'alt',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'onClick',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'url',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'fileWidth',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'fileHeight',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'width', // Deprecated on 14 August 2021
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'align', // Deprecated on 14 August 2021
-                        'type' => 'list',
-                        'defaultValue' => 'left',
-                        'options' => [
-                            [
-                                'value' => 'left'
-                            ],
-                            [
-                                'value' => 'center'
-                            ],
-                            [
-                                'value' => 'right'
-                            ]
-                        ]
-                    ],
+            $type = new ElementType('image', 'bearcms-image-element', self::$contextDir . '/components/bearcmsImageElement.php');
+            $type->properties = [
+                [
+                    'id' => 'filename',
+                    'type' => 'string'
                 ],
-                'onDelete' => function ($data) {
-                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
-                    InternalData::deleteElementAsset($filename);
-                },
-                'onDuplicate' => function ($data) {
-                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
-                    if (strlen($filename) > 0) {
-                        $data['filename'] = InternalData::duplicateElementAsset($filename);
-                    }
-                    return $data;
-                },
-                'onExport' => function ($data, $add) {
-                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
-                    if (strlen($filename) > 0) {
-                        $data['filename'] = InternalData::exportElementAsset($filename, 'file', $add);
-                    }
-                    return $data;
-                },
-                'onImport' => function (array $data, ImportContext $context) {
-                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
-                    if (strlen($filename) > 0) {
-                        $data['filename'] = InternalData::importElementAsset($filename, 'bearcms/files/image/', $context);
-                    }
-                    return $data;
-                },
-                'getUploadsSizeItems' => function ($data) {
-                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
-                    if (strlen($filename) > 0) {
-                        return [InternalData::getFilenameDataKey($filename)];
-                    }
-                    return [];
-                },
-                'optimizeData' => function ($data) {
-                    $app = App::get();
-                    $hasChange = false;
-                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
-                    if (strlen($filename) > 0) {
-                        $realFilenameWithOptions = InternalData::getRealFilename($filename);
-                        $realFilenameWithoutOptions = InternalData::removeFilenameOptions($realFilenameWithOptions);
-                        $shortFilenameWithOptions = InternalData::getShortFilename($realFilenameWithOptions);
-                        if (strpos($realFilenameWithoutOptions, 'appdata://') === 0) {
-                            if ($data['filename'] !== $shortFilenameWithOptions) {
-                                $data['filename'] = $shortFilenameWithOptions;
-                                $hasChange = true;
-                            }
-                            if (!isset($data['fileWidth']) || !isset($data['fileHeight'])) {
-                                $details = $app->assets->getDetails($realFilenameWithoutOptions, ['width', 'height']);
-                                $data['fileWidth'] = $details['width'] !== null ? $details['width'] : 0;
-                                $data['fileHeight'] = $details['height'] !== null ? $details['height'] : 0;
-                                $hasChange = true;
-                            }
+                [
+                    'id' => 'title',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'alt',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'onClick',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'url',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'fileWidth',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'fileHeight',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'width', // Deprecated on 14 August 2021
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'align', // Deprecated on 14 August 2021
+                    'type' => 'string'
+                ],
+            ];
+            $type->canStyle = true;
+            $type->onDelete = function (array $data): void {
+                $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                InternalData::deleteElementAsset($filename);
+            };
+            $type->onDuplicate = function (array $data): array {
+                $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                if (strlen($filename) > 0) {
+                    $data['filename'] = InternalData::duplicateElementAsset($filename);
+                }
+                return $data;
+            };
+            $type->onExport = function (array $data, callable $add): array {
+                $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                if (strlen($filename) > 0) {
+                    $data['filename'] = InternalData::exportElementAsset($filename, 'file', $add);
+                }
+                return $data;
+            };
+            $type->onImport = function (array $data, ImportContext $context): array {
+                $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                if (strlen($filename) > 0) {
+                    $data['filename'] = InternalData::importElementAsset($filename, 'bearcms/files/image/', $context);
+                }
+                return $data;
+            };
+            $type->getUploadsSizeItems = function (array $data): array {
+                $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                if (strlen($filename) > 0) {
+                    return [InternalData::getFilenameDataKey($filename)];
+                }
+                return [];
+            };
+            $type->optimizeData = function (array $data): ?array {
+                $app = App::get();
+                $hasChange = false;
+                $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                if (strlen($filename) > 0) {
+                    $realFilenameWithOptions = InternalData::getRealFilename($filename);
+                    $realFilenameWithoutOptions = InternalData::removeFilenameOptions($realFilenameWithOptions);
+                    $shortFilenameWithOptions = InternalData::getShortFilename($realFilenameWithOptions);
+                    if (strpos($realFilenameWithoutOptions, 'appdata://') === 0) {
+                        if ($data['filename'] !== $shortFilenameWithOptions) {
+                            $data['filename'] = $shortFilenameWithOptions;
+                            $hasChange = true;
+                        }
+                        if (!isset($data['fileWidth']) || !isset($data['fileHeight'])) {
+                            $details = $app->assets->getDetails($realFilenameWithoutOptions, ['width', 'height']);
+                            $data['fileWidth'] = $details['width'] !== null ? $details['width'] : 0;
+                            $data['fileHeight'] = $details['height'] !== null ? $details['height'] : 0;
+                            $hasChange = true;
                         }
                     }
-                    if ($hasChange) {
-                        return $data;
-                    }
-                },
-                'canStyle' => true
-            ]);
+                }
+                if ($hasChange) {
+                    return $data;
+                }
+                return null;
+            };
+            self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['image'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
@@ -387,153 +354,151 @@ class ElementsTypes
             }
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_IMAGE_GALLERY')) {
-            self::add('imageGallery', [
-                'componentSrc' => 'bearcms-image-gallery-element',
-                'componentFilename' => self::$contextDir . '/components/bearcmsImageGalleryElement.php',
-                'fields' => [
-                    [
-                        'id' => 'type',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'columnsCount',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'imageSize',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'imageAspectRatio',
-                        'type' => 'textbox'
-                    ]
+            $type = new ElementType('imageGallery', 'bearcms-image-gallery-element', self::$contextDir . '/components/bearcmsImageGalleryElement.php');
+            $type->properties = [
+                [
+                    'id' => 'type',
+                    'type' => 'string'
                 ],
-                'updateComponentFromData' => function ($component, $data) {
-                    if (isset($data['files']) && is_array($data['files'])) {
-                        $innerHTML = '';
-                        foreach ($data['files'] as $file) {
-                            if (isset($file['filename'])) {
-                                $innerHTML .= '<file '
-                                    . 'filename="' . htmlentities($file['filename']) . '" '
-                                    . 'fileWidth="' . (isset($file['width']) ? htmlentities($file['width']) : null) . '" '
-                                    . 'fileHeight="' . (isset($file['height']) ? htmlentities($file['height']) : null) . '"'
-                                    . 'title="' . (isset($file['title']) ? htmlentities($file['title']) : null) . '"'
-                                    . 'alt="' . (isset($file['alt']) ? htmlentities($file['alt']) : null) . '"'
-                                    . '/>';
-                            }
+                [
+                    'id' => 'columnsCount',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'imageSize',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'imageAspectRatio',
+                    'type' => 'string'
+                ]
+            ];
+            $type->updateComponentFromData = function ($component, array $data) {
+                if (isset($data['files']) && is_array($data['files'])) {
+                    $innerHTML = '';
+                    foreach ($data['files'] as $file) {
+                        if (isset($file['filename'])) {
+                            $innerHTML .= '<file '
+                                . 'filename="' . htmlentities($file['filename']) . '" '
+                                . 'fileWidth="' . (isset($file['width']) ? htmlentities($file['width']) : null) . '" '
+                                . 'fileHeight="' . (isset($file['height']) ? htmlentities($file['height']) : null) . '"'
+                                . 'title="' . (isset($file['title']) ? htmlentities($file['title']) : null) . '"'
+                                . 'alt="' . (isset($file['alt']) ? htmlentities($file['alt']) : null) . '"'
+                                . '/>';
                         }
-                        $component->innerHTML = $innerHTML;
                     }
-                    return $component;
-                },
-                'updateDataFromComponent' => function ($component, $data) {
-                    $domDocument = new HTML5DOMDocument();
-                    $domDocument->loadHTML($component->innerHTML, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
-                    $files = [];
-                    $filesElements = $domDocument->querySelectorAll('file');
-                    foreach ($filesElements as $fileElement) {
-                        $file = ['filename' => $fileElement->getAttribute('filename')];
-                        $width = (string)$fileElement->getAttribute('filewidth');
-                        if (isset($width[0])) {
-                            $file['width'] = $width[0];
-                        }
-                        $height = (string)$fileElement->getAttribute('fileheight');
-                        if (isset($height[0])) {
-                            $file['height'] = $height[0];
-                        }
-                        $files[] = $file;
+                    $component->innerHTML = $innerHTML;
+                }
+                return $component;
+            };
+            $type->updateDataFromComponent = function ($component, array $data): array {
+                $domDocument = new HTML5DOMDocument();
+                $domDocument->loadHTML($component->innerHTML, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
+                $files = [];
+                $filesElements = $domDocument->querySelectorAll('file');
+                foreach ($filesElements as $fileElement) {
+                    $file = ['filename' => $fileElement->getAttribute('filename')];
+                    $width = (string)$fileElement->getAttribute('filewidth');
+                    if (isset($width[0])) {
+                        $file['width'] = $width[0];
                     }
-                    $data['files'] = $files;
-                    return $data;
-                },
-                'onDelete' => function ($data) use ($app) {
-                    if (isset($data['files']) && is_array($data['files'])) {
-                        foreach ($data['files'] as $file) {
+                    $height = (string)$fileElement->getAttribute('fileheight');
+                    if (isset($height[0])) {
+                        $file['height'] = $height[0];
+                    }
+                    $files[] = $file;
+                }
+                $data['files'] = $files;
+                return $data;
+            };
+            $type->onDelete = function (array $data): void {
+                if (isset($data['files']) && is_array($data['files'])) {
+                    foreach ($data['files'] as $file) {
+                        $filename = isset($file['filename']) ? (string)$file['filename'] : '';
+                        InternalData::deleteElementAsset($filename);
+                    }
+                }
+            };
+            $type->onDuplicate = function (array $data): array {
+                if (isset($data['files']) && is_array($data['files'])) {
+                    foreach ($data['files'] as $index => $file) {
+                        $filename = isset($file['filename']) ? (string)$file['filename'] : '';
+                        if ($filename !== '') {
+                            $data['files'][$index]['filename'] = InternalData::duplicateElementAsset($filename);
+                        }
+                    }
+                }
+                return $data;
+            };
+            $type->onExport = function (array $data, callable $add): array {
+                if (isset($data['files']) && is_array($data['files'])) {
+                    foreach ($data['files'] as $index => $file) {
+                        $filename = isset($file['filename']) ? (string)$file['filename'] : '';
+                        if ($filename !== '') {
+                            $data['files'][$index]['filename'] = InternalData::exportElementAsset($filename, 'file' . ($index + 1), $add);
+                        }
+                    }
+                }
+                return $data;
+            };
+            $type->onImport = function (array $data, ImportContext $context): array {
+                if (isset($data['files']) && is_array($data['files'])) {
+                    foreach ($data['files'] as $index => $file) {
+                        $filename = isset($file['filename']) ? (string)$file['filename'] : '';
+                        if ($filename !== '') {
+                            $data['files'][$index]['filename'] = InternalData::importElementAsset($filename, 'bearcms/files/imagegallery/', $context);
+                        }
+                    }
+                }
+                return $data;
+            };
+            $type->getUploadsSizeItems = function (array $data): array {
+                $result = [];
+                if (isset($data['files']) && is_array($data['files'])) {
+                    foreach ($data['files'] as $file) {
+                        if (isset($file['filename'])) {
                             $filename = isset($file['filename']) ? (string)$file['filename'] : '';
-                            InternalData::deleteElementAsset($filename);
+                            if (strlen($filename) > 0) {
+                                $result[] = InternalData::getFilenameDataKey($filename);
+                            }
                         }
                     }
-                },
-                'onDuplicate' => function ($data) {
-                    if (isset($data['files']) && is_array($data['files'])) {
-                        foreach ($data['files'] as $index => $file) {
+                }
+                return $result;
+            };
+            $type->optimizeData = function (array $data): ?array {
+                $app = App::get();
+                $hasChange = false;
+                if (isset($data['files']) && is_array($data['files'])) {
+                    foreach ($data['files'] as $index => $file) {
+                        if (isset($file['filename'])) {
                             $filename = isset($file['filename']) ? (string)$file['filename'] : '';
-                            if ($filename !== '') {
-                                $data['files'][$index]['filename'] = InternalData::duplicateElementAsset($filename);
-                            }
-                        }
-                    }
-                    return $data;
-                },
-                'onExport' => function ($data, $add) {
-                    if (isset($data['files']) && is_array($data['files'])) {
-                        foreach ($data['files'] as $index => $file) {
-                            $filename = isset($file['filename']) ? (string)$file['filename'] : '';
-                            if ($filename !== '') {
-                                $data['files'][$index]['filename'] = InternalData::exportElementAsset($filename, 'file' . ($index + 1), $add);
-                            }
-                        }
-                    }
-                    return $data;
-                },
-                'onImport' => function (array $data, ImportContext $context) {
-                    if (isset($data['files']) && is_array($data['files'])) {
-                        foreach ($data['files'] as $index => $file) {
-                            $filename = isset($file['filename']) ? (string)$file['filename'] : '';
-                            if ($filename !== '') {
-                                $data['files'][$index]['filename'] = InternalData::importElementAsset($filename, 'bearcms/files/imagegallery/', $context);
-                            }
-                        }
-                    }
-                    return $data;
-                },
-                'getUploadsSizeItems' => function ($data) {
-                    $result = [];
-                    if (isset($data['files']) && is_array($data['files'])) {
-                        foreach ($data['files'] as $file) {
-                            if (isset($file['filename'])) {
-                                $filename = isset($file['filename']) ? (string)$file['filename'] : '';
-                                if (strlen($filename) > 0) {
-                                    $result[] = InternalData::getFilenameDataKey($filename);
-                                }
-                            }
-                        }
-                    }
-                    return $result;
-                },
-                'optimizeData' => function ($data) {
-                    $app = App::get();
-                    $hasChange = false;
-                    if (isset($data['files']) && is_array($data['files'])) {
-                        foreach ($data['files'] as $index => $file) {
-                            if (isset($file['filename'])) {
-                                $filename = isset($file['filename']) ? (string)$file['filename'] : '';
-                                if (strlen($filename) > 0) {
-                                    $realFilenameWithOptions = InternalData::getRealFilename($filename);
-                                    $realFilenameWithoutOptions = InternalData::removeFilenameOptions($realFilenameWithOptions);
-                                    $shortFilenameWithOptions = InternalData::getShortFilename($realFilenameWithOptions);
-                                    if (strpos($realFilenameWithoutOptions, 'appdata://') === 0) {
-                                        if ($file['filename'] !== $shortFilenameWithOptions) {
-                                            $file['filename'] = $shortFilenameWithOptions;
-                                            $hasChange = true;
-                                        }
-                                        if (!isset($file['width']) || !isset($file['height'])) {
-                                            $details = $app->assets->getDetails($realFilenameWithoutOptions, ['width', 'height']);
-                                            $file['width'] = $details['width'] !== null ? $details['width'] : 0;
-                                            $file['height'] = $details['height'] !== null ? $details['height'] : 0;
-                                            $hasChange = true;
-                                        }
-                                        $data['files'][$index] = $file;
+                            if (strlen($filename) > 0) {
+                                $realFilenameWithOptions = InternalData::getRealFilename($filename);
+                                $realFilenameWithoutOptions = InternalData::removeFilenameOptions($realFilenameWithOptions);
+                                $shortFilenameWithOptions = InternalData::getShortFilename($realFilenameWithOptions);
+                                if (strpos($realFilenameWithoutOptions, 'appdata://') === 0) {
+                                    if ($file['filename'] !== $shortFilenameWithOptions) {
+                                        $file['filename'] = $shortFilenameWithOptions;
+                                        $hasChange = true;
                                     }
+                                    if (!isset($file['width']) || !isset($file['height'])) {
+                                        $details = $app->assets->getDetails($realFilenameWithoutOptions, ['width', 'height']);
+                                        $file['width'] = $details['width'] !== null ? $details['width'] : 0;
+                                        $file['height'] = $details['height'] !== null ? $details['height'] : 0;
+                                        $hasChange = true;
+                                    }
+                                    $data['files'][$index] = $file;
                                 }
                             }
                         }
                     }
-                    if ($hasChange) {
-                        return $data;
-                    }
-                },
-            ]);
+                }
+                if ($hasChange) {
+                    return $data;
+                }
+            };
+            self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['imageGallery'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupImageGallery = $options->addGroup(__("bearcms.themes.options.Image gallery"));
@@ -559,140 +524,128 @@ class ElementsTypes
             }
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_VIDEO')) {
-            self::add('video', [
-                'componentSrc' => 'bearcms-video-element',
-                'componentFilename' => self::$contextDir . '/components/bearcmsVideoElement.php',
-                'fields' => [
-                    [
-                        'id' => 'url',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'filename',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'posterFilename',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'posterWidth',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'posterHeight',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'autoplay',
-                        'type' => 'checkbox'
-                    ],
-                    [
-                        'id' => 'muted',
-                        'type' => 'checkbox'
-                    ],
-                    [
-                        'id' => 'loop',
-                        'type' => 'checkbox'
-                    ],
-                    [
-                        'id' => 'width',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'align',
-                        'type' => 'list',
-                        'defaultValue' => 'left',
-                        'options' => [
-                            [
-                                'value' => 'left'
-                            ],
-                            [
-                                'value' => 'center'
-                            ],
-                            [
-                                'value' => 'right'
-                            ]
-                        ]
-                    ],
+            $type = new ElementType('video', 'bearcms-video-element', self::$contextDir . '/components/bearcmsVideoElement.php');
+            $type->properties = [
+                [
+                    'id' => 'url',
+                    'type' => 'string'
                 ],
-                'onDelete' => function ($data) use ($app) {
-                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
-                    InternalData::deleteElementAsset($filename);
-                    $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
-                    InternalData::deleteElementAsset($posterFilename);
-                },
-                'onDuplicate' => function ($data) {
-                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
-                    if (strlen($filename) > 0) {
-                        $data['filename'] = InternalData::duplicateElementAsset($filename);
-                    }
-                    $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
-                    if (strlen($posterFilename) > 0) {
-                        $data['posterFilename'] = InternalData::duplicateElementAsset($posterFilename);
-                    }
-                    return $data;
-                },
-                'onExport' => function ($data, $add) {
-                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
-                    if (strlen($filename) > 0) {
-                        $data['filename'] = InternalData::exportElementAsset($filename, 'file', $add);
-                    }
-                    $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
-                    if (strlen($posterFilename) > 0) {
-                        $data['posterFilename'] = InternalData::exportElementAsset($posterFilename, 'file', $add);
-                    }
-                    return $data;
-                },
-                'onImport' => function (array $data, ImportContext $context) {
-                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
-                    if (strlen($filename) > 0) {
-                        $data['filename'] = InternalData::importElementAsset($filename, 'bearcms/files/video/', $context);
-                    }
-                    $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
-                    if (strlen($posterFilename) > 0) {
-                        $data['posterFilename'] = InternalData::importElementAsset($posterFilename, 'bearcms/files/videoposter/', $context);
-                    }
-                    return $data;
-                },
-                'getUploadsSizeItems' => function ($data) {
-                    $keys = [];
-                    $filename = isset($data['filename']) ? (string)$data['filename'] : '';
-                    if (strlen($filename) > 0) {
-                        $keys[] = InternalData::getFilenameDataKey($filename);
-                    }
-                    $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
-                    if (strlen($posterFilename) > 0) {
-                        $keys[] = InternalData::getFilenameDataKey($posterFilename);
-                    }
-                    return $keys;
-                },
-                'optimizeData' => function ($data) {
-                    $app = App::get();
-                    $hasChange = false;
-                    $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
-                    if (strlen($posterFilename) > 0) {
-                        $realFilenameWithOptions = InternalData::getRealFilename($posterFilename);
-                        $realFilenameWithoutOptions = InternalData::removeFilenameOptions($realFilenameWithOptions);
-                        $shortFilenameWithOptions = InternalData::getShortFilename($realFilenameWithOptions);
-                        if (strpos($realFilenameWithoutOptions, 'appdata://') === 0) {
-                            if ($data['posterFilename'] !== $shortFilenameWithOptions) {
-                                $data['posterFilename'] = $shortFilenameWithOptions;
-                                $hasChange = true;
-                            }
-                            if (!isset($data['posterWidth']) || !isset($data['posterHeight'])) {
-                                $details = $app->assets->getDetails($realFilenameWithoutOptions, ['width', 'height']);
-                                $data['posterWidth'] = $details['width'] !== null ? $details['width'] : 0;
-                                $data['posterHeight'] = $details['height'] !== null ? $details['height'] : 0;
-                                $hasChange = true;
-                            }
+                [
+                    'id' => 'filename',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'posterFilename',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'posterWidth',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'posterHeight',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'autoplay',
+                    'type' => 'bool'
+                ],
+                [
+                    'id' => 'muted',
+                    'type' => 'bool'
+                ],
+                [
+                    'id' => 'loop',
+                    'type' => 'bool'
+                ],
+                [
+                    'id' => 'width',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'align',
+                    'type' => 'string'
+                ],
+            ];
+            $type->canStyle = true;
+            $type->onDelete = function (array $data): void {
+                $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                InternalData::deleteElementAsset($filename);
+                $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
+                InternalData::deleteElementAsset($posterFilename);
+            };
+            $type->onDuplicate = function (array $data): array {
+                $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                if (strlen($filename) > 0) {
+                    $data['filename'] = InternalData::duplicateElementAsset($filename);
+                }
+                $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
+                if (strlen($posterFilename) > 0) {
+                    $data['posterFilename'] = InternalData::duplicateElementAsset($posterFilename);
+                }
+                return $data;
+            };
+            $type->onExport = function (array $data, callable $add): array {
+                $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                if (strlen($filename) > 0) {
+                    $data['filename'] = InternalData::exportElementAsset($filename, 'file', $add);
+                }
+                $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
+                if (strlen($posterFilename) > 0) {
+                    $data['posterFilename'] = InternalData::exportElementAsset($posterFilename, 'file', $add);
+                }
+                return $data;
+            };
+            $type->onImport = function (array $data, ImportContext $context): array {
+                $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                if (strlen($filename) > 0) {
+                    $data['filename'] = InternalData::importElementAsset($filename, 'bearcms/files/video/', $context);
+                }
+                $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
+                if (strlen($posterFilename) > 0) {
+                    $data['posterFilename'] = InternalData::importElementAsset($posterFilename, 'bearcms/files/videoposter/', $context);
+                }
+                return $data;
+            };
+            $type->getUploadsSizeItems = function (array $data): array {
+                $keys = [];
+                $filename = isset($data['filename']) ? (string)$data['filename'] : '';
+                if (strlen($filename) > 0) {
+                    $keys[] = InternalData::getFilenameDataKey($filename);
+                }
+                $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
+                if (strlen($posterFilename) > 0) {
+                    $keys[] = InternalData::getFilenameDataKey($posterFilename);
+                }
+                return $keys;
+            };
+            $type->optimizeData = function (array $data): ?array {
+                $app = App::get();
+                $hasChange = false;
+                $posterFilename = isset($data['posterFilename']) ? (string)$data['posterFilename'] : '';
+                if (strlen($posterFilename) > 0) {
+                    $realFilenameWithOptions = InternalData::getRealFilename($posterFilename);
+                    $realFilenameWithoutOptions = InternalData::removeFilenameOptions($realFilenameWithOptions);
+                    $shortFilenameWithOptions = InternalData::getShortFilename($realFilenameWithOptions);
+                    if (strpos($realFilenameWithoutOptions, 'appdata://') === 0) {
+                        if ($data['posterFilename'] !== $shortFilenameWithOptions) {
+                            $data['posterFilename'] = $shortFilenameWithOptions;
+                            $hasChange = true;
+                        }
+                        if (!isset($data['posterWidth']) || !isset($data['posterHeight'])) {
+                            $details = $app->assets->getDetails($realFilenameWithoutOptions, ['width', 'height']);
+                            $data['posterWidth'] = $details['width'] !== null ? $details['width'] : 0;
+                            $data['posterHeight'] = $details['height'] !== null ? $details['height'] : 0;
+                            $hasChange = true;
                         }
                     }
-                    if ($hasChange) {
-                        return $data;
-                    }
-                },
-            ]);
+                }
+                if ($hasChange) {
+                    return $data;
+                }
+                return null;
+            };
+            self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['video'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $group = $options->addGroup(__("bearcms.themes.options.Video"));
@@ -708,44 +661,42 @@ class ElementsTypes
             }
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_NAVIGATION')) {
-            self::add('navigation', [
-                'componentSrc' => 'bearcms-navigation-element',
-                'componentFilename' => self::$contextDir . '/components/bearcmsNavigationElement.php',
-                'fields' => [
-                    [
-                        'id' => 'source',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'sourceParentPageID',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'showHomeLink',
-                        'type' => 'checkbox'
-                    ],
-                    [
-                        'id' => 'showSearchButton',
-                        'type' => 'checkbox'
-                    ],
-                    [
-                        'id' => 'showStoreCartButton',
-                        'type' => 'checkbox'
-                    ],
-                    [
-                        'id' => 'homeLinkText',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'itemsType',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'items',
-                        'type' => 'textbox'
-                    ]
+            $type = new ElementType('navigation', 'bearcms-navigation-element', self::$contextDir . '/components/bearcmsNavigationElement.php');
+            $type->properties = [
+                [
+                    'id' => 'source',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'sourceParentPageID',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'showHomeLink',
+                    'type' => 'bool'
+                ],
+                [
+                    'id' => 'showSearchButton',
+                    'type' => 'bool'
+                ],
+                [
+                    'id' => 'showStoreCartButton',
+                    'type' => 'bool'
+                ],
+                [
+                    'id' => 'homeLinkText',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'itemsType',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'items',
+                    'type' => 'string'
                 ]
-            ]);
+            ];
+            self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['navigation'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupNavigation = $options->addGroup(__("bearcms.themes.options.Navigation"));
@@ -782,24 +733,22 @@ class ElementsTypes
             }
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_HTML')) {
-            self::add('html', [
-                'componentSrc' => 'bearcms-html-element',
-                'componentFilename' => self::$contextDir . '/components/bearcmsHtmlElement.php',
-                'fields' => [
-                    [
-                        'id' => 'code',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'originalCode',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'renderMode',
-                        'type' => 'textbox'
-                    ]
+            $type = new ElementType('html', 'bearcms-html-element', self::$contextDir . '/components/bearcmsHtmlElement.php');
+            $type->properties = [
+                [
+                    'id' => 'code',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'originalCode',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'renderMode',
+                    'type' => 'string'
                 ]
-            ]);
+            ];
+            self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['html'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupHTMLCode = $options->addGroup(__("bearcms.themes.options.HTML code"));
@@ -828,40 +777,38 @@ class ElementsTypes
             }
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_BLOG_POSTS')) {
-            self::add('blogPosts', [
-                'componentSrc' => 'bearcms-blog-posts-element',
-                'componentFilename' => self::$contextDir . '/components/bearcmsBlogPostsElement.php',
-                'fields' => [
-                    [
-                        'id' => 'source',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'sourceCategoriesIDs',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'type',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'showDate',
-                        'type' => 'checkbox'
-                    ],
-                    [
-                        'id' => 'showSummaryReadMoreButton',
-                        'type' => 'checkbox'
-                    ],
-                    [
-                        'id' => 'limit',
-                        'type' => 'number'
-                    ],
-                    [
-                        'id' => 'showLoadMoreButton',
-                        'type' => 'checkbox'
-                    ]
+            $type = new ElementType('blogPosts', 'bearcms-blog-posts-element', self::$contextDir . '/components/bearcmsBlogPostsElement.php');
+            $type->properties = [
+                [
+                    'id' => 'source',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'sourceCategoriesIDs',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'type',
+                    'type' => 'string'
+                ],
+                [
+                    'id' => 'showDate',
+                    'type' => 'bool'
+                ],
+                [
+                    'id' => 'showSummaryReadMoreButton',
+                    'type' => 'bool'
+                ],
+                [
+                    'id' => 'limit',
+                    'type' => 'int'
+                ],
+                [
+                    'id' => 'showLoadMoreButton',
+                    'type' => 'bool'
                 ]
-            ]);
+            ];
+            self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['blogPosts'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupBlogPosts = $options->addGroup(__("bearcms.themes.options.Blog posts"));
@@ -961,33 +908,31 @@ class ElementsTypes
             }
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_COMMENTS')) {
-            self::add('comments', [
-                'componentSrc' => 'bearcms-comments-element',
-                'componentFilename' => self::$contextDir . '/components/bearcmsCommentsElement.php',
-                'fields' => [
-                    [
-                        'id' => 'threadID',
-                        'type' => 'textbox'
-                    ],
-                    [
-                        'id' => 'count',
-                        'type' => 'number'
-                    ]
+            $type = new ElementType('comments', 'bearcms-comments-element', self::$contextDir . '/components/bearcmsCommentsElement.php');
+            $type->properties = [
+                [
+                    'id' => 'threadID',
+                    'type' => 'string'
                 ],
-                'onDelete' => function ($data) {
-                    if (isset($data['threadID'])) {
-                        InternalData\Comments::deleteThread($data['threadID']);
-                    }
-                },
-                'onDuplicate' => function ($data) {
-                    if (isset($data['threadID'])) {
-                        $newThreadID = InternalData\Comments::generateNewThreadID();
-                        InternalData\Comments::copyThread($data['threadID'], $newThreadID);
-                        $data['threadID'] = $newThreadID;
-                    }
-                    return $data;
+                [
+                    'id' => 'count',
+                    'type' => 'int'
+                ]
+            ];
+            $type->onDelete = function (array $data): void {
+                if (isset($data['threadID'])) {
+                    InternalData\Comments::deleteThread($data['threadID']);
                 }
-            ]);
+            };
+            $type->onDuplicate = function (array $data): array {
+                if (isset($data['threadID'])) {
+                    $newThreadID = InternalData\Comments::generateNewThreadID();
+                    InternalData\Comments::copyThread($data['threadID'], $newThreadID);
+                    $data['threadID'] = $newThreadID;
+                }
+                return $data;
+            };
+            self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['comments'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupComments = $options->addGroup(__("bearcms.themes.options.Comments"));
@@ -1098,28 +1043,14 @@ class ElementsTypes
             }
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_SEPARATOR')) {
-            self::add('separator', [
-                'componentSrc' => 'bearcms-separator-element',
-                'componentFilename' => self::$contextDir . '/components/bearcmsSeparatorElement.php',
-                'fields' => [
-                    [
-                        'id' => 'size',
-                        'type' => 'list',
-                        'defaultValue' => 'large',
-                        'options' => [
-                            [
-                                'value' => 'large'
-                            ],
-                            [
-                                'value' => 'medium'
-                            ],
-                            [
-                                'value' => 'small'
-                            ]
-                        ]
-                    ]
+            $type = new ElementType('separator', 'bearcms-separator-element', self::$contextDir . '/components/bearcmsSeparatorElement.php');
+            $type->properties = [
+                [
+                    'id' => 'size',
+                    'type' => 'string'
                 ]
-            ]);
+            ];
+            self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['separator'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $group = $options->addGroup(__("bearcms.themes.options.Separator"));
@@ -1245,76 +1176,74 @@ class ElementsTypes
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_CANVAS')) {
-            self::add('canvas', [
-                'componentSrc' => 'bearcms-canvas-element',
-                'componentFilename' => self::$contextDir . '/components/bearcmsCanvasElement.php',
-                'fields' => [
-                    [
-                        'id' => 'value',
-                        'type' => 'textbox'
-                    ]
-                ],
-                'onDelete' => function ($data) use ($app) {
-                    if (isset($data['value'])) {
-                        $files = CanvasElementHelper::getFilesInValue((string)$data['value']);
-                        foreach ($files as $filename) {
-                            InternalData::deleteElementAsset($filename);
-                        }
+            $type = new ElementType('canvas', 'bearcms-canvas-element', self::$contextDir . '/components/bearcmsCanvasElement.php');
+            $type->properties = [
+                [
+                    'id' => 'value',
+                    'type' => 'string'
+                ]
+            ];
+            $type->onDelete = function (array $data): void {
+                if (isset($data['value'])) {
+                    $files = CanvasElementHelper::getFilesInValue((string)$data['value']);
+                    foreach ($files as $filename) {
+                        InternalData::deleteElementAsset($filename);
                     }
-                },
-                'onDuplicate' => function ($data) {
-                    if (isset($data['value'])) {
-                        $value = (string)$data['value'];
-                        $files = CanvasElementHelper::getFilesInValue($value, true);
-                        $filesToUpdate = [];
-                        foreach ($files as $filename) {
-                            $filesToUpdate[$filename] = InternalData::duplicateElementAsset($filename);
-                        }
-                        if (!empty($filesToUpdate)) {
-                            $data['value'] = CanvasElementHelper::updateFilesInValue($value, $filesToUpdate);
-                        }
-                    }
-                    return $data;
-                },
-                'onExport' => function ($data, $add) {
-                    if (isset($data['value'])) {
-                        $value = (string)$data['value'];
-                        $files = CanvasElementHelper::getFilesInValue($value, true);
-                        $filesToUpdate = [];
-                        foreach ($files as $i => $filename) {
-                            $filesToUpdate[$filename] = InternalData::exportElementAsset($filename, 'file' . ($i + 1), $add);
-                        }
-                        if (!empty($filesToUpdate)) {
-                            $data['value'] = CanvasElementHelper::updateFilesInValue($value, $filesToUpdate);
-                        }
-                    }
-                    return $data;
-                },
-                'onImport' => function (array $data, ImportContext $context) {
-                    if (isset($data['value'])) {
-                        $value = (string)$data['value'];
-                        $files = CanvasElementHelper::getFilesInValue($value, true);
-                        $filesToUpdate = [];
-                        foreach ($files as $filename) {
-                            $filesToUpdate[$filename] = InternalData::importElementAsset($filename, 'bearcms/files/canvasstyleimage/', $context);
-                        }
-                        if (!empty($filesToUpdate)) {
-                            $data['value'] = CanvasElementHelper::updateFilesInValue($value, $filesToUpdate);
-                        }
-                    }
-                    return $data;
-                },
-                'getUploadsSizeItems' => function ($data) {
-                    $result = [];
-                    if (isset($data['value'])) {
-                        $files = CanvasElementHelper::getFilesInValue((string)$data['value']);
-                        foreach ($files as $filename) {
-                            $result[] = InternalData::getFilenameDataKey($filename);
-                        }
-                    }
-                    return $result;
                 }
-            ]);
+            };
+            $type->onDuplicate = function (array $data): array {
+                if (isset($data['value'])) {
+                    $value = (string)$data['value'];
+                    $files = CanvasElementHelper::getFilesInValue($value, true);
+                    $filesToUpdate = [];
+                    foreach ($files as $filename) {
+                        $filesToUpdate[$filename] = InternalData::duplicateElementAsset($filename);
+                    }
+                    if (!empty($filesToUpdate)) {
+                        $data['value'] = CanvasElementHelper::updateFilesInValue($value, $filesToUpdate);
+                    }
+                }
+                return $data;
+            };
+            $type->onExport = function (array $data, callable $add): array {
+                if (isset($data['value'])) {
+                    $value = (string)$data['value'];
+                    $files = CanvasElementHelper::getFilesInValue($value, true);
+                    $filesToUpdate = [];
+                    foreach ($files as $i => $filename) {
+                        $filesToUpdate[$filename] = InternalData::exportElementAsset($filename, 'file' . ($i + 1), $add);
+                    }
+                    if (!empty($filesToUpdate)) {
+                        $data['value'] = CanvasElementHelper::updateFilesInValue($value, $filesToUpdate);
+                    }
+                }
+                return $data;
+            };
+            $type->onImport = function (array $data, ImportContext $context): array {
+                if (isset($data['value'])) {
+                    $value = (string)$data['value'];
+                    $files = CanvasElementHelper::getFilesInValue($value, true);
+                    $filesToUpdate = [];
+                    foreach ($files as $filename) {
+                        $filesToUpdate[$filename] = InternalData::importElementAsset($filename, 'bearcms/files/canvasstyleimage/', $context);
+                    }
+                    if (!empty($filesToUpdate)) {
+                        $data['value'] = CanvasElementHelper::updateFilesInValue($value, $filesToUpdate);
+                    }
+                }
+                return $data;
+            };
+            $type->getUploadsSizeItems = function (array $data): array {
+                $result = [];
+                if (isset($data['value'])) {
+                    $files = CanvasElementHelper::getFilesInValue((string)$data['value']);
+                    foreach ($files as $filename) {
+                        $result[] = InternalData::getFilenameDataKey($filename);
+                    }
+                }
+                return $result;
+            };
+            self::add($type);
         }
     }
 }

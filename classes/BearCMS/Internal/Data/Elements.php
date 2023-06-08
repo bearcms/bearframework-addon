@@ -168,9 +168,9 @@ class Elements
     static function getOptimizedElementData(array $elementData): ?array
     {
         if (isset($elementData['type'], $elementData['data'])) {
-            $options = ElementsHelper::getElementTypeOptions($elementData['type']);
-            if ($options !== null && isset($options['optimizeData']) && is_callable($options['optimizeData'])) {
-                $newData = call_user_func($options['optimizeData'], $elementData['data']);
+            $elementTypeDefinition = ElementsHelper::getElementTypeDefinition($elementData['type']);
+            if ($elementTypeDefinition !== null && is_callable($elementTypeDefinition->optimizeData)) {
+                $newData = call_user_func($elementTypeDefinition->optimizeData, $elementData['data']);
                 if (is_array($newData)) {
                     $elementData['data'] = $newData;
                     return $elementData;

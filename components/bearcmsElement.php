@@ -42,18 +42,14 @@ if (!$isMissing) {
     if ($rawData !== null && strlen($rawData) > 0) {
         $elementData = \BearCMS\Internal\Data\Elements::decodeElementRawData($rawData);
         $data = $elementData['data'];
-        $options = ElementsHelper::$elementsTypesOptions[$componentName];
-        if (isset($options['fields'])) {
-            foreach ($options['fields'] as $field) {
-                $fieldID = $field['id'];
-                $fieldType = $field['type'];
-                if ($fieldType === 'number') {
-                    $component->$fieldID = isset($data[$fieldID]) ? (string) $data[$fieldID] : '';
-                } elseif ($fieldType === 'checkbox') {
-                    $component->$fieldID = isset($data[$fieldID]) ? ($data[$fieldID] ? 'true' : 'false') : '';
-                } else {
-                    $component->$fieldID = isset($data[$fieldID]) ? (string) $data[$fieldID] : '';
-                }
+        $elementTypeDefinition = ElementsHelper::$elementsTypeDefinitions[$componentName];
+        foreach ($elementTypeDefinition->properties as $property) {
+            $propertyID = $property['id'];
+            $propertyType = $property['type'];
+            if ($propertyType === 'bool') {
+                $component->$propertyID = isset($data[$propertyID]) ? ($data[$propertyID] ? 'true' : 'false') : '';
+            } else { // int, float and string
+                $component->$propertyID = isset($data[$propertyID]) ? (string) $data[$propertyID] : '';
             }
         }
         if (isset($options['updateComponentFromData'])) {
@@ -81,30 +77,30 @@ if (!$isMissing) {
             $getRawDataFromComponent = function ($component) use ($elementID) {
                 $componentSrc = (string)$component->src;
                 $componentName = strlen($componentSrc) > 0 ? $componentSrc : ($component->tagName !== 'component' ? $component->tagName : null);
-                $options = ElementsHelper::$elementsTypesOptions[$componentName];
+                $elementTypeDefinition = ElementsHelper::$elementsTypeDefinitions[$componentName];
                 $data = [];
-                if (isset($options['fields'])) {
-                    foreach ($options['fields'] as $field) {
-                        $fieldID = $field['id'];
-                        $fieldType = $field['type'];
-                        if ($fieldType === 'number') {
-                            $data[$fieldID] = (int) $component->$fieldID;
-                        } elseif ($fieldType === 'checkbox') {
-                            $data[$fieldID] = $component->$fieldID === 'true';
-                        } else {
-                            $data[$fieldID] = (string) $component->$fieldID;
-                        }
+                foreach ($elementTypeDefinition->properties as $property) {
+                    $propertyID = $property['id'];
+                    $propertyType = $property['type'];
+                    if ($propertyType === 'int') {
+                        $data[$propertyID] = (int) $component->$propertyID;
+                    } elseif ($propertyType === 'float') {
+                        $data[$propertyID] = (float) $component->$propertyID;
+                    } elseif ($propertyType === 'bool') {
+                        $data[$propertyID] = $component->$propertyID === 'true';
+                    } else { // text
+                        $data[$propertyID] = (string) $component->$propertyID;
                     }
                 }
                 if (isset($options['updateDataFromComponent'])) {
                     $data = call_user_func($options['updateDataFromComponent'], clone ($component), $data);
                 }
-                return json_encode(['id' => $elementID, 'type' => ElementsHelper::$elementsTypesCodes[$componentName], 'data' => $data], JSON_THROW_ON_ERROR);
+                return json_encode(['id' => $elementID, 'type' => ElementsHelper::$elementsTypeComponents[$componentName], 'data' => $data], JSON_THROW_ON_ERROR);
             };
             if ($editable) {
                 $componentContextData['rawData'] = $getRawDataFromComponent($component);
             }
-            $elementType = ElementsHelper::$elementsTypesCodes[$componentName];
+            $elementType = ElementsHelper::$elementsTypeComponents[$componentName];
         }
     }
 

@@ -989,6 +989,25 @@ class ServerCommands
     }
 
     /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function elementTypeGet(array $data): ?array
+    {
+        if (isset($data['type'])) {
+            $elementType = $data['type'];
+            $componentName = array_search($elementType, ElementsHelper::$elementsTypeComponents);
+            $elementTypeDefinition = ElementsHelper::$elementsTypeDefinitions[$componentName];
+            return [
+                'name' => $elementTypeDefinition->name,
+                'properties' => $elementTypeDefinition->properties
+            ];
+        }
+        return null;
+    }
+
+    /**
      * DEPRECATED
      * 
      * @param array $data

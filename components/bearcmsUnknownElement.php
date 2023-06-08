@@ -53,7 +53,7 @@ if ($elementType !== null) {
         $newComponent->setAttribute('bearcms-internal-attribute-flexiblebox-id', $elementID);
         $updated = true;
     } else {
-        $componentName = array_search($elementType, ElementsHelper::$elementsTypesCodes);
+        $componentName = array_search($elementType, ElementsHelper::$elementsTypeComponents);
         if ($componentName !== false) {
             $newComponent->setAttribute('src', $componentName);
             $updated = true;

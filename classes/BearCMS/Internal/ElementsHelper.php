@@ -21,21 +21,20 @@ class ElementsHelper
 {
 
     static $editorData = [];
-    static $elementsTypesCodes = [];
-    static $elementsTypesFilenames = [];
-    static $elementsTypesOptions = [];
+    static $elementsTypeDefinitions = [];
+    static $elementsTypeComponents = [];
     static $lastLoadMoreServerData = null;
 
     /**
      * 
      * @param string $type
-     * @return array|null
+     * @return ElementType|null
      */
-    static function getElementTypeOptions(string $type): ?array
+    static function getElementTypeDefinition(string $type): ?ElementType
     {
-        $componentName = array_search($type, ElementsHelper::$elementsTypesCodes);
+        $componentName = array_search($type, ElementsHelper::$elementsTypeComponents);
         if ($componentName !== false) {
-            return ElementsHelper::$elementsTypesOptions[$componentName];
+            return ElementsHelper::$elementsTypeDefinitions[$componentName];
         }
         return null;
     }
@@ -78,14 +77,12 @@ class ElementsHelper
             if (array_search($key, $attributesToSkip) !== false || strpos($key, 'bearcms-internal-attribute-') === 0) {
                 $add = false;
             }
-            if ($add && isset(self::$elementsTypesOptions[$component->src])) {
-                $options = self::$elementsTypesOptions[$component->src];
-                if (isset($options['fields'])) {
-                    foreach ($options['fields'] as $field) {
-                        if (strtolower($key) === strtolower($field['id'])) {
-                            $add = false;
-                            break;
-                        }
+            if ($add && isset(self::$elementsTypeDefinitions[$component->src])) {
+                $elementTypeDefinition = self::$elementsTypeDefinitions[$component->src];
+                foreach ($elementTypeDefinition->properties as $property) {
+                    if (strtolower($key) === strtolower($property['id'])) {
+                        $add = false;
+                        break;
                     }
                 }
             }
@@ -114,7 +111,7 @@ class ElementsHelper
         if (!is_array($elementData)) {
             return '';
         }
-        $componentName = array_search($elementData['type'], self::$elementsTypesCodes);
+        $componentName = array_search($elementData['type'], self::$elementsTypeComponents);
         return '<component'
             . ' src="' . ($componentName === false ? 'bearcms-missing-element' : $componentName) . '"'
             . ' editable="' . ($editable ? 'true' : 'false') . '"'
@@ -652,16 +649,16 @@ class ElementsHelper
                 if ($component->getAttribute('canStyle', '') === '') {
                     $component->setAttribute('canStyle', 'true');
                 }
-            } elseif (isset(self::$elementsTypesFilenames[$name])) {
-                $component->setAttribute('bearcms-internal-attribute-type', self::$elementsTypesCodes[$name]);
-                $component->setAttribute('bearcms-internal-attribute-filename', self::$elementsTypesFilenames[$name]);
+            } elseif (isset(self::$elementsTypeDefinitions[$name])) {
+                $component->setAttribute('bearcms-internal-attribute-type', self::$elementsTypeComponents[$name]);
+                $component->setAttribute('bearcms-internal-attribute-filename', self::$elementsTypeDefinitions[$name]->componentFilename);
                 $updateIDAttributeFromRawData($component, true);
                 $updateEditableAttribute($component);
                 $updateContextAttributes($component);
-                if ($component->canStyle === 'true' && isset(self::$elementsTypesOptions[$component->src])) { // Check if element supports styling
+                if ($component->canStyle === 'true' && isset(self::$elementsTypeDefinitions[$component->src])) { // Check if element supports styling
                     $canStyle = false;
-                    $elementTypeOptions = self::$elementsTypesOptions[$component->src];
-                    if (isset($elementTypeOptions['canStyle']) && $elementTypeOptions['canStyle']) {
+                    $elementTypeDefinition = self::$elementsTypeDefinitions[$component->src];
+                    if ($elementTypeDefinition->canStyle) {
                         $canStyle = true;
                     }
                     if (!$canStyle) {

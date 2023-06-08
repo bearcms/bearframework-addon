@@ -203,9 +203,9 @@ class ElementsDataHelper
         }
         $deleteResources = function (array $elementData) {
             if (isset($elementData['type'])) {
-                $elementTypeOptions = ElementsHelper::getElementTypeOptions($elementData['type']);
-                if ($elementTypeOptions !== null && isset($elementTypeOptions['onDelete']) && is_callable($elementTypeOptions['onDelete'])) {
-                    call_user_func($elementTypeOptions['onDelete'], isset($elementData['data']) ? $elementData['data'] : []);
+                $elementTypeDefinition = ElementsHelper::getElementTypeDefinition($elementData['type']);
+                if ($elementTypeDefinition !== null && is_callable($elementTypeDefinition->onDelete)) {
+                    call_user_func($elementTypeDefinition->onDelete, isset($elementData['data']) ? $elementData['data'] : []);
                 }
             }
             if (isset($elementData['style'])) {
@@ -915,9 +915,9 @@ class ElementsDataHelper
     static private function duplicateElementData(array $elementData): array
     {
         if (isset($elementData['type'])) {
-            $elementTypeOptions = ElementsHelper::getElementTypeOptions($elementData['type']);
-            if ($elementTypeOptions !== null && isset($elementTypeOptions['onDuplicate']) && is_callable($elementTypeOptions['onDuplicate'])) {
-                $elementData['data'] = call_user_func($elementTypeOptions['onDuplicate'], isset($elementData['data']) ? $elementData['data'] : []);
+            $elementTypeDefinition = ElementsHelper::getElementTypeDefinition($elementData['type']);
+            if ($elementTypeDefinition !== null && is_callable($elementTypeDefinition->onDuplicate)) {
+                $elementData['data'] = call_user_func($elementTypeDefinition->onDuplicate, isset($elementData['data']) ? $elementData['data'] : []);
             }
         }
         if (isset($elementData['style'])) {
@@ -1227,9 +1227,9 @@ class ElementsDataHelper
     {
         $result = [];
         if (isset($elementData['type'])) {
-            $elementTypeOptions = ElementsHelper::getElementTypeOptions($elementData['type']);
-            if ($elementTypeOptions !== null && isset($elementTypeOptions['getUploadsSizeItems']) && is_callable($elementTypeOptions['getUploadsSizeItems'])) {
-                $result = array_merge($result, call_user_func($elementTypeOptions['getUploadsSizeItems'], isset($elementData['data']) ? $elementData['data'] : []));
+            $elementTypeDefinition = ElementsHelper::getElementTypeDefinition($elementData['type']);
+            if ($elementTypeDefinition !== null && is_callable($elementTypeDefinition->getUploadsSizeItems)) {
+                $result = array_merge($result, call_user_func($elementTypeDefinition->getUploadsSizeItems, isset($elementData['data']) ? $elementData['data'] : []));
             }
         }
         $result = array_merge($result, self::getElementDataStyleUploadsSizeItems($elementData));
@@ -1402,9 +1402,9 @@ class ElementsDataHelper
 
         $export = function (array $elementData, bool $addElementData) use ($app, $add): array {
             $elementID = $elementData['id'];
-            $elementTypeOptions = ElementsHelper::getElementTypeOptions($elementData['type']);
-            if ($elementTypeOptions !== null && isset($elementTypeOptions['onExport']) && is_callable($elementTypeOptions['onExport'])) {
-                $elementData['data'] = call_user_func($elementTypeOptions['onExport'], isset($elementData['data']) ? $elementData['data'] : [], function (string $key, string $content) use ($elementID, $add) {
+            $elementTypeDefinition = ElementsHelper::getElementTypeDefinition($elementData['type']);
+            if ($elementTypeDefinition !== null && is_callable($elementTypeDefinition->onExport)) {
+                $elementData['data'] = call_user_func($elementTypeDefinition->onExport, isset($elementData['data']) ? $elementData['data'] : [], function (string $key, string $content) use ($elementID, $add) {
                     $add('bearcms/elements/element/' . md5($elementID) . '/data/' . $key, $content);
                 });
             }
@@ -1493,12 +1493,12 @@ class ElementsDataHelper
         $isExecuteMode = $context->isExecuteMode();
 
         $import = function (array $elementData, string $oldElementID) use ($app, $context, $isExecuteMode) {
-            $elementTypeOptions = ElementsHelper::getElementTypeOptions($elementData['type']);
-            if ($elementTypeOptions !== null && isset($elementTypeOptions['onImport']) && is_callable($elementTypeOptions['onImport'])) {
+            $elementTypeDefinition = ElementsHelper::getElementTypeDefinition($elementData['type']);
+            if ($elementTypeDefinition !== null && is_callable($elementTypeDefinition->onImport)) {
                 $elementContext = $context->makeGetValueContext(function (string $key) use ($oldElementID, $context) {
                     return $context->getValue('bearcms/elements/element/' . md5($oldElementID) . '/data/' . $key);
                 });
-                $elementData['data'] = call_user_func($elementTypeOptions['onImport'], isset($elementData['data']) ? $elementData['data'] : [], $elementContext);
+                $elementData['data'] = call_user_func($elementTypeDefinition->onImport, isset($elementData['data']) ? $elementData['data'] : [], $elementContext);
             }
             $updateStyleValues = function (array $styleValues, string $filenamePrefix, string $dataKeyPrefix, string $logType, $errorContextData) use ($app, $context, $isExecuteMode) {
                 $filenames = InternalThemes::getFilesInValues($styleValues, true);
