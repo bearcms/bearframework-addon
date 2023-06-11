@@ -34,6 +34,9 @@ class Links
                 $onClick = "try{document.querySelector('" . $scrollLocation . "').scrollIntoView({behavior:'smooth'})}catch(e){};";
             }
             $url = "javascript:void(0);";
+        } elseif (strpos($url, 'js:') === 0) {
+            $onClick = substr($url, 3);
+            $url = "javascript:void(0);";
         } elseif (strpos($url, 'bearcms-lightbox:') === 0) {
             $app = App::get();
             $context = $app->contexts->get(__DIR__);
