@@ -117,9 +117,11 @@ class BearCMS
                         $response->headers->set($response->headers->make('Content-Type', 'text/html'));
                         $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
                         if ($response->content === '') {
+                            $restoreLocale = $this->setContextLocale();
                             $content = '<html data-bearcms-page-type="not-found"><body>';
                             $content .= '<bearcms-text-element text="' . htmlentities(__('bearcms.errorPage.notFound.message') . '<br><br><a href="' . $this->app->urls->get('/') . '">' . __('bearcms.errorPage.notFound.link') . '</a>') . '"></bearcms-text-element>';
                             $content .= '</body></html>';
+                            $restoreLocale();
                             $response->content = $content;
                         }
                     } elseif ($response instanceof App\Response\TemporaryUnavailable) {
@@ -1015,5 +1017,32 @@ class BearCMS
             . '</style></head><body>'
             . $html
             . '</body></html>';
+    }
+
+    /**
+     * Sets the localization location to the current one (from the request path or the site settings)
+     * 
+     * @return callable Returns a function to restore it.
+     */
+    public function setContextLocale(): callable
+    {
+        $settings = $this->data->settings->get();
+        $language = (string)$this->app->request->path->getSegment(0);
+        if (isset($language[0]) && array_search($language, $settings->languages) !== false) {
+            // ok 
+        } else {
+            $language = isset($settings->languages[0]) ? $settings->languages[0] : '';
+        }
+
+        if ($language !== '') {
+            $localization = $this->app->localization;
+            $previousLocale = $localization->getLocale();
+            $localization->setLocale($language);
+            return function () use ($localization, $previousLocale) {
+                $localization->setLocale($previousLocale);
+            };
+        }
+        return function () {
+        };
     }
 }
