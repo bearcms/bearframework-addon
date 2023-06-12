@@ -105,6 +105,33 @@ class BearCMS
             }
         }
 
+        if (Config::$handleErrorPages) {
+            $this->app
+                ->addEventListener('beforeSendResponse', function (\BearFramework\App\BeforeSendResponseEventDetails $details) {
+                    $response = $details->response;
+                    $requestPath = (string) $this->app->request->path;
+                    if (strpos($requestPath, $this->app->assets->pathPrefix) === 0 || strpos($requestPath, '/files/preview/') === 0 || strpos($requestPath, '/files/download/') === 0) {
+                        return;
+                    }
+                    if ($response instanceof App\Response\NotFound) {
+                        $response->headers->set($response->headers->make('Content-Type', 'text/html'));
+                        $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
+                        if ($response->content === '') {
+                            $content = '<html data-bearcms-page-type="not-found"><body>';
+                            $content .= '<bearcms-text-element text="' . htmlentities(__('bearcms.errorPage.notFound.message') . '<br><br><a href="' . $this->app->urls->get('/') . '">' . __('bearcms.errorPage.notFound.link') . '</a>') . '"></bearcms-text-element>';
+                            $content .= '</body></html>';
+                            $response->content = $content;
+                        }
+                    } elseif ($response instanceof App\Response\TemporaryUnavailable) {
+                        $response->headers->set($response->headers->make('Content-Type', 'text/html'));
+                        $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
+                        if ($response->content === '') {
+                            $response->content = $this->getSystemPageContent(nl2br(__('bearcms.errorPage.temporaryUnavailable.message')));
+                        }
+                    }
+                });
+        }
+
         $hasElements = Config::hasFeature('ELEMENTS') || Config::hasFeature('ELEMENTS_*');
         $hasPages = Config::hasFeature('PAGES');
         $hasBlog = Config::hasFeature('BLOG');
@@ -707,7 +734,7 @@ class BearCMS
         }
         $html .= '</head><body>';
 
-        if ($response instanceof App\Response\HTML) { // is not temporary disabled
+        if ($this->isHTMLResponse($response)) {
             if ($settings->externalLinks) {
                 // taken from dev/externalLinksNoUser.min.js
                 $html .= '<script>(function(){var f=location.host,e=function(){for(var d=document.getElementsByTagName("a"),b=0;b<d.length;b++){var c=d[b],a=c.getAttribute("href");null!==a&&-1!==a.indexOf("//")&&-1===a.indexOf("//"+f)&&0!==a.indexOf("#")&&0!==a.indexOf("javascript:")&&null===c.getAttribute("target")&&c.setAttribute("target","_blank")}};e();window.setInterval(e,999)})();</script>';
@@ -716,7 +743,7 @@ class BearCMS
         $html .= '</body></html>';
         $htmlToInsert[] = ['source' => $html];
 
-        if ($response instanceof App\Response\HTML) {
+        if ($this->isHTMLResponse($response)) {
             $allowRenderGlobalHTML = Config::getVariable('internalAllowRenderGlobalHTML');
             $allowRenderGlobalHTML = $allowRenderGlobalHTML !== null ? (int)$allowRenderGlobalHTML : true;
             if ($allowRenderGlobalHTML) {
@@ -853,7 +880,7 @@ class BearCMS
             $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
         }
 
-        if ($response instanceof App\Response\HTML) {
+        if ($this->isHTMLResponse($response)) {
             if (strpos($response->content, 'class="bearcms-blogpost-page-date-container"') !== false && ($currentCustomizations !== null && $currentCustomizations->getValue('blogPostPageDateVisibility') === '0')) {
                 $domDocument = new HTML5DOMDocument();
                 $domDocument->loadHTML($response->content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
@@ -872,7 +899,7 @@ class BearCMS
                 'languages' => $languages
             ];
             if ($theme->get !== null) {
-                if ($response instanceof App\Response\HTML) {
+                if ($this->isHTMLResponse($response)) {
                     $templateContent = call_user_func($theme->get, $currentCustomizations, $callContext);
                     if ($currentCustomizations !== null) {
                         $templateContent = $currentCustomizations->apply($templateContent);
@@ -887,7 +914,7 @@ class BearCMS
             }
         }
 
-        if ($response instanceof App\Response\HTML) {
+        if ($this->isHTMLResponse($response)) {
             $legalLinks = BearCMS\Internal\LegalLinks::$links;
             if (!Config::$whitelabel) {
                 $legalLinks[] = ['url' => 'https://bearcms.com/', 'target' => '_blank', 'rel' => 'nofollow noopener', 'title' => 'This website is powered by Bear CMS', 'text' => 'Powered by Bear CMS', 'position' => 'right'];
@@ -944,7 +971,9 @@ class BearCMS
         $settings = $this->data->settings->get();
         $isDisabled = !$currentUserExists && $settings->disabled;
         if ($isDisabled) {
-            return new App\Response\TemporaryUnavailable(htmlspecialchars($settings->disabledText));
+            $response = new App\Response\TemporaryUnavailable();
+            $response->content = $this->getSystemPageContent(htmlspecialchars($settings->disabledText));
+            return $response;
         }
         return null;
     }
@@ -956,5 +985,35 @@ class BearCMS
     public function makeApplyContext(): \BearCMS\ApplyContext
     {
         return new ApplyContext();
+    }
+
+    /**
+     * 
+     * @param App\Response $response
+     * @return boolean
+     */
+    private function isHTMLResponse(App\Response $response): bool
+    {
+        if ($response instanceof App\Response\TemporaryUnavailable) {
+            return false;
+        }
+        $header = $response->headers->get('Content-Type');
+        return $header !== null && $header->value = 'text/html';
+    }
+
+    /**
+     * 
+     * @param string $html
+     * @return string
+     */
+    public function getSystemPageContent(string $html): string
+    {
+        return '<html><head><style>'
+            . 'html{height:100vh;}'
+            . 'body{min-height:100vh;max-width:600px;margin:0 auto;padding:20px;display:flex;align-items:center;justify-content:center;background-color:#222;color:#fff;font-size:16px;font-family:Arial,Helvetica,sans-serif;line-height:160%;text-align:center;box-sizing:border-box;word-break:break-word;}'
+            . 'a{color:#fff;text-decoration:underline;}'
+            . '</style></head><body>'
+            . $html
+            . '</body></html>';
     }
 }

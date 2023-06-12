@@ -35,6 +35,7 @@ class Config
     static $addDefaultThemes = true;
     static $appSpecificServerData = [];
     static $elementsLazyLoadingOffset = 70;
+    static $handleErrorPages = false;
 
     static private $data = [];
 
@@ -113,6 +114,9 @@ class Config
         }
         if (isset($data['elementsLazyLoadingOffset'])) {
             self::$elementsLazyLoadingOffset = $data['elementsLazyLoadingOffset'];
+        }
+        if (isset($data['handleErrorPages'])) {
+            self::$handleErrorPages = (int) $data['handleErrorPages'];
         }
     }
 
