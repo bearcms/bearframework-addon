@@ -52,8 +52,8 @@ if (!$isMissing) {
                 $component->$propertyID = isset($data[$propertyID]) ? (string) $data[$propertyID] : '';
             }
         }
-        if (isset($options['updateComponentFromData'])) {
-            $component = call_user_func($options['updateComponentFromData'], clone ($component), $data);
+        if (is_callable($elementTypeDefinition->updateComponentFromData)) {
+            $component = call_user_func($elementTypeDefinition->updateComponentFromData, clone ($component), $data);
         }
         if (isset($elementData['type'])) {
             $elementType = $elementData['type'];
@@ -92,8 +92,8 @@ if (!$isMissing) {
                         $data[$propertyID] = (string) $component->$propertyID;
                     }
                 }
-                if (isset($options['updateDataFromComponent'])) {
-                    $data = call_user_func($options['updateDataFromComponent'], clone ($component), $data);
+                if (is_callable($elementTypeDefinition->updateDataFromComponent)) {
+                    $data = call_user_func($elementTypeDefinition->updateDataFromComponent, clone ($component), $data);
                 }
                 return json_encode(['id' => $elementID, 'type' => ElementsHelper::$elementsTypeComponents[$componentName], 'data' => $data], JSON_THROW_ON_ERROR);
             };
