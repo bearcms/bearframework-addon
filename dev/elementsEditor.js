@@ -157,18 +157,7 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
         actionsDone.push(actionID);
     };
 
-    var forceUpdateAttributesIfNeeded = function (elements) {
-        var update = false;
-        for (var i = 0; i < elements.length; i++) {
-            var element = elements[i];
-            if (isColumnsElement(element) || isFloatingBoxElement(element)) {
-                update = true;
-                break;
-            }
-        }
-        if (!update) {
-            return;
-        }
+    var forceUpdateElements = function (elements) {
         try {
             cssToAttributes.run();
         } catch (e) {
@@ -187,7 +176,7 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
     };
 
     var styleEditorChange = function (elements) { // called by the CMS
-        forceUpdateAttributesIfNeeded(elements);
+        forceUpdateElements(elements);
         for (var i = 0; i < elements.length; i++) {
             var element = elements[i];
             if (isColumnsElement(element)) {
@@ -199,7 +188,7 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
     };
 
     var styleEditorClose = function (elements) { // called by the CMS
-        forceUpdateAttributesIfNeeded(elements);
+        forceUpdateElements(elements);
         for (var i = 0; i < elements.length; i++) {
             var element = elements[i];
             if (isColumnsElement(element)) {
