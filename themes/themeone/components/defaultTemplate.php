@@ -166,8 +166,9 @@ if ($hasNavigation) {
     echo '.bearcms-template-navigation .bearcms-navigation-element-item:hover{background-color:#292929;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item:focus{background-color:#333;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item:active{background-color:#333;}';
-    echo '.bearcms-template-navigation .bearcms-navigation-element-item:first-child{border-top-left-radius:' . $borderRadius . ';border-top-right-radius:' . $borderRadius . ';border-bottom-left-radius:0 !important;}';
-    echo '.bearcms-template-navigation .bearcms-navigation-element-item:last-child{border-bottom-left-radius:' . $borderRadius . ';border-bottom-right-radius:' . $borderRadius . ';border-top-right-radius:0 !important;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item:first-child{border-top-left-radius:' . $borderRadius . ' !important;border-top-right-radius:' . $borderRadius . ' !important;border-bottom-left-radius:0 !important;border-bottom-right-radius:0 !important;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item:last-child{border-bottom-left-radius:' . $borderRadius . ' !important;border-bottom-right-radius:' . $borderRadius . ' !important;border-top-left-radius:0 !important;border-top-right-radius:0 !important;}';
+    echo '.bearcms-template-navigation .bearcms-navigation-element-item:first-child:last-child{border-bottom-left-radius:' . $borderRadius . ' !important;border-bottom-right-radius:' . $borderRadius . ' !important;border-top-left-radius:' . $borderRadius . ' !important;border-top-right-radius:' . $borderRadius . ' !important;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item a{display:block !important;color:#fff !important;text-align:left;}';
     echo '.bearcms-template-navigation .bearcms-navigation-element-item-children{display:none !important;}';
     echo '#bearcms-template-navigation-menu-button+label{display:inline-block;background-size:auto calc(var(--bearcms-template-text-font-size) + 9px);background-position:center center;background-repeat:no-repeat;border-top-left-radius:' . $borderRadius . ';border-bottom-left-radius:' . $borderRadius . ';}';
