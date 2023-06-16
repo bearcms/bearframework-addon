@@ -21,6 +21,7 @@ class ElementsHelper
 {
 
     static $editorData = [];
+    static $renderedData = [];
     static $elementsTypeDefinitions = [];
     static $elementsTypeComponents = [];
     static $lastLoadMoreServerData = null;
@@ -196,6 +197,8 @@ class ElementsHelper
             if ($editable) {
                 $attributes .= ' id="' . self::getHTMLElementID($elementID) . '"';
                 self::$editorData[] = ['columns', $elementID, $contextData];
+            } else {
+                self::$renderedData[] = ['columns', $elementID];
             }
             if ($outputType === 'full-html') {
                 $classAttributeValue = 'bearcms-element bearcms-columns-element';
@@ -323,6 +326,8 @@ class ElementsHelper
             if ($editable) {
                 $attributes .= ' id="' . self::getHTMLElementID($elementID) . '"';
                 self::$editorData[] = ['floatingBox', $elementID, $contextData];
+            } else {
+                self::$renderedData[] = ['floatingBox', $elementID];
             }
             if ($outputType === 'full-html') {
                 $classAttributeValue = 'bearcms-element bearcms-floating-box-element';
@@ -440,6 +445,8 @@ class ElementsHelper
             if ($editable) {
                 $attributes .= ' id="' . self::getHTMLElementID($elementID) . '"';
                 self::$editorData[] = ['flexibleBox', $elementID, $contextData];
+            } else {
+                self::$renderedData[] = ['flexibleBox', $elementID];
             }
             if ($outputType === 'full-html') {
                 $classAttributeValue = 'bearcms-element bearcms-flexible-box-element';

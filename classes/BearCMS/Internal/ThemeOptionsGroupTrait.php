@@ -138,6 +138,32 @@ trait ThemeOptionsGroupTrait
      * @param string $id
      * @return self
      */
+    public function addVisibility(string $id, string $cssSelector, array $details = []): self
+    {
+        $states = isset($details['states']) ? $details['states'] : [
+            ["type" => "size"],
+            ["type" => "screenSize"],
+            ["type" => "pageType"]
+        ];
+        $this->addOption($id, "visibility", '', [
+            "states" => $states,
+            "cssOutput" => [
+                ["selector", $cssSelector, '--css-to-attribute-data-bearcms-visibility:{cssPropertyValue(type)};'],
+                ["selector", $cssSelector, '--bearcms-visibility-top:{cssPropertyValue(top)};'],
+                ["selector", $cssSelector, '--bearcms-visibility-left:{cssPropertyValue(left)};'],
+                ["selector", $cssSelector, '--bearcms-visibility-bottom:{cssPropertyValue(bottom)};'],
+                ["selector", $cssSelector, '--bearcms-visibility-right:{cssPropertyValue(right)};'],
+            ],
+            "onHighlight" => [['cssSelector', $cssSelector]]
+        ]);
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $id
+     * @return self
+     */
     public function addCustomCSS(string $id = 'customCSS'): self
     {
         $this->addOption($id, "cssCode", __("bearcms.themes.options.Custom CSS"));

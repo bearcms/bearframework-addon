@@ -29,6 +29,8 @@ interface ThemeOptionsGroupInterface
 
     public function addPages();
 
+    public function addVisibility(string $id, string $cssSelector, array $details = []);
+
     public function addCustomCSS(string $id = 'customCSS');
 
     public function getList();

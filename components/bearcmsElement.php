@@ -131,6 +131,8 @@ if ($containerType === 'none') {
         $htmlElementID = ElementsHelper::getHTMLElementID($elementID);
         $attributes .= ' id="' . $htmlElementID . '"';
         ElementsHelper::$editorData[] = ['element', $elementID, $componentContextData, $typeCode];
+    } else {
+        ElementsHelper::$renderedData[] = ['element', $elementID];
     }
     $styleSelector = null;
     if ($outputType === 'full-html') {

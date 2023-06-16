@@ -19,7 +19,8 @@ $contextData = ElementsHelper::getComponentContextData($component);
 $editable = $component->editable === 'true';
 $group = $component->group;
 
-$containerData = InternalDataElements::getContainer($component->id, true);
+$containerID = $component->id;
+$containerData = InternalDataElements::getContainer($containerID, true);
 
 $elements = $containerData['elements'];
 $hasLazyLoading = sizeof($elements) > $lazyLimit;
@@ -97,9 +98,11 @@ if ($renderElementsContainer) {
     $className = 'bre' . md5($spacing . '$' . $width);
     $attributes = '';
     if ($editable) {
-        $htmlElementID = 'brela' . md5($component->id);
-        ElementsHelper::$editorData[] = ['container', $component->id, $contextData, $group];
+        $htmlElementID = 'brela' . md5($containerID);
+        ElementsHelper::$editorData[] = ['container', $containerID, $contextData, $group];
         $attributes .= ' id="' . $htmlElementID . '"';
+    } else {
+        ElementsHelper::$renderedData[] = ['container', $containerID];
     }
 
     $styles .= '.' . $className . '{--bearcms-elements-spacing:' . $spacing . ';width:' . $width . ';text-align:left;display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}';

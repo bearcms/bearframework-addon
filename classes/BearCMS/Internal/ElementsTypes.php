@@ -93,6 +93,7 @@ class ElementsTypes
                                 ["selector", $parentSelector . " .bearcms-heading-element"],
                             ]
                         ]);
+                        $options->addVisibility($idPrefix . "HeadingVisibility", $parentSelector);
                     } else {
                         $group = $options->addGroup(__("bearcms.themes.options.Heading"));
                         $customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
@@ -169,6 +170,10 @@ class ElementsTypes
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-text-element a"]
                         ]
                     ]);
+
+                    if ($isElementContext) {
+                        $optionsGroup->addVisibility($idPrefix . "TextVisibility", $parentSelector);
+                    }
                 };
             }
         }
@@ -218,6 +223,10 @@ class ElementsTypes
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element"]
                         ]
                     ]);
+
+                    if ($isElementContext) {
+                        $optionsGroup->addVisibility($idPrefix . "LinkVisibility", $parentSelector);
+                    }
                 };
             }
         }
@@ -349,6 +358,7 @@ class ElementsTypes
                                 ["selector", $parentSelector . $customStyleSelector . " .bearcms-image-element"]
                             ]
                         ]);
+                        $optionsGroup->addVisibility($idPrefix . "ImageVisibility", $parentSelector);
                     }
                 };
             }
@@ -1110,6 +1120,7 @@ class ElementsTypes
                     "defaultValue" => $defaultValue['layout'],
                     "onHighlight" => [['cssSelector', $parentSelector]]
                 ]);
+                $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector);
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_FLOATING_BOX')) {
@@ -1134,6 +1145,7 @@ class ElementsTypes
                     "defaultValue" => $defaultValue['layout'],
                     "onHighlight" => [['cssSelector', $parentSelector]]
                 ]);
+                $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector);
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_FLEXIBLE_BOX')) {
@@ -1166,7 +1178,8 @@ class ElementsTypes
                         ["selector", $parentSelector]
                     ],
                 ]);
-                $options->addOption($idPrefix . "code", "code", '', [
+                $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector);
+                $optionsGroup->addOption($idPrefix . "code", "code", '', [
                     "states" => [
                         ["type" => "visibility"],
                     ],
