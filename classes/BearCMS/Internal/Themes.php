@@ -881,7 +881,8 @@ class Themes
             'firstChild' => 'first-child',
             'lastChild' => 'last-child',
             'checked' => 'checked',
-            'visibility' => 'visibility'
+            'visibility' => 'visibility',
+            'tags' => 'tags'
         ];
 
         $updateFontFamily = function (string $fontName) use ($webSafeFonts, &$details, &$linkTags): string {
@@ -1035,15 +1036,17 @@ class Themes
 
         $getStateCSSRules = function (string $state, string $value, array $statesTypes, string $selector, int $optionIndex, int $stateIndex = null) use ($replaceStateSelectorsInSelector): array {
             $cssMediaQueries = []; // array of array of strings
-            $additionalCSSSelectors = []; // array of array of strings
             $attributes = [];
-            $cssStates = '';
+            $cssStates = $selector;
+            $cssTagStates = '';
             $unsupportedStates = '';
             $result = [];
             $stateParts = self::getStateCombinationDetails($state);
 
             $replacedStateSelectors = [];
             $selector = $replaceStateSelectorsInSelector($selector, array_keys($stateParts), $replacedStateSelectors);
+            $selectorParts = explode(' ', $selector);
+            $selectorLastPart = $selectorParts[sizeof($selectorParts) - 1];
 
             foreach ($stateParts as $name => $args) {
                 if (isset($statesTypes[$name])) {
@@ -1124,7 +1127,11 @@ class Themes
                             $cssSelectors[] = 'html[data-bearcms-page-type="' . $argName . '"]';
                         }
                         if (!empty($cssSelectors)) {
-                            $additionalCSSSelectors[] = $cssSelectors;
+                            $cssStates = ':is(' . implode(',', $cssSelectors) . ') ' . $cssStates;
+                        }
+                    } else if ($stateType === 'tags') {
+                        foreach ($args as $argName => $argValue) {
+                            $cssTagStates .= ':is([data-bearcms-tags~="' . $argName . '"] ' . $selectorLastPart . ', [data-bearcms-tags~="' . $argName . '"]' . $selectorLastPart . ')';
                         }
                     } else if ($stateType === 'visibility') {
                         if (!empty($args)) {
@@ -1175,14 +1182,12 @@ class Themes
             if (empty($cssMediaQueriesCombinations)) {
                 $cssMediaQueriesCombinations[] = [];
             }
-            $additionalCSSSelectorsCombinations = $getCombinations($additionalCSSSelectors);
-            if (empty($additionalCSSSelectorsCombinations)) {
-                $additionalCSSSelectorsCombinations[] = [];
-            }
-            foreach ($cssMediaQueriesCombinations as $cssMediaQueryCombinations) { // todo use is() someday when there is more support
-                foreach ($additionalCSSSelectorsCombinations as $additionalCssSelectorCombinations) {
-                    $result[] = [implode(' and ', $cssMediaQueryCombinations), (!empty($additionalCssSelectorCombinations) ? implode(' ', $additionalCssSelectorCombinations) . ' ' : '') . $selector . $cssStates . $unsupportedStates, $value];
+            foreach ($cssMediaQueriesCombinations as $cssMediaQueryCombinations) {
+                $selectorRuleToSet = $cssStates . $unsupportedStates;
+                if (isset($cssTagStates[0])) {
+                    $selectorRuleToSet = ':is(' . $selectorRuleToSet . ')' . $cssTagStates;
                 }
+                $result[] = [implode(' and ', $cssMediaQueryCombinations), $selectorRuleToSet, $value];
             }
             if (!empty($attributes)) {
                 $attributesCSS = '';

@@ -87,7 +87,7 @@ class ElementsTypes
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $options->addOption($idPrefix . "HeadingCSS", "css", '', [
-                            "cssOptions" => ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState"],
+                            "cssOptions" => ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
                                 ["selector", $parentSelector . " .bearcms-heading-element"],
@@ -149,7 +149,7 @@ class ElementsTypes
                         $customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
                     }
                     $optionsGroup->addOption($idPrefix . "TextCSS", "css", '', [
-                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))), // all but focus state
+                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))), // all but focus state
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-text-element", "box-sizing:border-box;"],
                             ["rule", $parentSelector . " .bearcms-text-element ul", "list-style-position:inside;margin:0;padding:0;"],
@@ -207,7 +207,7 @@ class ElementsTypes
                     }
 
                     $optionsGroup->addOption($idPrefix . "LinkCSS", "css", '', [
-                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
+                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-link-element a", "text-decoration:none;box-sizing:border-box;display:inline-block;"],
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element a"]
@@ -343,7 +343,7 @@ class ElementsTypes
 
                     $optionsGroup->addOption($idPrefix . "ImageCSS", "css", '', [
                         "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow"],
-                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
+                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-image-element", "overflow:hidden;"],
                             ["rule", $parentSelector . " .bearcms-image-element img", "border:0;"],
@@ -1173,7 +1173,7 @@ class ElementsTypes
                 ]);
                 $optionsGroup->addOption($idPrefix . "css", "css", '', [
                     "cssTypes" => ["cssMargin", "cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
-                    "cssOptions" => ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState"],
+                    "cssOptions" => ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                     "cssOutput" => [
                         ["selector", $parentSelector]
                     ],
