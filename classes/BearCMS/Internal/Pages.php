@@ -64,6 +64,7 @@ class Pages
             $title = '';
             $description = '';
             $keywords = '';
+            $tags = [];
             $status = null;
             $found = false;
             $page = $bearCMS->data->pages->get($pageID);
@@ -77,6 +78,7 @@ class Pages
                 }
                 $description = isset($page->descriptionTagContent) ? trim($page->descriptionTagContent) : '';
                 $keywords = isset($page->keywordsTagContent) ? trim($page->keywordsTagContent) : '';
+                $tags = $page->tags;
                 $found = true;
                 $status = $page->status;
             }
@@ -98,7 +100,7 @@ class Pages
                 } else {
                     $pageType = 'other';
                 }
-                $content = '<html data-bearcms-page-type="' . $pageType . '"><head>';
+                $content = '<html data-bearcms-page-type="' . $pageType . '"' . (empty($tags) ? '' : ' data-bearcms-tags="' . implode(' ', $tags) . '"') . '><head>';
                 if (isset($title[0])) {
                     $content .= '<title>' . htmlspecialchars($title) . '</title>';
                 }

@@ -22,6 +22,7 @@ use BearFramework\App;
  * @property string|null $titleTagContent
  * @property string|null $descriptionTagContent
  * @property string|null $keywordsTagContent
+ * @property array $tags
  * @property-read \BearFramework\Models\ModelsList|\BearCMS\Data\Pages\Page[] $children
  * @property int|null $lastChangeTime
  */
@@ -69,6 +70,9 @@ class Page extends \BearFramework\Models\Model
             ])
             ->defineProperty('keywordsTagContent', [
                 'type' => '?string'
+            ])
+            ->defineProperty('tags', [
+                'type' => 'array'
             ])
             ->defineProperty('children', [
                 'readonly' => true,
