@@ -143,7 +143,8 @@ trait ThemeOptionsGroupTrait
         $states = isset($details['states']) ? $details['states'] : [
             ["type" => "size"],
             ["type" => "screenSize"],
-            ["type" => "pageType"]
+            ["type" => "pageType"],
+            ["type" => "tags"],
         ];
         $this->addOption($id, "visibility", '', [
             "states" => $states,
