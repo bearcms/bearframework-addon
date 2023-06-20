@@ -71,10 +71,19 @@ bearCMS.tags = bearCMS.tags || (function () {
         }
     };
 
+    var toggle = function (tag, target) {
+        if (exists(tag, target)) {
+            remove(tag, target);
+        } else {
+            set(tag, target);
+        }
+    };
+
     return {
         'set': set,
         'exists': exists,
         'remove': remove,
+        'toggle': toggle,
     };
 
 }());

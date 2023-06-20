@@ -750,6 +750,9 @@ class BearCMS
                 // taken from dev/externalLinksNoUser.min.js
                 $html .= '<script>(function(){var f=location.host,e=function(){for(var d=document.getElementsByTagName("a"),b=0;b<d.length;b++){var c=d[b],a=c.getAttribute("href");null!==a&&-1!==a.indexOf("//")&&-1===a.indexOf("//"+f)&&0!==a.indexOf("#")&&0!==a.indexOf("javascript:")&&null===c.getAttribute("target")&&c.setAttribute("target","_blank")}};e();window.setInterval(e,999)})();</script>';
             }
+            //$html .= '<script>' . file_get_contents(__DIR__ . '/../dev/tags.js') . '</script>'; // dev mode
+            // taken from dev/tags.min.js
+            $html .= '<script>var bearCMS=bearCMS||{};bearCMS.tags=bearCMS.tags||function(){var t=function(t){if(null==t)return document.querySelector("html");if("string"==typeof t){if("#"===t.substring(0,1))return document.querySelector(\'[data-bearcms-tags~="\'+t.substring(1)+\'"]\')}else if("object"==typeof element&&void 0!==element.tagName)return element;return null},e=function(t){var e=t.getAttribute("data-bearcms-tags");return null!==e?e.split(" "):[]},r=function(t,e){0===(e=e.filter((function(t,e,r){return e===r.indexOf(t)}))).length?t.removeAttribute("data-bearcms-tags"):t.setAttribute("data-bearcms-tags",e.join(" "))},n=function(n,u){var a=t(u);if(null!==a){var i=e(a);return i.push(n),r(a,i),!0}return!1},u=function(r,n){var u=t(n);return null!==u&&-1!==e(u).indexOf(r)},a=function(n,u){var a=t(u);if(null!==a){var i=e(a).filter((function(t){return t!==n}));r(a,i)}};return{set:n,exists:u,remove:a,toggle:function(t,e){u(t,e)?a(t,e):n(t,e)}}}();</script>';
         }
         $html .= '</body></html>';
         $htmlToInsert[] = ['source' => $html];
