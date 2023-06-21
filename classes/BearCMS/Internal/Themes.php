@@ -936,11 +936,11 @@ class Themes
                     }
                     $replace[] = $isEncodedMode ? rawurlencode($valueToSet) : $valueToSet;
                 }
+                $valueAsArray = is_array($value) ? $value : ($value === '' ? [] : json_decode($value, true));
+                $defaultValueAsArray = is_array($defaultValue) ? $defaultValue : ($defaultValue === '' ? [] : json_decode($defaultValue, true));
                 $cssPropertyMatch = $isEncodedMode ? rawurlencode('{cssPropertyValue') : '{cssPropertyValue';
                 if (strpos($content, $cssPropertyMatch) !== false) {
                     $matches = [];
-                    $valueAsArray = is_array($value) ? $value : ($value === '' ? [] : json_decode($value, true));
-                    $defaultValueAsArray = is_array($defaultValue) ? $defaultValue : ($defaultValue === '' ? [] : json_decode($defaultValue, true));
                     $expression = $isEncodedMode ? rawurlencode('{cssPropertyValue(') . '(.*?)' . rawurlencode(')}') : '{cssPropertyValue\((.*?)\)}';
                     preg_match_all('/' . $expression . '/', $content, $matches);
                     foreach ($matches[0] as $i => $match) {
@@ -960,6 +960,26 @@ class Themes
                             }
                         }
                         $valueToSet = self::escapeCSSValue($valueToSet);
+                        $replace[] = $isEncodedMode ? rawurlencode($valueToSet) : $valueToSet;
+                    }
+                }
+                $cssPropertyMatch = $isEncodedMode ? rawurlencode('{cssPropertyTransition') : '{cssPropertyTransition';
+                if (strpos($content, $cssPropertyMatch) !== false) {
+                    $expression = $isEncodedMode ? rawurlencode('{cssPropertyTransition(') . '(.*?)' . rawurlencode(')}') : '{cssPropertyTransition\((.*?)\)}'; // list of properties
+                    preg_match_all('/' . $expression . '/', $content, $matches);
+                    foreach ($matches[0] as $i => $match) {
+                        $transitionProperties = [];
+                        $args = $matches[1][$i];
+                        $args = explode(',', $isEncodedMode ? rawurldecode($args) : $args);
+                        foreach ($args as $arg) {
+                            $propertyName = 'transition--' . $arg;
+                            $transitionValue = isset($valueAsArray[$propertyName]) ? $valueAsArray[$propertyName] : (isset($defaultValueAsArray[$propertyName]) ? $defaultValueAsArray[$propertyName] : '');
+                            if ($transitionValue !== '') {
+                                $transitionProperties[] = $arg . ' ' . $transitionValue;
+                            }
+                        }
+                        $search[] = $match;
+                        $valueToSet = !empty($transitionProperties) ? implode(',', $transitionProperties) : '';
                         $replace[] = $isEncodedMode ? rawurlencode($valueToSet) : $valueToSet;
                     }
                 }

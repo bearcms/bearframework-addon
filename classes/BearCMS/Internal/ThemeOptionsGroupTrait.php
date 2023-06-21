@@ -149,12 +149,7 @@ trait ThemeOptionsGroupTrait
         $this->addOption($id, "visibility", '', [
             "states" => $states,
             "cssOutput" => [
-                ["selector", $cssSelector, '--css-to-attribute-data-bearcms-visibility:{cssPropertyValue(type)};'],
-                ["selector", $cssSelector, '--bearcms-visibility-layer:{cssPropertyValue(layer)};'],
-                ["selector", $cssSelector, '--bearcms-visibility-top:{cssPropertyValue(top)};'],
-                ["selector", $cssSelector, '--bearcms-visibility-left:{cssPropertyValue(left)};'],
-                ["selector", $cssSelector, '--bearcms-visibility-bottom:{cssPropertyValue(bottom)};'],
-                ["selector", $cssSelector, '--bearcms-visibility-right:{cssPropertyValue(right)};'],
+                ["selector", $cssSelector, '--css-to-attribute-data-bearcms-visibility:{cssPropertyValue(type)};z-index:{cssPropertyValue(layer)};top:{cssPropertyValue(top)};left:{cssPropertyValue(left)};bottom:{cssPropertyValue(bottom)};right:{cssPropertyValue(right)};transition:{cssPropertyTransition(top,left,bottom,right)};'],
             ],
             "onHighlight" => [['cssSelector', $cssSelector]]
         ]);
