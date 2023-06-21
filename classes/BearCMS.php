@@ -738,8 +738,8 @@ class BearCMS
         //if (!empty(Internal\ElementsHelper::$renderedData)) { // todo
         $html .= '<style>' .
             '[data-bearcms-visibility="none"]{display:none}' .
-            '[data-bearcms-visibility="fixed"]{position:fixed;top:var(--bearcms-visibility-top);bottom:var(--bearcms-visibility-bottom);left:var(--bearcms-visibility-left);right:var(--bearcms-visibility-right);}' .
-            '[data-bearcms-visibility="floating"]{position:absolute;top:var(--bearcms-visibility-top);bottom:var(--bearcms-visibility-bottom);left:var(--bearcms-visibility-left);right:var(--bearcms-visibility-right);}' .
+            '[data-bearcms-visibility="fixed"]{position:fixed;z-index:var(--bearcms-visibility-layer);top:var(--bearcms-visibility-top);bottom:var(--bearcms-visibility-bottom);left:var(--bearcms-visibility-left);right:var(--bearcms-visibility-right);}' .
+            '[data-bearcms-visibility="floating"]{position:absolute;z-index:var(--bearcms-visibility-layer);top:var(--bearcms-visibility-top);bottom:var(--bearcms-visibility-bottom);left:var(--bearcms-visibility-left);right:var(--bearcms-visibility-right);}' .
             '</style>';
         //}
 

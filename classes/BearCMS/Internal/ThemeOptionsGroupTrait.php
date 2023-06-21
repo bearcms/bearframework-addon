@@ -150,6 +150,7 @@ trait ThemeOptionsGroupTrait
             "states" => $states,
             "cssOutput" => [
                 ["selector", $cssSelector, '--css-to-attribute-data-bearcms-visibility:{cssPropertyValue(type)};'],
+                ["selector", $cssSelector, '--bearcms-visibility-layer:{cssPropertyValue(layer)};'],
                 ["selector", $cssSelector, '--bearcms-visibility-top:{cssPropertyValue(top)};'],
                 ["selector", $cssSelector, '--bearcms-visibility-left:{cssPropertyValue(left)};'],
                 ["selector", $cssSelector, '--bearcms-visibility-bottom:{cssPropertyValue(bottom)};'],
