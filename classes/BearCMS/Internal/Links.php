@@ -33,16 +33,16 @@ class Links
             } elseif (strpos($scrollLocation, '#') === 0) {
                 $onClick = "try{document.querySelector('" . $scrollLocation . "').scrollIntoView({behavior:'smooth'})}catch(e){};";
             }
-            $url = "javascript:void(0);";
+            $url = "";
         } elseif (strpos($url, 'js:') === 0) {
             $onClick = substr($url, 3);
-            $url = "javascript:void(0);";
+            $url = "";
         } elseif (strpos($url, 'bearcms-lightbox:') === 0) {
             $app = App::get();
             $context = $app->contexts->get(__DIR__);
             $contentID = substr($url, 17);
             $onClick = "bearCMS.lightboxContent.open(" . json_encode($contentID) . ");";
-            $url = "javascript:void(0);";
+            $url = "";
             //$script = file_get_contents($context->dir . '/dev/lightboxContent.js'); // dev mode
             $script = include $context->dir . '/resources/lightboxContent.js.min.php';
             $html = '<html><head><link rel="client-packages-embed" name="lightbox"><script>' . $script . '</script></head></html>';

@@ -121,7 +121,7 @@ if ($isFullHtmlOutputType) {
     }
     if ($filename !== '') {
         $content .= '<component src="image-gallery" columns-count="1"' . $attributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
-        $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' ? ' url="' . htmlentities($onClickURL) . '"' : '') . '' . ($onClick === 'script' ? ' script="' . htmlentities($onClickScript) . '"' : '') . ' title="' . htmlentities((string)$component->title) . '" alt="' . htmlentities((string)$component->alt) . '" filename="' . $filename . '" file-width="' . $component->fileWidth . '" file-height="' . $component->fileHeight . '" min-asset-width="' . $minAssetWidth . '" min-asset-height="' . $minAssetHeight . '" max-asset-width="' . $maxAssetWidth . '" max-asset-height="' . $maxAssetHeight . '"' . InternalAssets::convertAssetOptionsToHTMLAttributes($assetOptions) . '/>';
+        $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' && $onClickURL !== '' ? ' url="' . htmlentities($onClickURL) . '"' : '') . '' . ($onClick === 'script' ? ' script="' . htmlentities($onClickScript) . '"' : '') . ' title="' . htmlentities((string)$component->title) . '" alt="' . htmlentities((string)$component->alt) . '" filename="' . $filename . '" file-width="' . $component->fileWidth . '" file-height="' . $component->fileHeight . '" min-asset-width="' . $minAssetWidth . '" min-asset-height="' . $minAssetHeight . '" max-asset-width="' . $maxAssetWidth . '" max-asset-height="' . $maxAssetHeight . '"' . InternalAssets::convertAssetOptionsToHTMLAttributes($assetOptions) . '/>';
         $content .= '</component>';
     }
     if (isset($innerContainerStyle[0])) {

@@ -434,7 +434,7 @@ class ElementsHelper
         if ($linkURL !== null) {
             $attributes .= ' data-bearcms-flexible-box-link';
             list($linkURL, $linkOnClick, $linkHTML) = \BearCMS\Internal\Links::updateURL($linkURL);
-            $innerContent .= '<a href="' . htmlentities($linkURL) . '"' . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '"' : '') . ($linkTitle !== null ? ' title="' . htmlentities($linkTitle) . '"' : '') . '></a>';
+            $innerContent .= '<a' . ($linkURL !== '' ? ' href="' . htmlentities($linkURL) . '"' : '') . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '"' : '') . ($linkTitle !== null ? ' title="' . htmlentities($linkTitle) . '"' : '') . '></a>';
         }
 
         $content = '<html>'

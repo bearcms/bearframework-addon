@@ -10,20 +10,23 @@ $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
 $isFullHtmlOutputType = $outputType === 'full-html';
 
-$url = $component->url;
-$text = $component->text;
-$title = $component->title;
+$url = (string)$component->url;
+$text = (string)$component->text;
+$title = (string)$component->title;
 
 list($url, $onClick, $linkHTML) = \BearCMS\Internal\Links::updateURL($url);
 
 echo '<html>';
 if ($isFullHtmlOutputType) {
-    echo '<head><style>.bearcms-link-element{word-break:break-word;}</style></head>';
+    echo '<head><style>'
+        . '.bearcms-link-element{word-break:break-word;}'
+        . '.bearcms-link-element a{cursor:pointer;}'
+        . '</style></head>';
 }
 echo '<body>';
 
 echo '<div' . ($isFullHtmlOutputType ? ' class="bearcms-link-element"' : '') . '>';
-echo '<a title="' . htmlentities($title) . '" href="' . htmlentities($url) . '"' . ($onClick !== null ? ' onclick="' . htmlentities($onClick) . '"' : '') . '>' . htmlspecialchars($text) . '</a>'; // htmlspecialchars(isset($text[0]) ? $text : $url)
+echo '<a title="' . htmlentities($title) . '"' . ($url !== '' ? ' href="' . htmlentities($url) . '"' : '') . ($onClick !== null ? ' onclick="' . htmlentities($onClick) . '"' : '') . '>' . htmlspecialchars($text) . '</a>'; // htmlspecialchars(isset($text[0]) ? $text : $url)
 echo '</div>';
 
 if ($linkHTML !== null) {
