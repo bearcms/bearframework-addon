@@ -462,7 +462,7 @@ class ElementsHelper
                 $content .= '<style>'
                     . '.bearcms-flexible-box-element{position:relative;box-sizing:border-box;display:flex;flex-direction:column;--css-to-attribute-data-bearcms-flexible-box-direction:' . $defaultLayoutValue['direction'] . ';--css-to-attribute-data-bearcms-flexible-box-alignment:' . $defaultLayoutValue['alignment'] . ';}'
                     . '.bearcms-flexible-box-element' . $notEditableSelector . ':not([class*="bearcms-element-style-"]):has(> div:empty){display:none;}'
-                    . '.bearcms-flexible-box-element>a{width:100%;height:100%;position:absolute;top:0;left:0;display:block;}'
+                    . '.bearcms-flexible-box-element>a{width:100%;height:100%;position:absolute;top:0;left:0;display:block;cursor:pointer;}'
                     . '.bearcms-flexible-box-element[data-bearcms-flexible-box-link]' . $notEditableSelector . '>div{pointer-events:none;}'
                     . '.bearcms-flexible-box-element>div{display:flex;flex:1 1 auto;flex-direction:column;gap:var(--bearcms-elements-spacing);}' // Must be here when canStyle=false // flex:1 1 auto; is needed to fill the container when there is height specified
                     . '.bearcms-flexible-box-element[data-bearcms-flexible-box-direction="vertical-reverse"]>div{flex-direction:column-reverse;}'
