@@ -290,6 +290,7 @@ class Server
         ];
         $settings = $app->bearCMS->data->settings->get();
         $clientData['contentLanguages'] = $settings->languages;
+        $clientData['clientIPHash'] = hash('sha256', serialize([$app->request->client->ip, $app->request->headers->getValue('Accept-Language'), $app->request->headers->getValue('User-Agent')]));
         $data['clientData'] = $clientData;
 
         $ch = curl_init();
