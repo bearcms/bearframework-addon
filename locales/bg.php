@@ -7,6 +7,7 @@ return [
     'bearcms.comments.Your comment cannot be empty!' => 'Вашият коментар не може да бъде празен!',
     'bearcms.comments.Show more' => 'Покажи още',
     'bearcms.comments.pending approval' => 'очаква одобрение',
+    'bearcms.comments.tooMany' => 'Изпратили сте твърде много коментари за кратко време. Моля, опитайте по-късно.',
     'bearcms.blogPosts.Show more posts' => 'Покажи още',
     'bearcms.blogPosts.Read more' => 'Прочети повече',
     'bearcms.blogPost.draft' => 'чернова',

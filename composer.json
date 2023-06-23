@@ -38,7 +38,8 @@
         "ivopetkov/responsively-lazy-bearframework-addon": "1.*",
         "ivopetkov/html5-dom-document-js-bearframework-addon": "1.*",
         "ivopetkov/responsive-attributes-bearframework-addon": "1.*",
-        "ivopetkov/css-to-attributes-bearframework-addon": "1.*"
+        "ivopetkov/css-to-attributes-bearframework-addon": "1.*",
+        "ivopetkov/rate-limiter-bearframework-addon": "1.*"
     },
     "require-dev": {
         "bearframework/addon-tests": "1.*",

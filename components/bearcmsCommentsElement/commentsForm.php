@@ -15,6 +15,11 @@ $context = $app->contexts->get(__DIR__);
 $allowFilesUpload = (string)$component->allowFilesUpload === 'true';
 
 $form->onSubmit = function ($values) use ($component, $app, $context, $allowFilesUpload) {
+
+    if (!$app->rateLimiter->logIP('bearcms-comments-form', ['4/m', '40/h'])) {
+        $this->throwError(__('bearcms.comments.tooMany'));
+    }
+
     $contextData = json_decode($values['cfcontext'], true);
     if (is_array($contextData) && isset($contextData['listElementID'], $contextData['listCommentsCount'])) {
         $listElementID = (string) $contextData['listElementID'];
