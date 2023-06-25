@@ -484,7 +484,7 @@ class Themes
                         if (isset($importedDataKeys[$filenameInArchive])) {
                             $dataKey = $importedDataKeys[$filenameInArchive];
                         } else {
-                            if (array_search($extension, ['jpg', 'jpeg', 'gif', 'png', 'svg']) === false) {
+                            if (array_search($extension, ['jpg', 'jpeg', 'gif', 'png', 'svg', 'webp', 'avif']) === false) {
                                 throw new \Exception('Invalid file (' . $filenameInArchive . ')!', 9);
                             }
                             $dataKey = (!$extractFilesInActiveDir ? '.temp/bearcms/files/themeimage/' : 'bearcms/files/themeimage/') . md5($filenameInArchive . '-' . uniqid()) . '.' . $extension;
