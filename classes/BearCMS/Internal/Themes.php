@@ -923,6 +923,9 @@ class Themes
             if ($defaultValue === null) {
                 $defaultValue = '';
             }
+            $getCSSValueAsArray = function ($value) {
+                return is_array($value) ? $value : ($value === '' ? [] : json_decode($value, true));
+            };
             $search = [];
             $replace = [];
             for ($mode = 0; $mode < 2; $mode++) {
@@ -936,10 +939,10 @@ class Themes
                     }
                     $replace[] = $isEncodedMode ? rawurlencode($valueToSet) : $valueToSet;
                 }
-                $valueAsArray = is_array($value) ? $value : ($value === '' ? [] : json_decode($value, true));
-                $defaultValueAsArray = is_array($defaultValue) ? $defaultValue : ($defaultValue === '' ? [] : json_decode($defaultValue, true));
                 $cssPropertyMatch = $isEncodedMode ? rawurlencode('{cssPropertyValue') : '{cssPropertyValue';
                 if (strpos($content, $cssPropertyMatch) !== false) {
+                    $valueAsArray = $getCSSValueAsArray($value);
+                    $defaultValueAsArray = $getCSSValueAsArray($defaultValue);
                     $matches = [];
                     $expression = $isEncodedMode ? rawurlencode('{cssPropertyValue(') . '(.*?)' . rawurlencode(')}') : '{cssPropertyValue\((.*?)\)}';
                     preg_match_all('/' . $expression . '/', $content, $matches);
@@ -965,6 +968,8 @@ class Themes
                 }
                 $cssPropertyMatch = $isEncodedMode ? rawurlencode('{cssPropertyTransition') : '{cssPropertyTransition';
                 if (strpos($content, $cssPropertyMatch) !== false) {
+                    $valueAsArray = $getCSSValueAsArray($value);
+                    $defaultValueAsArray = $getCSSValueAsArray($defaultValue);
                     $expression = $isEncodedMode ? rawurlencode('{cssPropertyTransition(') . '(.*?)' . rawurlencode(')}') : '{cssPropertyTransition\((.*?)\)}'; // list of properties
                     preg_match_all('/' . $expression . '/', $content, $matches);
                     foreach ($matches[0] as $i => $match) {
