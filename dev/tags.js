@@ -12,15 +12,33 @@ bearCMS.tags = bearCMS.tags || (function () {
 
     var attributeName = 'data-bearcms-tags';
 
-    var getTargetElement = function (target) { // null|undefined (html), element, #tag (element with tag)
-        if (target === null || typeof target === 'undefined') {
+    var getTargetElement = function (target) {
+        if (target === null || typeof target === 'undefined') { // null|undefined (html)
             return document.querySelector('html');
         } else if (typeof target === 'string') {
-            if (target.substring(0, 1) === '#') {
+            if (target.substring(0, 1) === '#') { // #tag (element with tag)
                 return document.querySelector('[' + attributeName + '~="' + target.substring(1) + '"]');
             }
-        } else if (typeof element === 'object' && typeof element.tagName !== 'undefined') {
-            return element;
+        } else if (typeof target === 'object') {
+            if (typeof target.tagName !== 'undefined') { // element
+                return target;
+            } else if (typeof target[0] !== 'undefined' && typeof target[1] !== 'undefined' && typeof target[0].tagName !== 'undefined' && typeof target[1] === 'string') { // [element, parent#tag] (parent with tag), [element, child#tag] (child with tag)
+                var element = target[0];
+                var targetParts = target[1].split('#');
+                if (targetParts[0] === 'parent') {
+                    while (element.parentNode) {
+                        var attributeValue = element.getAttribute(attributeName);
+                        if (attributeValue !== null) {
+                            if (attributeValue.split(' ').indexOf(targetParts[1]) !== -1) {
+                                return element;
+                            }
+                        }
+                        element = element.parentNode;
+                    }
+                } else if (targetParts[0] === 'child') {
+                    return element.querySelector('[' + attributeName + '~="' + targetParts[1] + '"]');
+                }
+            }
         }
         return null;
     };
