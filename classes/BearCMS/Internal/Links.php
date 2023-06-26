@@ -32,6 +32,8 @@ class Links
                 $onClick = "window.scroll({top:0,behavior:'smooth'});";
             } elseif (strpos($scrollLocation, '#') === 0) {
                 $onClick = "try{document.querySelector('" . $scrollLocation . "').scrollIntoView({behavior:'smooth'})}catch(e){};";
+            } elseif (strpos($scrollLocation, 'tag#') === 0) {
+                $onClick = "try{bearCMS.tags.getElement('" . substr($scrollLocation, 3) . "').scrollIntoView({behavior:'smooth'})}catch(e){};";
             }
             $url = "";
         } elseif (strpos($url, 'js:') === 0) {

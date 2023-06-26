@@ -12,7 +12,7 @@ bearCMS.tags = bearCMS.tags || (function () {
 
     var attributeName = 'data-bearcms-tags';
 
-    var getTargetElement = function (target) {
+    var getElement = function (target) {
         if (target === null || typeof target === 'undefined') { // null|undefined (html)
             return document.querySelector('html');
         } else if (typeof target === 'string') {
@@ -60,7 +60,7 @@ bearCMS.tags = bearCMS.tags || (function () {
     };
 
     var set = function (tag, target) {
-        var element = getTargetElement(target);
+        var element = getElement(target);
         if (element !== null) {
             var tags = getElementTags(element);
             tags.push(tag);
@@ -71,7 +71,7 @@ bearCMS.tags = bearCMS.tags || (function () {
     };
 
     var exists = function (tag, target) {
-        var element = getTargetElement(target);
+        var element = getElement(target);
         if (element !== null) {
             return getElementTags(element).indexOf(tag) !== -1;
         }
@@ -79,7 +79,7 @@ bearCMS.tags = bearCMS.tags || (function () {
     };
 
     var remove = function (tag, target) {
-        var element = getTargetElement(target);
+        var element = getElement(target);
         if (element !== null) {
             var tags = getElementTags(element);
             var updatedTags = tags.filter(function (t) {
@@ -102,6 +102,7 @@ bearCMS.tags = bearCMS.tags || (function () {
         'exists': exists,
         'remove': remove,
         'toggle': toggle,
+        'getElement': getElement
     };
 
 }());
