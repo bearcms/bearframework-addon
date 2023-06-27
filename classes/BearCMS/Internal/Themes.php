@@ -1212,6 +1212,9 @@ class Themes
                 if (isset($cssTagStates[0])) {
                     $selectorRuleToSet = ':is(' . $selectorRuleToSet . ')' . $cssTagStates;
                 }
+                if (strpos($selectorRuleToSet, ':is(') !== false) { // support for old browsers (Safari for example)
+                    $result[] = [implode(' and ', $cssMediaQueryCombinations), implode(':matches(', explode(':is(', $selectorRuleToSet)), $value];
+                }
                 $result[] = [implode(' and ', $cssMediaQueryCombinations), $selectorRuleToSet, $value];
             }
             if (!empty($attributes)) {
