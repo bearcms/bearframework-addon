@@ -153,7 +153,7 @@ if ($containerType === 'none') {
     }
     $content = '<html><head>';
     if ($styleSelector !== null) {
-        $content .= ElementsHelper::getStyleHTML($elementType, $styleValue, $styleSelector, true);
+        $content .= ElementsHelper::getStyleHTML($elementType, $styleValue, $styleSelector, true, !$editable);
     }
     $content .= '</head><body>';
     if ($editable && !$inElementsContainer) {

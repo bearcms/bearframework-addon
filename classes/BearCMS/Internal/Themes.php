@@ -274,7 +274,7 @@ class Themes
             foreach (self::$pagesOptions as $key => $value) {
                 $pagesOptionsEnvKeyData[] = $key . (is_array($value) ? '$' . $value[0] : '');
             }
-            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v14'));
+            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v15'));
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID);
@@ -314,7 +314,7 @@ class Themes
                 } else {
                     $themeOptions->setValues($currentValues);
                     $values = $themeOptions->getValues(true);
-                    $htmlData = self::getOptionsHTMLData($themeOptions->getList(), true);
+                    $htmlData = self::getOptionsHTMLData($themeOptions->getList(), true, $userID === null);
                 }
                 $resultData = [$values, $htmlData, $envKey];
                 if ($useCache) {
@@ -826,9 +826,10 @@ class Themes
      * 
      * @param array $options
      * @param boolean $includeDetails
+     * @param boolean $optimizeForCompatibility
      * @return array
      */
-    static public function getOptionsHTMLData(array $options, bool $includeDetails = false): array
+    static public function getOptionsHTMLData(array $options, bool $includeDetails = false, bool $optimizeForCompatibility = false): array
     {
         $app = App::get();
 
@@ -837,7 +838,7 @@ class Themes
         $details = [];
         $linkTags = [];
 
-        $addAssetDetails = function (string $filename) use ($app, &$details, $includeDetails): void {
+        $addAssetDetails = function (string $filename) use ($app, &$details, $includeDetails, $optimizeForCompatibility): void {
             if (!isset($details['assets'])) {
                 $details['assets'] = [];
             }
@@ -852,6 +853,14 @@ class Themes
                 $details['assets'][$filename] = ['width' => $assetDetails['width'], 'height' => $assetDetails['height']];
             } else {
                 $details['assets'][$filename] = [];
+            }
+            if ($optimizeForCompatibility) {
+                if (strpos($filename, '.webp') !== false) {
+                    $details['assets'][str_replace('.webp', '.webp.convert-to-png', $filename)] = $details['assets'][$filename];
+                }
+                if (strpos($filename, '.avif') !== false) {
+                    $details['assets'][str_replace('.avif', '.avif.convert-to-png', $filename)] = $details['assets'][$filename];
+                }
             }
         };
 
@@ -1059,7 +1068,7 @@ class Themes
             return $selector;
         };
 
-        $getStateCSSRules = function (string $state, string $value, array $statesTypes, string $selector, int $optionIndex, int $stateIndex = null) use ($replaceStateSelectorsInSelector): array {
+        $getStateCSSRules = function (string $state, string $value, array $statesTypes, string $selector, int $optionIndex, int $stateIndex = null) use ($replaceStateSelectorsInSelector, $optimizeForCompatibility): array {
             $cssMediaQueries = []; // array of array of strings
             $attributes = [];
             $cssStates = $selector;
@@ -1212,7 +1221,7 @@ class Themes
                 if (isset($cssTagStates[0])) {
                     $selectorRuleToSet = ':is(' . $selectorRuleToSet . ')' . $cssTagStates;
                 }
-                if (strpos($selectorRuleToSet, ':is(') !== false) { // support for old browsers (Safari for example)
+                if ($optimizeForCompatibility && strpos($selectorRuleToSet, ':is(') !== false) { // support for old browsers (Safari for example)
                     $result[] = [implode(' and ', $cssMediaQueryCombinations), implode(':matches(', explode(':is(', $selectorRuleToSet)), $value];
                 }
                 $result[] = [implode(' and ', $cssMediaQueryCombinations), $selectorRuleToSet, $value];
@@ -1325,7 +1334,13 @@ class Themes
                     $value .= '--css-to-attribute-data-bearcms-element-event:*;';
                     $hasEventAttributes = true;
                 }
-                $style .= $selector . '{' . $value . '}';
+                if ($optimizeForCompatibility && (strpos($value, '.webp') !== false || strpos($value, '.avif') !== false)) { // support for old browsers
+                    $style .= $selector . '{' . implode('.webp.convert-to-png', explode('.webp', $value)) . '}';
+                    $style .= $selector . '{' . implode('.avif.convert-to-png', explode('.avif', $value)) . '}';
+                    $style .= '@supports(rotate:0deg){' . $selector . '{' . $value . '}}';
+                } else {
+                    $style .= $selector . '{' . $value . '}';
+                }
             }
             if ($mediaQuery !== '') {
                 $style .= '}';
@@ -1384,10 +1399,18 @@ class Themes
                 $appAssets = $app->assets;
                 foreach ($details['assets'] as $filename => $assetDetails) {
                     try {
+                        $options = ['cacheMaxAge' => 999999999];
                         $filenameOptions = Internal\Data::getFilenameOptions($filename);
                         $filenameWithoutOptions = Internal\Data::removeFilenameOptions($filename);
+                        if (strpos($filenameWithoutOptions, '.webp.convert-to-png') !== false) {
+                            $filenameWithoutOptions = str_replace('.webp.convert-to-png', '.webp', $filenameWithoutOptions);
+                            $options['outputType'] = 'png';
+                        }
+                        if (strpos($filenameWithoutOptions, '.avif.convert-to-png') !== false) {
+                            $filenameWithoutOptions = str_replace('.avif.convert-to-png', '.avif', $filenameWithoutOptions);
+                            $options['outputType'] = 'png';
+                        }
                         $realFilename = \BearCMS\Internal\Data::getRealFilename($filenameWithoutOptions, true);
-                        $options = ['cacheMaxAge' => 999999999];
                         if (!empty($filenameOptions)) {
                             $options = array_merge($options, Internal\Assets::convertFileOptionsToAssetOptions($filenameOptions));
                         }

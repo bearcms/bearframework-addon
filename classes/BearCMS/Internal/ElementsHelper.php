@@ -261,7 +261,7 @@ class ElementsHelper
             }
         }
         if ($styleSelector !== null) {
-            $content .= self::getStyleHTML('columns', $styleValue, $styleSelector, true);
+            $content .= self::getStyleHTML('columns', $styleValue, $styleSelector, true, !$editable);
         }
         if (!empty($elementTags)) {
             $attributes .= self::getTagsHTMLAttributes($elementTags);
@@ -380,7 +380,7 @@ class ElementsHelper
             }
         }
         if ($styleSelector !== null) {
-            $content .= self::getStyleHTML('floatingBox', $styleValue, $styleSelector, true);
+            $content .= self::getStyleHTML('floatingBox', $styleValue, $styleSelector, true, !$editable);
         }
         if (!empty($elementTags)) {
             $attributes .= self::getTagsHTMLAttributes($elementTags);
@@ -485,7 +485,7 @@ class ElementsHelper
             }
         }
         if ($styleSelector !== null) {
-            $content .= self::getStyleHTML('flexibleBox', $styleValue, $styleSelector, true);
+            $content .= self::getStyleHTML('flexibleBox', $styleValue, $styleSelector, true, !$editable);
         }
         if (!empty($elementTags)) {
             $attributes .= self::getTagsHTMLAttributes($elementTags);
@@ -543,9 +543,10 @@ class ElementsHelper
      * @param array|null $styleValue
      * @param string $selector
      * @param boolean $returnHeadContentOnly
+     * @param boolean $optimizeForCompatibility
      * @return string
      */
-    static function getStyleHTML(string $elementType, array $styleValue = null, string $selector, bool $returnHeadContentOnly = false): string
+    static function getStyleHTML(string $elementType, array $styleValue = null, string $selector, bool $returnHeadContentOnly = false, bool $optimizeForCompatibility = false): string
     {
         if (isset(InternalThemes::$elementsOptions[$elementType])) {
             $options = new \BearCMS\Themes\Theme\Options();
@@ -557,7 +558,7 @@ class ElementsHelper
             if (is_array($styleValue)) {
                 $options->setValues($styleValue);
             }
-            $htmlData = InternalThemes::getOptionsHTMLData($options->getList());
+            $htmlData = InternalThemes::getOptionsHTMLData($options->getList(), false, $optimizeForCompatibility);
             $content = InternalThemes::processOptionsHTMLData($htmlData);
             if ($returnHeadContentOnly) {
                 $content = substr($content, strpos($content, '<head>') + 6);
