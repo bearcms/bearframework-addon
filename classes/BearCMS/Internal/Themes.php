@@ -1335,8 +1335,10 @@ class Themes
                     $hasEventAttributes = true;
                 }
                 if ($optimizeForCompatibility && (strpos($value, '.webp') !== false || strpos($value, '.avif') !== false)) { // support for old browsers
-                    $style .= $selector . '{' . implode('.webp.convert-to-png', explode('.webp', $value)) . '}';
-                    $style .= $selector . '{' . implode('.avif.convert-to-png', explode('.avif', $value)) . '}';
+                    $optimizedValue = $value;
+                    $optimizedValue = implode('.webp.convert-to-png', explode('.webp', $optimizedValue));
+                    $optimizedValue = implode('.avif.convert-to-png', explode('.avif', $optimizedValue));
+                    $style .= $selector . '{' . $optimizedValue . '}';
                     $style .= '@supports(rotate:0deg){' . $selector . '{' . $value . '}}';
                 } else {
                     $style .= $selector . '{' . $value . '}';
