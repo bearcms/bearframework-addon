@@ -193,6 +193,14 @@ class BearCMS
                 });
         }
 
+        $this->app->clientPackages
+            ->add('bearcms-lightbox-content', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/lightboxContent.js')); // dev mode
+                $package->addJSCode(include $this->context->dir . '/resources/lightboxContent.js.min.php');
+                $package->embedPackage('lightbox');
+                $package->get = 'bearCMS.lightboxContent;';
+            });
+
         // Load the CMS managed addons
         if (Config::hasFeature('ADDONS')) {
             Internal\Data\Addons::addToApp();

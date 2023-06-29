@@ -41,13 +41,10 @@ class Links
             $url = "";
         } elseif (strpos($url, 'bearcms-lightbox:') === 0) {
             $app = App::get();
-            $context = $app->contexts->get(__DIR__);
             $contentID = substr($url, 17);
             $onClick = "bearCMS.lightboxContent.open(" . json_encode($contentID) . ");";
             $url = "";
-            //$script = file_get_contents($context->dir . '/dev/lightboxContent.js'); // dev mode
-            $script = include $context->dir . '/resources/lightboxContent.js.min.php';
-            $html = '<html><head><link rel="client-packages-embed" name="lightbox"><script>' . $script . '</script></head></html>';
+            $html = '<html><head><link rel="client-packages-embed" name="bearcms-lightbox-content"></head></html>';
         }
         return [$url, $onClick, $html !== null ? '<component src="data:base64,' . base64_encode($html) . '" />' : null];
     }
