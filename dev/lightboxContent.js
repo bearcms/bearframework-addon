@@ -14,6 +14,7 @@ bearCMS.lightboxContent = bearCMS.lightboxContent || (function () {
     var contentCache = [];
 
     var open = function (id, options) {
+        var options = typeof options !== 'undefined' ? options : {};
         var spacing = typeof options.spacing !== 'undefined' ? options.spacing : '0px';
         var showCloseButton = typeof options.showCloseButton !== 'undefined' ? options.showCloseButton : true;
         var onOpen = typeof options.onOpen !== 'undefined' ? options.onOpen : null;
