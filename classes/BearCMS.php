@@ -745,7 +745,7 @@ class BearCMS
 
         //if (!empty(Internal\ElementsHelper::$renderedData)) { // todo
         $html .= '<style>' .
-            '[data-bearcms-visibility="none"]{display:none}' .
+            '[data-bearcms-visibility="none"]{display:none !important;}' .
             '[data-bearcms-visibility="fixed"]{position:fixed;}' .
             '[data-bearcms-visibility="floating"]{position:absolute;}' .
             '</style>';
