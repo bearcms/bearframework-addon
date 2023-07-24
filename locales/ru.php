@@ -16,7 +16,6 @@ return [
     'bearcms.navigation.home' => 'Начало',
     'bearcms.elements.LoadingMore' => 'Загрузка контента. Пожалуйста, подождите.',
     'bearcms.users.Administrator' => 'Администратор',
-    'bearcms.users.settingsButton' => 'Настройки профиля',
     'bearcms.elements.video.by %s' => 'от %s',
     'bearcms.elements.video.Play on %s' => 'Play on %s',
     'bearcms.pages.blogPost.Comments' => 'Комментарии',

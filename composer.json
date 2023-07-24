@@ -23,7 +23,7 @@
         "ivopetkov/html-server-components-bearframework-addon": "1.*",
         "ivopetkov/image-gallery-bearframework-addon": "^2.1",
         "ivopetkov/navigation-menu-bearframework-addon": "1.*",
-        "ivopetkov/users-bearframework-addon": "2.*",
+        "ivopetkov/users-bearframework-addon": "3.*",
         "ivopetkov/server-requests-bearframework-addon": "1.*",
         "ivopetkov/video-embed": "0.3.*|0.4.*",
         "ivopetkov/html5-dom-document-php": "2.*",
