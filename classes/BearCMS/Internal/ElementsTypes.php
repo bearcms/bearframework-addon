@@ -81,6 +81,7 @@ class ElementsTypes
                 ]
             ];
             $type->canStyle = true;
+            $type->canImportExport = true;
             self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['heading'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
@@ -137,6 +138,7 @@ class ElementsTypes
                 ]
             ];
             $type->canStyle = true;
+            $type->canImportExport = true;
             self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['text'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
@@ -194,6 +196,7 @@ class ElementsTypes
                 ]
             ];
             $type->canStyle = true;
+            $type->canImportExport = true;
             self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['link'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
@@ -271,6 +274,7 @@ class ElementsTypes
                 ],
             ];
             $type->canStyle = true;
+            $type->canImportExport = true;
             $type->onDelete = function (array $data): void {
                 $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                 InternalData::deleteElementAsset($filename);
@@ -383,6 +387,7 @@ class ElementsTypes
                     'type' => 'string'
                 ]
             ];
+            $type->canImportExport = true;
             $type->updateComponentFromData = function ($component, array $data) {
                 if (isset($data['files']) && is_array($data['files'])) {
                     $innerHTML = '';
@@ -579,6 +584,7 @@ class ElementsTypes
                 ],
             ];
             $type->canStyle = true;
+            $type->canImportExport = true;
             $type->onDelete = function (array $data): void {
                 $filename = isset($data['filename']) ? (string)$data['filename'] : '';
                 InternalData::deleteElementAsset($filename);
@@ -707,6 +713,7 @@ class ElementsTypes
                     'type' => 'string'
                 ]
             ];
+            $type->canImportExport = true;
             self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['navigation'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
@@ -759,6 +766,7 @@ class ElementsTypes
                     'type' => 'string'
                 ]
             ];
+            $type->canImportExport = true;
             self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['html'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
@@ -819,6 +827,13 @@ class ElementsTypes
                     'type' => 'bool'
                 ]
             ];
+            $type->canImportExport = true;
+            $type->onExport = function (array $data, callable $add): array {
+                if (isset($data['sourceCategoriesIDs'])) {
+                    $data['sourceCategoriesIDs'] = '';
+                }
+                return $data;
+            };
             self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['blogPosts'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
@@ -930,6 +945,7 @@ class ElementsTypes
                     'type' => 'int'
                 ]
             ];
+            $type->canImportExport = true;
             $type->onDelete = function (array $data): void {
                 if (isset($data['threadID'])) {
                     InternalData\Comments::deleteThread($data['threadID']);
@@ -941,6 +957,16 @@ class ElementsTypes
                     InternalData\Comments::copyThread($data['threadID'], $newThreadID);
                     $data['threadID'] = $newThreadID;
                 }
+                return $data;
+            };
+            $type->onExport = function (array $data, callable $add): array {
+                if (isset($data['threadID'])) {
+                    $data['threadID'] = '';
+                }
+                return $data;
+            };
+            $type->onImport = function (array $data, ImportContext $context): array {
+                $data['threadID'] = InternalData\Comments::generateNewThreadID();
                 return $data;
             };
             self::add($type);
@@ -1061,6 +1087,7 @@ class ElementsTypes
                     'type' => 'string'
                 ]
             ];
+            $type->canImportExport = true;
             self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['separator'] = function ($options, $idPrefix, $parentSelector, $context, $details) {

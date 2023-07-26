@@ -1182,23 +1182,6 @@ class ElementsDataHelper
     }
 
     /**
-     * Replaces the children elements IDs in a structural element with new ones
-     *
-     * @param array $elementData
-     * @param callable $newElementIDCallback
-     * @return array Returns the new container data and a list of replaced IDs. Format [containerData, [oldID1=>newID1, oldID2=>newID2, ...]]
-     */
-    static private function updateStructuralElementChildrenIDs(array $elementData, callable $newElementIDCallback): array
-    {
-        $temp = ['elements' => [$elementData]];
-        list($temp, $updatedElementIDs) = self::updateContainerElementsIDs($temp, $newElementIDCallback);
-        $newElementData = $temp['elements'][0];
-        $newElementData['id'] = $elementData['id'];
-        unset($updatedElementIDs[$elementData['id']]);
-        return [$newElementData, $updatedElementIDs];
-    }
-
-    /**
      * Replaces the elements IDs with new ones
      *
      * @param array $containerData
@@ -1349,16 +1332,14 @@ class ElementsDataHelper
      */
     static function exportContainer(string $containerID, callable $add): void
     {
-        throw new \Exception('Does not support all element types, so it\'s unsafe!');
         $containerData = InternalDataElements::getContainer($containerID);
         if ($containerData === null) {
             return;
         }
-        // $elementsIDs = self::getContainerElementsIDs($containerID, 'nonStructural');
-        // foreach ($elementsIDs as $elementID) {
-        //     self::exportElement($elementID, $containerID, $add);
-        // }
-        // $add('bearcms/elements/container/' . md5($containerID) . '/value.json', json_encode($containerData, JSON_THROW_ON_ERROR));
+        foreach ($containerData['elements'] as $elementData) {
+            self::exportElement($elementData['id'], $containerID, $add, ['containerData' => $containerData]);
+        }
+        $add('bearcms/elements/container/' . md5($containerID) . '/value.json', json_encode($containerData, JSON_THROW_ON_ERROR));
     }
 
     /**
@@ -1366,27 +1347,40 @@ class ElementsDataHelper
      * @param string $containerID
      * @param ImportContext $context
      * @param array $options
-     * @return void
+     * @return string|null
      */
-    static function importContainer(string $containerID, ImportContext $context, array $options = []): void
+    static function importContainer(string $containerID, ImportContext $context, array $options = []): ?string
     {
-        throw new \Exception('Does not support all element types, so it\'s unsafe!');
-        // $containerData = json_decode($context->getValue('bearcms/elements/container/' . md5($containerID) . '/value.json'), true);
-        // $elementsIDs = self::getContainerDataElementsIDs($containerData, 'nonStructural');
-        // list($updatedContainerData, $updatedElementIDs) = self::updateContainerElementsIDs($containerData, function (string $oldElementID) use ($containerID, $context) {
-        //     return self::generateElementID('ic'); // , $context->id !== null ? [$containerID, $oldElementID, $context->id] : null
-        // });
-        // self::setLastChangeTime($updatedContainerData);
-        // foreach ($elementsIDs as $elementID) {
-        //     self::importElement($elementID, $containerID, $context, [
-        //         'newElementID' => $updatedElementIDs[$elementID]
-        //     ]);
-        // }
-        // if ($context->isExecuteMode()) {
-        //     self::deleteContainer($containerID);
-        //     InternalDataElements::setContainer($containerID, $updatedContainerData);
-        //     InternalDataElements::dispatchContainerChangeEvent($containerID);
-        // }
+        $getContainerData = function (string $containerID) use ($context): ?array {
+            $containerData = $context->getValue('bearcms/elements/container/' . md5($containerID) . '/value.json');
+            if ($containerData !== null) {
+                $containerData = json_decode($containerData, true);
+                if (is_array($containerData) && isset($containerData['elements'])) {
+                    return $containerData;
+                }
+            }
+            return null;
+        };
+        $containerData = $getContainerData($containerID);
+        if ($containerData === null) {
+            return null; // may not be found when exporting
+        }
+
+        self::setLastChangeTime($containerData);
+        foreach ($containerData['elements'] as $elementData) {
+            self::importElement($elementData['id'], $containerID, $context, [
+                'generateNewElementID' => true,
+                'targetContainerData' => &$containerData,
+                'insertTarget' => '-internal-replace'
+            ]);
+        }
+        $targetContainerID = isset($options['targetContainerID']) ? $options['targetContainerID'] : $containerID;
+        if ($context->isExecuteMode()) {
+            self::deleteContainer($targetContainerID);
+            InternalDataElements::setContainer($targetContainerID, $containerData);
+            InternalDataElements::dispatchContainerChangeEvent($targetContainerID);
+        }
+        return $targetContainerID;
     }
 
     /**
@@ -1396,17 +1390,22 @@ class ElementsDataHelper
      * @param callable $add Function to add an item to the exported file
      * @return void
      */
-    static function exportElement(string $elementID, string $containerID = null, callable $add): void
+    static function exportElement(string $elementID, string $containerID = null, callable $add, array $options = []): void
     {
         $app = App::get();
 
         $export = function (array $elementData, bool $addElementData) use ($app, $add): array {
             $elementID = $elementData['id'];
             $elementTypeDefinition = ElementsHelper::getElementTypeDefinition($elementData['type']);
-            if ($elementTypeDefinition !== null && is_callable($elementTypeDefinition->onExport)) {
-                $elementData['data'] = call_user_func($elementTypeDefinition->onExport, isset($elementData['data']) ? $elementData['data'] : [], function (string $key, string $content) use ($elementID, $add) {
-                    $add('bearcms/elements/element/' . md5($elementID) . '/data/' . $key, $content);
-                });
+            if ($elementTypeDefinition !== null) {
+                if (!$elementTypeDefinition->canImportExport) {
+                    throw new \Exception('Cannot export element of type ' . $elementData['type'] . '! Trying to export ' . $elementID . '.');
+                }
+                if (is_callable($elementTypeDefinition->onExport)) {
+                    $elementData['data'] = call_user_func($elementTypeDefinition->onExport, isset($elementData['data']) ? $elementData['data'] : [], function (string $key, string $content) use ($elementID, $add) {
+                        $add('bearcms/elements/element/' . md5($elementID) . '/data/' . $key, $content);
+                    });
+                }
             }
             $updateStyleValues = function (array $styleValues, string $filenamePrefix) use ($app, $add) {
                 $addedDataKeys = [];
@@ -1458,7 +1457,7 @@ class ElementsDataHelper
         if (is_array($elementData) && isset($elementData['type'])) {
             $export($elementData, true);
         } else {
-            $containerData = InternalDataElements::getContainer($containerID);
+            $containerData = isset($options['containerData']) ? $options['containerData'] : InternalDataElements::getContainer($containerID);
             if (is_array($containerData)) {
                 $elementData = self::getContainerDataElement($containerData, $elementID, 'structural');
                 if (is_array($elementData) && isset($elementData['type'])) {
@@ -1621,15 +1620,27 @@ class ElementsDataHelper
             $setNonStructualElementData($elementData);
         }
         if ($containerID !== null) {
-            if ($isExecuteMode) {
+            $hasTargetContainer = isset($options['targetContainerData']);
+            if ($hasTargetContainer) {
+                $containerData = &$options['targetContainerData'];
+            } else {
                 $containerData = InternalDataElements::getContainer($containerID, true);
-                self::removeContainerDataElement($containerData, $newElementID); // remove old element with the same id
-                $containerData['elements'][] = $isStructural ? $elementData : ['id' => $newElementID];
+            }
+            $containerData = self::removeContainerDataElement($containerData, $newElementID); // remove old element with the same id
+            $containerData['elements'][] = $isStructural ? $elementData : ['id' => $newElementID];
+            if (isset($options['insertTarget']) && $options['insertTarget'] === '-internal-replace') {
+                $containerData = self::moveContainerDataElement($containerData, $newElementID, ['beforeElement', $oldElementID]);
+                $containerData = self::removeContainerDataElement($containerData, $oldElementID);
+            } else {
                 if (isset($options['insertTarget'])) {
                     $containerData = self::moveContainerDataElement($containerData, $newElementID, $options['insertTarget']);
                 }
-                self::setLastChangeTime($containerData);
-                InternalDataElements::setContainer($containerID, $containerData);
+            }
+            self::setLastChangeTime($containerData);
+            if (!$hasTargetContainer) {
+                if ($isExecuteMode) {
+                    InternalDataElements::setContainer($containerID, $containerData);
+                }
             }
         }
 
@@ -1637,8 +1648,10 @@ class ElementsDataHelper
             foreach ($elementChangeEventsToDispatch as $eventElementID) {
                 InternalDataElements::dispatchElementChangeEvent($eventElementID, $containerID);
             }
-            if ($containerID !== null) {
-                InternalDataElements::dispatchContainerChangeEvent($containerID);
+            if (!$hasTargetContainer) {
+                if ($containerID !== null) {
+                    InternalDataElements::dispatchContainerChangeEvent($containerID);
+                }
             }
         }
         return $newElementID;
@@ -1664,13 +1677,71 @@ class ElementsDataHelper
     /**
      * 
      * @param string $filename
-     * @param string $containerID
+     * @param string $targetContainerID
      * @param array|null $target
      * @return string|null
      */
-    static function importElementFromFile(string $filename, string $containerID, array $target = null): ?string
+    static function importElementFromFile(string $filename, string $targetContainerID, array $target = null): ?string
     {
-        $result = self::executeImportElementFromFile($filename, false, $containerID, $target);
+        $result = self::executeImportElementFromFile($filename, false, $targetContainerID, $target);
+        if (isset($result['results'], $result['results'][0], $result['results'][0]['result']) && is_string($result['results'][0]['result'])) {
+            return $result['results'][0]['result'];
+        }
+        throw new \Exception('Invalid result ' . print_r($result, true));
+    }
+
+    /**
+     * 
+     * @param string $filename
+     * @param boolean $preview
+     * @param string $targetContainerID
+     * @param array|null $insertTarget
+     * @return array
+     */
+    static private function executeImportElementFromFile(string $filename, bool $preview, string $targetContainerID, array $insertTarget = null): array
+    {
+        return \BearCMS\Internal\ImportExport::import($filename, $preview, function ($manifest) use ($targetContainerID, $insertTarget) {
+            if (sizeof($manifest['items']) === 1 && $manifest['items'][0]['type'] === 'element') {
+                $manifest['items'][0]['importOptions'] = ['generateNewElementID' => true, 'insertTarget' => $insertTarget];
+                if (!isset($manifest['items'][0]['args'])) {
+                    $manifest['items'][0]['args'] = [];
+                }
+                if (isset($manifest['items'][0]['elementID'])) {
+                    $manifest['items'][0]['args']['elementID'] = $manifest['items'][0]['elementID'];
+                }
+                $manifest['items'][0]['args']['containerID'] = $targetContainerID;
+                return $manifest;
+            }
+            throw new \Exception('This is not a valid element export file!');
+        });
+    }
+
+    /**
+     * 
+     * @param string $filename
+     * @return integer
+     */
+    static function getImportElementsContainerFromFileUploadsSize(string $filename): int
+    {
+        $size = 0;
+        $result = self::executeImportElementsContainerFromFile($filename, true, 'dummy');
+        if (isset($result['changes'], $result['changes']['uploadsSizeAdd'])) {
+            foreach ($result['changes']['uploadsSizeAdd'] as $uploadSizeData) {
+                $size += $uploadSizeData['size'];
+            }
+        }
+        return $size;
+    }
+
+    /**
+     * 
+     * @param string $filename
+     * @param string $targetContainerID
+     * @return string|null
+     */
+    static function importElementsContainerFromFile(string $filename, string $targetContainerID): ?string
+    {
+        $result = self::executeImportElementsContainerFromFile($filename, false, $targetContainerID);
         if (isset($result['results'], $result['results'][0], $result['results'][0]['result']) && is_string($result['results'][0]['result'])) {
             return $result['results'][0]['result'];
         }
@@ -1682,24 +1753,16 @@ class ElementsDataHelper
      * @param string $filename
      * @param boolean $preview
      * @param string $containerID
-     * @param array|null $insertTarget
      * @return array
      */
-    static private function executeImportElementFromFile(string $filename, bool $preview, string $containerID, array $insertTarget = null): array
+    static private function executeImportElementsContainerFromFile(string $filename, bool $preview, string $targetContainerID): array
     {
-        return \BearCMS\Internal\ImportExport::import($filename, $preview, function ($manifest) use ($containerID, $insertTarget) {
-            if (sizeof($manifest['items']) === 1 && $manifest['items'][0]['type'] === 'element') {
-                $manifest['items'][0]['importOptions'] = ['generateNewElementID' => true, 'insertTarget' => $insertTarget];
-                if (!isset($manifest['items'][0]['args'])) {
-                    $manifest['items'][0]['args'] = [];
-                }
-                if (isset($manifest['items'][0]['elementID'])) {
-                    $manifest['items'][0]['args']['elementID'] = $manifest['items'][0]['elementID'];
-                }
-                $manifest['items'][0]['args']['containerID'] = $containerID;
+        return \BearCMS\Internal\ImportExport::import($filename, $preview, function ($manifest) use ($targetContainerID) {
+            if (sizeof($manifest['items']) === 1 && $manifest['items'][0]['type'] === 'elementsContainer') {
+                $manifest['items'][0]['importOptions'] = ['targetContainerID' => $targetContainerID];
                 return $manifest;
             }
-            throw new \Exception('This is not a valid element export file!');
+            throw new \Exception('This is not a valid elements container export file!');
         });
     }
 

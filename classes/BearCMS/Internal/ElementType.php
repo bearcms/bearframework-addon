@@ -53,6 +53,12 @@ class ElementType
 
     /**
      * 
+     * @var boolean
+     */
+    public $canImportExport = false;
+
+    /**
+     * 
      * @var callable function (array $data): void {}
      */
     public $onDelete = null;

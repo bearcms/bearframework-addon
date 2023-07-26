@@ -991,6 +991,55 @@ class ServerCommands
     /**
      * 
      * @param array $data
+     * @return array
+     */
+    static function elementsContainerGetImportFromFileUploadsSize(array $data): array
+    {
+        if (isset($data['filename'])) {
+            $filename = $data['filename'];
+        } elseif (isset($data['path'])) {
+            $filename = Server::download($data['path'], true);
+        } else {
+            throw new \Exception('Not supported!');
+        }
+        try {
+            $size = ElementsDataHelper::getImportElementsContainerFromFileUploadsSize($filename);
+        } catch (\Exception $e) {
+            return ['error' => 1];
+        }
+        return ['size' => $size];
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return string|null|array
+     */
+    static function elementsContainerImportFromFile(array $data)
+    {
+        if (isset($data['filename'])) {
+            $filename = $data['filename'];
+        } elseif (isset($data['path'])) {
+            $filename = Server::download($data['path'], true);
+        } else {
+            throw new \Exception('Not supported!');
+        }
+        $containerID = $data['containerID'];
+        try {
+            if (isset($data['skipIfExists']) && $data['skipIfExists']) {
+                if (InternalDataElements::getContainer($containerID) !== null) {
+                    return ['exists' => 1];
+                }
+            }
+            return ElementsDataHelper::importElementsContainerFromFile($filename, $containerID);
+        } catch (\Exception $e) {
+            return ['error' => 1];
+        }
+    }
+
+    /**
+     * 
+     * @param array $data
      * @return array|null
      */
     static function elementTypeGet(array $data): ?array
