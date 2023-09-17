@@ -31,8 +31,8 @@ class PublicProfile
             $user = $app->users->getUser($author['provider'], $author['id']);
             $data['name'] = $user->name;
             $data['url'] = $user->url;
-            $data['imageSmall'] = $user->getImageUrl(200);
-            $data['imageLarge'] = $user->getImageUrl(1000);
+            $data['imageSmall'] = $user->getImageURL(200);
+            $data['imageLarge'] = $user->getImageURL(1000);
         }
         if (!isset($data['name']) || strlen($data['name']) === 0) {
             $data['name'] = 'Anonymous';

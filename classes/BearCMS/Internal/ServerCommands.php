@@ -1638,7 +1638,7 @@ class ServerCommands
         $result = [];
         $result['data'] = $app->users->getUserData($providerID, $userID);
         $result['name'] = $user->name;
-        $result['imageURL'] = $imageSize !== null ? $user->getImageUrl($imageSize) : null;
+        $result['imageURL'] = $imageSize !== null ? $user->getImageURL($imageSize) : null;
         return $result;
     }
 

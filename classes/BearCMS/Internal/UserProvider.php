@@ -21,8 +21,10 @@ class UserProvider extends \IvoPetkov\BearFrameworkAddons\Users\Provider
     /**
      * 
      */
-    public function __construct()
+    public function __construct(string $id, array $options = [])
     {
+        parent::__construct($id, $options);
+
         $this->options['profileFields'] = ['image', 'name', 'description'];
     }
 
