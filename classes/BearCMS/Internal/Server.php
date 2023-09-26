@@ -11,6 +11,7 @@ namespace BearCMS\Internal;
 
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
+use BearCMS\Internal\Data\Uploads;
 use BearFramework\App;
 use IvoPetkov\HTML5DOMDocument;
 
@@ -223,52 +224,12 @@ class Server
         $clientData['adminPagesPathPrefix'] = Config::$adminPagesPathPrefix;
         $clientData['blogPagesPathPrefix'] = Config::$blogPagesPathPrefix;
         $clientData['elementsTypes'] = Internal\ElementsHelper::$elementsTypeComponents;
-        $maxUploadsSize = Config::getVariable('maxUploadsSize');
+        $maxUploadsSize = Uploads::getMaxUploadsSize();
         if ($maxUploadsSize !== null) {
             $clientData['maxUploadsSize'] = (int)$maxUploadsSize;
             $clientData['uploadsSize'] = Internal\Data\UploadsSize::getSize();
         }
-        $maxUploadSize = Config::getVariable('maxUploadSize');
-        if ($maxUploadSize === null) {
-            $getSystemMaxUploadSize = function () { // todo move to other class and cache result
-                $sizeToBytes = function ($size): int {
-                    if (is_int($size)) {
-                        return $size;
-                    }
-                    $size = (string)$size;
-                    $suffix = strtolower(substr($size, -1));
-                    if (!in_array($suffix, ['t', 'g', 'm', 'k'])) {
-                        return (int) $size;
-                    }
-                    $value = (int) substr($size, 0, -1);
-                    switch ($suffix) {
-                        case 't':
-                            return $value * 1024 * 1024 * 1024 * 1024;
-                        case 'g':
-                            return $value * 1024 * 1024 * 1024;
-                        case 'm':
-                            return $value * 1024 * 1024;
-                        case 'k':
-                            return $value * 1024;
-                    }
-                };
-                $values = [];
-                $value = $sizeToBytes(ini_get('post_max_size'));
-                if ($value > 0) {
-                    $values[] = $value;
-                }
-                $value = $sizeToBytes(ini_get('upload_max_filesize'));
-                if ($value > 0) {
-                    $values[] = $value;
-                }
-                if (!empty($values)) {
-                    return min($values);
-                }
-                return null;
-            };
-            $maxUploadSize = $getSystemMaxUploadSize();
-            $clientData['maxUploadSize'] = $maxUploadSize;
-        }
+        $clientData['maxUploadSize'] = Uploads::getMaxUploadSize();
         $clientData['assetsFileOptions'] = Internal\Assets::$supportedFileOptions;
         $clientData['appSpecific'] = Config::$appSpecificServerData;
         $clientData['flags'] = [
