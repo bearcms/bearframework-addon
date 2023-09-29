@@ -26,7 +26,7 @@ if ($isFullHtmlOutputType) {
 echo '<body>';
 
 echo '<div' . ($isFullHtmlOutputType ? ' class="bearcms-link-element"' : '') . '>';
-echo '<a title="' . htmlentities($title) . '"' . ($url !== '' ? ' href="' . htmlentities($url) . '"' : '') . ($onClick !== null ? ' onclick="' . htmlentities($onClick) . '"' : '') . '>' . htmlspecialchars($text) . '</a>'; // htmlspecialchars(isset($text[0]) ? $text : $url)
+echo '<a title="' . htmlentities($title) . '"' . ($url !== '' ? ' href="' . htmlentities($url) . '"' : '') . ($onClick !== null ? ' onclick="' . htmlentities($onClick) . '" role="button" onkeydown="if(event.keyCode===13){this.click();}"' : '') . ' tabindex="0">' . htmlspecialchars($text) . '</a>'; // htmlspecialchars(isset($text[0]) ? $text : $url)
 echo '</div>';
 
 if ($linkHTML !== null) {

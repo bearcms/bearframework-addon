@@ -433,8 +433,14 @@ class ElementsHelper
         $linkHTML = null;
         if ($linkURL !== null) {
             $attributes .= ' data-bearcms-flexible-box-link';
+            $attributes .= ' tabindex="0"';
+            $attributes .= ' onkeydown="if(event.keyCode===13){this.lastChild.click();}"';
             list($linkURL, $linkOnClick, $linkHTML) = \BearCMS\Internal\Links::updateURL($linkURL);
-            $innerContent .= '<a' . ($linkURL !== '' ? ' href="' . htmlentities($linkURL) . '"' : '') . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '"' : '') . ($linkTitle !== null ? ' title="' . htmlentities($linkTitle) . '"' : '') . '></a>';
+            $attributes .= ' role="button"';
+            if ($linkTitle !== null) {
+                $attributes .= ' title="' . htmlentities($linkTitle) . '"';
+            }
+            $innerContent .= '<a' . ($linkURL !== '' ? ' href="' . htmlentities($linkURL) . '"' : '') . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '"' : '') . '></a>';
         }
 
         $content = '<html>'

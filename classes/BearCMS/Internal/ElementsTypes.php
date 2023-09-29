@@ -165,7 +165,7 @@ class ElementsTypes
 
                     $groupLinks = $optionsGroup->addGroup(__("bearcms.themes.options.Links"));
                     $groupLinks->addOption($idPrefix . "TextLinkCSS", "css", '', [
-                        "cssOptions" => isset($details['cssOptions']) ? $details['cssOptions'] : [],
+                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
                         "cssTypes" => ["cssText", "cssTextShadow"],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-text-element a", "text-decoration:none;"],
@@ -210,7 +210,7 @@ class ElementsTypes
                     }
 
                     $optionsGroup->addOption($idPrefix . "LinkCSS", "css", '', [
-                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
+                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/focusState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-link-element a", "text-decoration:none;box-sizing:border-box;display:inline-block;"],
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element a"]
@@ -220,7 +220,7 @@ class ElementsTypes
                     $groupContainer = $optionsGroup->addGroup(__("bearcms.themes.options.Container"));
                     $groupContainer->addOption($idPrefix . "LinkContainerCSS", "css", '', [
                         "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssTextAlign", "cssSize", "cssTransform"],
-                        "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
+                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))), // all but focus state
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-link-element", "box-sizing:border-box;"],
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element"]
@@ -346,10 +346,10 @@ class ElementsTypes
                     }
 
                     $optionsGroup->addOption($idPrefix . "ImageCSS", "css", '', [
-                        "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow"],
-                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
+                        "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
+                        "cssOptions" => ($isElementContext ? ["*/hoverState", "*/focusState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
                         "cssOutput" => [
-                            ["rule", $parentSelector . " .bearcms-image-element", "overflow:hidden;"],
+                            ["rule", $parentSelector . " .bearcms-image-element", "overflow:hidden;box-sizing:border-box;"],
                             ["rule", $parentSelector . " .bearcms-image-element img", "border:0;"],
                             ["selector", $parentSelector . $customStyleSelector . " .bearcms-image-element"]
                         ]
@@ -357,7 +357,7 @@ class ElementsTypes
                     if ($isElementContext) {
                         $optionsGroup->addOption($idPrefix . "elementContainerCSS", "css", '', [
                             "cssTypes" => ["cssSize", "cssTransform"],
-                            "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
+                            "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))), // all but focus state
                             "cssOutput" => [
                                 ["selector", $parentSelector . $customStyleSelector . " .bearcms-image-element"]
                             ]
@@ -1200,7 +1200,7 @@ class ElementsTypes
                 ]);
                 $optionsGroup->addOption($idPrefix . "css", "css", '', [
                     "cssTypes" => ["cssMargin", "cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
-                    "cssOptions" => ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
+                    "cssOptions" => ["*/hoverState", "*/focusState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                     "cssOutput" => [
                         ["selector", $parentSelector]
                     ],

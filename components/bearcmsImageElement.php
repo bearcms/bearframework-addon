@@ -64,7 +64,8 @@ if ($maxAssetHeight === 0) {
     $maxAssetHeight = 4000;
 }
 
-$attributes = '';
+$imageAttributes = '';
+$containerAttributes = '';
 
 $onClickHTML = null;
 if ($onClick === 'url') {
@@ -74,7 +75,11 @@ if ($onClick === 'url') {
         $onClickScript = $onClickValue;
     }
 }
-$attributes .= ' onclick="' . $onClick . '"';
+$imageAttributes .= ' onclick="' . $onClick . '"';
+if ($onClick !== 'none') {
+    $containerAttributes .= ' tabindex="0"';
+    $containerAttributes .= ' onkeydown="if(event.keyCode===13){try{this.querySelector(\'a\').click();}catch(e){}}"';
+}
 
 $class = (string) $component->class;
 $classAttributeValue = isset($class[0]) ? ' ' . htmlentities($class) : '';
@@ -87,15 +92,15 @@ if ($imageLoadingBackground === '') {
     }
 }
 if ($imageLoadingBackground !== '') {
-    $attributes .= ' image-loading-background="' . htmlentities($imageLoadingBackground) . '"';
+    $imageAttributes .= ' image-loading-background="' . htmlentities($imageLoadingBackground) . '"';
 }
 
 $previewImageLoadingBackground = (string)Config::getVariable('lazyImagePreviewLoadingBackground');
 if ($previewImageLoadingBackground !== '') {
-    $attributes .= ' preview-image-loading-background="' . htmlentities($previewImageLoadingBackground) . '"';
+    $imageAttributes .= ' preview-image-loading-background="' . htmlentities($previewImageLoadingBackground) . '"';
 }
 
-$attributes .= ' lazy-load="' . $lazyLoad . '"';
+$imageAttributes .= ' lazy-load="' . $lazyLoad . '"';
 
 $innerContainerStyle = '';
 if (strlen($width) === 0) {
@@ -115,12 +120,12 @@ if (strlen($width) === 0) {
 
 $content = '';
 if ($isFullHtmlOutputType) {
-    $content = '<div class="bearcms-image-element' . $classAttributeValue . '">';
+    $content = '<div class="bearcms-image-element' . $classAttributeValue . '"' . $containerAttributes . '>';
     if (isset($innerContainerStyle[0])) {
         $content .= '<div style="' . $innerContainerStyle . '">';
     }
     if ($filename !== '') {
-        $content .= '<component src="image-gallery" columns-count="1"' . $attributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
+        $content .= '<component src="image-gallery" columns-count="1"' . $imageAttributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
         $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' && $onClickURL !== '' ? ' url="' . htmlentities($onClickURL) . '"' : '') . '' . ($onClick === 'script' ? ' script="' . htmlentities($onClickScript) . '"' : '') . ' title="' . htmlentities((string)$component->title) . '" alt="' . htmlentities((string)$component->alt) . '" filename="' . $filename . '" file-width="' . $component->fileWidth . '" file-height="' . $component->fileHeight . '" min-asset-width="' . $minAssetWidth . '" min-asset-height="' . $minAssetHeight . '" max-asset-width="' . $maxAssetWidth . '" max-asset-height="' . $maxAssetHeight . '"' . InternalAssets::convertAssetOptionsToHTMLAttributes($assetOptions) . '/>';
         $content .= '</component>';
     }
@@ -137,7 +142,7 @@ if ($isFullHtmlOutputType) {
 }
 echo '<html>';
 if ($isFullHtmlOutputType) {
-    echo '<head><style>.bearcms-image-element, .bearcms-image-element *{font-size:0;line-height:0;}</style></head>';
+    echo '<head><style>.bearcms-image-element,.bearcms-image-element *{font-size:0;line-height:0;}</style></head>';
 }
 echo '<body>';
 echo $content;

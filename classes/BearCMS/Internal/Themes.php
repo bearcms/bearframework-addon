@@ -1187,7 +1187,7 @@ class Themes
                         }
                     } else if (array_search($stateType, ['hover', 'focus', 'active', 'firstChild', 'lastChild', 'checked']) !== false) {
                         if (array_search($name, $replacedStateSelectors) === false) {
-                            $cssStates .= ':' . $name;
+                            $cssStates .= ':' . ($name === 'focus' ? 'focus-visible' : $name);
                         }
                     }
                 } else {
