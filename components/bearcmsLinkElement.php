@@ -14,7 +14,7 @@ $url = (string)$component->url;
 $text = (string)$component->text;
 $title = (string)$component->title;
 
-list($url, $onClick, $linkHTML) = \BearCMS\Internal\Links::updateURL($url);
+list($linkURL, $linkOnClick, $linkHTML) = \BearCMS\Internal\Links::updateURL($url);
 
 echo '<html>';
 if ($isFullHtmlOutputType) {
@@ -26,7 +26,7 @@ if ($isFullHtmlOutputType) {
 echo '<body>';
 
 echo '<div' . ($isFullHtmlOutputType ? ' class="bearcms-link-element"' : '') . '>';
-echo '<a title="' . htmlentities($title) . '"' . ($url !== '' ? ' href="' . htmlentities($url) . '"' : '') . ($onClick !== null ? ' onclick="' . htmlentities($onClick) . '" role="button" onkeydown="if(event.keyCode===13){this.click();}"' : '') . ' tabindex="0">' . htmlspecialchars($text) . '</a>'; // htmlspecialchars(isset($text[0]) ? $text : $url)
+echo '<a title="' . htmlentities($title) . '"' . ($linkURL !== null ? ' href="' . htmlentities($linkURL) . '"' : '') . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '" role="button" onkeydown="if(event.keyCode===13){this.click();}"' : '') . ' tabindex="0">' . htmlspecialchars($text) . '</a>'; // htmlspecialchars(isset($text[0]) ? $text : $url)
 echo '</div>';
 
 if ($linkHTML !== null) {

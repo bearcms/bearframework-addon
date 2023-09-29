@@ -35,15 +35,14 @@ class Links
             } elseif (strpos($scrollLocation, 'tag#') === 0) {
                 $onClick = "try{bearCMS.tags.getElement('" . substr($scrollLocation, 3) . "').scrollIntoView({behavior:'smooth'})}catch(e){};";
             }
-            $url = "";
+            $url = null;
         } elseif (strpos($url, 'js:') === 0) {
             $onClick = substr($url, 3);
-            $url = "";
+            $url = null;
         } elseif (strpos($url, 'bearcms-lightbox:') === 0) {
-            $app = App::get();
             $contentID = substr($url, 17);
             $onClick = "bearCMS.lightboxContent.open(" . json_encode($contentID) . ");";
-            $url = "";
+            $url = null;
             $html = '<html><head><link rel="client-packages-embed" name="bearcms-lightbox-content"></head></html>';
         }
         return [$url, $onClick, $html !== null ? '<component src="data:base64,' . base64_encode($html) . '" />' : null];

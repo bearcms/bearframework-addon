@@ -34,7 +34,7 @@ if ($component->onClick === 'fullscreen') {
 } elseif ($component->onClick === 'openUrl') {
     $onClick = 'url';
 }
-$onClickURL = $component->url;
+$url = $component->url;
 
 $lazyLoad = 'true';
 if ($component->lazyLoad === 'false') {
@@ -67,18 +67,31 @@ if ($maxAssetHeight === 0) {
 $imageAttributes = '';
 $containerAttributes = '';
 
+$onClickURL = null;
+$onClickValue = null;
 $onClickHTML = null;
 if ($onClick === 'url') {
-    list($onClickURL, $onClickValue, $onClickHTML) = \BearCMS\Internal\Links::updateURL($onClickURL);
+    list($onClickURL, $onClickValue, $onClickHTML) = \BearCMS\Internal\Links::updateURL($url);
     if ($onClickValue !== null) {
         $onClick = 'script';
         $onClickScript = $onClickValue;
     }
 }
 $imageAttributes .= ' onclick="' . $onClick . '"';
-if ($onClick !== 'none') {
+if ($onClickURL !== null || $onClickValue !== null || $onClick === 'fullscreen') {
+    if ($onClickURL !== null) {
+        $containerAttributes .= ' role="link"';
+    }
+    if ($onClickValue !== null || $onClick === 'fullscreen') {
+        $containerAttributes .= ' role="button"';
+    }
     $containerAttributes .= ' tabindex="0"';
     $containerAttributes .= ' onkeydown="if(event.keyCode===13){try{this.querySelector(\'a\').click();}catch(e){}}"';
+}
+
+$title = (string)$component->title;
+if ($title !== '') {
+    $containerAttributes .= ' title="' . htmlentities($title) . '"';
 }
 
 $class = (string) $component->class;
@@ -126,7 +139,7 @@ if ($isFullHtmlOutputType) {
     }
     if ($filename !== '') {
         $content .= '<component src="image-gallery" columns-count="1"' . $imageAttributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
-        $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' && $onClickURL !== '' ? ' url="' . htmlentities($onClickURL) . '"' : '') . '' . ($onClick === 'script' ? ' script="' . htmlentities($onClickScript) . '"' : '') . ' title="' . htmlentities((string)$component->title) . '" alt="' . htmlentities((string)$component->alt) . '" filename="' . $filename . '" file-width="' . $component->fileWidth . '" file-height="' . $component->fileHeight . '" min-asset-width="' . $minAssetWidth . '" min-asset-height="' . $minAssetHeight . '" max-asset-width="' . $maxAssetWidth . '" max-asset-height="' . $maxAssetHeight . '"' . InternalAssets::convertAssetOptionsToHTMLAttributes($assetOptions) . '/>';
+        $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' && $onClickURL !== '' ? ' url="' . htmlentities($onClickURL) . '"' : '') . '' . ($onClick === 'script' ? ' script="' . htmlentities($onClickScript) . '"' : '') . ' alt="' . htmlentities((string)$component->alt) . '" filename="' . $filename . '" file-width="' . $component->fileWidth . '" file-height="' . $component->fileHeight . '" min-asset-width="' . $minAssetWidth . '" min-asset-height="' . $minAssetHeight . '" max-asset-width="' . $maxAssetWidth . '" max-asset-height="' . $maxAssetHeight . '"' . InternalAssets::convertAssetOptionsToHTMLAttributes($assetOptions) . '/>';
         $content .= '</component>';
     }
     if (isset($innerContainerStyle[0])) {
