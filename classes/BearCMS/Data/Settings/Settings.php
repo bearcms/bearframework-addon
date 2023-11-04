@@ -144,6 +144,9 @@ class Settings extends \BearFramework\Models\Model
         }
         if (!isset($data['languages'])) {
             $data['languages'] = [];
+            if (!isset($data['language'])) {
+                $data['language'] = 'en';
+            }
         }
         if (isset($data['language']) && strlen($data['language']) > 0) {
             if (empty($data['languages'])) {
