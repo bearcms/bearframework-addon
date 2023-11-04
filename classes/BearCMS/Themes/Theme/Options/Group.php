@@ -28,4 +28,10 @@ class Group implements \BearCMS\Internal\ThemeOptionsGroupInterface
      * @var string 
      */
     public $description = '';
+
+    /**
+     *
+     * @var array
+     */
+    public $details = [];
 }
