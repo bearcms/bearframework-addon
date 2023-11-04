@@ -21,7 +21,7 @@ class PagesTest extends BearCMSTestCase
         $app = $this->getApp();
 
         $this->assertEquals($app->bearCMS->data->pages->get('pageid'), null);
-        $this->assertEquals($app->bearCMS->data->pages->getList()->count(), 0);
+        $this->assertEquals($app->bearCMS->data->pages->getList()->count(), 1); // auto created the home page
 
         $app->data->setValue('bearcms/pages/page/' . md5('pageid') . '.json', json_encode([
             'id' => 'pageid',
@@ -43,7 +43,7 @@ class PagesTest extends BearCMSTestCase
         $this->assertEquals($page->keywordsTagContent, null);
         $this->assertEquals($page->children->count(), 0);
 
-        $this->assertEquals($app->bearCMS->data->pages->getList()->count(), 1);
+        $this->assertEquals($app->bearCMS->data->pages->getList()->count(), 2); // auto created the home page
     }
 
 }

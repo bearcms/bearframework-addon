@@ -21,21 +21,21 @@ class SeparatorElementTest extends BearCMSTestCase
         $app = $this->getApp();
 
         $result = $app->components->process('<component src="bearcms-separator-element" size="large"/>');
-        $this->assertTrue(strpos($result, 'class="bearcms-separator-element-large"></div>') !== false);
+        $this->assertTrue(strpos($result, 'class="bearcms-separator-element bearcms-separator-element-large"></div>') !== false);
 
         $result = $app->components->process('<bearcms-separator-element size="large"/>');
-        $this->assertTrue(strpos($result, 'class="bearcms-separator-element-large"></div>') !== false);
+        $this->assertTrue(strpos($result, 'class="bearcms-separator-element bearcms-separator-element-large"></div>') !== false);
 
         $result = $app->components->process('<component src="bearcms-separator-element" size="medium"/>');
-        $this->assertTrue(strpos($result, 'class="bearcms-separator-element-medium"></div>') !== false);
+        $this->assertTrue(strpos($result, 'class="bearcms-separator-element bearcms-separator-element-medium"></div>') !== false);
 
         $result = $app->components->process('<bearcms-separator-element size="medium"/>');
-        $this->assertTrue(strpos($result, 'class="bearcms-separator-element-medium"></div>') !== false);
+        $this->assertTrue(strpos($result, 'class="bearcms-separator-element bearcms-separator-element-medium"></div>') !== false);
 
         $result = $app->components->process('<component src="bearcms-separator-element" size="small"/>');
-        $this->assertTrue(strpos($result, 'class="bearcms-separator-element-small"></div>') !== false);
+        $this->assertTrue(strpos($result, 'class="bearcms-separator-element bearcms-separator-element-small"></div>') !== false);
 
         $result = $app->components->process('<bearcms-separator-element size="small"/>');
-        $this->assertTrue(strpos($result, 'class="bearcms-separator-element-small"></div>') !== false);
+        $this->assertTrue(strpos($result, 'class="bearcms-separator-element bearcms-separator-element-small"></div>') !== false);
     }
 }

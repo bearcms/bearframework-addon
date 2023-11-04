@@ -8,7 +8,6 @@
  */
 
 use BearFramework\App;
-use BearCMS\Internal2;
 use BearCMS\Internal\Config;
 use BearCMS\Internal;
 
