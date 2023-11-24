@@ -1405,6 +1405,9 @@ class Themes
             if (isset($details['assets'])) {
                 $appAssets = $app->assets;
                 foreach ($details['assets'] as $filename => $assetDetails) {
+                    if ($filename === '') {
+                        continue;
+                    }
                     try {
                         $options = ['cacheMaxAge' => 999999999];
                         $filenameOptions = Internal\Data::getFilenameOptions($filename);
@@ -1421,7 +1424,7 @@ class Themes
                         if (!empty($filenameOptions)) {
                             $options = array_merge($options, Internal\Assets::convertFileOptionsToAssetOptions($filenameOptions));
                         }
-                        $replace[] = $appAssets->getURL($realFilename, $options);
+                        $replace[] = $realFilename !== null ? $appAssets->getURL($realFilename, $options) : '';
                         $search[] = $filename; // Must be after getURL, because there may be an exception
                     } catch (\Exception $e) { // May be file in an invalid dir
                         $search[] = $filename;
