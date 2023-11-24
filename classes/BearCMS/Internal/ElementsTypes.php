@@ -1245,6 +1245,15 @@ class ElementsTypes
                 ]);
                 $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector);
 
+                $optionSlideGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Slide'));
+                $optionSlideGroup->addOption($idPrefix . "slideCSS", "css", '', [
+                    "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssTextAlign", "cssSize", "cssTransform"],
+                    "cssOutput" => [
+                        ["rule", $parentSelector . ">div:first-child>*", "box-sizing:border-box;"],
+                        ["selector", $parentSelector . ">div:first-child>*"]
+                    ]
+                ]);
+
                 $optionNextButtonGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Next button'));
                 $optionNextButtonGroup->addOption($idPrefix . "nextButtonCSS", "css", '', [
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],

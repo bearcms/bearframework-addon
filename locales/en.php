@@ -112,6 +112,7 @@ return [
     //'bearcms.themes.options.floatingBox.ElementsSpacing' => 'Elements spacing',
     //'bearcms.themes.options.flexibleBox.ElementsSpacing' => 'Elements spacing',
     //'bearcms.themes.options.flexibleBox.RowAlignment' => 'Horizontal alignment'
+    'bearcms.themes.options.slider.Slide' => 'Slide',
     'bearcms.themes.options.slider.Next button' => 'Next button',
     'bearcms.themes.options.slider.Previous button' => 'Previous button',
     'bearcms.themes.options.slider.Indicators' => 'Indicators',
