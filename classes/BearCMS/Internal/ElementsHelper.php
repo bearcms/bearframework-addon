@@ -538,7 +538,9 @@ class ElementsHelper
         $slidesElements = isset($elementContainerData['elements']) ? $elementContainerData['elements'] : [];
         $slidesIndexes = [];
         foreach ($slidesElements as $slideIndex => $slideElements) {
-            $slidesIndexes[] = (int)$slideIndex;
+            if (!empty($slideElements)) {
+                $slidesIndexes[] = (int)$slideIndex;
+            }
         }
         $slidesCount = (empty($slidesIndexes) ? 0 : max($slidesIndexes) + 1) + 1;
         for ($i = 0; $i < $slidesCount; $i++) {

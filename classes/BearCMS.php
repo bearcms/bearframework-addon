@@ -192,8 +192,8 @@ class BearCMS
                     $package->get = 'return bearCMS.elementEvents;';
                 })
                 ->add('-bearcms-slider-elements', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
-                    //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/sliderElements.js')); // dev mode
-                    $package->addJSCode(include $this->context->dir . '/resources/sliderElements.js.min.php');
+                    $package->addJSCode(file_get_contents(__DIR__ . '/../dev/sliderElements.js')); // dev mode
+                    //$package->addJSCode(include $this->context->dir . '/resources/sliderElements.js.min.php');
                     $package->get = 'return bearCMS.sliderElements;';
                 });
         }
