@@ -509,6 +509,126 @@ class ElementsHelper
 
     /**
      * 
+     * @param array $elementContainerData
+     * @param bool $editable
+     * @param array $contextData
+     * @param bool $inContainer
+     * @param string $outputType
+     * @return string
+     */
+    static function renderSlider(array $elementContainerData, bool $editable, array $contextData, bool $inContainer, string $outputType = 'full-html'): string
+    {
+        $elementContainerData = ElementsDataHelper::getUpdatedStructuralElementData($elementContainerData);
+        if ($elementContainerData === null) {
+            return '';
+        }
+
+        $attributes = '';
+
+        $elementID = $elementContainerData['id'];
+        $canStyle = isset($contextData['canStyle']) && $contextData['canStyle'] === 'true';
+        $elementStyleID = isset($elementContainerData['styleID']) ? $elementContainerData['styleID'] : null;
+        $elementStyleValue = isset($elementContainerData['style']) ? $elementContainerData['style'] : null;
+        $elementTags = isset($elementContainerData['tags']) ? $elementContainerData['tags'] : [];
+        $defaultStyle = ElementsDataHelper::getDefaultElementStyle('slider', true);
+        $defaultLayoutValue = $defaultStyle['layout']['value'];
+        list($styleID, $styleValue) = ElementStylesHelper::getElementRealStyleData($elementStyleID, $elementStyleValue, ElementsDataHelper::getDefaultElementStyle('slider'));
+
+        $innerContent = '<div>';
+        $slidesElements = isset($elementContainerData['elements']) ? $elementContainerData['elements'] : [];
+        $slidesIndexes = [];
+        foreach ($slidesElements as $slideIndex => $slideElements) {
+            $slidesIndexes[] = (int)$slideIndex;
+        }
+        $slidesCount = (empty($slidesIndexes) ? 0 : max($slidesIndexes) + 1) + 1;
+        for ($i = 0; $i < $slidesCount; $i++) {
+            $slideContent = '';
+            $addSlideContent = function ($slidesElementsData) use (&$slideContent, $editable, $contextData, $outputType) {
+                if (!empty($slidesElementsData)) {
+                    $slideContent .= self::renderContainerElements($slidesElementsData, $editable, $contextData, $outputType);
+                }
+            };
+            if (isset($slidesElements[$i])) {
+                $addSlideContent($slidesElements[$i]);
+            }
+            $innerContent .= '<div>' . $slideContent . '</div>';
+        }
+        $innerContent .= '</div>';
+
+        $innerContent .= '<div>';
+        $buttonAttributes = ' tabindex="0" onkeydown="if(event.keyCode===13){this.lastChild.click();}" role="button"';
+        $innerContent .= '<span' . $buttonAttributes . ' data-bearcms-slider-button data-bearcms-slider-button-previous></span>';
+        $innerContent .= '<span' . $buttonAttributes . ' data-bearcms-slider-button data-bearcms-slider-button-next></span>';
+        $innerContent .= '<div data-bearcms-slider-indicators>';
+        for ($i = 0; $i < $slidesCount; $i++) {
+            $innerContent .= '<span data-bearcms-slider-indicator></span>';
+        }
+        $innerContent .= '</div>';
+        $innerContent .= '</div>';
+
+        $content = '<html>'
+            . '<head>';
+
+        $styleSelector = null;
+        if ($inContainer) {
+            if ($editable) {
+                $attributes .= ' id="' . self::getHTMLElementID($elementID) . '"';
+                self::$editorData[] = ['slider', $elementID, $contextData];
+            } else {
+                self::$renderedData[] = ['slider', $elementID];
+            }
+            if ($outputType === 'full-html') {
+                $classAttributeValue = 'bearcms-element bearcms-slider-element';
+                if ($canStyle) {
+                    $styleSelector = ElementStylesHelper::getElementStyleSelector($elementID, $styleID);
+                    if ($styleSelector !== null) {
+                        $classAttributeValue .= ' ' . ElementStylesHelper::getElementStyleClassName($elementID, $styleID);
+                    }
+                }
+                $attributes .= ' class="' . $classAttributeValue . '"';
+
+                $notEditableSelector = $editable ? ':not([data-rvr-editable])' : '';
+                $content .= '<style>'
+                    . '.bearcms-slider-element{position:relative;box-sizing:border-box;display:flex;flex-direction:column;'
+                    . '--css-to-attribute-data-bearcms-slider-direction:' . $defaultLayoutValue['direction'] . ';'
+                    . '--css-to-attribute-data-bearcms-slider-alignment:' . $defaultLayoutValue['alignment'] . ';'
+                    . '--bearcms-slider-element-speed:' . $defaultLayoutValue['speed'] . ';'
+                    . '}'
+                    //. '.bearcms-slider-element' . $notEditableSelector . ':not(:has(> div > div:empty)){display:none;}' // todo
+                    . '.bearcms-slider-element>div:first-child{display:flex;overflow:hidden;}'
+                    . '.bearcms-slider-element>div:first-child>*{width:100%;flex:0 0 auto;display:flex;flex-direction:column;transition:transform var(--bearcms-slider-element-speed,0) ease-in-out,opacity var(--bearcms-slider-element-speed,0) ease-in-out;}'
+                    . '.bearcms-slider-element[data-bearcms-slider-alignment="start"]>div:first-child>*{justify-content:flex-start;}'
+                    . '.bearcms-slider-element[data-bearcms-slider-alignment="center"]>div:first-child>*{justify-content:center;}'
+                    . '.bearcms-slider-element[data-bearcms-slider-alignment="end"]>div:first-child>*{justify-content:flex-end;}'
+                    . '.bearcms-slider-element>div:first-child>*>*{width:100%;}'
+                    . '.bearcms-slider-element' . $notEditableSelector . '>div:first-child>*:empty{display:none;}'
+                    . '.bearcms-slider-element>div:last-child{position:absolute;width:100%;height:100%;pointer-events:none;}'
+                    . '.bearcms-slider-element>div:last-child>[data-bearcms-slider-button]{opacity:0;pointer-events:none;cursor:pointer;}'
+                    . '.bearcms-slider-element>div:last-child>[data-bearcms-slider-button-visible]{opacity:1;pointer-events:all;}'
+                    . '.bearcms-slider-element>div:last-child [data-bearcms-slider-indicator]{cursor:pointer;pointer-events:all;display:inline-block;}'
+                    . '</style>'
+                    . self::getStyleHTML('slider', [], '.bearcms-slider-element:not([class*="bearcms-element-style-"])', true, !$editable);
+            }
+        }
+        if ($styleSelector !== null) {
+            $content .= self::getStyleHTML('slider', $styleValue, $styleSelector, true, !$editable);
+        }
+        if (!empty($elementTags)) {
+            $attributes .= self::getTagsHTMLAttributes($elementTags);
+        }
+        $content .= '<link rel="client-packages-embed" name="cssToAttributes">'
+            . '<link rel="client-packages-embed" name="-bearcms-slider-elements">'
+            . '</head>'
+            . '<body>'
+            . ($inContainer ? '<div' . $attributes . '>' . $innerContent . '</div>' : $innerContent)
+            . '</body>'
+            . '</html>';
+
+        return '<component src="data:base64,' . base64_encode($content) . '" />';
+    }
+
+    /**
+     * 
      * @param array $elementsContainerData
      * @param boolean $editable
      * @param array $contextData
@@ -533,6 +653,8 @@ class ElementsHelper
                 $content .= self::renderFloatingBox($elementContainerData, $editable, $contextData, true, $outputType);
             } elseif (ElementsDataHelper::isFlexibleBoxElementContainerData($elementContainerData)) {
                 $content .= self::renderFlexibleBox($elementContainerData, $editable, $contextData, true, $outputType);
+            } elseif (ElementsDataHelper::isSliderElementContainerData($elementContainerData)) {
+                $content .= self::renderSlider($elementContainerData, $editable, $contextData, true, $outputType);
             } else {
                 $elementRawData = $elementsRawData[$elementContainerData['id']];
                 if ($elementRawData !== null) {

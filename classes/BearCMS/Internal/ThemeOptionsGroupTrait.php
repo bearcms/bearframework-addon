@@ -94,7 +94,7 @@ trait ThemeOptionsGroupTrait
     public function addElements(string $idPrefix, string $parentSelector, array $details = []): self
     {
         foreach (Internal\Themes::$elementsOptions as $type => $callable) {
-            if ($type === 'columns' || $type === 'floatingBox' || $type === 'flexibleBox') {
+            if (array_search($type, ['columns', 'floatingBox', 'flexibleBox', 'slider']) !== false) {
                 continue;
             }
             if (is_array($callable)) {
@@ -151,7 +151,8 @@ trait ThemeOptionsGroupTrait
             "cssOutput" => [
                 ["selector", $cssSelector, '--css-to-attribute-data-bearcms-visibility:{cssPropertyValue(type)};z-index:{cssPropertyValue(layer)};top:{cssPropertyValue(top)};left:{cssPropertyValue(left)};bottom:{cssPropertyValue(bottom)};right:{cssPropertyValue(right)};transition:{cssPropertyTransition(top,left,bottom,right)};'],
             ],
-            "onHighlight" => [['cssSelector', $cssSelector]]
+            "onHighlight" => [['cssSelector', $cssSelector]],
+            "defaultValue" => (isset($details['defaultValue']) ? $details['defaultValue'] : '')
         ]);
         return $this;
     }

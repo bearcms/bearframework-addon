@@ -52,6 +52,11 @@ if ($elementType !== null) {
         $newComponent->setAttribute('id', $containerID);
         $newComponent->setAttribute('bearcms-internal-attribute-flexiblebox-id', $elementID);
         $updated = true;
+    } elseif ($elementType === 'slider') {
+        $newComponent->setAttribute('src', 'bearcms-elements');
+        $newComponent->setAttribute('id', $containerID);
+        $newComponent->setAttribute('bearcms-internal-attribute-slider-id', $elementID);
+        $updated = true;
     } else {
         $componentName = array_search($elementType, ElementsHelper::$elementsTypeComponents);
         if ($componentName !== false) {

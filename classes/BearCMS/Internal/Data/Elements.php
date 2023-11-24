@@ -311,6 +311,18 @@ class Elements
                                 $structuralElementData['elements'] = $result[1];
                             }
                         }
+                    } elseif ($structuralElementData['type'] === 'slider') {
+                        if (isset($structuralElementData['elements'])) {
+                            for ($i = 0; $i < 10000; $i++) {
+                                if (isset($structuralElementData['elements'][$i])) {
+                                    $result = $walkElements($structuralElementData['elements'][$i]);
+                                    if ($result[0]) {
+                                        $_hasChange = true;
+                                        $structuralElementData['elements'][$i] = $result[1];
+                                    }
+                                }
+                            }
+                        }
                     }
                     if ($_hasChange) {
                         $hasChange = true;

@@ -23,14 +23,21 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
         document.getElementsByTagName('head')[0].appendChild(style);
     };
 
-    var isColumnsElement = function (element) {
+    var hasClass = function (element, className) {
         var value = element.getAttribute('class');
-        return value !== null ? value.indexOf('bearcms-columns-element') !== -1 : false;
+        return value !== null ? value.indexOf(className) !== -1 : false;
+    };
+
+    var isColumnsElement = function (element) {
+        return hasClass(element, 'bearcms-columns-element');
     };
 
     var isFloatingBoxElement = function (element) {
-        var value = element.getAttribute('class');
-        return value !== null ? value.indexOf('bearcms-floating-box-element') !== -1 : false;
+        return hasClass(element, 'bearcms-floating-box-element');
+    };
+
+    var isSliderElement = function (element) {
+        return hasClass(element, 'bearcms-slider-element');
     };
 
     var updateColumnsStyle = function (element) {
@@ -175,6 +182,13 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
         }
     };
 
+    var contentChange = function (elements) {
+        forceUpdateElements(elements);
+        if (typeof bearCMS.sliderElements !== 'undefined') {
+            bearCMS.sliderElements.update();
+        }
+    };
+
     var styleEditorChange = function (elements) { // called by the CMS
         forceUpdateElements(elements);
         for (var i = 0; i < elements.length; i++) {
@@ -183,6 +197,10 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
                 updateColumnsStyle(element);
             } else if (isFloatingBoxElement(element)) {
                 updateFloatingBoxStyle(element);
+            } else if (isSliderElement(element)) {
+                if (typeof bearCMS.sliderElements !== 'undefined') {
+                    bearCMS.sliderElements.update(element);
+                }
             }
         }
     };
@@ -418,6 +436,7 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
     };
 
     return {
+        'contentChange': contentChange,
         'styleEditorChange': styleEditorChange,
         'styleEditorClose': styleEditorClose,
         'getElementDefaultStyleOptionsValues': getElementDefaultStyleOptionsValues

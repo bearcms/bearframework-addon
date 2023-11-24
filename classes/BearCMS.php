@@ -161,7 +161,7 @@ class BearCMS
                 ->add('-bearcms-elements-lazy-load', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
                     // $package->addJSCode(file_get_contents(__DIR__ . '/../dev/elementsLazyLoad.js')); // dev mode
                     $package->addJSFile($this->context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 6]));
-                    $package->get = 'bearCMS.elementsLazyLoad.initialize(' . json_encode([__('bearcms.elements.LoadingMore'), JSON_THROW_ON_ERROR]) . ');';
+                    $package->get = 'bearCMS.elementsLazyLoad.initialize(' . json_encode([__('bearcms.elements.LoadingMore'), JSON_THROW_ON_ERROR]) . ');return bearCMS.elementsLazyLoad;';
                 });
 
             $this->app->serverRequests
@@ -189,7 +189,12 @@ class BearCMS
                 ->add('-bearcms-element-events', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/elementEvents.js')); // dev mode
                     $package->addJSCode(include $this->context->dir . '/resources/elementEvents.js.min.php');
-                    $package->get = 'bearCMS.elementEvents.initialize();';
+                    $package->get = 'return bearCMS.elementEvents;';
+                })
+                ->add('-bearcms-slider-elements', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                    //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/sliderElements.js')); // dev mode
+                    $package->addJSCode(include $this->context->dir . '/resources/sliderElements.js.min.php');
+                    $package->get = 'return bearCMS.sliderElements;';
                 });
         }
 
@@ -198,7 +203,7 @@ class BearCMS
                 //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/lightboxContent.js')); // dev mode
                 $package->addJSCode(include $this->context->dir . '/resources/lightboxContent.js.min.php');
                 $package->embedPackage('lightbox');
-                $package->get = 'bearCMS.lightboxContent;';
+                $package->get = 'return bearCMS.lightboxContent;';
             });
 
         // Load the CMS managed addons
@@ -861,7 +866,7 @@ class BearCMS
                     $context = $this->app->contexts->get(__DIR__);
                     $html = '';
                     //$html .= '<script>' . file_get_contents(__DIR__ . '/../dev/elementsEditor.js') . '</script>'; // dev mode
-                    $html .= '<script src="' . $context->assets->getURL('assets/elementsEditor.min.js', ['cacheMaxAge' => 999999999, 'version' => 10]) . '" />';
+                    $html .= '<script src="' . $context->assets->getURL('assets/elementsEditor.min.js', ['cacheMaxAge' => 999999999, 'version' => 11]) . '" />';
                     $html .= '<link rel="client-packages-embed" name="cssToAttributes">'; // may be needed when customizing elements
                     $html .= '<link rel="client-packages-embed" name="responsiveAttributes">'; // may be needed when customizing elements
                     $html .= '<link rel="client-packages-embed" name="-bearcms-element-events">'; // may be needed when customizing elements

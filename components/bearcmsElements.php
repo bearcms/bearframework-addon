@@ -28,8 +28,9 @@ $hasLazyLoading = sizeof($elements) > $lazyLimit;
 $columnID = (string) $component->getAttribute('bearcms-internal-attribute-columns-id');
 $floatingBoxID = (string) $component->getAttribute('bearcms-internal-attribute-floatingbox-id');
 $flexibleBoxID = (string) $component->getAttribute('bearcms-internal-attribute-flexiblebox-id');
+$sliderID = (string) $component->getAttribute('bearcms-internal-attribute-slider-id');
 $inContainer = $component->getAttribute('bearcms-internal-attribute-container') !== 'none';
-$renderElementsContainer = $inContainer && !isset($columnID[0]) && !isset($floatingBoxID[0]) && !isset($flexibleBoxID[0]);
+$renderElementsContainer = $inContainer && !isset($columnID[0]) && !isset($floatingBoxID[0]) && !isset($flexibleBoxID[0]) && !isset($sliderID[0]);
 
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
@@ -49,6 +50,9 @@ if (!empty($elements)) {
     } elseif (isset($flexibleBoxID[0])) {
         $flexibleBoxElement = ElementsDataHelper::getContainerDataElement($containerData, $flexibleBoxID, 'flexibleBox');
         $elements = $flexibleBoxElement !== null ? [$flexibleBoxElement] : [];
+    } elseif (isset($sliderID[0])) {
+        $sliderElement = ElementsDataHelper::getContainerDataElement($containerData, $sliderID, 'slider');
+        $elements = $sliderElement !== null ? [$sliderElement] : [];
     } else if ($hasLazyLoading) {
         $remainingLazyLoadElements = (string) $component->getAttribute('bearcms-internal-attribute-remaining-lazy-load-elements');
         if ($remainingLazyLoadElements === '') {
@@ -148,6 +152,8 @@ if (!empty($elements)) {
         echo ElementsHelper::renderFloatingBox($elements[0], $editable, $childrenContextData, $inContainer, $outputType);
     } elseif (isset($flexibleBoxID[0])) {
         echo ElementsHelper::renderFlexibleBox($elements[0], $editable, $childrenContextData, $inContainer, $outputType);
+    } elseif (isset($sliderID[0])) {
+        echo ElementsHelper::renderSlider($elements[0], $editable, $childrenContextData, $inContainer, $outputType);
     } else {
         echo ElementsHelper::renderContainerElements($elements, $editable, $childrenContextData, $outputType);
     }

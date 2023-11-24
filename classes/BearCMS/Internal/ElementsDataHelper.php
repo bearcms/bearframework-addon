@@ -49,7 +49,7 @@ class ElementsDataHelper
      */
     static private function getStructuralElementsTypes(): array
     {
-        return ['columns', 'floatingBox', 'flexibleBox'];
+        return ['columns', 'floatingBox', 'flexibleBox', 'slider'];
     }
 
     /**
@@ -80,6 +80,16 @@ class ElementsDataHelper
     static function isFlexibleBoxElementContainerData(array $elementData): bool
     {
         return self::getElementTypeFromElementData($elementData) === 'flexibleBox';
+    }
+
+    /**
+     * 
+     * @param array $elementData
+     * @return boolean
+     */
+    static function isSliderElementContainerData(array $elementData): bool
+    {
+        return self::getElementTypeFromElementData($elementData) === 'slider';
     }
 
     /**
@@ -718,6 +728,11 @@ class ElementsDataHelper
                     $result['style']['layout'] = InternalThemes::valueDetailsToString($layout);
                 }
             }
+        } elseif ($result['type'] === 'slider') {
+            $result['elements'] = isset($elementContainerData['elements']) ? $elementContainerData['elements'] : [];
+            if (isset($elementContainerData['style'])) {
+                $result['style'] = $elementContainerData['style'];
+            }
         }
         if (isset($result['style']) && empty($result['style'])) {
             unset($result['style']);
@@ -771,7 +786,7 @@ class ElementsDataHelper
      * @param string $elementID
      * @param string $sourceContainerID
      * @param string $targetContainerID
-     * @param array $target Available values: ['beforeElement', 'id'], ['afterElement', 'id'], ['insideContainer'], ['insideColumn', 'id', 'index'], ['insideFloatingBox', 'id', 'inside|outside'], ['insideFlexibleBox', 'id']
+     * @param array $target Available values: ['beforeElement', 'id'], ['afterElement', 'id'], ['insideContainer'], ['insideColumn', 'id', 'index'], ['insideFloatingBox', 'id', 'inside|outside'], ['insideFlexibleBox', 'id'], ['insideSlider', 'id']
      * @return void
      */
     static function moveElement(string $elementID, string $sourceContainerID, string $targetContainerID, array $target): void
@@ -815,7 +830,7 @@ class ElementsDataHelper
      * 
      * @param array $containerData
      * @param string $elementID
-     * @param array $target Available values: ['beforeElement', 'id'], ['afterElement', 'id'], ['insideContainer'], ['insideColumn', 'id', 'index'], ['insideFloatingBox', 'id', 'inside|outside'], ['insideFlexibleBox', 'id']
+     * @param array $target Available values: ['beforeElement', 'id'], ['afterElement', 'id'], ['insideContainer'], ['insideColumn', 'id', 'index'], ['insideFloatingBox', 'id', 'inside|outside'], ['insideFlexibleBox', 'id'], ['insideSlider', 'id']
      * @throws \Exception
      * @return array
      */
@@ -827,7 +842,7 @@ class ElementsDataHelper
         $targetType = $target[0];
         $targetID = null;
         $targetArg = null;
-        if (array_search($targetType, ['beforeElement', 'afterElement', 'insideColumn', 'insideFloatingBox', 'insideFlexibleBox']) !== false) {
+        if (array_search($targetType, ['beforeElement', 'afterElement', 'insideColumn', 'insideFloatingBox', 'insideFlexibleBox', 'insideSlider']) !== false) {
             if (!isset($target[1])) {
                 throw new \Exception('Target id (index 1) not found!');
             }
@@ -837,6 +852,9 @@ class ElementsDataHelper
             }
             if ($targetType === 'insideFloatingBox') {
                 $targetArg = isset($target[2]) && $target[2] === 'inside' ? 'inside' : 'outside';
+            }
+            if ($targetType === 'insideSlider') {
+                $targetArg = isset($target[2]) ? (int)$target[2] : 0;
             }
         } elseif (array_search($targetType, ['insideContainer']) !== false) {
             // ok
@@ -875,7 +893,7 @@ class ElementsDataHelper
                 }
                 return $result;
             }, 'elementsList');
-        } elseif ($targetType === 'insideColumn' || $targetType === 'insideFloatingBox' || $targetType === 'insideFlexibleBox') {
+        } elseif ($targetType === 'insideColumn' || $targetType === 'insideFloatingBox' || $targetType === 'insideFlexibleBox' || $targetType === 'insideSlider') {
             $containerData = self::walkContainerDataElements($containerData, function (array $elemData) use ($targetID, $targetArg, $elementData, &$added) {
                 if ($elemData['id'] === $targetID) {
                     if (self::isColumnsElementContainerData($elemData)) {
@@ -892,6 +910,12 @@ class ElementsDataHelper
                         $added = true;
                     } elseif (self::isFlexibleBoxElementContainerData($elemData)) {
                         $elemData['elements'][] = $elementData;
+                        $added = true;
+                    } elseif (self::isSliderElementContainerData($elemData)) {
+                        if (!isset($elemData['elements'][$targetArg])) {
+                            $elemData['elements'][$targetArg] = [];
+                        }
+                        $elemData['elements'][$targetArg][] = $elementData;
                         $added = true;
                     } else {
                         throw new \Exception('Invalid target structural item!');
@@ -1126,6 +1150,16 @@ class ElementsDataHelper
                                     }
                                     $newElementData['elements'] = $walkElementsResult;
                                 }
+                            } elseif ($elementType === 'slider') {
+                                if (isset($newElementData['elements'])) {
+                                    foreach ($newElementData['elements'] as $slideIndex => $slideElements) {
+                                        $walkElementsResult = $walkElements($slideElements);
+                                        if ($walkElementsResult === -2) {
+                                            return -2;
+                                        }
+                                        $newElementData['elements'][$slideIndex] = $walkElementsResult;
+                                    }
+                                }
                             }
                         }
                         $result[] = $newElementData;
@@ -1166,6 +1200,12 @@ class ElementsDataHelper
                         } elseif ($elementType === 'flexibleBox') {
                             if (isset($newElementData['elements'])) {
                                 $newElementData['elements'] = $walkElements($newElementData['elements']);
+                            }
+                        } elseif ($elementType === 'slider') {
+                            if (isset($newElementData['elements'])) {
+                                foreach ($newElementData['elements'] as $slideIndex => $slideElements) {
+                                    $newElementData['elements'][$slideIndex] = $walkElements($slideElements);
+                                }
                             }
                         }
                         $newElementsList[$i] = $newElementData;
@@ -1783,6 +1823,27 @@ class ElementsDataHelper
         } elseif ($elementType === 'flexibleBox') {
             $layout = ['value' => ['direction' => 'vertical', 'alignment' => 'start']];
             return ['layout' => $returnAsArray ? $layout : json_encode($layout)];
+        } elseif ($elementType === 'slider') {
+            $layout = ['value' => ['direction' => 'horizontal', 'alignment' => 'start', 'speed' => '300ms']];
+            $nextButton = '{"background-color":"rgba(0,0,0,0.5)","width":"30px","height":"30px","border-top-left-radius":"50%","border-top-right-radius":"50%","border-bottom-left-radius":"50%","border-bottom-right-radius":"50%","background-image":"url(addon:bearcms\/bearframework-addon:assets\/slider-next.svg)","background-position":"center center","background-repeat":"no-repeat","background-size":"14px"}';
+            $nextButtonVisibility = '{"type":"floating","top":"calc(50% - 15px)","right":"10px"}';
+            $previousButton = '{"background-color":"rgba(0,0,0,0.5)","width":"30px","height":"30px","border-top-left-radius":"50%","border-top-right-radius":"50%","border-bottom-left-radius":"50%","border-bottom-right-radius":"50%","background-image":"url(addon:bearcms\/bearframework-addon:assets\/slider-previous.svg)","background-position":"center center","background-repeat":"no-repeat","background-size":"14px"}';
+            $previousButtonVisibility = '{"type":"floating","top":"calc(50% - 15px)","left":"10px"}';
+            $indicator = '{"background-color":"rgba(0,0,0,0.1)","width":"12px","height":"12px","border-top-left-radius":"50%","border-top-right-radius":"50%","border-bottom-left-radius":"50%","border-bottom-right-radius":"50%","margin-left":"3px","margin-right":"3px"}';
+            $indicatorSelected = '{"background-color":"rgba(0,0,0,0.5)"}';
+            $indicators = '{"width":"100%","text-align":"center"}';
+            $indicatorsVisibility = '{"type":"floating","bottom":"10px"}';
+            return [
+                'layout' => $returnAsArray ? $layout : json_encode($layout),
+                'nextButton' => $returnAsArray ? json_decode($nextButton, true) : $nextButton,
+                'nextButtonVisibility' => $returnAsArray ? json_decode($nextButtonVisibility, true) : $nextButtonVisibility,
+                'previousButton' => $returnAsArray ? json_decode($previousButton, true) : $previousButton,
+                'previousButtonVisibility' => $returnAsArray ? json_decode($previousButtonVisibility, true) : $previousButtonVisibility,
+                'indicator' => $indicator,
+                'indicatorSelected' => $indicatorSelected,
+                'indicators' => $indicators,
+                'indicatorsVisibility' => $indicatorsVisibility,
+            ];
         }
         return [];
     }

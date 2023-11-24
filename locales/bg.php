@@ -112,4 +112,8 @@ return [
     //'bearcms.themes.options.floatingBox.ElementsSpacing' => 'Разстояние между елементите',
     //'bearcms.themes.options.flexibleBox.ElementsSpacing' => 'Разстояние между елементите',
     //'bearcms.themes.options.flexibleBox.RowAlignment' => 'Хоризонтално подравняване'
+    'bearcms.themes.options.slider.Next button' => 'Бутон Напред',
+    'bearcms.themes.options.slider.Previous button' => 'Бутон Назад',
+    'bearcms.themes.options.slider.Indicators' => 'Индикатори',
+    'bearcms.themes.options.slider.IndicatorSelected' => 'Избран',
 ];
