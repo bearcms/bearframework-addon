@@ -1453,18 +1453,22 @@ class ElementsDataHelper
                 if (!empty($filenames)) {
                     $filesToUpdate = [];
                     foreach ($filenames as $filename) {
-                        $filenameOptions = InternalData::getFilenameOptions($filename);
-                        $dataKey = InternalData::getFilenameDataKey($filename);
-                        if ($dataKey !== null && $app->data->exists($dataKey)) {
-                            if (isset($addedDataKeys[$dataKey])) {
-                                $newFilename = $addedDataKeys[$dataKey];
-                            } else {
-                                $newFilename = 'file' . (sizeof($addedDataKeys) + 1) . '.' . InternalData::getFilenameExtension($filename);
-                                $add($filenamePrefix . $newFilename, file_get_contents($app->data->getFilename($dataKey)));
-                                $addedDataKeys[$dataKey] = $newFilename;
+                        if (strpos($filename, 'addon:') === 0) {
+                            // leave as is
+                        } else {
+                            $filenameOptions = InternalData::getFilenameOptions($filename);
+                            $dataKey = InternalData::getFilenameDataKey($filename);
+                            if ($dataKey !== null && $app->data->exists($dataKey)) {
+                                if (isset($addedDataKeys[$dataKey])) {
+                                    $newFilename = $addedDataKeys[$dataKey];
+                                } else {
+                                    $newFilename = 'file' . (sizeof($addedDataKeys) + 1) . '.' . InternalData::getFilenameExtension($filename);
+                                    $add($filenamePrefix . $newFilename, file_get_contents($app->data->getFilename($dataKey)));
+                                    $addedDataKeys[$dataKey] = $newFilename;
+                                }
+                                $newFilenameWithOptions = InternalData::setFilenameOptions($newFilename, $filenameOptions);
+                                $filesToUpdate[$filename] = $newFilenameWithOptions;
                             }
-                            $newFilenameWithOptions = InternalData::setFilenameOptions($newFilename, $filenameOptions);
-                            $filesToUpdate[$filename] = $newFilenameWithOptions;
                         }
                     }
                     $styleValues = InternalThemes::updateFilesInValues($styleValues, $filesToUpdate);
@@ -1545,30 +1549,34 @@ class ElementsDataHelper
                     $addedFiles = [];
                     $filesToUpdate = [];
                     foreach ($filenames as $filename) {
-                        $filenameOptions = InternalData::getFilenameOptions($filename);
-                        $filenameWithoutOptions = InternalData::removeFilenameOptions($filename);
-                        $filenameInArchive = $filenamePrefix . $filenameWithoutOptions;
-                        $content = $context->getValue($filenameInArchive);
-                        if ($content !== null) {
-                            if (isset($addedFiles[$filenameWithoutOptions])) {
-                                $newFilename = $addedFiles[$filenameWithoutOptions];
-                            } else {
-                                $newFilename = InternalData::generateNewFilename($app->data->getFilename($dataKeyPrefix . $filenameWithoutOptions)); // , $context->id !== null ? [$containerID, $newElementID, $oldElementID, $filename, $context->id] : null
-                                $newFilenameDataKey = InternalData::getFilenameDataKey($newFilename);
-                                $newFilenameFileSize = strlen($content);
-                                if ($isExecuteMode) {
-                                    file_put_contents($newFilename, $content);
-                                    UploadsSize::add($newFilenameDataKey, $newFilenameFileSize);
-                                }
-                                $addedFiles[$filenameWithoutOptions] = $newFilename;
-                                $context->logChange($logType, ['dataKey' => $newFilenameDataKey]);
-                                $context->logChange('uploadsSizeAdd', ['key' => $newFilenameDataKey, 'size' => $newFilenameFileSize]);
-                            }
-                            $newFilenameWithOptions = InternalData::setFilenameOptions($newFilename, $filenameOptions);
-                            $filesToUpdate[$filename] = InternalData::getShortFilename($newFilenameWithOptions);
+                        if (strpos($filename, 'addon:') === 0) {
+                            // leave as is
                         } else {
-                            $context->logWarning('Style file not found in archive (' . $filenameInArchive . ')', $errorContextData);
-                            $filesToUpdate[$filename] = '';
+                            $filenameOptions = InternalData::getFilenameOptions($filename);
+                            $filenameWithoutOptions = InternalData::removeFilenameOptions($filename);
+                            $filenameInArchive = $filenamePrefix . $filenameWithoutOptions;
+                            $content = $context->getValue($filenameInArchive);
+                            if ($content !== null) {
+                                if (isset($addedFiles[$filenameWithoutOptions])) {
+                                    $newFilename = $addedFiles[$filenameWithoutOptions];
+                                } else {
+                                    $newFilename = InternalData::generateNewFilename($app->data->getFilename($dataKeyPrefix . $filenameWithoutOptions)); // , $context->id !== null ? [$containerID, $newElementID, $oldElementID, $filename, $context->id] : null
+                                    $newFilenameDataKey = InternalData::getFilenameDataKey($newFilename);
+                                    $newFilenameFileSize = strlen($content);
+                                    if ($isExecuteMode) {
+                                        file_put_contents($newFilename, $content);
+                                        UploadsSize::add($newFilenameDataKey, $newFilenameFileSize);
+                                    }
+                                    $addedFiles[$filenameWithoutOptions] = $newFilename;
+                                    $context->logChange($logType, ['dataKey' => $newFilenameDataKey]);
+                                    $context->logChange('uploadsSizeAdd', ['key' => $newFilenameDataKey, 'size' => $newFilenameFileSize]);
+                                }
+                                $newFilenameWithOptions = InternalData::setFilenameOptions($newFilename, $filenameOptions);
+                                $filesToUpdate[$filename] = InternalData::getShortFilename($newFilenameWithOptions);
+                            } else {
+                                $context->logWarning('Style file not found in archive (' . $filenameInArchive . ')', $errorContextData);
+                                $filesToUpdate[$filename] = '';
+                            }
                         }
                     }
                     $styleValues = InternalThemes::updateFilesInValues($styleValues, $filesToUpdate);
