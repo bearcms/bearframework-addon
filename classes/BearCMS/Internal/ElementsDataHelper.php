@@ -1832,7 +1832,7 @@ class ElementsDataHelper
             $layout = ['value' => ['direction' => 'vertical', 'alignment' => 'start']];
             return ['layout' => $returnAsArray ? $layout : json_encode($layout)];
         } elseif ($elementType === 'slider') {
-            $layout = ['value' => ['direction' => 'horizontal', 'alignment' => 'start', 'speed' => '300ms']];
+            $layout = ['value' => ['direction' => 'horizontal', 'alignment' => 'start', 'speed' => '300ms', 'swipe' => '1']];
             $nextButton = '{"background-color":"rgba(0,0,0,0.5)","width":"30px","height":"30px","border-top-left-radius":"50%","border-top-right-radius":"50%","border-bottom-left-radius":"50%","border-bottom-right-radius":"50%","background-image":"url(addon:bearcms\/bearframework-addon:assets\/slider-next.svg)","background-position":"center center","background-repeat":"no-repeat","background-size":"14px"}';
             $nextButtonVisibility = '{"type":"floating","top":"calc(50% - 15px)","right":"10px"}';
             $previousButton = '{"background-color":"rgba(0,0,0,0.5)","width":"30px","height":"30px","border-top-left-radius":"50%","border-top-right-radius":"50%","border-bottom-left-radius":"50%","border-bottom-right-radius":"50%","background-image":"url(addon:bearcms\/bearframework-addon:assets\/slider-previous.svg)","background-position":"center center","background-repeat":"no-repeat","background-size":"14px"}';

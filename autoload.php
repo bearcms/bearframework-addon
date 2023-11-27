@@ -29,6 +29,7 @@ BearFramework\Addons::register('bearcms/bearframework-addon', __DIR__, [
         'ivopetkov/html5-dom-document-js-bearframework-addon',
         'ivopetkov/responsive-attributes-bearframework-addon',
         'ivopetkov/css-to-attributes-bearframework-addon',
+        'ivopetkov/touch-events-js-bearframework-addon',
         'ivopetkov/rate-limiter-bearframework-addon'
     ]
 ]);

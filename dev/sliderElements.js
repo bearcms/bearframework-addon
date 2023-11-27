@@ -10,6 +10,8 @@
 var bearCMS = bearCMS || {};
 bearCMS.sliderElements = bearCMS.sliderElements || (function () {
 
+    var touchEvents = ivoPetkov.bearFrameworkAddons.touchEvents;
+
     var initializedElements = [];
 
     var elementsData = [];
@@ -66,6 +68,14 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
         return null;
     };
 
+    var setTransitionsStatus = function (element, enabled) {
+        if (enabled) {
+            element.removeAttribute('data-bearcms-slider-no-transition');
+        } else {
+            element.setAttribute('data-bearcms-slider-no-transition', '');
+        }
+    };
+
     var isEditable = function (element) {
         return element.getAttribute('data-rvr-editable') === '1'; // temp
     };
@@ -81,6 +91,14 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
             }
         }
         return false;
+    };
+
+    var getSize = function (element) {
+        var rect = element.getBoundingClientRect();
+        return {
+            width: rect.width,
+            height: rect.height,
+        };
     };
 
     var isVisible = function (element) {
@@ -168,14 +186,33 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
     var updateElement = function (element) {
         var direction = element.getAttribute('data-bearcms-slider-direction');
         var autoplay = element.getAttribute('data-bearcms-slider-autoplay');
-        //var swipe = element.getAttribute('data-bearcms-slider-swipe');
 
         if (isEditable(element)) {
             var allSlides = element.firstChild.childNodes;
-            var lastSlide = allSlides[allSlides.length - 1];
+            var allSlidesCount = allSlides.length;
+            var lastSlide = allSlides[allSlidesCount - 1];
             if (lastSlide.childNodes.length > 0) {
                 lastSlide.parentNode.insertAdjacentHTML("beforeend", "<div></div>");
                 rebuildIndicators(element);
+            }
+            var removeLastSlideIfLastTwoEmpty = function () {
+                var allSlides = element.firstChild.childNodes;
+                var allSlidesCount = allSlides.length;
+                if (allSlidesCount >= 2) {
+                    var lastSlide1 = allSlides[allSlidesCount - 1];
+                    var lastSlide2 = allSlides[allSlidesCount - 2];
+                    if (lastSlide1.childNodes.length === 0 && lastSlide2.childNodes.length === 0) {
+                        lastSlide1.parentNode.removeChild(lastSlide1);
+                        rebuildIndicators(element);
+                        return true;
+                    }
+                }
+                return false;
+            };
+            for (var i = 0; i < allSlidesCount; i++) {
+                if (!removeLastSlideIfLastTwoEmpty()) {
+                    break;
+                }
             }
         }
 
@@ -187,24 +224,61 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
         setButtonVisibility(previousButton, index > 0);
         setButtonVisibility(nextButton, index + 1 < slidesCount);
 
+        var slideX = 0;
+        var slideY = 0;
+        var slidesDefaultY = [0];
+        if (direction === 'horizontal' || direction === 'vertical') {
+            if (slidesCount > 0) {
+                var allSlidesWidth = 0;
+                var allSlidesHeight = 0;
+                var containerSize = getSize(element.firstChild);
+                for (var i = 0; i < slidesCount; i++) {
+                    var slide = slides[i];
+                    var slideSize = getSize(slide);
+                    if (i < index) {
+                        slideX += slideSize.width;
+                        slideY += slideSize.height;
+                    }
+                    if (i > 0) {
+                        for (var j = i; j < slidesCount; j++) {
+                            if (typeof slidesDefaultY[j] === 'undefined') {
+                                slidesDefaultY[j] = 0;
+                            }
+                            slidesDefaultY[j] += slideSize.height;
+                        }
+                    }
+                    allSlidesWidth += slideSize.width;
+                    allSlidesHeight += slideSize.height;
+                }
+                var containerWidth = containerSize.width;
+                var containerHeight = containerSize.height;
+                if (containerWidth + slideX > allSlidesWidth) {
+                    slideX += allSlidesWidth - (containerWidth + slideX);
+                }
+                if (containerHeight + slideY > allSlidesHeight) {
+                    slideY += allSlidesHeight - (containerHeight + slideY);
+                }
+            }
+        }
+
         for (var i = 0; i < slidesCount; i++) {
             var slide = slides[i];
-            var x = '0';
-            var y = '0';
+            var slideSize = getSize(slide);
+            var x = '0px';
+            var y = '0px';
             var opacity = '1';
             var enabled = true;
             if (direction === 'horizontal') {
                 if (index > 0) {
-                    x = '-' + (index * 100) + '%';
+                    x = '-' + slideX + 'px';
                 }
                 if (i !== index) {
                     enabled = false;
                 }
             } else if (direction === 'vertical') {
-                if (i > 0) {
-                    x = '-' + (i * 100) + '%';
+                if (index > 0) {
+                    y = '-' + slideY + 'px';
                 }
-                y = ((i - index) * 100) + '%';
                 if (i !== index) {
                     enabled = false;
                 }
@@ -217,12 +291,12 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                     enabled = false;
                 }
             }
-            slide.style.setProperty('transform', 'translateX(' + x + ') translateY(' + y + ')');
+            slide.style.setProperty('--bse-slide-x', x);
+            slide.style.setProperty('--bse-slide-y', y);
             slide.style.setProperty('opacity', opacity);
-            slide.style.setProperty('pointer-events', enabled ? 'all' : 'none');
         }
 
-        if (getElementData(element, 'autoplayValue') !== autoplay) {// && !isAutoplayDisabled(element)
+        if (getElementData(element, 'autoplayValue') !== autoplay) {
             clearAutoplay(element);
             setElementData(element, 'autoplayValue', autoplay);
             if (autoplay !== null) {
@@ -244,14 +318,6 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
 
         updateIndicators(element);
     };
-
-    // var isAutoplayDisabled = function (element) {
-    //     return getElementData(element, 'autoplayDisabled') !== null;
-    // };
-
-    // var disableAutoplay = function (element) {
-    //     setElementData(element, 'autoplayDisabled', 1);
-    // };
 
     var isAutoplayPaused = function (element) {
         return getElementData(element, 'autoplayPaused') !== null;
@@ -275,6 +341,9 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
     };
 
     var changeSlide = function (element, change) {
+        if (change === 0) {
+            return;
+        }
         var index = getElementData(element, 'index');
         index += change;
         var slidesCount = getSlides(element).length;
@@ -284,6 +353,11 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
             index = slidesCount - 1;
         }
         showSlide(element, index);
+    };
+
+    var setSwipeValue = function (element, x, y) {
+        element.style.setProperty('--bse-swipe-x', x);
+        element.style.setProperty('--bse-swipe-y', y);
     };
 
     var update = function (element) {
@@ -313,12 +387,94 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                     setElementData(element, 'index', 0);
                     rebuildIndicators(element);
                     updateIndicators(element);
+
                     (new MutationObserver(function () { // editable changed
                         // todo move to adjacent visible slide + update indicators
                         updateElement(element);
                         rebuildIndicators(element);
                         updateIndicators(element);
                     })).observe(element, { attributeFilter: ["data-rvr-editable"] });
+
+                    var swipeEventTarget = touchEvents.addSwipe(element.firstChild, element.ownerDocument.body);
+                    swipeEventTarget.addEventListener('start', function (e) {
+                        setSwipeValue(element, '0px', '0px');
+                        if (element.getAttribute('data-bearcms-slider-swipe') === null) {
+                            return;
+                        }
+                        var direction = element.getAttribute('data-bearcms-slider-direction');
+                        if (direction === 'horizontal' || direction === 'vertical') {
+                            setTransitionsStatus(element, false);
+                        }
+                    });
+                    swipeEventTarget.addEventListener('change', function (e) {
+                        if (element.getAttribute('data-bearcms-slider-swipe') === null) {
+                            return;
+                        }
+                        var direction = element.getAttribute('data-bearcms-slider-direction');
+                        if (direction === 'horizontal') {
+                            setSwipeValue(element, e.changeX + 'px', '0px');
+                        } else if (direction === 'vertical') {
+                            setSwipeValue(element, '0px', e.changeY + 'px');
+                        }
+                    });
+                    swipeEventTarget.addEventListener('end', function (e) {
+                        if (element.getAttribute('data-bearcms-slider-swipe') === null) {
+                            return;
+                        }
+                        setTransitionsStatus(element, true);
+                        setSwipeValue(element, '0px', '0px');
+                        var direction = element.getAttribute('data-bearcms-slider-direction');
+                        var change = null;
+                        if (direction === 'horizontal' || direction === 'swap') {
+                            change = e.changeX;
+                        } else if (direction === 'vertical') {
+                            change = e.changeY;
+                        }
+                        if (change === null) {
+                            return;
+                        }
+                        var absChange = Math.abs(change);
+                        if (absChange > 40) {
+                            var isForwardSwipe = change < 0;
+                            if (direction === 'swap') {
+                                changeSlide(element, isForwardSwipe ? 1 : -1);
+                            } else {
+                                var index = getElementData(element, 'index');
+                                var slides = getSlides(element);
+                                var slidesCount = slides.length;
+                                var sizeSum = 0;
+                                var newIndex = null;
+                                var indexesToCheck = [];
+                                if (isForwardSwipe) {
+                                    for (var i = index; i < slidesCount; i++) {
+                                        indexesToCheck.push(i);
+                                    }
+                                } else { // move backward
+                                    for (var i = index; i >= 0; i--) {
+                                        indexesToCheck.push(i);
+                                    }
+                                }
+                                for (var i = 0; i < indexesToCheck.length; i++) {
+                                    var indexToCheck = indexesToCheck[i];
+                                    var slide = slides[indexToCheck];
+                                    var slideSize = getSize(slide);
+                                    var targetSize = direction === 'horizontal' ? slideSize.width : slideSize.height;
+                                    if (sizeSum + (isForwardSwipe ? 0 : targetSize) >= absChange) {
+                                        newIndex = indexToCheck + (isForwardSwipe ? 0 : -1);
+                                        break;
+                                    }
+                                    sizeSum += targetSize;
+                                }
+                                if (newIndex === null) {
+                                    newIndex = !isForwardSwipe ? 0 : slidesCount - 1;
+                                }
+                                changeSlide(element, newIndex - index);
+                            }
+                        }
+                    });
+
+                    setTransitionsStatus(element, true);
+
                 })(element);
                 initializedElements.push(element);
             }
