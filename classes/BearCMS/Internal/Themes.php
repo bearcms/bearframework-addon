@@ -274,7 +274,7 @@ class Themes
             foreach (self::$pagesOptions as $key => $value) {
                 $pagesOptionsEnvKeyData[] = $key . (is_array($value) ? '$' . $value[0] : '');
             }
-            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v15'));
+            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v16'));
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID);
@@ -1324,21 +1324,58 @@ class Themes
 
         $hasResponsiveAttributes = false;
         $hasEventAttributes = false;
+        $hasRepeaterAttributes = false;
 
+        //$repeaterWidths = [];
         $style = '';
         foreach ($cssRules as $mediaQuery => $mediaQueryRules) {
             if ($mediaQuery !== '') {
                 $style .= '@media ' . $mediaQuery . '{';
             }
             foreach ($mediaQueryRules as $selector => $value) {
+                $valueHasResponsiveAttributes = false;
                 if (strpos($value, '--css-to-attribute-data-responsive-attributes') !== false) {
                     $value .= '--css-to-attribute-data-responsive-attributes:*;';
                     $hasResponsiveAttributes = true;
+                    $valueHasResponsiveAttributes = true;
                 }
                 if (strpos($value, '--css-to-attribute-data-bearcms-element-event') !== false) {
                     $value .= '--css-to-attribute-data-bearcms-element-event:*;';
                     $hasEventAttributes = true;
                 }
+                if (strpos($value, '--css-to-attribute-data-bearcms-repeater-type') !== false) {
+                    if (!$valueHasResponsiveAttributes) {
+                        $value .= '--css-to-attribute-data-responsive-attributes:*;';
+                    }
+                    $repeaterWidths = [
+                        'small' => 300,
+                        'medium' => 430,
+                        'large' => 600
+                    ];
+                    foreach ($repeaterWidths as $repeaterWidthName => $repeaterWidthValue) {
+                        $repeaterWidthExpression = [];
+                        for ($i = 0; $i <= 100; $i++) {
+                            $startWidth = $i * $repeaterWidthValue;
+                            $endWidth =  ($i + 1) * $repeaterWidthValue;
+                            $attributeExpression = 'data-bearcms-repeater-' . $repeaterWidthName . '=' . ($i + 1);
+                            if ($endWidth > 3000) {
+                                $repeaterWidthExpression[] = 'w>' . $startWidth . '=>' . $attributeExpression;
+                                break;
+                            } else {
+                                $repeaterWidthExpression[] = 'w>' . $startWidth . '&&w<' . $endWidth . '=>' . $attributeExpression;
+                            }
+                        }
+                        $value .= '--css-to-attribute-data-responsive-attributes-bearcms-repeater-' . $repeaterWidthName . ':' . join(',', $repeaterWidthExpression) . ';';
+                    }
+                    $hasRepeaterAttributes = true;
+                }
+                // if (strpos($value, '--css-to-attribute-data-bearcms-repeater-widths') !== false) {
+                //     $matches = [];
+                //     preg_match_all('/\-\-css\-to\-attribute\-data\-bearcms\-repeater\-widths\:(.*?)\;/', $value, $matches);
+                //     if (isset($matches[1], $matches[1][0])) {
+                //         $repeaterWidths[] = $matches[1][0];
+                //     }
+                // }
                 if ($optimizeForCompatibility && (strpos($value, '.webp') !== false || strpos($value, '.avif') !== false)) { // support for old browsers
                     $optimizedValue = $value;
                     $optimizedValue = implode('.webp.convert-to-png', explode('.webp', $optimizedValue));
@@ -1372,6 +1409,9 @@ class Themes
         }
         if ($hasEventAttributes) {
             $html .= '<link rel="client-packages-embed" name="-bearcms-element-events">';
+        }
+        if ($hasRepeaterAttributes) {
+            $html .= '<link rel="client-packages-embed" name="-bearcms-repeater">';
         }
 
         if ($html !== '') {

@@ -196,6 +196,30 @@ class BearCMS
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/sliderElements.js')); // dev mode
                     $package->addJSCode(include $this->context->dir . '/resources/sliderElements.js.min.php');
                     $package->get = 'return bearCMS.sliderElements;';
+                })
+                ->add('-bearcms-repeater', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                    $style = '';
+                    $style .= '[data-bearcms-repeater-type="vertical"]{display:flex;flex-direction:column;gap:var(--bearcms-repeater-spacing);}';
+                    $style .= '[data-bearcms-repeater-type="grid"]{display:flex;flex-direction:row;flex-wrap:wrap;gap:var(--bearcms-repeater-spacing);}';
+                    $style .= '[data-bearcms-repeater-type="grid"]>*{flex:0 0 auto;align-content:start;}';
+                    for ($i = 2; $i <= 6; $i++) { // Xcolumns
+                        $style .= '[data-bearcms-repeater-type="grid"][data-bearcms-repeater-widths="' . $i . 'columns"]>*{width:calc((100% - ' . ($i - 1) . '*var(--bearcms-repeater-spacing))/' . $i . ');}';
+                    }
+                    $repeaterWidths = [
+                        'small' => 300,
+                        'medium' => 430,
+                        'large' => 600
+                    ];
+                    foreach ($repeaterWidths as $repeaterWidthName => $repeaterWidthValue) {
+                        for ($i = 0; $i <= 100; $i++) {
+                            $style .= '[data-bearcms-repeater-type="grid"][data-bearcms-repeater-widths="' . $repeaterWidthName . '"][data-bearcms-repeater-' . $repeaterWidthName . '="' . ($i + 1) . '"]>*{width:calc((100% - ' . $i . '*var(--bearcms-repeater-spacing))/' . ($i + 1) . ');}';
+                            if (($i + 1) * $repeaterWidthValue > 3000) {
+                                break;
+                            }
+                        }
+                    }
+                    $package->addCSSCode($style);
+                    $package->embedPackage('responsiveAttributes');
                 });
         }
 
@@ -871,6 +895,7 @@ class BearCMS
                     $html .= '<link rel="client-packages-embed" name="cssToAttributes">'; // may be needed when customizing elements
                     $html .= '<link rel="client-packages-embed" name="responsiveAttributes">'; // may be needed when customizing elements
                     $html .= '<link rel="client-packages-embed" name="-bearcms-element-events">'; // may be needed when customizing elements
+                    $html .= '<link rel="client-packages-embed" name="-bearcms-repeater">'; // may be needed when customizing elements
                     $htmlToInsert[] = ['source' => '<html><head>' . $html . '</head></html>'];
                 }
                 $htmlToInsert[] = ['source' => '<html><head><link rel="client-packages"></head></html>']; // used by ServerCommands to update content
