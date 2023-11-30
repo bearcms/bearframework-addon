@@ -1225,39 +1225,44 @@ class ElementsTypes
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_SLIDER')) {
             InternalThemes::$elementsOptions['slider'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
-                if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
+                $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
+                if ($isElementContext) {
                     $optionsGroup = $options;
+                    $customStyleSelector = '';
                 } else {
-                    throw new \Exception('Not supported in other contexts!');
+                    $optionsGroup = $options->addGroup(__("bearcms.themes.options.Slider"));
+                    $customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]).bearcms-slider-element';
                 }
                 $defaultValue = ElementsDataHelper::getDefaultElementStyle('slider');
                 $defaultLayoutValue = ElementsDataHelper::getDefaultElementStyle('slider', true)['layout']['value'];
                 $optionsGroup->addOption($idPrefix . "layout", "sliderLayout", '', [
                     "cssOutput" => [
-                        ["selector", $parentSelector, '--css-to-attribute-data-bearcms-slider-direction:{cssPropertyValue(direction,' . $defaultLayoutValue['direction'] . ')};'],
-                        ["selector", $parentSelector, '--css-to-attribute-data-bearcms-slider-alignment:{cssPropertyValue(alignment,' . $defaultLayoutValue['alignment'] . ')};'],
-                        ["selector", $parentSelector, '--css-to-attribute-data-bearcms-slider-autoplay:{cssPropertyValue(autoplay)};'],
-                        ["selector", $parentSelector, '--css-to-attribute-data-bearcms-slider-swipe:{cssPropertyValue(swipe)};'],
-                        ["selector", $parentSelector, '--bearcms-slider-element-speed:{cssPropertyValue(speed,' . $defaultLayoutValue['speed'] . ')};'],
+                        ["selector", $parentSelector . $customStyleSelector, '--css-to-attribute-data-bearcms-slider-direction:{cssPropertyValue(direction,' . $defaultLayoutValue['direction'] . ')};'],
+                        ["selector", $parentSelector . $customStyleSelector, '--css-to-attribute-data-bearcms-slider-alignment:{cssPropertyValue(alignment,' . $defaultLayoutValue['alignment'] . ')};'],
+                        ["selector", $parentSelector . $customStyleSelector, '--css-to-attribute-data-bearcms-slider-autoplay:{cssPropertyValue(autoplay)};'],
+                        ["selector", $parentSelector . $customStyleSelector, '--css-to-attribute-data-bearcms-slider-swipe:{cssPropertyValue(swipe)};'],
+                        ["selector", $parentSelector . $customStyleSelector, '--bearcms-slider-element-speed:{cssPropertyValue(speed,' . $defaultLayoutValue['speed'] . ')};'],
                     ],
                     "defaultValue" => $defaultValue['layout'],
-                    "onHighlight" => [['cssSelector', $parentSelector]]
+                    "onHighlight" => [['cssSelector', $parentSelector . $customStyleSelector]]
                 ]);
                 $optionsGroup->addOption($idPrefix . "css", "css", '', [
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                     "cssOptions" => ["*/hoverState", "*/focusState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                     "cssOutput" => [
-                        ["selector", $parentSelector]
+                        ["selector", $parentSelector . $customStyleSelector]
                     ],
                 ]);
-                $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector);
+                if ($isElementContext) {
+                    $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector);
+                }
 
                 $optionSlideGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Slide'));
                 $optionSlideGroup->addOption($idPrefix . "slideCSS", "css", '', [
                     "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssTextAlign", "cssSize", "cssTransform"],
                     "cssOutput" => [
                         ["rule", $parentSelector . ">div:first-child>*", "box-sizing:border-box;"],
-                        ["selector", $parentSelector . ">div:first-child>*"]
+                        ["selector", $parentSelector . $customStyleSelector . ">div:first-child>*"]
                     ]
                 ]);
 
@@ -1266,28 +1271,28 @@ class ElementsTypes
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                     "cssOutput" => [
                         ["rule", $parentSelector . " [data-bearcms-slider-button-next]", "box-sizing:border-box;display:inline-block;"],
-                        ["selector", $parentSelector . " [data-bearcms-slider-button-next]"]
+                        ["selector", $parentSelector . $customStyleSelector . " [data-bearcms-slider-button-next]"]
                     ],
                     "defaultValue" => $defaultValue['nextButton']
                 ]);
-                $optionNextButtonGroup->addVisibility($idPrefix . "nextButtonVisibility", $parentSelector . " [data-bearcms-slider-button-next]", ['defaultValue' => $defaultValue['nextButtonVisibility']]);
+                $optionNextButtonGroup->addVisibility($idPrefix . "nextButtonVisibility", $parentSelector . $customStyleSelector . " [data-bearcms-slider-button-next]", ['defaultValue' => $defaultValue['nextButtonVisibility']]);
 
                 $optionPreviousButtonGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Previous button'));
                 $optionPreviousButtonGroup->addOption($idPrefix . "previousButtonCSS", "css", '', [
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                     "cssOutput" => [
                         ["rule", $parentSelector . " [data-bearcms-slider-button-previous]", "box-sizing:border-box;display:inline-block;"],
-                        ["selector", $parentSelector . " [data-bearcms-slider-button-previous]"]
+                        ["selector", $parentSelector . $customStyleSelector . " [data-bearcms-slider-button-previous]"]
                     ],
                     "defaultValue" => $defaultValue['previousButton']
                 ]);
-                $optionPreviousButtonGroup->addVisibility($idPrefix . "previousButtonVisibility", $parentSelector . " [data-bearcms-slider-button-previous]", ['defaultValue' => $defaultValue['previousButtonVisibility']]);
+                $optionPreviousButtonGroup->addVisibility($idPrefix . "previousButtonVisibility", $parentSelector . $customStyleSelector . " [data-bearcms-slider-button-previous]", ['defaultValue' => $defaultValue['previousButtonVisibility']]);
 
                 $optionIndicatorGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Indicators'));
                 $optionIndicatorGroup->addOption($idPrefix . "indicatorCSS", "css", '', [
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                     "cssOutput" => [
-                        ["selector", $parentSelector . " [data-bearcms-slider-indicator]"]
+                        ["selector", $parentSelector . $customStyleSelector . " [data-bearcms-slider-indicator]"]
                     ],
                     "defaultValue" => $defaultValue['indicator']
                 ]);
@@ -1295,7 +1300,7 @@ class ElementsTypes
                 $optionIndicatorSelectedGroup->addOption($idPrefix . "indicatorSelectedCSS", "css", '', [
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                     "cssOutput" => [
-                        ["selector", $parentSelector . " [data-bearcms-slider-indicator-selected]"]
+                        ["selector", $parentSelector . $customStyleSelector . " [data-bearcms-slider-indicator-selected]"]
                     ],
                     "defaultValue" => $defaultValue['indicatorSelected']
                 ]);
@@ -1305,11 +1310,11 @@ class ElementsTypes
                     "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssTextAlign", "cssSize", "cssTransform"],
                     "cssOutput" => [
                         ["rule", $parentSelector . ">div:last-child [data-bearcms-slider-indicators]", "box-sizing:border-box;"],
-                        ["selector", $parentSelector . ">div:last-child [data-bearcms-slider-indicators]"]
+                        ["selector", $parentSelector . $customStyleSelector . ">div:last-child [data-bearcms-slider-indicators]"]
                     ],
                     "defaultValue" => $defaultValue['indicators']
                 ]);
-                $optionIndicatorsContainerGroup->addVisibility($idPrefix . "indicatorsContainerVisibility", $parentSelector . ">div:last-child [data-bearcms-slider-indicators]", ['defaultValue' => $defaultValue['indicatorsVisibility']]);
+                $optionIndicatorsContainerGroup->addVisibility($idPrefix . "indicatorsContainerVisibility", $parentSelector . $customStyleSelector . ">div:last-child [data-bearcms-slider-indicators]", ['defaultValue' => $defaultValue['indicatorsVisibility']]);
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_CANVAS')) {

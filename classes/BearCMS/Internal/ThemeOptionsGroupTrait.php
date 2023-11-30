@@ -94,7 +94,7 @@ trait ThemeOptionsGroupTrait
     public function addElements(string $idPrefix, string $parentSelector, array $details = []): self
     {
         foreach (Internal\Themes::$elementsOptions as $type => $callable) {
-            if (array_search($type, ['columns', 'floatingBox', 'flexibleBox', 'slider']) !== false) {
+            if (array_search($type, ['columns', 'floatingBox', 'flexibleBox']) !== false) {
                 continue;
             }
             if (is_array($callable)) {
