@@ -973,6 +973,13 @@ class ElementsTypes
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['comments'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
                     $groupComments = $options->addGroup(__("bearcms.themes.options.Comments"));
+                    $groupComments->addOption($idPrefix . "CommentsCSS", "css", '', [
+                        "cssTypes" => ["cssPadding", "cssBorder", "cssRadius", "cssShadow", "cssBackground"],
+                        "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
+                        "cssOutput" => [
+                            ["selector", $parentSelector . " .bearcms-comments-element"]
+                        ]
+                    ]);
 
                     $groupComment = $groupComments->addGroup(__("bearcms.themes.options.comments.Comment"));
                     $groupComment->addOption($idPrefix . "CommentsCommentCSS", "css", '', [
