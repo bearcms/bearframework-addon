@@ -206,7 +206,7 @@ if ($hasStoreSupport) {
         'StoreItemsItemDescriptionCSS' => '{' . $elementTextJSON . '}',
         'StoreItemsItemPriceContainerCSS' => '{"padding-top":"' . $elementsSpacingHalf . '"}',
         'StoreItemsItemPriceCSS' => '{' . $elementTextJSON . '}',
-        'StoreItemsItemPriceOriginalCSS' => '{' . $elementTextJSON . '}',
+        'StoreItemsItemPriceOriginalCSS' => '{' . $elementTextJSON . ',"text-decoration":"line-through","font-size":"calc(var(--bearcms-template-text-font-size) * 0.8)"}',
 
         'storeItemPageImageGalleryImageCSS' => '{"border-top-left-radius":"' . $borderRadius . '","border-bottom-left-radius":"' . $borderRadius . '","border-top-right-radius":"' . $borderRadius . '","border-bottom-right-radius":"' . $borderRadius . '"}',
         'storeItemPageNameCSS' => '{' . $elementHeadingLargeJSON . '}',
@@ -216,7 +216,7 @@ if ($hasStoreSupport) {
         'storeItemPageOptionSelectCSS' => '{' . $elementInputJSON . ',"width":"auto"}',
         'storeItemPagePriceContainerCSS' => '{"padding-top":"' . $elementsSpacingHalf . '"}',
         'storeItemPagePriceCSS' => '{' . $elementTextJSON . '}',
-        'storeItemPagePriceOriginalCSS' => '{' . $elementTextJSON . '}',
+        'storeItemPagePriceOriginalCSS' => '{' . $elementTextJSON . ',"text-decoration":"line-through","font-size":"calc(var(--bearcms-template-text-font-size) * 0.8)"}',
         'storeItemPageBuyButtonContainerCSS' => '{"padding-top":"' . $elementsSpacingHalf . '","font-size":"0"}',
         'storeItemPageBuyButtonCSS' => '{' . $elementButtonJSON . '}',
     ]);
