@@ -567,6 +567,7 @@ class ElementsHelper
         }
         $innerContent .= '</div>';
         $innerContent .= '</div>';
+        $innerContent .= '<script>try{bearCMS.sliderElements.queueUpdate();}catch(e){}</script>';
 
         $content = '<html>'
             . '<head>';
@@ -607,10 +608,10 @@ class ElementsHelper
                     . '.bearcms-slider-element[data-bearcms-slider-alignment="end"]>div:first-child>*{justify-content:flex-end;}'
                     . '.bearcms-slider-element>div:first-child>*>*{width:100%;}'
                     . '.bearcms-slider-element' . $notEditableSelector . '>div:first-child>*:empty{display:none;}'
-                    . '.bearcms-slider-element>div:last-child{position:absolute;width:100%;height:100%;pointer-events:none;}'
-                    . '.bearcms-slider-element>div:last-child>[data-bearcms-slider-button]{opacity:0;pointer-events:none;cursor:pointer;}'
-                    . '.bearcms-slider-element>div:last-child>[data-bearcms-slider-button-visible]{opacity:1;pointer-events:all;}'
-                    . '.bearcms-slider-element>div:last-child [data-bearcms-slider-indicator]{cursor:pointer;pointer-events:all;display:inline-block;}'
+                    . '.bearcms-slider-element>div:nth-child(2){position:absolute;width:100%;height:100%;pointer-events:none;}'
+                    . '.bearcms-slider-element>div:nth-child(2)>[data-bearcms-slider-button]{opacity:0;pointer-events:none;cursor:pointer;}'
+                    . '.bearcms-slider-element>div:nth-child(2)>[data-bearcms-slider-button-visible]{opacity:1;pointer-events:all;}'
+                    . '.bearcms-slider-element>div:nth-child(2) [data-bearcms-slider-indicator]{cursor:pointer;pointer-events:all;display:inline-block;}'
                     . '</style>'
                     . self::getStyleHTML('slider', [], '.bearcms-slider-element:not([class*="bearcms-element-style-"])', true, !$editable);
             }

@@ -91,10 +91,12 @@ class Options implements \BearCMS\Internal\ThemeOptionsGroupInterface
 
     /**
      * 
+     * @param array $options
      * @return string
      */
-    public function getHTML(): string
+    public function getHTML(array $options = []): string
     {
-        return InternalThemes::processOptionsHTMLData(InternalThemes::getOptionsHTMLData($this->options));
+        $includeEditorData = array_search('internalIncludeEditorData', $options) !== false;
+        return InternalThemes::processOptionsHTMLData(InternalThemes::getOptionsHTMLData($this->options, false, false, $includeEditorData));
     }
 }

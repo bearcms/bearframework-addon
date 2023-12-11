@@ -337,7 +337,18 @@ class ElementStylesHelper
                     $filesToUpdate[$filename] = $newFilenameWithOptions;
                     $filesToDelete[] = $filenameWithoutOptions;
                 } else {
-                    $filesToKeep[] = $filenameWithoutOptions;
+                    if (array_search($filenameWithoutOptions, $filesInOldStyle) === false) {
+                        $realFilename = InternalData::getRealFilename($filenameWithoutOptions);
+                        $newDataKey = 'bearcms/files/elementstyleimage/temp.' . pathinfo($realFilename, PATHINFO_EXTENSION);
+                        $newDataKey = InternalData::generateNewFilename($newDataKey);
+                        $newFilename = $app->data->getFilename($newDataKey);
+                        copy($realFilename, $newFilename);
+                        UploadsSize::add($newDataKey, filesize($newFilename));
+                        $newFilenameWithOptions = InternalData::setFilenameOptions('data:' . $newDataKey, $filenameOptions);
+                        $filesToUpdate[$filename] = $newFilenameWithOptions;
+                    } else {
+                        $filesToKeep[] = $filenameWithoutOptions;
+                    }
                 }
             }
             $filesToDelete = array_merge($filesToDelete, array_diff($filesInOldStyle, $filesToKeep));
@@ -404,7 +415,7 @@ class ElementStylesHelper
             $app = App::get();
             $duplicatedDataKeys = [];
             $filesToUpdate = [];
-            foreach ($filenames as $filename) {
+            foreach ($filenames as $filename) { // it's not expected to have 'addon:' here
                 $filenameOptions = InternalData::getFilenameOptions($filename);
                 $filenameDataKey = InternalData::getFilenameDataKey($filename);
                 if ($filenameDataKey !== null && $app->data->exists($filenameDataKey)) {

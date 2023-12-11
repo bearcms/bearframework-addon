@@ -87,6 +87,7 @@ echo '<link rel="client-packages-embed" name="-bearcms-comments-element-form">';
 echo '<style>';
 echo '.bearcms-comments-element-text-input{display:block;resize:none;}';
 echo '.bearcms-comments-element-send-button{cursor:pointer;}';
+echo '.bearcms-comments-element [data-form-element-type="submit-button"]{display:flex;}';
 echo '</style></head><body>';
 $formID = 'cmntfrm' . uniqid();
 echo '<form id="' . $formID . '" class="bearcms-comments-element-form">';

@@ -96,33 +96,34 @@ class ElementsTypes
                         ]);
                         $options->addVisibility($idPrefix . "HeadingVisibility", $parentSelector);
                     } else {
-                        $group = $options->addGroup(__("bearcms.themes.options.Heading"));
-                        $customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
+                        $optionsGroup = $options->addGroup(__("bearcms.themes.options.Heading"));
+                        $defaultStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
+                        $optionsGroup->details['internalElementSelector'] = [$idPrefix, $parentSelector . " .bearcms-heading-element"];
 
-                        $groupLarge = $group->addGroup(__("bearcms.themes.options.Large"));
+                        $groupLarge = $optionsGroup->addGroup(__("bearcms.themes.options.Large"));
                         $groupLarge->addOption($idPrefix . "HeadingLargeCSS", "css", '', [
                             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element-large", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
-                                ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-large"]
+                                ["selector", $parentSelector . $defaultStyleSelector . " .bearcms-heading-element-large"]
                             ]
                         ]);
 
-                        $groupMedium = $group->addGroup(__("bearcms.themes.options.Medium"));
+                        $groupMedium = $optionsGroup->addGroup(__("bearcms.themes.options.Medium"));
                         $groupMedium->addOption($idPrefix . "HeadingMediumCSS", "css", '', [
                             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element-medium", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
-                                ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-medium"]
+                                ["selector", $parentSelector . $defaultStyleSelector . " .bearcms-heading-element-medium"]
                             ]
                         ]);
 
-                        $groupSmall = $group->addGroup(__("bearcms.themes.options.Small"));
+                        $groupSmall = $optionsGroup->addGroup(__("bearcms.themes.options.Small"));
                         $groupSmall->addOption($idPrefix . "HeadingSmallCSS", "css", '', [
                             "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                             "cssOutput" => [
                                 ["rule", $parentSelector . " .bearcms-heading-element-small", "box-sizing:border-box;font-weight:normal;padding:0;margin:0;"],
-                                ["selector", $parentSelector . $customStyleSelector . " .bearcms-heading-element-small"]
+                                ["selector", $parentSelector . $defaultStyleSelector . " .bearcms-heading-element-small"]
                             ]
                         ]);
                     }
@@ -145,10 +146,11 @@ class ElementsTypes
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
-                        $customStyleSelector = '';
+                        $defaultStyleSelector = '';
                     } else {
                         $optionsGroup = $options->addGroup(__("bearcms.themes.options.Text"));
-                        $customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
+                        $defaultStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
+                        $optionsGroup->details['internalElementSelector'] = [$idPrefix, $parentSelector . " .bearcms-text-element"];
                     }
                     $optionsGroup->addOption($idPrefix . "TextCSS", "css", '', [
                         "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))), // all but focus state
@@ -159,7 +161,7 @@ class ElementsTypes
                             ["rule", $parentSelector . " .bearcms-text-element li", "list-style-position:inside;margin:0;padding:0;"],
                             ["rule", $parentSelector . " .bearcms-text-element p", "margin:0;padding:0;"],
                             ["rule", $parentSelector . " .bearcms-text-element input", "margin:0;padding:0;"],
-                            ["selector", $parentSelector . $customStyleSelector . " .bearcms-text-element"]
+                            ["selector", $parentSelector . $defaultStyleSelector . " .bearcms-text-element"]
                         ]
                     ]);
 
@@ -169,7 +171,7 @@ class ElementsTypes
                         "cssTypes" => ["cssText", "cssTextShadow"],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-text-element a", "text-decoration:none;"],
-                            ["selector", $parentSelector . $customStyleSelector . " .bearcms-text-element a"]
+                            ["selector", $parentSelector . $defaultStyleSelector . " .bearcms-text-element a"]
                         ]
                     ]);
 
@@ -203,17 +205,18 @@ class ElementsTypes
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
-                        $customStyleSelector = '';
+                        $defaultStyleSelector = '';
                     } else {
                         $optionsGroup = $options->addGroup(__("bearcms.themes.options.Link"));
-                        $customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
+                        $defaultStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
+                        $optionsGroup->details['internalElementSelector'] = [$idPrefix, $parentSelector . " .bearcms-link-element"];
                     }
 
                     $optionsGroup->addOption($idPrefix . "LinkCSS", "css", '', [
                         "cssOptions" => ($isElementContext ? ["*/hoverState", "*/focusState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (isset($details['cssOptions']) ? $details['cssOptions'] : [])),
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-link-element a", "text-decoration:none;box-sizing:border-box;display:inline-block;"],
-                            ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element a"]
+                            ["selector", $parentSelector . $defaultStyleSelector . " .bearcms-link-element a"]
                         ]
                     ]);
 
@@ -223,7 +226,7 @@ class ElementsTypes
                         "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))), // all but focus state
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-link-element", "box-sizing:border-box;"],
-                            ["selector", $parentSelector . $customStyleSelector . " .bearcms-link-element"]
+                            ["selector", $parentSelector . $defaultStyleSelector . " .bearcms-link-element"]
                         ]
                     ]);
 
@@ -339,10 +342,11 @@ class ElementsTypes
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
-                        $customStyleSelector = '';
+                        $defaultStyleSelector = '';
                     } else {
                         $optionsGroup = $options->addGroup(__("bearcms.themes.options.Image"));
-                        $customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
+                        $defaultStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
+                        $optionsGroup->details['internalElementSelector'] = [$idPrefix, $parentSelector . " .bearcms-image-element"];
                     }
 
                     $optionsGroup->addOption($idPrefix . "ImageCSS", "css", '', [
@@ -351,7 +355,7 @@ class ElementsTypes
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-image-element", "overflow:hidden;box-sizing:border-box;"],
                             ["rule", $parentSelector . " .bearcms-image-element img", "border:0;"],
-                            ["selector", $parentSelector . $customStyleSelector . " .bearcms-image-element"]
+                            ["selector", $parentSelector . $defaultStyleSelector . " .bearcms-image-element"]
                         ]
                     ]);
                     if ($isElementContext) {
@@ -359,7 +363,7 @@ class ElementsTypes
                             "cssTypes" => ["cssSize", "cssTransform"],
                             "cssOptions" => ($isElementContext ? ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"] : (array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]))), // all but focus state
                             "cssOutput" => [
-                                ["selector", $parentSelector . $customStyleSelector . " .bearcms-image-element"]
+                                ["selector", $parentSelector . $defaultStyleSelector . " .bearcms-image-element"]
                             ]
                         ]);
                         $optionsGroup->addVisibility($idPrefix . "ImageVisibility", $parentSelector);
@@ -665,13 +669,22 @@ class ElementsTypes
             self::add($type);
             if ($hasThemes) {
                 InternalThemes::$elementsOptions['video'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+                    $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
+                    if ($isElementContext) {
+                        $optionsGroup = $options;
+                        $defaultStyleSelector = '';
+                    } else {
+                        $optionsGroup = $options->addGroup(__("bearcms.themes.options.Image"));
+                        $defaultStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]) >';
+                        $optionsGroup->details['internalElementSelector'] = [$idPrefix, $parentSelector . " .bearcms-video-element"];
+                    }
                     $group = $options->addGroup(__("bearcms.themes.options.Video"));
                     $group->addOption($idPrefix . "VideoCSS", "css", '', [
                         "cssTypes" => ["cssBorder", "cssRadius", "cssShadow"],
                         "cssOptions" => array_diff(isset($details['cssOptions']) ? $details['cssOptions'] : [], ["*/focusState"]), // all but focus state
                         "cssOutput" => [
-                            ["rule", $parentSelector . " .bearcms-video-element", "overflow:hidden;"],
-                            ["selector", $parentSelector . " .bearcms-video-element"]
+                            ["rule", $parentSelector . $defaultStyleSelector . " .bearcms-video-element", "overflow:hidden;"],
+                            ["selector", $parentSelector . $defaultStyleSelector . " .bearcms-video-element"]
                         ]
                     ]);
                 };
@@ -1228,29 +1241,30 @@ class ElementsTypes
                 $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                 if ($isElementContext) {
                     $optionsGroup = $options;
-                    $customStyleSelector = '';
+                    $defaultStyleSelector = '';
                 } else {
                     $optionsGroup = $options->addGroup(__("bearcms.themes.options.Slider"));
-                    $customStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]).bearcms-slider-element';
+                    $defaultStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"]).bearcms-slider-element';
+                    $optionsGroup->details['internalElementSelector'] = [$idPrefix, $parentSelector . " .bearcms-slider-element"];
                 }
                 $defaultValue = ElementsDataHelper::getDefaultElementStyle('slider');
                 $defaultLayoutValue = ElementsDataHelper::getDefaultElementStyle('slider', true)['layout']['value'];
                 $optionsGroup->addOption($idPrefix . "layout", "sliderLayout", '', [
                     "cssOutput" => [
-                        ["selector", $parentSelector . $customStyleSelector, '--css-to-attribute-data-bearcms-slider-direction:{cssPropertyValue(direction,' . $defaultLayoutValue['direction'] . ')};'],
-                        ["selector", $parentSelector . $customStyleSelector, '--css-to-attribute-data-bearcms-slider-alignment:{cssPropertyValue(alignment,' . $defaultLayoutValue['alignment'] . ')};'],
-                        ["selector", $parentSelector . $customStyleSelector, '--css-to-attribute-data-bearcms-slider-autoplay:{cssPropertyValue(autoplay)};'],
-                        ["selector", $parentSelector . $customStyleSelector, '--css-to-attribute-data-bearcms-slider-swipe:{cssPropertyValue(swipe)};'],
-                        ["selector", $parentSelector . $customStyleSelector, '--bearcms-slider-element-speed:{cssPropertyValue(speed,' . $defaultLayoutValue['speed'] . ')};'],
+                        ["selector", $parentSelector . $defaultStyleSelector, '--css-to-attribute-data-bearcms-slider-direction:{cssPropertyValue(direction,' . $defaultLayoutValue['direction'] . ')};'],
+                        ["selector", $parentSelector . $defaultStyleSelector, '--css-to-attribute-data-bearcms-slider-alignment:{cssPropertyValue(alignment,' . $defaultLayoutValue['alignment'] . ')};'],
+                        ["selector", $parentSelector . $defaultStyleSelector, '--css-to-attribute-data-bearcms-slider-autoplay:{cssPropertyValue(autoplay)};'],
+                        ["selector", $parentSelector . $defaultStyleSelector, '--css-to-attribute-data-bearcms-slider-swipe:{cssPropertyValue(swipe)};'],
+                        ["selector", $parentSelector . $defaultStyleSelector, '--bearcms-slider-element-speed:{cssPropertyValue(speed,' . $defaultLayoutValue['speed'] . ')};'],
                     ],
                     "defaultValue" => $defaultValue['layout'],
-                    "onHighlight" => [['cssSelector', $parentSelector . $customStyleSelector]]
+                    "onHighlight" => [['cssSelector', $parentSelector . $defaultStyleSelector]]
                 ]);
                 $optionsGroup->addOption($idPrefix . "css", "css", '', [
-                    "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
+                    "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"], // todo add "cssPadding" but find solution for the absolute div inside
                     "cssOptions" => ["*/hoverState", "*/focusState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                     "cssOutput" => [
-                        ["selector", $parentSelector . $customStyleSelector]
+                        ["selector", $parentSelector . $defaultStyleSelector]
                     ],
                 ]);
                 if ($isElementContext) {
@@ -1259,10 +1273,10 @@ class ElementsTypes
 
                 $optionSlideGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Slide'));
                 $optionSlideGroup->addOption($idPrefix . "slideCSS", "css", '', [
-                    "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssTextAlign", "cssSize", "cssTransform"],
+                    "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
                     "cssOutput" => [
                         ["rule", $parentSelector . ">div:first-child>*", "box-sizing:border-box;"],
-                        ["selector", $parentSelector . $customStyleSelector . ">div:first-child>*"]
+                        ["selector", $parentSelector . $defaultStyleSelector . ">div:first-child>*"]
                     ]
                 ]);
 
@@ -1271,28 +1285,28 @@ class ElementsTypes
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                     "cssOutput" => [
                         ["rule", $parentSelector . " [data-bearcms-slider-button-next]", "box-sizing:border-box;display:inline-block;"],
-                        ["selector", $parentSelector . $customStyleSelector . " [data-bearcms-slider-button-next]"]
+                        ["selector", $parentSelector . $defaultStyleSelector . " [data-bearcms-slider-button-next]"]
                     ],
                     "defaultValue" => $defaultValue['nextButton']
                 ]);
-                $optionNextButtonGroup->addVisibility($idPrefix . "nextButtonVisibility", $parentSelector . $customStyleSelector . " [data-bearcms-slider-button-next]", ['defaultValue' => $defaultValue['nextButtonVisibility']]);
+                $optionNextButtonGroup->addVisibility($idPrefix . "nextButtonVisibility", $parentSelector . $defaultStyleSelector . " [data-bearcms-slider-button-next]", ['defaultValue' => $defaultValue['nextButtonVisibility']]);
 
                 $optionPreviousButtonGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Previous button'));
                 $optionPreviousButtonGroup->addOption($idPrefix . "previousButtonCSS", "css", '', [
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                     "cssOutput" => [
                         ["rule", $parentSelector . " [data-bearcms-slider-button-previous]", "box-sizing:border-box;display:inline-block;"],
-                        ["selector", $parentSelector . $customStyleSelector . " [data-bearcms-slider-button-previous]"]
+                        ["selector", $parentSelector . $defaultStyleSelector . " [data-bearcms-slider-button-previous]"]
                     ],
                     "defaultValue" => $defaultValue['previousButton']
                 ]);
-                $optionPreviousButtonGroup->addVisibility($idPrefix . "previousButtonVisibility", $parentSelector . $customStyleSelector . " [data-bearcms-slider-button-previous]", ['defaultValue' => $defaultValue['previousButtonVisibility']]);
+                $optionPreviousButtonGroup->addVisibility($idPrefix . "previousButtonVisibility", $parentSelector . $defaultStyleSelector . " [data-bearcms-slider-button-previous]", ['defaultValue' => $defaultValue['previousButtonVisibility']]);
 
                 $optionIndicatorGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Indicators'));
                 $optionIndicatorGroup->addOption($idPrefix . "indicatorCSS", "css", '', [
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                     "cssOutput" => [
-                        ["selector", $parentSelector . $customStyleSelector . " [data-bearcms-slider-indicator]"]
+                        ["selector", $parentSelector . $defaultStyleSelector . " [data-bearcms-slider-indicator]"]
                     ],
                     "defaultValue" => $defaultValue['indicator']
                 ]);
@@ -1300,7 +1314,7 @@ class ElementsTypes
                 $optionIndicatorSelectedGroup->addOption($idPrefix . "indicatorSelectedCSS", "css", '', [
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
                     "cssOutput" => [
-                        ["selector", $parentSelector . $customStyleSelector . " [data-bearcms-slider-indicator-selected]"]
+                        ["selector", $parentSelector . $defaultStyleSelector . " [data-bearcms-slider-indicator-selected]"]
                     ],
                     "defaultValue" => $defaultValue['indicatorSelected']
                 ]);
@@ -1309,12 +1323,12 @@ class ElementsTypes
                 $optionIndicatorsContainerGroup->addOption($idPrefix . "indicatorsContainerCSS", "css", '', [
                     "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssTextAlign", "cssSize", "cssTransform"],
                     "cssOutput" => [
-                        ["rule", $parentSelector . ">div:last-child [data-bearcms-slider-indicators]", "box-sizing:border-box;"],
-                        ["selector", $parentSelector . $customStyleSelector . ">div:last-child [data-bearcms-slider-indicators]"]
+                        ["rule", $parentSelector . ">div:nth-child(2) [data-bearcms-slider-indicators]", "box-sizing:border-box;"],
+                        ["selector", $parentSelector . $defaultStyleSelector . ">div:nth-child(2) [data-bearcms-slider-indicators]"]
                     ],
                     "defaultValue" => $defaultValue['indicators']
                 ]);
-                $optionIndicatorsContainerGroup->addVisibility($idPrefix . "indicatorsContainerVisibility", $parentSelector . $customStyleSelector . ">div:last-child [data-bearcms-slider-indicators]", ['defaultValue' => $defaultValue['indicatorsVisibility']]);
+                $optionIndicatorsContainerGroup->addVisibility($idPrefix . "indicatorsContainerVisibility", $parentSelector . $defaultStyleSelector . ">div:nth-child(2) [data-bearcms-slider-indicators]", ['defaultValue' => $defaultValue['indicatorsVisibility']]);
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_CANVAS')) {

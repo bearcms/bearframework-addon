@@ -96,8 +96,9 @@ class Themes
         $theme = self::get($id);
         if ($theme instanceof \BearCMS\Themes\Theme && is_callable($theme->initialize)) {
             $app = App::get();
-            $currentUserID = $app->bearCMS->currentUser->exists() ? $app->bearCMS->currentUser->getID() : null;
-            $currentCustomizations = self::getCustomizations($id, $currentUserID);
+            $hasCurrentUser = $app->bearCMS->currentUser->exists();
+            $currentUserID = $hasCurrentUser ? $app->bearCMS->currentUser->getID() : null;
+            $currentCustomizations = self::getCustomizations($id, $currentUserID, $hasCurrentUser);
             call_user_func($theme->initialize, $currentCustomizations);
         }
     }
@@ -228,12 +229,13 @@ class Themes
     /**
      * 
      * @param string $id
-     * @param string $userID
+     * @param string|null $userID
+     * @param boolean $includeEditorData
      * @return string|null
      */
-    static private function getCustomizationsCacheKey(string $id, string $userID = null): ?string
+    static private function getCustomizationsCacheKey(string $id, string $userID = null, bool $includeEditorData = false): ?string
     {
-        return 'bearcms-theme-customizations-' . md5($id) . '-' . md5((string)$userID);
+        return 'bearcms-theme-customizations-' . md5($id) . '-' . md5((string)$userID) . '-' . (int)$includeEditorData;
     }
 
     /**
@@ -244,24 +246,28 @@ class Themes
      */
     static function clearCustomizationsCache(string $id, string $userID = null): void
     {
-        $cacheKey = self::getCustomizationsCacheKey($id, $userID);
         $app = App::get();
-        $app->data->delete('.temp/bearcms/theme-customizations-' . md5($cacheKey));
-        $app->cache->delete($cacheKey);
+        $clearCache = function ($cacheKey) use ($app) {
+            $app->data->delete('.temp/bearcms/themes/customizations-cache-' . md5($cacheKey));
+            $app->cache->delete($cacheKey);
+        };
+        $clearCache(self::getCustomizationsCacheKey($id, $userID, true));
+        $clearCache(self::getCustomizationsCacheKey($id, $userID, false));
     }
 
     /**
      * 
      * @param string $id
-     * @param string $userID
+     * @param string|null $userID
+     * @param boolean $includeEditorData
      * @return \BearCMS\Themes\Theme\Customizations|null
      */
-    static public function getCustomizations(string $id, string $userID = null): ?\BearCMS\Themes\Theme\Customizations
+    static public function getCustomizations(string $id, string $userID = null, bool $includeEditorData = false): ?\BearCMS\Themes\Theme\Customizations
     {
         if (!isset(self::$registrations[$id])) {
             return null;
         }
-        $localCacheKey = 'customizations-' . $id . '-' . $userID;
+        $localCacheKey = 'customizations-' . $id . '-' . $userID . '-' . (int)$includeEditorData;
         if (!isset(self::$cache[$localCacheKey])) {
             $app = App::get();
             $version = self::getVersion($id);
@@ -274,11 +280,11 @@ class Themes
             foreach (self::$pagesOptions as $key => $value) {
                 $pagesOptionsEnvKeyData[] = $key . (is_array($value) ? '$' . $value[0] : '');
             }
-            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v16'));
+            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v17'));
             $resultData = null;
             if ($useCache) {
-                $cacheKey = self::getCustomizationsCacheKey($id, $userID);
-                $tempDataKey = '.temp/bearcms/theme-customizations-' . md5($cacheKey);
+                $cacheKey = self::getCustomizationsCacheKey($id, $userID, $includeEditorData);
+                $tempDataKey = '.temp/bearcms/themes/customizations-cache-' . md5($cacheKey);
                 $saveToCache = false;
                 $saveToTempData = false;
                 $resultData = $app->cache->getValue($cacheKey);
@@ -314,7 +320,7 @@ class Themes
                 } else {
                     $themeOptions->setValues($currentValues);
                     $values = $themeOptions->getValues(true);
-                    $htmlData = self::getOptionsHTMLData($themeOptions->getList(), true, $userID === null);
+                    $htmlData = self::getOptionsHTMLData($themeOptions->getList(), true, $userID === null, $includeEditorData);
                 }
                 $resultData = [$values, $htmlData, $envKey];
                 if ($useCache) {
@@ -827,9 +833,10 @@ class Themes
      * @param array $options
      * @param boolean $includeDetails
      * @param boolean $optimizeForCompatibility
+     * @param boolean $includeEditorData
      * @return array
      */
-    static public function getOptionsHTMLData(array $options, bool $includeDetails = false, bool $optimizeForCompatibility = false): array
+    static public function getOptionsHTMLData(array $options, bool $includeDetails = false, bool $optimizeForCompatibility = false, $includeEditorData = false): array
     {
         $app = App::get();
 
@@ -837,6 +844,7 @@ class Themes
         $cssCode = '';
         $details = [];
         $linkTags = [];
+        $elementsDefaultValues = [];
 
         $addAssetDetails = function (string $filename) use ($app, &$details, $includeDetails, $optimizeForCompatibility): void {
             if (!isset($details['assets'])) {
@@ -1242,11 +1250,15 @@ class Themes
             return $result;
         };
 
-        $walkOptions = function ($options) use (&$addCSSRule, &$cssCode, &$walkOptions, &$addAssetDetails, &$replaceVariables, &$getCSSRuleValue, &$replaceStateSelectorsInSelector, $supportedStates, $getCodeOptionCssRule, $getCodeOptionStatesCssRules, $getStateCSSRules) {
+        $walkOptions = function ($options, &$optionsValues) use (&$addCSSRule, &$cssCode, &$walkOptions, &$addAssetDetails, &$replaceVariables, &$getCSSRuleValue, &$replaceStateSelectorsInSelector, &$elementsDefaultValues, $supportedStates, $getCodeOptionCssRule, $getCodeOptionStatesCssRules, $getStateCSSRules, $includeEditorData) {
+            $hasOptionsValues = $optionsValues !== null;
             foreach ($options as $optionIndex => $option) {
                 if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                     //$value = isset($option->details['value']) ? (is_array($option->details['value']) ? json_encode($option->details['value'], JSON_THROW_ON_ERROR) : $option->details['value']) : null; // array not used ???
                     $value = isset($option->details['value']) ? $option->details['value'] : (isset($option->details['defaultValue']) ? $option->details['defaultValue'] : null);
+                    if ($hasOptionsValues && $value !== null) {
+                        $optionsValues[$option->id] = $value;
+                    }
                     $valueDetails = self::getValueDetails($value, true);
                     $optionType = $option->type;
                     if ($optionType === 'cssCode') {
@@ -1316,11 +1328,28 @@ class Themes
                         }
                     }
                 } elseif ($option instanceof \BearCMS\Themes\Theme\Options\Group) {
-                    $walkOptions($option->getList());
+                    $hasElementSelector = isset($option->details['internalElementSelector']);
+                    $groupOptionValues = $includeEditorData && ($hasElementSelector || $hasOptionsValues) ? [] : null;
+                    $walkOptions($option->getList(), $groupOptionValues);
+                    if ($includeEditorData && $hasElementSelector) {
+                        $elementSelectorData = $option->details['internalElementSelector'];
+                        $idPrefix = $elementSelectorData[0];
+                        $temp = [];
+                        foreach ($groupOptionValues as $id => $value) {
+                            $temp[str_replace($idPrefix, '', $id)] = $value;
+                        }
+                        $groupOptionValues = $temp;
+                        $elementsDefaultValues[$elementSelectorData[1]] = $groupOptionValues;
+                    }
+                    if ($hasOptionsValues) {
+                        $optionsValues = array_merge($optionsValues, $groupOptionValues);
+                    }
                 }
             }
         };
-        $walkOptions($options);
+
+        $optionsValues = null; // not needed
+        $walkOptions($options, $optionsValues);
 
         $hasResponsiveAttributes = false;
         $hasEventAttributes = false;
@@ -1412,6 +1441,15 @@ class Themes
         }
         if ($hasRepeaterAttributes) {
             $html .= '<link rel="client-packages-embed" name="-bearcms-repeater">';
+        }
+
+        if ($includeEditorData) {
+            if (!empty($elementsDefaultValues)) {
+                $html .= '<script type="bearcms-editor-elements-default-values">' . json_encode($elementsDefaultValues) . '</script>';
+            }
+            if (!empty($details['googleFonts'])) {
+                $html .= '<script type="bearcms-editor-google-fonts">' . json_encode(array_keys($details['googleFonts'])) . '</script>';
+            }
         }
 
         if ($html !== '') {

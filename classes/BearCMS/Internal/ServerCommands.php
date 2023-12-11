@@ -729,6 +729,7 @@ class ServerCommands
      */
     static function elementStylesGet(array $data): ?array
     {
+        $app = App::get();
         $result = [];
 
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
@@ -747,8 +748,11 @@ class ServerCommands
 
         $result['styleID'] = $elementRealStyleID;
 
-        $getOutputHTML = function ($values, $selector) use ($elementType): string {
-            return ElementsHelper::getStyleHTML($elementType, $values, $selector);
+        $getOutputHTML = function ($values, $selector) use ($app, $elementType): string {
+            $outputHTML = ElementsHelper::getStyleHTML($elementType, $values, $selector);
+            $outputHTML = $app->components->process($outputHTML);
+            $outputHTML = $app->clientPackages->process($outputHTML);
+            return $outputHTML;
         };
 
         $styles = [];
