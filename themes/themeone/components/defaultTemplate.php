@@ -102,7 +102,7 @@ $elementTextJSON = $elementTextStyleJSON;
 $elementTextLinkJSON = $elementTextStyleJSON . ',"text-decoration":"underline"';
 $elementButtonJSON = $elementTextStyleJSON . ',"background-color":"transparent","background-color:hover":"rgba(0,0,0,0.04)","background-color:focus":"rgba(0,0,0,0.08)","background-color:active":"rgba(0,0,0,0.08)","border":"1px solid var(--bearcms-template-context-text-color)","text-decoration":"none","border-top-left-radius":"' . $borderRadius . '","border-bottom-left-radius":"' . $borderRadius . '","border-top-right-radius":"' . $borderRadius . '","border-bottom-right-radius":"' . $borderRadius . '","padding-left":"' . $buttonPadding . '","padding-right":"' . $buttonPadding . '","line-height":"' . $buttonHeight . '","height":"' . $buttonHeight . '"';
 $elementUserImageJSON = '"box-sizing":"border-box","width":"50px","height":"50px","margin-right":"' . $elementsSpacingHalf . '","border-top-left-radius":"' . $borderRadius . '","border-bottom-left-radius":"' . $borderRadius . '","border-top-right-radius":"' . $borderRadius . '","border-bottom-right-radius":"' . $borderRadius . '"';
-$elementSeparatorJSON = '"background-color":"var(--bearcms-template-context-text-color)","height":"2px","margin-top":"calc(' . $elementsSpacing . ' * 3)","margin-right":auto","margin-bottom":calc(' . $elementsSpacing . ' * 3)","margin-left":auto","opacity":"0.3"';
+$elementSeparatorJSON = '"background-color":"var(--bearcms-template-context-text-color)","height":"2px","margin-top":"calc(' . $elementsSpacing . ' * 3)","margin-right":"auto","margin-bottom":"calc(' . $elementsSpacing . ' * 3)","margin-left":"auto","opacity":"0.3"';
 
 $options = new \BearCMS\Themes\Theme\Options();
 $options->addElements('', '.bearcms-template-context');
@@ -140,7 +140,7 @@ $optionsValues = [
     'CommentsAuthorNameCSS' => '{' . $elementTextLinkJSON . '}',
     'CommentsTextCSS' => '{' . $elementTextJSON . '}',
     'CommentsTextLinksCSS' => '{' . $elementTextLinkJSON . '}',
-    'CommentsDateCSS' => '{' . $elementTextJSON . ',"font-size":"calc(var(--bearcms-template-text-font-size) * 0.8)";}',
+    'CommentsDateCSS' => '{' . $elementTextJSON . ',"font-size":"calc(var(--bearcms-template-text-font-size) * 0.8)"}',
     'CommentsTextInputCSS' => '{' . $elementInputJSON . ',' . $elementTextareaJSON . ',"height":"calc(var(--bearcms-template-text-font-size) * 8)"}',
     'CommentsSendButtonCSS' => '{"margin-top":"' . $elementsSpacingHalf . '",' . $elementButtonJSON . '}',
 
@@ -217,7 +217,7 @@ if ($hasStoreSupport) {
         'storeItemPagePriceContainerCSS' => '{"padding-top":"' . $elementsSpacingHalf . '"}',
         'storeItemPagePriceCSS' => '{' . $elementTextJSON . '}',
         'storeItemPagePriceOriginalCSS' => '{' . $elementTextJSON . '}',
-        'storeItemPageBuyButtonContainerCSS' => '{"padding-top":"' . $elementsSpacingHalf . '","font-size":"0";}',
+        'storeItemPageBuyButtonContainerCSS' => '{"padding-top":"' . $elementsSpacingHalf . '","font-size":"0"}',
         'storeItemPageBuyButtonCSS' => '{' . $elementButtonJSON . '}',
     ]);
 }
