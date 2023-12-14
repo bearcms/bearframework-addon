@@ -1250,6 +1250,11 @@ class ElementsTypes
                 $defaultValue = ElementsDataHelper::getDefaultElementStyle('slider');
                 $defaultLayoutValue = ElementsDataHelper::getDefaultElementStyle('slider', true)['layout']['value'];
                 $optionsGroup->addOption($idPrefix . "layout", "sliderLayout", '', [
+                    "states" => [
+                        ["type" => "size"],
+                        ["type" => "screenSize"],
+                        ["type" => "pageType"]
+                    ],
                     "cssOutput" => [
                         ["selector", $parentSelector . $defaultStyleSelector, '--css-to-attribute-data-bearcms-slider-direction:{cssPropertyValue(direction,' . $defaultLayoutValue['direction'] . ')};'],
                         ["selector", $parentSelector . $defaultStyleSelector, '--css-to-attribute-data-bearcms-slider-alignment:{cssPropertyValue(alignment,' . $defaultLayoutValue['alignment'] . ')};'],
@@ -1262,7 +1267,7 @@ class ElementsTypes
                 ]);
                 $optionsGroup->addOption($idPrefix . "css", "css", '', [
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"], // todo add "cssPadding" but find solution for the absolute div inside
-                    "cssOptions" => ["*/hoverState", "*/focusState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
+                    "cssOptions" => ["*/hoverState", "*/focusState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                     "cssOutput" => [
                         ["selector", $parentSelector . $defaultStyleSelector]
                     ],
