@@ -260,7 +260,6 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                 }
             }
         }
-
         for (var i = 0; i < slidesCount; i++) {
             var slide = slides[i];
             var slideSize = getSize(slide);
@@ -272,16 +271,11 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                 if (index > 0) {
                     x = '-' + slideX + 'px';
                 }
-                // if (i !== index) {
-                //     enabled = false;
-                // }
             } else if (direction === 'vertical') {
-                if (index > 0) {
-                    y = '-' + slideY + 'px';
+                if (i > 0) {
+                    x = '-' + (i * 100) + '%';
                 }
-                // if (i !== index) {
-                //     enabled = false;
-                // }
+                y = (slidesDefaultY[i] - slideY) + 'px';
             } else if (direction === 'swap') {
                 if (i > 0) {
                     x = '-' + (i * 100) + '%';
