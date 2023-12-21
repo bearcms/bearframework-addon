@@ -1237,7 +1237,7 @@ class ElementsTypes
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_SLIDER')) {
-            InternalThemes::$elementsOptions['slider'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+            InternalThemes::$elementsOptions['slider'] = ['v3', function ($options, $idPrefix, $parentSelector, $context, $details) {
                 $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                 if ($isElementContext) {
                     $optionsGroup = $options;
@@ -1259,6 +1259,7 @@ class ElementsTypes
                         ["selector", $parentSelector . $defaultStyleSelector, '--css-to-attribute-data-bearcms-slider-direction:{cssPropertyValue(direction,' . $defaultLayoutValue['direction'] . ')};'],
                         ["selector", $parentSelector . $defaultStyleSelector, '--css-to-attribute-data-bearcms-slider-alignment:{cssPropertyValue(alignment,' . $defaultLayoutValue['alignment'] . ')};'],
                         ["selector", $parentSelector . $defaultStyleSelector, '--css-to-attribute-data-bearcms-slider-autoplay:{cssPropertyValue(autoplay)};'],
+                        ["selector", $parentSelector . $defaultStyleSelector, '--css-to-attribute-data-bearcms-slider-infinite:{cssPropertyValue(infinite)};'],
                         ["selector", $parentSelector . $defaultStyleSelector, '--css-to-attribute-data-bearcms-slider-swipe:{cssPropertyValue(swipe)};'],
                         ["selector", $parentSelector . $defaultStyleSelector, '--bearcms-slider-element-speed:{cssPropertyValue(speed,' . $defaultLayoutValue['speed'] . ')};'],
                     ],
@@ -1334,7 +1335,7 @@ class ElementsTypes
                     "defaultValue" => $defaultValue['indicators']
                 ]);
                 $optionIndicatorsContainerGroup->addVisibility($idPrefix . "indicatorsContainerVisibility", $parentSelector . $defaultStyleSelector . ">div:nth-child(2) [data-bearcms-slider-indicators]", ['defaultValue' => $defaultValue['indicatorsVisibility']]);
-            };
+            }];
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_CANVAS')) {
             $type = new ElementType('canvas', 'bearcms-canvas-element', self::$contextDir . '/components/bearcmsCanvasElement.php');

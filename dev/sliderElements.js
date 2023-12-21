@@ -101,12 +101,12 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
         };
     };
 
-    var isVisible = function (element) {
-        var rect = element.getBoundingClientRect();
+    var isVisible = function (targetElement) {
+        var rect = targetElement.getBoundingClientRect();
         if (rect.width === 0 && rect.height === 0) { // display = none
             return false;
         }
-        var style = getComputedStyle(element);
+        var style = getComputedStyle(targetElement);
         var getBorderWidth = function (name) {
             return parseInt(style.getPropertyValue('border-' + name + '-width').replace('px', ''));
         };
@@ -119,22 +119,31 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
             [left, top],
             [right, top],
             [left, bottom],
-            [right, bottom]
+            [right, bottom],
+            [(right - left) / 2 + left, (bottom - top) / 2 + top], // center
+            [(right - left) / 2 + left, top], // center top
+            [(right - left) / 2 + left, bottom], // center top
+            [left, (bottom - top) / 2 + top], // center left
+            [right, (bottom - top) / 2 + top] // center right
         ];
         for (var i = 0; i < pointsToTest.length; i++) {
             var pointToTest = pointsToTest[i];
             var foundElement = document.elementFromPoint(pointToTest[0], pointToTest[1]);
-            if (foundElement === element || isChildOf(element, foundElement)) {
+            if (foundElement === targetElement || isChildOf(targetElement, foundElement)) {
                 return true;
             }
         }
         return false;
     };
 
+    var getSlidesElements = function (element) {
+        return element.firstChild.childNodes;
+    };
+
     var getSlides = function (element) {
         var result = [];
         var isEditableElement = isEditable(element);
-        var slides = element.firstChild.childNodes;
+        var slides = getSlidesElements(element);
         for (var i = 0; i < slides.length; i++) {
             var slide = slides[i];
             if (!isEditableElement && slide.childNodes.length === 0) {
@@ -160,6 +169,7 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
             for (var i = 0; i < slidesCount; i++) {
                 (function (index) {
                     container.childNodes[index].addEventListener('click', function () {
+                        prepareInfiniteSlide(element, null, index);
                         showSlide(element, index);
                     });
                 })(i);
@@ -183,12 +193,77 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
         };
     };
 
+    var getDirection = function (element) {
+        return element.getAttribute('data-bearcms-slider-direction');
+    };
+
+    var getAutoplay = function (element) {
+        return element.getAttribute('data-bearcms-slider-autoplay');
+    };
+
+    var isInfinite = function (element) {
+        return element.getAttribute('data-bearcms-slider-infinite') !== null;
+    };
+
+    var prepareInfiniteSlide = function (element, oldIndex, newIndex) {
+        if (oldIndex === null) {
+            oldIndex = getElementData(element, 'index');
+        }
+        var infiniteSlidesData = null;
+        if (isInfinite(element) && getDirection(element) === 'horizontal') {
+            infiniteSlidesData = {
+                firstIndexes: [],
+                lastIndexes: [],
+                indexes: [],
+                offsets: []
+            };
+            var slides = getSlides(element);
+            var slidesCount = slides.length;
+            var lastSlideIndex = slidesCount - 1;
+            var containerWidth = getSize(element.firstChild).width;
+            var allSlidesWidth = 0;
+            var slidesWidths = [];
+            for (var i = 0; i < slidesCount; i++) {
+                slidesWidths[i] = getSize(slides[i]).width;
+                allSlidesWidth += slidesWidths[i];
+            }
+            if (containerWidth * 3 <= allSlidesWidth && slidesCount >= 3) { // allow infinite if has enough slides
+                var slidesSum = 0;
+                for (var i = 0; i < slidesCount; i++) {
+                    infiniteSlidesData.offsets[i] = containerWidth + 'px';
+                    infiniteSlidesData.firstIndexes.push(i);
+                    slidesSum += slidesWidths[i];
+                    if (slidesSum >= containerWidth) {
+                        break;
+                    }
+                }
+                var slidesSum = 0;
+                for (var i = lastSlideIndex; i >= 0; i--) {
+                    infiniteSlidesData.offsets[i] = -allSlidesWidth + 'px';
+                    infiniteSlidesData.lastIndexes.push(i);
+                    slidesSum += slidesWidths[i];
+                    if (slidesSum >= containerWidth) {
+                        break;
+                    }
+                }
+                if (lastSlideIndex === newIndex && newIndex > oldIndex) { // forward to the last one
+                    infiniteSlidesData.indexes = infiniteSlidesData.firstIndexes;
+                } else if (newIndex === 0 && newIndex < oldIndex) { // back to the first one
+                    infiniteSlidesData.indexes = infiniteSlidesData.lastIndexes;
+                }
+            }
+        }
+        setElementData(element, 'infiniteSlidesData', infiniteSlidesData);
+    };
+
     var updateElement = function (element) {
-        var direction = element.getAttribute('data-bearcms-slider-direction');
-        var autoplay = element.getAttribute('data-bearcms-slider-autoplay');
+        var direction = getDirection(element);
+        var autoplay = getAutoplay(element);
+        var infinite = isInfinite(element);
+        var infiniteSlidesData = infinite ? getElementData(element, 'infiniteSlidesData') : null;
 
         if (isEditable(element)) {
-            var allSlides = element.firstChild.childNodes;
+            var allSlides = getSlidesElements(element);
             var allSlidesCount = allSlides.length;
             var lastSlide = allSlides[allSlidesCount - 1];
             if (lastSlide.childNodes.length > 0) {
@@ -196,7 +271,7 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                 rebuildIndicators(element);
             }
             var removeLastSlideIfLastTwoEmpty = function () {
-                var allSlides = element.firstChild.childNodes;
+                var allSlides = getSlidesElements(element);
                 var allSlidesCount = allSlides.length;
                 if (allSlidesCount >= 2) {
                     var lastSlide1 = allSlides[allSlidesCount - 1];
@@ -221,12 +296,13 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
         var index = getElementData(element, 'index');
         var previousButton = getPreviousButton(element);
         var nextButton = getNextButton(element);
-        setButtonVisibility(previousButton, index > 0);
-        setButtonVisibility(nextButton, index + 1 < slidesCount);
+        setButtonVisibility(previousButton, infinite ? true : index > 0);
+        setButtonVisibility(nextButton, infinite ? true : index + 1 < slidesCount);
 
         var slideX = 0;
         var slideY = 0;
         var slidesDefaultY = [0];
+        var lastSlideWidth = 0;
         if (direction === 'horizontal' || direction === 'vertical') {
             if (slidesCount > 0) {
                 var allSlidesWidth = 0;
@@ -249,6 +325,7 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                     }
                     allSlidesWidth += slideSize.width;
                     allSlidesHeight += slideSize.height;
+                    lastSlideWidth = slideSize.width;
                 }
                 var containerWidth = containerSize.width;
                 var containerHeight = containerSize.height;
@@ -260,6 +337,9 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                 }
             }
         }
+        var isInfinitePosition = function (value) {
+            return value.indexOf('calc(') !== -1;
+        };
         for (var i = 0; i < slidesCount; i++) {
             var slide = slides[i];
             var slideSize = getSize(slide);
@@ -270,6 +350,9 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
             if (direction === 'horizontal') {
                 if (index > 0) {
                     x = '-' + slideX + 'px';
+                }
+                if (infiniteSlidesData !== null && infiniteSlidesData.indexes.indexOf(i) !== -1) {
+                    x = 'calc(' + infiniteSlidesData.offsets[i] + ' + 0px)';
                 }
             } else if (direction === 'vertical') {
                 if (i > 0) {
@@ -285,10 +368,51 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                     enabled = false;
                 }
             }
+
+            var previousX = slide.style.getPropertyValue('--bse-slide-x');
+            var forceTransitionUpdate = function (targetElement) {
+                var style = window.getComputedStyle(targetElement);
+                var temp = style.getPropertyValue('transition');
+            };
+            var tempDisableTransition = false;
+            if (infiniteSlidesData !== null) {
+                var lastSlideIndex = slidesCount - 1;
+                var infiniteSlidesIndexes = infiniteSlidesData.indexes;
+                if (infiniteSlidesIndexes.indexOf(0) !== -1) { // first
+                    if (infiniteSlidesIndexes.indexOf(i) !== -1) {
+                        if (!isInfinitePosition(previousX) && previousX !== '0px') { // 0px
+                            tempDisableTransition = true;
+                        }
+                    } else if (infiniteSlidesData.firstIndexes.indexOf(i) === -1 && infiniteSlidesData.lastIndexes.indexOf(i) === -1 && previousX === '0px') {
+                        tempDisableTransition = true;
+                    }
+                } else if (infiniteSlidesIndexes.indexOf(lastSlideIndex) !== -1) { // last
+                    if (infiniteSlidesIndexes.indexOf(i) !== -1) {
+                        if (isInfinitePosition(x) && (previousX === '-' + lastSlideWidth + 'px' || previousX === '')) {
+                            tempDisableTransition = true;
+                        }
+                    } else if (infiniteSlidesData.firstIndexes.indexOf(i) === -1 && infiniteSlidesData.lastIndexes.indexOf(i) === -1 && previousX !== '-' + containerWidth + 'px') {
+                        tempDisableTransition = true;
+                    }
+                } else if (infiniteSlidesIndexes.length === 0) {
+                    if (isInfinitePosition(previousX)) {
+                        tempDisableTransition = true;
+                    }
+                }
+            }
+            if (tempDisableTransition) {
+                slide.style.setProperty('transition', 'none', 'important');
+                forceTransitionUpdate(slide);
+            }
             slide.style.setProperty('--bse-slide-x', x);
             slide.style.setProperty('--bse-slide-y', y);
             slide.style.setProperty('opacity', opacity);
             slide.style.setProperty('pointer-events', enabled ? 'auto' : 'none');
+            if (tempDisableTransition) {
+                forceTransitionUpdate(slide);
+                slide.style.removeProperty('transition');
+                forceTransitionUpdate(slide);
+            }
         }
 
         if (getElementData(element, 'autoplayValue') !== autoplay) {
@@ -339,15 +463,17 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
         if (change === 0) {
             return;
         }
+        var infinite = isInfinite(element);
         var index = getElementData(element, 'index');
-        index += change;
+        var newIndex = index + change;
         var slidesCount = getSlides(element).length;
-        if (index < 0) {
-            index = 0;
-        } else if (index > slidesCount - 1) {
-            index = slidesCount - 1;
+        if (newIndex < 0) {
+            newIndex = infinite ? slidesCount - 1 : 0;
+        } else if (newIndex > slidesCount - 1) {
+            newIndex = infinite ? 0 : slidesCount - 1;
         }
-        showSlide(element, index);
+        prepareInfiniteSlide(element, index, newIndex);
+        showSlide(element, newIndex);
     };
 
     var setSwipeValue = function (element, x, y) {
@@ -379,9 +505,17 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                     element.addEventListener('mouseleave', function () {
                         resumeAutoplay(element);
                     });
+                    var autoplayPausedByTouch = false;
+                    element.addEventListener('touchstart', function () {
+                        if (!autoplayPausedByTouch) {
+                            autoplayPausedByTouch = true;
+                            pauseAutoplay(element);
+                        }
+                    });
                     setElementData(element, 'index', 0);
                     rebuildIndicators(element);
                     updateIndicators(element);
+                    prepareInfiniteSlide(element, 1, 0);
 
                     (new MutationObserver(function () { // editable changed
                         // todo move to adjacent visible slide + update indicators
@@ -392,11 +526,12 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
 
                     var swipeEventTarget = touchEvents.addSwipe(element.firstChild, element.ownerDocument.body);
                     swipeEventTarget.addEventListener('start', function (e) {
+
                         setSwipeValue(element, '0px', '0px');
                         if (element.getAttribute('data-bearcms-slider-swipe') === null) {
                             return;
                         }
-                        var direction = element.getAttribute('data-bearcms-slider-direction');
+                        var direction = getDirection(element);
                         if (direction === 'horizontal' || direction === 'vertical') {
                             setTransitionsStatus(element, false);
                         }
@@ -405,7 +540,7 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                         if (element.getAttribute('data-bearcms-slider-swipe') === null) {
                             return;
                         }
-                        var direction = element.getAttribute('data-bearcms-slider-direction');
+                        var direction = getDirection(element);
                         if (direction === 'horizontal') {
                             setSwipeValue(element, e.changeX + 'px', '0px');
                         } else if (direction === 'vertical') {
@@ -418,7 +553,7 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                         }
                         setTransitionsStatus(element, true);
                         setSwipeValue(element, '0px', '0px');
-                        var direction = element.getAttribute('data-bearcms-slider-direction');
+                        var direction = getDirection(element);
                         var change = null;
                         if (direction === 'horizontal' || direction === 'swap') {
                             change = e.changeX;
@@ -434,6 +569,7 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                             if (direction === 'swap') {
                                 changeSlide(element, isForwardSwipe ? 1 : -1);
                             } else {
+                                var infinite = isInfinite(element);
                                 var index = getElementData(element, 'index');
                                 var slides = getSlides(element);
                                 var slidesCount = slides.length;
@@ -461,7 +597,10 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                                     sizeSum += targetSize;
                                 }
                                 if (newIndex === null) {
-                                    newIndex = !isForwardSwipe ? 0 : slidesCount - 1;
+                                    newIndex = isForwardSwipe ? slidesCount - 1 : 0;
+                                }
+                                if (infinite && newIndex === index) {
+                                    newIndex = isForwardSwipe ? 0 : slidesCount - 1;
                                 }
                                 changeSlide(element, newIndex - index);
                             }

@@ -600,7 +600,8 @@ class ElementsHelper
                     . '}'
                     //. '.bearcms-slider-element' . $notEditableSelector . ':not(:has(> div > div:empty)){display:none;}' // todo
                     . '.bearcms-slider-element>div:first-child{display:flex;overflow:hidden;width:100%;height:100%;}'
-                    . '.bearcms-slider-element>div:first-child>*{width:100%;flex:0 0 auto;display:flex;flex-direction:column;transition:transform var(--bearcms-slider-element-speed,0ms) ease-out,opacity var(--bearcms-slider-element-speed,0ms) ease-out;transform:translate(calc(var(--bse-slide-x,0px) + var(--bse-swipe-x,0px)),calc(var(--bse-slide-y,0px) + var(--bse-swipe-y,0px)))}'
+                    . '.bearcms-slider-element>div:first-child>*{width:100%;flex:0 0 auto;display:flex;flex-direction:column;transition:transform var(--bearcms-slider-element-speed,0ms) ease-out;transform:translate(calc(var(--bse-slide-x,0px) + var(--bse-swipe-x,0px)),calc(var(--bse-slide-y,0px) + var(--bse-swipe-y,0px)))}'
+                    . '.bearcms-slider-element[data-bearcms-slider-direction="swap"]>div:first-child>*{transition:opacity var(--bearcms-slider-element-speed,0ms) ease-out;transform:none;}'
                     . '.bearcms-slider-element[data-bearcms-slider-no-transition]>div:first-child>*{transition:none;}'
                     . '.bearcms-slider-element[data-bearcms-slider-alignment="start"]>div:first-child>*{justify-content:flex-start;}'
                     . '.bearcms-slider-element[data-bearcms-slider-alignment="center"]>div:first-child>*{justify-content:center;}'
