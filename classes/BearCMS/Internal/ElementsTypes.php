@@ -113,7 +113,7 @@ class ElementsTypes
                         $defaultStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"])';
                         $optionsGroup->details['internalElementSelector'] = [$idPrefix, $parentSelector . " .bearcms-heading-element"];
 
-                        $groupLarge = $optionsGroup->addGroup(__("bearcms.themes.options.Large"));
+                        $groupLarge = $optionsGroup->addGroup(__("bearcms.themes.options.HeadingLarge"));
                         $groupLarge->addOption($idPrefix . "HeadingLargeCSS", "css", '', [
                             "cssOptions" => ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                             "cssOutput" => [
@@ -133,7 +133,7 @@ class ElementsTypes
                             ]
                         ]);
 
-                        $groupMedium = $optionsGroup->addGroup(__("bearcms.themes.options.Medium"));
+                        $groupMedium = $optionsGroup->addGroup(__("bearcms.themes.options.HeadingMedium"));
                         $groupMedium->addOption($idPrefix . "HeadingMediumCSS", "css", '', [
                             "cssOptions" => ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                             "cssOutput" => [
@@ -153,7 +153,7 @@ class ElementsTypes
                             ]
                         ]);
 
-                        $groupSmall = $optionsGroup->addGroup(__("bearcms.themes.options.Small"));
+                        $groupSmall = $optionsGroup->addGroup(__("bearcms.themes.options.HeadingSmall"));
                         $groupSmall->addOption($idPrefix . "HeadingSmallCSS", "css", '', [
                             "cssOptions" => ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                             "cssOutput" => [
