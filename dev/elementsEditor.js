@@ -309,11 +309,20 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
                     if (typeof elementDefaultValue.HeadingLargeCSS !== 'undefined') { // special case for the heading element
                         var tagName = element.querySelector('.bearcms-heading-element').tagName.toLowerCase();
                         if (tagName === 'h1') {
-                            elementDefaultValue = { HeadingCSS: elementDefaultValue.HeadingLargeCSS };
+                            elementDefaultValue = { HeadingCSS: elementDefaultValue.HeadingLargeCSS, HeadingContainerCSS: elementDefaultValue.HeadingLargeContainerCSS };
                         } else if (tagName === 'h2') {
-                            elementDefaultValue = { HeadingCSS: elementDefaultValue.HeadingMediumCSS };
+                            elementDefaultValue = { HeadingCSS: elementDefaultValue.HeadingMediumCSS, HeadingContainerCSS: elementDefaultValue.HeadingMediumContainerCSS };
                         } else if (tagName === 'h3') {
-                            elementDefaultValue = { HeadingCSS: elementDefaultValue.HeadingSmallCSS };
+                            elementDefaultValue = { HeadingCSS: elementDefaultValue.HeadingSmallCSS, HeadingContainerCSS: elementDefaultValue.HeadingSmallContainerCSS };
+                        }
+                    }
+                    if (typeof elementDefaultValue.SeparatorLargeCSS !== 'undefined') { // special case for the separator element
+                        if (element.querySelector('.bearcms-separator-element-large') !== null) {
+                            elementDefaultValue = { SeparatorCSS: elementDefaultValue.SeparatorLargeCSS, SeparatorContainerCSS: elementDefaultValue.SeparatorLargeContainerCSS };
+                        } else if (element.querySelector('.bearcms-separator-element-medium') !== null) {
+                            elementDefaultValue = { SeparatorCSS: elementDefaultValue.SeparatorMediumCSS, SeparatorContainerCSS: elementDefaultValue.SeparatorMediumContainerCSS };
+                        } else if (element.querySelector('.bearcms-separator-element-small') !== null) {
+                            elementDefaultValue = { SeparatorCSS: elementDefaultValue.SeparatorSmallCSS, SeparatorContainerCSS: elementDefaultValue.SeparatorSmallContainerCSS };
                         }
                     }
                     break;

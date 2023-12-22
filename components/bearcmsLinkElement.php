@@ -19,15 +19,12 @@ list($linkURL, $linkOnClick, $linkHTML) = \BearCMS\Internal\Links::updateURL($ur
 echo '<html>';
 if ($isFullHtmlOutputType) {
     echo '<head><style>'
-        . '.bearcms-link-element{word-break:break-word;}'
-        . '.bearcms-link-element a{cursor:pointer;}'
+        . '.bearcms-link-element{word-break:break-word;cursor:pointer;}'
         . '</style></head>';
 }
 echo '<body>';
 
-echo '<div' . ($isFullHtmlOutputType ? ' class="bearcms-link-element"' : '') . '>';
-echo '<a title="' . htmlentities($title) . '"' . ($linkURL !== null ? ' href="' . htmlentities($linkURL) . '"' : '') . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '" role="button" onkeydown="if(event.keyCode===13){this.click();}"' : '') . ' tabindex="0">' . htmlspecialchars($text) . '</a>'; // htmlspecialchars(isset($text[0]) ? $text : $url)
-echo '</div>';
+echo '<a' . ($isFullHtmlOutputType ? ' class="bearcms-link-element"' : '') . ' title="' . htmlentities($title) . '"' . ($linkURL !== null ? ' href="' . htmlentities($linkURL) . '"' : '') . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '" role="button" onkeydown="if(event.keyCode===13){this.click();}"' : '') . ' tabindex="0">' . htmlspecialchars($text) . '</a>';
 
 if ($linkHTML !== null) {
     echo $linkHTML;
