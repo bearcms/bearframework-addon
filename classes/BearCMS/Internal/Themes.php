@@ -280,7 +280,7 @@ class Themes
             foreach (self::$pagesOptions as $key => $value) {
                 $pagesOptionsEnvKeyData[] = $key . (is_array($value) ? '$' . $value[0] : '');
             }
-            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v17'));
+            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v18'));
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID, $includeEditorData);
@@ -1085,7 +1085,6 @@ class Themes
         $getStateCSSRules = function (string $state, string $value, array $statesTypes, string $selector, int $optionIndex, int $stateIndex = null) use ($replaceStateSelectorsInSelector, $optimizeForCompatibility): array {
             $cssMediaQueries = []; // array of array of strings
             $attributes = [];
-            $cssStates = $selector;
             $cssTagStates = '';
             $unsupportedStates = '';
             $result = [];
@@ -1095,6 +1094,7 @@ class Themes
             $selector = $replaceStateSelectorsInSelector($selector, array_keys($stateParts), $replacedStateSelectors);
             $selectorParts = explode(' ', $selector);
             $selectorLastPart = $selectorParts[sizeof($selectorParts) - 1];
+            $cssStates = $selector;
 
             foreach ($stateParts as $name => $args) {
                 if (isset($statesTypes[$name])) {
