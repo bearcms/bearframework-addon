@@ -390,7 +390,13 @@ class Themes
             $zip->addFromString('manifest.json', json_encode($manifest, JSON_THROW_ON_ERROR));
             $zip->addFromString('values.json', json_encode($values, JSON_THROW_ON_ERROR));
             foreach ($filesToAttach as $filename => $attachmentName) {
-                $zip->addFromString($attachmentName, file_get_contents($filename));
+                $content = is_file($filename) ? file_get_contents($filename) : null;
+                if ($content === null) {
+                    $content = $app->assets->getContent($filename); // Try in assets. May has a custom handler.
+                }
+                if ($content !== null) {
+                    $zip->addFromString($attachmentName, $content);
+                }
             }
             $zip->close();
         } else {
