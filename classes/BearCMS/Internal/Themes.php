@@ -209,13 +209,15 @@ class Themes
                     $item = array_merge($option->details, [
                         "id" => $option->id,
                         "type" => $option->type,
-                        "name" => $option->name
+                        "name" => $option->name,
+                        "details" => $option->details,
                     ]);
                 } elseif ($option instanceof \BearCMS\Themes\Theme\Options\Group) {
                     $item = [
                         "type" => "group",
                         "name" => $option->name,
                         "description" => $option->description,
+                        "details" => $option->details,
                     ];
                     $item['options'] = $walkOptions($option->getList());
                 }
