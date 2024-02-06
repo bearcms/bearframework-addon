@@ -9,14 +9,15 @@
 
 namespace BearCMS\Internal;
 
-use BearFramework\App;
-
 /**
  * @internal
  * @codeCoverageIgnore
  */
 class Links
 {
+
+    static private $handlers = [];
+
     /**
      * 
      * @param string $url
@@ -44,7 +45,25 @@ class Links
             $onClick = "bearCMS.lightboxContent.open(" . json_encode($contentID) . ");";
             $url = null;
             $html = '<html><head><link rel="client-packages-embed" name="bearcms-lightbox-content"></head></html>';
+        } else {
+            foreach (self::$handlers as $prefix => $handlerCallback) {
+                if (strpos($url, $prefix) === 0) {
+                    [$url, $onClick, $html] = $handlerCallback(str_replace($prefix, '', $url));
+                    break;
+                }
+            }
         }
         return [$url, $onClick, $html !== null ? '<component src="data:base64,' . base64_encode($html) . '" />' : null];
+    }
+
+    /**
+     * 
+     * @param string $prefix Example bearcms-pages:
+     * @param callable $callback
+     * @return void
+     */
+    static function addHandler(string $prefix, callable $callback)
+    {
+        self::$handlers[$prefix] = $callback;
     }
 }

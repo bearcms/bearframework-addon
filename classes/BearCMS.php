@@ -387,6 +387,16 @@ class BearCMS
                     $package->addJSCode(include $this->context->dir . '/components/bearcmsBlogPostsElement/blogPostsElement.min.js.php');
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/blogPostsElement.js'));
                 });
+
+            \BearCMS\Internal\Links::addHandler('bearcms-blogpost:', function (string $value) {
+                $blogPost = $this->data->blogPosts->get($value); // todo optimize - use cache
+                if ($blogPost !== null) {
+                    $url = $blogPost->getURL();
+                } else {
+                    $url = '';
+                }
+                return [$url, null, null];
+            });
         }
 
         // Register a home page and the dynamic pages handler
@@ -398,6 +408,16 @@ class BearCMS
                         return Pages::handlePageRequest($this, $request);
                     }
                 ]);
+
+            \BearCMS\Internal\Links::addHandler('bearcms-page:', function (string $value) {
+                $page = $this->data->pages->get($value); // todo optimize - use cache
+                if ($page !== null) {
+                    $url = $page->getURL();
+                } else {
+                    $url = '';
+                }
+                return [$url, null, null];
+            });
         }
 
         // Register a redirects handler

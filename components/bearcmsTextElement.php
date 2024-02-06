@@ -14,7 +14,27 @@ $attributes = $isFullHtmlOutputType ? ' class="bearcms-text-element"' : '';
 
 $text = $component->text;
 
-$content = '<div' . $attributes . '>' . $text . '</div>';
+$linksHTML = '';
+
+$search = [];
+$replace = [];
+$matches = null;
+preg_match_all('/href=\"(.*?)\"/', $text, $matches);
+foreach ($matches[0] as $i => $match) {
+    $search[] = $match;
+    list($linkURL, $linkOnClick, $linkHTML) = \BearCMS\Internal\Links::updateURL($matches[1][$i]);
+    if ($linkURL !== null) {
+        $replace[] = 'href="' . htmlentities($linkURL) . '"';
+    } else if ($linkOnClick !== null) {
+        $replace[] = 'href="javascript:void(0);" onclick="' . htmlentities($linkOnClick) . '"';
+    }
+    $linksHTML .= (string)$linkHTML;
+}
+if (!empty($search)) {
+    $text = str_replace($search, $replace, $text);
+}
+
+$content = '<div' . $attributes . '>' . $text . $linksHTML . '</div>';
 
 echo '<html>';
 if ($isFullHtmlOutputType) {
