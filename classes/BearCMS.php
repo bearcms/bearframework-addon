@@ -414,13 +414,17 @@ class BearCMS
 
             $pagesPathsListCache = null;
             \BearCMS\Internal\Links::addHandler('bearcms-page:', function (string $value) use (&$pagesPathsListCache) {
-                if ($pagesPathsListCache === null) {
-                    $pagesPathsListCache = Internal\Data\Pages::getPathsList((Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) && $this->currentUser->exists() ? 'all' : 'publicOrSecret');
-                }
-                if (isset($pagesPathsListCache[$value])) {
-                    $url = $this->app->urls->get($pagesPathsListCache[$value]);
+                if ($value === 'home') {
+                    $url = $this->app->urls->get('/');
                 } else {
-                    $url = '';
+                    if ($pagesPathsListCache === null) {
+                        $pagesPathsListCache = Internal\Data\Pages::getPathsList((Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) && $this->currentUser->exists() ? 'all' : 'publicOrSecret');
+                    }
+                    if (isset($pagesPathsListCache[$value])) {
+                        $url = $this->app->urls->get($pagesPathsListCache[$value]);
+                    } else {
+                        $url = '';
+                    }
                 }
                 return [$url, null, null];
             });
