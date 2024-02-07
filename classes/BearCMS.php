@@ -388,10 +388,13 @@ class BearCMS
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/blogPostsElement.js'));
                 });
 
-            \BearCMS\Internal\Links::addHandler('bearcms-blogpost:', function (string $value) {
-                $blogPost = $this->data->blogPosts->get($value); // todo optimize - use cache
-                if ($blogPost !== null) {
-                    $url = $blogPost->getURL();
+            $blogPostsSlugsListCache = null;
+            \BearCMS\Internal\Links::addHandler('bearcms-blogpost:', function (string $value) use (&$blogPostsSlugsListCache) {
+                if ($blogPostsSlugsListCache === null) {
+                    $blogPostsSlugsListCache = Internal\Data\BlogPosts::getSlugsList('all');
+                }
+                if (isset($blogPostsSlugsListCache[$value])) {
+                    $url = $this->app->urls->get(Internal\Data\BlogPosts::getURLPath($value, $blogPostsSlugsListCache[$value]));
                 } else {
                     $url = '';
                 }
@@ -409,10 +412,13 @@ class BearCMS
                     }
                 ]);
 
-            \BearCMS\Internal\Links::addHandler('bearcms-page:', function (string $value) {
-                $page = $this->data->pages->get($value); // todo optimize - use cache
-                if ($page !== null) {
-                    $url = $page->getURL();
+            $pagesPathsListCache = null;
+            \BearCMS\Internal\Links::addHandler('bearcms-page:', function (string $value) use (&$pagesPathsListCache) {
+                if ($pagesPathsListCache === null) {
+                    $pagesPathsListCache = Internal\Data\Pages::getPathsList((Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) && $this->currentUser->exists() ? 'all' : 'publicOrSecret');
+                }
+                if (isset($pagesPathsListCache[$value])) {
+                    $url = $this->app->urls->get($pagesPathsListCache[$value]);
                 } else {
                     $url = '';
                 }

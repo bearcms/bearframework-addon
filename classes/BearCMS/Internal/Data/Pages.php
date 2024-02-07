@@ -11,8 +11,6 @@ namespace BearCMS\Internal\Data;
 
 use BearCMS\Internal;
 use BearCMS\Internal\Config;
-use BearCMS\Internal\ElementsHelper;
-use BearCMS\Internal\Data\Elements as InternalDataElements;
 use BearFramework\App;
 
 /**

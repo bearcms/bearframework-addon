@@ -10,6 +10,7 @@
 namespace BearCMS\Internal\Data;
 
 use BearCMS\Internal;
+use BearCMS\Internal\Config;
 use BearFramework\App;
 
 /**
@@ -122,5 +123,18 @@ class BlogPosts
                 self::set($blogPostID, $data);
             }
         }
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    static function getURLPath(string $id, string $slug = null): string
+    {
+        if (strlen((string)$id) === 0) {
+            return null;
+        }
+        $slug = (string)$slug;
+        return Config::$blogPagesPathPrefix . (strlen($slug) === 0 ? '-' . $id : $slug) . '/';
     }
 }

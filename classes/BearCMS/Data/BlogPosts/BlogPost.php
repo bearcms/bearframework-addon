@@ -11,6 +11,7 @@ namespace BearCMS\Data\BlogPosts;
 
 use BearFramework\App;
 use BearCMS\Internal\Config;
+use BearCMS\Internal\Data\BlogPosts as InternalBlogPosts;
 
 /**
  * @property string|null $id
@@ -101,8 +102,7 @@ class BlogPost extends \BearFramework\Models\Model
         if (strlen((string)$this->id) === 0) {
             return null;
         }
-        $slug = (string)$this->slug;
-        return Config::$blogPagesPathPrefix . (strlen($this->slug) === 0 ? '-' . $this->id : $slug) . '/';
+        return InternalBlogPosts::getURLPath($this->id, $this->slug);
     }
 
     /**
