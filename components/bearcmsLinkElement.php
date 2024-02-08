@@ -20,7 +20,7 @@ echo '<html>';
 if ($isFullHtmlOutputType) {
     echo '<head><style>'
         . '.bearcms-link-element{word-break:break-word;cursor:pointer;}'
-        . '.bearcms-element:has(>.bearcms-link-element){display:flex;}' // remove font-size spacing
+        // . '.bearcms-element:has(>.bearcms-link-element){display:flex;}' // remove font-size spacing // breaks text-align
         . '</style></head>';
 }
 echo '<body>';
