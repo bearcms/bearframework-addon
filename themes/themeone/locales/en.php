@@ -20,7 +20,7 @@ return [
     'bearcms.themes.themeone.options.Logo.Image.Effect.None' => 'None',
     'bearcms.themes.themeone.options.Logo.Image.Effect.Circle' => 'Circle',
     'bearcms.themes.themeone.options.Logo.Text' => 'Text',
-    'bearcms.themes.themeone.options.Logo.Text.Style' => 'Sstyle',
+    'bearcms.themes.themeone.options.Logo.Text.Style' => 'Style',
     'bearcms.themes.themeone.options.Navigation' => 'Navigation',
     'bearcms.themes.themeone.options.Visibility' => 'Visibility',
     'bearcms.themes.themeone.options.Visible' => 'Visible',
