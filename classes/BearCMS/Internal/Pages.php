@@ -100,7 +100,7 @@ class Pages
                 } else {
                     $pageType = 'other';
                 }
-                $content = '<html data-bearcms-page-type="' . $pageType . '"' . (empty($tags) ? '' : ' data-bearcms-tags="' . implode(' ', $tags) . '"') . '><head>';
+                $content = '<html data-bearcms-page-type="' . $pageType . '"' . ($bearCMS->currentUser->exists() ? ' data-bearcms-editor-page="page:' . $pageID . '"' : '') . '' . (empty($tags) ? '' : ' data-bearcms-tags="' . implode(' ', $tags) . '"') . '><head>';
                 if (isset($title[0])) {
                     $content .= '<title>' . htmlspecialchars($title) . '</title>';
                 }
