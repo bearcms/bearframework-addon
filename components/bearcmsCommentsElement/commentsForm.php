@@ -61,7 +61,7 @@ $form->onSubmit = function ($values) use ($component, $app, $context, $allowFile
     }
 
     if ($app->bearCMS->hasEventListeners('internalBeforeAddComment')) {
-        $eventDetails = new \BearCMS\Internal\BeforeAddCommentEventDetails($author, $text, $status, $files);
+        $eventDetails = new \BearCMS\Internal\BeforeAddCommentEventDetails($threadID, $author, $text, $status, $files);
         $app->bearCMS->dispatchEvent('internalBeforeAddComment', $eventDetails);
         $author = $eventDetails->author;
         $text = $eventDetails->text;

@@ -10,6 +10,7 @@
 namespace BearCMS\Internal;
 
 /**
+ * @property string $threadID
  * @property array $author
  * @property string $text
  * @property array $files
@@ -26,14 +27,18 @@ class BeforeAddCommentEventDetails
 
     /**
      * 
+     * @param string $threadID
      * @param array $author
      * @param string $text
      * @param string $status
      * @param array $files
      */
-    public function __construct(array $author, string $text, string $status, array $files = [])
+    public function __construct(string $threadID, array $author, string $text, string $status, array $files = [])
     {
         $this
+            ->defineProperty('threadID', [
+                'type' => 'string'
+            ])
             ->defineProperty('author', [
                 'type' => 'array'
             ])
@@ -55,6 +60,7 @@ class BeforeAddCommentEventDetails
             ->defineProperty('cancelMessage', [
                 'type' => 'string'
             ]);
+        $this->threadID = $threadID;
         $this->author = $author;
         $this->text = $text;
         $this->files = $files;
