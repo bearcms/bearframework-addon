@@ -55,7 +55,7 @@ $app->shortcuts
 
 BearCMS\Internal2::initialize();
 
-if ($app->request->method === 'GET') {
+if ($app->request->method === 'GET' && (string)$app->request->path !== '/robots.txt') {
     if (strpos($app->request->path, $app->assets->pathPrefix) !== 0) {
         $cacheBundlePath = $app->request->path->get();
         Internal\Data::loadCacheBundle($cacheBundlePath);

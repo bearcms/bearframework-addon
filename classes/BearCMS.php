@@ -299,7 +299,7 @@ class BearCMS
                 }
             ])
             ->add('/robots.txt', [
-                $disabledCheck,
+                //$disabledCheck, // removed to remove data/cache calls for robots.txt requests
                 function () {
                     return Internal\Controller::handleRobots();
                 }
@@ -613,8 +613,12 @@ class BearCMS
             });
 
         // Initialize to add asset dirs
-        $currentThemeID = Internal\CurrentTheme::getID();
-        Internal\Themes::initialize($currentThemeID);
+        if ((string)$this->app->request->path === '/robots.txt') {
+            // remove data/cache calls for robots.txt requests
+        } else {
+            $currentThemeID = Internal\CurrentTheme::getID();
+            Internal\Themes::initialize($currentThemeID);
+        }
 
         Config::$initialized = true;
     }
