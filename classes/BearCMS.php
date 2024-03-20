@@ -480,6 +480,7 @@ class BearCMS
                 });
         }
 
+        $preparedAssetsDetails = [];
         $this->app->assets
             ->addEventListener('beforePrepare', function (\BearFramework\App\Assets\BeforePrepareEventDetails $details) {
                 $filename = $details->filename;
@@ -510,7 +511,7 @@ class BearCMS
                     }
                 }
             })
-            ->addEventListener('beforePrepare', function (\BearFramework\App\Assets\BeforePrepareEventDetails $details) {
+            ->addEventListener('beforePrepare', function (\BearFramework\App\Assets\BeforePrepareEventDetails $details) use (&$preparedAssetsDetails) {
                 $filename = $details->filename;
                 $addonAssetsDir = $this->context->dir . '/assets/';
                 if (strpos($filename, $addonAssetsDir) === 0) {
@@ -539,15 +540,30 @@ class BearCMS
                     $matchingDir = $addonAssetsDir . 'c/';
                     if (strpos($filename, $matchingDir) === 0) {
                         $path = str_replace('\\', '/', substr($filename, strlen($this->context->dir)));
-                        $details->filename = (string)Internal\Data\Comments::getFilenameFromURL($path);
+                        $fileDetails = Internal\Data\Comments::getFileDetailsFromURL($path);
+                        if ($fileDetails !== null) {
+                            $details->filename = $fileDetails['filename'];
+                            if (isset($details->options['download']) && $details->options['download']) {
+                                $preparedAssetsDetails[$details->filename] = ['downloadName' => $fileDetails['name']];
+                            }
+                        } else {
+                            $details->filename = '';
+                        }
                     }
                 }
             });
 
         $this->app
-            ->addEventListener('beforeSendResponse', function (\BearFramework\App\BeforeSendResponseEventDetails $details) {
-                if (strpos((string) $this->app->request->path, $this->app->assets->pathPrefix) !== 0) {
-                    $response = $details->response;
+            ->addEventListener('beforeSendResponse', function (\BearFramework\App\BeforeSendResponseEventDetails $details) use (&$preparedAssetsDetails) {
+                $response = $details->response;
+                if (strpos((string) $this->app->request->path, $this->app->assets->pathPrefix) === 0) { // asset file
+                    if ($response instanceof App\Response\FileReader) {
+                        $filename = $response->filename;
+                        if (isset($preparedAssetsDetails[$filename], $preparedAssetsDetails[$filename]['downloadName'])) {
+                            $response->headers->set($response->headers->make('Content-Disposition', 'attachment; filename="' . $preparedAssetsDetails[$filename]['downloadName'] . '"'));
+                        }
+                    }
+                } else {
                     if ($response instanceof App\Response\NotFound) {
                         $response->headers->set($response->headers->make('Content-Type', 'text/html'));
                         $this->apply($response);

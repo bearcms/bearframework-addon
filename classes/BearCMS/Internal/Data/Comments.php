@@ -319,23 +319,45 @@ class Comments
     {
         $app = App::get();
         $context = $app->contexts->get(__DIR__);
-        return $context->assets->getURL('/assets/c/' . $threadID . '/' . $fileID, ['cacheMaxAge' => 86400, 'robotsNoIndex' => true, 'download' => true]);
+        return $context->assets->getURL($app->assets->pathPrefix . 'c/' . $threadID . '/' . $fileID, ['cacheMaxAge' => 86400, 'robotsNoIndex' => true, 'download' => true]);
     }
 
     /**
      * 
      * @param string $path
-     * @return string|null
+     * @return array|null
      */
-    static function getFilenameFromURL(string $path): ?string
+    static function getFileDetailsFromURL(string $path): ?array
     {
         $app = App::get();
-        $parts = explode('/', str_replace('/assets/c/', '', $path));
+        $parts = explode('/', str_replace($app->assets->pathPrefix . 'c/', '', $path));
         if (isset($parts[0], $parts[1])) {
             $threadID = $parts[0];
             $fileID = $parts[1];
-            return $app->data->getFilename(self::getFileDataKey($threadID, $fileID));
+            $name = null;
+            $thread = Internal2::$data2->commentsThreads->get($threadID);
+            if ($thread !== null) {
+                foreach ($thread->comments as $comment) {
+                    $files = $comment->files;
+                    if (is_array($files)) {
+                        foreach ($files as $fileData) {
+                            if ($fileData['id'] === $fileID) {
+                                $name = $fileData['name'];
+                                break;
+                            }
+                        }
+                    }
+                    if ($name !== null) {
+                        break;
+                    }
+                }
+            }
+            return [
+                'filename' => $app->data->getFilename(self::getFileDataKey($threadID, $fileID)),
+                'name' => $name
+            ];
         }
+        return null;
     }
 
     /**
