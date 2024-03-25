@@ -85,12 +85,13 @@ class Comments
         $app->data->set($app->data->make($dataKey, json_encode($data, JSON_THROW_ON_ERROR)));
 
         if (Config::hasFeature('NOTIFICATIONS')) {
-            if (!$app->tasks->exists('bearcms-send-new-comment-notification')) {
-                $app->tasks->add('bearcms-send-new-comment-notification', [
-                    'threadID' => $threadID,
-                    'commentID' => $commentID
-                ], ['id' => 'bearcms-send-new-comment-notification']);
-            }
+            $app->tasks->add('bearcms-send-new-comment-notification', [
+                'threadID' => $threadID,
+                'commentID' => $commentID,
+            ], [
+                'id' => 'bearcms-send-new-comment-notification-' . md5($threadID) . '-' . md5($commentID),
+                'ignoreIfExists' => true
+            ]);
         }
         $eventDetails = new \BearCMS\Internal\AddCommentEventDetails($threadID, $commentID);
         $app->bearCMS->dispatchEvent('internalAddComment', $eventDetails);

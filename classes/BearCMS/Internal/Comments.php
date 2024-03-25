@@ -48,8 +48,16 @@ class Comments
      */
     public static function sendNewCommentNotification(array $data): void
     {
+        $app = App::get();
         $threadID = $data['threadID'];
         $commentID = $data['commentID'];
+        if ($app->bearCMS->hasEventListeners('internalBeforeSendNewCommentNotification')) {
+            $eventDetails = new \BearCMS\Internal\BeforeSendNewCommentNotificationEventDetails($threadID, $commentID);
+            $app->bearCMS->dispatchEvent('internalBeforeSendNewCommentNotification', $eventDetails);
+            if ($eventDetails->cancel) {
+                return;
+            }
+        }
         $comments = Internal2::$data2->comments->getList()
             ->filterBy('threadID', $threadID)
             ->filterBy('id', $commentID);
