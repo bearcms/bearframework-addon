@@ -422,7 +422,7 @@ if ($hasLanguagesPicker) {
 }
 
 if ($hasLogoImage) {
-    $imageHTML = '<component src="bearcms-image-element" class="bearcms-template-logo"' . ($isHomePage ? '' : ' onClick="openUrl" url="' . htmlentities($app->urls->get()) . '"') . ' filename="' . htmlentities($logoImageDetails['filename']) . '" fileWidth="' . htmlentities($logoImageDetails['width']) . '" fileHeight="' . htmlentities($logoImageDetails['height']) . '"/>';
+    $imageHTML = '<component src="bearcms-image-element" class="bearcms-template-logo"' . ($isHomePage ? '' : ' onClick="openUrl" url="' . htmlentities($app->urls->get()) . '"') . ' filename="' . htmlentities((string)$logoImageDetails['filename']) . '" fileWidth="' . htmlentities((string)$logoImageDetails['width']) . '" fileHeight="' . htmlentities((string)$logoImageDetails['height']) . '"/>';
     echo '<div class="bearcms-template-logo-container">' . $imageHTML . '</div>';
 }
 if ($hasLogoText) {
