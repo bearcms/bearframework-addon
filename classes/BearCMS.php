@@ -316,8 +316,16 @@ class BearCMS
             ->add(['/-meta-og-image', '*/-meta-og-image'], [
                 $disabledCheck,
                 function (App\Request $request) {
-                    $path = substr((string) $request->path, 0, -strlen('-meta-og-image'));
-                    return Internal\Controller::handleMetaOGImage($path);
+                    $path = (string) $request->path;
+                    $index = strpos($path, '-meta-og-image');
+                    $pagePath = substr($path, 0, $index);
+                    $suffix = substr($path, $index + 14);
+                    if ($suffix !== '') {
+                        $response = new App\Response\PermanentRedirect($this->app->urls->get($pagePath . '-meta-og-image'));
+                        $response->headers->set($response->headers->make('Cache-Control', 'public, max-age=43200'));
+                        return $response;
+                    }
+                    return Internal\Controller::handleMetaOGImage($pagePath);
                 }
             ]);
 
