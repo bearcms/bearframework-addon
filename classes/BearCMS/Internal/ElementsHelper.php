@@ -542,7 +542,7 @@ class ElementsHelper
                 $slidesIndexes[] = (int)$slideIndex;
             }
         }
-        $slidesCount = (empty($slidesIndexes) ? 0 : max($slidesIndexes) + 1) + 1;
+        $slidesCount = (empty($slidesIndexes) ? 0 : max($slidesIndexes) + 1);
         for ($i = 0; $i < $slidesCount; $i++) {
             $slideContent = '';
             $addSlideContent = function ($slidesElementsData) use (&$slideContent, $editable, $contextData, $outputType) {

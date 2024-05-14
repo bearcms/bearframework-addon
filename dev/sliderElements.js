@@ -93,12 +93,23 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
         return false;
     };
 
-    var getSize = function (element) {
+    var getSize = function (element, includeMargins) {
+        if (typeof includeMargins === "undefined") {
+            includeMargins = false;
+        }
         var rect = element.getBoundingClientRect();
-        return {
-            width: rect.width,
-            height: rect.height,
-        };
+        if (includeMargins) {
+            var style = window.getComputedStyle(element);
+            return {
+                width: rect.width + parseInt(style.marginLeft) + parseInt(style.marginRight), // parseInt removes px
+                height: rect.height + parseInt(style.marginTop) + parseInt(style.marginBottom)
+            };
+        } else {
+            return {
+                width: rect.width,
+                height: rect.height,
+            };
+        }
     };
 
     var isVisible = function (targetElement) {
@@ -180,6 +191,11 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
     var updateIndicators = function (element) {
         var index = getElementData(element, 'index');
         var container = element.querySelector('[data-bearcms-slider-indicators]');
+        if (areAllSlidesVisible(element)) {
+            container.style.display = 'none';
+        } else {
+            container.style.removeProperty('display');
+        }
         var buttons = container.childNodes;
         for (var i = 0; i < buttons.length; i++) {
             if (typeof buttons[i] !== 'undefined') {
@@ -205,6 +221,30 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
         return element.getAttribute('data-bearcms-slider-infinite') !== null;
     };
 
+    var areAllSlidesVisible = function (element) {
+        var direction = getDirection(element);
+        if (direction === 'horizontal' || direction === 'vertical') {
+            var containerSize = getSize(element.firstChild);
+            var allSlidesSize = 0;
+            var slides = getSlides(element);
+            var slidesCount = slides.length;
+            for (var i = 0; i < slidesCount; i++) {
+                var slideSize = getSize(slides[i], true);
+                if (direction === 'horizontal') {
+                    allSlidesSize += slideSize.width;
+                } else {
+                    allSlidesSize += slideSize.height;
+                }
+            }
+            if (direction === 'horizontal') {
+                return allSlidesSize < containerSize.width;
+            } else {
+                return allSlidesSize < containerSize.height;
+            }
+        }
+        return false;
+    }
+
     var prepareInfiniteSlide = function (element, oldIndex, newIndex) {
         if (oldIndex === null) {
             oldIndex = getElementData(element, 'index');
@@ -224,7 +264,7 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
             var allSlidesWidth = 0;
             var slidesWidths = [];
             for (var i = 0; i < slidesCount; i++) {
-                slidesWidths[i] = getSize(slides[i]).width;
+                slidesWidths[i] = getSize(slides[i], true).width;
                 allSlidesWidth += slidesWidths[i];
             }
             if (containerWidth * 3 <= allSlidesWidth && slidesCount >= 3) { // allow infinite if has enough slides
@@ -298,7 +338,17 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
         var nextButton = getNextButton(element);
         setButtonVisibility(previousButton, infinite ? true : index > 0);
         setButtonVisibility(nextButton, infinite ? true : index + 1 < slidesCount);
-
+        var allSlidesAreVisible = areAllSlidesVisible(element);
+        if (allSlidesAreVisible) {
+            previousButton.style.display = 'none';
+        } else {
+            previousButton.style.removeProperty('display');
+        }
+        if (allSlidesAreVisible) {
+            nextButton.style.display = 'none';
+        } else {
+            nextButton.style.removeProperty('display');
+        }
         var slideX = 0;
         var slideY = 0;
         var slidesDefaultY = [0];
@@ -310,7 +360,7 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                 var containerSize = getSize(element.firstChild);
                 for (var i = 0; i < slidesCount; i++) {
                     var slide = slides[i];
-                    var slideSize = getSize(slide);
+                    var slideSize = getSize(slide, true);
                     if (i < index) {
                         slideX += slideSize.width;
                         slideY += slideSize.height;
@@ -342,7 +392,7 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
         };
         for (var i = 0; i < slidesCount; i++) {
             var slide = slides[i];
-            var slideSize = getSize(slide);
+            var slideSize = getSize(slide, true);
             var x = '0px';
             var y = '0px';
             var opacity = '1';
@@ -372,7 +422,7 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
             var previousX = slide.style.getPropertyValue('--bse-slide-x');
             var forceTransitionUpdate = function (targetElement) {
                 var style = window.getComputedStyle(targetElement);
-                var temp = style.getPropertyValue('transition');
+                var temp = style.getPropertyValue('transition'); // force
             };
             var tempDisableTransition = false;
             if (infiniteSlidesData !== null) {
@@ -526,9 +576,11 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
 
                     var swipeEventTarget = touchEvents.addSwipe(element.firstChild, element.ownerDocument.body);
                     swipeEventTarget.addEventListener('start', function (e) {
-
                         setSwipeValue(element, '0px', '0px');
                         if (element.getAttribute('data-bearcms-slider-swipe') === null) {
+                            return;
+                        }
+                        if (areAllSlidesVisible(element)) {
                             return;
                         }
                         var direction = getDirection(element);
@@ -540,6 +592,9 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                         if (element.getAttribute('data-bearcms-slider-swipe') === null) {
                             return;
                         }
+                        if (areAllSlidesVisible(element)) {
+                            return;
+                        }
                         var direction = getDirection(element);
                         if (direction === 'horizontal') {
                             setSwipeValue(element, e.changeX + 'px', '0px');
@@ -549,6 +604,9 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                     });
                     swipeEventTarget.addEventListener('end', function (e) {
                         if (element.getAttribute('data-bearcms-slider-swipe') === null) {
+                            return;
+                        }
+                        if (areAllSlidesVisible(element)) {
                             return;
                         }
                         setTransitionsStatus(element, true);
@@ -588,7 +646,7 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                                 for (var i = 0; i < indexesToCheck.length; i++) {
                                     var indexToCheck = indexesToCheck[i];
                                     var slide = slides[indexToCheck];
-                                    var slideSize = getSize(slide);
+                                    var slideSize = getSize(slide, true);
                                     var targetSize = direction === 'horizontal' ? slideSize.width : slideSize.height;
                                     if (sizeSum + (isForwardSwipe ? 0 : targetSize) >= absChange) {
                                         newIndex = indexToCheck + (isForwardSwipe ? 0 : -1);
@@ -618,6 +676,10 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
 
     document.addEventListener('readystatechange', function () { // interactive or complete
         update();
+    });
+
+    window.addEventListener('resize', function () {
+        queueUpdate();
     });
 
     if (document.readyState === 'complete') {

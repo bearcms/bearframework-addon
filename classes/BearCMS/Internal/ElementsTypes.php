@@ -1561,6 +1561,7 @@ class ElementsTypes
                 $optionSlideGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Slide'));
                 $optionSlideGroup->addOption($idPrefix . "slideCSS", "css", '', [
                     "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize"],
+                    "cssOptions" => ["*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState", "*/firstChildState", "*/lastChildState"],
                     "cssOutput" => [
                         ["rule", $parentSelector . ">div:first-child>*", "box-sizing:border-box;"],
                         ["selector", $parentSelector . $defaultStyleSelector . ">div:first-child>*"]
@@ -1570,6 +1571,7 @@ class ElementsTypes
                 $optionNextButtonGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Next button'));
                 $optionNextButtonGroup->addOption($idPrefix . "nextButtonCSS", "css", '', [
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
+                    "cssOptions" => ["*/hoverState", "*/focusState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                     "cssOutput" => [
                         ["rule", $parentSelector . " [data-bearcms-slider-button-next]", "box-sizing:border-box;display:inline-block;"],
                         ["selector", $parentSelector . $defaultStyleSelector . " [data-bearcms-slider-button-next]"]
@@ -1581,6 +1583,7 @@ class ElementsTypes
                 $optionPreviousButtonGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Previous button'));
                 $optionPreviousButtonGroup->addOption($idPrefix . "previousButtonCSS", "css", '', [
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
+                    "cssOptions" => ["*/hoverState", "*/focusState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                     "cssOutput" => [
                         ["rule", $parentSelector . " [data-bearcms-slider-button-previous]", "box-sizing:border-box;display:inline-block;"],
                         ["selector", $parentSelector . $defaultStyleSelector . " [data-bearcms-slider-button-previous]"]
@@ -1592,6 +1595,7 @@ class ElementsTypes
                 $optionIndicatorGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Indicators'));
                 $optionIndicatorGroup->addOption($idPrefix . "indicatorCSS", "css", '', [
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
+                    "cssOptions" => ["*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState", "*/firstChildState", "*/lastChildState"],
                     "cssOutput" => [
                         ["selector", $parentSelector . $defaultStyleSelector . " [data-bearcms-slider-indicator]"]
                     ],
@@ -1600,6 +1604,7 @@ class ElementsTypes
                 $optionIndicatorSelectedGroup = $optionIndicatorGroup->addGroup(__('bearcms.themes.options.slider.IndicatorSelected'));
                 $optionIndicatorSelectedGroup->addOption($idPrefix . "indicatorSelectedCSS", "css", '', [
                     "cssTypes" => ["cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssSize", "cssTransform"],
+                    "cssOptions" => ["*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                     "cssOutput" => [
                         ["selector", $parentSelector . $defaultStyleSelector . " [data-bearcms-slider-indicator-selected]"]
                     ],
@@ -1609,6 +1614,7 @@ class ElementsTypes
                 $optionIndicatorsContainerGroup = $optionIndicatorGroup->addGroup(__("bearcms.themes.options.Container"));
                 $optionIndicatorsContainerGroup->addOption($idPrefix . "indicatorsContainerCSS", "css", '', [
                     "cssTypes" => ["cssPadding", "cssMargin", "cssBorder", "cssRadius", "cssShadow", "cssBackground", "cssTextAlign", "cssSize", "cssTransform"],
+                    "cssOptions" => ["*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                     "cssOutput" => [
                         ["rule", $parentSelector . ">div:nth-child(2) [data-bearcms-slider-indicators]", "box-sizing:border-box;"],
                         ["selector", $parentSelector . $defaultStyleSelector . ">div:nth-child(2) [data-bearcms-slider-indicators]"]
