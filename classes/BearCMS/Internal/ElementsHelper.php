@@ -607,6 +607,7 @@ class ElementsHelper
                     . '.bearcms-slider-element[data-bearcms-slider-alignment="center"]>div:first-child>*{justify-content:center;}'
                     . '.bearcms-slider-element[data-bearcms-slider-alignment="end"]>div:first-child>*{justify-content:flex-end;}'
                     . '.bearcms-slider-element>div:first-child>*>*{width:100%;}'
+                    . '.bearcms-slider-element' . $notEditableSelector . ':not(:has( .bearcms-element)){display:none;}'
                     . '.bearcms-slider-element' . $notEditableSelector . '>div:first-child>*:empty{display:none;}'
                     . '.bearcms-slider-element>div:nth-child(2){position:absolute;width:100%;height:100%;pointer-events:none;}'
                     . '.bearcms-slider-element>div:nth-child(2)>[data-bearcms-slider-button]{opacity:0;pointer-events:none;cursor:pointer;}'
