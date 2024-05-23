@@ -305,9 +305,9 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
         if (isEditable(element)) {
             var allSlides = getSlidesElements(element);
             var allSlidesCount = allSlides.length;
-            var lastSlide = allSlides[allSlidesCount - 1];
-            if (lastSlide.childNodes.length > 0) {
-                lastSlide.parentNode.insertAdjacentHTML("beforeend", "<div></div>");
+            var lastSlide = allSlidesCount > 0 ? allSlides[allSlidesCount - 1] : null;
+            if (lastSlide === null || lastSlide.childNodes.length > 0) {
+                element.firstChild.insertAdjacentHTML("beforeend", "<div></div>");
                 rebuildIndicators(element);
             }
             var removeLastSlideIfLastTwoEmpty = function () {
