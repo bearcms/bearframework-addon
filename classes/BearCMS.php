@@ -827,7 +827,7 @@ class BearCMS
                 }
             }
             if ($fontFacesCSS !== '') {
-                $html .= '<style>' . $fontFacesCSS . '</style>';
+                $html .= '<style' . ($this->currentUser->exists() ? ' data-bearcms-editor-fonts' : '') . '>' . $fontFacesCSS . '</style>';
             }
         }
 
