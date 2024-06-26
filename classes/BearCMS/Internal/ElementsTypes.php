@@ -213,7 +213,7 @@ class ElementsTypes
 
                     $groupLinks = $optionsGroup->addGroup(__("bearcms.themes.options.Links"));
                     $groupLinks->addOption($idPrefix . "TextLinkCSS", "css", '', [
-                        "cssOptions" => ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
+                        "cssOptions" => ["*/hoverState", "*/focusState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                         "cssTypes" => ["cssText", "cssTextShadow", "cssBackground"],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-text-element a", "text-decoration:none;"],
