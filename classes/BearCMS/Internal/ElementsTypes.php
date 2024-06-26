@@ -214,7 +214,7 @@ class ElementsTypes
                     $groupLinks = $optionsGroup->addGroup(__("bearcms.themes.options.Links"));
                     $groupLinks->addOption($idPrefix . "TextLinkCSS", "css", '', [
                         "cssOptions" => ["*/hoverState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
-                        "cssTypes" => ["cssText", "cssTextShadow"],
+                        "cssTypes" => ["cssText", "cssTextShadow", "cssBackground"],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-text-element a", "text-decoration:none;"],
                             ["selector", $parentSelector . $defaultStyleSelector . "> .bearcms-text-element a"]
@@ -874,7 +874,7 @@ class ElementsTypes
 
                     $groupElements = $optionsGroup->addGroup(__("bearcms.themes.options.Elements"));
                     $groupElements->addOption($idPrefix . "NavigationItemLinkCSS", "css", '', [
-                        "cssTypes" => ["cssText", "cssTextShadow"],
+                        "cssTypes" => ["cssText", "cssTextShadow", "cssBackground"],
                         "cssOptions" => ["*/hoverState", "*/focusState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-navigation-element-item a", "text-decoration:none;"], // treat as text link // no max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
@@ -953,7 +953,7 @@ class ElementsTypes
 
                     $groupLinks = $optionsGroup->addGroup(__("bearcms.themes.options.Links"));
                     $groupLinks->addOption($idPrefix . "HtmlLinkCSS", "css", '', [
-                        "cssTypes" => ["cssText", "cssTextShadow"],
+                        "cssTypes" => ["cssText", "cssTextShadow", "cssBackground"],
                         "cssOptions" => ["*/hoverState", "*/focusState", "*/activeState", "*/visibilityState", "*/sizeState", "*/screenSizeState", "*/pageTypeState", "*/tagsState"],
                         "cssOutput" => [
                             ["rule", $parentSelector . " .bearcms-html-element a", "text-decoration:none;"],
