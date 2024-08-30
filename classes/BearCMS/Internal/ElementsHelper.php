@@ -242,7 +242,7 @@ class ElementsHelper
                     }
 
                     $selectorPrefix = '.bearcms-columns-element[data-bearcms-columns-widths="' . InternalThemes::escapeCSSValue($widths, true) . '"]';
-                    $notEditableSelector = $editable ? ':not([data-rvr-editable])' : '';
+                    $notEditableSelector = $editable || true ? ':not([data-rvr-editable])' : ''; // TODO Add check if in admin mode. There are problems if there is not editable and editable element of this kind.
 
                     $emptySelectorPart = '';
                     foreach ($columnsStyles as $index => $columnStyle) {
@@ -337,7 +337,7 @@ class ElementsHelper
                 }
                 $attributes .= ' class="' . $classAttributeValue . '"';
 
-                $notEditableSelector = $editable ? ':not([data-rvr-editable])' : '';
+                $notEditableSelector = $editable || true ? ':not([data-rvr-editable])' : ''; // TODO Add check if in admin mode. There are problems if there is not editable and editable element of this kind.
                 $content .= '<style>'
                     . '.bearcms-floating-box-element{--css-to-attribute-data-bearcms-floating-box-position:' . $defaultLayoutValue['position'] . ';--css-to-attribute-data-bearcms-floating-box-width:' . $defaultLayoutValue['width'] . ';}'
                     . '.bearcms-floating-box-element' . $notEditableSelector . ':has(> div:first-child:empty):has(> div:last-child:empty){display:none;}'
@@ -464,7 +464,7 @@ class ElementsHelper
                 }
                 $attributes .= ' class="' . $classAttributeValue . '"';
 
-                $notEditableSelector = $editable ? ':not([data-rvr-editable])' : '';
+                $notEditableSelector = $editable || true ? ':not([data-rvr-editable])' : ''; // TODO Add check if in admin mode. There are problems if there is not editable and editable element of this kind.
                 $content .= '<style>'
                     . '.bearcms-flexible-box-element{position:relative;box-sizing:border-box;display:flex;flex-direction:column;--css-to-attribute-data-bearcms-flexible-box-direction:' . $defaultLayoutValue['direction'] . ';--css-to-attribute-data-bearcms-flexible-box-alignment:' . $defaultLayoutValue['alignment'] . ';}'
                     . '.bearcms-flexible-box-element' . $notEditableSelector . ':not([class*="bearcms-element-style-"]):has(> div:empty){display:none;}'
@@ -591,7 +591,7 @@ class ElementsHelper
                 $attributes .= ' class="' . $classAttributeValue . '"';
                 $attributes .= ' data-bearcms-slider-no-transition';
 
-                $notEditableSelector = $editable ? ':not([data-rvr-editable])' : '';
+                $notEditableSelector = $editable || true ? ':not([data-rvr-editable])' : ''; // TODO Add check if in admin mode. There are problems if there is not editable and editable element of this kind.
                 $content .= '<style>'
                     . '.bearcms-slider-element{position:relative;box-sizing:border-box;display:flex;flex-direction:column;'
                     . '--css-to-attribute-data-bearcms-slider-direction:' . $defaultLayoutValue['direction'] . ';'
