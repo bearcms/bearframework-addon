@@ -440,7 +440,7 @@ class ElementsHelper
             if ($linkTitle !== null) {
                 $attributes .= ' title="' . htmlentities($linkTitle) . '"';
             }
-            $innerContent .= '<a' . ($linkURL !== null ? ' href="' . htmlentities($linkURL) . '"' : '') . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '"' : '') . ' tabindex="-1"></a>';
+            $innerContent .= '<a' . ($linkURL !== null ? ' href="' . htmlentities($linkURL) . '"' : '') . ($linkOnClick !== null ? ' onclick="' . htmlentities($linkOnClick) . '"' : '') . ($linkTitle !== null ? ' title="' . htmlentities($linkTitle) . '"' : '') . ' tabindex="-1"></a>';
         }
 
         $content = '<html>'
