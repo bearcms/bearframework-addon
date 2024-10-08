@@ -30,6 +30,12 @@ foreach ($matches[0] as $i => $match) {
     }
     $linksHTML .= (string)$linkHTML;
 }
+$matches = null;
+preg_match_all('/<font color="(.*?)">(.*?)<\/font>/', $text, $matches);
+foreach ($matches[0] as $i => $match) {
+    $search[] = $match;
+    $replace[] = '<span style="color:' . $matches[1][$i] . '">' . $matches[2][$i] . '</span>';
+}
 if (!empty($search)) {
     $text = str_replace($search, $replace, $text);
 }
