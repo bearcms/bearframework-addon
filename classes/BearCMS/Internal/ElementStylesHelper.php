@@ -81,9 +81,9 @@ class ElementStylesHelper
     static function getElementStyleClassName(string $elementID, string $styleID): ?string
     {
         if ($styleID === 'custom') {
-            return 'bearcms-element-style-' . md5($elementID);
+            return 'bearcms-element-style-' . substr(base_convert(md5($elementID), 16, 36), 0, 10);
         } elseif ($styleID !== 'default') {
-            return 'bearcms-element-style-id-' . md5($styleID);
+            return 'bearcms-element-style-id-' . substr(base_convert(md5($styleID), 16, 36), 0, 10);
         }
         return null;
     }
