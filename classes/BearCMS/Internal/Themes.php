@@ -1014,7 +1014,20 @@ class Themes
                     }
                 }
             }
-            return empty($search) ? $content : str_replace($search, $replace, $content);
+            if (!empty($search)) {
+                $content = str_replace($search, $replace, $content);
+                if (strpos($content, ':;') !== false) { // has empty values after replace
+                    $currentProperties = explode(';', $content);
+                    $newProperties = [];
+                    foreach ($currentProperties as $property) {
+                        if (substr($property, -1, 1) !== ':') {
+                            $newProperties[] = $property;
+                        }
+                    }
+                    $content = implode(";", $newProperties);
+                }
+            }
+            return $content;
         };
 
         $getCSSRuleValue = function ($value) use ($updateFontFamily): string {
