@@ -850,7 +850,7 @@ class BearCMS
 
         if ($settings->externalLinks) {
             // taken from dev/externalLinksNoUser.min.js
-            $html .= '<script>(function(){var f=location.host,e=function(){for(var d=document.getElementsByTagName("a"),b=0;b<d.length;b++){var c=d[b],a=c.getAttribute("href");null!==a&&-1!==a.indexOf("//")&&-1===a.indexOf("//"+f)&&0!==a.indexOf("#")&&0!==a.indexOf("javascript:")&&null===c.getAttribute("target")&&c.setAttribute("target","_blank")}};e();window.setInterval(e,999)})();</script>';
+            $html .= '<script>!function(){var t=location.host,e=function(){for(var e=document.getElementsByTagName("a"),n=0;n<e.length;n++){var r=e[n],i=r.getAttribute("href");null!==i&&-1!==i.indexOf("//")&&-1===i.indexOf("//"+t)&&0!==i.indexOf("#")&&0!==i.indexOf("javascript:")&&(null===r.getAttribute("target")&&r.setAttribute("target","_blank"),null===r.getAttribute("rel")&&r.setAttribute("rel","noopener"))}};e(),window.setInterval(e,999)}();</script>';
         }
         $html .= '</body></html>';
         $htmlToInsert[] = ['source' => $html];

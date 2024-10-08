@@ -16,6 +16,9 @@
                 if (link.getAttribute('target') === null) {
                     link.setAttribute('target', '_blank');
                 }
+                if (link.getAttribute('rel') === null) {
+                    link.setAttribute('rel', 'noopener');
+                }
             }
         }
     };
