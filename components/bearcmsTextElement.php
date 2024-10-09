@@ -19,6 +19,36 @@ $linksHTML = '';
 $search = [];
 $replace = [];
 $matches = null;
+preg_match_all('/<font color="(.*?)">(.*?)<\/font>/', $text, $matches);
+foreach ($matches[0] as $i => $match) {
+    $search[] = $match;
+    $replace[] = '<span style="color:' . $matches[1][$i] . '">' . $matches[2][$i] . '</span>';
+}
+$matches = null;
+preg_match_all('/<strike>(.*?)<\/strike>/', $text, $matches);
+foreach ($matches[0] as $i => $match) {
+    $search[] = $match;
+    $replace[] = '<span style="text-decoration:line-through">' . $matches[1][$i] . '</span>';
+}
+$matches = null;
+preg_match_all('/<u>(.*?)<\/u>/', $text, $matches);
+foreach ($matches[0] as $i => $match) {
+    $search[] = $match;
+    $replace[] = '<span style="text-decoration:underline">' . $matches[1][$i] . '</span>';
+}
+$matches = null;
+preg_match_all('/<div align="(.*?)">(.*?)<\/div>/', $text, $matches);
+foreach ($matches[0] as $i => $match) {
+    $search[] = $match;
+    $replace[] = '<div style="text-align:' . $matches[1][$i] . '">' . $matches[2][$i] . '</div>';
+}
+if (!empty($search)) {
+    $text = str_replace($search, $replace, $text);
+}
+
+$search = [];
+$replace = [];
+$matches = null;
 preg_match_all('/href=\"(.*?)\"/', $text, $matches);
 foreach ($matches[0] as $i => $match) {
     $search[] = $match;
@@ -29,12 +59,6 @@ foreach ($matches[0] as $i => $match) {
         $replace[] = 'href="javascript:void(0);" onclick="' . htmlentities($linkOnClick) . '"';
     }
     $linksHTML .= (string)$linkHTML;
-}
-$matches = null;
-preg_match_all('/<font color="(.*?)">(.*?)<\/font>/', $text, $matches);
-foreach ($matches[0] as $i => $match) {
-    $search[] = $match;
-    $replace[] = '<span style="color:' . $matches[1][$i] . '">' . $matches[2][$i] . '</span>';
 }
 if (!empty($search)) {
     $text = str_replace($search, $replace, $text);
