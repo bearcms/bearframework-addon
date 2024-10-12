@@ -404,7 +404,7 @@ class BearCMS
                 if (isset($blogPostsSlugsListCache[$value])) {
                     $url = $this->app->urls->get(Internal\Data\BlogPosts::getURLPath($value, $blogPostsSlugsListCache[$value]));
                 } else {
-                    $url = '';
+                    $url = null;
                 }
                 return [$url, null, null];
             });
@@ -431,7 +431,7 @@ class BearCMS
                     if (isset($pagesPathsListCache[$value])) {
                         $url = $this->app->urls->get($pagesPathsListCache[$value]);
                     } else {
-                        $url = '';
+                        $url = null;
                     }
                 }
                 return [$url, null, null];

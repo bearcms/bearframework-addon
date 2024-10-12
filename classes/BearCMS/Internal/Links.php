@@ -53,6 +53,15 @@ class Links
                 }
             }
         }
+        if ($url === '') {
+            $url = null;
+        }
+        if ($onClick === '') {
+            $onClick = null;
+        }
+        if ($html === '') {
+            $html = null;
+        }
         return [$url, $onClick, $html !== null ? '<component src="data:base64,' . base64_encode($html) . '" />' : null];
     }
 
