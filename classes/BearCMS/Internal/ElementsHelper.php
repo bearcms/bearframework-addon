@@ -12,6 +12,7 @@ namespace BearCMS\Internal;
 use BearFramework\App;
 use BearCMS\Internal\Themes as InternalThemes;
 use BearCMS\Internal\Data\Elements as InternalDataElements;
+use IvoPetkov\HTML5DOMDocument;
 
 /**
  * @internal
@@ -727,6 +728,18 @@ class ElementsHelper
                 $html = $elementsEditorData['result']['content'];
                 $html = Server::updateAssetsUrls($html, false);
             }
+        }
+        return $html;
+    }
+
+
+    static function addEditableElementsHTML(string $html): string {
+        $editorContent = self::getEditableElementsHTML();
+        if ($editorContent !== '') {
+            $domDocument = new HTML5DOMDocument();
+            $domDocument->loadHTML($html, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
+            $domDocument->insertHTML($editorContent);
+            $html = $domDocument->saveHTML();
         }
         return $html;
     }

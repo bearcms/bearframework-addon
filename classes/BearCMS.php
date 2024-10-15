@@ -175,13 +175,7 @@ class BearCMS
                     $content = '<html><head><style>' . $style . '</style></head><body><div class="bearcms-lightbox-content"><bearcms-elements id="bearcms-lightbox-' . $id . '" editable="true"/></div></body></html>';
                     $content = $this->app->components->process($content);
                     $content = $this->app->clientPackages->process($content);
-                    $editorContent = Internal\ElementsHelper::getEditableElementsHTML();
-                    if ($editorContent !== '') {
-                        $domDocument = new HTML5DOMDocument();
-                        $domDocument->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
-                        $domDocument->insertHTML($editorContent);
-                        $content = $domDocument->saveHTML();
-                    }
+                    $content = Internal\ElementsHelper::addEditableElementsHTML($content);
                     return $content;
                 });
 
@@ -1153,7 +1147,6 @@ class BearCMS
                 $localization->setLocale($previousLocale);
             };
         }
-        return function () {
-        };
+        return function () {};
     }
 }
