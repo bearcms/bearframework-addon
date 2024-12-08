@@ -54,7 +54,7 @@ foreach ($matches[0] as $i => $match) {
     $search[] = $match;
     list($linkURL, $linkOnClick, $linkHTML) = \BearCMS\Internal\Links::updateURL($matches[1][$i]);
     if ($linkURL !== null) {
-        $replace[] = 'href="' . htmlentities($linkURL) . '"';
+        $replace[] = 'href="' . $linkURL . '"'; // The URL is already encoded, so now htmlentities() is required
     } else if ($linkOnClick !== null) {
         $replace[] = 'href="javascript:void(0);" onclick="' . htmlentities($linkOnClick) . '"';
     }
