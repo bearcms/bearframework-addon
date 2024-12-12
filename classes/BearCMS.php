@@ -123,12 +123,14 @@ class BearCMS
                             $content .= '</body></html>';
                             $restoreLocale();
                             $response->content = $content;
+                            $this->apply($response);
                         }
                     } elseif ($response instanceof App\Response\TemporaryUnavailable) {
                         $response->headers->set($response->headers->make('Content-Type', 'text/html'));
                         $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
                         if ($response->content === '') {
                             $response->content = $this->getSystemPageContent(nl2br(__('bearcms.errorPage.temporaryUnavailable.message')));
+                            $this->apply($response);
                         }
                     }
                 });
@@ -564,14 +566,6 @@ class BearCMS
                         if (isset($preparedAssetsDetails[$filename], $preparedAssetsDetails[$filename]['downloadName'])) {
                             $response->headers->set($response->headers->make('Content-Disposition', 'attachment; filename="' . $preparedAssetsDetails[$filename]['downloadName'] . '"'));
                         }
-                    }
-                } else {
-                    if ($response instanceof App\Response\NotFound) {
-                        $response->headers->set($response->headers->make('Content-Type', 'text/html'));
-                        $this->apply($response);
-                    } elseif ($response instanceof App\Response\TemporaryUnavailable) {
-                        $response->headers->set($response->headers->make('Content-Type', 'text/html'));
-                        $this->apply($response);
                     }
                 }
             });
