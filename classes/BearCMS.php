@@ -110,7 +110,7 @@ class BearCMS
                 ->addEventListener('beforeSendResponse', function (\BearFramework\App\BeforeSendResponseEventDetails $details) {
                     $response = $details->response;
                     $requestPath = (string) $this->app->request->path;
-                    if (strpos($requestPath, $this->app->assets->pathPrefix) === 0 || strpos($requestPath, '/files/preview/') === 0 || strpos($requestPath, '/files/download/') === 0 || strpos($requestPath, '/favicon.ico') === 0) {
+                    if (strpos($requestPath, $this->app->assets->pathPrefix) === 0 || strpos($requestPath, '/files/preview/') === 0 || strpos($requestPath, '/files/download/') === 0 || strpos($requestPath, '/favicon.ico') === 0 || strpos($requestPath, '/.well-known/') === 0) {
                         return;
                     }
                     if ($response instanceof App\Response\NotFound) {
