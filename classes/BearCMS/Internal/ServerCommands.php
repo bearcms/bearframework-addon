@@ -1095,6 +1095,7 @@ class ServerCommands
                 'published' => (isset($item->metadata['published']) ? (int) $item->metadata['published'] : 0),
                 'size' => filesize($fullFilename),
                 'dateCreated' => (isset($item->metadata['dateCreated']) ? (string) $item->metadata['dateCreated'] : ''),
+                'note' => (isset($item->metadata['note']) ? (string) $item->metadata['note'] : ''),
             ];
             return $result;
         }
@@ -1121,6 +1122,9 @@ class ServerCommands
         if (isset($fileData['dateCreated'])) {
             $app->data->setMetadata($key, 'dateCreated', (string) $fileData['dateCreated']);
         }
+        if (isset($fileData['note'])) {
+            $app->data->setMetadata($key, 'note', (string) $fileData['note']);
+        }
     }
 
     /**
@@ -1139,7 +1143,9 @@ class ServerCommands
             $temp[] = [
                 'filename' => str_replace($prefix, '', $key),
                 'name' => (isset($item->metadata['name']) ? $item->metadata['name'] : str_replace($prefix, '', $key)),
-                'published' => (isset($item->metadata['published']) ? (int) $item->metadata['published'] : 0)
+                'published' => (isset($item->metadata['published']) ? (int) $item->metadata['published'] : 0),
+                'dateCreated' => (isset($item->metadata['dateCreated']) ? (string) $item->metadata['dateCreated'] : ''),
+                'note' => (isset($item->metadata['note']) ? (string) $item->metadata['note'] : ''),
             ];
         }
         return $temp;
