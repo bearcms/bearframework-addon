@@ -848,8 +848,19 @@ class BearCMS
             $allowRenderGlobalHTML = $allowRenderGlobalHTML !== null ? (int)$allowRenderGlobalHTML : true;
             if ($allowRenderGlobalHTML) {
                 $globalHTML = $settings->globalHTML;
-                if (isset($globalHTML[0]) && (!$currentUserExists || ($currentUserExists && !$this->app->request->query->exists('disable-global-html')))) {
-                    $htmlToInsert[] = ['source' => $globalHTML];
+                if ($globalHTML !== null) {
+                    if ((!$currentUserExists || ($currentUserExists && !$this->app->request->query->exists('disable-global-html')))) {
+                        if (!is_array($globalHTML)) {
+                            $globalHTML = [
+                                ['html' => $globalHTML]
+                            ];
+                        }
+                        foreach ($globalHTML as $globalHTMLData) {
+                            if (isset($globalHTMLData['html']) && is_string($globalHTMLData['html']) && strlen($globalHTMLData['html']) > 0) {
+                                $htmlToInsert[] = ['source' => $globalHTMLData['html']];
+                            }
+                        }
+                    }
                 }
             }
         }

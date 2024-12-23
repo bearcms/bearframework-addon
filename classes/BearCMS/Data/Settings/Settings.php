@@ -27,7 +27,7 @@ namespace BearCMS\Data\Settings;
  * @property boolean $enableRSS
  * @property string|null $rssType
  * @property array $translations
- * @property string|null $globalHTML
+ * @property string|array|null $globalHTML
  * @property array $redirects
  * @property array $fonts
  */
@@ -113,7 +113,7 @@ class Settings extends \BearFramework\Models\Model
                 'type' => 'array',
             ])
             ->defineProperty('globalHTML', [
-                'type' => '?string'
+                //'type' => '?string' // todo add array
             ])
             ->defineProperty('redirects', [
                 'type' => 'array',

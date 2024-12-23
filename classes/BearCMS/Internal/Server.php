@@ -30,7 +30,7 @@ class Server
      * @param string $cacheKey
      * @return type
      */
-    public static function call(string $name, array $arguments = [], bool $sendCookies = false, string $cacheKey = null)
+    public static function call(string $name, array $arguments = [], bool $sendCookies = false, ?string $cacheKey = null)
     {
         $app = App::get();
         $send = function () use ($name, $arguments, $sendCookies) {
@@ -248,7 +248,8 @@ class Server
             '78va', // new elements commands
             'k85a', // new elements commands (elementDataGet, elementDataSet)
             'm48a', // element tags,
-            'n81w' // new slider element
+            'n81w', // new slider element,
+            'm4i9' // multiple global html options
         ];
         $settings = $app->bearCMS->data->settings->get();
         $clientData['contentLanguages'] = $settings->languages;
