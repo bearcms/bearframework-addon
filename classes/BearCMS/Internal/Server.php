@@ -251,6 +251,9 @@ class Server
             'n81w', // new slider element,
             'm4i9' // multiple global html options
         ];
+        if (Config::getVariable('internalDataExportConverter') !== null) {
+            $clientData['flags'][] = 'de91'; // has data export
+        }
         $settings = $app->bearCMS->data->settings->get();
         $clientData['contentLanguages'] = $settings->languages;
         $clientData['clientIPHash'] = hash('sha256', serialize([$app->request->client->ip, $app->request->headers->getValue('Accept-Language'), $app->request->headers->getValue('User-Agent')]));

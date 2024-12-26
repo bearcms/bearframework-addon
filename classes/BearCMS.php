@@ -110,7 +110,7 @@ class BearCMS
                 ->addEventListener('beforeSendResponse', function (\BearFramework\App\BeforeSendResponseEventDetails $details) {
                     $response = $details->response;
                     $requestPath = (string) $this->app->request->path;
-                    if (strpos($requestPath, $this->app->assets->pathPrefix) === 0 || strpos($requestPath, '/files/preview/') === 0 || strpos($requestPath, '/files/download/') === 0 || strpos($requestPath, '/favicon.ico') === 0 || strpos($requestPath, '/.well-known/') === 0) {
+                    if (strpos($requestPath, $this->app->assets->pathPrefix) === 0 || strpos($requestPath, '/files/preview/') === 0 || strpos($requestPath, '/files/download/') === 0 || strpos($requestPath, '/favicon.ico') === 0 || strpos($requestPath, '/.well-known/') === 0 || strpos($requestPath, '/-de/') === 0) {
                         return;
                     }
                     if ($response instanceof App\Response\NotFound) {
@@ -273,6 +273,33 @@ class BearCMS
                         return Internal\Controller::handleFileDownload($request);
                     }
                 ]);
+        }
+
+        // Register data export handlers
+        if (Config::getVariable('internalDataExportConverter') !== null) {
+            $this->app->routes
+                ->add('/-de/*', function (App\Request $request) {
+                    $filename = (string) $request->path->getSegment(1);
+                    if ($filename !== null && strlen($filename) < 200 && $this->currentUser->exists()) {
+                        $filenameParts = explode('.', $filename, 2);
+                        $fullFilename = $this->app->data->getFilename('.temp/bearcms/data-export/' . $filename);
+                        if (sizeof($filenameParts) === 2 && is_file($fullFilename)) {
+                            $response = new App\Response\FileReader($fullFilename);
+                            $details = $this->app->assets->getDetails($fullFilename, ['mimeType']);
+                            if ($details['mimeType'] !== null && strlen($details['mimeType']) > 0) {
+                                $response->headers->set($response->headers->make('Content-Type', $details['mimeType']));
+                            }
+                            $filenamePrefix = implode('-', explode('.', $this->app->request->host));
+                            $response->headers->set($response->headers->make('Content-Disposition', 'attachment; filename="' . $filenamePrefix . '-' . $filenameParts[1] . '"'));
+                            $response->headers->set($response->headers->make('Content-Length', (string) filesize($fullFilename)));
+                            $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
+                            $response->headers->set($response->headers->make('X-Robots-Tag', 'noindex, nofollow'));
+                            $response->headers->set($response->headers->make('Accept-Ranges', 'bytes'));
+                            return $response;
+                        }
+                    }
+                    return new App\Response\NotFound();
+                });
         }
 
         // Register some other pages

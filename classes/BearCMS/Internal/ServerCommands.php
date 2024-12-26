@@ -1698,4 +1698,52 @@ class ServerCommands
         $fileKey = $data['key'];
         $app->users->deleteUserFile($providerID, $fileKey);
     }
+    /**
+     * 
+     * @param array $data
+     * @return string|null
+     */
+    static function dataExportGetURL(array $data): ?string
+    {
+        $type = $data['type'];
+        $handler = $data['handler'];
+        $options = $data['options'];
+        if (array_search($type, ['pdf', 'xls', 'csv']) !== false && is_string($handler) && is_array($options)) {
+            $app = App::get();
+            $generateID = function () {
+                return base_convert(md5(uniqid('', true)), 16, 36);
+            };
+            $filePrefix = '.temp/bearcms/data-export/';
+            $id = null;
+            for ($i = 0; $i < 1000; $i++) {
+                $_id = $generateID();
+                if (!$app->data->exists($filePrefix . $_id)) {
+                    $id = $_id;
+                    break;
+                }
+            }
+            if ($id === null) {
+                throw new \Exception('Too many retries!');
+            }
+            $converter = Config::getVariable('internalDataExportConverter');
+            if ($converter !== null) {
+                if ($type === 'pdf') {
+                    $from = 'html';
+                } else {
+                    $from = 'json';
+                }
+                $result = \BearCMS\Internal\DataExport::getResult($from, $handler, $options);
+                if ($result !== null) {
+                    $content = $converter($from, $type, $result['value']);
+                    if ($content !== null) {
+                        $filename = $id . '.' . $result['filename'] . '.' . $type;
+                        $app->data->setValue($filePrefix . $filename, $content);
+                        return $app->urls->get('/-de/' . $filename);
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
 }
