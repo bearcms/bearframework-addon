@@ -30,6 +30,7 @@ namespace BearCMS\Data\Settings;
  * @property string|array|null $globalHTML
  * @property array $redirects
  * @property array $fonts
+ * @property string|null $image
  */
 class Settings extends \BearFramework\Models\Model
 {
@@ -120,6 +121,9 @@ class Settings extends \BearFramework\Models\Model
             ])
             ->defineProperty('fonts', [
                 'type' => 'array'
+            ])
+            ->defineProperty('image', [
+                'type' => '?string'
             ]);
     }
 

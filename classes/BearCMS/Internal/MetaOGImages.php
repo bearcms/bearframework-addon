@@ -60,15 +60,13 @@ class MetaOGImages
     {
         $app = App::get();
 
-        $iconCache = null;
-        $getIconFilename = function () use (&$iconCache) {
-            if ($iconCache === null) {
-                $iconCache = [\BearCMS\Internal\Data\Settings::getIconForSize(2000)];
-            }
-            return $iconCache[0];
-        };
-
         $filename = null;
+        $getFilenameURL = function () use (&$filename, $app) {
+            if ($filename !== null) {
+                return $app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
+            }
+            return null;
+        };
 
         $containerID = null;
         if (strpos($path, Config::$blogPagesPathPrefix) === 0) {
@@ -99,17 +97,19 @@ class MetaOGImages
                 }
             }
             if ($path === '/' && $filename === null) {
-                $iconFilename = $getIconFilename();
-                if ($iconFilename !== null) {
-                    $filename = $iconFilename;
-                } else {
-                    $containerID = 'bearcms-page-home';
-                }
+                $containerID = 'bearcms-page-home';
+            }
+        }
+
+        if ($filename === null) {
+            $settings = $app->bearCMS->data->settings->get();
+            if (!empty($settings->image)) {
+                $filename = $settings->image;
             }
         }
 
         if ($filename !== null) {
-            return $app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
+            return $getFilenameURL();
         }
 
         if ($containerID !== null) {
@@ -129,10 +129,10 @@ class MetaOGImages
             }
         }
 
-        // use the website icon if no image found on page
-        $filename = $getIconFilename();
+        $filename = \BearCMS\Internal\Data\Settings::getIconForSize(2000); // use the website icon if no image found on page
+
         if ($filename !== null) {
-            return $app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
+            return $getFilenameURL();
         }
 
         return null;

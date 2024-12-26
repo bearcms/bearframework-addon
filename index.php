@@ -30,6 +30,7 @@ $app->assets
     ->addDir('appdata://bearcms/files/image/')
     ->addDir('appdata://bearcms/files/imagegallery/')
     ->addDir('appdata://bearcms/files/icon/')
+    ->addDir('appdata://bearcms/files/settings/')
     ->addDir('appdata://bearcms/files/page/')
     ->addDir('appdata://bearcms/files/font/')
     ->addDir('appdata://.temp/bearcms/files/themeimage/')
