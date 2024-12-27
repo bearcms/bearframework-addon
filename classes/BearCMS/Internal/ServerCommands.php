@@ -22,6 +22,7 @@ use BearCMS\Internal\Pages as InternalPages;
 use BearCMS\Internal\Blog as InternalBlog;
 use BearCMS\Internal\Data\ElementsSharedStyles;
 use BearCMS\Internal\Data\UploadsSize;
+use IvoPetkov\DataList;
 
 /**
  * @internal
@@ -1129,16 +1130,17 @@ class ServerCommands
 
     /**
      * 
+     * @param array $data
      * @return array
      */
-    static function files(): array
+    static function files(array $data): array
     {
         $app = App::get();
         $prefix = 'bearcms/files/custom/';
-        $result = $app->data->getList()
+        $list = $app->data->getList()
             ->filterBy('key', $prefix, 'startWith');
         $temp = [];
-        foreach ($result as $item) {
+        foreach ($list as $item) {
             $key = $item->key;
             $temp[] = [
                 'filename' => str_replace($prefix, '', $key),
@@ -1148,7 +1150,11 @@ class ServerCommands
                 'note' => (isset($item->metadata['note']) ? (string) $item->metadata['note'] : ''),
             ];
         }
-        return $temp;
+        $result = new DataList($temp);
+        if (isset($data['modifications'])) {
+            $result = self::applyListModifications($result, $data['modifications']);
+        }
+        return $result->toArray();
     }
 
     /**
