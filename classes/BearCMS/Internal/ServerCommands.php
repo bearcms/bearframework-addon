@@ -1138,7 +1138,8 @@ class ServerCommands
         $app = App::get();
         $prefix = 'bearcms/files/custom/';
         $list = $app->data->getList()
-            ->filterBy('key', $prefix, 'startWith');
+            ->filterBy('key', $prefix, 'startWith')
+            ->sliceProperties(['key', 'metadata']);
         $temp = [];
         foreach ($list as $item) {
             $key = $item->key;
