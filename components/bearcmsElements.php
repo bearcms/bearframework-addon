@@ -23,7 +23,7 @@ $containerID = $component->id;
 $containerData = InternalDataElements::getContainer($containerID, true);
 
 $elements = $containerData['elements'];
-$hasLazyLoading = sizeof($elements) > $lazyLimit;
+$hasLazyLoading = count($elements) > $lazyLimit;
 
 $columnID = (string) $component->getAttribute('bearcms-internal-attribute-columns-id');
 $floatingBoxID = (string) $component->getAttribute('bearcms-internal-attribute-floatingbox-id');
@@ -72,7 +72,7 @@ if (!empty($elements)) {
             $tempElements[] = $elementContainerData;
             $elementsToLoad[] = $elementContainerData['id'];
             unset($remainingLazyLoadElements[$remainingLazyLoadElementIndex]);
-            if (sizeof($tempElements) >= $lazyLimit) {
+            if (count($tempElements) >= $lazyLimit) {
                 break;
             }
         }

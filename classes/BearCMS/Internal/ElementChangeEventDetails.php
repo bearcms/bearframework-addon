@@ -25,7 +25,7 @@ class ElementChangeEventDetails
      * @param string $elementID
      * @param string|null $containerID
      */
-    public function __construct(string $elementID, string $containerID = null)
+    public function __construct(string $elementID, ?string $containerID = null)
     {
         $this
             ->defineProperty('elementID', [

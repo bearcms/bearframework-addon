@@ -131,7 +131,7 @@ class Elements
      * @param string|null $containerID
      * @return void
      */
-    static function dispatchElementChangeEvent(string $elementID, string $containerID = null): void
+    static function dispatchElementChangeEvent(string $elementID, ?string $containerID = null): void
     {
         $app = App::get();
         $bearCMS = $app->bearCMS;
@@ -148,7 +148,7 @@ class Elements
      * @param string|null $containerID
      * @return void
      */
-    static function optimizeElement(string $elementID, string $containerID = null): void
+    static function optimizeElement(string $elementID, ?string $containerID = null): void
     {
         $data = self::getElement($elementID);
         if ($data !== null) {

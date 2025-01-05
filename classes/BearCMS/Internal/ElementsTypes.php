@@ -84,7 +84,7 @@ class ElementsTypes
             $type->canImportExport = true;
             self::add($type);
             if ($hasThemes) {
-                InternalThemes::$elementsOptions['heading'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['heading'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details): void {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $options->addOption($idPrefix . "HeadingCSS", "css", '', [
@@ -188,7 +188,7 @@ class ElementsTypes
             $type->canImportExport = true;
             self::add($type);
             if ($hasThemes) {
-                InternalThemes::$elementsOptions['text'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['text'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details): void {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
@@ -262,7 +262,7 @@ class ElementsTypes
             $type->canImportExport = true;
             self::add($type);
             if ($hasThemes) {
-                InternalThemes::$elementsOptions['link'] = ['v2', function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['link'] = ['v2', function ($options, $idPrefix, $parentSelector, $context, $details): void {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
@@ -404,7 +404,7 @@ class ElementsTypes
             };
             self::add($type);
             if ($hasThemes) {
-                InternalThemes::$elementsOptions['image'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['image'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details): void {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
@@ -602,7 +602,7 @@ class ElementsTypes
             };
             self::add($type);
             if ($hasThemes) {
-                InternalThemes::$elementsOptions['imageGallery'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['imageGallery'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details): void {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
@@ -774,7 +774,7 @@ class ElementsTypes
             };
             self::add($type);
             if ($hasThemes) {
-                InternalThemes::$elementsOptions['video'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['video'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details): void {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
@@ -851,7 +851,7 @@ class ElementsTypes
             $type->canImportExport = true;
             self::add($type);
             if ($hasThemes) {
-                InternalThemes::$elementsOptions['navigation'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['navigation'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details): void {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
@@ -929,7 +929,7 @@ class ElementsTypes
             $type->canImportExport = true;
             self::add($type);
             if ($hasThemes) {
-                InternalThemes::$elementsOptions['html'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['html'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details): void {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
@@ -1020,7 +1020,7 @@ class ElementsTypes
             };
             self::add($type);
             if ($hasThemes) {
-                InternalThemes::$elementsOptions['blogPosts'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['blogPosts'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details): void {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
@@ -1180,7 +1180,7 @@ class ElementsTypes
             };
             self::add($type);
             if ($hasThemes) {
-                InternalThemes::$elementsOptions['comments'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['comments'] = ['v1', function ($options, $idPrefix, $parentSelector, $context, $details): void {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $optionsGroup = $options;
@@ -1330,7 +1330,7 @@ class ElementsTypes
             $type->canImportExport = true;
             self::add($type);
             if ($hasThemes) {
-                InternalThemes::$elementsOptions['separator'] = ['v2', function ($options, $idPrefix, $parentSelector, $context, $details) {
+                InternalThemes::$elementsOptions['separator'] = ['v2', function ($options, $idPrefix, $parentSelector, $context, $details): void {
                     $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                     if ($isElementContext) {
                         $options->addOption($idPrefix . "SeparatorCSS", "css", '', [
@@ -1427,7 +1427,7 @@ class ElementsTypes
             }
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_COLUMNS')) {
-            InternalThemes::$elementsOptions['columns'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+            InternalThemes::$elementsOptions['columns'] = function ($options, $idPrefix, $parentSelector, $context, $details): void {
                 if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
                     $optionsGroup = $options;
                 } else {
@@ -1452,7 +1452,7 @@ class ElementsTypes
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_FLOATING_BOX')) {
-            InternalThemes::$elementsOptions['floatingBox'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+            InternalThemes::$elementsOptions['floatingBox'] = function ($options, $idPrefix, $parentSelector, $context, $details): void {
                 if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
                     $optionsGroup = $options;
                 } else {
@@ -1477,7 +1477,7 @@ class ElementsTypes
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_FLEXIBLE_BOX')) {
-            InternalThemes::$elementsOptions['flexibleBox'] = function ($options, $idPrefix, $parentSelector, $context, $details) {
+            InternalThemes::$elementsOptions['flexibleBox'] = function ($options, $idPrefix, $parentSelector, $context, $details): void {
                 if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
                     $optionsGroup = $options;
                 } else {
@@ -1518,7 +1518,7 @@ class ElementsTypes
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_SLIDER')) {
-            InternalThemes::$elementsOptions['slider'] = ['v3', function ($options, $idPrefix, $parentSelector, $context, $details) {
+            InternalThemes::$elementsOptions['slider'] = ['v3', function ($options, $idPrefix, $parentSelector, $context, $details): void {
                 $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
                 if ($isElementContext) {
                     $optionsGroup = $options;

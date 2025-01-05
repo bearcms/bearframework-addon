@@ -105,7 +105,7 @@ class Pages
                     $result[] = self::getDefaultHomePage();
                 }
             }
-            $walkPages = function ($structureData) use (&$walkPages, &$result, $pages) {
+            $walkPages = function ($structureData) use (&$walkPages, &$result, $pages): void {
                 foreach ($structureData as $item) {
                     $pageID = $item['id'];
                     if (isset($pages[$pageID])) {
@@ -131,7 +131,7 @@ class Pages
      * @param string|null $parentID
      * @return \BearFramework\Models\ModelsList
      */
-    static function getChildrenList(string $parentID = null): \BearFramework\Models\ModelsList
+    static function getChildrenList(?string $parentID = null): \BearFramework\Models\ModelsList
     {
         $cacheKey = 'pages_children_list';
         if (!isset(Internal\Data::$cache[$cacheKey])) {

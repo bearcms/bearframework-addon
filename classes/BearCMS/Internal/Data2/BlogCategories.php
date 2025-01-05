@@ -62,7 +62,7 @@ class BlogCategories
         $cacheKey = 'blog_categories_list';
         if (!isset(Internal\Data::$cache[$cacheKey])) {
             $list = Internal\Data::getList('bearcms/blog/categories/category/');
-            array_walk($list, function (&$value) {
+            array_walk($list, function (&$value): void {
                 $value = $this->makeBlogCategoryFromRawData($value);
             });
 

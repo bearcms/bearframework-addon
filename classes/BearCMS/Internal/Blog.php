@@ -101,13 +101,13 @@ class Blog
                         ->filterBy('status', 'published')
                         ->sortBy('publishedTime', 'desc');
                     foreach ($relatedBlogPosts as $relatedBlogPost) {
-                        if ($blogPost->id === $relatedBlogPost->id || sizeof(array_intersect($categoriesIDs, $relatedBlogPost->categoriesIDs)) === 0) {
+                        if ($blogPost->id === $relatedBlogPost->id || count(array_intersect($categoriesIDs, $relatedBlogPost->categoriesIDs)) === 0) {
                             continue;
                         }
                         $relatedBlogTitle = strlen($relatedBlogPost->title) > 0 ? $relatedBlogPost->title : 'Unknown';
                         $relatedBlogURL = $relatedBlogPost->getURL();
                         $links[] = '<a href="' . htmlentities($relatedBlogURL) . '" title="' . htmlentities($relatedBlogTitle) . '">' . htmlspecialchars($relatedBlogTitle) . '</a>';
-                        if (sizeof($links) >= 5) {
+                        if (count($links) >= 5) {
                             break;
                         }
                     }
@@ -315,7 +315,7 @@ class Blog
      * @param string|null $blogPostID
      * @return void
      */
-    static function setCommentsLocations(string $blogPostID = null): void
+    static function setCommentsLocations(?string $blogPostID = null): void
     {
         $app = App::get();
         $blogPosts = $app->bearCMS->data->blogPosts;

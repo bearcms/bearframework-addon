@@ -41,7 +41,7 @@ class Options implements \BearCMS\Internal\ThemeOptionsGroupInterface
     public function setValues(array $values, bool $setDefaultValues = false): self
     {
         $valuesSetCount = 0;
-        $valuesCount = sizeof($values);
+        $valuesCount = count($values);
         if ($valuesCount > 0) {
             $walkOptions = function ($options) use (&$walkOptions, &$valuesSetCount, $valuesCount, $values, $setDefaultValues) {
                 foreach ($options as $option) {
@@ -74,7 +74,7 @@ class Options implements \BearCMS\Internal\ThemeOptionsGroupInterface
     public function getValues(bool $useDefaultValues = false): array
     {
         $result = [];
-        $walkOptions = function ($options) use (&$walkOptions, &$result, $useDefaultValues) {
+        $walkOptions = function ($options) use (&$walkOptions, &$result, $useDefaultValues): void {
             foreach ($options as $option) {
                 if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
                     $result[$option->id] = isset($option->details['value']) ? $option->details['value'] : ($useDefaultValues && isset($option->details['defaultValue']) ? $option->details['defaultValue'] : null);

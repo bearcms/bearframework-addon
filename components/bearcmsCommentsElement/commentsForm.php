@@ -82,6 +82,7 @@ $form->onSubmit = function ($values) use ($component, $app, $context, $allowFile
         'success' => 1
     ];
 };
+
 echo '<html><head>';
 echo '<link rel="client-packages-embed" name="-bearcms-comments-element-form">';
 echo '<style>';

@@ -26,7 +26,7 @@ $getSettings = function () use ($app, &$settings) {
 };
 $isHomePage = (string) $app->request->path === $homePath;
 
-$hasLanguagesPicker = sizeof($languages) > 1;
+$hasLanguagesPicker = count($languages) > 1;
 
 switch ((int)$customizations->getValue('contentWidth')) {
     case 1:

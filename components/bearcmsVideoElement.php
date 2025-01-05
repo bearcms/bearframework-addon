@@ -61,7 +61,7 @@ if (strlen($componentURL) > 0) {
     $videoProvider = null;
     $videoAspectRatio = 0.75;
     $videoHTML = null;
-    $setData = function ($data) use (&$videoExists, &$videoTitle, &$videoUrl, &$videoImage, &$videoAuthor, &$videoProvider, &$videoAspectRatio, &$videoHTML) {
+    $setData = function ($data) use (&$videoExists, &$videoTitle, &$videoUrl, &$videoImage, &$videoAuthor, &$videoProvider, &$videoAspectRatio, &$videoHTML): void {
         $videoExists = (int) $data['exists'] > 0;
         if ($videoExists) {
             $videoTitle = $data['title'];

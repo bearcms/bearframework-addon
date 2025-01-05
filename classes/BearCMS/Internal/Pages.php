@@ -188,7 +188,7 @@ class Pages
      * @param string|null $pageID
      * @return void
      */
-    static function setCommentsLocations(string $pageID = null): void
+    static function setCommentsLocations(?string $pageID = null): void
     {
         $app = App::get();
         $pages = $app->bearCMS->data->pages;

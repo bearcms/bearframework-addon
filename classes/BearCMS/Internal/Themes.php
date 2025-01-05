@@ -235,7 +235,7 @@ class Themes
      * @param boolean $includeEditorData
      * @return string|null
      */
-    static private function getCustomizationsCacheKey(string $id, string $userID = null, bool $includeEditorData = false): ?string
+    static private function getCustomizationsCacheKey(string $id, ?string $userID = null, bool $includeEditorData = false): ?string
     {
         return 'bearcms-theme-customizations-' . md5($id) . '-' . md5((string)$userID) . '-' . (int)$includeEditorData;
     }
@@ -246,10 +246,10 @@ class Themes
      * @param string $userID
      * @return void
      */
-    static function clearCustomizationsCache(string $id, string $userID = null): void
+    static function clearCustomizationsCache(string $id, ?string $userID = null): void
     {
         $app = App::get();
-        $clearCache = function ($cacheKey) use ($app) {
+        $clearCache = function ($cacheKey) use ($app): void {
             $app->data->delete('.temp/bearcms/themes/customizations-cache-' . md5($cacheKey));
             $app->cache->delete($cacheKey);
         };
@@ -264,7 +264,7 @@ class Themes
      * @param boolean $includeEditorData
      * @return \BearCMS\Themes\Theme\Customizations|null
      */
-    static public function getCustomizations(string $id, string $userID = null, bool $includeEditorData = false): ?\BearCMS\Themes\Theme\Customizations
+    static public function getCustomizations(string $id, ?string $userID = null, bool $includeEditorData = false): ?\BearCMS\Themes\Theme\Customizations
     {
         if (!isset(self::$registrations[$id])) {
             return null;
@@ -371,7 +371,7 @@ class Themes
             if (isset($filesToAttach[$realFilename])) {
                 $attachmentName = $filesToAttach[$realFilename];
             } else {
-                $attachmentName = 'files/' . (sizeof($filesToAttach) + 1) . '.' . pathinfo($filenameWithoutOptions, PATHINFO_EXTENSION); // the slash helps in import (shows if the value is encoded)
+                $attachmentName = 'files/' . (count($filesToAttach) + 1) . '.' . pathinfo($filenameWithoutOptions, PATHINFO_EXTENSION); // the slash helps in import (shows if the value is encoded)
                 $filesToAttach[$realFilename] = $attachmentName;
             }
             $newFilenameWithOptions = Internal\Data::setFilenameOptions('data:' . $attachmentName, $filenameOptions);
@@ -416,7 +416,7 @@ class Themes
      * @param string $userID The user ID
      * @throws \Exception
      */
-    static public function import(string $filename, string $id, string $userID = null): void
+    static public function import(string $filename, string $id, ?string $userID = null): void
     {
         if (!isset(self::$registrations[$id])) {
             throw new \Exception('Theme does not exists!', 1);
@@ -690,7 +690,7 @@ class Themes
         }
 
         if ($includeFiles) {
-            $addFiles = function ($value) use (&$result) {
+            $addFiles = function ($value) use (&$result): void {
                 $isFilename = function ($value) {
                     return strpos($value, 'appdata://') === 0 || strpos($value, 'data:') === 0 || strpos($value, 'addon:') === 0;
                 };
@@ -749,7 +749,7 @@ class Themes
     {
         $valueDetails = self::getValueDetails($value);
         $result = [];
-        $search = function (array $cssValues) use (&$result, $propertyName) {
+        $search = function (array $cssValues) use (&$result, $propertyName): void {
             if (isset($cssValues[$propertyName])) {
                 $result[$cssValues[$propertyName]] = 1;
             }
@@ -818,7 +818,7 @@ class Themes
                 foreach ($argTexts as $argText) {
                     $argText = trim($argText);
                     $argTextParts = explode('=', $argText, 2);
-                    if (sizeof($argTextParts) === 2) {
+                    if (count($argTextParts) === 2) {
                         $args[trim($argTextParts[0])] = $argTextParts[1];
                     } else {
                         $args[$argText] = true;
@@ -1052,7 +1052,7 @@ class Themes
             return $result;
         };
 
-        $getCodeOptionCssRule = function (array $args, $value, int $optionIndex, int $stateIndex = null): string {
+        $getCodeOptionCssRule = function (array $args, $value, int $optionIndex, ?int $stateIndex = null): string {
             if (is_string($value) && strlen($value) > 0) {
                 return '--css-to-attribute-data-bearcms-element-event-' . $optionIndex . ($stateIndex !== null ? '-' . $stateIndex : '') . ':' . implode('+', $args) . ' call ' . self::escapeCSSValue($value) . ';';
             }
@@ -1097,7 +1097,7 @@ class Themes
             return $selector;
         };
 
-        $getStateCSSRules = function (string $state, string $value, array $statesTypes, string $selector, int $optionIndex, int $stateIndex = null) use ($replaceStateSelectorsInSelector, $optimizeForCompatibility): array {
+        $getStateCSSRules = function (string $state, string $value, array $statesTypes, string $selector, int $optionIndex, ?int $stateIndex = null) use ($replaceStateSelectorsInSelector, $optimizeForCompatibility): array {
             $cssMediaQueries = []; // array of array of strings
             $attributes = [];
             $cssTagStates = '';
@@ -1108,7 +1108,7 @@ class Themes
             $replacedStateSelectors = [];
             $selector = $replaceStateSelectorsInSelector($selector, array_keys($stateParts), $replacedStateSelectors);
             $selectorParts = explode(' ', $selector);
-            $selectorLastPart = $selectorParts[sizeof($selectorParts) - 1];
+            $selectorLastPart = $selectorParts[count($selectorParts) - 1];
             $cssStates = $selector;
 
             foreach ($stateParts as $name => $args) {
@@ -1227,8 +1227,8 @@ class Themes
             $getCombinations = function (array $list) { // combines arrays of strings
                 $result = [];
                 foreach ($list as $items) {
-                    $resultCount = sizeof($result);
-                    $itemsCount = sizeof($items);
+                    $resultCount = count($result);
+                    $itemsCount = count($items);
                     if ($itemsCount > 1) {
                         $resultClone = $result;
                         for ($i = 1; $i < $itemsCount; $i++) {
@@ -1271,7 +1271,7 @@ class Themes
             return $result;
         };
 
-        $walkOptions = function ($options, &$optionsValues) use (&$addCSSRule, &$cssCode, &$walkOptions, &$addAssetDetails, &$replaceVariables, &$getCSSRuleValue, &$replaceStateSelectorsInSelector, &$elementsDefaultValues, $supportedStates, $getCodeOptionCssRule, $getCodeOptionStatesCssRules, $getStateCSSRules, $includeEditorData) {
+        $walkOptions = function ($options, &$optionsValues) use (&$addCSSRule, &$cssCode, &$walkOptions, &$addAssetDetails, &$replaceVariables, &$getCSSRuleValue, &$replaceStateSelectorsInSelector, &$elementsDefaultValues, $supportedStates, $getCodeOptionCssRule, $getCodeOptionStatesCssRules, $getStateCSSRules, $includeEditorData): void {
             $hasOptionsValues = $optionsValues !== null;
             foreach ($options as $optionIndex => $option) {
                 if ($option instanceof \BearCMS\Themes\Theme\Options\Option) {
@@ -1415,7 +1415,7 @@ class Themes
                                 $repeaterWidthExpression[] = 'w>' . $startWidth . '&&w<' . $endWidth . '=>' . $attributeExpression;
                             }
                         }
-                        $value .= '--css-to-attribute-data-responsive-attributes-bearcms-repeater-' . $repeaterWidthName . ':' . join(',', $repeaterWidthExpression) . ';';
+                        $value .= '--css-to-attribute-data-responsive-attributes-bearcms-repeater-' . $repeaterWidthName . ':' . implode(',', $repeaterWidthExpression) . ';';
                     }
                     $hasRepeaterAttributes = true;
                 }

@@ -101,7 +101,7 @@ trait ThemeOptionsGroupTrait
                 $callable = $callable[1];
             }
             call_user_func($callable, $this, $idPrefix, $parentSelector, Internal\Themes::OPTIONS_CONTEXT_THEME, $details);
-            $lastOption = $this->options[sizeof($this->options) - 1];
+            $lastOption = $this->options[count($this->options) - 1];
             if ($lastOption instanceof \BearCMS\Themes\Theme\Options\Group) { // expect the last one to be the element's group
                 $lastOption->details['internalElementType'] = $type;
             }

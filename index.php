@@ -61,14 +61,14 @@ if ($app->request->method === 'GET' && (string)$app->request->path !== '/robots.
         $cacheBundlePath = $app->request->path->get();
         Internal\Data::loadCacheBundle($cacheBundlePath);
         $app
-            ->addEventListener('sendResponse', function () use ($cacheBundlePath) {
+            ->addEventListener('sendResponse', function () use ($cacheBundlePath): void {
                 Internal\Data::saveCacheBundle($cacheBundlePath);
             });
     }
 }
 
 $app->data
-    ->addEventListener('itemChange', function (\BearFramework\App\Data\ItemChangeEventDetails $details) use (&$app) {
+    ->addEventListener('itemChange', function (\BearFramework\App\Data\ItemChangeEventDetails $details) use (&$app): void {
         $key = $details->key;
 
         Internal\Data::onDataChanged($key);
@@ -91,7 +91,7 @@ $app->data
     });
 
 $app
-    ->addEventListener('sendResponse', function () use ($app) {
+    ->addEventListener('sendResponse', function () use ($app): void {
         if (Internal\Data::$hasContentChange) {
             $app->bearCMS->dispatchEvent('internalChangeData');
         }

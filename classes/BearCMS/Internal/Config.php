@@ -161,7 +161,7 @@ class Config
                 }
             }
         }
-        return array_search($name, self::$features) !== false || (sizeof(self::$features) === 1 && self::$features[0] === 'ALL');
+        return array_search($name, self::$features) !== false || (count(self::$features) === 1 && self::$features[0] === 'ALL');
     }
 
     /**
@@ -202,7 +202,7 @@ class Config
     {
         if (self::$appSecretKey !== null && strlen(self::$appSecretKey) > 0) {
             $parts = explode('-', self::$appSecretKey, 2);
-            if (sizeof($parts) === 2) {
+            if (count($parts) === 2) {
                 return strtoupper('sha256-' . $parts[0] . '-' . hash('sha256', $parts[1]));
             }
         }

@@ -25,7 +25,7 @@ class Sitemap
      * @param float $priority
      * @return self Returns a reference to itself.
      */
-    public function addItem(string $locationPath, $lastModified = null, string $changeFrequency = null, float $priority = null): self
+    public function addItem(string $locationPath, $lastModified = null, ?string $changeFrequency = null, ?float $priority = null): self
     {
         $this->data[] = [
             'locationPath' => $locationPath,

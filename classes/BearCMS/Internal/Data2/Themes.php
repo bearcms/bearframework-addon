@@ -78,7 +78,7 @@ class Themes
      * @param array|null $values
      * @return array|null
      */
-    private function updateOptionsValues(string $id, array $values = null): ?array
+    private function updateOptionsValues(string $id, ?array $values = null): ?array
     {
         $theme = Internal\Themes::get($id);
         if ($theme !== null && is_callable($theme->updateValues)) {
@@ -93,7 +93,7 @@ class Themes
      * @param array|null $values Option values
      * @param string $userID The user ID
      */
-    private function setOptionsValues(string $id, $values, string $userID = null): void
+    private function setOptionsValues(string $id, $values, ?string $userID = null): void
     {
         if (!is_array($values) && $values !== null) {
             throw new \InvalidArgumentException('The values argument is not valid');

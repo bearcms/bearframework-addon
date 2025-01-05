@@ -60,7 +60,7 @@ class BearCMSTestCase extends BearFramework\AddonTests\PHPUnitTestCase
     protected function loginUser(string $userID): string
     {
         $app = $this->getApp();
-        $sessionKey = str_repeat(uniqid(), 90 / strlen(uniqid()));
+        $sessionKey = str_repeat(uniqid(), (int)(90 / strlen(uniqid())));
         \BearCMS\Internal\Cookies::setList(\BearCMS\Internal\Cookies::TYPE_SERVER, [['name' => '_s', 'value' => $sessionKey, 'expire' => time() + 86400]]);
         $app->data->setValue('.temp/bearcms/userkeys/' . md5($sessionKey), $userID);
         return $sessionKey;
@@ -85,5 +85,4 @@ class BearCMSTestCase extends BearFramework\AddonTests\PHPUnitTestCase
         $userID = $this->createUser();
         $this->loginUser($userID);
     }
-
 }

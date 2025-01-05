@@ -23,7 +23,7 @@ class Settings
      * @param integer $preferedSize
      * @return string|null
      */
-    static function getIconForSize(int $preferedSize = null): ?string
+    static function getIconForSize(?int $preferedSize = null): ?string
     {
         $app = App::get();
         $settings = $app->bearCMS->data->settings->get();

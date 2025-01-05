@@ -108,7 +108,7 @@ class ElementsDataHelper
      * @param string|null $containerID
      * @return array|null
      */
-    static function getElement(string $elementID, string $containerID = null): ?array
+    static function getElement(string $elementID, ?string $containerID = null): ?array
     {
         $elementData = InternalDataElements::getElement($elementID);
         if ($elementData !== null) {
@@ -132,7 +132,7 @@ class ElementsDataHelper
      * @param string|null $containerID
      * @return void
      */
-    static function setElement(array $elementData, string $containerID = null): void
+    static function setElement(array $elementData, ?string $containerID = null): void
     {
         $elementID = $elementData['id'];
         if (self::isStructuralElementData($elementData)) {
@@ -200,7 +200,7 @@ class ElementsDataHelper
      * @param array $options
      * @return void
      */
-    static function deleteElement(string $elementID, string $containerID = null, array $options = []): void
+    static function deleteElement(string $elementID, ?string $containerID = null, array $options = []): void
     {
         $updateContainer = isset($options['updateContainer']) ? $options['updateContainer'] : true;
         $recursivelyDeleteStructuralElementChildren = isset($options['recursivelyDeleteStructuralElementChildren']) ? $options['recursivelyDeleteStructuralElementChildren'] : true;
@@ -211,7 +211,7 @@ class ElementsDataHelper
         if ($containerData !== null) {
             $elementDataInContainer = self::getContainerDataElement($containerData, $elementID);
         }
-        $deleteResources = function (array $elementData) {
+        $deleteResources = function (array $elementData): void {
             if (isset($elementData['type'])) {
                 $elementTypeDefinition = ElementsHelper::getElementTypeDefinition($elementData['type']);
                 if ($elementTypeDefinition !== null && is_callable($elementTypeDefinition->onDelete)) {
@@ -367,7 +367,7 @@ class ElementsDataHelper
     {
         $result = [];
         $structuralElementsTypes = self::getStructuralElementsTypes();
-        self::walkContainerDataElements($containerData, function (array $elementData) use (&$result, $type, $structuralElementsTypes) {
+        self::walkContainerDataElements($containerData, function (array $elementData) use (&$result, $type, $structuralElementsTypes): void {
             if (isset($elementData['id'])) {
                 $elementType = isset($elementData['type']) ? $elementData['type'] : null; // nonStructural are outside (for now)
                 $add = false;
@@ -434,7 +434,7 @@ class ElementsDataHelper
      * @param string|null $expectedType
      * @return array|null
      */
-    static function getContainerDataElement(array $containerData, string $elementID, string $expectedType = null): ?array
+    static function getContainerDataElement(array $containerData, string $elementID, ?string $expectedType = null): ?array
     {
         $result = null;
         $structuralElementsTypes = self::getStructuralElementsTypes();
@@ -542,7 +542,7 @@ class ElementsDataHelper
                 if (isset($elementContainerData['data'])) {
                     if (isset($elementContainerData['data']['mode'])) {
                         $columnsSizes = explode(':', $elementContainerData['data']['mode']);
-                        $columnsCount = sizeof($columnsSizes);
+                        $columnsCount = count($columnsSizes);
                         $totalSize = array_sum($columnsSizes);
                         if ($totalSize === $columnsCount) {
                             $newValue = str_repeat(',', $columnsCount - 1);
@@ -974,7 +974,7 @@ class ElementsDataHelper
             throw new \Exception('Source element (' . $elementID . ') not found!');
         }
 
-        $addToContainer = function (array $elementContainerData) use ($containerData, $elementID, $containerID) {
+        $addToContainer = function (array $elementContainerData) use ($containerData, $elementID, $containerID): void {
             $containerData['elements'][] = $elementContainerData;
             $containerData = self::moveContainerDataElement($containerData, $elementContainerData['id'], ['afterElement', $elementID]);
             self::setLastChangeTime($containerData);
@@ -1306,7 +1306,7 @@ class ElementsDataHelper
         $result = [];
 
         $addedElements = [];
-        $addElementUploadsSizeItems = function (array $elementData) use (&$addElementUploadsSizeItems, &$addedElements, &$result) {
+        $addElementUploadsSizeItems = function (array $elementData) use (&$addElementUploadsSizeItems, &$addedElements, &$result): void {
             $elementID = $elementData['id'];
             if (isset($addedElements[$elementID])) {
                 return;
@@ -1314,7 +1314,7 @@ class ElementsDataHelper
             $addedElements[$elementID] = true;
             if (self::isStructuralElementData($elementData)) {
                 $result = array_merge($result, self::getElementDataUploadsSizeItems($elementData));
-                self::walkStructuralElementChildren($elementData, function (array $childElementData) use (&$addElementUploadsSizeItems) {
+                self::walkStructuralElementChildren($elementData, function (array $childElementData) use (&$addElementUploadsSizeItems): void {
                     $addElementUploadsSizeItems($childElementData);
                 });
             } else {
@@ -1325,7 +1325,7 @@ class ElementsDataHelper
             }
         };
 
-        self::walkContainerDataElements($containerData, function (array $elementData) use ($elementsIDs, $addElementUploadsSizeItems) {
+        self::walkContainerDataElements($containerData, function (array $elementData) use ($elementsIDs, $addElementUploadsSizeItems): void {
             if ($elementsIDs !== null && array_search($elementData['id'], $elementsIDs) === false) {
                 return;
             }
@@ -1341,7 +1341,7 @@ class ElementsDataHelper
      * @param string|null $containerID
      * @return integer
      */
-    static function getElementUploadsSize(string $elementID, string $containerID = null): int
+    static function getElementUploadsSize(string $elementID, ?string $containerID = null): int
     {
         return UploadsSize::getItemsSize(self::getElementUploadsSizeItems($elementID, $containerID));
     }
@@ -1352,7 +1352,7 @@ class ElementsDataHelper
      * @param string|null $containerID
      * @return array
      */
-    static function getElementUploadsSizeItems(string $elementID, string $containerID = null): array
+    static function getElementUploadsSizeItems(string $elementID, ?string $containerID = null): array
     {
         $elementData = InternalDataElements::getElement($elementID);
         if ($elementData !== null) {
@@ -1430,7 +1430,7 @@ class ElementsDataHelper
      * @param callable $add Function to add an item to the exported file
      * @return void
      */
-    static function exportElement(string $elementID, string $containerID = null, callable $add, array $options = []): void
+    static function exportElement(string $elementID, ?string $containerID = null, callable $add, array $options = []): void
     {
         $app = App::get();
 
@@ -1442,7 +1442,7 @@ class ElementsDataHelper
                     throw new \Exception('Cannot export element of type ' . $elementData['type'] . '! Trying to export ' . $elementID . '.');
                 }
                 if (is_callable($elementTypeDefinition->onExport)) {
-                    $elementData['data'] = call_user_func($elementTypeDefinition->onExport, isset($elementData['data']) ? $elementData['data'] : [], function (string $key, string $content) use ($elementID, $add) {
+                    $elementData['data'] = call_user_func($elementTypeDefinition->onExport, isset($elementData['data']) ? $elementData['data'] : [], function (string $key, string $content) use ($elementID, $add): void {
                         $add('bearcms/elements/element/' . md5($elementID) . '/data/' . $key, $content);
                     });
                 }
@@ -1462,7 +1462,7 @@ class ElementsDataHelper
                                 if (isset($addedDataKeys[$dataKey])) {
                                     $newFilename = $addedDataKeys[$dataKey];
                                 } else {
-                                    $newFilename = 'file' . (sizeof($addedDataKeys) + 1) . '.' . InternalData::getFilenameExtension($filename);
+                                    $newFilename = 'file' . (count($addedDataKeys) + 1) . '.' . InternalData::getFilenameExtension($filename);
                                     $add($filenamePrefix . $newFilename, file_get_contents($app->data->getFilename($dataKey)));
                                     $addedDataKeys[$dataKey] = $newFilename;
                                 }
@@ -1529,7 +1529,7 @@ class ElementsDataHelper
      * @param array $options
      * @return string|null Returns the imported element ID
      */
-    static function importElement(string $elementID, string $containerID = null, ImportContext $context, array $options = []): ?string
+    static function importElement(string $elementID, ?string $containerID = null, ImportContext $context, array $options = []): ?string
     {
         $app = App::get();
 
@@ -1615,7 +1615,7 @@ class ElementsDataHelper
         };
 
         $elementChangeEventsToDispatch = [];
-        $setNonStructualElementData = function (array $elementData) use ($containerID, $isExecuteMode, &$elementChangeEventsToDispatch) {
+        $setNonStructualElementData = function (array $elementData) use ($containerID, $isExecuteMode, &$elementChangeEventsToDispatch): void {
             if ($isExecuteMode) {
                 self::setLastChangeTime($elementData);
                 $elementID = $elementData['id'];
@@ -1729,7 +1729,7 @@ class ElementsDataHelper
      * @param array|null $target
      * @return string|null
      */
-    static function importElementFromFile(string $filename, string $targetContainerID, array $target = null): ?string
+    static function importElementFromFile(string $filename, string $targetContainerID, ?array $target = null): ?string
     {
         $result = self::executeImportElementFromFile($filename, false, $targetContainerID, $target);
         if (isset($result['results'], $result['results'][0], $result['results'][0]['result']) && is_string($result['results'][0]['result'])) {
@@ -1746,10 +1746,10 @@ class ElementsDataHelper
      * @param array|null $insertTarget
      * @return array
      */
-    static private function executeImportElementFromFile(string $filename, bool $preview, string $targetContainerID, array $insertTarget = null): array
+    static private function executeImportElementFromFile(string $filename, bool $preview, string $targetContainerID, ?array $insertTarget = null): array
     {
         return \BearCMS\Internal\ImportExport::import($filename, $preview, function ($manifest) use ($targetContainerID, $insertTarget) {
-            if (sizeof($manifest['items']) === 1 && $manifest['items'][0]['type'] === 'element') {
+            if (count($manifest['items']) === 1 && $manifest['items'][0]['type'] === 'element') {
                 $manifest['items'][0]['importOptions'] = ['generateNewElementID' => true, 'insertTarget' => $insertTarget];
                 if (!isset($manifest['items'][0]['args'])) {
                     $manifest['items'][0]['args'] = [];
@@ -1806,7 +1806,7 @@ class ElementsDataHelper
     static private function executeImportElementsContainerFromFile(string $filename, bool $preview, string $targetContainerID): array
     {
         return \BearCMS\Internal\ImportExport::import($filename, $preview, function ($manifest) use ($targetContainerID) {
-            if (sizeof($manifest['items']) === 1 && $manifest['items'][0]['type'] === 'elementsContainer') {
+            if (count($manifest['items']) === 1 && $manifest['items'][0]['type'] === 'elementsContainer') {
                 $manifest['items'][0]['importOptions'] = ['targetContainerID' => $targetContainerID];
                 return $manifest;
             }

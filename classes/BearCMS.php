@@ -107,7 +107,7 @@ class BearCMS
 
         if (Config::$handleErrorPages) {
             $this->app
-                ->addEventListener('beforeSendResponse', function (\BearFramework\App\BeforeSendResponseEventDetails $details) {
+                ->addEventListener('beforeSendResponse', function (\BearFramework\App\BeforeSendResponseEventDetails $details): void {
                     $response = $details->response;
                     $requestPath = (string) $this->app->request->path;
                     if (strpos($requestPath, $this->app->assets->pathPrefix) === 0 || strpos($requestPath, '/files/preview/') === 0 || strpos($requestPath, '/files/download/') === 0 || strpos($requestPath, '/favicon.ico') === 0 || strpos($requestPath, '/.well-known/') === 0 || strpos($requestPath, '/-de/') === 0) {
@@ -148,7 +148,7 @@ class BearCMS
                 ->addTag('bearcms-elements', 'file:' . $this->context->dir . '/components/bearcmsElements.php')
                 ->addAlias('bearcms-missing-element', 'file:' . $this->context->dir . '/components/bearcmsElement.php')
                 ->addAlias('bearcms-unknown-element', 'file:' . $this->context->dir . '/components/bearcmsUnknownElement.php')
-                ->addEventListener('makeComponent', function ($details) {
+                ->addEventListener('makeComponent', function ($details): void {
                     ElementsHelper::updateComponent($details->component);
                 });
 
@@ -160,7 +160,7 @@ class BearCMS
                 });
 
             $this->app->clientPackages
-                ->add('-bearcms-elements-lazy-load', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                ->add('-bearcms-elements-lazy-load', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package): void {
                     // $package->addJSCode(file_get_contents(__DIR__ . '/../dev/elementsLazyLoad.js')); // dev mode
                     $package->addJSFile($this->context->assets->getURL('assets/elementsLazyLoad.min.js', ['cacheMaxAge' => 999999999, 'version' => 6]));
                     $package->get = 'bearCMS.elementsLazyLoad.initialize(' . json_encode([__('bearcms.elements.LoadingMore'), JSON_THROW_ON_ERROR]) . ');return bearCMS.elementsLazyLoad;';
@@ -182,18 +182,18 @@ class BearCMS
                 });
 
             $this->app->clientPackages
-                ->add('-bearcms-element-events', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                ->add('-bearcms-element-events', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package): void {
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/elementEvents.js')); // dev mode
                     $package->addJSCode(include $this->context->dir . '/resources/elementEvents.js.min.php');
                     $package->get = 'return bearCMS.elementEvents;';
                 })
-                ->add('-bearcms-slider-elements', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                ->add('-bearcms-slider-elements', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package): void {
                     $package->embedPackage('touchEvents');
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/sliderElements.js')); // dev mode
                     $package->addJSCode(include $this->context->dir . '/resources/sliderElements.js.min.php');
                     $package->get = 'return bearCMS.sliderElements;';
                 })
-                ->add('-bearcms-repeater', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                ->add('-bearcms-repeater', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package): void {
                     $style = '';
                     $style .= '[data-bearcms-repeater-type="vertical"]{display:flex;flex-direction:column;gap:var(--bearcms-repeater-spacing);}';
                     $style .= '[data-bearcms-repeater-type="grid"]{display:flex;flex-direction:row;flex-wrap:wrap;gap:var(--bearcms-repeater-spacing);}';
@@ -220,7 +220,7 @@ class BearCMS
         }
 
         $this->app->clientPackages
-            ->add('bearcms-lightbox-content', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+            ->add('bearcms-lightbox-content', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package): void {
                 //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/lightboxContent.js')); // dev mode
                 $package->addJSCode(include $this->context->dir . '/resources/lightboxContent.js.min.php');
                 $package->embedPackage('lightbox');
@@ -283,7 +283,7 @@ class BearCMS
                     if ($filename !== null && strlen($filename) < 200 && $this->currentUser->exists()) {
                         $filenameParts = explode('.', $filename, 2);
                         $fullFilename = $this->app->data->getFilename('.temp/bearcms/data-export/' . $filename);
-                        if (sizeof($filenameParts) === 2 && is_file($fullFilename)) {
+                        if (count($filenameParts) === 2 && is_file($fullFilename)) {
                             $response = new App\Response\FileReader($fullFilename);
                             $details = $this->app->assets->getDetails($fullFilename, ['mimeType']);
                             if ($details['mimeType'] !== null && strlen($details['mimeType']) > 0) {
@@ -310,7 +310,7 @@ class BearCMS
                     $settings = $this->data->settings->get();
                     if ($settings->enableRSS) {
                         $segmentParts = explode('.', $request->path->getSegment(0));
-                        $language = sizeof($segmentParts) === 3 ? $segmentParts[1] : '';
+                        $language = count($segmentParts) === 3 ? $segmentParts[1] : '';
                         return Internal\Controller::handleRSS($language);
                     }
                 }
@@ -358,17 +358,17 @@ class BearCMS
                     return Comments::handleLoadMoreServerRequest($data);
                 });
             $this->app->clientPackages
-                ->add('-bearcms-comments-element-form', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                ->add('-bearcms-comments-element-form', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package): void {
                     $package->addJSCode(include $this->context->dir . '/components/bearcmsCommentsElement/commentsElementForm.min.js.php');
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/commentsElementForm.js'));
                     $package->embedPackage('users');
                 })
-                ->add('-bearcms-comments-element-list', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                ->add('-bearcms-comments-element-list', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package): void {
                     $package->addJSCode(include $this->context->dir . '/components/bearcmsCommentsElement/commentsElementList.min.js.php');
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/commentsElementList.js'));
                     $package->embedPackage('users');
                 });
-            CommentsLocations::addSource(function () use ($hasPages, $hasBlog) {
+            CommentsLocations::addSource(function () use ($hasPages, $hasBlog): void {
                 if ($hasPages) {
                     Pages::setCommentsLocations();
                 }
@@ -376,21 +376,21 @@ class BearCMS
                     Blog::setCommentsLocations();
                 }
             });
-            $checkCommentsLocationsElementsContainerID = function (string $containerID) use ($hasPages) {
+            $checkCommentsLocationsElementsContainerID = function (string $containerID) use ($hasPages): void {
                 if ($hasPages && strpos($containerID, 'bearcms-page-') === 0) {
                     $pageID = str_replace('bearcms-page-', '', $containerID);
-                    $this->app->addEventListener('sendResponse', function () use ($pageID) {
+                    $this->app->addEventListener('sendResponse', function () use ($pageID): void {
                         Pages::addUpdateCommentsLocationsTask($pageID);
                     });
                 }
             };
             $this
-                ->addEventListener('internalElementChange', function (\BearCMS\Internal\ElementChangeEventDetails $details) use ($checkCommentsLocationsElementsContainerID) {
+                ->addEventListener('internalElementChange', function (\BearCMS\Internal\ElementChangeEventDetails $details) use ($checkCommentsLocationsElementsContainerID): void {
                     if ($details->containerID !== null) {
                         $checkCommentsLocationsElementsContainerID($details->containerID);
                     }
                 })
-                ->addEventListener('internalElementsContainerChange', function (\BearCMS\Internal\ElementsContainerChangeEventDetails $details) use ($checkCommentsLocationsElementsContainerID) {
+                ->addEventListener('internalElementsContainerChange', function (\BearCMS\Internal\ElementsContainerChangeEventDetails $details) use ($checkCommentsLocationsElementsContainerID): void {
                     $checkCommentsLocationsElementsContainerID($details->containerID);
                 });
         }
@@ -409,12 +409,12 @@ class BearCMS
                 });
 
             if ($hasThemes) {
-                Internal\Themes::$pagesOptions['blog'] = function (\BearCMS\Internal\ThemeOptionsGroupInterface $options, array $details = []) {
+                Internal\Themes::$pagesOptions['blog'] = function (\BearCMS\Internal\ThemeOptionsGroupInterface $options, array $details = []): void {
                     Blog::addThemesPageOptions($options, $details);
                 };
             }
             $this->app->clientPackages
-                ->add('-bearcms-blog-posts-element', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package) {
+                ->add('-bearcms-blog-posts-element', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package): void {
                     $package->addJSCode(include $this->context->dir . '/components/bearcmsBlogPostsElement/blogPostsElement.min.js.php');
                     //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/blogPostsElement.js'));
                 });
@@ -472,7 +472,7 @@ class BearCMS
 
         // Sitemap for pages and blog posts
         if ($hasPages || $hasBlog) {
-            Sitemap::addSource(function (\BearCMS\Internal\Sitemap\Sitemap $sitemap) use ($hasPages, $hasBlog) {
+            Sitemap::addSource(function (\BearCMS\Internal\Sitemap\Sitemap $sitemap) use ($hasPages, $hasBlog): void {
                 if ($hasPages) {
                     Pages::addSitemapItems($sitemap);
                 }
@@ -480,10 +480,10 @@ class BearCMS
                     Blog::addSitemapItems($sitemap);
                 }
             });
-            $checkSitemapElementsContainerID = function (string $containerID) use ($hasPages, $hasBlog) {
+            $checkSitemapElementsContainerID = function (string $containerID) use ($hasPages, $hasBlog): void {
                 if ($hasPages && strpos($containerID, 'bearcms-page-') === 0) {
                     $pageID = str_replace('bearcms-page-', '', $containerID);
-                    $this->app->addEventListener('sendResponse', function () use ($pageID) {
+                    $this->app->addEventListener('sendResponse', function () use ($pageID): void {
                         $page = $this->data->pages->get($pageID);
                         if ($page !== null) {
                             Sitemap::addUpdateDateTask($page->path);
@@ -492,7 +492,7 @@ class BearCMS
                 }
                 if ($hasBlog && strpos($containerID, 'bearcms-blogpost-') === 0) {
                     $blogPostID = str_replace('bearcms-blogpost-', '', $containerID);
-                    $this->app->addEventListener('sendResponse', function () use ($blogPostID) {
+                    $this->app->addEventListener('sendResponse', function () use ($blogPostID): void {
                         $blogPost = $this->data->blogPosts->get($blogPostID);
                         if ($blogPost !== null) {
                             Sitemap::addUpdateDateTask($blogPost->getURLPath());
@@ -501,19 +501,19 @@ class BearCMS
                 }
             };
             $this
-                ->addEventListener('internalElementChange', function (\BearCMS\Internal\ElementChangeEventDetails $details) use ($checkSitemapElementsContainerID) {
+                ->addEventListener('internalElementChange', function (\BearCMS\Internal\ElementChangeEventDetails $details) use ($checkSitemapElementsContainerID): void {
                     if ($details->containerID !== null) {
                         $checkSitemapElementsContainerID($details->containerID);
                     }
                 })
-                ->addEventListener('internalElementsContainerChange', function (\BearCMS\Internal\ElementsContainerChangeEventDetails $details) use ($checkSitemapElementsContainerID) {
+                ->addEventListener('internalElementsContainerChange', function (\BearCMS\Internal\ElementsContainerChangeEventDetails $details) use ($checkSitemapElementsContainerID): void {
                     $checkSitemapElementsContainerID($details->containerID);
                 });
         }
 
         $preparedAssetsDetails = [];
         $this->app->assets
-            ->addEventListener('beforePrepare', function (\BearFramework\App\Assets\BeforePrepareEventDetails $details) {
+            ->addEventListener('beforePrepare', function (\BearFramework\App\Assets\BeforePrepareEventDetails $details): void {
                 $filename = $details->filename;
                 // Theme media file
                 $matchingDir = $this->context->dir . '/assets/tm/';
@@ -542,7 +542,7 @@ class BearCMS
                     }
                 }
             })
-            ->addEventListener('beforePrepare', function (\BearFramework\App\Assets\BeforePrepareEventDetails $details) use (&$preparedAssetsDetails) {
+            ->addEventListener('beforePrepare', function (\BearFramework\App\Assets\BeforePrepareEventDetails $details) use (&$preparedAssetsDetails): void {
                 $filename = $details->filename;
                 $addonAssetsDir = $this->context->dir . '/assets/';
                 if (strpos($filename, $addonAssetsDir) === 0) {
@@ -585,7 +585,7 @@ class BearCMS
             });
 
         $this->app
-            ->addEventListener('beforeSendResponse', function (\BearFramework\App\BeforeSendResponseEventDetails $details) use (&$preparedAssetsDetails) {
+            ->addEventListener('beforeSendResponse', function (\BearFramework\App\BeforeSendResponseEventDetails $details) use (&$preparedAssetsDetails): void {
                 $response = $details->response;
                 if (strpos((string) $this->app->request->path, $this->app->assets->pathPrefix) === 0) { // asset file
                     if ($response instanceof App\Response\FileReader) {
@@ -619,7 +619,7 @@ class BearCMS
                 }
             }
             $this->app
-                ->addEventListener('beforeSendResponse', function (\BearFramework\App\BeforeSendResponseEventDetails $details) {
+                ->addEventListener('beforeSendResponse', function (\BearFramework\App\BeforeSendResponseEventDetails $details): void {
                     Internal\Cookies::apply($details->response);
                 });
         }
@@ -627,27 +627,27 @@ class BearCMS
 
         if (Config::hasFeature('NOTIFICATIONS')) {
             $this->app->tasks
-                ->define('bearcms-send-new-comment-notification', function ($data) {
+                ->define('bearcms-send-new-comment-notification', function ($data): void {
                     Comments::sendNewCommentNotification($data);
                 });
         }
 
         $this->app->tasks
-            ->define('bearcms-sitemap-update-dates', function ($paths) {
+            ->define('bearcms-sitemap-update-dates', function ($paths): void {
                 foreach ($paths as $path) {
                     Internal\Sitemap::addUpdateDateTask($path);
                 }
             })
-            ->define('bearcms-sitemap-update-date', function ($path) {
+            ->define('bearcms-sitemap-update-date', function ($path): void {
                 Internal\Sitemap::updateDate($path);
             })
-            ->define('bearcms-sitemap-notify-search-engines', function () {
+            ->define('bearcms-sitemap-notify-search-engines', function (): void {
                 Internal\Sitemap::notifySearchEngines();
             })
-            ->define('bearcms-page-comments-locations-update', function ($pageID) {
+            ->define('bearcms-page-comments-locations-update', function ($pageID): void {
                 Pages::setCommentsLocations($pageID);
             })
-            ->define('bearcms-blog-comments-locations-update', function ($blogPostID) {
+            ->define('bearcms-blog-comments-locations-update', function ($blogPostID): void {
                 Blog::setCommentsLocations($blogPostID);
             });
 
@@ -669,7 +669,7 @@ class BearCMS
      * @param \BearCMS\ApplyContext|null $applyContext
      * @return void
      */
-    public function apply(\BearFramework\App\Response $response, \BearCMS\ApplyContext $applyContext = null): void
+    public function apply(\BearFramework\App\Response $response, ?\BearCMS\ApplyContext $applyContext = null): void
     {
         $language = null;
         if ($applyContext !== null) {
@@ -707,7 +707,7 @@ class BearCMS
      * @param \BearCMS\ApplyContext|null $applyContext
      * @return void
      */
-    public function applyDefaults(\BearFramework\App\Response $response, \BearCMS\ApplyContext $applyContext = null): void
+    public function applyDefaults(\BearFramework\App\Response $response, ?\BearCMS\ApplyContext $applyContext = null): void
     {
         $currentUserExists = Config::hasServer() && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
         $settings = $this->data->settings->get();
@@ -929,7 +929,7 @@ class BearCMS
      * @param \BearCMS\ApplyContext|null $applyContext
      * @return void
      */
-    public function applyAdminUI(\BearFramework\App\Response $response, \BearCMS\ApplyContext $applyContext = null): void
+    public function applyAdminUI(\BearFramework\App\Response $response, ?\BearCMS\ApplyContext $applyContext = null): void
     {
         $currentUserExists = Config::hasServer() && (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) ? $this->currentUser->exists() : false;
         if (!$currentUserExists) {
@@ -996,7 +996,7 @@ class BearCMS
      * @param \BearCMS\ApplyContext|null $applyContext
      * @return void
      */
-    public function applyTheme(\BearFramework\App\Response $response, \BearCMS\ApplyContext $applyContext = null): void
+    public function applyTheme(\BearFramework\App\Response $response, ?\BearCMS\ApplyContext $applyContext = null): void
     {
         $currentUserExists = $this->currentUser->exists();
         $currentThemeID = Internal\CurrentTheme::getID();
@@ -1175,10 +1175,10 @@ class BearCMS
             $localization = $this->app->localization;
             $previousLocale = $localization->getLocale();
             $localization->setLocale($language);
-            return function () use ($localization, $previousLocale) {
+            return function () use ($localization, $previousLocale): void {
                 $localization->setLocale($previousLocale);
             };
         }
-        return function () {};
+        return function (): void {};
     }
 }

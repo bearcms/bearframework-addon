@@ -129,7 +129,7 @@ class BlogPosts
      * 
      * @return string
      */
-    static function getURLPath(string $id, string $slug = null): string
+    static function getURLPath(string $id, ?string $slug = null): string
     {
         if (strlen((string)$id) === 0) {
             return null;

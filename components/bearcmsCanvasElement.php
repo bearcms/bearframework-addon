@@ -48,7 +48,7 @@ $cssTypesOptionsDetails['background'] = [
 ];
 
 $cssCode = '';
-$addStyleCSS = function (string $selector, string $type, array $style) use (&$cssCode, $cssTypesOptionsDetails) {
+$addStyleCSS = function (string $selector, string $type, array $style) use (&$cssCode, $cssTypesOptionsDetails): void {
     if (isset($cssTypesOptionsDetails[$type])) {
         $options = new \BearCMS\Themes\Theme\Options();
         $options->addOption("css", "css", '', $cssTypesOptionsDetails[$type]);

@@ -362,7 +362,7 @@ class Data
         }
         if (substr($filename, 0, 6) === 'addon:') {
             $temp = explode(':', $filename, 3);
-            if (sizeof($temp) === 3) {
+            if (count($temp) === 3) {
                 $addon = \BearFramework\Addons::get($temp[1]);
                 if ($addon !== null) {
                     return $addon->dir . '/' . $temp[2];

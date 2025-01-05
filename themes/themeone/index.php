@@ -13,7 +13,7 @@ use IvoPetkov\HTML5DOMDocument;
 $app = App::get();
 
 $app->bearCMS->themes
-    ->register('bearcms/themeone', function (\BearCMS\Themes\Theme $theme) use ($app) {
+    ->register('bearcms/themeone', function (\BearCMS\Themes\Theme $theme) use ($app): void {
         $context = $app->contexts->get(__DIR__);
 
         $app->localization
@@ -47,7 +47,7 @@ $app->bearCMS->themes
             return $template;
         };
 
-        $theme->apply = function (\BearFramework\App\Response $response, \BearCMS\Themes\Theme\Customizations $customizations) use ($context) {
+        $theme->apply = function (\BearFramework\App\Response $response, \BearCMS\Themes\Theme\Customizations $customizations) use ($context): void {
             $domDocument = new HTML5DOMDocument();
             $domDocument->loadHTML($response->content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
             $elements = $domDocument->querySelectorAll('bearcms-elements');
@@ -84,7 +84,7 @@ $app->bearCMS->themes
             return $options;
         };
 
-        $theme->updateValues = function (array $values = null) {
+        $theme->updateValues = function (?array $values = null) {
             if (is_array($values)) {
                 if (isset($values['textColor']) || isset($values['textSize'])) {
                     $textCSS = [];

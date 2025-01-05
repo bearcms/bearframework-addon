@@ -35,7 +35,7 @@ class ElementStylesHelper
      * @param array|null $elementDefaultValue
      * @return string
      */
-    static function getElementRealStyleID(string $elementStyleID = null, array $elementStyleValue = null, array $elementDefaultValue = null): string
+    static function getElementRealStyleID(?string $elementStyleID = null, ?array $elementStyleValue = null, ?array $elementDefaultValue = null): string
     {
         if ($elementStyleID !== null) {
             return $elementStyleID;
@@ -56,7 +56,7 @@ class ElementStylesHelper
      * @param array|null $elementDefaultValue
      * @return array [realStyleID, realStyleValue]
      */
-    static function getElementRealStyleData(string $elementStyleID = null, array $elementStyleValue = null, array $elementDefaultValue = null): array
+    static function getElementRealStyleData(?string $elementStyleID = null, ?array $elementStyleValue = null, ?array $elementDefaultValue = null): array
     {
         $realStyleID = self::getElementRealStyleID($elementStyleID, $elementStyleValue, $elementDefaultValue);
         if ($realStyleID === 'default') {
@@ -108,7 +108,7 @@ class ElementStylesHelper
      * @param string|null $type
      * @return array
      */
-    static function getSharedStylesList(string $type = null): array
+    static function getSharedStylesList(?string $type = null): array
     {
         $list = ElementsSharedStyles::getList();
         if ($type === null) {
@@ -228,7 +228,7 @@ class ElementStylesHelper
      * @param string|null $containerID
      * @return string
      */
-    static function createSharedStyleFromCustom(string $elementID, string $containerID = null): string
+    static function createSharedStyleFromCustom(string $elementID, ?string $containerID = null): string
     {
         $elementData = ElementsDataHelper::getElement($elementID, $containerID);
         if ($elementData === null) {
@@ -278,7 +278,7 @@ class ElementStylesHelper
      * @param string|null $styleID
      * @return void
      */
-    static function setElementStyleID(string $elementID, string $containerID = null, string $styleID = null): void
+    static function setElementStyleID(string $elementID, ?string $containerID = null, ?string $styleID = null): void
     {
         $elementData = ElementsDataHelper::getElement($elementID, $containerID);
         if ($elementData === null) {

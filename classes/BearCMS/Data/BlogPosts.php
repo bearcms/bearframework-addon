@@ -38,7 +38,7 @@ class BlogPosts
     public function getList(): \BearFramework\Models\ModelsList
     {
         $list = Internal\Data::getList('bearcms/blog/post/');
-        array_walk($list, function (&$value) {
+        array_walk($list, function (&$value): void {
             $value = \BearCMS\Data\BlogPosts\BlogPost::fromJSON($value);
         });
         return new \BearFramework\Models\ModelsList($list);

@@ -163,7 +163,7 @@ class ElementsHelper
         };
 
         $columnsWidths = explode(';', $widths);
-        $columnsCount = sizeof($columnsWidths);
+        $columnsCount = count($columnsWidths);
 
         $innerContent = '';
         $columnsElements = isset($elementContainerData['elements']) ? $elementContainerData['elements'] : [];
@@ -174,7 +174,7 @@ class ElementsHelper
         $lastColumnIndex = $columnsCount - 1;
         for ($i = 0; $i < $columnsCount; $i++) {
             $columnContent = '';
-            $addColumnsContent = function ($columnElementsData) use (&$columnContent, $editable, $contextData, $outputType) {
+            $addColumnsContent = function ($columnElementsData) use (&$columnContent, $editable, $contextData, $outputType): void {
                 if (!empty($columnElementsData)) {
                     $columnContent .= self::renderContainerElements($columnElementsData, $editable, $contextData, $outputType);
                 }
@@ -221,7 +221,7 @@ class ElementsHelper
                 $getWidthsCSS = function (string $widths) use ($editable): string {
                     $result = '';
                     $columnsWidths = explode(';', $widths);
-                    $columnsCount = sizeof($columnsWidths);
+                    $columnsCount = count($columnsWidths);
                     $columnsStyles = [];
                     $notEmptyColumnsWidthsCalc = [];
                     $emptyColumnsWidths = 0;
@@ -546,7 +546,7 @@ class ElementsHelper
         $slidesCount = (empty($slidesIndexes) ? 0 : max($slidesIndexes) + 1);
         for ($i = 0; $i < $slidesCount; $i++) {
             $slideContent = '';
-            $addSlideContent = function ($slidesElementsData) use (&$slideContent, $editable, $contextData, $outputType) {
+            $addSlideContent = function ($slidesElementsData) use (&$slideContent, $editable, $contextData, $outputType): void {
                 if (!empty($slidesElementsData)) {
                     $slideContent .= self::renderContainerElements($slidesElementsData, $editable, $contextData, $outputType);
                 }
@@ -682,7 +682,7 @@ class ElementsHelper
      * @param boolean $optimizeForCompatibility
      * @return string
      */
-    static function getStyleHTML(string $elementType, array $styleValue = null, string $selector, bool $returnHeadContentOnly = false, bool $optimizeForCompatibility = false): string
+    static function getStyleHTML(string $elementType, ?array $styleValue, string $selector, bool $returnHeadContentOnly = false, bool $optimizeForCompatibility = false): string
     {
         if (isset(InternalThemes::$elementsOptions[$elementType])) {
             $options = new \BearCMS\Themes\Theme\Options();
@@ -780,7 +780,7 @@ class ElementsHelper
                 $component->color = $componentColor;
             };
 
-            $updateIDAttributeFromRawData = function ($component, bool $setRawAttributeIfMissing) {
+            $updateIDAttributeFromRawData = function ($component, bool $setRawAttributeIfMissing): void {
                 $rawData = (string)$component->getAttribute('bearcms-internal-attribute-raw-data');
                 if (strlen($rawData) > 0) {
                     $elementData = InternalDataElements::decodeElementRawData($rawData);

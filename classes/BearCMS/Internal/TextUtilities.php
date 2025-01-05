@@ -33,7 +33,7 @@ class TextUtilities
      * @param integer|null $length
      * @return string
      */
-    static function substr(string $string, int $start, int $length = null): string
+    static function substr(string $string, int $start, ?int $length = null): string
     {
         return function_exists('mb_substr') ? mb_substr($string, $start, $length) : substr($string, $start, $length);
     }
@@ -103,7 +103,7 @@ class TextUtilities
             $wordLength = self::strlen($word);
             if ($wordLength >= 3 && !is_numeric($word)) {
                 $selectedWords[] = $word;
-                if (sizeof($selectedWords) === 10) {
+                if (count($selectedWords) === 10) {
                     break;
                 }
             }

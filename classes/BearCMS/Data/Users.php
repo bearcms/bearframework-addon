@@ -36,7 +36,7 @@ class Users
     public function getList(): \BearFramework\Models\ModelsList
     {
         $list = \BearCMS\Internal\Data::getList('bearcms/users/user/');
-        array_walk($list, function(&$value) {
+        array_walk($list, function(&$value): void {
             $value = \BearCMS\Data\Users\User::fromJSON($value);
         });
         return new \BearFramework\Models\ModelsList($list);
@@ -49,7 +49,7 @@ class Users
     public function hasUsers(): bool
     {
         $list = \BearCMS\Internal\Data::getList('bearcms/users/user/'); //'limit' => 1 //todo
-        return sizeof($list) > 0;
+        return count($list) > 0;
     }
 
 }

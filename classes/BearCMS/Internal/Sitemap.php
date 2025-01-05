@@ -191,7 +191,7 @@ class Sitemap
     {
         $app = App::get();
         $app->tasks->add('bearcms-sitemap-update-dates', $paths, [
-            'id' => 'bearcms-sitemap-update-dates-' . md5(json_encode($paths, JSON_THROW_ON_ERROR)) . '-' . sizeof($paths), // for debugging purposes
+            'id' => 'bearcms-sitemap-update-dates-' . md5(json_encode($paths, JSON_THROW_ON_ERROR)) . '-' . count($paths), // for debugging purposes
             'ignoreIfExists' => true
         ]);
     }
@@ -233,7 +233,7 @@ class Sitemap
         $sitemapURL = $app->urls->get('/sitemap.xml');
         $tempData['pings'][] = $ping('https://www.google.com/webmasters/tools/ping?sitemap=' . $sitemapURL);
         $tempData['pings'][] = $ping('https://www.bing.com/webmaster/ping.aspx?siteMap=' . $sitemapURL);
-        $pingsCount = sizeof($tempData['pings']);
+        $pingsCount = count($tempData['pings']);
         if ($pingsCount > 20) {
             $tempData['pings'] = array_slice($tempData['pings'], $pingsCount - 20);
         }

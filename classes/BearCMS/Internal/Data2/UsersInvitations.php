@@ -57,7 +57,7 @@ class UsersInvitations
     public function getList()
     {
         $list = \BearCMS\Internal\Data::getList('bearcms/users/invitation/');
-        array_walk($list, function (&$value) {
+        array_walk($list, function (&$value): void {
             $value = $this->makeUserFromRawData($value);
         });
         return new \IvoPetkov\DataList($list);

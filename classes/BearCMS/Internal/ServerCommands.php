@@ -225,7 +225,7 @@ class ServerCommands
         $app = App::get();
         $blogPostID = $data['id'];
         InternalDataBlogPosts::set($blogPostID, $data['data']);
-        $app->addEventListener('sendResponse', function () use ($app, $blogPostID) {
+        $app->addEventListener('sendResponse', function () use ($app, $blogPostID): void {
             $blogPost = $app->bearCMS->data->blogPosts->get($blogPostID);
             if ($blogPost !== null) {
                 Sitemap::addUpdateDateTask($blogPost->getURLPath());
@@ -350,7 +350,7 @@ class ServerCommands
         $result = [];
         $app = App::get();
 
-        $validateKey = function ($key) {
+        $validateKey = function ($key): void {
             if (strpos($key, 'bearcms/') !== 0 && strpos($key, '.temp/bearcms/') !== 0 && strpos($key, '.recyclebin/bearcms/') !== 0 && strpos($key, 'bearcms-store/') !== 0 && strpos($key, '.temp/bearcms-store/') !== 0 && strpos($key, '.recyclebin/bearcms-store/') !== 0) {
                 throw new \Exception('The key ' . $key . ' is forbidden!');
             }
@@ -1180,7 +1180,7 @@ class ServerCommands
         if (isset($data['isNew']) && (int)$data['isNew'] > 0) {
             InternalPages::createNewPageHeadingElement($pageID);
         }
-        $app->addEventListener('sendResponse', function () use ($app, $pageID) {
+        $app->addEventListener('sendResponse', function () use ($app, $pageID): void {
             $page = $app->bearCMS->data->pages->get($pageID);
             if ($page !== null) {
                 Sitemap::addUpdateDateTask($page->path);

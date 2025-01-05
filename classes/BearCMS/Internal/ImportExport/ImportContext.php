@@ -46,7 +46,7 @@ class ImportContext
      * @param callable|null $getValueCallback
      * @param ImportContext|null $parentContext
      */
-    public function __construct(string $mode, callable $getValueCallback = null, ImportContext $parentContext = null)
+    public function __construct(string $mode, ?callable $getValueCallback = null, ?ImportContext $parentContext = null)
     {
         $this->mode = $mode;
         $this->getValueCallback = $getValueCallback;

@@ -58,7 +58,7 @@ if (isset($itemsHtml[0])) {
     }
     $liElements = $domDocument->querySelectorAll('li');
     $requestBase = $app->request->base;
-    foreach ($liElements as $index => $liElement) {
+    foreach ($liElements as $liElement) {
         $liClasssName = 'bearcms-navigation-element-item';
         if ($liElement->firstChild) {
             $liPath = str_replace($requestBase, '', $liElement->firstChild->getAttribute('href'));

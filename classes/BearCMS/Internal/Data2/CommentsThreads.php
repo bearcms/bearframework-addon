@@ -55,7 +55,7 @@ class CommentsThreads
     public function getList()
     {
         $list = Internal\Data::getList('bearcms/comments/thread/');
-        array_walk($list, function (&$value) {
+        array_walk($list, function (&$value): void {
             $value = $this->makeCommentsThreadPostFromRawData($value);
         });
         return new \IvoPetkov\DataList($list);

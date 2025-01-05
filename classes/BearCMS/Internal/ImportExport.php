@@ -40,7 +40,7 @@ class ImportExport
         if (!self::$defaultHandlersInitialized) {
             self::$handlers['elementsContainer'] = function () {
                 return self::makeHandler(
-                    function (array $args, callable $add) {
+                    function (array $args, callable $add): void {
                         ElementsDataHelper::exportContainer($args['containerID'], $add);
                     },
                     function (array $args, ImportContext $context, $options) {
@@ -86,7 +86,7 @@ class ImportExport
                         }
                         $add('keys.json', json_encode($keys));
                     },
-                    function (array $args, ImportContext $context, $options) {
+                    function (array $args, ImportContext $context, $options): void {
                         $app = App::get();
                         $appData = $app->data;
                         $keys = json_decode($context->getValue('keys.json'), true);
@@ -176,7 +176,7 @@ class ImportExport
         $memoryLimit = isset($options['memoryLimit']) ? (int) $options['memoryLimit'] : ($getConfigMemoryLimit() - $startMemoryUsage) / 2;
 
         $zip = null;
-        $openZip = function () use (&$zip, $tempArchiveFilename) {
+        $openZip = function () use (&$zip, $tempArchiveFilename): void {
             if ($zip === null) {
                 $zip = new \ZipArchive();
                 if (!$zip->open($tempArchiveFilename, \ZipArchive::CREATE)) {
@@ -184,7 +184,7 @@ class ImportExport
                 }
             }
         };
-        $closeZip = function () use (&$zip) {
+        $closeZip = function () use (&$zip): void {
             if ($zip !== null) {
                 $zip->close();
                 $zip = null;
@@ -206,7 +206,7 @@ class ImportExport
             $exportArgs = !(isset($item['exportArgs']) && $item['exportArgs'] === false);
             $handler = self::getHandler($itemType);
             $files = [];
-            $handler->export($itemArgs, function (string $key, string $content) use ($index, &$files, &$zip, $openZip, $closeZip, $startMemoryUsage, $memoryLimit) {
+            $handler->export($itemArgs, function (string $key, string $content) use ($index, &$files, &$zip, $openZip, $closeZip, $startMemoryUsage, $memoryLimit): void {
                 $openZip();
                 $zip->addFromString('items/' . $index . '/' . md5($key), $content);
                 $files[$key] = 1; // may have duplicates (shared styles for example)
@@ -237,7 +237,7 @@ class ImportExport
      * @param callable|null $updateManifestCallback
      * @return array
      */
-    static function import(string $filename, bool $preview, callable $updateManifestCallback = null): array
+    static function import(string $filename, bool $preview, ?callable $updateManifestCallback = null): array
     {
         $result = ['results' => [], 'changes' => []];
         if (!is_file($filename)) {
