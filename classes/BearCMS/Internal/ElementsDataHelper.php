@@ -1430,7 +1430,7 @@ class ElementsDataHelper
      * @param callable $add Function to add an item to the exported file
      * @return void
      */
-    static function exportElement(string $elementID, ?string $containerID = null, callable $add, array $options = []): void
+    static function exportElement(string $elementID, ?string $containerID, callable $add, array $options = []): void
     {
         $app = App::get();
 
@@ -1529,7 +1529,7 @@ class ElementsDataHelper
      * @param array $options
      * @return string|null Returns the imported element ID
      */
-    static function importElement(string $elementID, ?string $containerID = null, ImportContext $context, array $options = []): ?string
+    static function importElement(string $elementID, ?string $containerID, ImportContext $context, array $options = []): ?string
     {
         $app = App::get();
 
