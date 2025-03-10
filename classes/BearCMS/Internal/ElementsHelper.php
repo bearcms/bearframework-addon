@@ -225,11 +225,16 @@ class ElementsHelper
                     $columnsStyles = [];
                     $notEmptyColumnsWidthsCalc = [];
                     $emptyColumnsWidths = 0;
+                    $fixedSizeColumnsCount = 0;
                     for ($i = 0; $i < $columnsCount; $i++) {
-                        if (strlen($columnsWidths[$i]) === 0) {
+                        $columnWidth = $columnsWidths[$i];
+                        if (strlen($columnWidth) === 0) {
                             $emptyColumnsWidths++;
                         } else {
-                            $notEmptyColumnsWidthsCalc[] = $columnsWidths[$i];
+                            $notEmptyColumnsWidthsCalc[] = $columnWidth;
+                            if (strpos($columnWidth, 'px') !== false) {
+                                $fixedSizeColumnsCount++;
+                            }
                         }
                     }
                     $notEmptyColumnsWidthsCalc = implode(' + ', $notEmptyColumnsWidthsCalc);
@@ -239,7 +244,7 @@ class ElementsHelper
                         if (strlen($columnWidth) === 0) {
                             $columnWidth = (strlen($notEmptyColumnsWidthsCalc) === 0 ? '100%' : '(100% - (' . $notEmptyColumnsWidthsCalc . '))') . '/' . $emptyColumnsWidths;
                         }
-                        $columnsStyles[$i] = $isFixedWidth ? 'flex:0 0 auto;width:' . $columnWidth . ';' : 'flex:1 0 auto;max-width:calc(' . $columnWidth . ' - (var(--bearcms-elements-spacing)*' . ($columnsCount - 1) . '/' . $columnsCount . '));';
+                        $columnsStyles[$i] = $isFixedWidth ? 'flex:0 0 auto;width:' . $columnWidth . ';' : 'flex:1 0 auto;max-width:calc(' . $columnWidth . ' - (var(--bearcms-elements-spacing)*' . ($columnsCount - 1) . '/' . ($fixedSizeColumnsCount > 0 ? ($columnsCount - $fixedSizeColumnsCount) : $columnsCount) . '));';
                     }
 
                     $selectorPrefix = '.bearcms-columns-element[data-bearcms-columns-widths="' . InternalThemes::escapeCSSValue($widths, true) . '"]';
@@ -733,7 +738,8 @@ class ElementsHelper
     }
 
 
-    static function addEditableElementsHTML(string $html): string {
+    static function addEditableElementsHTML(string $html): string
+    {
         $editorContent = self::getEditableElementsHTML();
         if ($editorContent !== '') {
             $domDocument = new HTML5DOMDocument();
