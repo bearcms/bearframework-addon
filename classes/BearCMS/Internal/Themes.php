@@ -1194,6 +1194,7 @@ class Themes
                         }
                     } else if ($stateType === 'tags') {
                         foreach ($args as $argName => $argValue) {
+                            $argName = (string)$argName; // can be int
                             if ($argName[0] === '!') {
                                 $argName = substr($argName, 1);
                                 $cssTagStates .= ':not(:is([data-bearcms-tags~="' . $argName . '"] ' . $selectorLastPart . ', [data-bearcms-tags~="' . $argName . '"]' . $selectorLastPart . '))';
