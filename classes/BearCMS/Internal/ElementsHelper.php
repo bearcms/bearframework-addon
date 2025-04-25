@@ -58,6 +58,10 @@ class ElementsHelper
         if ($canDuplicate !== null) {
             $result['canDuplicate'] = $canDuplicate;
         }
+        $canTag = $component->canTag;
+        if ($canTag !== null) {
+            $result['canTag'] = $canTag;
+        }
         $canStyle = $component->canStyle;
         if ($canStyle !== null) {
             $result['canStyle'] = $canStyle;
@@ -72,7 +76,7 @@ class ElementsHelper
         }
 
         $otherAttributes = [];
-        $attributesToSkip = ['src', 'id', 'editable', 'color', 'group', 'canEdit', 'canDuplicate', 'canStyle', 'canMove', 'canDelete'];
+        $attributesToSkip = ['src', 'id', 'editable', 'color', 'group', 'canEdit', 'canDuplicate', 'canTag', 'canStyle', 'canMove', 'canDelete'];
         $attributes = $component->getAttributes();
         foreach ($attributes as $key => $value) {
             $add = true;
@@ -121,6 +125,7 @@ class ElementsHelper
             . ' bearcms-internal-attribute-in-elements-container="' . ((int) $contextData['inElementsContainer'] === 1 ? 'true' : 'false') . '"'
             . ($editable && isset($contextData['canEdit']) ? ' canEdit="' . $contextData['canEdit'] . '"' : '')
             . ($editable && isset($contextData['canDuplicate']) ? ' canDuplicate="' . $contextData['canDuplicate'] . '"' : '')
+            . ($editable && isset($contextData['canTag']) ? ' canTag="' . $contextData['canTag'] . '"' : '')
             . (isset($contextData['canStyle']) ? ' canStyle="' . $contextData['canStyle'] . '"' : '')
             . ($editable && isset($contextData['canMove']) ? ' canMove="' . $contextData['canMove'] . '"' : '')
             . ($editable && isset($contextData['canDelete']) ? ' canEdit="' . $contextData['canDelete'] . '"' : '')
