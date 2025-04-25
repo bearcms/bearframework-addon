@@ -555,7 +555,12 @@ class ServerCommands
     {
         $elementID = $data['id'];
         $containerID = isset($data['containerID']) ? $data['containerID'] : null;
-        ElementsDataHelper::deleteElement($elementID, $containerID);
+        $moveToBin = isset($data['moveToBin']) ? $data['moveToBin'] : false;
+        if ($moveToBin) {
+            ElementsDataHelper::moveElementToSet('bin', $elementID, $containerID);
+        } else {
+            ElementsDataHelper::deleteElement($elementID, $containerID);
+        }
     }
 
     /**
@@ -698,6 +703,60 @@ class ServerCommands
     static function elementsContainerDuplicate(array $data): void
     {
         ElementsDataHelper::duplicateContainer($data['sourceID'], $data['targetID']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function elementsSetElementsList(array $data): array
+    {
+        $setID = $data['setID'];
+        $includeDetails = isset($data['includeDetails']) ? $data['includeDetails'] : false;
+        $items = ElementsDataHelper::getElementsSetData($setID);
+        $result = [];
+        foreach ($items as $item) {
+            $elementID = $item['id'];
+            $resultItem = [];
+            $resultItem['id'] = $elementID;
+            if ($includeDetails) {
+                $elementData = ElementsDataHelper::getElement($elementID);
+                $resultItem['type'] = $elementData !== null ? $elementData['type'] : null;
+            }
+            $result[] = $resultItem;
+        }
+        return ['items' => $result];
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementsSetMoveElementFromSet(array $data): void
+    {
+        ElementsDataHelper::moveElementFromSet($data['setID'], $data['elementID'], $data['containerID'], $data['target']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementsSetDeleteElement(array $data): void
+    {
+        ElementsDataHelper::deleteElementFromSet($data['setID'], $data['elementID']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementsSetDeleteAllElements(array $data): void
+    {
+        ElementsDataHelper::deleteAllElementsFromSet($data['setID']);
     }
 
     /**
@@ -1705,6 +1764,56 @@ class ServerCommands
         $fileKey = $data['key'];
         $app->users->deleteUserFile($providerID, $fileKey);
     }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function usersGetList(array $data): array
+    {
+        $app = App::get();
+        $list = $app->users->getList();
+        $list = self::applyListModifications($list, $data['modifications']);
+        return $list->toArray();
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return integer
+     */
+    static function usersGetCount(array $data): int
+    {
+        $app = App::get();
+        $list = $app->users->getList();
+        $list = self::applyListModifications($list, $data['modifications']);
+        return $list->count();
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function usersGet(array $data): ?array
+    {
+        $app = App::get();
+        $order = $app->users->get($data['id']); // TODO
+        return $order !== null ? $order->toArray() : null;
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return boolean
+     */
+    static function usersExists(array $data): bool
+    {
+        $app = App::get();
+        return $app->users->userExists($data['providerID'], $data['id']);
+    }
+
     /**
      * 
      * @param array $data

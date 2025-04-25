@@ -249,7 +249,8 @@ class Server
             'k85a', // new elements commands (elementDataGet, elementDataSet)
             'm48a', // element tags,
             'n81w', // new slider element,
-            'm4i9' // multiple global html options
+            'm4i9', // multiple global html options
+            'ebn9' // has elements bin support
         ];
         if (Config::getVariable('internalDataExportConverter') !== null) {
             $clientData['flags'][] = 'de91'; // has data export

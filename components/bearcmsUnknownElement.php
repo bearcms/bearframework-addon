@@ -19,6 +19,8 @@ if ($elementID !== null) {
     if ($elementData !== null) {
         if (isset($elementData['type'])) {
             $elementType = $elementData['type'];
+            $containerID = '-bearcms-internal-external-element-container';
+            $newComponent->setAttribute('bearcms-internal-attribute-external-element-id', $elementID);
         }
     } else {
         $containerID = $component->getAttribute('container-id');

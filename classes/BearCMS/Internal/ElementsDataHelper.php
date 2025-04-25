@@ -222,14 +222,22 @@ class ElementsDataHelper
                 self::deleteElementStyleFiles(InternalThemes::getFilesInValues($elementData['style']));
             }
         };
-        if ($recursivelyDeleteStructuralElementChildren && $elementDataInContainer !== null && self::isStructuralElementData($elementDataInContainer)) {
-            $childrenElementsData = self::getStructuralElementDataChildrenData($elementDataInContainer, 'all');
-            foreach ($childrenElementsData as $childElementData) {
-                if (self::isStructuralElementData($childElementData)) {
-                    $deleteResources($childElementData);
-                } else {
-                    self::deleteElement($childElementData['id'], $containerID, ['updateContainer' => false, 'skipStructuralTypeCheck' => true]);
+        if ($recursivelyDeleteStructuralElementChildren) {
+            $processStructuralElement = function (array $structuralElementData) use ($deleteResources, $containerID) {
+                $childrenElementsData = self::getStructuralElementDataChildrenData($structuralElementData, 'all');
+                foreach ($childrenElementsData as $childElementData) {
+                    if (self::isStructuralElementData($childElementData)) {
+                        $deleteResources($childElementData);
+                    } else {
+                        self::deleteElement($childElementData['id'], $containerID, ['updateContainer' => false, 'skipStructuralTypeCheck' => true]);
+                    }
                 }
+            };
+            if ($elementData !== null && self::isStructuralElementData($elementData)) {
+                $processStructuralElement($elementData);
+            }
+            if ($elementDataInContainer !== null && self::isStructuralElementData($elementDataInContainer)) {
+                $processStructuralElement($elementDataInContainer);
             }
         }
         if ($elementData !== null) {
@@ -823,6 +831,191 @@ class ElementsDataHelper
             InternalDataElements::setContainer($targetContainerID, $newTargetContainerData);
             InternalDataElements::dispatchContainerChangeEvent($sourceContainerID);
             InternalDataElements::dispatchContainerChangeEvent($targetContainerID);
+        }
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @param string $elementID
+     * @param string $containerID
+     * @return void
+     */
+    static function moveElementToSet(string $setID, string $elementID, string $containerID): void
+    {
+        $containerData = $containerID !== null ? InternalDataElements::getContainer($containerID) : null;
+        if ($containerData === null) {
+            throw new \Exception('Cannot find container (' . $containerID . ')!');
+        }
+        $elementContainerData = self::getContainerDataElement($containerData, $elementID);
+        if ($elementContainerData === null) {
+            throw new \Exception('Element (' . $elementID . ') not found!');
+        }
+        if (self::isStructuralElementData($elementContainerData)) {
+            InternalDataElements::setElement($elementID, $elementContainerData);
+        }
+        $newContainerData = self::removeContainerDataElement($containerData, $elementID);
+        self::addElementToSet($setID, $elementID);
+        self::setLastChangeTime($newContainerData);
+        InternalDataElements::setContainer($containerID, $newContainerData);
+        InternalDataElements::dispatchContainerChangeEvent($containerID);
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @param string $elementID
+     * @param string $targetContainerID
+     * @param array $target
+     * @return void
+     */
+    static function moveElementFromSet(string $setID, string $elementID, string $targetContainerID, array $target): void
+    {
+        if (!self::isElementInSet($setID, $elementID)) {
+            throw new \Exception('Element (' . $elementID . ') not found in set (' . $setID . ')!');
+        }
+        $targetContainerData = $targetContainerID !== null ? InternalDataElements::getContainer($targetContainerID) : null;
+        if ($targetContainerData === null) {
+            throw new \Exception('Cannot find target container (' . $targetContainerID . ')!');
+        }
+        $elementData = InternalDataElements::getElement($elementID);
+        if ($elementData === null) {
+            throw new \Exception('Element (' . $elementID . ') not found!');
+        }
+        $isStructural = self::isStructuralElementData($elementData);
+        $targetContainerData['elements'][] = $isStructural ? $elementData : ['id' => $elementID];
+        $targetContainerData = self::moveContainerDataElement($targetContainerData, $elementID, $target);
+        self::setLastChangeTime($targetContainerData);
+        InternalDataElements::setContainer($targetContainerID, $targetContainerData);
+        if ($isStructural) {
+            InternalDataElements::deleteElement($elementID);
+        }
+        self::removeElementFromSet($setID, $elementID);
+        InternalDataElements::dispatchContainerChangeEvent($targetContainerID);
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @param string $elementID
+     * @return void
+     */
+    static function deleteElementFromSet(string $setID, string $elementID): void
+    {
+        if (self::isElementInSet($setID, $elementID)) {
+            self::removeElementFromSet($setID, $elementID);
+            self::deleteElement($elementID);
+        }
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @return void
+     */
+    static function deleteAllElementsFromSet(string $setID): void
+    {
+        $setData = self::getElementsSetData($setID);
+        foreach ($setData as $setItemData) {
+            self::deleteElement($setItemData['id']);
+        }
+        self::setElementsSetData($setID, []);
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @param string $elementID
+     * @return void
+     */
+    static private function addElementToSet(string $setID, string $elementID): void
+    {
+        $setData = self::getElementsSetData($setID);
+        $setData[] = ['id' => $elementID];
+        self::setElementsSetData($setID, $setData);
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @param string $elementID
+     * @return boolean
+     */
+    static private function isElementInSet(string $setID, string $elementID): bool
+    {
+        $setData = self::getElementsSetData($setID);
+        foreach ($setData as $setItemData) {
+            if ($setItemData['id'] === $elementID) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @param string $elementID
+     * @return void
+     */
+    static private function removeElementFromSet(string $setID, string $elementID): void
+    {
+        $setData = self::getElementsSetData($setID);
+        $newSetData = [];
+        $hasChange = false;
+        foreach ($setData as $setItemData) {
+            if ($setItemData['id'] === $elementID) {
+                $hasChange = true;
+            } else {
+                $newSetData[] = $setItemData;
+            }
+        }
+        if ($hasChange) {
+            self::setElementsSetData($setID, $newSetData);
+        }
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @param string $elementID
+     * @param array $target
+     * @return void
+     */
+    static private function moveElementInSet(string $setID, string $elementID, array $target): void
+    {
+        // todo
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @return array
+     */
+    static function getElementsSetData(string $setID): array
+    {
+        $app = App::get();
+        $data = $app->data->getValue('bearcms/elements/set/' . md5($setID) . '.json');
+        if ($data !== null) {
+            return json_decode($data, true);
+        }
+        return [];
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @param array $data
+     * @return void
+     */
+    static private function setElementsSetData(string $setID, array $data): void
+    {
+        $app = App::get();
+        $dataKey = 'bearcms/elements/set/' . md5($setID) . '.json';
+        if (empty($data)) {
+            $app->data->delete($dataKey);
+        } else {
+            $app->data->setValue($dataKey, json_encode($data));
         }
     }
 

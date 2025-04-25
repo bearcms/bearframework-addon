@@ -20,7 +20,16 @@ $editable = $component->editable === 'true';
 $group = $component->group;
 
 $containerID = $component->id;
-$containerData = InternalDataElements::getContainer($containerID, true);
+if ($containerID === '-bearcms-internal-external-element-container') {
+    $containerData = ['elements' => []];
+    $externalElementID = (string) $component->getAttribute('bearcms-internal-attribute-external-element-id');
+    $elementData = InternalDataElements::getElement($externalElementID);
+    if ($elementData !== null) {
+        $containerData['elements'][] = $elementData;
+    }
+} else {
+    $containerData = InternalDataElements::getContainer($containerID, true);
+}
 
 $elements = $containerData['elements'];
 $hasLazyLoading = count($elements) > $lazyLimit;
