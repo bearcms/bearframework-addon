@@ -568,6 +568,18 @@ class ServerCommands
      * @param array $data
      * @return void
      */
+    static function elementArchive(array $data): void
+    {
+        $elementID = $data['id'];
+        $containerID = isset($data['containerID']) ? $data['containerID'] : null;
+        ElementsDataHelper::moveElementToSet('archive', $elementID, $containerID);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
     static function elementMove(array $data): void
     {
         $elementID = isset($data['elementID']) ? $data['elementID'] : null;
