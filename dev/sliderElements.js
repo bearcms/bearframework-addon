@@ -5,8 +5,6 @@
  * Free to use under the MIT license.
  */
 
-/* global clientPackages */
-
 var bearCMS = bearCMS || {};
 bearCMS.sliderElements = bearCMS.sliderElements || (function () {
 
@@ -60,10 +58,10 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
     };
 
     var timeToMilliseconds = function (time) {
-        if (time.indexOf('ms')) {
-            return parseInt(time.replace('ms', '')) * 1000;
-        } else if (time.indexOf('s')) {
-            return parseInt(time.replace('s', '')) * 1000 * 1000;
+        if (time.indexOf('ms') !== -1) {
+            return parseInt(time.replace('ms', ''));
+        } else if (time.indexOf('s') !== -1) {
+            return parseInt(time.replace('s', '')) * 1000;
         }
         return null;
     };
@@ -504,9 +502,23 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
         window.clearInterval(getElementData(element, 'autoplayInterval'));
     };
 
-    var showSlide = function (element, index) {
+    var showSlide = function (element, index, options) {
+        var currentIndex = getElementData(element, 'index');
+        if (currentIndex === index) {
+            return;
+        }
         setElementData(element, 'index', index);
         updateElement(element);
+        var options = typeof options !== 'undefined' ? options : {};
+        var onShowSlide = typeof options.onShowSlide !== 'undefined' ? options.onShowSlide : null;
+        if (onShowSlide !== null) {
+            var slideSpeed = getSliderSpeed(element);
+            if (slideSpeed !== null) {
+                setTimeout(onShowSlide, slideSpeed);
+            } else {
+                onShowSlide();
+            }
+        }
     };
 
     var changeSlide = function (element, change) {
@@ -529,6 +541,43 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
     var setSwipeValue = function (element, x, y) {
         element.style.setProperty('--bse-swipe-x', x);
         element.style.setProperty('--bse-swipe-y', y);
+    };
+
+    var slideToChildElement = function (element, childElement, options) {
+        var slides = getSlidesElements(element);
+        for (var i = 0; i < slides.length; i++) {
+            var slide = slides[i];
+            var slideChildren = slide.childNodes;
+            for (var j = 0; j < slideChildren.length; j++) {
+                if (slideChildren[j] === childElement) {
+                    showSlide(element, i, options);
+                    return;
+                }
+            }
+        }
+    };
+
+    var isInVisibleSlide = function (element, childElement) {
+        var index = getElementData(element, 'index');
+        var slides = getSlidesElements(element);
+        if (typeof slides[index] !== 'undefined') {
+            var slide = slides[index];
+            var slideChildren = slide.childNodes;
+            for (var j = 0; j < slideChildren.length; j++) {
+                if (slideChildren[j] === childElement) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    var getSliderSpeed = function (element) {
+        var speed = getComputedStyle(element).getPropertyValue('--bearcms-slider-element-speed');
+        if (speed !== '') {
+            return timeToMilliseconds(speed);
+        }
+        return null;
     };
 
     var update = function (element) {
@@ -566,6 +615,18 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                     rebuildIndicators(element);
                     updateIndicators(element);
                     prepareInfiniteSlide(element, 1, 0);
+
+                    element.slideTo = function (index) {
+                        showSlide(element, index);
+                    };
+
+                    element.slideToElement = function (childElement, options) {
+                        slideToChildElement(element, childElement, options);
+                    };
+
+                    element.isInVisibleSlide = function (childElement) {
+                        return isInVisibleSlide(element, childElement);
+                    };
 
                     (new MutationObserver(function () { // editable changed
                         // todo move to adjacent visible slide + update indicators
