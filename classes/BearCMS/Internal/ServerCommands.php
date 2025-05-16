@@ -773,6 +773,47 @@ class ServerCommands
 
     /**
      * 
+     * @return array
+     */
+    static function elementsSharedContentList(): array
+    {
+        $setID = 'sharedContent';
+        $items = ElementsDataHelper::getContainersSetData($setID);
+        $result = [];
+        foreach ($items as $item) {
+            $contentID = $item['id'];
+            $resultItem = [];
+            $resultItem['id'] = $contentID;
+            $result[] = $resultItem;
+        }
+        return ['items' => $result];
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    static function elementsSharedContentAdd(): void
+    {
+        $setID = 'sharedContent';
+        $prefix = 'shared-content-';
+        $contentID = str_replace($prefix, '', ElementsDataHelper::generateContainerID($prefix));
+        ElementsDataHelper::addContainerToSet($setID, $contentID);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function elementsSharedContentDelete(array $data): void
+    {
+        $setID = 'sharedContent';
+        ElementsDataHelper::deleteContainerFromSet($setID, $data['contentID']);
+    }
+
+    /**
+     * 
      * @param array $data
      * @param \ArrayObject $response
      * @return void

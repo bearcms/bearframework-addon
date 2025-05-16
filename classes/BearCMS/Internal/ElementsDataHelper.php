@@ -791,6 +791,27 @@ class ElementsDataHelper
 
     /**
      * 
+     * @param string $prefix
+     * @param boolean $checkIfExists
+     * @return string
+     */
+    static function generateContainerID(string $prefix = '', bool $checkIfExists = true): string
+    {
+        $generateID = function (string $data) use ($prefix) {
+            return $prefix . base_convert(md5($data), 16, 36);
+        };
+        for ($i = 0; $i < 100; $i++) {
+            $id = $generateID(uniqid('', true));
+            if ($checkIfExists && InternalDataElements::getContainer($id) !== null) {
+                continue;
+            }
+            return $id;
+        }
+        throw new \Exception('Too much retries!');
+    }
+
+    /**
+     * 
      * @param string $elementID
      * @param string $sourceContainerID
      * @param string $targetContainerID
@@ -855,7 +876,7 @@ class ElementsDataHelper
             InternalDataElements::setElement($elementID, $elementContainerData);
         }
         $newContainerData = self::removeContainerDataElement($containerData, $elementID);
-        self::addElementToSet($setID, $elementID);
+        self::addItemToSet($setID, $elementID);
         self::setLastChangeTime($newContainerData);
         InternalDataElements::setContainer($containerID, $newContainerData);
         InternalDataElements::dispatchContainerChangeEvent($containerID);
@@ -871,7 +892,7 @@ class ElementsDataHelper
      */
     static function moveElementFromSet(string $setID, string $elementID, string $targetContainerID, array $target): void
     {
-        if (!self::isElementInSet($setID, $elementID)) {
+        if (!self::isItemInSet($setID, $elementID)) {
             throw new \Exception('Element (' . $elementID . ') not found in set (' . $setID . ')!');
         }
         $targetContainerData = $targetContainerID !== null ? InternalDataElements::getContainer($targetContainerID) : null;
@@ -890,7 +911,7 @@ class ElementsDataHelper
         if ($isStructural) {
             InternalDataElements::deleteElement($elementID);
         }
-        self::removeElementFromSet($setID, $elementID);
+        self::removeItemFromSet($setID, $elementID);
         InternalDataElements::dispatchContainerChangeEvent($targetContainerID);
     }
 
@@ -902,8 +923,8 @@ class ElementsDataHelper
      */
     static function deleteElementFromSet(string $setID, string $elementID): void
     {
-        if (self::isElementInSet($setID, $elementID)) {
-            self::removeElementFromSet($setID, $elementID);
+        if (self::isItemInSet($setID, $elementID)) {
+            self::removeItemFromSet($setID, $elementID);
             self::deleteElement($elementID);
         }
     }
@@ -915,37 +936,91 @@ class ElementsDataHelper
      */
     static function deleteAllElementsFromSet(string $setID): void
     {
-        $setData = self::getElementsSetData($setID);
+        $setData = self::getItemsSetData($setID);
         foreach ($setData as $setItemData) {
             self::deleteElement($setItemData['id']);
         }
-        self::setElementsSetData($setID, []);
+        self::setItemsSetData($setID, []);
     }
 
     /**
      * 
      * @param string $setID
-     * @param string $elementID
+     * @return array
+     */
+    static function getElementsSetData(string $setID): array
+    {
+        return self::getItemsSetData($setID);
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @param string $containerID
      * @return void
      */
-    static private function addElementToSet(string $setID, string $elementID): void
+    static function addContainerToSet(string $setID, string $containerID): void
     {
-        $setData = self::getElementsSetData($setID);
-        $setData[] = ['id' => $elementID];
-        self::setElementsSetData($setID, $setData);
+        self::addItemToSet($setID, $containerID);
     }
 
     /**
      * 
      * @param string $setID
-     * @param string $elementID
+     * @param string $containerID
+     * @return void
+     */
+    static function deleteContainerFromSet(string $setID, string $containerID): void
+    {
+        if (self::isItemInSet($setID, $containerID)) {
+            self::removeItemFromSet($setID, $containerID);
+            if ($setID === 'sharedContent') {
+                self::deleteContainer('bearcms-shared-content-' . $containerID);
+            } else {
+                self::deleteContainer($containerID);
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @return array
+     */
+    static function getContainersSetData(string $setID): array
+    {
+        return self::getItemsSetData($setID);
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @param string $itemID
+     * @return void
+     */
+    static private function addItemToSet(string $setID, string $itemID): void
+    {
+        $setData = self::getItemsSetData($setID);
+        foreach ($setData as $setItemData) {
+            if ($setItemData['id'] === $itemID) {
+                return;
+            }
+        }
+        $setData[] = ['id' => $itemID];
+        self::setItemsSetData($setID, $setData);
+    }
+
+    /**
+     * 
+     * @param string $setID
+     * @param string $itemID
      * @return boolean
      */
-    static private function isElementInSet(string $setID, string $elementID): bool
+    static private function isItemInSet(string $setID, string $itemID): bool
     {
-        $setData = self::getElementsSetData($setID);
+        $setData = self::getItemsSetData($setID);
         foreach ($setData as $setItemData) {
-            if ($setItemData['id'] === $elementID) {
+            if ($setItemData['id'] === $itemID) {
                 return true;
             }
         }
@@ -955,34 +1030,34 @@ class ElementsDataHelper
     /**
      * 
      * @param string $setID
-     * @param string $elementID
+     * @param string $itemID
      * @return void
      */
-    static private function removeElementFromSet(string $setID, string $elementID): void
+    static private function removeItemFromSet(string $setID, string $itemID): void
     {
-        $setData = self::getElementsSetData($setID);
+        $setData = self::getItemsSetData($setID);
         $newSetData = [];
         $hasChange = false;
         foreach ($setData as $setItemData) {
-            if ($setItemData['id'] === $elementID) {
+            if ($setItemData['id'] === $itemID) {
                 $hasChange = true;
             } else {
                 $newSetData[] = $setItemData;
             }
         }
         if ($hasChange) {
-            self::setElementsSetData($setID, $newSetData);
+            self::setItemsSetData($setID, $newSetData);
         }
     }
 
     /**
      * 
      * @param string $setID
-     * @param string $elementID
+     * @param string $itemID
      * @param array $target
      * @return void
      */
-    static private function moveElementInSet(string $setID, string $elementID, array $target): void
+    static private function moveItemInSet(string $setID, string $itemID, array $target): void
     {
         // todo
     }
@@ -992,7 +1067,7 @@ class ElementsDataHelper
      * @param string $setID
      * @return array
      */
-    static function getElementsSetData(string $setID): array
+    static private function getItemsSetData(string $setID): array
     {
         $app = App::get();
         $data = $app->data->getValue('bearcms/elements/set/' . md5($setID) . '.json');
@@ -1008,7 +1083,7 @@ class ElementsDataHelper
      * @param array $data
      * @return void
      */
-    static private function setElementsSetData(string $setID, array $data): void
+    static private function setItemsSetData(string $setID, array $data): void
     {
         $app = App::get();
         $dataKey = 'bearcms/elements/set/' . md5($setID) . '.json';

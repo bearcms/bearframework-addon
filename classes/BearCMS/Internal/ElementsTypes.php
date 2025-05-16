@@ -1624,6 +1624,16 @@ class ElementsTypes
                 $optionIndicatorsContainerGroup->addVisibility($idPrefix . "indicatorsContainerVisibility", $parentSelector . $defaultStyleSelector . ">div:nth-child(2) [data-bearcms-slider-indicators]", ['defaultValue' => $defaultValue['indicatorsVisibility']]);
             }];
         }
+        if ($hasElements || Config::hasFeature('ELEMENTS_SHARED_CONTENT')) {
+            $type = new ElementType('sharedContent', 'bearcms-shared-content-element', self::$contextDir . '/components/bearcmsSharedContentElement.php');
+            $type->properties = [
+                [
+                    'id' => 'contentID',
+                    'type' => 'string'
+                ]
+            ];
+            self::add($type);
+        }
         if ($hasElements || Config::hasFeature('ELEMENTS_CANVAS')) {
             $type = new ElementType('canvas', 'bearcms-canvas-element', self::$contextDir . '/components/bearcmsCanvasElement.php');
             $type->properties = [

@@ -251,7 +251,8 @@ class Server
             'n81w', // new slider element,
             'm4i9', // multiple global html options
             'ebn9', // has elements bin support
-            'na31' // has elements archive support
+            'na31', // has elements archive support
+            '9a3a' // has shared content support
         ];
         if (Config::getVariable('internalDataExportConverter') !== null) {
             $clientData['flags'][] = 'de91'; // has data export
