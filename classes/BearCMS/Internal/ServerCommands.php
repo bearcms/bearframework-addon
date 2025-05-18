@@ -796,7 +796,7 @@ class ServerCommands
     static function elementsSharedContentAdd(): void
     {
         $setID = 'sharedContent';
-        $prefix = 'shared-content-';
+        $prefix = 'bearcms-shared-content-';
         $contentID = str_replace($prefix, '', ElementsDataHelper::generateContainerID($prefix));
         ElementsDataHelper::addContainerToSet($setID, $contentID);
     }
