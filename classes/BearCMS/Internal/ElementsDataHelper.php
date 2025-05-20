@@ -895,7 +895,7 @@ class ElementsDataHelper
         if (!self::isItemInSet($setID, $elementID)) {
             throw new \Exception('Element (' . $elementID . ') not found in set (' . $setID . ')!');
         }
-        $targetContainerData = $targetContainerID !== null ? InternalDataElements::getContainer($targetContainerID) : null;
+        $targetContainerData = $targetContainerID !== null ? InternalDataElements::getContainer($targetContainerID, true) : null;
         if ($targetContainerData === null) {
             throw new \Exception('Cannot find target container (' . $targetContainerID . ')!');
         }
