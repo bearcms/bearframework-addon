@@ -359,7 +359,7 @@ class Server
 
             $response = new \ArrayObject([ // Must be ArrayObject so it can be passed by reference to the internal commands
                 'headers' => $requestResponse['headers'],
-                'value' => isset($requestResponseData['value']) ? $requestResponseData['value'] : '',
+                'value' => isset($requestResponseData['value']) ? $requestResponseData['value'] : [],
                 'cache' => isset($requestResponseData['cache']) ? (int) $requestResponseData['cache'] > 0 : false,
                 'cacheTTL' => isset($requestResponseData['cacheTTL']) ? (int) $requestResponseData['cacheTTL'] : 0,
             ]);
