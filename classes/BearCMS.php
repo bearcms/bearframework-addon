@@ -237,17 +237,16 @@ class BearCMS
         // Register the system pages
         if ($hasServer) {
             if (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_DEFAULT')) {
-                $this->app->routes
-                    // ->add(Config::$adminPagesPathPrefix . 'loggedin/', function () {
-                    //     return new App\Response\TemporaryRedirect($this->app->request->base . '/');
-                    // })
-                    ->add([Config::$adminPagesPathPrefix, Config::$adminPagesPathPrefix . '*/'], function () {
-                        return Internal\Controller::handleAdminPage();
-                    })
-                    ->add([rtrim(Config::$adminPagesPathPrefix, '/'), Config::$adminPagesPathPrefix . '*'], function (App\Request $request) {
-                        $request->path->set($request->path->get() . '/');
-                        return new App\Response\PermanentRedirect($request->getURL());
-                    });
+                if (is_string(Config::$adminPagesPathPrefix) && strlen(Config::$adminPagesPathPrefix) > 0) {
+                    $this->app->routes
+                        ->add([Config::$adminPagesPathPrefix, Config::$adminPagesPathPrefix . '*/'], function () {
+                            return Internal\Controller::handleAdminPage();
+                        })
+                        ->add([rtrim(Config::$adminPagesPathPrefix, '/'), Config::$adminPagesPathPrefix . '*'], function (App\Request $request) {
+                            $request->path->set($request->path->get() . '/');
+                            return new App\Response\PermanentRedirect($request->getURL());
+                        });
+                }
             }
             if (Config::hasFeature('USERS') || Config::hasFeature('USERS_LOGIN_*')) {
                 $this->app->routes

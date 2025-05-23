@@ -27,19 +27,7 @@ class Controller
      */
     static function handleAdminPage(): \BearFramework\App\Response
     {
-        //$app = App::get();
-        // $path = (string) $app->request->path;
-        // if ($path === Config::$adminPagesPathPrefix) {
-        //     if (!$app->bearCMS->data->users->hasUsers()) {
-        //         return new App\Response\TemporaryRedirect($app->request->base . Config::$adminPagesPathPrefix . 'firstrun/');
-        //     }
-        // } elseif ($path === Config::$adminPagesPathPrefix . 'firstrun/') {
-        //     if ($app->bearCMS->data->users->hasUsers()) {
-        //         return new App\Response\TemporaryRedirect($app->request->base . Config::$adminPagesPathPrefix);
-        //     }
-        // }
         $arguments = [];
-        //$arguments['path'] = $path;
         $data = Internal\Server::call('adminpage', $arguments, true);
         if (isset($data['error'])) {
             return new App\Response\TemporaryUnavailable(isset($data['errorMessage']) ? $data['errorMessage'] : 'Unknown error!');
