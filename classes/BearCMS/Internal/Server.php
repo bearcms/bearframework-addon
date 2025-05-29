@@ -344,8 +344,9 @@ class Server
         $cookies = $sendCookies ? Internal\Cookies::getList(Internal\Cookies::TYPE_SERVER) : [];
 
         $commandsResultsCache = [];
+        $lastProcessedCurrentUserDataHash = null;
 
-        $send = function ($requestData = [], $counter = 1) use (&$send, $app, $url, $data, $cookies, &$commandsResultsCache) {
+        $send = function ($requestData = [], $counter = 1) use (&$send, $app, $url, $data, $cookies, &$commandsResultsCache, &$lastProcessedCurrentUserDataHash) {
             if ($counter > 10) {
                 throw new \Exception('Too much requests');
             }
@@ -450,11 +451,16 @@ class Server
                 for ($i = 1; $i <= 3; $i++) {
                     try {
                         $currentUserData = $requestResponseMeta['currentUser'];
-                        if ($currentUserData['key'] !== null) {
-                            $dataKey = '.temp/bearcms/userkeys/' . md5($currentUserData['key']);
-                            $userID = (string) $currentUserData['id'];
-                            if ($app->data->getValue($dataKey) !== $userID) {
-                                $app->data->set($app->data->make($dataKey, $userID));
+                        $currentUserDataHash = md5(serialize($currentUserData));
+                        if ($lastProcessedCurrentUserDataHash !== $currentUserDataHash) {
+                            $lastProcessedCurrentUserDataHash = $currentUserDataHash;
+                            if ($currentUserData['key'] !== null) {
+                                $dataKey = '.temp/bearcms/userkeys/' . md5($currentUserData['key']);
+                                $userID = (string) $currentUserData['id'];
+                                if (Internal\Data::getCachedDataItemValue($dataKey) !== $userID) {
+                                    $app->data->set($app->data->make($dataKey, $userID));
+                                    Internal\Data::deleteDataItemCache($dataKey);
+                                }
                             }
                         }
                         break;

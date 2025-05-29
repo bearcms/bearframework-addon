@@ -88,8 +88,7 @@ class UploadsSize
      */
     static function getData(): array
     {
-        $app = App::get();
-        $data = $app->data->getValue('bearcms/uploadssize.json');
+        $data = \BearCMS\Internal\Data::getCachedDataItemValue('bearcms/uploadssize.json');
         return $data === null ? [] : json_decode($data, true);
     }
 
@@ -107,6 +106,7 @@ class UploadsSize
         } else {
             $app->data->set($app->data->make($dataKey, json_encode($data, JSON_THROW_ON_ERROR)));
         }
+        \BearCMS\Internal\Data::deleteDataItemCache('bearcms/uploadssize.json');
         $app->bearCMS->dispatchEvent('internalChangeUploadsSize');
     }
 }

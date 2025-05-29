@@ -533,4 +533,37 @@ class Data
             return null;
         }
     }
+
+    /**
+     * 
+     * @param string $dataKey
+     * @return string|null
+     */
+    static function getCachedDataItemValue(string $dataKey): ?string
+    {
+        $app = App::get();
+        $cacheKey = 'bearcms-data-item-cache-' . $dataKey;
+        $data = $app->cache->getValue($cacheKey);
+        $notFoundValue = '-bearcms-data-item-cache-not-found';
+        if ($data === null) {
+            $data = $app->data->getValue($dataKey);
+            if ($data === null) {
+                $data = $notFoundValue;
+            }
+            $app->cache->set($app->cache->make($cacheKey, $data));
+        }
+        return $data !== $notFoundValue ? $data : null;
+    }
+
+    /**
+     * 
+     * @param string $dataKey
+     * @return void
+     */
+    static function deleteDataItemCache(string $dataKey): void
+    {
+        $app = App::get();
+        $cacheKey = 'bearcms-data-item-cache-' . $dataKey;
+        $app->cache->delete($cacheKey);
+    }
 }

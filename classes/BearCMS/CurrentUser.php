@@ -65,7 +65,7 @@ class CurrentUser
         $cacheKey = 'id-' . $sessionKey;
         if (!isset(self::$cache[$cacheKey])) {
             self::$cache[$cacheKey] = null;
-            $data = Internal\Data::getValue('.temp/bearcms/userkeys/' . md5($sessionKey));
+            $data = Internal\Data::getCachedDataItemValue('.temp/bearcms/userkeys/' . md5($sessionKey));
             if ($data !== null) {
                 self::$cache[$cacheKey] = $data;
             }
