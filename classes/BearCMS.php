@@ -717,6 +717,7 @@ class BearCMS
 
         $document = new HTML5DOMDocument();
         $document->loadHTML($response->content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
+        $isNotFoundPage = $response instanceof App\Response\NotFound;
 
         $language = null;
         if ($applyContext !== null) {
@@ -750,8 +751,8 @@ class BearCMS
         }
 
         $metaElements = $document->querySelectorAll('meta');
-        $generateDescriptionMetaTag = true;
-        $generateKeywordsMetaTag = true;
+        $generateDescriptionMetaTag = $isNotFoundPage ? false : true;
+        $generateKeywordsMetaTag = $isNotFoundPage ? false : true;
         foreach ($metaElements as $metaElement) {
             $metaElementName = $metaElement->getAttribute('name');
             if ($metaElementName === 'description' && strlen($metaElement->getAttribute('content')) > 0) {
@@ -817,22 +818,24 @@ class BearCMS
         $url = rtrim($this->app->request->getURL(), '/') . '/';
         $url = explode('?', $url)[0]; // remove the query string
         $html .= '<link rel="canonical" href="' . htmlentities($url) . '">';
-        if ($settings->enableRSS) {
-            $rssKeys = $settings->languages;
-            if (empty($rssKeys)) {
-                $rssKeys = [''];
-            } else {
-                $rssKeys[0] = '';
+        if (!$isNotFoundPage) {
+            if ($settings->enableRSS) {
+                $rssKeys = $settings->languages;
+                if (empty($rssKeys)) {
+                    $rssKeys = [''];
+                } else {
+                    $rssKeys[0] = '';
+                }
+                foreach ($rssKeys as $rssKey) {
+                    $rssTitle = (string)$settings->getTitle($rssKey);
+                    $rssURL = $this->app->urls->get('/rss' . ($rssKey === '' ? '' : '.' . $rssKey) . '.xml');
+                    $html .= '<link rel="alternate" type="application/rss+xml" title="' . htmlentities(trim($rssTitle)) . '" href="' . htmlentities($rssURL) . '">';
+                }
             }
-            foreach ($rssKeys as $rssKey) {
-                $rssTitle = (string)$settings->getTitle($rssKey);
-                $rssURL = $this->app->urls->get('/rss' . ($rssKey === '' ? '' : '.' . $rssKey) . '.xml');
-                $html .= '<link rel="alternate" type="application/rss+xml" title="' . htmlentities(trim($rssTitle)) . '" href="' . htmlentities($rssURL) . '">';
-            }
+            $html .= '<meta property="og:image" content="' . htmlentities($url) . '-meta-og-image' . '?' . time() . '">';
+            $html .= '<meta property="og:type" content="website">';
+            $html .= '<meta property="og:url" content="' . htmlentities($url) . '">';
         }
-        $html .= '<meta property="og:image" content="' . htmlentities($url) . '-meta-og-image' . '?' . time() . '">';
-        $html .= '<meta property="og:type" content="website">';
-        $html .= '<meta property="og:url" content="' . htmlentities($url) . '">';
         if (!empty($settings->fonts)) {
             $fontFacesCSS = '';
             foreach ($settings->fonts as $fontData) {
