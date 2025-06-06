@@ -814,6 +814,45 @@ class ServerCommands
 
     /**
      * 
+     * @return array
+     */
+    static function modalsList(): array
+    {
+        $list = ElementsDataHelper::getModalsList();
+        return ['items' => $list];
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function modalsGet(array $data): ?array
+    {
+        return ElementsDataHelper::getModalData($data['id']);
+    }
+
+    /**
+     * 
+     * @return void
+     */
+    static function modalsSet(array $data): void
+    {
+        ElementsDataHelper::setModalData($data['id'], $data['data']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function modalsDelete(array $data): void
+    {
+        ElementsDataHelper::deleteModalData($data['id']);
+    }
+
+    /**
+     * 
      * @param array $data
      * @param \ArrayObject $response
      * @return void

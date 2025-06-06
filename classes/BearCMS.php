@@ -20,6 +20,7 @@ use BearCMS\Internal\ElementsTypes;
 use BearCMS\Internal\Pages;
 use BearCMS\Internal\Sitemap;
 use BearCMS\Internal\CommentsLocations;
+use BearCMS\Internal\ElementsDataHelper;
 use BearCMS\Internal\TextUtilities;
 
 /**
@@ -167,7 +168,7 @@ class BearCMS
                 });
 
             $this->app->serverRequests
-                ->add('-bearcms-lightbox-content', function ($data) {
+                ->add('-bearcms-lightbox-content', function ($data) { // deprecated
                     $id = isset($data['id']) ? trim($data['id']) : '';
                     if (strlen($id) === 0 || preg_match('/^[0-9a-z\-]*$/', $id) !== 1) {
                         return 'error';
@@ -175,6 +176,22 @@ class BearCMS
                     $style = '';
                     $style .= '.bearcms-lightbox-content{min-width:300px}';
                     $content = '<html><head><style>' . $style . '</style></head><body><div class="bearcms-lightbox-content"><bearcms-elements id="bearcms-lightbox-' . $id . '" editable="true"/></div></body></html>';
+                    $content = $this->app->components->process($content);
+                    $content = $this->app->clientPackages->process($content);
+                    $content = Internal\ElementsHelper::addEditableElementsHTML($content);
+                    return $content;
+                })
+                ->add('-bearcms-modal-content', function ($data) {
+                    $id = isset($data['id']) ? trim($data['id']) : '';
+                    if (strlen($id) === 0 || preg_match('/^[0-9a-z\-]*$/', $id) !== 1) {
+                        return 'error';
+                    }
+                    if (ElementsDataHelper::getModalData($id) === null) {
+                        return 'error';
+                    }
+                    $style = '';
+                    $style .= '.bearcms-modal-content{min-width:300px}';
+                    $content = '<html><head><style>' . $style . '</style></head><body><div class="bearcms-modal-content"><bearcms-elements id="bearcms-modal-' . $id . '" editable="true"/></div></body></html>';
                     $content = $this->app->components->process($content);
                     $content = $this->app->clientPackages->process($content);
                     $content = Internal\ElementsHelper::addEditableElementsHTML($content);
@@ -220,11 +237,17 @@ class BearCMS
         }
 
         $this->app->clientPackages
-            ->add('bearcms-lightbox-content', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package): void {
+            ->add('bearcms-lightbox-content', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package): void { // deprecated
                 //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/lightboxContent.js')); // dev mode
                 $package->addJSCode(include $this->context->dir . '/resources/lightboxContent.js.min.php');
                 $package->embedPackage('lightbox');
                 $package->get = 'return bearCMS.lightboxContent;';
+            })
+            ->add('bearcms-modal-content', function (IvoPetkov\BearFrameworkAddons\ClientPackage $package): void {
+                //$package->addJSCode(file_get_contents(__DIR__ . '/../dev/modalContent.js')); // dev mode
+                $package->addJSCode(include $this->context->dir . '/resources/modalContent.js.min.php');
+                $package->embedPackage('modal');
+                $package->get = 'return bearCMS.modalContent;';
             });
 
         // Load the CMS managed addons

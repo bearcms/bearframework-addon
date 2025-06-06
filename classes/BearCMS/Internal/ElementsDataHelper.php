@@ -2123,4 +2123,82 @@ class ElementsDataHelper
         }
         return [];
     }
+
+    /**
+     * 
+     * @return array
+     */
+    static function getModalsList(): array
+    {
+        $result = [];
+        $app = App::get();
+        $list = $app->data->getList()
+            ->filterBy('key', 'bearcms/elements/modal/', 'startWith');
+        foreach ($list as $item) {
+            $itemData = json_decode($item->value, true);
+            $result[] = $itemData;
+        }
+        return $result;
+    }
+
+    /**
+     * 
+     * @param string $prefix
+     * @param boolean $checkIfExists
+     * @return string
+     */
+    static function generateModalID(string $prefix = '', bool $checkIfExists = true): string
+    {
+        $generateID = function (string $data) use ($prefix) {
+            return $prefix . base_convert(md5($data), 16, 36);
+        };
+        for ($i = 0; $i < 100; $i++) {
+            $id = $generateID(uniqid('', true));
+            if ($checkIfExists && self::getModalData($id) !== null) {
+                continue;
+            }
+            return $id;
+        }
+        throw new \Exception('Too much retries!');
+    }
+
+    /**
+     * 
+     * @param string $id
+     * @param array $data
+     * @return void
+     */
+    static function setModalData(string $id, array $data): void
+    {
+        if ($id === '') {
+            $id = self::generateModalID();
+        }
+        $app = App::get();
+        $data['id'] = $id;
+        $app->data->setValue('bearcms/elements/modal/' . md5($id) . '.json', json_encode($data, JSON_THROW_ON_ERROR));
+    }
+
+    /**
+     * 
+     * @param string $id
+     * @return array|null
+     */
+    static function getModalData(string $id): ?array
+    {
+        $app = App::get();
+        $data = $app->data->getValue('bearcms/elements/modal/' . md5($id) . '.json');
+        return $data !== null ? json_decode($data, true) : null;
+    }
+
+    /**
+     * 
+     * @param string $id
+     * @return void
+     */
+    static function deleteModalData(string $id): void
+    {
+        $app = App::get();
+        $app->data->delete('bearcms/elements/modal/' . md5($id) . '.json');
+        self::deleteContainer('bearcms-modal-' . $id);
+    }
 }

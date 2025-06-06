@@ -40,11 +40,16 @@ class Links
         } elseif (strpos($url, 'js:') === 0) {
             $onClick = substr($url, 3);
             $url = null;
-        } elseif (strpos($url, 'bearcms-lightbox:') === 0) {
+        } elseif (strpos($url, 'bearcms-lightbox:') === 0) { // deprecated, use bearcms-modal instead
             $contentID = substr($url, 17);
             $onClick = "bearCMS.lightboxContent.open(" . json_encode($contentID) . ");";
             $url = null;
             $html = '<html><head><link rel="client-packages-embed" name="bearcms-lightbox-content"></head></html>';
+        } elseif (strpos($url, 'bearcms-modal:') === 0) {
+            $contentID = substr($url, 14);
+            $onClick = "bearCMS.modalContent.open(" . json_encode($contentID) . ");";
+            $url = null;
+            $html = '<html><head><link rel="client-packages-embed" name="bearcms-modal-content"></head></html>';
         } else {
             foreach (self::$handlers as $prefix => $handlerCallback) {
                 if (strpos($url, $prefix) === 0) {
