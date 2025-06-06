@@ -171,7 +171,7 @@ class BearCMS
                 ->add('-bearcms-lightbox-content', function ($data) { // deprecated
                     $id = isset($data['id']) ? trim($data['id']) : '';
                     if (strlen($id) === 0 || preg_match('/^[0-9a-z\-]*$/', $id) !== 1) {
-                        return 'error';
+                        return 'ERROR';
                     }
                     $style = '';
                     $style .= '.bearcms-lightbox-content{min-width:300px}';
@@ -184,10 +184,10 @@ class BearCMS
                 ->add('-bearcms-modal-content', function ($data) {
                     $id = isset($data['id']) ? trim($data['id']) : '';
                     if (strlen($id) === 0 || preg_match('/^[0-9a-z\-]*$/', $id) !== 1) {
-                        return 'error';
+                        return 'ERROR';
                     }
                     if (ElementsDataHelper::getModalData($id) === null) {
-                        return 'error';
+                        return $this->currentUser->exists() ? 'NOT FOUND' : '';
                     }
                     $style = '';
                     $style .= '.bearcms-modal-content{min-width:300px}';
