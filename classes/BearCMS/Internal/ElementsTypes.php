@@ -94,7 +94,7 @@ class ElementsTypes
                                 ["selector", $parentSelector . " .bearcms-heading-element"],
                             ]
                         ]);
-                        $options->addVisibility($idPrefix . "HeadingVisibility", $parentSelector);
+                        $options->addVisibility($idPrefix . "HeadingVisibility", $parentSelector, ['_internalIsElementContext' => $isElementContext]);
 
                         $containerSelector = ":has(> .bearcms-heading-element)";
                         $groupContainer = $options->addGroup(__("bearcms.themes.options.Container"));
@@ -107,7 +107,7 @@ class ElementsTypes
                             ]
                         ]);
 
-                        $groupContainer->addVisibility($idPrefix . "HeadingContainerVisibility", $parentSelector . $containerSelector);
+                        $groupContainer->addVisibility($idPrefix . "HeadingContainerVisibility", $parentSelector . $containerSelector, ['_internalIsElementContext' => $isElementContext]);
                     } else {
                         $optionsGroup = $options->addGroup(__("bearcms.themes.options.Heading"));
                         $defaultStyleSelector = ' .bearcms-element:not([class*="bearcms-element-style-"])';
@@ -222,7 +222,7 @@ class ElementsTypes
                     ]);
 
                     if ($isElementContext) {
-                        $optionsGroup->addVisibility($idPrefix . "TextVisibility", $parentSelector);
+                        $optionsGroup->addVisibility($idPrefix . "TextVisibility", $parentSelector, ['_internalIsElementContext' => $isElementContext]);
                     }
 
                     $containerSelector = $defaultStyleSelector . ":has(> .bearcms-text-element)";
@@ -237,7 +237,7 @@ class ElementsTypes
                     ]);
 
                     if ($isElementContext) {
-                        $groupContainer->addVisibility($idPrefix . "TextContainerVisibility", $parentSelector . $containerSelector);
+                        $groupContainer->addVisibility($idPrefix . "TextContainerVisibility", $parentSelector . $containerSelector, ['_internalIsElementContext' => $isElementContext]);
                     }
                 }];
             }
@@ -282,7 +282,7 @@ class ElementsTypes
                     ]);
 
                     if ($isElementContext) {
-                        $optionsGroup->addVisibility($idPrefix . "LinkVisibility", $parentSelector);
+                        $optionsGroup->addVisibility($idPrefix . "LinkVisibility", $parentSelector, ['_internalIsElementContext' => $isElementContext]);
                     }
 
                     $containerSelector = $defaultStyleSelector . ":has(> .bearcms-link-element)";
@@ -297,7 +297,7 @@ class ElementsTypes
                     ]);
 
                     if ($isElementContext) {
-                        $groupContainer->addVisibility($idPrefix . "LinkContainerVisibility", $parentSelector . $containerSelector);
+                        $groupContainer->addVisibility($idPrefix . "LinkContainerVisibility", $parentSelector . $containerSelector, ['_internalIsElementContext' => $isElementContext]);
                     }
                 }];
             }
@@ -432,7 +432,7 @@ class ElementsTypes
                                 ["selector", $parentSelector . $defaultStyleSelector . "> .bearcms-image-element"]
                             ]
                         ]);
-                        $optionsGroup->addVisibility($idPrefix . "ImageVisibility", $parentSelector);
+                        $optionsGroup->addVisibility($idPrefix . "ImageVisibility", $parentSelector, ['_internalIsElementContext' => $isElementContext]);
                     }
 
                     $containerSelector = $defaultStyleSelector . ":has(> .bearcms-image-element)";
@@ -447,7 +447,7 @@ class ElementsTypes
                     ]);
 
                     if ($isElementContext) {
-                        $groupContainer->addVisibility($idPrefix . "ImageContainerVisibility", $parentSelector . $containerSelector);
+                        $groupContainer->addVisibility($idPrefix . "ImageContainerVisibility", $parentSelector . $containerSelector, ['_internalIsElementContext' => $isElementContext]);
                     }
                 }];
             }
@@ -644,7 +644,7 @@ class ElementsTypes
                     ]);
 
                     if ($isElementContext) {
-                        $groupContainer->addVisibility($idPrefix . "ImageGalleryContainerVisibility", $parentSelector . $containerSelector);
+                        $groupContainer->addVisibility($idPrefix . "ImageGalleryContainerVisibility", $parentSelector . $containerSelector, ['_internalIsElementContext' => $isElementContext]);
                     }
                 }];
             }
@@ -806,7 +806,7 @@ class ElementsTypes
                     ]);
 
                     if ($isElementContext) {
-                        $groupContainer->addVisibility($idPrefix . "VideoContainerVisibility", $parentSelector . $containerSelector);
+                        $groupContainer->addVisibility($idPrefix . "VideoContainerVisibility", $parentSelector . $containerSelector, ['_internalIsElementContext' => $isElementContext]);
                     }
                 }];
             }
@@ -904,7 +904,7 @@ class ElementsTypes
                     ]);
 
                     if ($isElementContext) {
-                        $groupContainer->addVisibility($idPrefix . "NavigationContainerVisibility", $parentSelector . $containerSelector);
+                        $groupContainer->addVisibility($idPrefix . "NavigationContainerVisibility", $parentSelector . $containerSelector, ['_internalIsElementContext' => $isElementContext]);
                     }
                 }];
             }
@@ -973,7 +973,7 @@ class ElementsTypes
                     ]);
 
                     if ($isElementContext) {
-                        $groupContainer->addVisibility($idPrefix . "HtmlContainerVisibility", $parentSelector . $containerSelector);
+                        $groupContainer->addVisibility($idPrefix . "HtmlContainerVisibility", $parentSelector . $containerSelector, ['_internalIsElementContext' => $isElementContext]);
                     }
                 }];
             }
@@ -1136,7 +1136,7 @@ class ElementsTypes
                     ]);
 
                     if ($isElementContext) {
-                        $groupContainer->addVisibility($idPrefix . "BlogPostsContainerVisibility", $parentSelector . $containerSelector);
+                        $groupContainer->addVisibility($idPrefix . "BlogPostsContainerVisibility", $parentSelector . $containerSelector, ['_internalIsElementContext' => $isElementContext]);
                     }
                 }];
             }
@@ -1313,7 +1313,7 @@ class ElementsTypes
                     ]);
 
                     if ($isElementContext) {
-                        $groupContainer->addVisibility($idPrefix . "CommentsContainerVisibility", $parentSelector . $containerSelector);
+                        $groupContainer->addVisibility($idPrefix . "CommentsContainerVisibility", $parentSelector . $containerSelector, ['_internalIsElementContext' => $isElementContext]);
                     }
                 }];
             }
@@ -1339,7 +1339,7 @@ class ElementsTypes
                                 ["selector", $parentSelector . " .bearcms-separator-element"],
                             ]
                         ]);
-                        $options->addVisibility($idPrefix . "SeparatorVisibility", $parentSelector);
+                        $options->addVisibility($idPrefix . "SeparatorVisibility", $parentSelector, ['_internalIsElementContext' => $isElementContext]);
 
                         $containerSelector = ":has(> .bearcms-separator-element)";
                         $groupContainer = $options->addGroup(__("bearcms.themes.options.Container"));
@@ -1353,7 +1353,7 @@ class ElementsTypes
                         ]);
 
                         if ($isElementContext) {
-                            $groupContainer->addVisibility($idPrefix . "SeparatorContainerVisibility", $parentSelector . $containerSelector);
+                            $groupContainer->addVisibility($idPrefix . "SeparatorContainerVisibility", $parentSelector . $containerSelector, ['_internalIsElementContext' => $isElementContext]);
                         }
                     } else {
                         $optionsGroup = $options->addGroup(__("bearcms.themes.options.Separator"));
@@ -1428,7 +1428,8 @@ class ElementsTypes
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_COLUMNS')) {
             InternalThemes::$elementsOptions['columns'] = function ($options, $idPrefix, $parentSelector, $context, $details): void {
-                if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
+                $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
+                if ($isElementContext) {
                     $optionsGroup = $options;
                 } else {
                     throw new \Exception('Not supported in other contexts!');
@@ -1448,12 +1449,13 @@ class ElementsTypes
                     "defaultValue" => $defaultValue['layout'],
                     "onHighlight" => [['cssSelector', $parentSelector]]
                 ]);
-                $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector);
+                $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector, ['_internalIsElementContext' => $isElementContext]);
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_FLOATING_BOX')) {
             InternalThemes::$elementsOptions['floatingBox'] = function ($options, $idPrefix, $parentSelector, $context, $details): void {
-                if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
+                $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
+                if ($isElementContext) {
                     $optionsGroup = $options;
                 } else {
                     throw new \Exception('Not supported in other contexts!');
@@ -1473,12 +1475,13 @@ class ElementsTypes
                     "defaultValue" => $defaultValue['layout'],
                     "onHighlight" => [['cssSelector', $parentSelector]]
                 ]);
-                $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector);
+                $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector, ['_internalIsElementContext' => $isElementContext]);
             };
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_FLEXIBLE_BOX')) {
             InternalThemes::$elementsOptions['flexibleBox'] = function ($options, $idPrefix, $parentSelector, $context, $details): void {
-                if ($context === InternalThemes::OPTIONS_CONTEXT_ELEMENT) {
+                $isElementContext = $context === InternalThemes::OPTIONS_CONTEXT_ELEMENT;
+                if ($isElementContext) {
                     $optionsGroup = $options;
                 } else {
                     throw new \Exception('Not supported in other contexts!');
@@ -1506,7 +1509,7 @@ class ElementsTypes
                         ["selector", $parentSelector]
                     ],
                 ]);
-                $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector);
+                $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector, ['_internalIsElementContext' => $isElementContext]);
                 $optionsGroup->addOption($idPrefix . "code", "code", '', [
                     "states" => [
                         ["type" => "visibility"],
@@ -1555,7 +1558,7 @@ class ElementsTypes
                     ],
                 ]);
                 if ($isElementContext) {
-                    $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector);
+                    $optionsGroup->addVisibility($idPrefix . "visibility", $parentSelector, ['_internalIsElementContext' => $isElementContext]);
                 }
 
                 $optionSlideGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Slide'));
@@ -1578,7 +1581,7 @@ class ElementsTypes
                     ],
                     "defaultValue" => $defaultValue['nextButton']
                 ]);
-                $optionNextButtonGroup->addVisibility($idPrefix . "nextButtonVisibility", $parentSelector . $defaultStyleSelector . " [data-bearcms-slider-button-next]", ['defaultValue' => $defaultValue['nextButtonVisibility']]);
+                $optionNextButtonGroup->addVisibility($idPrefix . "nextButtonVisibility", $parentSelector . $defaultStyleSelector . " [data-bearcms-slider-button-next]", ['defaultValue' => $defaultValue['nextButtonVisibility'], '_internalIsElementContext' => $isElementContext]);
 
                 $optionPreviousButtonGroup = $optionsGroup->addGroup(__('bearcms.themes.options.slider.Previous button'));
                 $optionPreviousButtonGroup->addOption($idPrefix . "previousButtonCSS", "css", '', [
@@ -1621,7 +1624,7 @@ class ElementsTypes
                     ],
                     "defaultValue" => $defaultValue['indicators']
                 ]);
-                $optionIndicatorsContainerGroup->addVisibility($idPrefix . "indicatorsContainerVisibility", $parentSelector . $defaultStyleSelector . ">div:nth-child(2) [data-bearcms-slider-indicators]", ['defaultValue' => $defaultValue['indicatorsVisibility']]);
+                $optionIndicatorsContainerGroup->addVisibility($idPrefix . "indicatorsContainerVisibility", $parentSelector . $defaultStyleSelector . ">div:nth-child(2) [data-bearcms-slider-indicators]", ['defaultValue' => $defaultValue['indicatorsVisibility'], '_internalIsElementContext' => $isElementContext]);
             }];
         }
         if ($hasElements || Config::hasFeature('ELEMENTS_SHARED_CONTENT')) {
