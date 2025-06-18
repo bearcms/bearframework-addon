@@ -118,6 +118,7 @@ if ($renderElementsContainer) {
         ElementsHelper::$renderedData[] = ['container', $containerID];
     }
 
+    $styles .= '.bearcms-elements{position:relative;}'; // allows absolute elements to stay inside (already used in CMS)
     $styles .= '.' . $className . '{--bearcms-elements-spacing:' . $spacing . ';width:' . $width . ';text-align:left;display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}';
     $styles .= '.' . $className . '>*{width:100%;}'; // the default size when elements have margin-left/right=auto;
 
