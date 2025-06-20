@@ -119,6 +119,11 @@ class BearCMS
                         $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
                         if ($response->content === '') {
                             $settings = $this->data->settings->get();
+                            $applyContext = $this->makeApplyContext();
+                            $contextLanguage = (string)$this->app->request->path->getSegment(0);
+                            if (isset($contextLanguage[0]) && array_search($contextLanguage, $settings->languages) !== false) {
+                                $applyContext->language = $contextLanguage;
+                            }
                             $restoreLocale = $this->setContextLocale();
                             $content = '<html data-bearcms-page-type="not-found"><body>';
                             if ($settings->customNotFoundPageContent) {
@@ -131,7 +136,7 @@ class BearCMS
                             $content .= '</body></html>';
                             $restoreLocale();
                             $response->content = $content;
-                            $this->apply($response);
+                            $this->apply($response, $applyContext);
                         }
                     } elseif ($response instanceof App\Response\TemporaryUnavailable) {
                         $response->headers->set($response->headers->make('Content-Type', 'text/html'));
