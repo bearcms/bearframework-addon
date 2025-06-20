@@ -118,9 +118,16 @@ class BearCMS
                         $response->headers->set($response->headers->make('Content-Type', 'text/html'));
                         $response->headers->set($response->headers->make('Cache-Control', 'no-cache, no-store, must-revalidate, private, max-age=0'));
                         if ($response->content === '') {
+                            $settings = $this->data->settings->get();
                             $restoreLocale = $this->setContextLocale();
                             $content = '<html data-bearcms-page-type="not-found"><body>';
-                            $content .= '<bearcms-text-element text="' . htmlentities(__('bearcms.errorPage.notFound.message') . '<br><br><a href="' . $this->app->urls->get('/') . '">' . __('bearcms.errorPage.notFound.link') . '</a>') . '"></bearcms-text-element>';
+                            if ($settings->customNotFoundPageContent) {
+                                $defaultLanguage = isset($settings->languages[0]) ? $settings->languages[0] : null;
+                                $currentLanguage = $this->app->localization->getLocale();
+                                $content .= '<bearcms-elements id="bearcms-page-not-found' . ($defaultLanguage !== null && $defaultLanguage !== $currentLanguage ? '-' . $currentLanguage : '') . '" editable="true"/>';
+                            } else {
+                                $content .= '<bearcms-text-element text="' . htmlentities(__('bearcms.errorPage.notFound.message') . '<br><br><a href="' . $this->app->urls->get('/') . '">' . __('bearcms.errorPage.notFound.link') . '</a>') . '"></bearcms-text-element>';
+                            }
                             $content .= '</body></html>';
                             $restoreLocale();
                             $response->content = $content;

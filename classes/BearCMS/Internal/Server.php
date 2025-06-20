@@ -253,7 +253,8 @@ class Server
             'ebn9', // has elements bin support
             'na31', // has elements archive support
             '9a3a', // has shared content support
-            'mn29' // has modals support
+            'mn29', // has modals support
+            'gr91', // has custom not found page support
         ];
         if (Config::getVariable('internalDataExportConverter') !== null) {
             $clientData['flags'][] = 'de91'; // has data export

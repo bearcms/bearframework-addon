@@ -31,6 +31,7 @@ namespace BearCMS\Data\Settings;
  * @property array $redirects
  * @property array $fonts
  * @property string|null $image
+ * @property boolean $customNotFoundPageContent
  */
 class Settings extends \BearFramework\Models\Model
 {
@@ -124,6 +125,12 @@ class Settings extends \BearFramework\Models\Model
             ])
             ->defineProperty('image', [
                 'type' => '?string'
+            ])
+            ->defineProperty('customNotFoundPageContent', [
+                'type' => 'bool',
+                'init' => function () {
+                    return false;
+                }
             ]);
     }
 
