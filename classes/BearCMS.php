@@ -307,6 +307,11 @@ class BearCMS
                         return Internal\Controller::handleFileDownload($request);
                     }
                 ]);
+
+            \BearCMS\Internal\Links::addHandler('bearcms-file:', function (string $value) {
+                $url = $this->app->urls->get('/files/preview/' . $value);
+                return [$url, null, null];
+            });
         }
 
         // Register data export handlers
@@ -494,6 +499,26 @@ class BearCMS
                 return [$url, null, null];
             });
         }
+
+        \BearCMS\Internal\Links::addHandler('bearcms-email:', function (string $value) {
+            $url = 'mailto:' . $value;
+            return [$url, null, null];
+        });
+
+        \BearCMS\Internal\Links::addHandler('bearcms-phone:', function (string $value) {
+            $url = 'tel:' . $value;
+            return [$url, null, null];
+        });
+
+        \BearCMS\Internal\Links::addHandler('bearcms-messenger:', function (string $value) {
+            $url = 'https://m.me/' . $value;
+            return [$url, null, null];
+        });
+
+        \BearCMS\Internal\Links::addHandler('bearcms-viber:', function (string $value) {
+            $url = 'viber://chat?number=' . $value;
+            return [$url, null, null];
+        });
 
         // Register a redirects handler
         $this->app->routes
