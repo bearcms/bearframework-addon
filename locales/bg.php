@@ -60,6 +60,7 @@ return [
     'bearcms.themes.options.Custom CSS' => 'Допълнителен CSS код',
     'bearcms.themes.options.Pages' => 'Страници',
     'bearcms.themes.options.Elements' => 'Елементи',
+    'bearcms.themes.options.ElementsSpacing' => 'Разстояние между елементите',
     //    'bearcms.themes.options.Position' => 'Позиция',
     //    'bearcms.themes.options.Top' => 'Горе',
     //    'bearcms.themes.options.Bottom' => 'Долу',

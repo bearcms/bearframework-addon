@@ -93,7 +93,51 @@ trait ThemeOptionsGroupTrait
      */
     public function addElements(string $idPrefix, string $parentSelector, array $details = []): self
     {
+        $order = [];
+        $order[] = 'heading';
+        $order[] = 'text';
+        $order[] = 'link';
+        $order[] = 'image';
+        $order[] = 'imageGallery';
+        $order[] = 'video';
+        $order[] = 'columns';
+        $order[] = 'floatingBox';
+        $order[] = 'flexibleBox';
+        $order[] = 'slider';
+        $order[] = 'separator';
+        $order[] = 'html';
+        $order[] = 'navigation';
+        $order[] = 'map';
+        $order[] = 'blogPosts';
+        $order[] = 'storeItems';
+        $order[] = 'newsletterSubscribeForm';
+        $order[] = 'form';
+        $order[] = 'embed';
+        $order[] = 'code';
+        $order[] = 'comments';
+        $order[] = 'searchBox';
+        $order[] = 'shareButton';
+        $order[] = 'facebookPageBox';
+        $order[] = 'googleBadge';
+        $order[] = 'googleTranslate';
+        $order[] = 'forumPosts';
+        $order[] = 'sharedContent';
+
+        $sortedList = [];
+        $lastList = [];
+        foreach ($order as $type) {
+            if (isset(Internal\Themes::$elementsOptions[$type])) {
+                $sortedList[$type] = Internal\Themes::$elementsOptions[$type];
+            }
+        }
         foreach (Internal\Themes::$elementsOptions as $type => $callable) {
+            if (array_search($type, $order) === false) {
+                $lastList[$type] = $callable;
+            }
+        }
+        $sortedList = array_merge($sortedList, $lastList);
+
+        foreach ($sortedList as $type => $callable) {
             if (array_search($type, ['columns', 'floatingBox', 'flexibleBox']) !== false) {
                 continue;
             }
