@@ -106,6 +106,12 @@ trait ThemeOptionsGroupTrait
                 $lastOption->details['internalElementType'] = $type;
             }
         }
+        $this->addOption($idPrefix . "ElementsSpacing", "htmlUnit", __('bearcms.themes.options.ElementsSpacing'), [
+            "defaultValue" => "1rem",
+            "cssOutput" => [
+                ["selector", $parentSelector . ' .bearcms-elements', "--bearcms-elements-spacing:{value};"]
+            ]
+        ]);
         return $this;
     }
 
