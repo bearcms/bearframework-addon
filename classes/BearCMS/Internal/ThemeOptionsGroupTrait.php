@@ -200,9 +200,7 @@ trait ThemeOptionsGroupTrait
         $states = [];
         $states[] = ["type" => "size"];
         $states[] = ["type" => "screenSize"];
-        if (!(isset($details['_internalIsElementContext']) && $details['_internalIsElementContext'] === true)) {
-            $states[] = ["type" => "pageType"];
-        }
+        $states[] = ["type" => "pageType"];
         $states[] = ["type" => "tags"];
 
         $this->addOption($id, "visibility", '', [
