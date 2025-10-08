@@ -13,7 +13,7 @@ bearCMS.blogPostsElement = bearCMS.blogPostsElement || (function () {
     var loadMore = function (event, data) {
         event.target.innerHTML += " ...";
         var listElement = event.target.parentNode.parentNode.parentNode;
-        var requestData = [];
+        var requestData = {};
         requestData['serverData'] = data['serverData'];
         clientPackages.get('serverRequests').then(function (serverRequests) {
             serverRequests.send('bearcms-blogposts-load-more', requestData).then(function (response) {
