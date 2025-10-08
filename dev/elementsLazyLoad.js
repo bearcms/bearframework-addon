@@ -13,7 +13,7 @@ bearCMS.elementsLazyLoad = bearCMS.elementsLazyLoad || (function () {
     var loadingText = '';
 
     var load = function (container, serverData) {
-        var requestData = [];
+        var requestData = {};
         requestData['serverData'] = serverData;
         try {
             if (typeof bp !== 'undefined' && typeof bp.riverEditor !== 'undefined' && typeof bp.riverEditor.disableInteractions !== 'undefined') {
