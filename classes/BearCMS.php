@@ -900,7 +900,9 @@ class BearCMS
             $fontFacesCSS = '';
             foreach ($settings->fonts as $fontData) {
                 if (isset($fontData['name'], $fontData['filename'])) {
-                    $fontFacesCSS .= '@font-face {font-family:\'' . str_replace(['"', "'"], '', trim($fontData['name'])) . '\';src:url(' . $this->app->assets->getURL($fontData['filename'], ['cacheMaxAge' => 999999999, 'version' => 1]) . ');}'; // format(\'' . pathinfo($fontData['filename'], PATHINFO_EXTENSION) . '\')
+                    $fontWeight = isset($fontData['weight']) && strlen((string)$fontData['weight']) > 0 ? 'font-weight:' . $fontData['weight'] . ';' : '';
+                    $fontStyle = isset($fontData['italic']) && $fontData['italic'] === true ? 'font-style:italic;' : '';
+                    $fontFacesCSS .= '@font-face {font-family:\'' . str_replace(['"', "'"], '', trim($fontData['name'])) . '\';src:url(' . $this->app->assets->getURL($fontData['filename'], ['cacheMaxAge' => 999999999, 'version' => 1]) . ');' . $fontWeight . $fontStyle . '}'; // format(\'' . pathinfo($fontData['filename'], PATHINFO_EXTENSION) . '\')
                 }
             }
             if ($fontFacesCSS !== '') {
