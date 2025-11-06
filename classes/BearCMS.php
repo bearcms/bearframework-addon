@@ -613,7 +613,17 @@ class BearCMS
                         $pathParts = explode('/', substr($filename, strlen($matchingDir)), 3);
                         if (isset($pathParts[0], $pathParts[1], $pathParts[2])) {
                             $url = $pathParts[0] . '://' . $pathParts[1] . '/' . str_replace('\\', '/', $pathParts[2]);
-                            $details->filename = Internal\Downloads::download($url, true);
+                            $allowedPrefixes = ['https://i.ytimg.com/'];
+                            $isAllowed = false;
+                            foreach ($allowedPrefixes as $allowedPrefix) {
+                                if (strpos($url, $allowedPrefix) === 0) {
+                                    $isAllowed = true;
+                                    break;
+                                }
+                            }
+                            if ($isAllowed) {
+                                $details->filename = Internal\Downloads::download($url, true);
+                            }
                         }
                         return;
                     }
