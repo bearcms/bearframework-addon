@@ -329,6 +329,14 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
             }
         }
 
+        var touchActionValue = 'auto';
+        if (direction === 'horizontal') {
+            touchActionValue = 'pan-y';
+        } else if (direction === 'vertical') {
+            touchActionValue = 'pan-x';
+        }
+        element.firstChild.style.setProperty('touch-action', touchActionValue);
+
         var slides = getSlides(element);
         var slidesCount = slides.length;
         var index = getElementData(element, 'index');
