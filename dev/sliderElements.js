@@ -502,6 +502,24 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
         window.clearInterval(getElementData(element, 'autoplayInterval'));
     };
 
+    var updateResponsivelyLazy = function (element, index) {
+        var allSlides = getSlidesElements(element);
+        if (typeof allSlides[index] === 'undefined') {
+            return;
+        }
+        try {
+            var slideContainer = allSlides[index];
+            if (typeof slideContainer !== 'undefined') {
+                var imageElement = slideContainer.querySelector('[data-responsively-lazy]');
+                if (imageElement !== null) {
+                    responsivelyLazy.run(imageElement, { ignoreThreshold: true });
+                }
+            }
+        } catch (e) {
+
+        }
+    };
+
     var showSlide = function (element, index, options) {
         var currentIndex = getElementData(element, 'index');
         if (currentIndex === index) {
@@ -519,6 +537,9 @@ bearCMS.sliderElements = bearCMS.sliderElements || (function () {
                 onShowSlide();
             }
         }
+        updateResponsivelyLazy(element, index - 1);
+        updateResponsivelyLazy(element, index);
+        updateResponsivelyLazy(element, index + 1);
     };
 
     var changeSlide = function (element, change) {
