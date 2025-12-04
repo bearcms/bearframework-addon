@@ -133,9 +133,9 @@ if ($list->count() > 0) {
                         'inElementsContainer' => true
                     ], true, $outputType);
                 } elseif ($hasImage) {
-                    $content .= '<component output-type="' . $outputType . '" src="bearcms-image-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($imageElementData, JSON_THROW_ON_ERROR)) . '"/>';
+                    $content .= '<component output-type="' . $outputType . '" src="bearcms-image-element" bearcms-internal-attribute-raw-data="' . base64_encode(json_encode($imageElementData, JSON_THROW_ON_ERROR)) . '"/>';
                 } elseif ($hasText) {
-                    $content .= '<component output-type="' . $outputType . '" src="bearcms-text-element" bearcms-internal-attribute-raw-data="' . htmlentities(json_encode($textElementData, JSON_THROW_ON_ERROR)) . '"/>';
+                    $content .= '<component output-type="' . $outputType . '" src="bearcms-text-element" bearcms-internal-attribute-raw-data="' . base64_encode(json_encode($textElementData, JSON_THROW_ON_ERROR)) . '"/>';
                 }
                 if ($showSummaryReadMoreButton && ($hasImage || $hasText)) {
                     $readMoreText = '<a href="' . htmlentities($url) . '">' . __('bearcms.blogPosts.Read more') . '</a>';

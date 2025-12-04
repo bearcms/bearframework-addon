@@ -121,7 +121,7 @@ class ElementsHelper
         return '<component'
             . ' src="' . ($componentName === false ? 'bearcms-missing-element' : $componentName) . '"'
             . ' editable="' . ($editable ? 'true' : 'false') . '"'
-            . ' bearcms-internal-attribute-raw-data="' . htmlentities($rawData) . '"'
+            . ' bearcms-internal-attribute-raw-data="' . base64_encode($rawData) . '"'
             . ' bearcms-internal-attribute-in-elements-container="' . ((int) $contextData['inElementsContainer'] === 1 ? 'true' : 'false') . '"'
             . ($editable && isset($contextData['canEdit']) ? ' canEdit="' . $contextData['canEdit'] . '"' : '')
             . ($editable && isset($contextData['canDuplicate']) ? ' canDuplicate="' . $contextData['canDuplicate'] . '"' : '')
@@ -794,13 +794,13 @@ class ElementsHelper
             $updateIDAttributeFromRawData = function ($component, bool $setRawAttributeIfMissing): void {
                 $rawData = (string)$component->getAttribute('bearcms-internal-attribute-raw-data');
                 if (strlen($rawData) > 0) {
-                    $elementData = InternalDataElements::decodeElementRawData($rawData);
+                    $elementData = InternalDataElements::decodeElementRawData(base64_decode($rawData));
                     if (is_array($elementData)) {
                         $component->id = $elementData['id'];
                     }
                 } elseif ($setRawAttributeIfMissing && $component->id !== null && strlen($component->id) > 0) {
                     $elementRawData = InternalDataElements::getElementRawData($component->id);
-                    $component->setAttribute('bearcms-internal-attribute-raw-data', $elementRawData);
+                    $component->setAttribute('bearcms-internal-attribute-raw-data', base64_encode((string)$elementRawData));
                 }
             };
 

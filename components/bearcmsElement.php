@@ -40,7 +40,7 @@ $elementTags = [];
 if (!$isMissing) {
     $rawData = $component->getAttribute('bearcms-internal-attribute-raw-data');
     if ($rawData !== null && strlen($rawData) > 0) {
-        $elementData = \BearCMS\Internal\Data\Elements::decodeElementRawData($rawData);
+        $elementData = \BearCMS\Internal\Data\Elements::decodeElementRawData(base64_decode($rawData));
         $data = $elementData['data'];
         $elementTypeDefinition = ElementsHelper::$elementsTypeDefinitions[$componentName];
         foreach ($elementTypeDefinition->properties as $property) {
