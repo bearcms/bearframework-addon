@@ -226,7 +226,7 @@ class Sitemap
             curl_setopt($ch, CURLOPT_TIMEOUT, 15);
             $response = curl_exec($ch);
             $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
+            // curl_close($ch); not needed since PHP 8.0
             return date('c') . ' - ' . $url . ' - ' . $status . ' - ' . $response;
         };
         $tempData = self::getTempData();

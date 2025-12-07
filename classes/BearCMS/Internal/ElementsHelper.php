@@ -75,6 +75,8 @@ class ElementsHelper
             $result['canDelete'] = $canDelete;
         }
 
+        $componentSrc = (string)$component->src;
+
         $otherAttributes = [];
         $attributesToSkip = ['src', 'id', 'editable', 'color', 'group', 'canEdit', 'canDuplicate', 'canTag', 'canStyle', 'canMove', 'canDelete'];
         $attributes = $component->getAttributes();
@@ -83,8 +85,8 @@ class ElementsHelper
             if (array_search($key, $attributesToSkip) !== false || strpos($key, 'bearcms-internal-attribute-') === 0) {
                 $add = false;
             }
-            if ($add && isset(self::$elementsTypeDefinitions[$component->src])) {
-                $elementTypeDefinition = self::$elementsTypeDefinitions[$component->src];
+            if ($add && isset(self::$elementsTypeDefinitions[$componentSrc])) {
+                $elementTypeDefinition = self::$elementsTypeDefinitions[$componentSrc];
                 foreach ($elementTypeDefinition->properties as $property) {
                     if (strtolower($key) === strtolower($property['id'])) {
                         $add = false;

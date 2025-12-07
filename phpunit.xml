@@ -4,7 +4,7 @@
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
-    <coverage>
+    <source>
         <include>
             <directory>./classes/</directory>
             <directory>./components/</directory>
@@ -12,5 +12,5 @@
             <directory>./themes/</directory>
             <file>./index.php</file>
         </include>
-    </coverage>
+    </source>
 </phpunit>

@@ -39,6 +39,7 @@ class Server
             return $response;
         };
         if ($cacheKey !== null) {
+            //$cacheKey .= uniqid();
             $cacheKey = md5($cacheKey) . md5($name) . md5(json_encode($arguments, JSON_THROW_ON_ERROR));
             $data = $app->cache->getValue($cacheKey);
             if (is_array($data)) {
@@ -315,7 +316,7 @@ class Server
                 'body' => $responseBody,
             ];
         }
-        curl_close($ch);
+        // curl_close($ch); not needed since PHP 8.0
         if (isset($error[0])) {
             throw new \Exception('Request curl error: ' . $error . ' (1027)');
         }

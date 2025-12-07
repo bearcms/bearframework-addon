@@ -133,12 +133,13 @@ class Pages
      */
     static function getChildrenList(?string $parentID = null): \BearFramework\Models\ModelsList
     {
+        $parentID = (string)$parentID;
         $cacheKey = 'pages_children_list';
         if (!isset(Internal\Data::$cache[$cacheKey])) {
             $list = self::getRawPagesList();
             $result = [];
             foreach ($list as $page) {
-                $_parentID = $page->parentID;
+                $_parentID = (string)$page->parentID;
                 if (!isset($result[$_parentID])) {
                     $result[$_parentID] = [];
                 }
