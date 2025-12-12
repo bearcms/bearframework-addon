@@ -38,6 +38,24 @@ class Pages
 
     /**
      * 
+     * @param string $path
+     * @return \BearCMS\Data\Pages\Page|null
+     */
+    public function getByPath(string $path): ?\BearCMS\Data\Pages\Page
+    {
+        $pathsList = Internal\Data\Pages::getPathsList();
+        $pageID = array_search($path, $pathsList);
+        if ($pageID !== false) {
+            return $this->get($pageID);
+        }
+        if ($path === '/' && Config::$autoCreateHomePage) {
+            return InternalDataPages::getDefaultHomePage();
+        }
+        return null;
+    }
+
+    /**
+     * 
      * @return \BearFramework\Models\ModelsList
      */
     public function getList(): \BearFramework\Models\ModelsList
