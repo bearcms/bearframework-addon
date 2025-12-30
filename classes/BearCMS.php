@@ -1048,7 +1048,7 @@ class BearCMS
                 if (!empty(Internal\ElementsHelper::$editorData)) {
                     $context = $this->app->contexts->get(__DIR__);
                     $html = '';
-                    $html .= '<script>' . file_get_contents(__DIR__ . '/../dev/elementsEditor.js') . '</script>'; // dev mode
+                    //$html .= '<script>' . file_get_contents(__DIR__ . '/../dev/elementsEditor.js') . '</script>'; // dev mode
                     $html .= '<script src="' . $context->assets->getURL('assets/elementsEditor.min.js', ['cacheMaxAge' => 999999999, 'version' => 14]) . '" />';
                     $html .= '<link rel="client-packages-embed" name="cssToAttributes">'; // may be needed when customizing elements
                     $html .= '<link rel="client-packages-embed" name="responsiveAttributes">'; // may be needed when customizing elements
