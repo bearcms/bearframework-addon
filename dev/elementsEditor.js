@@ -180,6 +180,11 @@ bearCMS.elementsEditor = bearCMS.elementsEditor || (function () {
         } catch (e) {
 
         }
+        try {
+            bearCMS.tags.update();
+        } catch (e) {
+
+        }
     };
 
     var contentChange = function (elements) {

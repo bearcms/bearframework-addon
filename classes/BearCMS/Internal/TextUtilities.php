@@ -110,4 +110,21 @@ class TextUtilities
         }
         return $selectedWords;
     }
+
+    /**
+     * 
+     * @param string $suffix
+     * @param mixed|null $context
+     * @return string
+     */
+    static function generateID(string $suffix = '', $context = null): string
+    {
+        $generateID = function (string $data) use ($suffix) {
+            return base_convert(md5($data), 16, 36) . $suffix;
+        };
+        if ($context !== null) {
+            return $generateID(serialize($context));
+        }
+        return $generateID(uniqid('', true));
+    }
 }

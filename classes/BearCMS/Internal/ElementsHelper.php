@@ -706,7 +706,7 @@ class ElementsHelper
             if (is_array($styleValue)) {
                 $options->setValues($styleValue);
             }
-            $htmlData = InternalThemes::getOptionsHTMLData($options->getList(), false, $optimizeForCompatibility);
+            $htmlData = InternalThemes::getOptionsHTMLData($options->getList(), false, $optimizeForCompatibility, false, $selector);
             $content = InternalThemes::processOptionsHTMLData($htmlData);
             if ($returnHeadContentOnly) {
                 $content = substr($content, strpos($content, '<head>') + 6);

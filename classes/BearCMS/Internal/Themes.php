@@ -282,7 +282,7 @@ class Themes
             foreach (self::$pagesOptions as $key => $value) {
                 $pagesOptionsEnvKeyData[] = $key . (is_array($value) ? '$' . $value[0] : '');
             }
-            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v18'));
+            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v19'));
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID, $includeEditorData);
@@ -842,14 +842,16 @@ class Themes
      * @param boolean $includeDetails
      * @param boolean $optimizeForCompatibility
      * @param boolean $includeEditorData
+     * @param string $elementSelector
      * @return array
      */
-    static public function getOptionsHTMLData(array $options, bool $includeDetails = false, bool $optimizeForCompatibility = false, $includeEditorData = false): array
+    static public function getOptionsHTMLData(array $options, bool $includeDetails = false, bool $optimizeForCompatibility = false, $includeEditorData = false, string $elementSelector = ''): array
     {
         $app = App::get();
 
         $cssRules = [];
-        $cssCode = '';
+        $cssCode = [];
+        $jsCode = [];
         $details = [];
         $linkTags = [];
         $elementsDefaultValues = [];
@@ -1097,7 +1099,7 @@ class Themes
             return $selector;
         };
 
-        $getStateCSSRules = function (string $state, string $value, array $statesTypes, string $selector, int $optionIndex, ?int $stateIndex = null) use ($replaceStateSelectorsInSelector, $optimizeForCompatibility): array {
+        $getStateCSSRules = function (string $state, string $value, array $statesTypes, string $selector, int $optionIndex, ?int $stateIndex = null) use ($replaceStateSelectorsInSelector, $optimizeForCompatibility, &$jsCode, $elementSelector): array {
             $cssMediaQueries = []; // array of array of strings
             $attributes = [];
             $cssTagStates = '';
@@ -1193,13 +1195,30 @@ class Themes
                             $cssStates = ':is(' . implode(',', $cssSelectors) . ') ' . $cssStates;
                         }
                     } else if ($stateType === 'tags') {
+                        $getAttributeSelector = function (string $argName) use (&$jsCode, $elementSelector) {
+                            $prefix = 'js-function-';
+                            if (strpos($argName, $prefix) === 0) {
+                                $functionName = substr($argName, strlen($prefix));
+                                $selectorID = 'bjft-' . TextUtilities::generateID('', [$elementSelector, $functionName]);
+                                $jsVarInitialize = 'var bearcmsjft=bearcmsjft||[];';
+                                if (array_search($jsVarInitialize, $jsCode) === false) {
+                                    $jsCode[] = $jsVarInitialize;
+                                }
+                                $jsCode[] = 'bearcmsjft.push(["' . $elementSelector . '","' . $selectorID . '","' . $functionName . '"]);';
+                                return '[data-bearcms-tags~="' . $selectorID . '"]';
+                            }
+                            return '[data-bearcms-tags~="' . $argName . '"]';
+                        };
+
                         foreach ($args as $argName => $argValue) {
                             $argName = (string)$argName; // can be int
                             if ($argName[0] === '!') {
                                 $argName = substr($argName, 1);
-                                $cssTagStates .= ':not(:is([data-bearcms-tags~="' . $argName . '"] ' . $selectorLastPart . ', [data-bearcms-tags~="' . $argName . '"]' . $selectorLastPart . '))';
+                                $attributeSelector = $getAttributeSelector($argName);
+                                $cssTagStates .= ':not(:is(' . $attributeSelector . ' ' . $selectorLastPart . ', ' . $attributeSelector . $selectorLastPart . '))';
                             } else {
-                                $cssTagStates .= ':is([data-bearcms-tags~="' . $argName . '"] ' . $selectorLastPart . ', [data-bearcms-tags~="' . $argName . '"]' . $selectorLastPart . ')';
+                                $attributeSelector = $getAttributeSelector($argName);
+                                $cssTagStates .= ':is(' . $attributeSelector . ' ' . $selectorLastPart . ', ' . $attributeSelector . $selectorLastPart . ')';
                             }
                         }
                     } else if ($stateType === 'visibility') {
@@ -1284,7 +1303,7 @@ class Themes
                     $valueDetails = self::getValueDetails($value, true);
                     $optionType = $option->type;
                     if ($optionType === 'cssCode') {
-                        $cssCode .= trim((string)$valueDetails['value']);
+                        $cssCode[] = trim((string)$valueDetails['value']);
                     } else {
                         $isCodeOptionType = $optionType === 'code';
 
@@ -1442,40 +1461,50 @@ class Themes
             }
         }
 
-        $html = '';
+        $head = '';
         if (!empty($linkTags)) {
-            $html .= implode('', $linkTags);
+            $head .= implode('', $linkTags);
         }
         if ($style !== '') {
-            $html .= '<style>' . $style . '</style>';
+            $head .= '<style>' . $style . '</style>';
         }
-        if ($cssCode !== '') {
-            $html .= '<style>' . $cssCode . '</style>'; // Positioned in different style tag just in case it's invalid
+        if (!empty($cssCode)) {
+            $cssCode = implode('', $cssCode);
+            if ($cssCode !== '') {
+                $head .= '<style>' . $cssCode . '</style>'; // Positioned in different style tag just in case it's invalid
+            }
         }
         if (strpos($style, '--css-to-attribute-') !== false) {
-            $html .= '<link rel="client-packages-embed" name="cssToAttributes">';
+            $head .= '<link rel="client-packages-embed" name="cssToAttributes">';
         }
         if ($hasResponsiveAttributes) {
-            $html .= '<link rel="client-packages-embed" name="responsiveAttributes">';
+            $head .= '<link rel="client-packages-embed" name="responsiveAttributes">';
         }
         if ($hasEventAttributes) {
-            $html .= '<link rel="client-packages-embed" name="-bearcms-element-events">';
+            $head .= '<link rel="client-packages-embed" name="-bearcms-element-events">';
         }
         if ($hasRepeaterAttributes) {
-            $html .= '<link rel="client-packages-embed" name="-bearcms-repeater">';
+            $head .= '<link rel="client-packages-embed" name="-bearcms-repeater">';
         }
 
         if ($includeEditorData) {
             if (!empty($elementsDefaultValues)) {
-                $html .= '<script type="bearcms-editor-elements-default-values">' . json_encode($elementsDefaultValues) . '</script>';
+                $head .= '<script type="bearcms-editor-elements-default-values">' . json_encode($elementsDefaultValues) . '</script>';
             }
             if (!empty($details['googleFonts'])) {
-                $html .= '<script type="bearcms-editor-google-fonts">' . json_encode(array_keys($details['googleFonts'])) . '</script>';
+                $head .= '<script type="bearcms-editor-google-fonts">' . json_encode(array_keys($details['googleFonts'])) . '</script>';
             }
         }
 
-        if ($html !== '') {
-            $html = '<html><head>' . $html . '</head></html>';
+        if (!empty($jsCode)) {
+            $jsCode = implode('', $jsCode);
+            if ($jsCode !== '') {
+                $head .= '<script>' . $jsCode . '</script>';
+            }
+        }
+
+        if ($head !== '') {
+            $html = '<html><head>' . $head . '</head></html>';
         } else {
             $html = '';
         }
