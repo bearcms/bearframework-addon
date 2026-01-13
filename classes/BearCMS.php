@@ -789,6 +789,9 @@ class BearCMS
         $document->loadHTML($response->content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
         $isNotFoundPage = $response instanceof App\Response\NotFound;
 
+        $headElement = $document->querySelector('head');
+        $hasHeadElement = $headElement !== null;
+
         $language = null;
         if ($applyContext !== null) {
             $language = $applyContext->language;
@@ -806,7 +809,7 @@ class BearCMS
         $html .= '<head>';
 
         $title = '';
-        $titleElement = $document->querySelector('title');
+        $titleElement = $hasHeadElement ? $headElement->querySelector('title') : null;
         if ($titleElement !== null && strlen($titleElement->innerHTML) > 0) {
             $title = html_entity_decode($titleElement->innerHTML);
         } else {
@@ -815,12 +818,12 @@ class BearCMS
                 $innerHTML = $h1Element->innerHTML;
                 if (isset($innerHTML[0])) {
                     $title = $innerHTML;
-                    $html .= '<title>' . $innerHTML . '</title>';
+                    $html .= '<title>' . htmlspecialchars(strip_tags($innerHTML)) . '</title>';
                 }
             }
         }
 
-        $metaElements = $document->querySelectorAll('meta');
+        $metaElements = $hasHeadElement ? $document->querySelectorAll('meta') : [];
         $generateDescriptionMetaTag = $isNotFoundPage ? false : true;
         $generateKeywordsMetaTag = $isNotFoundPage ? false : true;
         foreach ($metaElements as $metaElement) {
@@ -865,14 +868,17 @@ class BearCMS
         if (!Config::$whitelabel) {
             $html .= '<meta name="generator" content="Bear CMS (powered by Bear Framework)"/>';
         }
-        $icon = $settings->icon;
-        if (isset($icon[0])) {
-            $baseUrl = $this->app->urls->get();
-            $html .= '<link rel="icon" href="' . htmlentities($baseUrl . '-link-rel-icon-32') . '">';
-            $html .= '<link rel="apple-touch-icon" href="' . htmlentities($baseUrl . '-link-rel-icon-192') . '">';
-        } else if ($currentUserExists) {
-            $html .= '<link rel="icon" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
-            $html .= '<link rel="apple-touch-icon" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+
+        if (($hasHeadElement && $headElement->querySelector('link[rel="icon"]') === null) || !$hasHeadElement) {
+            $icon = $settings->icon;
+            if (isset($icon[0])) {
+                $baseUrl = $this->app->urls->get();
+                $html .= '<link rel="icon" href="' . htmlentities($baseUrl . '-link-rel-icon-32') . '">';
+                $html .= '<link rel="apple-touch-icon" href="' . htmlentities($baseUrl . '-link-rel-icon-192') . '">';
+            } else if ($currentUserExists) {
+                $html .= '<link rel="icon" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+                $html .= '<link rel="apple-touch-icon" href="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+            }
         }
         if (empty($settings->allowSearchEngines)) {
             $html .= '<meta name="robots" content="noindex">';
@@ -887,7 +893,9 @@ class BearCMS
         }
         $url = rtrim($this->app->request->getURL(), '/') . '/';
         $url = explode('?', $url)[0]; // remove the query string
-        $html .= '<link rel="canonical" href="' . htmlentities($url) . '">';
+        if (($hasHeadElement && $headElement->querySelector('link[rel="canonical"]') === null) || !$hasHeadElement) {
+            $html .= '<link rel="canonical" href="' . htmlentities($url) . '">';
+        }
         if (!$isNotFoundPage) {
             if ($settings->enableRSS) {
                 $rssKeys = $settings->languages;
@@ -902,9 +910,15 @@ class BearCMS
                     $html .= '<link rel="alternate" type="application/rss+xml" title="' . htmlentities(trim($rssTitle)) . '" href="' . htmlentities($rssURL) . '">';
                 }
             }
-            $html .= '<meta property="og:image" content="' . htmlentities($url) . '-meta-og-image' . '?' . time() . '">';
-            $html .= '<meta property="og:type" content="website">';
-            $html .= '<meta property="og:url" content="' . htmlentities($url) . '">';
+            if (($hasHeadElement && $headElement->querySelector('link[rel="og:image"]') === null) || !$hasHeadElement) {
+                $html .= '<meta property="og:image" content="' . htmlentities($url) . '-meta-og-image' . '?' . time() . '">';
+            }
+            if (($hasHeadElement && $headElement->querySelector('link[rel="og:type"]') === null) || !$hasHeadElement) {
+                $html .= '<meta property="og:type" content="website">';
+            }
+            if (($hasHeadElement && $headElement->querySelector('link[rel="og:url"]') === null) || !$hasHeadElement) {
+                $html .= '<meta property="og:url" content="' . htmlentities($url) . '">';
+            }
         }
         if (!empty($settings->fonts)) {
             $fontFacesCSS = '';
