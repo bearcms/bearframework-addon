@@ -613,7 +613,7 @@ class BearCMS
                         $pathParts = explode('/', substr($filename, strlen($matchingDir)), 3);
                         if (isset($pathParts[0], $pathParts[1], $pathParts[2])) {
                             $url = $pathParts[0] . '://' . $pathParts[1] . '/' . str_replace('\\', '/', $pathParts[2]);
-                            $allowedPrefixes = ['https://i.ytimg.com/'];
+                            $allowedPrefixes = ['https://i.ytimg.com/', 'https://packages.bearcms.com/'];
                             $isAllowed = false;
                             foreach ($allowedPrefixes as $allowedPrefix) {
                                 if (strpos($url, $allowedPrefix) === 0) {
