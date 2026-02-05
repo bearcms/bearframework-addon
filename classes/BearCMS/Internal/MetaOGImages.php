@@ -38,12 +38,14 @@ class MetaOGImages
     /**
      * 
      * @param string $path
+     * @param string|null $filename
+     * @param string|null $url
      * @return string|null
      */
-    private static function callSources(string $path): ?string
+    private static function callSources(string $path, ?string $filename, ?string $url): ?string
     {
         foreach (self::$sources as $source) {
-            $result = call_user_func($source, $path);
+            $result = call_user_func($source, $path, $filename, $url);
             if (is_string($result)) {
                 return $result;
             }
@@ -61,11 +63,10 @@ class MetaOGImages
         $app = App::get();
 
         $filename = null;
-        $getFilenameURL = function () use (&$filename, $app) {
-            if ($filename !== null) {
-                return $app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
-            }
-            return null;
+        $url = null;
+
+        $getFilenameURL = function (string $filename) use ($app) {
+            return $app->assets->getURL($filename, ['cacheMaxAge' => 999999999]);
         };
 
         $containerID = null;
@@ -109,32 +110,31 @@ class MetaOGImages
         }
 
         if ($filename !== null) {
-            return $getFilenameURL();
-        }
-
-        if ($containerID !== null) {
-            $content = $app->components->process('<component src="bearcms-elements" id="' . htmlentities($containerID) . '"/>');
-            if (strpos($content, '<img') !== false) {
-                $html5Document = new HTML5DOMDocument();
-                $html5Document->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
-                $imageElement = $html5Document->querySelector('img');
-                if ($imageElement !== null) {
-                    return $imageElement->getAttribute('src');
+            $url = $getFilenameURL($filename);
+        } else {
+            if ($containerID !== null) {
+                $content = $app->components->process('<component src="bearcms-elements" id="' . htmlentities($containerID) . '"/>');
+                if (strpos($content, '<img') !== false) {
+                    $html5Document = new HTML5DOMDocument();
+                    $html5Document->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
+                    $imageElement = $html5Document->querySelector('img');
+                    if ($imageElement !== null) {
+                        $url = $imageElement->getAttribute('src');
+                    }
                 }
             }
-        } else {
-            $url = self::callSources($path);
-            if ($url !== null) {
-                return $url;
-            }
         }
 
-        $filename = \BearCMS\Internal\Data\Settings::getIconForSize(2000); // use the website icon if no image found on page
-
-        if ($filename !== null) {
-            return $getFilenameURL();
+        if ($url === null) {
+            $filename = \BearCMS\Internal\Data\Settings::getIconForSize(2000); // use the website icon if no image found on page
+            $url = $getFilenameURL($filename);
         }
 
-        return null;
+        $newURL = self::callSources($path, $filename, $url);
+        if ($newURL !== null) {
+            return $newURL;
+        }
+
+        return $url;
     }
 }
