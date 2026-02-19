@@ -127,7 +127,9 @@ class MetaOGImages
 
         if ($url === null) {
             $filename = \BearCMS\Internal\Data\Settings::getIconForSize(2000); // use the website icon if no image found on page
-            $url = $getFilenameURL($filename);
+            if ($filename !== null) {
+                $url = $getFilenameURL($filename);
+            }
         }
 
         $newURL = self::callSources($path, $filename, $url);
