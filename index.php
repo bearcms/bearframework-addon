@@ -47,6 +47,9 @@ $app->localization
     })
     ->addDictionary('ru', function () use ($context) {
         return include $context->dir . '/locales/ru.php';
+    })
+    ->addDictionary('ro', function () use ($context) {
+        return include $context->dir . '/locales/ro.php';
     });
 
 $app->shortcuts
