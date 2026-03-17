@@ -50,6 +50,10 @@ class Links
             $onClick = "bearCMS.modalContent.open(" . json_encode($contentID) . ");";
             $url = null;
             $html = '<html><head><link rel="client-packages-embed" name="bearcms-modal-content"></head></html>';
+        } elseif (strpos($url, 'bearcms-modal-close') === 0) {
+            $onClick = "bearCMS.modalContent.close();";
+            $url = null;
+            $html = '<html><head><link rel="client-packages-embed" name="bearcms-modal-content"></head></html>';
         } else {
             foreach (self::$handlers as $prefix => $handlerCallback) {
                 if (strpos($url, $prefix) === 0) {
