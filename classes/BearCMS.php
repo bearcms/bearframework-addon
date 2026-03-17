@@ -965,6 +965,9 @@ class BearCMS
                 $globalHTML = $settings->globalHTML;
                 if ($globalHTML !== null) {
                     if ((!$currentUserExists || ($currentUserExists && !$this->app->request->query->exists('disable-global-html')))) {
+                        $htmlElement = $document->querySelector('html');
+                        $pageTags = $htmlElement !== '' ? $htmlElement->getAttribute('data-bearcms-tags') : '';
+                        $pageTags = explode(' ', $pageTags);
                         if (!is_array($globalHTML)) {
                             $globalHTML = [
                                 ['html' => $globalHTML]
@@ -972,6 +975,19 @@ class BearCMS
                         }
                         foreach ($globalHTML as $globalHTMLData) {
                             if (isset($globalHTMLData['html']) && is_string($globalHTMLData['html']) && strlen($globalHTMLData['html']) > 0) {
+                                $active = isset($globalHTMLData['active']) ? $globalHTMLData['active'] : true;
+                                if (!$active) {
+                                    continue;
+                                }
+                                $requiredTags = isset($globalHTMLData['tags']) ? $globalHTMLData['tags'] : [];
+                                if (sizeof($requiredTags) > 0) {
+                                    $add = sizeof(array_intersect($requiredTags, $pageTags)) === sizeof($requiredTags);
+                                } else {
+                                    $add = true;
+                                }
+                                if (!$add) {
+                                    continue;
+                                }
                                 $htmlToInsert[] = ['source' => $globalHTMLData['html']];
                             }
                         }
