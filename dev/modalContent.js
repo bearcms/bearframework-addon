@@ -52,9 +52,24 @@ bearCMS.modalContent = bearCMS.modalContent || (function () {
         }
     };
 
+    var _openOncePerSession = function (id, options) {
+        var sessionKey = 'bwm-' + id;
+        function getCookie(name) {
+            return document.cookie
+                .split('; ')
+                .find(row => row.startsWith(name + '='))
+                ?.split('=')[1];
+        }
+        if (!getCookie(sessionKey)) {
+            open(id, options);
+            document.cookie = sessionKey + "=1;path=/";
+        }
+    };
+
     return {
         'open': open,
-        'close': close
+        'close': close,
+        '_openOncePerSession': _openOncePerSession
     };
 
 }());

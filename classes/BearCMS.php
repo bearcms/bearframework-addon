@@ -959,15 +959,21 @@ class BearCMS
         $htmlToInsert[] = ['source' => $html];
 
         if ($this->isHTMLResponse($response)) {
+            $pageTagsCache = null;
+            $getPageTags = function () use ($document, &$pageTagsCache) {
+                if ($pageTagsCache === null) {
+                    $htmlElement = $document->querySelector('html');
+                    $pageTagsCache = $htmlElement !== '' ? explode(' ', $htmlElement->getAttribute('data-bearcms-tags')) : [];
+                }
+                return $pageTagsCache;
+            };
             $allowRenderGlobalHTML = Config::getVariable('internalAllowRenderGlobalHTML');
             $allowRenderGlobalHTML = $allowRenderGlobalHTML !== null ? (int)$allowRenderGlobalHTML : true;
             if ($allowRenderGlobalHTML) {
                 $globalHTML = $settings->globalHTML;
                 if ($globalHTML !== null) {
                     if ((!$currentUserExists || ($currentUserExists && !$this->app->request->query->exists('disable-global-html')))) {
-                        $htmlElement = $document->querySelector('html');
-                        $pageTags = $htmlElement !== '' ? $htmlElement->getAttribute('data-bearcms-tags') : '';
-                        $pageTags = explode(' ', $pageTags);
+                        $pageTags = $getPageTags();
                         if (!is_array($globalHTML)) {
                             $globalHTML = [
                                 ['html' => $globalHTML]
@@ -991,6 +997,38 @@ class BearCMS
                                 $htmlToInsert[] = ['source' => $globalHTMLData['html']];
                             }
                         }
+                    }
+                }
+            }
+            if (!$currentUserExists) {
+                $pageTags = $getPageTags();
+                $welcomeModals = isset($settings->welcomeModals) && is_array($settings->welcomeModals) ? $settings->welcomeModals : [];
+                $selectedWelcomeModal = null;
+                foreach ($welcomeModals as $welcomeModal) {
+                    $active = isset($welcomeModal['active']) ? $welcomeModal['active'] : true;
+                    if (!$active) {
+                        continue;
+                    }
+                    $requiredTags = isset($welcomeModal['tags']) ? $welcomeModal['tags'] : [];
+                    if (sizeof($requiredTags) > 0) {
+                        $add = sizeof(array_intersect($requiredTags, $pageTags)) === sizeof($requiredTags);
+                    } else {
+                        $add = true;
+                    }
+                    if (!$add) {
+                        continue;
+                    }
+                    $selectedWelcomeModal = $welcomeModal;
+                }
+                if ($selectedWelcomeModal !== null) {
+                    $modalID = $selectedWelcomeModal['modalID'];
+                    $app = App::get();
+                    if (!$app->request->cookies->exists($modalID)) {
+                        $html = '<html><head>';
+                        $html .= '<link rel="client-packages-embed" name="bearcms-modal-content">';
+                        $html .= '<script>clientPackages.get(\'bearcms-modal-content\').then(function(m){m._openOncePerSession(' . json_encode($modalID) . ');});</script>';
+                        $html .= '</head></html>';
+                        $htmlToInsert[] = ['source' => $html];
                     }
                 }
             }

@@ -32,6 +32,7 @@ namespace BearCMS\Data\Settings;
  * @property array $fonts
  * @property string|null $image
  * @property boolean $customNotFoundPageContent
+ * @property array $welcomeModals
  */
 class Settings extends \BearFramework\Models\Model
 {
@@ -131,6 +132,9 @@ class Settings extends \BearFramework\Models\Model
                 'init' => function () {
                     return false;
                 }
+            ])
+            ->defineProperty('welcomeModals', [
+                'type' => '?array',
             ]);
     }
 
