@@ -259,6 +259,18 @@ class Themes
 
     /**
      * 
+     * @return \BearCMS\Themes\Theme\Customizations|null
+     */
+    static public function getCurrentCustomizations(): ?\BearCMS\Themes\Theme\Customizations
+    {
+        $app = App::get();
+        $currentUserExists = $app->bearCMS->currentUser->exists();
+        $currentThemeID = Internal\CurrentTheme::getID();
+        return Internal\Themes::getCustomizations($currentThemeID, $currentUserExists ? $app->bearCMS->currentUser->getID() : null, $currentUserExists);
+    }
+
+    /**
+     * 
      * @param string $id
      * @param string|null $userID
      * @param boolean $includeEditorData
