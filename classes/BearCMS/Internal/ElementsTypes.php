@@ -481,9 +481,9 @@ class ElementsTypes
                         if (isset($file['filename'])) {
                             $innerHTML .= '<file '
                                 . 'filename="' . htmlentities($file['filename']) . '" '
-                                . 'fileWidth="' . (isset($file['width']) ? htmlentities($file['width']) : null) . '" '
-                                . 'fileHeight="' . (isset($file['height']) ? htmlentities($file['height']) : null) . '"'
-                                . 'title="' . (isset($file['title']) ? htmlentities($file['title']) : null) . '"'
+                                . 'file-width="' . (isset($file['width']) ? htmlentities($file['width']) : null) . '" '
+                                . 'file-height="' . (isset($file['height']) ? htmlentities($file['height']) : null) . '" '
+                                . 'title="' . (isset($file['title']) ? htmlentities($file['title']) : null) . '" '
                                 . 'alt="' . (isset($file['alt']) ? htmlentities($file['alt']) : null) . '"'
                                 . '/>';
                         }
@@ -499,11 +499,11 @@ class ElementsTypes
                 $filesElements = $domDocument->querySelectorAll('file');
                 foreach ($filesElements as $fileElement) {
                     $file = ['filename' => $fileElement->getAttribute('filename')];
-                    $width = (string)$fileElement->getAttribute('filewidth');
+                    $width = (string)$fileElement->getAttribute('file-width');
                     if (isset($width[0])) {
                         $file['width'] = $width[0];
                     }
-                    $height = (string)$fileElement->getAttribute('fileheight');
+                    $height = (string)$fileElement->getAttribute('file-height');
                     if (isset($height[0])) {
                         $file['height'] = $height[0];
                     }
