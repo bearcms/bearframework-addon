@@ -6,6 +6,7 @@
  * Free to use under the MIT license.
  */
 
+use BearCMS\Internal\ComponentUtilities;
 use BearFramework\App;
 
 $app = App::get();
@@ -33,12 +34,13 @@ if (strlen($threadID) > 0) {
 }
 echo '<html><head>';
 if ($isFullHtmlOutputType) {
-    echo '<style>';
-    echo '.bearcms-comments-comment{display:block;clear:both;zoom:1;word-break:break-word;}';
-    echo '.bearcms-comments-comment:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
-    echo '.bearcms-comments-comment-author-image{display:inline-block;float:left;}';
-    echo '.bearcms-comments-comment-date{float:right;}';
-    echo '</style>';
+    $styleHTML = '<style>'
+        . '.bearcms-comments-comment{display:block;clear:both;zoom:1;word-break:break-word;}'
+        . '.bearcms-comments-comment:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}'
+        . '.bearcms-comments-comment-author-image{display:inline-block;float:left;}'
+        . '.bearcms-comments-comment-date{float:right;}'
+        . '</style>';
+    echo ComponentUtilities::createComponentFragment('bcme', $styleHTML);
 }
 echo '</head><body>';
 echo $content;

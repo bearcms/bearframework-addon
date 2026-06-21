@@ -6,6 +6,8 @@
  * Free to use under the MIT license.
  */
 
+use BearCMS\Internal\ComponentUtilities;
+
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
 $isFullHtmlOutputType = $outputType === 'full-html';
@@ -68,10 +70,13 @@ $content = '<div' . $attributes . '>' . $text . $linksHTML . '</div>';
 
 echo '<html>';
 if ($isFullHtmlOutputType) {
-    echo '<head><style>';
-    echo '.bearcms-text-element{display:block;word-break:break-word;}'; // no clear:both - breaks floating box
-    echo '.bearcms-text-element:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
-    echo '</style></head>';
+    echo '<head>';
+    $styleHTML = '<style>';
+    $styleHTML .= '.bearcms-text-element{display:block;word-break:break-word;}'; // no clear:both - breaks floating box
+    $styleHTML .= '.bearcms-text-element:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}';
+    $styleHTML .= '</style>';
+    echo ComponentUtilities::createComponentFragment('bte', $styleHTML);
+    echo '</head>';
 }
 echo '<body>';
 echo $content;

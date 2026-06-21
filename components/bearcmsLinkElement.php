@@ -6,6 +6,8 @@
  * Free to use under the MIT license.
  */
 
+use BearCMS\Internal\ComponentUtilities;
+
 $outputType = (string) $component->getAttribute('output-type');
 $outputType = isset($outputType[0]) ? $outputType : 'full-html';
 $isFullHtmlOutputType = $outputType === 'full-html';
@@ -18,10 +20,13 @@ list($linkURL, $linkOnClick, $linkHTML) = \BearCMS\Internal\Links::updateURL($ur
 
 echo '<html>';
 if ($isFullHtmlOutputType) {
-    echo '<head><style>'
+    echo '<head>';
+    $styleHTML = '<style>'
         . '.bearcms-link-element{word-break:break-word;cursor:pointer;}'
         // . '.bearcms-element:has(>.bearcms-link-element){display:flex;}' // remove font-size spacing // breaks text-align
-        . '</style></head>';
+        . '</style>';
+    echo ComponentUtilities::createComponentFragment('ble', $styleHTML);
+    echo '</head>';
 }
 echo '<body>';
 

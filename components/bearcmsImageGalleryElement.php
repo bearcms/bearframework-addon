@@ -11,6 +11,7 @@ use BearCMS\Internal\Config;
 use BearCMS\Internal;
 use IvoPetkov\HTML5DOMDocument;
 use BearCMS\Internal\Assets as InternalAssets;
+use BearCMS\Internal\ComponentUtilities;
 
 $app = App::get();
 
@@ -121,7 +122,10 @@ if ($isFullHtmlOutputType) {
 }
 echo '<html>';
 if ($isFullHtmlOutputType) {
-    echo '<head><style>.bearcms-image-gallery-element, .bearcms-image-gallery-element *{font-size:0;line-height:0;}</style></head>';
+    echo '<head>';
+    $styleHTML = '<style>.bearcms-image-gallery-element, .bearcms-image-gallery-element *{font-size:0;line-height:0;}</style>';
+    echo ComponentUtilities::createComponentFragment('bige', $styleHTML);
+    echo '</head>';
 }
 echo '<body>';
 echo $content;

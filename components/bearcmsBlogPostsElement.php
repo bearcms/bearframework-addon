@@ -8,6 +8,7 @@
 
 use BearFramework\App;
 use BearCMS\Internal2;
+use BearCMS\Internal\ComponentUtilities;
 use BearCMS\Internal\ElementsHelper;
 use BearCMS\Internal\ElementsDataHelper;
 use BearCMS\Internal\Data\Elements as InternalDataElements;
@@ -170,7 +171,8 @@ echo '<html>';
 
 echo '<head>';
 if ($isFullHtmlOutputType) {
-    echo '<style>.bearcms-blog-posts-element-post-title{word-break:break-word;}</style>';
+    $styleHTML = '<style>.bearcms-blog-posts-element-post-title{word-break:break-word;}</style>';
+    echo ComponentUtilities::createComponentFragment('bbpe', $styleHTML);
     if ($list->count() > $limit) {
         echo '<link rel="client-packages-embed" name="-bearcms-blog-posts-element">';
     }

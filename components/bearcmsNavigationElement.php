@@ -6,6 +6,7 @@
  * Free to use under the MIT license.
  */
 
+use BearCMS\Internal\ComponentUtilities;
 use BearFramework\App;
 use IvoPetkov\HTML5DOMDocument;
 
@@ -228,9 +229,8 @@ if ($isFullHtmlOutputType) {
     if ($showStoreCartButton) {
         echo '<link rel="client-packages-embed" name="-bearcms-store">';
     }
-    echo '<style>';
-    echo '.bearcms-navigation-element-item{word-break:break-word;}';
-    echo '</style>';
+    $styleHTML = '<style>.bearcms-navigation-element-item{word-break:break-word;}</style>';
+    echo ComponentUtilities::createComponentFragment('bnve', $styleHTML);
 }
 echo '</head><body>';
 echo $content;

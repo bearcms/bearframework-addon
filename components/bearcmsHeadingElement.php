@@ -6,6 +6,8 @@
  * Free to use under the MIT license.
  */
 
+use BearCMS\Internal\ComponentUtilities;
+
 $text = (string) $component->text;
 $size = 'large';
 $componentSize = (string)$component->size;
@@ -39,7 +41,10 @@ if ($isFullHtmlOutputType) {
 $content = '<' . $tagName . $attributes . '>' . htmlspecialchars($text) . '</' . $tagName . '>';
 echo '<html>';
 if ($isFullHtmlOutputType) {
-    echo '<head><style>.bearcms-heading-element{word-break:break-word;}</style></head>';
+    echo '<head>';
+    $styleHTML = '<style>.bearcms-heading-element{word-break:break-word;}</style>';
+    echo ComponentUtilities::createComponentFragment('bhe', $styleHTML);
+    echo '</head>';
 }
 echo '<body>';
 echo $content;

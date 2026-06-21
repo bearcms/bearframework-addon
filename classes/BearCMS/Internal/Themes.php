@@ -294,7 +294,7 @@ class Themes
             foreach (self::$pagesOptions as $key => $value) {
                 $pagesOptionsEnvKeyData[] = $key . (is_array($value) ? '$' . $value[0] : '');
             }
-            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v19'));
+            $envKey = md5(md5(serialize($elementsOptionsEnvKeyData)) . md5(serialize($pagesOptionsEnvKeyData)) . md5((string)$version) . md5('v20'));
             $resultData = null;
             if ($useCache) {
                 $cacheKey = self::getCustomizationsCacheKey($id, $userID, $includeEditorData);
@@ -935,7 +935,7 @@ class Themes
                 if (!isset($details['googleFonts'][$googleFontName])) {
                     $updateKey = 'googlefont:' . md5($googleFontName);
                     $details['googleFonts'][$googleFontName] = [];
-                    $linkTags[] = '<link href="' . htmlentities($updateKey) . '" rel="preload" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"><noscript><link href="' . htmlentities($updateKey) . '" rel="stylesheet"></noscript>';
+                    $linkTags[] = '<link href="' . htmlentities($updateKey) . '" rel="preload" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">'; //<noscript><link href="' . htmlentities($updateKey) . '" rel="stylesheet"></noscript>
                 }
                 return $googleFontName;
             }

@@ -7,6 +7,7 @@
  * Free to use under the MIT license.
  */
 
+use BearCMS\Internal\ComponentUtilities;
 use BearFramework\App;
 use BearCMS\Internal\ElementsHelper;
 use BearCMS\Internal\ElementStylesHelper;
@@ -38,9 +39,10 @@ $elementStyleID = null;
 $elementStyleValue = null;
 $elementTags = [];
 if (!$isMissing) {
-    $rawData = $component->getAttribute('bearcms-internal-attribute-raw-data');
-    if ($rawData !== null && strlen($rawData) > 0) {
-        $elementData = \BearCMS\Internal\Data\Elements::decodeElementRawData(base64_decode($rawData));
+    $rawDataReferenceID = $component->getAttribute('bearcms-internal-attribute-raw-data');
+    if ($rawDataReferenceID !== null && strlen($rawDataReferenceID) > 0) {
+        $rawData = ElementsHelper::$rawDataReferences[$rawDataReferenceID];
+        $elementData = \BearCMS\Internal\Data\Elements::decodeElementRawData($rawData);
         $data = $elementData['data'];
         $elementTypeDefinition = ElementsHelper::$elementsTypeDefinitions[$componentName];
         foreach ($elementTypeDefinition->properties as $property) {
@@ -53,7 +55,7 @@ if (!$isMissing) {
             }
         }
         if (is_callable($elementTypeDefinition->updateComponentFromData)) {
-            $component = call_user_func($elementTypeDefinition->updateComponentFromData, clone ($component), $data);
+            $component = call_user_func($elementTypeDefinition->updateComponentFromData, clone($component), $data);
         }
         if (isset($elementData['type'])) {
             $elementType = $elementData['type'];
@@ -93,7 +95,7 @@ if (!$isMissing) {
                     }
                 }
                 if (is_callable($elementTypeDefinition->updateDataFromComponent)) {
-                    $data = call_user_func($elementTypeDefinition->updateDataFromComponent, clone ($component), $data);
+                    $data = call_user_func($elementTypeDefinition->updateDataFromComponent, clone($component), $data);
                 }
                 return json_encode(['id' => $elementID, 'type' => ElementsHelper::$elementsTypeComponents[$componentName], 'data' => $data], JSON_THROW_ON_ERROR);
             };
@@ -153,7 +155,8 @@ if ($containerType === 'none') {
     }
     $content = '<html><head>';
     if ($styleSelector !== null) {
-        $content .= ElementsHelper::getStyleHTML($elementType, $styleValue, $styleSelector, true, !$editable);
+        $styleHTML = ElementsHelper::getStyleHTML($elementType, $styleValue, $styleSelector, true, !$editable);
+        $content .= ComponentUtilities::createComponentFragment('besh' . md5($styleHTML), $styleHTML);
     }
     $content .= '</head><body>';
     if ($editable && !$inElementsContainer) {

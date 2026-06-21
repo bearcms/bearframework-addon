@@ -6,6 +6,8 @@
  * Free to use under the MIT license.
  */
 
+use BearCMS\Internal\ComponentUtilities;
+
 $size = 'large';
 $componentSize = (string)$component->size;
 if (array_search($componentSize, ['large', 'medium', 'small']) !== false) {
@@ -29,7 +31,10 @@ $attributes = $isFullHtmlOutputType ? ' class="' . $classNames . '"' : '';
 $content = '<div' . $attributes . '></div>';
 echo '<html>';
 if ($isFullHtmlOutputType) {
-    echo '<head><style>.bearcms-separator-element{font-size:0;line-height:0;}</style></head>';
+    echo '<head>';
+    $styleHTML = '<style>.bearcms-separator-element{font-size:0;line-height:0;}</style>';
+    echo ComponentUtilities::createComponentFragment('bse', $styleHTML);
+    echo '</head>';
 }
 echo '<body>';
 echo $content;

@@ -26,6 +26,8 @@ class ElementsHelper
     static $elementsTypeDefinitions = [];
     static $elementsTypeComponents = [];
     static $lastLoadMoreServerData = null;
+    static $cache = [];
+    static $rawDataReferences = [];
 
     /**
      * 
@@ -120,10 +122,12 @@ class ElementsHelper
             return '';
         }
         $componentName = array_search($elementData['type'], self::$elementsTypeComponents);
+        $referenceID = md5(serialize($rawData));
+        self::$rawDataReferences[$referenceID] = $rawData;
         return '<component'
             . ' src="' . ($componentName === false ? 'bearcms-missing-element' : $componentName) . '"'
             . ' editable="' . ($editable ? 'true' : 'false') . '"'
-            . ' bearcms-internal-attribute-raw-data="' . base64_encode($rawData) . '"'
+            . ' bearcms-internal-attribute-raw-data="' . $referenceID . '"'
             . ' bearcms-internal-attribute-in-elements-container="' . ((int) $contextData['inElementsContainer'] === 1 ? 'true' : 'false') . '"'
             . ($editable && isset($contextData['canEdit']) ? ' canEdit="' . $contextData['canEdit'] . '"' : '')
             . ($editable && isset($contextData['canDuplicate']) ? ' canDuplicate="' . $contextData['canDuplicate'] . '"' : '')
@@ -216,14 +220,15 @@ class ElementsHelper
                 }
                 $attributes .= ' class="' . $classAttributeValue . '"';
 
-                $content .= '<style>'
+                $styleHTML = '<style>'
                     . '.bearcms-columns-element{display:flex;flex-direction:row;gap:var(--bearcms-elements-spacing);--css-to-attribute-data-bearcms-columns-widths:' . InternalThemes::escapeCSSValue($defaultLayoutValue['widths']) . ';--css-to-attribute-data-bearcms-columns-direction:' . $defaultLayoutValue['direction'] . ';}'
                     . '.bearcms-columns-element>div{display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}'
                     . '.bearcms-columns-element[data-bearcms-columns-direction="horizontal"]{flex-direction:row;}'
                     . '.bearcms-columns-element[data-bearcms-columns-direction="vertical"]{flex-direction:column;}'
                     . '.bearcms-columns-element[data-bearcms-columns-direction="vertical-reverse"]{flex-direction:column-reverse;}'
-                    . ($editable ? '.bearcms-columns-element[data-rvr-editable]>div{min-width:15px;}' : '')
+                    . '.bearcms-columns-element[data-rvr-editable]>div{min-width:15px;}'
                     . '</style>';
+                $content .= ComponentUtilities::createComponentFragment('ehclds' . md5($styleHTML), $styleHTML);
 
                 $getWidthsCSS = function (string $widths) use ($editable): string {
                     $result = '';
@@ -255,7 +260,7 @@ class ElementsHelper
                     }
 
                     $selectorPrefix = '.bearcms-columns-element[data-bearcms-columns-widths="' . InternalThemes::escapeCSSValue($widths, true) . '"]';
-                    $notEditableSelector = $editable || true ? ':not([data-rvr-editable])' : ''; // TODO Add check if in admin mode. There are problems if there is not editable and editable element of this kind.
+                    $notEditableSelector = ':not([data-rvr-editable])';
 
                     $emptySelectorPart = '';
                     foreach ($columnsStyles as $index => $columnStyle) {
@@ -268,13 +273,15 @@ class ElementsHelper
                     return $result;
                 };
 
-                $content .= '<style>'
+                $styleHTML = '<style>'
                     . $getWidthsCSS($widths)
                     . '</style>';
+                $content .= ComponentUtilities::createComponentFragment('ehclws' . md5($styleHTML), $styleHTML);
             }
         }
         if ($styleSelector !== null) {
-            $content .= self::getStyleHTML('columns', $styleValue, $styleSelector, true, !$editable);
+            $styleHTML = self::getStyleHTML('columns', $styleValue, $styleSelector, true, !$editable);
+            $content .= ComponentUtilities::createComponentFragment('ehclsh' . md5($styleHTML), $styleHTML);
         }
         if (!empty($elementTags)) {
             $attributes .= self::getTagsHTMLAttributes($elementTags);
@@ -350,8 +357,8 @@ class ElementsHelper
                 }
                 $attributes .= ' class="' . $classAttributeValue . '"';
 
-                $notEditableSelector = $editable || true ? ':not([data-rvr-editable])' : ''; // TODO Add check if in admin mode. There are problems if there is not editable and editable element of this kind.
-                $content .= '<style>'
+                $notEditableSelector = ':not([data-rvr-editable])';
+                $styleHTML = '<style>'
                     . '.bearcms-floating-box-element{--css-to-attribute-data-bearcms-floating-box-position:' . $defaultLayoutValue['position'] . ';--css-to-attribute-data-bearcms-floating-box-width:' . $defaultLayoutValue['width'] . ';}'
                     . '.bearcms-floating-box-element' . $notEditableSelector . ':has(> div:first-child:empty):has(> div:last-child:empty){display:none;}'
                     . '.bearcms-floating-box-element>div:first-child{max-width:100%;}'
@@ -367,12 +374,13 @@ class ElementsHelper
                     . '.bearcms-floating-box-element[data-bearcms-floating-box-position="above"]>div{width:100%;display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}'
                     . '.bearcms-floating-box-element[data-bearcms-floating-box-position="below"]{display:flex;flex-direction:column-reverse;gap:var(--bearcms-elements-spacing);}'
                     . '.bearcms-floating-box-element[data-bearcms-floating-box-position="below"]>div{width:100%;display:flex;flex-direction:column;gap:var(--bearcms-elements-spacing);}'
-                    . ($editable ? '.bearcms-floating-box-element[data-rvr-editable]>div:first-child{min-width:15px;}' : '')
+                    . '.bearcms-floating-box-element[data-rvr-editable]>div:first-child{min-width:15px;}'
                     . '.bearcms-floating-box-element[data-bearcms-floating-box-position="left"]:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}'
                     . '.bearcms-floating-box-element[data-bearcms-floating-box-position="right"]:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0;}'
                     . '</style>';
+                $content .= ComponentUtilities::createComponentFragment('ehfbds' . md5($styleHTML), $styleHTML);
 
-                $getWidthCSS = function (string $width) use ($editable): string {
+                $getWidthCSS = function (string $width): string {
                     $result = '';
                     foreach (['left', 'right'] as $selectorPosition) {
                         $selector = '.bearcms-floating-box-element[data-bearcms-floating-box-position="' . $selectorPosition . '"][data-bearcms-floating-box-width="' . htmlentities($width) . '"]>div:first-child';
@@ -386,14 +394,16 @@ class ElementsHelper
                 };
 
                 foreach ($widths as $width) {
-                    $content .= '<style>'
+                    $styleHTML = '<style>'
                         . $getWidthCSS($width)
                         . '</style>';
+                    $content .= ComponentUtilities::createComponentFragment('ehfbws' . md5($styleHTML), $styleHTML);
                 }
             }
         }
         if ($styleSelector !== null) {
-            $content .= self::getStyleHTML('floatingBox', $styleValue, $styleSelector, true, !$editable);
+            $styleHTML = self::getStyleHTML('floatingBox', $styleValue, $styleSelector, true, !$editable);
+            $content .= ComponentUtilities::createComponentFragment('ehfbsh' . md5($styleHTML), $styleHTML);
         }
         if (!empty($elementTags)) {
             $attributes .= self::getTagsHTMLAttributes($elementTags);
@@ -477,8 +487,8 @@ class ElementsHelper
                 }
                 $attributes .= ' class="' . $classAttributeValue . '"';
 
-                $notEditableSelector = $editable || true ? ':not([data-rvr-editable])' : ''; // TODO Add check if in admin mode. There are problems if there is not editable and editable element of this kind.
-                $content .= '<style>'
+                $notEditableSelector = ':not([data-rvr-editable])';
+                $styleHTML = '<style>'
                     . '.bearcms-flexible-box-element{position:relative;box-sizing:border-box;display:flex;flex-direction:column;--css-to-attribute-data-bearcms-flexible-box-direction:' . $defaultLayoutValue['direction'] . ';--css-to-attribute-data-bearcms-flexible-box-alignment:' . $defaultLayoutValue['alignment'] . ';}'
                     . '.bearcms-flexible-box-element' . $notEditableSelector . ':not([class*="bearcms-element-style-"]):has(> div:empty){display:none;}'
                     . '.bearcms-flexible-box-element>a{width:100%;height:100%;position:absolute;top:0;left:0;display:block;cursor:pointer;}'
@@ -501,10 +511,12 @@ class ElementsHelper
                     . '.bearcms-flexible-box-element[data-bearcms-flexible-box-cross-alignment="center"]>div{align-items:center;}'
                     . '.bearcms-flexible-box-element[data-bearcms-flexible-box-cross-alignment="end"]>div{align-items:flex-end;}'
                     . '</style>';
+                $content .= ComponentUtilities::createComponentFragment('ehcfds' . md5($styleHTML), $styleHTML);
             }
         }
         if ($styleSelector !== null) {
-            $content .= self::getStyleHTML('flexibleBox', $styleValue, $styleSelector, true, !$editable);
+            $styleHTML = self::getStyleHTML('flexibleBox', $styleValue, $styleSelector, true, !$editable);
+            $content .= ComponentUtilities::createComponentFragment('ehcfsh' . md5($styleHTML), $styleHTML);
         }
         if (!empty($elementTags)) {
             $attributes .= self::getTagsHTMLAttributes($elementTags);
@@ -604,8 +616,8 @@ class ElementsHelper
                 $attributes .= ' class="' . $classAttributeValue . '"';
                 $attributes .= ' data-bearcms-slider-no-transition';
 
-                $notEditableSelector = $editable || true ? ':not([data-rvr-editable])' : ''; // TODO Add check if in admin mode. There are problems if there is not editable and editable element of this kind.
-                $content .= '<style>'
+                $notEditableSelector = ':not([data-rvr-editable])';
+                $styleHTML = '<style>'
                     . '.bearcms-slider-element{position:relative;box-sizing:border-box;display:flex;flex-direction:column;'
                     . '--css-to-attribute-data-bearcms-slider-direction:' . $defaultLayoutValue['direction'] . ';'
                     . '--css-to-attribute-data-bearcms-slider-alignment:' . $defaultLayoutValue['alignment'] . ';'
@@ -628,10 +640,12 @@ class ElementsHelper
                     . '.bearcms-slider-element>div:nth-child(2) [data-bearcms-slider-indicator]{cursor:pointer;pointer-events:all;display:inline-block;}'
                     . '</style>'
                     . self::getStyleHTML('slider', [], '.bearcms-slider-element:not([class*="bearcms-element-style-"])', true, !$editable);
+                $content .= ComponentUtilities::createComponentFragment('ehslds' . md5($styleHTML), $styleHTML);
             }
         }
         if ($styleSelector !== null) {
-            $content .= self::getStyleHTML('slider', $styleValue, $styleSelector, true, !$editable);
+            $styleHTML = self::getStyleHTML('slider', $styleValue, $styleSelector, true, !$editable);
+            $content .= ComponentUtilities::createComponentFragment('ehslsh' . md5($styleHTML), $styleHTML);
         }
         if (!empty($elementTags)) {
             $attributes .= self::getTagsHTMLAttributes($elementTags);
@@ -697,22 +711,26 @@ class ElementsHelper
     static function getStyleHTML(string $elementType, ?array $styleValue, string $selector, bool $returnHeadContentOnly = false, bool $optimizeForCompatibility = false): string
     {
         if (isset(InternalThemes::$elementsOptions[$elementType])) {
-            $options = new \BearCMS\Themes\Theme\Options();
-            $callback = InternalThemes::$elementsOptions[$elementType];
-            if (is_array($callback)) {
-                $callback = $callback[1];
+            $cacheKey = 'getStyleHTML-' . md5(serialize(func_get_args()));
+            if (!isset(self::$cache[$cacheKey])) {
+                $options = new \BearCMS\Themes\Theme\Options();
+                $callback = InternalThemes::$elementsOptions[$elementType];
+                if (is_array($callback)) {
+                    $callback = $callback[1];
+                }
+                call_user_func($callback, $options, '', $selector, InternalThemes::OPTIONS_CONTEXT_ELEMENT, []);
+                if (is_array($styleValue)) {
+                    $options->setValues($styleValue);
+                }
+                $htmlData = InternalThemes::getOptionsHTMLData($options->getList(), false, $optimizeForCompatibility, false, $selector);
+                $content = InternalThemes::processOptionsHTMLData($htmlData);
+                if ($returnHeadContentOnly) {
+                    $content = substr($content, strpos($content, '<head>') + 6);
+                    $content = substr($content, 0, strpos($content, '</head>'));
+                }
+                self::$cache[$cacheKey] = $content;
             }
-            call_user_func($callback, $options, '', $selector, InternalThemes::OPTIONS_CONTEXT_ELEMENT, []);
-            if (is_array($styleValue)) {
-                $options->setValues($styleValue);
-            }
-            $htmlData = InternalThemes::getOptionsHTMLData($options->getList(), false, $optimizeForCompatibility, false, $selector);
-            $content = InternalThemes::processOptionsHTMLData($htmlData);
-            if ($returnHeadContentOnly) {
-                $content = substr($content, strpos($content, '<head>') + 6);
-                $content = substr($content, 0, strpos($content, '</head>'));
-            }
-            return $content;
+            return self::$cache[$cacheKey];
         }
         return '';
     }
@@ -794,15 +812,18 @@ class ElementsHelper
             };
 
             $updateIDAttributeFromRawData = function ($component, bool $setRawAttributeIfMissing): void {
-                $rawData = (string)$component->getAttribute('bearcms-internal-attribute-raw-data');
-                if (strlen($rawData) > 0) {
-                    $elementData = InternalDataElements::decodeElementRawData(base64_decode($rawData));
+                $referenceID = (string)$component->getAttribute('bearcms-internal-attribute-raw-data');
+                if (strlen($referenceID) > 0) {
+                    $rawData = self::$rawDataReferences[$referenceID];
+                    $elementData = InternalDataElements::decodeElementRawData($rawData);
                     if (is_array($elementData)) {
                         $component->id = $elementData['id'];
                     }
                 } elseif ($setRawAttributeIfMissing && $component->id !== null && strlen($component->id) > 0) {
                     $elementRawData = InternalDataElements::getElementRawData($component->id);
-                    $component->setAttribute('bearcms-internal-attribute-raw-data', base64_encode((string)$elementRawData));
+                    $referenceID = md5(serialize($elementRawData));
+                    self::$rawDataReferences[$referenceID] = $elementRawData;
+                    $component->setAttribute('bearcms-internal-attribute-raw-data', $referenceID);
                 }
             };
 
