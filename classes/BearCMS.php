@@ -846,20 +846,27 @@ class BearCMS
                 foreach ($elements as $element) {
                     $class = $element->getAttribute('class');
                     $content = $element->innerHTML;
+                    $contentText = TextUtilities::htmlToText($content);
                     if ($generateDescriptionMetaTag) {
                         if (strpos($class, 'bearcms-text-element') !== false) {
-                            $descriptionContent .= ' ' . $content;
+                            $descriptionContent .= ' ' . $contentText;
                         }
                     }
                     if ($generateKeywordsMetaTag) {
-                        $keywordsContent .= ' ' . $content;
+                        $keywordsContent .= ' ' . $contentText;
+                    }
+                    if ($generateDescriptionMetaTag && strlen($descriptionContent) > 1000) {
+                        break;
+                    }
+                    if ($generateKeywordsMetaTag && strlen($keywordsContent) > 1000) {
+                        break;
                     }
                 }
                 if ($generateDescriptionMetaTag) {
-                    $html .= '<meta name="description" content="' . htmlentities(TextUtilities::cropText(TextUtilities::htmlToText($descriptionContent), 200)) . '"/>';
+                    $html .= '<meta name="description" content="' . htmlentities(TextUtilities::cropText($descriptionContent, 200)) . '"/>';
                 }
                 if ($generateKeywordsMetaTag) {
-                    $keywords = TextUtilities::getKeywords(TextUtilities::htmlToText($keywordsContent));
+                    $keywords = TextUtilities::getKeywords($keywordsContent);
                     $html .= '<meta name="keywords" content="' . htmlentities(implode(', ', $keywords)) . '"/>';
                 }
             }
