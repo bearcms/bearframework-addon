@@ -134,7 +134,7 @@ class ElementsHelper
             . ($editable && isset($contextData['canTag']) ? ' canTag="' . $contextData['canTag'] . '"' : '')
             . (isset($contextData['canStyle']) ? ' canStyle="' . $contextData['canStyle'] . '"' : '')
             . ($editable && isset($contextData['canMove']) ? ' canMove="' . $contextData['canMove'] . '"' : '')
-            . ($editable && isset($contextData['canDelete']) ? ' canEdit="' . $contextData['canDelete'] . '"' : '')
+            . ($editable && isset($contextData['canDelete']) ? ' canDelete="' . $contextData['canDelete'] . '"' : '')
             . ' color="' . $contextData['color'] . '"'
             . ' output-type="' . $outputType . '"'
             . '/>';
@@ -821,9 +821,11 @@ class ElementsHelper
                     }
                 } elseif ($setRawAttributeIfMissing && $component->id !== null && strlen($component->id) > 0) {
                     $elementRawData = InternalDataElements::getElementRawData($component->id);
-                    $referenceID = md5(serialize($elementRawData));
-                    self::$rawDataReferences[$referenceID] = $elementRawData;
-                    $component->setAttribute('bearcms-internal-attribute-raw-data', $referenceID);
+                    if ($elementRawData !== null) {
+                        $referenceID = md5(serialize($elementRawData));
+                        self::$rawDataReferences[$referenceID] = $elementRawData;
+                        $component->setAttribute('bearcms-internal-attribute-raw-data', $referenceID);
+                    }
                 }
             };
 
