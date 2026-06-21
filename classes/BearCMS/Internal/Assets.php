@@ -54,11 +54,11 @@ class Assets
         foreach ($fileOptions as $name => $value) {
             if (isset(self::$supportedFileOptions[$name])) {
                 $assetOptionName = self::$supportedFileOptions[$name];
-                if (array_search($assetOptionName, ['svgFill', 'svgStroke']) !== false) {
+                if (in_array($assetOptionName, ['svgFill', 'svgStroke'])) {
                     $value = '#' . $value;
-                } elseif (array_search($assetOptionName, ['rotate']) !== false) {
+                } elseif (in_array($assetOptionName, ['rotate'])) {
                     $value = (int)$value;
-                } elseif (array_search($assetOptionName, ['crop']) !== false) {
+                } elseif (in_array($assetOptionName, ['crop'])) {
                     $cropParts = explode('x', $value);
                     $result['cropX'] = (int)$cropParts[0];
                     $result['cropY'] = (int)$cropParts[1];
