@@ -60,7 +60,7 @@ class Maintenance
         $blogPosts = $bearCMS->data->blogPosts->getList();
         foreach ($blogPosts as $blogPost) {
             $elementsContainersToCheck[] = 'bearcms-blogpost-' . $blogPost->id;
-            $blogPostImage = $blogPost->image;
+            $blogPostImage = (string)$blogPost->image;
             if (strlen($blogPostImage) > 0) {
                 $files[] = str_replace('appdata://', '', $blogPostImage);
             }
