@@ -584,8 +584,8 @@ class ElementsHelper
 
         $innerContent .= '<div>';
         $buttonAttributes = ' tabindex="0" onkeydown="if(event.keyCode===13){this.lastChild.click();}" role="button"';
-        $innerContent .= '<span' . $buttonAttributes . ' data-bearcms-slider-button data-bearcms-slider-button-previous></span>';
-        $innerContent .= '<span' . $buttonAttributes . ' data-bearcms-slider-button data-bearcms-slider-button-next></span>';
+        $innerContent .= '<span' . $buttonAttributes . ' aria-label="' . __('bearcms.element.slider.previous') . '" title="' . __('bearcms.element.slider.previous') . '" data-bearcms-slider-button data-bearcms-slider-button-previous></span>';
+        $innerContent .= '<span' . $buttonAttributes . ' aria-label="' . __('bearcms.element.slider.next') . '" title="' . __('bearcms.element.slider.next') . '" data-bearcms-slider-button data-bearcms-slider-button-next></span>';
         $innerContent .= '<div data-bearcms-slider-indicators>';
         for ($i = 0; $i < $slidesCount; $i++) {
             $innerContent .= '<span data-bearcms-slider-indicator></span>';
