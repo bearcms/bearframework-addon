@@ -90,4 +90,6 @@ return [
     'bearcms.themes.options.slider.Previous button' => 'Buton înapoi',
     'bearcms.themes.options.slider.Indicators' => 'Indicatori',
     'bearcms.themes.options.slider.IndicatorSelected' => 'Selectat',
+    'bearcms.element.slider.next' => 'Următorul',
+    'bearcms.element.slider.previous' => 'Anterior',
 ];

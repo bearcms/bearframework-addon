@@ -29,4 +29,6 @@ return [
     'bearcms.elementStyle.CopyOfStyle' => 'Копия %s',
     'bearcms.elementStyle.CopyOfCustom' => 'Копия стиля',
     'bearcms.elementStyle.UnknownStyle' => 'Неизвестный стиль',
+    'bearcms.element.slider.next' => 'Следующий',
+    'bearcms.element.slider.previous' => 'Предыдущий',
 ];

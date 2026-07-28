@@ -117,4 +117,6 @@ return [
     'bearcms.themes.options.slider.Previous button' => 'Previous button',
     'bearcms.themes.options.slider.Indicators' => 'Indicators',
     'bearcms.themes.options.slider.IndicatorSelected' => 'Selected',
+    'bearcms.element.slider.next' => 'Next',
+    'bearcms.element.slider.previous' => 'Previous',
 ];
