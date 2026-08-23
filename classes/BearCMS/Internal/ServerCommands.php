@@ -1235,23 +1235,7 @@ class ServerCommands
      */
     static function file(array $data): ?array
     {
-        $app = App::get();
-        $prefix = 'bearcms/files/custom/';
-        $item = $app->data->get($prefix . $data['filename']);
-        if ($item !== null) {
-            $key = $item->key;
-            $fullFilename = $app->data->getFilename($key);
-            $result = [
-                'filename' => str_replace($prefix, '', $key),
-                'name' => (isset($item->metadata['name']) ? $item->metadata['name'] : str_replace($prefix, '', $key)),
-                'published' => (isset($item->metadata['published']) ? (int) $item->metadata['published'] : 0),
-                'size' => filesize($fullFilename),
-                'dateCreated' => (isset($item->metadata['dateCreated']) ? (string) $item->metadata['dateCreated'] : ''),
-                'note' => (isset($item->metadata['note']) ? (string) $item->metadata['note'] : ''),
-            ];
-            return $result;
-        }
-        return null;
+        return \BearCMS\Internal\Data\Files::getFileData($data['filename']);
     }
 
     /**
@@ -1262,20 +1246,21 @@ class ServerCommands
      */
     static function fileSet(array $data): void
     {
-        $app = App::get();
         $fileData = $data['data'];
-        $key = 'bearcms/files/custom/' . $data['filename'];
         if (isset($fileData['name'])) {
-            $app->data->setMetadata($key, 'name', (string) $fileData['name']);
+            \BearCMS\Internal\Data\Files::setFileName($data['filename'], (string) $fileData['name']);
         }
         if (isset($fileData['published'])) {
-            $app->data->setMetadata($key, 'published', (string) $fileData['published']);
+            \BearCMS\Internal\Data\Files::setFilePublished($data['filename'], (int) $fileData['published'] > 0);
         }
         if (isset($fileData['dateCreated'])) {
-            $app->data->setMetadata($key, 'dateCreated', (string) $fileData['dateCreated']);
+            \BearCMS\Internal\Data\Files::setFileDateCreated($data['filename'], (string) $fileData['dateCreated']);
         }
         if (isset($fileData['note'])) {
-            $app->data->setMetadata($key, 'note', (string) $fileData['note']);
+            \BearCMS\Internal\Data\Files::setFileNote($data['filename'], (string) $fileData['note']);
+        }
+        if (isset($fileData['categories'])) {
+            \BearCMS\Internal\Data\Files::setFileCategories($data['filename'], $fileData['categories']);
         }
     }
 
@@ -1286,27 +1271,59 @@ class ServerCommands
      */
     static function files(array $data): array
     {
-        $app = App::get();
-        $prefix = 'bearcms/files/custom/';
-        $list = $app->data->getList()
-            ->filterBy('key', $prefix, 'startWith')
-            ->sliceProperties(['key', 'metadata']);
-        $temp = [];
-        foreach ($list as $item) {
-            $key = $item->key;
-            $temp[] = [
-                'filename' => str_replace($prefix, '', $key),
-                'name' => (isset($item->metadata['name']) ? $item->metadata['name'] : str_replace($prefix, '', $key)),
-                'published' => (isset($item->metadata['published']) ? (int) $item->metadata['published'] : 0),
-                'dateCreated' => (isset($item->metadata['dateCreated']) ? (string) $item->metadata['dateCreated'] : ''),
-                'note' => (isset($item->metadata['note']) ? (string) $item->metadata['note'] : ''),
-            ];
-        }
-        $result = new DataList($temp);
+        $list = \BearCMS\Internal\Data\Files::getList();
+        $result = new DataList($list);
         if (isset($data['modifications'])) {
             $result = self::applyListModifications($result, $data['modifications']);
         }
         return $result->toArray();
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array
+     */
+    static function fileCategoriesList(array $data): array
+    {
+        $list = \BearCMS\Internal\Data\FileCategories::getList();
+        $result = new DataList($list);
+        if (isset($data['modifications'])) {
+            $result = self::applyListModifications($result, $data['modifications']);
+        }
+        return $result->toArray();
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function fileCategorySet(array $data): void
+    {
+        $groupData = $data['data'];
+        $groupData['id'] = $data['id'];
+        \BearCMS\Internal\Data\FileCategories::set($data['id'], $groupData);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return array|null
+     */
+    static function fileCategoryGet(array $data): ?array
+    {
+        return \BearCMS\Internal\Data\FileCategories::get($data['id']);
+    }
+
+    /**
+     * 
+     * @param array $data
+     * @return void
+     */
+    static function fileCategoryDelete(array $data): void
+    {
+        \BearCMS\Internal\Data\FileCategories::delete($data['id']);
     }
 
     /**
@@ -1772,7 +1789,7 @@ class ServerCommands
      * 
      * @param object $list
      * @param array $modifications
-     * @return void
+     * @return mixed
      */
     static function applyListModifications($list, array $modifications)
     {

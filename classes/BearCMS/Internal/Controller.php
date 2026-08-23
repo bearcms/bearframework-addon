@@ -126,7 +126,7 @@ class Controller
         $hasAccess = false;
         $noCache = false;
         if (is_array($fileData)) {
-            if ($fileData['published'] === 1) {
+            if ($fileData['published'] === true) {
                 $hasAccess = true;
             } else {
                 if ($app->bearCMS->currentUser->exists() && $app->bearCMS->currentUser->hasPermission('manageFiles')) {
