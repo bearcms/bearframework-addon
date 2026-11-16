@@ -1439,7 +1439,9 @@ class ElementsTypes
                 $optionsGroup->addOption($idPrefix . "layout", "columnsLayout", '', [
                     "states" => [
                         ["type" => "size"],
-                        ["type" => "screenSize"]
+                        ["type" => "screenSize"],
+                        ["type" => "pageType"],
+                        ["type" => "tags"]
                     ],
                     "cssOutput" => [
                         ["selector", $parentSelector, '--bearcms-elements-spacing:{cssPropertyValue(spacing,inherit)};'],
@@ -1465,7 +1467,9 @@ class ElementsTypes
                 $optionsGroup->addOption($idPrefix . "layout", "floatingBoxLayout", '', [
                     "states" => [
                         ["type" => "size"],
-                        ["type" => "screenSize"]
+                        ["type" => "screenSize"],
+                        ["type" => "pageType"],
+                        ["type" => "tags"]
                     ],
                     "cssOutput" => [
                         ["selector", $parentSelector, '--bearcms-elements-spacing:{cssPropertyValue(spacing,inherit)};'],
@@ -1491,7 +1495,9 @@ class ElementsTypes
                 $optionsGroup->addOption($idPrefix . "layout", "flexibleBoxLayout", '', [
                     "states" => [
                         ["type" => "size"],
-                        ["type" => "screenSize"]
+                        ["type" => "screenSize"],
+                        ["type" => "pageType"],
+                        ["type" => "tags"]
                     ],
                     "cssOutput" => [
                         ["selector", $parentSelector, '--bearcms-elements-spacing:{cssPropertyValue(spacing,inherit)};'],
@@ -1537,7 +1543,8 @@ class ElementsTypes
                     "states" => [
                         ["type" => "size"],
                         ["type" => "screenSize"],
-                        ["type" => "pageType"]
+                        ["type" => "pageType"],
+                        ["type" => "tags"]
                     ],
                     "cssOutput" => [
                         ["selector", $parentSelector . $defaultStyleSelector, '--css-to-attribute-data-bearcms-slider-direction:{cssPropertyValue(direction,' . $defaultLayoutValue['direction'] . ')};'],
