@@ -267,6 +267,8 @@ class ElementsHelper
                         $result .= $selectorPrefix . '[data-bearcms-columns-direction="horizontal"]>div:nth-child(' . ($index + 1) . '){' . $columnStyle . '}';
                         $result .= $selectorPrefix . '[data-bearcms-columns-direction="vertical"]' . $notEditableSelector . '>div:nth-child(' . ($index + 1) . '):empty{display:none;}';
                         $result .= $selectorPrefix . '[data-bearcms-columns-direction="vertical-reverse"]' . $notEditableSelector . '>div:nth-child(' . ($index + 1) . '):empty{display:none;}';
+                        $result .= $selectorPrefix . '[data-bearcms-columns-direction="vertical"]' . $notEditableSelector . '>div:nth-child(' . ($index + 1) . '):not(:has(> :not([data-bearcms-visibility="none"]))){display:none;}';
+                        $result .= $selectorPrefix . '[data-bearcms-columns-direction="vertical-reverse"]' . $notEditableSelector . '>div:nth-child(' . ($index + 1) . '):not(:has(> :not([data-bearcms-visibility="none"]))){display:none;}';
                         $emptySelectorPart .= ':has(> div:nth-child(' . ($index + 1) . '):empty)';
                     }
                     $result .= $selectorPrefix . $notEditableSelector . $emptySelectorPart . '{display:none;}'; // if all columns are empty
