@@ -55,16 +55,16 @@ if ($isFullHtmlOutputType) {
 
     $attributes = '';
     if ($component->type !== null && strlen($component->type) > 0) {
-        $attributes .= ' type="' . $component->type . '"';
+        $attributes .= ' type="' . htmlentities((string)$component->type) . '"';
     }
     if ($component->columnsCount !== null && strlen($component->columnsCount) > 0) {
-        $attributes .= ' columns-count="' . $component->columnsCount . '"';
+        $attributes .= ' columns-count="' . htmlentities((string)$component->columnsCount) . '"';
     }
     if ($component->imageSize !== null && strlen($component->imageSize) > 0) {
-        $attributes .= ' image-size="' . $component->imageSize . '"';
+        $attributes .= ' image-size="' . htmlentities((string)$component->imageSize) . '"';
     }
     if ($component->imageAspectRatio !== null && strlen($component->imageAspectRatio) > 0) {
-        $attributes .= ' image-aspect-ratio="' . $component->imageAspectRatio . '"';
+        $attributes .= ' image-aspect-ratio="' . htmlentities((string)$component->imageAspectRatio) . '"';
     }
     $imageLoadingBackground = (string)$component->imageLoadingBackground;
     if ($imageLoadingBackground === '') {
@@ -83,7 +83,7 @@ if ($isFullHtmlOutputType) {
     }
 
     if ($component->lazyLoadImages !== null && strlen($component->lazyLoadImages) > 0) {
-        $attributes .= ' lazy-load="' . $component->lazyLoadImages . '"';
+        $attributes .= ' lazy-load="' . htmlentities((string)$component->lazyLoadImages) . '"';
     } else {
         $attributes .= ' lazy-load="true"';
     }

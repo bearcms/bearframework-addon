@@ -137,19 +137,19 @@ if ($list->count() > 0) {
                     $imageElementDataAsString = json_encode($imageElementData, JSON_THROW_ON_ERROR);
                     $referenceID = md5(serialize($imageElementDataAsString));
                     ElementsHelper::$rawDataReferences[$referenceID] = $imageElementDataAsString;
-                    $content .= '<component output-type="' . $outputType . '" src="bearcms-image-element" bearcms-internal-attribute-raw-data="' . $referenceID . '"/>';
+                    $content .= '<component output-type="' . $outputType . '" src="bearcms-image-element" bearcms-internal-attribute-raw-data="' . htmlentities($referenceID) . '"/>';
                 } elseif ($hasText) {
                     $textElementDataAsString = json_encode($textElementData, JSON_THROW_ON_ERROR);
                     $referenceID = md5(serialize($textElementDataAsString));
                     ElementsHelper::$rawDataReferences[$referenceID] = $textElementDataAsString;
-                    $content .= '<component output-type="' . $outputType . '" src="bearcms-text-element" bearcms-internal-attribute-raw-data="' . $referenceID . '"/>';
+                    $content .= '<component output-type="' . $outputType . '" src="bearcms-text-element" bearcms-internal-attribute-raw-data="' . htmlentities($referenceID) . '"/>';
                 }
                 if ($showSummaryReadMoreButton && ($hasImage || $hasText)) {
                     $readMoreText = '<a href="' . htmlentities($url) . '">' . __('bearcms.blogPosts.Read more') . '</a>';
                     $content .= '<component output-type="' . $outputType . '" src="bearcms-text-element" text="' . htmlentities($readMoreText) . '"/>';
                 }
             } else {
-                $content .= '<component output-type="' . $outputType . '" src="bearcms-elements" id="' . $containerID . '"/>';
+                $content .= '<component output-type="' . $outputType . '" src="bearcms-elements" id="' . htmlentities($containerID) . '"/>';
             }
             $content .= '</div>';
         }

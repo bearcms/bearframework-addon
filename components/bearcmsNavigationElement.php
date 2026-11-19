@@ -30,7 +30,7 @@ if (array_search($componentMenuType, ['horizontal-down', 'vertical-left', 'verti
 
 $attributes = '';
 if ($isFullHtmlOutputType) {
-    $attributes .= ' type="' . $menuType . '"';
+    $attributes .= ' type="' . htmlentities($menuType) . '"';
     $componentClass = (string)$component->class;
     if (strlen($componentClass) > 0) {
         $attributes .= ' class="' . htmlentities($componentClass) . '"';

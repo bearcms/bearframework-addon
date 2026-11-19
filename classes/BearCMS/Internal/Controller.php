@@ -237,7 +237,7 @@ class Controller
                 continue;
             }
             $blogPostURL = $blogPost->getURL();
-            $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . $blogPost->id . '" output-type="simple-html"/>');
+            $blogPostContent = $app->components->process('<component src="bearcms-elements" id="bearcms-blogpost-' . htmlentities($blogPost->id) . '" output-type="simple-html"/>');
             $domDocument = new HTML5DOMDocument();
             $domDocument->loadHTML($blogPostContent, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
             $contentElementsContainer = $domDocument->querySelector('body')->firstChild;

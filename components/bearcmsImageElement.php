@@ -78,7 +78,7 @@ if ($onClick === 'url') {
         $onClickScript = $onClickValue;
     }
 }
-$imageAttributes .= ' onclick="' . $onClick . '"';
+$imageAttributes .= ' onclick="' . htmlentities($onClick) . '"';
 if ($onClickURL !== null || $onClickValue !== null || $onClick === 'fullscreen') {
     if ($onClickURL !== null) {
         $containerAttributes .= ' role="link"';
@@ -114,7 +114,7 @@ if ($previewImageLoadingBackground !== '') {
     $imageAttributes .= ' preview-image-loading-background="' . htmlentities($previewImageLoadingBackground) . '"';
 }
 
-$imageAttributes .= ' lazy-load="' . $lazyLoad . '"';
+$imageAttributes .= ' lazy-load="' . htmlentities($lazyLoad) . '"';
 
 $innerContainerStyle = '';
 if (strlen($width) === 0) {
@@ -140,7 +140,7 @@ if ($isFullHtmlOutputType) {
     }
     if ($filename !== '') {
         $content .= '<component src="image-gallery" columns-count="1"' . $imageAttributes . ' internal-option-render-image-container="false" internal-option-render-container="false">';
-        $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' && $onClickURL !== '' && $onClickURL !== null ? ' url="' . htmlentities($onClickURL) . '"' : '') . '' . ($onClick === 'script' ? ' script="' . htmlentities($onClickScript) . '"' : '') . ' alt="' . htmlentities((string)$component->alt) . '" filename="' . $filename . '" file-width="' . $component->fileWidth . '" file-height="' . $component->fileHeight . '" min-asset-width="' . $minAssetWidth . '" min-asset-height="' . $minAssetHeight . '" max-asset-width="' . $maxAssetWidth . '" max-asset-height="' . $maxAssetHeight . '"' . InternalAssets::convertAssetOptionsToHTMLAttributes($assetOptions) . '/>';
+        $content .= '<file class="bearcms-image-element-image"' . ($onClick === 'url' && $onClickURL !== '' && $onClickURL !== null ? ' url="' . htmlentities($onClickURL) . '"' : '') . '' . ($onClick === 'script' ? ' script="' . htmlentities($onClickScript) . '"' : '') . ' alt="' . htmlentities((string)$component->alt) . '" filename="' . htmlentities((string)$filename) . '" file-width="' . htmlentities((string)$component->fileWidth) . '" file-height="' . htmlentities((string)$component->fileHeight) . '" min-asset-width="' . htmlentities((string)$minAssetWidth) . '" min-asset-height="' . htmlentities((string)$minAssetHeight) . '" max-asset-width="' . htmlentities((string)$maxAssetWidth) . '" max-asset-height="' . htmlentities((string)$maxAssetHeight) . '"' . InternalAssets::convertAssetOptionsToHTMLAttributes($assetOptions) . '/>';
         $content .= '</component>';
     }
     if (isset($innerContainerStyle[0])) {
@@ -150,7 +150,7 @@ if ($isFullHtmlOutputType) {
 } else {
     $content .= '<div>';
     if ($filename !== '') {
-        $content .= '<img src="' . htmlentities($app->assets->getURL($filename, $assetOptions)) . '" style="max-width:100%;">';
+        $content .= '<img src="' . htmlentities((string)$app->assets->getURL($filename, $assetOptions)) . '" style="max-width:100%;">';
     }
     $content .= '</div>';
 }

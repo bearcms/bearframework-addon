@@ -92,7 +92,7 @@ class Blog
                 if ($settings->allowCommentsInBlogPosts) {
                     $content .= '<div class="bearcms-blogpost-page-comments-block-separator"><component src="bearcms-separator-element" size="large"/></div>';
                     $content .= '<div class="bearcms-blogpost-page-comments-title-container"><component src="bearcms-heading-element" text="' . __('bearcms.pages.blogPost.Comments') . '" size="small"/></div>';
-                    $content .= '<div class="bearcms-blogpost-page-comments-container"><component src="bearcms-comments-element" threadID="bearcms-blogpost-' . $blogPost->id . '"/></div>';
+                    $content .= '<div class="bearcms-blogpost-page-comments-container"><component src="bearcms-comments-element" threadID="bearcms-blogpost-' . htmlentities($blogPost->id) . '"/></div>';
                 }
                 $categoriesIDs = $blogPost->categoriesIDs;
                 if ($settings->showRelatedBlogPosts && !empty($categoriesIDs)) {

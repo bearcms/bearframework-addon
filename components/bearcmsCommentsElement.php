@@ -26,7 +26,7 @@ $allowFilesUpload = (string)$component->allowFilesUpload === 'true';
 $content = '';
 if (strlen($threadID) > 0) {
     $content .= '<div' . ($isFullHtmlOutputType ? ' class="bearcms-comments-element"' : '') . '>';
-    $content .= '<component src="file:' . $context->dir . '/components/bearcmsCommentsElement/commentsList.php" output-type="' . $outputType . '" count="' . htmlentities($count) . '" threadID="' . htmlentities($threadID) . '" />';
+    $content .= '<component src="file:' . $context->dir . '/components/bearcmsCommentsElement/commentsList.php" output-type="' . htmlentities($outputType) . '" count="' . htmlentities($count) . '" threadID="' . htmlentities($threadID) . '" />';
     if ($isFullHtmlOutputType) {
         $content .= '<component src="form" filename="' . $context->dir . '/components/bearcmsCommentsElement/commentsForm.php" count="' . htmlentities($count) . '" threadID="' . htmlentities($threadID) . '" ' . ($allowFilesUpload ? 'allowFilesUpload="true"' : '') . '/>';
     }

@@ -127,7 +127,7 @@ class ElementsHelper
         return '<component'
             . ' src="' . ($componentName === false ? 'bearcms-missing-element' : $componentName) . '"'
             . ' editable="' . ($editable ? 'true' : 'false') . '"'
-            . ' bearcms-internal-attribute-raw-data="' . $referenceID . '"'
+            . ' bearcms-internal-attribute-raw-data="' . htmlentities($referenceID) . '"'
             . ' bearcms-internal-attribute-in-elements-container="' . ((int) $contextData['inElementsContainer'] === 1 ? 'true' : 'false') . '"'
             . ($editable && isset($contextData['canEdit']) ? ' canEdit="' . $contextData['canEdit'] . '"' : '')
             . ($editable && isset($contextData['canDuplicate']) ? ' canDuplicate="' . $contextData['canDuplicate'] . '"' : '')

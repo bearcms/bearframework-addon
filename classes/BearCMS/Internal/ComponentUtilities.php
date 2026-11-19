@@ -18,6 +18,6 @@ class ComponentUtilities
 
     static function createComponentFragment(string $id, string $content): string
     {
-        return '<component-fragment id="' . $id . '" src="data:base64,' . base64_encode($content) . '" />';
+        return '<component-fragment id="' . htmlentities($id) . '" src="data:base64,' . base64_encode($content) . '" />';
     }
 }
